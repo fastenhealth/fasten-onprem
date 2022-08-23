@@ -2,10 +2,10 @@ package web
 
 import (
 	"fmt"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/web/handler"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/web/middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/packagrio/goweb-template/backend/pkg/config"
-	"github.com/packagrio/goweb-template/backend/pkg/web/handler"
-	"github.com/packagrio/goweb-template/backend/pkg/web/middleware"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"

@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/gin-gonic/gin"
-	"github.com/packagrio/goweb-template/backend/pkg/config"
 )
 
 func ConfigMiddleware(appConfig config.Interface) gin.HandlerFunc {

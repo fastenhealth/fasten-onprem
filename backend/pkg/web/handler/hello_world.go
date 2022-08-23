@@ -1,9 +1,9 @@
 package handler
 
 import (
-	//"github.com/packagrio/goweb-template/backend/pkg/database"
+	//"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/gin-gonic/gin"
-	//"github.com/packagrio/goweb-template/backend/pkg/config"
+	//"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	//"github.com/sirupsen/logrus"
 	"net/http"
 )

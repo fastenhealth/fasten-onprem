@@ -1,4 +1,4 @@
-module github.com/packagrio/goweb-template
+module github.com/fastenhealth/fastenhealth-onprem
 
 go 1.18
 

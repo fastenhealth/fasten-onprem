@@ -2,7 +2,7 @@
 # Version
 #
 # version specifies the version of this configuration file schema, not
-# the webcli binary. There is only 1 version available at the moment
+# the fasten binary. There is only 1 version available at the moment
 version: 1
 
 web:
@@ -10,15 +10,15 @@ web:
     port: 8080
     host: 0.0.0.0
 
-    # if you're using a reverse proxy like apache/nginx, you can override this value to serve webcli on a subpath.
-    # eg. http://example.com/webcli/* vs http://example.com:8080
-    # basepath: `/webcli`
+    # if you're using a reverse proxy like apache/nginx, you can override this value to serve fasten on a subpath.
+    # eg. http://example.com/fasten/* vs http://example.com:8080
+    # basepath: `/fasten`
     # leave empty unless behind a path prefixed proxy
     basepath: ''
   src:
     # the location on the filesystem where webapp javascript + css is located
     frontend:
-      path: /opt/webcli/web
+      path: /opt/fasten/web
 #      path: ./dist
 
 log:

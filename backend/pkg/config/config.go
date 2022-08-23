@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 	"github.com/analogj/go-util/utils"
-	"github.com/packagrio/goweb-template/backend/pkg/errors"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/errors"
 	"github.com/spf13/viper"
 	"log"
 	"os"
@@ -24,7 +24,7 @@ func (c *configuration) Init() error {
 	c.SetDefault("web.listen.port", "8080")
 	c.SetDefault("web.listen.host", "0.0.0.0")
 	c.SetDefault("web.listen.basepath", "")
-	c.SetDefault("web.src.frontend.path", "/opt/webcli/web")
+	c.SetDefault("web.src.frontend.path", "/opt/fasten/web")
 
 	c.SetDefault("log.level", "INFO")
 	c.SetDefault("log.file", "")
@@ -37,7 +37,7 @@ func (c *configuration) Init() error {
 	c.AddConfigPath("$HOME/")
 
 	//configure env variable parsing.
-	c.SetEnvPrefix("PACKAGR")
+	c.SetEnvPrefix("FASTEN")
 	c.SetEnvKeyReplacer(strings.NewReplacer("-", "_", ".", "_"))
 	c.AutomaticEnv()
 	//CLI options will be added via the `Set()` function

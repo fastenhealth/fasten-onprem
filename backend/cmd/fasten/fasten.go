@@ -4,10 +4,28 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/analogj/go-util/utils"
-	"github.com/packagrio/goweb-template/backend/pkg/config"
-	"github.com/packagrio/goweb-template/backend/pkg/errors"
-	"github.com/packagrio/goweb-template/backend/pkg/version"
-	"github.com/packagrio/goweb-template/backend/pkg/web"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/errors"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/version"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/web"
+	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli/v2"
+	"io"
+	"log"
+	"os"
+	"time"
+)
+
+\
+
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/analogj/go-util/utils"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/errors"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/version"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/web"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"io"
@@ -48,7 +66,7 @@ func main() {
 		},
 		Before: func(c *cli.Context) error {
 
-			packagrUrl := "github.com/packagrio/goweb-template"
+			packagrUrl := "github.com/fastenhealth/fastenhealth-onprem"
 
 			versionInfo := fmt.Sprintf("%s.%s-%s", goos, goarch, version.VERSION)
 
@@ -69,7 +87,7 @@ func main() {
 		Commands: []*cli.Command{
 			{
 				Name:  "start",
-				Usage: "Start the webcli server",
+				Usage: "Start the fasten server",
 				Action: func(c *cli.Context) error {
 					//fmt.Fprintln(c.App.Writer, c.Command.Usage)
 					if c.IsSet("config") {
