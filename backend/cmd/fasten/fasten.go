@@ -16,24 +16,6 @@ import (
 	"time"
 )
 
-\
-
-import (
-	"encoding/json"
-	"fmt"
-	"github.com/analogj/go-util/utils"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/errors"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/version"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/web"
-	"github.com/sirupsen/logrus"
-	"github.com/urfave/cli/v2"
-	"io"
-	"log"
-	"os"
-	"time"
-)
-
 var goos string
 var goarch string
 
