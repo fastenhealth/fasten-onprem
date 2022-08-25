@@ -30,7 +30,9 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/@panva/oauth4webapi/build/index.js"
+            ]
           },
           "configurations": {
             "production": {
