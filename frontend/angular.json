@@ -125,6 +125,9 @@
           }
         }
       }
-    }},
-  "defaultProject": "fastenhealth"
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
 }

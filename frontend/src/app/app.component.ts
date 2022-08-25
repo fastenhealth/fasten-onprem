@@ -37,7 +37,7 @@ export class AppComponent {
         if (data.message.aud){
           authorizationUrl.searchParams.set('aud', data.message.aud);
         }
-        console.log('authorize url:', authorizationUrl);
+        console.log('authorize url:', authorizationUrl.toString());
       });
 
 
