@@ -1,15 +1,13 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-// import 'fhir-js-client';
 import * as Oauth from '@panva/oauth4webapi';
 import { concatMap, delay, retryWhen } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';
-// import {fhirclient} from 'fhirclient/lib/types';
 import * as FHIR from "fhirclient"
-import Client from 'fhirclient/lib/Client';
 import {getAccessTokenExpiration} from 'fhirclient/lib/lib';
 import BrowserAdapter from 'fhirclient/lib/adapters/BrowserAdapter';
-
+import {PassportService} from './services/passport.service';
+import {ProviderConfig} from './models/passport/provider-config';
+import {AuthorizeClaim} from './models/passport/authorize-claim';
 export const retryCount = 24; //wait 2 minutes (5 * 24 = 120)
 export const retryWaitMilliSeconds = 5000; //wait 5 seconds
 
@@ -22,37 +20,27 @@ export class AppComponent {
   title = 'fastenhealth';
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private passportApi: PassportService) { }
 
   connect(provider: string) {
-    this.http.get<any>(`https://sandbox-api.fastenhealth.com/v1/connect/${provider}`)
-      .subscribe(async (connectData: any) => {
+    this.passportApi.getProviderConfig(provider)
+      .subscribe(async (connectData: ProviderConfig) => {
         console.log(connectData);
 
         // https://github.com/panva/oauth4webapi/blob/8eba19eac408bdec5c1fe8abac2710c50bfadcc3/examples/public.ts
         const codeVerifier = Oauth.generateRandomCodeVerifier();
         const codeChallenge = await Oauth.calculatePKCECodeChallenge(codeVerifier);
         const codeChallengeMethod = 'S256';
-
-        // generate the authorization url
         const state = this.uuidV4()
-        const authorizationUrl = new URL(`${connectData.message.oauth_endpoint_base_url}/authorize`);
-        authorizationUrl.searchParams.set('client_id', connectData.message.client_id);
-        authorizationUrl.searchParams.set('code_challenge', codeChallenge);
-        authorizationUrl.searchParams.set('code_challenge_method', codeChallengeMethod);
-        authorizationUrl.searchParams.set('redirect_uri', connectData.message.redirect_uri);
-        authorizationUrl.searchParams.set('response_type', 'code');
-        authorizationUrl.searchParams.set('scope', connectData.message.scopes.join(' '));
-        authorizationUrl.searchParams.set('state', state);
-        if (connectData.message.aud){
-          authorizationUrl.searchParams.set('aud', connectData.message.aud);
-        }
+
+        const authorizationUrl = this.passportApi.generatePKCEProviderAuthorizeUrl(codeVerifier, codeChallenge, codeChallengeMethod, state, connectData)
+
         console.log('authorize url:', authorizationUrl.toString());
         // open new browser window
         window.open(authorizationUrl.toString(), "_blank");
 
         //wait for response
-        this.waitForClaimOrTimeout(provider, state).subscribe(async (claimData: any) => {
+        this.waitForClaimOrTimeout(provider, state).subscribe(async (claimData: AuthorizeClaim) => {
           console.log("claim response:", claimData)
 
 
@@ -62,19 +50,19 @@ export class AppComponent {
 
           // @ts-expect-error
           const client: oauth.Client = {
-            client_id: connectData.message.client_id,
+            client_id: connectData.client_id,
             token_endpoint_auth_method: 'none',
           }
 
           const as = {
             issuer: `${authorizationUrl.protocol}//${authorizationUrl.host}`,
-            authorization_endpoint:	`${connectData.message.oauth_endpoint_base_url}/authorize`,
-            token_endpoint:	`${connectData.message.oauth_endpoint_base_url}/token`,
-            introspect_endpoint: `${connectData.message.oauth_endpoint_base_url}/introspect`,
+            authorization_endpoint:	`${connectData.oauth_endpoint_base_url}/authorize`,
+            token_endpoint:	`${connectData.oauth_endpoint_base_url}/token`,
+            introspect_endpoint: `${connectData.oauth_endpoint_base_url}/introspect`,
           }
 
           console.log("STARTING--- Oauth.validateAuthResponse")
-          const params = Oauth.validateAuthResponse(as, client, new URLSearchParams(claimData.message), state)
+          const params = Oauth.validateAuthResponse(as, client, new URLSearchParams(claimData as any), state)
           if (Oauth.isOAuth2Error(params)) {
             console.log('error', params)
             throw new Error() // Handle OAuth 2.0 redirect error
@@ -85,7 +73,7 @@ export class AppComponent {
             as,
             client,
             params,
-            connectData.message.redirect_uri,
+            connectData.redirect_uri,
             codeVerifier,
           )
           const payload = await response.json()
@@ -94,11 +82,11 @@ export class AppComponent {
 
           //Create FHIR Client
           const clientState = {
-            serverUrl: connectData.message.api_endpoint_base_url,
-            clientId: connectData.message.client_id,
-            redirectUri: connectData.message.redirect_uri,
-            tokenUri: `${connectData.message.oauth_endpoint_base_url}/token`,
-            scope: connectData.message.scopes.join(' '),
+            serverUrl: connectData.api_endpoint_base_url,
+            clientId: connectData.client_id,
+            redirectUri: connectData.redirect_uri,
+            tokenUri: `${connectData.oauth_endpoint_base_url}/token`,
+            scope: connectData.scopes.join(' '),
             tokenResponse: payload,
             expiresAt: getAccessTokenExpiration(payload, new BrowserAdapter()),
             codeChallenge: codeChallenge,
@@ -136,8 +124,8 @@ export class AppComponent {
 
       });
   }
-  waitForClaimOrTimeout(provider: string, state: string): Observable<any> {
-    return this.http.get<any>(`https://sandbox-api.fastenhealth.com/v1/claim/${provider}`, {params: {"state": state}}).pipe(
+  waitForClaimOrTimeout(providerId: string, state: string): Observable<any> {
+    return this.passportApi.getProviderAuthorizeClaim(providerId, state).pipe(
       retryWhen(error =>
         error.pipe(
           concatMap((error, count) => {
