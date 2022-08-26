@@ -41,6 +41,16 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	}
 	globalLogger.Infof("Successfully connected to scrutiny sqlite db: %s\n", appConfig.GetString("web.database.location"))
 
+	//TODO: automigrate for now
+	err = database.AutoMigrate(&models.User{})
+	if err != nil {
+		return nil, fmt.Errorf("Failed to automigrate! - %v", err)
+	}
+	err = database.AutoMigrate(&models.ProviderCredential{})
+	if err != nil {
+		return nil, fmt.Errorf("Failed to automigrate! - %v", err)
+	}
+
 	deviceRepo := sqliteRepository{
 		appConfig:  appConfig,
 		logger:     globalLogger,
@@ -65,7 +75,7 @@ func (sr *sqliteRepository) Close() error {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func (sr *sqliteRepository) CreateProviderCredentials(ctx context.Context, providerCreds models.ProviderCredential) error {
-	return sr.gormClient.WithContext(ctx).Create(providerCreds).Error
+	return sr.gormClient.WithContext(ctx).Create(&providerCreds).Error
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

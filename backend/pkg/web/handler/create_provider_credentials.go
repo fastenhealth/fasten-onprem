@@ -19,6 +19,8 @@ func CreateProviderCredentials(c *gin.Context) {
 		return
 	}
 
+	logger.Infof("Parsed Create Provider Credentials Payload: %v", providerCred)
+
 	err := databaseRepo.CreateProviderCredentials(c, providerCred)
 	if err != nil {
 		logger.Errorln("An error occurred while storing provider credential", err)

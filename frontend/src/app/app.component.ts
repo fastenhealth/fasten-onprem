@@ -8,6 +8,8 @@ import BrowserAdapter from 'fhirclient/lib/adapters/BrowserAdapter';
 import {PassportService} from './services/passport.service';
 import {ProviderConfig} from './models/passport/provider-config';
 import {AuthorizeClaim} from './models/passport/authorize-claim';
+import {FastenApiService} from './services/fasten-api.service';
+import {ProviderCredential} from './models/fasten/provider-credential';
 export const retryCount = 24; //wait 2 minutes (5 * 24 = 120)
 export const retryWaitMilliSeconds = 5000; //wait 5 seconds
 
@@ -20,7 +22,10 @@ export class AppComponent {
   title = 'fastenhealth';
 
 
-  constructor(private passportApi: PassportService) { }
+  constructor(
+    private passportApi: PassportService,
+    private fastenApi: FastenApiService,
+  ) { }
 
   connect(provider: string) {
     this.passportApi.getProviderConfig(provider)
@@ -81,23 +86,34 @@ export class AppComponent {
 
 
           //Create FHIR Client
-          const clientState = {
-            serverUrl: connectData.api_endpoint_base_url,
-            clientId: connectData.client_id,
-            redirectUri: connectData.redirect_uri,
-            tokenUri: `${connectData.oauth_endpoint_base_url}/token`,
-            scope: connectData.scopes.join(' '),
-            tokenResponse: payload,
-            expiresAt: getAccessTokenExpiration(payload, new BrowserAdapter()),
-            codeChallenge: codeChallenge,
-            codeVerifier: codeVerifier
+          const providerCredential: ProviderCredential = {
+            oauth_endpoint_base_url: connectData.oauth_endpoint_base_url,
+            api_endpoint_base_url:   connectData.api_endpoint_base_url,
+            client_id:             connectData.client_id,
+            redirect_uri:          connectData.redirect_uri,
+            scopes:               connectData.scopes.join(' '),
+            patient:            payload.patient,
+            access_token:          payload.access_token,
+            refresh_token:          payload.refresh_token,
+            id_token:              payload.id_token,
+            expires_at:            getAccessTokenExpiration(payload, new BrowserAdapter()),
+            code_challenge:        codeChallenge,
+            code_verifier:         codeVerifier,
           }
-          console.log("STARTING--- FHIR.client(clientState)", clientState)
-          const fhirClient = FHIR.client(clientState);
 
-          console.log("STARTING--- client.request(Patient)")
-          const patientResponse = await fhirClient.request("PatientAccess/v1/$userinfo")
-          console.log(patientResponse)
+          this.fastenApi.createProviderCredential(providerCredential).subscribe( (respData) => {
+            console.log("provider credential create response:", respData)
+          })
+
+
+
+
+          // console.log("STARTING--- FHIR.client(clientState)", clientState)
+          // const fhirClient = FHIR.client(clientState);
+          //
+          // console.log("STARTING--- client.request(Patient)")
+          // const patientResponse = await fhirClient.request("PatientAccess/v1/$userinfo")
+          // console.log(patientResponse)
 
 
 

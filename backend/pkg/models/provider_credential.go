@@ -5,18 +5,18 @@ import "gorm.io/gorm"
 type ProviderCredential struct {
 	gorm.Model
 
-	OauthEndpointBaseUrl string   `json:"oauth_endpoint_base_url"`
-	ApiEndpointBaseUrl   string   `json:"api_endpoint_base_url"`
-	ClientId             string   `json:"client_id"`
-	RedirectUri          string   `json:"redirect_uri"`
-	Scopes               []string `json:"scopes"`
-	PatientId            string   `json:"patient"`
-	AccessToken          string   `json:"access_token"`
-	RefreshToken         string   `json:"refresh_token"`
-	IdToken              string   `json:"id_token"`
-	ExpiresAt            string   `json:"expires_at"`
-	CodeChallenge        string   `json:"code_challenge"`
-	CodeVerifier         string   `json:"code_verifier"`
+	OauthEndpointBaseUrl string `json:"oauth_endpoint_base_url"`
+	ApiEndpointBaseUrl   string `json:"api_endpoint_base_url"`
+	ClientId             string `json:"client_id"`
+	RedirectUri          string `json:"redirect_uri"`
+	Scopes               string `json:"scopes"`
+	PatientId            string `json:"patient"`
+	AccessToken          string `json:"access_token"`
+	RefreshToken         string `json:"refresh_token"`
+	IdToken              string `json:"id_token"`
+	ExpiresAt            int64  `json:"expires_at"`
+	CodeChallenge        string `json:"code_challenge"`
+	CodeVerifier         string `json:"code_verifier"`
 }
 
 /*
