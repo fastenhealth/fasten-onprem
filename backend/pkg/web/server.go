@@ -20,7 +20,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 	r := gin.New()
 
 	r.Use(middleware.LoggerMiddleware(logger))
-	//r.Use(middleware.DatabaseMiddleware(ae.Config, logger))
+	r.Use(middleware.RepositoryMiddleware(ae.Config, logger))
 	r.Use(middleware.ConfigMiddleware(ae.Config))
 	r.Use(gin.Recovery())
 
@@ -39,7 +39,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 					"success": true,
 				})
 			})
-			api.POST("/hello-world", handler.GetHelloWorld) //used to save settings
+			api.POST("/provider_credentials", handler.CreateProviderCredentials) //used to save settings
 		}
 	}
 
