@@ -3,8 +3,8 @@ package models
 type ProviderCredential struct {
 	//TODO: PRIMARY KEY should be UserId + ProviderId + PatientId
 
-	User   User `gorm:"foreignKey:ID;references:UserId"`
-	UserId int  `json:"user_id"`
+	User   User `json:"user,omitempty" gorm:"foreignKey:ID;references:UserId"`
+	UserId uint `json:"user_id"`
 
 	ProviderId string `json:"provider" gorm:"primaryKey"`
 	PatientId  string `json:"patient" gorm:"primaryKey"`

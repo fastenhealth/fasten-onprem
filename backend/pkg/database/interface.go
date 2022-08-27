@@ -7,6 +7,7 @@ import (
 
 type DatabaseRepository interface {
 	Close() error
+	GetCurrentUser() models.User
 
-	CreateProviderCredentials(ctx context.Context, providerCreds models.ProviderCredential) error
+	CreateProviderCredentials(ctx context.Context, providerCreds *models.ProviderCredential) error
 }

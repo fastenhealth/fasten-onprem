@@ -52,6 +52,13 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 		return nil, fmt.Errorf("Failed to automigrate! - %v", err)
 	}
 
+	// create/update admin user
+	adminUser := models.User{}
+	err = database.FirstOrCreate(&adminUser, models.User{Username: "admin"}).Error
+	if err != nil {
+		return nil, fmt.Errorf("Failed to create admin user! - %v", err)
+	}
+
 	deviceRepo := sqliteRepository{
 		appConfig:  appConfig,
 		logger:     globalLogger,
@@ -71,12 +78,17 @@ func (sr *sqliteRepository) Close() error {
 	return nil
 }
 
+func (sr *sqliteRepository) GetCurrentUser() models.User {
+	return models.User{Model: &gorm.Model{ID: 1}}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DeviceSummary
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (sr *sqliteRepository) CreateProviderCredentials(ctx context.Context, providerCreds models.ProviderCredential) error {
-	return sr.gormClient.WithContext(ctx).Create(&providerCreds).Error
+func (sr *sqliteRepository) CreateProviderCredentials(ctx context.Context, providerCreds *models.ProviderCredential) error {
+	providerCreds.UserId = sr.GetCurrentUser().ID
+	return sr.gormClient.WithContext(ctx).Create(providerCreds).Error
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
