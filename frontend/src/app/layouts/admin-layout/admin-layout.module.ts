@@ -6,8 +6,9 @@ import { FormsModule } from "@angular/forms";
 
 import { AdminLayoutRoutes } from "./admin-layout.routing";
 import { DashboardComponent } from "../../pages/dashboard/dashboard.component";
-import { UserComponent } from "../../pages/user/user.component";
-// import { RtlComponent } from "../../pages/rtl/rtl.component";
+import { PatientComponent } from "../../pages/patient/patient.component";
+import { MedicalProvidersComponent } from "../../pages/medical-providers/medical-providers.component";
+
 
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 
@@ -21,7 +22,8 @@ import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
   ],
   declarations: [
     DashboardComponent,
-    UserComponent,
+    PatientComponent,
+    MedicalProvidersComponent
   ]
 })
 export class AdminLayoutModule {}
