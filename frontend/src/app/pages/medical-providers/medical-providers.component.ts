@@ -29,7 +29,9 @@ export class MedicalProvidersComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  connect(provider: string) {
+  connect($event: MouseEvent, provider: string) {
+    ($event.currentTarget as HTMLButtonElement).disabled = true;
+
     this.passportApi.getProviderConfig(provider)
       .subscribe(async (connectData: ProviderConfig) => {
         console.log(connectData);

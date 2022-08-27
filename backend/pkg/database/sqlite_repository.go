@@ -30,6 +30,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	// but should be fine for local usage.
 	pragmaStr := sqlitePragmaString(map[string]string{
 		"busy_timeout": "30000",
+		"foreign_keys": "ON",
 	})
 	database, err := gorm.Open(sqlite.Open(appConfig.GetString("web.database.location")+pragmaStr), &gorm.Config{
 		//TODO: figure out how to log database queries again.

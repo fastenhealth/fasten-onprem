@@ -26,14 +26,68 @@ export const ROUTES: RouteInfo[] = [
     class: ""
   },
   {
-    path: "/tables",
-    title: "Table List",
+    path: "/allergies",
+    title: "Allergies",
     icon: "icon-puzzle-10",
     class: ""
   },
   {
-    path: "/typography",
-    title: "Typography",
+    path: "/encounters",
+    title: "Encounters",
+    icon: "icon-align-center",
+    class: ""
+  },
+  {
+    path: "/immunizations",
+    title: "Immunizations",
+    icon: "icon-align-center",
+    class: ""
+  },
+  {
+    path: "/instructions",
+    title: "Instructions",
+    icon: "icon-align-center",
+    class: ""
+  },
+  {
+    path: "/medications",
+    title: "Medications",
+    icon: "icon-align-center",
+    class: ""
+  },
+  {
+    path: "/organizations",
+    title: "Organizations",
+    icon: "icon-align-center",
+    class: ""
+  },
+  {
+    path: "/problems",
+    title: "Problems",
+    icon: "icon-align-center",
+    class: ""
+  },
+  {
+    path: "/procedures",
+    title: "Procedures",
+    icon: "icon-align-center",
+    class: ""
+  },
+  {
+    path: "/test_results",
+    title: "Test Results",
+    icon: "icon-align-center",
+    class: ""
+  },
+  {
+    path: "/vitals",
+    title: "Vitals",
+    icon: "icon-align-center",
+    class: ""
+  },
+  {
+    path: "/demographics",
+    title: "Demographics",
     icon: "icon-align-center",
     class: ""
   }
