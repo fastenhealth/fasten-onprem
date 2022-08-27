@@ -4,17 +4,23 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { AdminLayoutComponent } from "./layouts/admin-layout/admin-layout.component";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { ComponentsModule } from "./components/components.module";
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent,
+    AdminLayoutComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    NgbModule,
+    ComponentsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

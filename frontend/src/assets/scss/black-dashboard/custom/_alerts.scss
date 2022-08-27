@@ -1,0 +1,89 @@
+.alert{
+    border: 0;
+    color: $white;
+
+    .alert-link{
+      color: $white;
+    }
+
+    &.alert-success{
+      background-color: darken($success, 10%);
+    }
+
+    i.fa,
+    i.tim-icons{
+        font-size: $font-paragraph;
+    }
+
+    .close{
+        color: $white;
+        opacity: .9;
+        text-shadow: none;
+        line-height: 0;
+        outline: 0;
+    }
+
+    span[data-notify="icon"]{
+      font-size: 22px;
+      display: block;
+      left: 19px;
+      position: absolute;
+      top: 50%;
+      margin-top: -11px;
+    }
+
+    button.close{
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      margin-top: -13px;
+      width: 25px;
+      height: 25px;
+      padding: 3px;
+    }
+
+    .close ~ span{
+        display: block;
+        max-width: 89%;
+    }
+
+    &.alert-with-icon{
+        padding-left: 65px;
+    }
+}
+
+.alert-dismissible {
+    .close {
+        top: 50%;
+        right: $alert-padding-x;
+        padding: 0;
+        transform: translateY(-50%);
+        color: rgba($white, .6);
+        opacity: 1;
+
+        &:hover,
+        &:focus {
+            color: rgba($white, .9);
+            opacity: 1 !important;
+        }
+
+        @include media-breakpoint-down(xs) {
+            top: 1rem;
+            right: .5rem;
+        }
+
+        &>span:not(.sr-only) {
+            font-size: 1.5rem;
+            background-color: transparent;
+            color: rgba($white, .6);
+        }
+
+        &:hover,
+        &:focus {
+            &>span:not(.sr-only) {
+                background-color: transparent;
+                color: rgba($white, .9);
+            }
+        }
+    }
+}

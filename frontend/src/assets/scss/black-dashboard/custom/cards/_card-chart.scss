@@ -1,0 +1,73 @@
+.card-chart {
+  overflow: hidden;
+  .card-header{
+    .card-title{
+      i{
+        font-size: 16px;
+        margin-right: 5px;
+        margin-bottom: 3px;
+      }
+    }
+    .card-category{
+      margin-bottom: 5px;
+    }
+  }
+    .card-body{
+      padding-left: 5px;
+      padding-right: 5px;
+      .tab-space{
+        padding: 0;
+      }
+    }
+  .table{
+    margin-bottom: 0;
+
+    td{
+      border-top: none;
+      border-bottom: 1px solid rgba($white,0.1);
+    }
+  }
+
+  .card-progress {
+    margin-top: 30px;
+    padding: 0 10px;
+  }
+
+  .chart-area {
+    height: 220px;
+    width: 100%;
+  }
+  .card-footer {
+    margin-top: 15px;
+
+    .stats{
+      color: $dark-gray;
+    }
+  }
+
+  .dropdown{
+    position: absolute;
+    right: 20px;
+    top: 20px;
+
+    .btn{
+      margin: 0;
+    }
+  }
+
+  &.card-chart-pie{
+    .chart-area{
+      padding: 10px 0 25px;
+      height: auto;
+    }
+
+    .card-title{
+      margin-bottom: 10px;
+      i{
+        font-size: 1rem;
+      }
+    }
+
+  }
+
+}

@@ -1,0 +1,44 @@
+<div class="wrapper">
+  <div class="sidebar"><app-sidebar></app-sidebar></div>
+  <div class="main-panel">
+    <app-navbar></app-navbar>
+    <router-outlet></router-outlet>
+    <app-footer></app-footer>
+  </div>
+</div>
+<div class=" fixed-plugin">
+  <div class=" show-dropdown" ngbDropdown>
+    <a data-toggle="dropdown" ngbDropdownToggle>
+      <i class=" fa fa-cog fa-2x"> </i>
+    </a>
+    <ul ngbDropdownMenu>
+      <li class=" header-title">Sidebar Background</li>
+      <li class=" adjustments-line">
+        <a class=" switch-trigger background-color" href="javascript:void(0)">
+          <div class=" badge-colors text-center">
+            <span
+              class=" badge filter badge-danger"
+              [ngClass]="{'active':sidebarColor==='red'}" (click)="changeSidebarColor('red')"
+            >
+            </span>
+            <span
+              class=" badge filter badge-primary"
+              [ngClass]="{'active':sidebarColor==='primary'}" (click)="changeSidebarColor('primary')"
+            >
+            </span>
+            <span class=" badge filter badge-info" [ngClass]="{'active':sidebarColor==='blue'}" (click)="changeSidebarColor('blue')"> </span>
+            <span class=" badge filter badge-success" [ngClass]="{'active':sidebarColor==='green'}" (click)="changeSidebarColor('green')">
+            </span>
+          </div>
+          <div class=" clearfix"></div>
+        </a>
+      </li>
+      <li class=" adjustments-line text-center color-change">
+        <span class=" color-label"> LIGHT MODE </span>
+        <span class=" badge light-badge mr-2" (click)="changeDashboardColor('white-content')"> </span>
+        <span class=" badge dark-badge ml-2" (click)="changeDashboardColor('black-content')"> </span>
+        <span class=" color-label"> DARK MODE </span>
+      </li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,191 @@
+.table{
+  > tbody > tr > td {
+    color: rgba(255, 255, 255, 0.7) !important;
+
+    .photo {
+      height: 30px;
+      width: 30px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto;
+
+      img {
+        width: 100%;
+      }
+    }
+  }
+
+  > tbody > tr.table-success > td{
+    background-color: darken($success,10%);
+  }
+
+  > tbody > tr.table-info > td{
+    background-color: $info;
+  }
+
+  > tbody > tr.table-primary > td{
+    background-color: $primary;
+  }
+
+  > tbody > tr.table-warning > td{
+    background-color: $warning;
+  }
+  > tbody > tr.table-danger > td{
+    background-color: $danger;
+  }
+
+    .img-wrapper{
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto;
+    }
+
+    .img-row{
+      max-width: 60px;
+      width: 60px;
+    }
+
+    .form-check{
+        margin: 0;
+        margin-top: 5px;
+
+        & label .form-check-sign::before,
+        & label .form-check-sign::after{
+            top: -17px;
+            left: 4px;
+        }
+    }
+
+    .btn{
+        margin: 0;
+    }
+
+    small,.small{
+      font-weight: 300;
+    }
+
+    .card-tasks .card-body &{
+        margin-bottom: 0;
+
+        > thead > tr > th,
+        > tbody > tr > th,
+        > tfoot > tr > th,
+        > thead > tr > td,
+        > tbody > tr > td,
+        > tfoot > tr > td{
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+    }
+
+   > thead > tr > th{
+       border-bottom-width: 1px;
+       font-size: 12px;
+       text-transform: uppercase;
+       font-weight: $font-weight-extra-bold;
+       border: 0;
+       color: rgba($white, 0.7);
+   }
+
+   .radio,
+   .checkbox{
+       margin-top: 0;
+       margin-bottom: 0;
+       padding: 0;
+       width: 15px;
+
+       .icons{
+           position: relative;
+       }
+
+        label{
+            &:after,
+            &:before{
+                top: -17px;
+                left: -3px;
+            }
+        }
+   }
+   > thead > tr > th,
+   > tbody > tr > th,
+   > tfoot > tr > th,
+   > thead > tr > td,
+   > tbody > tr > td,
+   > tfoot > tr > td{
+       border-color: rgba(255, 255, 255, 0.1);
+       padding: 12px 7px;
+       vertical-align: middle;
+   }
+
+   &.table-shopping tbody tr:last-child td{
+      border: none;
+   }
+
+   .th-description{
+       max-width: 150px;
+   }
+   .td-price{
+       font-size: 26px;
+       font-weight: $font-weight-light;
+       margin-top: 5px;
+       position: relative;
+       top: 4px;
+       text-align: right;
+   }
+   .td-total{
+        font-weight: $font-weight-bold;
+        font-size: $h5-font-size;
+        padding-top: 20px;
+        text-align: right;
+    }
+
+   .td-actions .btn{
+    margin: 0px;
+    }
+
+    > tbody > tr{
+        position: relative;
+    }
+
+    > tfoot > tr {
+      color: hsla(0,0%,100%,.7);
+      text-transform: uppercase;
+    }
+}
+
+.table-responsive{
+  overflow: scroll;
+  padding-bottom: 10px;
+}
+
+#tables .table-responsive{
+    margin-bottom: 30px;
+}
+
+table.tablesorter thead tr .header{
+	// background-image: url("../img/bg.gif");
+  background-repeat: no-repeat;
+  background-position: center right;
+  cursor: pointer;
+}
+
+table.tablesorter thead tr .headerSortUp {
+	// background-image: url("../img/asc.gif");
+}
+table.tablesorter thead tr .headerSortDown {
+	// background-image: url("../img/desc.gif");
+}
+
+// datatables
+
+.dataTables_wrapper {
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0,0,0,.05);
+  }
+
+  .form-control-sm {
+    font-size: 10px;
+  }
+}

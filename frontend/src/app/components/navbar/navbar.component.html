@@ -1,0 +1,137 @@
+<nav class=" navbar navbar-expand-lg navbar-absolute navbar-transparent">
+  <div class=" container-fluid">
+    <div class=" navbar-wrapper">
+      <div class=" navbar-toggle d-inline">
+        <button class=" navbar-toggler" type="button" (click)="sidebarToggle()">
+          <span class=" navbar-toggler-bar bar1"> </span>
+          <span class=" navbar-toggler-bar bar2"> </span>
+          <span class=" navbar-toggler-bar bar3"> </span>
+        </button>
+      </div>
+      <a class=" navbar-brand" href="javascript:void(0)"> {{ getTitle() }} </a>
+    </div>
+    <button
+      aria-label="Toggle navigation"
+      class=" navbar-toggler"
+      (click)="collapse()"
+      [attr.aria-expanded]="!isCollapsed"
+      aria-controls="collapseExample"
+      id="navigation"
+      type="button"
+    >
+      <span class=" navbar-toggler-bar navbar-kebab"> </span>
+      <span class=" navbar-toggler-bar navbar-kebab"> </span>
+      <span class=" navbar-toggler-bar navbar-kebab"> </span>
+    </button>
+    <div class=" navbar-collapse" [ngbCollapse]="isCollapsed" id="navigation">
+      <ul class=" navbar-nav ml-auto">
+        <li class=" search-bar input-group">
+          <button
+            class=" btn btn-link"
+            data-target="#searchModal"
+            data-toggle="modal"
+            (click)="open(content)"
+            id="search-button"
+          >
+            <i class=" tim-icons icon-zoom-split"> </i>
+            <span class=" d-lg-none d-md-block"> Search </span>
+          </button>
+        </li>
+        <li class=" nav-item" ngbDropdown>
+          <a
+            class=" nav-link"
+            data-toggle="dropdown"
+            href="javascript:void(0)"
+            ngbDropdownToggle
+          >
+            <div class=" notification d-none d-lg-block d-xl-block"></div>
+            <i class=" tim-icons icon-sound-wave"> </i>
+            <p class=" d-lg-none">Notifications</p>
+          </a>
+          <ul class=" dropdown-menu-right dropdown-navbar" ngbDropdownMenu>
+            <li class=" nav-link">
+              <a class=" nav-item" href="javascript:void(0)" ngbDropdownItem>
+                Mike John responded to your email
+              </a>
+            </li>
+            <li class=" nav-link">
+              <a class=" nav-item" href="javascript:void(0)" ngbDropdownItem>
+                You have 5 more tasks
+              </a>
+            </li>
+            <li class=" nav-link">
+              <a class=" nav-item" href="javascript:void(0)" ngbDropdownItem>
+                Your friend Michael is in town
+              </a>
+            </li>
+            <li class=" nav-link">
+              <a class=" nav-item" href="javascript:void(0)" ngbDropdownItem>
+                Another notification
+              </a>
+            </li>
+            <li class=" nav-link">
+              <a class=" nav-item" href="javascript:void(0)" ngbDropdownItem>
+                Another one
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class=" nav-item" ngbDropdown>
+          <a
+            class=" nav-link"
+            data-toggle="dropdown"
+            href="javascript:void(0)"
+            ngbDropdownToggle
+          >
+            <div class=" photo">
+              <img alt="Profile Photo" src="assets/img/anime3.png" />
+            </div>
+            <b class=" caret d-none d-lg-block d-xl-block"> </b>
+            <p class=" d-lg-none">Log out</p>
+          </a>
+          <ul class=" dropdown-navbar" ngbDropdownMenu>
+            <li class=" nav-link">
+              <a class=" nav-item" href="javascript:void(0)" ngbDropdownItem>
+                Profile
+              </a>
+            </li>
+            <li class=" nav-link">
+              <a class=" nav-item" href="javascript:void(0)" ngbDropdownItem>
+                Settings
+              </a>
+            </li>
+            <li class=" dropdown-divider"></li>
+            <li class=" nav-link">
+              <a class=" nav-item" href="javascript:void(0)" ngbDropdownItem>
+                Log out
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class=" separator d-lg-none"></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<ng-template #content let-modal>
+  <div class=" modal-header">
+    <input
+      class=" form-control"
+      id="inlineFormInputGroup"
+      placeholder="SEARCH"
+      type="text"
+    />
+
+    <button
+      aria-label="Close"
+      class=" close"
+      data-dismiss="modal"
+      type="button"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <i class=" tim-icons icon-simple-remove"> </i>
+    </button>
+  </div>
+
+</ng-template>

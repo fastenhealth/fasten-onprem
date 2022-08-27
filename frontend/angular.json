@@ -22,13 +22,16 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
+            "allowedCommonJsDependencies": ["chart.js"],
             "aot": true,
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/assets/scss/black-dashboard.scss",
+              "src/assets/css/nucleo-icons.css"
             ],
             "scripts": [
               "node_modules/@panva/oauth4webapi/build/index.js"

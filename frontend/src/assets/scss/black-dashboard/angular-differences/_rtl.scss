@@ -1,0 +1,13 @@
+.rtl .fixed-plugin {
+  border-radius: 0 8px 8px 0;
+  left: 0;
+  right: unset;
+  .dropdown-menu {
+      left: 80px!important;
+      right: auto!important;
+  }
+}
+.rtl .off-canvas-sidebar .nav li.active>a:not([data-toggle=collapse]):before, .rtl .sidebar .nav li.active>a:not([data-toggle=collapse]):before {
+    left: unset;
+    right: -4px;
+}

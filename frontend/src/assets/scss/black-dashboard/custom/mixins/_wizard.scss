@@ -1,0 +1,26 @@
+@mixin set-wizard-color($color) {
+      .progress-with-circle .progress-bar{
+          background: $color;
+      }
+
+      .nav-pills .nav-item .nav-link{
+        color: $color;
+
+        &.checked, &.active{
+          background: $color;
+          color: white;
+        }
+        &:hover{
+          background: $white;
+        }
+      }
+
+      .nav-pills .nav-item .nav-link.active,
+      .nav-pills .nav-item .nav-link.checked:focus,
+      .nav-pills .nav-item .nav-link.checked:hover,
+      .nav-pills .nav-item .nav-link.active:focus,
+      .nav-pills .nav-item .nav-link.active:hover{
+          background: $color;
+      }
+
+}

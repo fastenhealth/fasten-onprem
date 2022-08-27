@@ -1,0 +1,133 @@
+/* Form controls */
+@include form-control-placeholder(#6c757c, 1);
+
+.form-control{
+  border-color: lighten($black,5%);
+  border-radius: $border-radius-lg;
+  font-size: $font-size-sm;
+  @include transition-input-focus-color();
+
+
+  &:focus{
+    border-color: $primary;
+    background-color: $input-bg;
+    @include box-shadow(none);
+
+    & + .input-group-append .input-group-text,
+    & ~ .input-group-append .input-group-text,
+    & + .input-group-prepend .input-group-text,
+    & ~ .input-group-prepend .input-group-text{
+        border: 1px solid $primary;
+        border-left: none;
+        background-color: $transparent-bg;
+    }
+  }
+
+  .has-success &,
+  .has-error &,
+  .has-success &:focus,
+  .has-error &:focus{
+      @include box-shadow(none);
+  }
+
+  .has-danger &,
+  .has-success &{
+      &.form-control-success,
+      &.form-control-danger{
+          background-image: none;
+      }
+  }
+
+  & + .form-control-feedback{
+      border-radius: $border-radius-lg;
+      margin-top: -7px;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      vertical-align: middle;
+  }
+
+  .open &{
+      border-radius: $border-radius-lg $border-radius-lg 0 0;
+      border-bottom-color: $transparent-bg;
+  }
+
+  & + .input-group-append .input-group-text,
+  & + .input-group-prepend .input-group-text{
+      background-color: $white;
+  }
+
+}
+
+.has-success .input-group-append .input-group-text,
+.has-success .input-group-prepend .input-group-text,
+.has-success .form-control{
+    border-color: lighten($black,5%);
+}
+
+.has-success .form-control:focus,
+.has-success.input-group-focus .input-group-append .input-group-text,
+.has-success.input-group-focus .input-group-prepend .input-group-text{
+  border-color: darken($success, 10%);
+}
+
+.has-danger .form-control,
+.has-danger .input-group-append .input-group-text,
+.has-danger .input-group-prepend .input-group-text,
+.has-danger.input-group-focus .input-group-prepend .input-group-text,
+.has-danger.input-group-focus .input-group-append .input-group-text{
+    border-color: lighten($danger-states,5%);
+    color: $danger-states;
+    background-color: rgba(222,222,222, .1);
+
+    &:focus{
+        background-color: $transparent-bg;
+    }
+}
+
+.has-success,
+.has-danger{
+    &:after{
+        font-family: 'nucleo';
+        content: "\ea1b";
+        display: inline-block;
+        position: absolute;
+        right: 20px;
+        top: 13px;
+        color: $success;
+        font-size: 11px;
+    }
+
+    &.form-control-lg{
+      &:after{
+        font-size: 13px;
+        top: 24px;
+      }
+    }
+
+    &.has-label{
+      &:after{
+        top: 37px;
+      }
+    }
+
+
+    &.form-check:after{
+      display: none !important;
+    }
+
+    &.form-check .form-check-label{
+      color: $success;
+    }
+}
+
+.has-danger{
+  &:after{
+    content: "\ea48";
+    color: $danger-states;
+  }
+
+  &.form-check .form-check-label{
+    color: $danger-states;
+  }
+}
