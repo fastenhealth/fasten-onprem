@@ -10,4 +10,5 @@ type DatabaseRepository interface {
 	GetCurrentUser() models.User
 
 	CreateProviderCredentials(ctx context.Context, providerCreds *models.ProviderCredential) error
+	GetProviderCredentials(ctx context.Context) ([]models.ProviderCredential, error)
 }

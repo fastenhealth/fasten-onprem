@@ -29,3 +29,16 @@ func CreateProviderCredentials(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": providerCred})
 }
+
+func ListProviderCredentials(c *gin.Context) {
+	logger := c.MustGet("LOGGER").(*logrus.Entry)
+	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+
+	providerCredentials, err := databaseRepo.GetProviderCredentials(c)
+	if err != nil {
+		logger.Errorln("An error occurred while storing provider credential", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": providerCredentials})
+}

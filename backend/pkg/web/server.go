@@ -39,7 +39,8 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 					"success": true,
 				})
 			})
-			api.POST("/provider_credential", handler.CreateProviderCredentials) //used to save settings
+			api.POST("/provider_credential", handler.CreateProviderCredentials)
+			api.GET("/provider_credential", handler.ListProviderCredentials)
 		}
 	}
 

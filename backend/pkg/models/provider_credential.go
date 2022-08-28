@@ -6,8 +6,8 @@ type ProviderCredential struct {
 	User   User `json:"user,omitempty" gorm:"foreignKey:ID;references:UserId"`
 	UserId uint `json:"user_id"`
 
-	ProviderId string `json:"provider" gorm:"primaryKey"`
-	PatientId  string `json:"patient" gorm:"primaryKey"`
+	ProviderId string `json:"provider_id" gorm:"primaryKey"`
+	PatientId  string `json:"patient_id" gorm:"primaryKey"`
 
 	OauthEndpointBaseUrl string `json:"oauth_endpoint_base_url"`
 	ApiEndpointBaseUrl   string `json:"api_endpoint_base_url"`

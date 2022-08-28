@@ -29,10 +29,10 @@ export class MedicalProvidersComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  connect($event: MouseEvent, provider: string) {
+  connect($event: MouseEvent, providerId: string) {
     ($event.currentTarget as HTMLButtonElement).disabled = true;
 
-    this.passportApi.getProviderConfig(provider)
+    this.passportApi.getProviderConfig(providerId)
       .subscribe(async (connectData: ProviderConfig) => {
         console.log(connectData);
 
@@ -49,7 +49,7 @@ export class MedicalProvidersComponent implements OnInit {
         window.open(authorizationUrl.toString(), "_blank");
 
         //wait for response
-        this.waitForClaimOrTimeout(provider, state).subscribe(async (claimData: AuthorizeClaim) => {
+        this.waitForClaimOrTimeout(providerId, state).subscribe(async (claimData: AuthorizeClaim) => {
           console.log("claim response:", claimData)
 
 
@@ -91,12 +91,13 @@ export class MedicalProvidersComponent implements OnInit {
 
           //Create FHIR Client
           const providerCredential: ProviderCredential = {
+            provider_id: providerId,
             oauth_endpoint_base_url: connectData.oauth_endpoint_base_url,
             api_endpoint_base_url:   connectData.api_endpoint_base_url,
             client_id:             connectData.client_id,
             redirect_uri:          connectData.redirect_uri,
             scopes:               connectData.scopes.join(' '),
-            patient:            payload.patient,
+            patient_id:            payload.patient,
             access_token:          payload.access_token,
             refresh_token:          payload.refresh_token,
             id_token:              payload.id_token,
