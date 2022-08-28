@@ -1,13 +1,13 @@
 package models
 
+import "gorm.io/gorm"
+
 type ProviderCredential struct {
-	//TODO: PRIMARY KEY should be UserId + ProviderId + PatientId
-
-	User   User `json:"user,omitempty" gorm:"foreignKey:ID;references:UserId"`
-	UserId uint `json:"user_id"`
-
-	ProviderId string `json:"provider_id" gorm:"primaryKey"`
-	PatientId  string `json:"patient_id" gorm:"primaryKey"`
+	gorm.Model
+	User       User   `json:"user,omitempty"`
+	UserID     uint   `json:"user_id" gorm:"uniqueIndex:idx_user_provider_patient"`
+	ProviderId string `json:"provider_id" gorm:"uniqueIndex:idx_user_provider_patient"`
+	PatientId  string `json:"patient_id" gorm:"uniqueIndex:idx_user_provider_patient"`
 
 	OauthEndpointBaseUrl string `json:"oauth_endpoint_base_url"`
 	ApiEndpointBaseUrl   string `json:"api_endpoint_base_url"`

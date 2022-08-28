@@ -79,19 +79,19 @@ func (sr *sqliteRepository) Close() error {
 }
 
 func (sr *sqliteRepository) GetCurrentUser() models.User {
-	return models.User{Model: &gorm.Model{ID: 1}}
+	return models.User{Model: gorm.Model{ID: 1}}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// DeviceSummary
+// ProviderCredentials
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func (sr *sqliteRepository) CreateProviderCredentials(ctx context.Context, providerCreds *models.ProviderCredential) error {
-	providerCreds.UserId = sr.GetCurrentUser().ID
+	providerCreds.UserID = sr.GetCurrentUser().ID
 
 	if sr.gormClient.WithContext(ctx).Model(&providerCreds).
 		Where(models.ProviderCredential{
-			UserId:     providerCreds.UserId,
+			UserID:     providerCreds.UserID,
 			ProviderId: providerCreds.ProviderId,
 			PatientId:  providerCreds.PatientId}).Updates(&providerCreds).RowsAffected == 0 {
 		return sr.gormClient.WithContext(ctx).Create(&providerCreds).Error
@@ -103,7 +103,7 @@ func (sr *sqliteRepository) GetProviderCredentials(ctx context.Context) ([]model
 
 	var providerCredentials []models.ProviderCredential
 	results := sr.gormClient.WithContext(ctx).
-		Where(models.ProviderCredential{UserId: sr.GetCurrentUser().ID}).
+		Where(models.ProviderCredential{UserID: sr.GetCurrentUser().ID}).
 		Find(&providerCredentials)
 
 	return providerCredentials, results.Error

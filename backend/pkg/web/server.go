@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/web/handler"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/web/handler/fhir"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/web/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -41,6 +42,8 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 			})
 			api.POST("/provider_credential", handler.CreateProviderCredentials)
 			api.GET("/provider_credential", handler.ListProviderCredentials)
+
+			api.GET("/request", fhir.Request)
 		}
 	}
 
