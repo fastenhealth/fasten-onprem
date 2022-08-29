@@ -3,11 +3,10 @@ package base
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
-	gofhir "github.com/fastenhealth/gofhir-client/models"
+	"github.com/fastenhealth/gofhir-models/fhir430"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"net/http"
@@ -15,7 +14,7 @@ import (
 	"time"
 )
 
-type FhirBaseClient struct {
+type FHIR430Client struct {
 	AppConfig config.Interface
 	Logger    logrus.FieldLogger
 
@@ -23,7 +22,7 @@ type FhirBaseClient struct {
 	Credential  models.ProviderCredential
 }
 
-func NewBaseClient(appConfig config.Interface, globalLogger logrus.FieldLogger, credentials models.ProviderCredential, testHttpClient ...*http.Client) (FhirBaseClient, error) {
+func NewFHIR430Client(appConfig config.Interface, globalLogger logrus.FieldLogger, credentials models.ProviderCredential, testHttpClient ...*http.Client) (FHIR430Client, error) {
 
 	var httpClient *http.Client
 	if len(testHttpClient) == 0 {
@@ -39,7 +38,7 @@ func NewBaseClient(appConfig config.Interface, globalLogger logrus.FieldLogger, 
 	}
 
 	httpClient.Timeout = 10 * time.Second
-	return FhirBaseClient{
+	return FHIR430Client{
 		AppConfig:   appConfig,
 		Logger:      globalLogger,
 		OauthClient: httpClient,
@@ -50,53 +49,37 @@ func NewBaseClient(appConfig config.Interface, globalLogger logrus.FieldLogger, 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FHIR
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-func (c *FhirBaseClient) GetPatientEverything(patientId string) (*gofhir.Bundle, error) {
+func (c *FHIR430Client) GetPatientEverything(patientId string) (*fhir430.Bundle, error) {
 
 	// https://www.hl7.org/fhir/patient-operation-everything.html
-	data, err := c.GetRequest(fmt.Sprintf("Patient/%s/$everything", patientId))
-	if err != nil {
-		return nil, err
-	}
-	if bundle, isOk := data.(*gofhir.Bundle); isOk {
-		return bundle, nil
-	} else {
-		return nil, errors.New("could not cast Patient")
-	}
+	bundle := fhir430.Bundle{}
+	err := c.GetRequest(fmt.Sprintf("Patient/%s/$everything", patientId), &bundle)
+	return &bundle, err
 }
 
-func (c *FhirBaseClient) GetPatient(patientId string) (*gofhir.Patient, error) {
+func (c *FHIR430Client) GetPatient(patientId string) (*fhir430.Patient, error) {
 
-	data, err := c.GetRequest(fmt.Sprintf("Patient/%s", patientId))
-	if err != nil {
-		return nil, err
-	}
-	if patient, isOk := data.(*gofhir.Patient); isOk {
-		return patient, nil
-	} else {
-		return nil, errors.New("could not cast Patient")
-	}
+	patient := fhir430.Patient{}
+	err := c.GetRequest(fmt.Sprintf("Patient/%s", patientId), &patient)
+	return &patient, err
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HttpClient
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-func (c *FhirBaseClient) GetRequest(resourceSubpath string) (interface{}, error) {
+func (c *FHIR430Client) GetRequest(resourceSubpath string, decodeModelPtr interface{}) error {
 	url := fmt.Sprintf("%s/%s", strings.TrimRight(c.Credential.ApiEndpointBaseUrl, "/"), strings.TrimLeft(resourceSubpath, "/"))
 	resp, err := c.OauthClient.Get(url)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer resp.Body.Close()
 
-	//log.Printf("%v resp code", resp.StatusCode)
-	//body, err := ioutil.ReadAll(resp.Body)
-	//log.Fatalf("JSON BODY: %v", string(body))
-
-	var jsonResp map[string]interface{}
-	err = json.NewDecoder(resp.Body).Decode(&jsonResp)
+	err = json.NewDecoder(resp.Body).Decode(decodeModelPtr)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return gofhir.MapToResource(jsonResp, true)
+	return err
 }
