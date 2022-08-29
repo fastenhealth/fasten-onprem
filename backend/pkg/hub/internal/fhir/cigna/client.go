@@ -18,15 +18,9 @@ func NewClient(appConfig config.Interface, globalLogger logrus.FieldLogger, cred
 	return CignaClient{
 		baseClient,
 	}, err
-
 }
 
 func (c CignaClient) SyncAll() error {
-	patient, err := c.GetPatient(c.Credential.PatientId)
-	if err != nil {
-		return err
-	}
-	c.Logger.Infof("patient: %v", patient)
 
 	bundle, err := c.GetPatientEverything(c.Credential.PatientId)
 	if err != nil {
@@ -37,14 +31,6 @@ func (c CignaClient) SyncAll() error {
 	if err != nil {
 		return err
 	}
-	c.Logger.Infof("bundle lenght: ", string(bundleJson))
+	c.Logger.Infof("bundle lenght: %v", string(bundleJson))
 	return nil
 }
-
-//func (c CignaClient) PatientProfile() (models.PatientProfile, error) {
-//	patient, err := c.GetPatientEverything(fmt.Sprintf("Patient/%s/", c.Credential.PatientId))
-//
-//
-//
-//	return nil
-//}
