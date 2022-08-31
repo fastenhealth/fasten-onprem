@@ -36,24 +36,26 @@ func (c CignaClient) SyncAll(db database.DatabaseRepository) error {
 		resources = append(resources, resource)
 	}
 
+	//////////////////////////////////////////////////////////////////////
+	// Patient
+	//////////////////////////////////////////////////////////////////////
 	patientResources := []fhir401.Patient{}
 	for _, resource := range resources {
 		if patient, isPatient := resource.(fhir401.Patient); isPatient {
 			patientResources = append(patientResources, patient)
 		}
 	}
-
-	c.Logger.Infof("patients lenght: %v", len(patientResources))
 	patientProfiles, err := c.ProcessPatients(patientResources)
-
-	//patientProfile. = c.Source.ID
-	c.Logger.Infof("CREATING PATIENT PROFILES: %v", patientProfiles)
 	for _, profile := range patientProfiles {
 		err = db.UpsertProfile(context.Background(), profile)
 		if err != nil {
 			return err
 		}
 	}
+
+	//////////////////////////////////////////////////////////////////////
+	// Patient
+	//////////////////////////////////////////////////////////////////////
 
 	return nil
 }
