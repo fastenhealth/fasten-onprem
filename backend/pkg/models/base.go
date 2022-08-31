@@ -26,10 +26,10 @@ type OriginBase struct {
 	UserID uuid.UUID `json:"user_id"`
 
 	Source   Source    `json:"source" gorm:"-"`
-	SourceID uuid.UUID `json:"source_id" gorm:"not null;uniqueIndex:idx_source_resource_id"`
+	SourceID uuid.UUID `json:"source_id" gorm:"not null;index:,unique,composite:source_resource_id"`
 
-	SourceResourceType string `json:"source_resource_type" gorm:"not null;uniqueIndex:idx_source_resource_id"`
-	SourceResourceID   string `json:"source_resource_id" gorm:"not null;uniqueIndex:idx_source_resource_id"`
+	SourceResourceType string `json:"source_resource_type" gorm:"not null;index:,unique,composite:source_resource_id"`
+	SourceResourceID   string `json:"source_resource_id" gorm:"not null;index:,unique,composite:source_resource_id"`
 }
 
 func (o OriginBase) GetSourceID() uuid.UUID {

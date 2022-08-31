@@ -107,3 +107,39 @@ func (c *FHIR401Client) ProcessPatients(patients []fhir401.Patient) ([]models.Pr
 
 	return profiles, nil
 }
+
+func (c *FHIR401Client) ProcessOrganizations(orgs []fhir401.Organization) ([]models.Organization, error) {
+	apiOrganizations := []models.Organization{}
+	for _, org := range orgs {
+		apiOrganization := models.Organization{
+			OriginBase: models.OriginBase{
+				ModelBase:          models.ModelBase{},
+				UserID:             c.Source.UserID,
+				SourceID:           c.Source.ID,
+				SourceResourceID:   *org.Id,
+				SourceResourceType: fhir401.ResourceTypeOrganization.Code(),
+			},
+			Address: models.Address{},
+		}
+
+		if org.Meta != nil && org.Meta.LastUpdated != nil {
+			if parsed, err := time.Parse(time.RFC3339, *org.Meta.LastUpdated); err == nil {
+				apiOrganization.UpdatedAt = parsed
+			}
+		}
+
+		if org.Address != nil && len(org.Address) > 0 {
+			itemAddress := org.Address[0]
+			apiOrganization.Address.City = itemAddress.City
+			apiOrganization.Address.Country = itemAddress.Country
+			apiOrganization.Address.State = itemAddress.State
+			apiOrganization.Address.Street = itemAddress.Line
+			apiOrganization.Address.Zip = itemAddress.PostalCode
+		}
+		apiOrganization.Name = org.Name
+		apiOrganization.Active = org.Active
+
+		apiOrganizations = append(apiOrganizations, apiOrganization)
+	}
+	return apiOrganizations, nil
+}

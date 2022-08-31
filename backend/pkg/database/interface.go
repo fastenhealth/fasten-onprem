@@ -9,8 +9,9 @@ type DatabaseRepository interface {
 	Close() error
 	GetCurrentUser() models.User
 
-	UpsertProfile(ctx context.Context, profile models.Profile) error
+	UpsertProfile(context.Context, *models.Profile) error
+	UpsertOrganziation(context.Context, *models.Organization) error
 
-	CreateSource(ctx context.Context, providerCreds *models.Source) error
-	GetSources(ctx context.Context) ([]models.Source, error)
+	CreateSource(context.Context, *models.Source) error
+	GetSources(context.Context) ([]models.Source, error)
 }

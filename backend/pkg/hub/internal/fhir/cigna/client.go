@@ -2,12 +2,14 @@ package cigna
 
 import (
 	"context"
+	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/base"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/fastenhealth/gofhir-models/fhir401"
 	fhirutils "github.com/fastenhealth/gofhir-models/fhir401/utils"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
@@ -36,6 +38,8 @@ func (c CignaClient) SyncAll(db database.DatabaseRepository) error {
 		resources = append(resources, resource)
 	}
 
+	resourceRefLookup := map[string]uuid.UUID{}
+
 	//////////////////////////////////////////////////////////////////////
 	// Patient
 	//////////////////////////////////////////////////////////////////////
@@ -45,17 +49,35 @@ func (c CignaClient) SyncAll(db database.DatabaseRepository) error {
 			patientResources = append(patientResources, patient)
 		}
 	}
-	patientProfiles, err := c.ProcessPatients(patientResources)
-	for _, profile := range patientProfiles {
-		err = db.UpsertProfile(context.Background(), profile)
+	apiProfiles, err := c.ProcessPatients(patientResources)
+	for _, profile := range apiProfiles {
+		err = db.UpsertProfile(context.Background(), &profile)
 		if err != nil {
 			return err
 		}
+		//add upserted resource uuids to lookup
+		resourceRefLookup[fmt.Sprintf("%s/%s", profile.SourceResourceType, profile.SourceResourceID)] = profile.ID
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	// Patient
+	// Organization
 	//////////////////////////////////////////////////////////////////////
+
+	organizations := []fhir401.Organization{}
+	for _, resource := range resources {
+		if org, isOrganization := resource.(fhir401.Organization); isOrganization {
+			organizations = append(organizations, org)
+		}
+	}
+	apiOrgs, err := c.ProcessOrganizations(organizations)
+	for _, apiOrg := range apiOrgs {
+		err = db.UpsertOrganziation(context.Background(), &apiOrg)
+		if err != nil {
+			return err
+		}
+		//add upserted resource uuids to lookup
+		resourceRefLookup[fmt.Sprintf("%s/%s", apiOrg.SourceResourceType, apiOrg.SourceResourceID)] = apiOrg.ID
+	}
 
 	return nil
 }

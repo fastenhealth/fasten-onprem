@@ -47,6 +47,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 		&models.User{},
 		&models.Source{},
 		&models.Profile{},
+		&models.Organization{},
 	)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to automigrate! - %v", err)
@@ -86,15 +87,28 @@ func (sr *sqliteRepository) GetCurrentUser() models.User {
 }
 
 // UpsertSourceResource Create or Update record in database
-func (sr *sqliteRepository) UpsertProfile(ctx context.Context, profile models.Profile) error {
-	if sr.gormClient.Debug().WithContext(ctx).Model(&profile).
+func (sr *sqliteRepository) UpsertProfile(ctx context.Context, profile *models.Profile) error {
+	if sr.gormClient.Debug().WithContext(ctx).Model(profile).
 		Where(models.OriginBase{
 			SourceID:           profile.GetSourceID(),
 			SourceResourceID:   profile.GetSourceResourceID(),
 			SourceResourceType: profile.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-		}).Updates(&profile).RowsAffected == 0 {
+		}).Updates(profile).RowsAffected == 0 {
 		sr.logger.Infof("profile does not exist, creating: %s %s %s", profile.GetSourceID(), profile.GetSourceResourceID(), profile.GetSourceResourceType())
-		return sr.gormClient.Debug().Create(&profile).Error
+		return sr.gormClient.Debug().Create(profile).Error
+	}
+	return nil
+}
+
+func (sr *sqliteRepository) UpsertOrganziation(ctx context.Context, org *models.Organization) error {
+	if sr.gormClient.Debug().WithContext(ctx).Model(org).
+		Where(models.OriginBase{
+			SourceID:           org.GetSourceID(),
+			SourceResourceID:   org.GetSourceResourceID(),
+			SourceResourceType: org.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
+		}).Updates(org).RowsAffected == 0 {
+		sr.logger.Infof("org does not exist, creating: %s %s %s", org.GetSourceID(), org.GetSourceResourceID(), org.GetSourceResourceType())
+		return sr.gormClient.Debug().Create(org).Error
 	}
 	return nil
 }
