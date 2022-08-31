@@ -48,8 +48,8 @@ func (c CignaClient) SyncAll(db database.DatabaseRepository) error {
 
 	//patientProfile. = c.Source.ID
 	c.Logger.Infof("CREATING PATIENT PROFILES: %v", patientProfiles)
-	for _, patient := range patientProfiles {
-		err = db.UpsertSourceResource(context.Background(), patient)
+	for _, profile := range patientProfiles {
+		err = db.UpsertProfile(context.Background(), profile)
 		if err != nil {
 			return err
 		}
