@@ -43,11 +43,11 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	globalLogger.Infof("Successfully connected to scrutiny sqlite db: %s\n", appConfig.GetString("web.database.location"))
 
 	//TODO: automigrate for now
-	err = database.AutoMigrate(&models.User{})
-	if err != nil {
-		return nil, fmt.Errorf("Failed to automigrate! - %v", err)
-	}
-	err = database.AutoMigrate(&models.ProviderCredential{})
+	err = database.AutoMigrate(
+		&models.User{},
+		&models.Source{},
+		&models.Profile{},
+	)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to automigrate! - %v", err)
 	}
@@ -79,18 +79,35 @@ func (sr *sqliteRepository) Close() error {
 }
 
 func (sr *sqliteRepository) GetCurrentUser() models.User {
-	return models.User{Model: gorm.Model{ID: 1}}
+	var currentUser models.User
+	sr.gormClient.Model(models.User{}).First(&currentUser)
+
+	return currentUser
+}
+
+// UpsertSourceResource Create or Update record in database
+func (sr *sqliteRepository) UpsertProfile(ctx context.Context, profile models.Profile) error {
+	if sr.gormClient.Debug().WithContext(ctx).Model(&profile).
+		Where(models.OriginBase{
+			SourceID:           profile.GetSourceID(),
+			SourceResourceID:   profile.GetSourceResourceID(),
+			SourceResourceType: profile.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
+		}).Updates(&profile).RowsAffected == 0 {
+		sr.logger.Infof("profile does not exist, creating: %s %s %s", profile.GetSourceID(), profile.GetSourceResourceID(), profile.GetSourceResourceType())
+		return sr.gormClient.Debug().Create(&profile).Error
+	}
+	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ProviderCredentials
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (sr *sqliteRepository) CreateProviderCredentials(ctx context.Context, providerCreds *models.ProviderCredential) error {
+func (sr *sqliteRepository) CreateSource(ctx context.Context, providerCreds *models.Source) error {
 	providerCreds.UserID = sr.GetCurrentUser().ID
 
 	if sr.gormClient.WithContext(ctx).Model(&providerCreds).
-		Where(models.ProviderCredential{
+		Where(models.Source{
 			UserID:     providerCreds.UserID,
 			ProviderId: providerCreds.ProviderId,
 			PatientId:  providerCreds.PatientId}).Updates(&providerCreds).RowsAffected == 0 {
@@ -99,11 +116,11 @@ func (sr *sqliteRepository) CreateProviderCredentials(ctx context.Context, provi
 	return nil
 }
 
-func (sr *sqliteRepository) GetProviderCredentials(ctx context.Context) ([]models.ProviderCredential, error) {
+func (sr *sqliteRepository) GetSources(ctx context.Context) ([]models.Source, error) {
 
-	var providerCredentials []models.ProviderCredential
+	var providerCredentials []models.Source
 	results := sr.gormClient.WithContext(ctx).
-		Where(models.ProviderCredential{UserID: sr.GetCurrentUser().ID}).
+		Where(models.Source{UserID: sr.GetCurrentUser().ID}).
 		Find(&providerCredentials)
 
 	return providerCredentials, results.Error
