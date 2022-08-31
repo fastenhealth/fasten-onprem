@@ -8,11 +8,11 @@ import (
 	"net/http"
 )
 
-func CreateProviderCredentials(c *gin.Context) {
+func CreateSource(c *gin.Context) {
 	logger := c.MustGet("LOGGER").(*logrus.Entry)
 	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
 
-	providerCred := models.ProviderCredential{}
+	providerCred := models.Source{}
 	if err := c.ShouldBindJSON(&providerCred); err != nil {
 		logger.Errorln("An error occurred while parsing posted provider credential", err)
 		c.JSON(http.StatusBadRequest, gin.H{"success": false})
@@ -21,7 +21,7 @@ func CreateProviderCredentials(c *gin.Context) {
 
 	logger.Infof("Parsed Create Provider Credentials Payload: %v", providerCred)
 
-	err := databaseRepo.CreateProviderCredentials(c, &providerCred)
+	err := databaseRepo.CreateSource(c, &providerCred)
 	if err != nil {
 		logger.Errorln("An error occurred while storing provider credential", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
@@ -30,11 +30,11 @@ func CreateProviderCredentials(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": providerCred})
 }
 
-func ListProviderCredentials(c *gin.Context) {
+func ListSource(c *gin.Context) {
 	logger := c.MustGet("LOGGER").(*logrus.Entry)
 	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
 
-	providerCredentials, err := databaseRepo.GetProviderCredentials(c)
+	providerCredentials, err := databaseRepo.GetSources(c)
 	if err != nil {
 		logger.Errorln("An error occurred while storing provider credential", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})

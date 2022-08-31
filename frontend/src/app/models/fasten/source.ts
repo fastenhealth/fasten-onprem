@@ -1,4 +1,4 @@
-export class ProviderCredential {
+export class Source {
   user_id?: number
   provider_id: string
   patient_id: string

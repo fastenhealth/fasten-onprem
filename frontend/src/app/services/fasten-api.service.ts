@@ -5,7 +5,7 @@ import {ProviderConfig} from '../models/passport/provider-config';
 import {environment} from '../../environments/environment';
 import {map} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
-import {ProviderCredential} from '../models/fasten/provider-credential';
+import {Source} from '../models/fasten/source';
 
 @Injectable({
   providedIn: 'root'
@@ -19,12 +19,12 @@ export class FastenApiService {
     return window.location.pathname.split('/web').slice(0, 1)[0];
   }
 
-  createProviderCredential(providerCredential: ProviderCredential): Observable<ProviderCredential> {
-    return this._httpClient.post<any>(`${this.getBasePath()}/api/provider_credential`, providerCredential)
+  createSource(source: Source): Observable<Source> {
+    return this._httpClient.post<any>(`${this.getBasePath()}/api/source`, source)
       .pipe(
         map((response: ResponseWrapper) => {
-          console.log("PROVIDER CREDENTIAL RESPONSE", response)
-          return response.data as ProviderCredential
+          console.log("SOURCE RESPONSE", response)
+          return response.data as Source
         })
       );
   }

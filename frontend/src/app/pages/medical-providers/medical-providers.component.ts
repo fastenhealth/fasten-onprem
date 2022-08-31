@@ -4,7 +4,7 @@ import {FastenApiService} from '../../services/fasten-api.service';
 import {ProviderConfig} from '../../models/passport/provider-config';
 import * as Oauth from '@panva/oauth4webapi';
 import {AuthorizeClaim} from '../../models/passport/authorize-claim';
-import {ProviderCredential} from '../../models/fasten/provider-credential';
+import {Source} from '../../models/fasten/source';
 import {getAccessTokenExpiration} from 'fhirclient/lib/lib';
 import BrowserAdapter from 'fhirclient/lib/adapters/BrowserAdapter';
 import {Observable, of, throwError} from 'rxjs';
@@ -90,7 +90,7 @@ export class MedicalProvidersComponent implements OnInit {
 
 
           //Create FHIR Client
-          const providerCredential: ProviderCredential = {
+          const sourceCredential: Source = {
             provider_id: providerId,
             oauth_endpoint_base_url: connectData.oauth_endpoint_base_url,
             api_endpoint_base_url:   connectData.api_endpoint_base_url,
@@ -106,7 +106,7 @@ export class MedicalProvidersComponent implements OnInit {
             code_verifier:         codeVerifier,
           }
 
-          this.fastenApi.createProviderCredential(providerCredential).subscribe( (respData) => {
+          this.fastenApi.createSource(sourceCredential).subscribe( (respData) => {
             console.log("provider credential create response:", respData)
           })
 

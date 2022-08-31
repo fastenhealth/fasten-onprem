@@ -18,17 +18,17 @@ type BaseClient struct {
 	Logger    logrus.FieldLogger
 
 	OauthClient *http.Client
-	Credential  models.ProviderCredential
+	Source      models.Source
 }
 
-func NewBaseClient(appConfig config.Interface, globalLogger logrus.FieldLogger, credentials models.ProviderCredential, testHttpClient ...*http.Client) BaseClient {
+func NewBaseClient(appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) *BaseClient {
 	var httpClient *http.Client
 	if len(testHttpClient) == 0 {
 		httpClient = oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(
 			&oauth2.Token{
 				TokenType:    "Bearer",
-				RefreshToken: credentials.RefreshToken,
-				AccessToken:  credentials.AccessToken,
+				RefreshToken: source.RefreshToken,
+				AccessToken:  source.AccessToken,
 			}))
 	} else {
 		//Testing mode.
@@ -36,11 +36,11 @@ func NewBaseClient(appConfig config.Interface, globalLogger logrus.FieldLogger, 
 	}
 
 	httpClient.Timeout = 10 * time.Second
-	return BaseClient{
+	return &BaseClient{
 		AppConfig:   appConfig,
 		Logger:      globalLogger,
 		OauthClient: httpClient,
-		Credential:  credentials,
+		Source:      source,
 	}
 }
 
@@ -48,7 +48,7 @@ func NewBaseClient(appConfig config.Interface, globalLogger logrus.FieldLogger, 
 // HttpClient
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 func (c *BaseClient) GetRequest(resourceSubpath string, decodeModelPtr interface{}) error {
-	url := fmt.Sprintf("%s/%s", strings.TrimRight(c.Credential.ApiEndpointBaseUrl, "/"), strings.TrimLeft(resourceSubpath, "/"))
+	url := fmt.Sprintf("%s/%s", strings.TrimRight(c.Source.ApiEndpointBaseUrl, "/"), strings.TrimLeft(resourceSubpath, "/"))
 	resp, err := c.OauthClient.Get(url)
 
 	if err != nil {
@@ -66,3 +66,7 @@ func (c *BaseClient) GetRequest(resourceSubpath string, decodeModelPtr interface
 	}
 	return err
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Helper Functions
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

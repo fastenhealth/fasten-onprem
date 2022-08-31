@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func NewClient(providerId string, appConfig config.Interface, globalLogger logrus.FieldLogger, credentials models.ProviderCredential, testHttpClient ...*http.Client) (base.Client, error) {
+func NewClient(providerId string, appConfig config.Interface, globalLogger logrus.FieldLogger, credentials models.Source, testHttpClient ...*http.Client) (base.Client, error) {
 
 	var providerClient base.Client
 	var err error

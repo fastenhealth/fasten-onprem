@@ -1,7 +1,10 @@
 package base
 
+import "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
+
 type Client interface {
-	SyncAll() error
+	GetRequest(resourceSubpath string, decodeModelPtr interface{}) error
+	SyncAll(db database.DatabaseRepository) error
 
 	//PatientProfile() (models.PatientProfile, error)
 	//Allergies()
