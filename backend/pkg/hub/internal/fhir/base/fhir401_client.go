@@ -6,7 +6,6 @@ import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/fastenhealth/gofhir-models/fhir401"
 	"github.com/sirupsen/logrus"
-	"log"
 	"net/http"
 	"time"
 )
@@ -46,7 +45,7 @@ func (c *FHIR401Client) GetPatient(patientId string) (*fhir401.Patient, error) {
 func (c *FHIR401Client) ProcessPatients(patients []fhir401.Patient) ([]models.Profile, error) {
 	profiles := []models.Profile{}
 	for _, item := range patients {
-		log.Printf("item", item)
+		c.Logger.Debugf("item %v", item)
 		patientProfile := models.Profile{
 			OriginBase: models.OriginBase{
 				ModelBase:          models.ModelBase{},
@@ -62,7 +61,7 @@ func (c *FHIR401Client) ProcessPatients(patients []fhir401.Patient) ([]models.Pr
 		}
 
 		if item.Meta != nil && item.Meta.LastUpdated != nil {
-			if parsed, err := time.Parse(time.RFC3339, *item.Meta.LastUpdated); err == nil {
+			if parsed, err := time.Parse(time.RFC3339Nano, *item.Meta.LastUpdated); err == nil {
 				patientProfile.UpdatedAt = parsed
 			}
 		}

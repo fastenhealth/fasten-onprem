@@ -1,0 +1,53 @@
+{
+	"id": "ifp-A00000000000005",
+	"meta": {
+		"lastUpdated": "2022-06-20T15:45:22.043000+00:00",
+		"profile": ["http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-Patient"],
+		"source": "IFP#CqP06ARvJo9XS9Cl",
+		"versionId": "1"
+	},
+	"text": {
+		"div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><div class=\"hapiHeaderText\">Felecita <b>MONAHAN </b></div><table class=\"hapiPropertyTable\"><tbody><tr><td>Identifier</td><td>A00000000000005</td></tr><tr><td>Date of birth</td><td><span>12 January 2013</span></td></tr></tbody></table></div>",
+		"status": "generated"
+	},
+	"birthDate": "2013-01-12",
+	"gender": "female",
+	"identifier": [{
+		"system": "https://developer.cigna.com",
+		"type": {
+			"coding": [{
+				"code": "um",
+				"system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/IdentifierTypeCS"
+			}]
+		},
+		"value": "A00000000000005"
+	}, {
+		"system": "https://developer.cigna.com",
+		"type": {
+			"coding": [{
+				"code": "mb",
+				"system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/IdentifierTypeCS"
+			}]
+		},
+		"value": "unknown"
+	}],
+	"maritalStatus": {
+		"coding": [{
+			"code": "UNK",
+			"display": "unknown",
+			"system": "http://terminology.hl7.org/CodeSystem/v3-NullFlavor"
+		}],
+		"text": "unknown"
+	},
+	"name": [{
+		"family": "Monahan",
+		"given": ["Felecita"],
+		"use": "official"
+	}],
+	"telecom": [{
+		"system": "phone",
+		"use": "mobile",
+		"value": "9404535496"
+	}],
+	"resourceType": "Patient"
+}

@@ -5,7 +5,7 @@ import (
 )
 
 // Create mock using:
-// mockgen -source=backend/pkg/config/interface.go -destination=backend/pkg/config/mock/mock_config.go
+//go:generate mockgen -source=interface.go -destination=mock/mock_config.go
 type Interface interface {
 	Init() error
 	ReadConfig(configFilePath string) error
