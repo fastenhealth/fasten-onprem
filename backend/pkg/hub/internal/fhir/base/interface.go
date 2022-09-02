@@ -24,3 +24,7 @@ type Client interface {
 	//Demographics()
 	//SocialHistory()
 }
+
+type ResourceInterface interface {
+	ResourceRef() (string, *string)
+}

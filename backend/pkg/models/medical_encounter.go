@@ -13,8 +13,8 @@ type Encounter struct {
 	//Diagnoses []Diagnosis `json:"diagnoses,omitempty"` // diagnoses	Array[Object]	(optional) A list of diagnoses for the encounter where object contains a "name" field e.g. *[{"name": "Sacroiliac dysfunction"}, {"name": "Bilateral hand pain"}]
 	//vitals	Object	(optional) Vitals captured during the encounter (e.g. {"temperature" : 95.2 [degF]","weight" : 180 [lb_av]","height" : "69 [in_us]"})
 	//vitalSigns	Array[Object]	(optional) A list of vital signs from the encounter (see link object)
-	Reasons []string `json:"reasons,omitempty"`                                    // reasons	Array[String]	(optional) A list of reasons for the encounter (e.g. [‘Follow-up’, 'Consult’, 'DYSPHONIA', 'Back Pain’])
-	Orders  []Order  `json:"orders,omitempty" gorm:"serializer:json;default:'{}'"` // orders	Array[Object]	(optional) A list of medication orders for the patient (see orders object)
+	Reasons []string `json:"reasons,omitempty" gorm:"serializer:json;default:'[]'"` // reasons	Array[String]	(optional) A list of reasons for the encounter (e.g. [‘Follow-up’, 'Consult’, 'DYSPHONIA', 'Back Pain’])
+	Orders  []Order  `json:"orders,omitempty" gorm:"serializer:json;default:'{}'"`  // orders	Array[Object]	(optional) A list of medication orders for the patient (see orders object)
 	//testResults	Array[Object]	(optional) A list of test results for the patient (see link object)
 	//plansOfCare	Array[Object]	(optional) A list of plans of care from the encounter (see link object)
 	//medications	Array[Object]	(optional) A list of medications used by the patient. Objects in array can have some or many of the properties of medications. Common properties are "name", "productName", "startDate", "endDate", "instructions".

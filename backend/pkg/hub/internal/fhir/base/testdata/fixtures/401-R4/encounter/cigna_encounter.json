@@ -1,0 +1,80 @@
+{
+  "id": "ifp-1C9A46F07B3CADE33EFC75ABA3DC37CF",
+  "meta": {
+    "lastUpdated": "2022-06-20T15:45:29.685000+00:00",
+    "profile": ["http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter"],
+    "source": "IFP#e7zkeLCSmQFgUX0Z",
+    "versionId": "1"
+  },
+  "class": {
+    "extension": [{
+      "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+      "valueCode": "unknown"
+    }]
+  },
+  "diagnosis": [{
+    "condition": {
+      "reference": "Condition/ifp-A00000000000005-OP0447575426-K57.80-Y-"
+    },
+    "use": {
+      "coding": [{
+        "display": "Admission diagnosis"
+      }]
+    }
+  }],
+  "identifier": [{
+    "system": "http://dev.cigna.com/system/TRCR",
+    "value": "TRCR-OP0447575426-1"
+  }],
+  "location": [{
+    "location": {
+      "reference": "Location/ifp-7312532"
+    }
+  }, {
+    "location": {
+      "reference": "Location/ifp-0566265"
+    }
+  }],
+  "participant": [{
+    "individual": {
+      "reference": "Practitioner/ifp-50ef4542ecb5ae5eddc0dac76a10aaed"
+    }
+  }, {
+    "individual": {
+      "reference": "Practitioner/ifp-6a4d3d6fe165b6a0a79b6a976d043c2c"
+    }
+  }],
+  "period": {
+    "end": "2019-12-31",
+    "start": "2019-11-07"
+  },
+  "reasonCode": [{
+    "coding": [{
+      "code": "K57.80",
+      "display": "Dvtrcli of intest, part unsp, w perf and abscess w/o bleed"
+    }]
+  }],
+  "reasonReference": [{
+    "reference": "Condition/ifp-A00000000000005-OP0447575426-K57.80-Y-"
+  }],
+  "serviceProvider": {
+    "reference": "Organization/ifp-0566265"
+  },
+  "serviceType": {
+    "coding": [{
+      "code": "302",
+      "display": "Medical Outpatient"
+    }]
+  },
+  "status": "unknown",
+  "subject": {
+    "reference": "Patient/ifp-A00000000000005"
+  },
+  "type": [{
+    "extension": [{
+      "url": "http://hl7.org/fhir/StructureDefinition/data-absent-reason",
+      "valueCode": "unknown"
+    }]
+  }],
+  "resourceType": "Encounter"
+}

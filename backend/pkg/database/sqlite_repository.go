@@ -48,6 +48,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 		&models.Source{},
 		&models.Profile{},
 		&models.Organization{},
+		&models.Encounter{},
 	)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to automigrate! - %v", err)
@@ -86,16 +87,48 @@ func (sr *sqliteRepository) GetCurrentUser() models.User {
 	return currentUser
 }
 
-// UpsertSourceResource Create or Update record in database
-func (sr *sqliteRepository) UpsertProfile(ctx context.Context, profile *models.Profile) error {
-	if sr.gormClient.Debug().WithContext(ctx).Model(profile).
-		Where(models.OriginBase{
-			SourceID:           profile.GetSourceID(),
-			SourceResourceID:   profile.GetSourceResourceID(),
-			SourceResourceType: profile.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-		}).Updates(profile).RowsAffected == 0 {
-		sr.logger.Infof("profile does not exist, creating: %s %s %s", profile.GetSourceID(), profile.GetSourceResourceID(), profile.GetSourceResourceType())
-		return sr.gormClient.Debug().Create(profile).Error
+func (sr *sqliteRepository) UpsertResource(ctx context.Context, resourceModel interface{}) error {
+	sr.logger.Infof("insert/update (%T) %v", resourceModel, resourceModel)
+
+	switch (resourceModel).(type) {
+	case models.Encounter:
+		var apiEncounter models.Encounter
+		apiEncounter = resourceModel.(models.Encounter)
+		if sr.gormClient.Debug().WithContext(ctx).Model(&apiEncounter).
+			Where(models.OriginBase{
+				SourceID:           apiEncounter.GetSourceID(),
+				SourceResourceID:   apiEncounter.GetSourceResourceID(),
+				SourceResourceType: apiEncounter.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
+			}).Updates(&apiEncounter).RowsAffected == 0 {
+			sr.logger.Infof("organization does not exist, creating: %s %s %s", apiEncounter.GetSourceID(), apiEncounter.GetSourceResourceID(), apiEncounter.GetSourceResourceType())
+			return sr.gormClient.Debug().Model(&apiEncounter).Create(&apiEncounter).Error
+		}
+	case models.Organization:
+		var apiOrganization models.Organization
+		apiOrganization = (resourceModel).(models.Organization)
+		if sr.gormClient.Debug().WithContext(ctx).Model(&apiOrganization).
+			Where(models.OriginBase{
+				SourceID:           apiOrganization.GetSourceID(),
+				SourceResourceID:   apiOrganization.GetSourceResourceID(),
+				SourceResourceType: apiOrganization.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
+			}).Updates(&apiOrganization).RowsAffected == 0 {
+			sr.logger.Infof("organization does not exist, creating: %s %s %s", apiOrganization.GetSourceID(), apiOrganization.GetSourceResourceID(), apiOrganization.GetSourceResourceType())
+			return sr.gormClient.Debug().Model(&apiOrganization).Create(&apiOrganization).Error
+		}
+	case models.Profile:
+		var apiProfile models.Profile
+		apiProfile = (resourceModel).(models.Profile)
+		if sr.gormClient.Debug().WithContext(ctx).Model(&apiProfile).
+			Where(models.OriginBase{
+				SourceID:           apiProfile.GetSourceID(),
+				SourceResourceID:   apiProfile.GetSourceResourceID(),
+				SourceResourceType: apiProfile.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
+			}).Updates(&apiProfile).RowsAffected == 0 {
+			sr.logger.Infof("profile does not exist, creating: %s %s %s", apiProfile.GetSourceID(), apiProfile.GetSourceResourceID(), apiProfile.GetSourceResourceType())
+			return sr.gormClient.Debug().Model(&apiProfile).Create(&apiProfile).Error
+		}
+	default:
+		return fmt.Errorf("unknown model (%T) %v", resourceModel, resourceModel)
 	}
 	return nil
 }
