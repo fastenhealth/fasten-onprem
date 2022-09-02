@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {PassportService} from '../../services/passport.service';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {ProviderConfig} from '../../models/passport/provider-config';
@@ -145,6 +145,23 @@ export class MedicalProvidersComponent implements OnInit {
 
       });
   }
+
+  @HostListener('window:message', ['$event'])
+  onPostMessage(event: MessageEvent) {
+    console.log("received a message from OAuth popup - "+ event.data, "sleeping 5 seconds")
+    // todo, process event, (retrieve code from passport api and swap for code)
+    setTimeout(() => {
+      console.log("responding to OAuth popup...")
+      event.source.postMessage(JSON.stringify({close:true}),
+        // @ts-ignore
+        event.origin);
+    }, 5000);
+
+
+  }
+
+
+
   waitForClaimOrTimeout(providerId: string, state: string): Observable<any> {
     return this.passportApi.getProviderAuthorizeClaim(providerId, state).pipe(
       retryWhen(error =>
