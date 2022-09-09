@@ -85,6 +85,10 @@ func (sr *sqliteRepository) GetCurrentUser() models.User {
 	return currentUser
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Resource
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 func (sr *sqliteRepository) UpsertResource(ctx context.Context, resourceModel models.ResourceFhir) error {
 	sr.logger.Infof("insert/update (%T) %v", resourceModel, resourceModel)
 
@@ -98,6 +102,27 @@ func (sr *sqliteRepository) UpsertResource(ctx context.Context, resourceModel mo
 		return sr.gormClient.Debug().Model(&resourceModel).Create(&resourceModel).Error
 	}
 	return nil
+}
+
+func (sr *sqliteRepository) ListResources(ctx context.Context, sourceResourceType string, sourceResourceId string) ([]models.ResourceFhir, error) {
+
+	queryParam := models.ResourceFhir{
+		OriginBase: models.OriginBase{
+			UserID:             sr.GetCurrentUser().ID,
+			SourceResourceType: sourceResourceType,
+		},
+	}
+
+	if len(sourceResourceId) > 0 {
+		queryParam.SourceResourceID = sourceResourceId
+	}
+
+	var wrappedResourceModels []models.ResourceFhir
+	results := sr.gormClient.WithContext(ctx).
+		Where(queryParam).
+		Find(&wrappedResourceModels)
+
+	return wrappedResourceModels, results.Error
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
