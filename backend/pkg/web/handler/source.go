@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -27,6 +28,21 @@ func CreateSource(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
+
+	// after creating the source, we should do a bulk import
+	sourceClient, err := hub.NewClient(providerCred.ProviderId, nil, logger, providerCred)
+	if err != nil {
+		logger.Errorln("An error occurred while initializing hub client using source credential", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	err = sourceClient.SyncAll(databaseRepo)
+	if err != nil {
+		logger.Errorln("An error occurred while bulk import of resources from source", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": providerCred})
 }
 

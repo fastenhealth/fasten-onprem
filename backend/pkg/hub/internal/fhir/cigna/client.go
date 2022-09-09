@@ -28,11 +28,11 @@ func (c CignaClient) SyncAll(db database.DatabaseRepository) error {
 		return err
 	}
 
-	_, resourceRefApiModelLookup, _, err := c.ProcessBundle(bundle)
+	wrappedResourceModels, err := c.ProcessBundle(bundle)
 
 	//todo, create the resources in dependency order
 
-	for _, apiModel := range resourceRefApiModelLookup {
+	for _, apiModel := range wrappedResourceModels {
 		err = db.UpsertResource(context.Background(), apiModel)
 		if err != nil {
 			return err
