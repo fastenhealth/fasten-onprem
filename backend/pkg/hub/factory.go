@@ -11,18 +11,19 @@ import (
 	"net/http"
 )
 
-func NewClient(providerId string, appConfig config.Interface, globalLogger logrus.FieldLogger, credentials models.Source, testHttpClient ...*http.Client) (base.Client, error) {
+func NewClient(providerId string, appConfig config.Interface, globalLogger logrus.FieldLogger, credentials models.Source, testHttpClient ...*http.Client) (base.Client, *models.Source, error) {
 
 	var providerClient base.Client
+	var updatedSource *models.Source
 	var err error
 	switch providerId {
 	case "anthem":
-		providerClient, err = cigna.NewClient(appConfig, globalLogger, credentials, testHttpClient...)
+		providerClient, updatedSource, err = cigna.NewClient(appConfig, globalLogger, credentials, testHttpClient...)
 	case "cigna":
-		providerClient, err = cigna.NewClient(appConfig, globalLogger, credentials, testHttpClient...)
+		providerClient, updatedSource, err = cigna.NewClient(appConfig, globalLogger, credentials, testHttpClient...)
 	default:
-		return nil, errors.New(fmt.Sprintf("Unknown Provider Type: %s", providerId))
+		return nil, updatedSource, errors.New(fmt.Sprintf("Unknown Provider Type: %s", providerId))
 	}
 
-	return providerClient, err
+	return providerClient, updatedSource, err
 }

@@ -30,12 +30,21 @@ func CreateSource(c *gin.Context) {
 	}
 
 	// after creating the source, we should do a bulk import
-	sourceClient, err := hub.NewClient(providerCred.ProviderId, nil, logger, providerCred)
+	sourceClient, updatedSource, err := hub.NewClient(providerCred.ProviderId, nil, logger, providerCred)
 	if err != nil {
 		logger.Errorln("An error occurred while initializing hub client using source credential", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
+	if updatedSource != nil {
+		err := databaseRepo.CreateSource(c, updatedSource)
+		if err != nil {
+			logger.Errorln("An error occurred while updating provider credential", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+			return
+		}
+	}
+
 	err = sourceClient.SyncAll(databaseRepo)
 	if err != nil {
 		logger.Errorln("An error occurred while bulk import of resources from source", err)
@@ -83,12 +92,21 @@ func RawRequestSource(c *gin.Context) {
 		return
 	}
 
-	client, err := hub.NewClient(c.Param("sourceType"), nil, logger, *foundSource)
+	client, updatedSource, err := hub.NewClient(c.Param("sourceType"), nil, logger, *foundSource)
 	if err != nil {
 		logger.Errorf("Could not initialize source client", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
+	if updatedSource != nil {
+		err := databaseRepo.CreateSource(c, updatedSource)
+		if err != nil {
+			logger.Errorln("An error occurred while updating provider credential", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+			return
+		}
+	}
+
 	var resp map[string]interface{}
 	err = client.GetRequest(c.Param("path"), &resp)
 	if err != nil {

@@ -13,10 +13,11 @@ type FHIR430Client struct {
 	*BaseClient
 }
 
-func NewFHIR430Client(appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) (*FHIR430Client, error) {
+func NewFHIR430Client(appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) (*FHIR430Client, *models.Source, error) {
+	baseClient, updatedSource, err := NewBaseClient(appConfig, globalLogger, source, testHttpClient...)
 	return &FHIR430Client{
-		NewBaseClient(appConfig, globalLogger, source, testHttpClient...),
-	}, nil
+		baseClient,
+	}, updatedSource, err
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

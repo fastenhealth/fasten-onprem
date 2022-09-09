@@ -14,11 +14,11 @@ type CignaClient struct {
 	*base.FHIR401Client
 }
 
-func NewClient(appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) (base.Client, error) {
-	baseClient, err := base.NewFHIR401Client(appConfig, globalLogger, source, testHttpClient...)
+func NewClient(appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) (base.Client, *models.Source, error) {
+	baseClient, updatedSource, err := base.NewFHIR401Client(appConfig, globalLogger, source, testHttpClient...)
 	return CignaClient{
 		baseClient,
-	}, err
+	}, updatedSource, err
 }
 
 func (c CignaClient) SyncAll(db database.DatabaseRepository) error {

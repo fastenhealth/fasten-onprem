@@ -35,7 +35,7 @@ func TestNewFHIR401Client(t *testing.T) {
 	})
 
 	//test
-	client, err := NewFHIR401Client(fakeConfig, testLogger, models.Source{
+	client, _, err := NewFHIR401Client(fakeConfig, testLogger, models.Source{
 		RefreshToken: "test-refresh-token",
 		AccessToken:  "test-access-token",
 	})
@@ -55,7 +55,7 @@ func TestFHIR401Client_ProcessBundle(t *testing.T) {
 	testLogger := logrus.WithFields(logrus.Fields{
 		"type": "test",
 	})
-	client, err := NewFHIR401Client(fakeConfig, testLogger, models.Source{
+	client, _, err := NewFHIR401Client(fakeConfig, testLogger, models.Source{
 		RefreshToken: "test-refresh-token",
 		AccessToken:  "test-access-token",
 	})
