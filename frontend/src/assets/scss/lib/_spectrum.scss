@@ -1,0 +1,89 @@
+/* ###### 5.12 Spectrum ###### */
+
+.sp-container {
+  background-color: #fff;
+  border-color: $gray-300;
+  //box-shadow: 0px 1px 3px 0px rgba(#000, 0.21);
+  z-index: 200;
+
+  button {
+    @extend .btn;
+    border: 0;
+    padding: 8px 15px;
+    background-image: none;
+    background-color: $gray-300;
+    font-family: $font-family-base;
+    font-size: 12px;
+    text-shadow: none;
+    text-transform: capitalize;
+    @include border-radius(2px);
+
+    &:hover,
+    &:focus {
+      border: 0;
+      background-image: none;
+      background-color: $gray-500;
+      text-shadow: none;
+    }
+  }
+}
+
+.sp-button-container .sp-cancel {
+  font-family: $font-family-base;
+  font-size: 12px;
+  text-transform: capitalize;
+  color: $gray-600 !important;
+
+  &:hover,
+  &:focus {
+    color: $gray-800 !important;
+    text-decoration: none;
+  }
+}
+
+.sp-picker-container {
+  border-left: 0;
+}
+
+.sp-replacer {
+  border-color: $gray-300;
+  background-color: #fff;
+
+  &:hover,
+  &:focus {
+    border-color: $gray-400;
+  }
+
+  &.sp-active { border-color: $gray-600; }
+}
+
+.sp-dd {
+  text-indent: -99999px;
+  position: relative;
+  width: 10px;
+
+  &::before {
+    content: '\f280';
+    font-family: 'Ionicons';
+    font-size: 15px;
+    color: $gray-500;
+    position: absolute;
+    text-indent: 0;
+    left: 0;
+    z-index: 10;
+  }
+}
+
+.sp-preview { border: 0; }
+.sp-dragger { background-color: transparent; }
+
+.sp-choose {
+  background-color: $gray-300;
+}
+
+.sp-palette {
+  .sp-thumb-el:hover,
+  .sp-thumb-el.sp-thumb-active {
+    border-color: $gray-800;
+  }
+}

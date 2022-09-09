@@ -1,0 +1,728 @@
+/* ###### 7.2 Calendar  ###### */
+
+.az-content-calendar {
+  @include media-breakpoint-up(lg) { padding: 25px 0; }
+
+  .container,
+  .container-fluid {
+    padding: 20px 0 0;
+    @include media-breakpoint-up(lg) { padding-top: 0; }
+  }
+}
+
+.az-content-left-calendar {
+  @include media-breakpoint-up(sm) { width: 300px; }
+  @include media-breakpoint-up(lg) { width: 230px; }
+}
+
+.az-datepicker {
+  .ui-datepicker-inline { margin-top: 0; }
+  .ui-datepicker {
+    .ui-datepicker-title {
+      color: $az-color-primary;
+      letter-spacing: -.2px;
+    }
+
+    .ui-datepicker-calendar {
+      width: 100%;
+
+      th {
+        padding: 5px;
+        font-size: 10px;
+        color: $gray-900;
+      }
+
+      th,
+      td {
+        text-align: center;
+
+        &.ui-datepicker-week-end:first-child:not(.ui-datepicker-other-month) a { color: $red; }
+      }
+
+      td { padding: 0 1px; }
+
+      td span,
+      td a {
+        padding: 4px 5px;
+        font-family: Verdana, sans-serif;
+        font-size: 11px;
+        color: $gray-700;
+      }
+
+      .ui-datepicker-today a {
+        background-color: $az-color-primary;
+        color: #fff;
+
+        @include border-radius(2px);
+      }
+    }
+  }
+}
+
+.az-nav-calendar-event {
+  .nav-link {
+    font-size: 13px;
+    position: relative;
+
+    i {
+      font-size: 21px;
+      position: relative;
+      margin-right: 10px;
+      top: -.5px;
+    }
+
+    &.exclude {
+      color: $gray-600;
+      i { color: $gray-600; }
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        border-top: 1px solid $gray-600;
+      }
+    }
+  }
+}
+
+.az-content-body-calendar {
+  @include media-breakpoint-up(lg) { padding-left: 25px; }
+}
+
+ng-fullcalendar {
+  border-color: $gray-300;
+
+  .fc-content,
+  .fc-divider,
+  .fc-list-heading td,
+  .fc-list-view,
+  .fc-popover,
+  .fc-row,
+  tbody,
+  td,
+  th,
+  thead {
+    border-color: $gray-300;
+  }
+
+  .fc-header-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding: 0 20px;
+
+    @include media-breakpoint-up(lg) {
+      padding: 0;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      margin-bottom: 0;
+      color: $gray-900;
+      font-size: 20px;
+      font-weight: 700;
+
+      @include media-breakpoint-up(sm) { font-size: 22px; }
+    }
+
+    .fc-left { 
+      display: flex;
+     }
+    .fc-right { order: 3; }
+    .fc-clear { display: none; }
+
+    @include media-breakpoint-down(sm) {
+      .fc-center {
+        order: 1;
+        flex: 0 0 100%;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      .fc-left {
+        order: 2;
+        flex: 0 0 50%;
+      }
+
+      .fc-right {
+        flex: 0 0 50%;
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+
+    button {
+      height: $az-height-base;
+      background-color: #fff;
+      background-image: none;
+      border: 1px solid $gray-300;
+      box-shadow: none;
+      padding: 0 15px;
+      display: flex;
+      align-items: center;
+      color: $gray-900;
+      font-size: 13px;
+      text-transform: capitalize;
+      outline: none;
+      text-shadow: none;
+      @include border-radius(0);
+
+      @include hover-focus() {
+        background-color: $gray-200;
+      }
+
+      &.fc-prev-button,
+      &.fc-next-button {
+        padding: 0;
+        width: $az-height-base;
+        justify-content: center;
+
+        span { margin: 0; }
+      }
+
+      &.fc-state-active { background-color: $gray-200; }
+
+      &.fc-today-button {
+        color: #fff;
+        background-color: $az-color-secondary;
+        border-color: darken($az-color-secondary, 5%);
+
+        &.fc-state-disabled {
+          border-color: $gray-300;
+          background-color: $gray-100;
+          color: $gray-500;
+          cursor: default;
+        }
+      }
+
+      @media (max-width: 575px) {
+        &.fc-prev-button,
+        &.fc-next-button {
+          width: 32px;
+          height: 32px;
+        }
+
+        &.fc-today-button {
+          height: 32px;
+          padding-left: 10px;
+          padding-right: 10px;
+          font-size: 11px;
+        }
+
+        &.fc-month-button,
+        &.fc-agendaWeek-button,
+        &.fc-agendaDay-button,
+        &.fc-listWeek-button,
+        &.fc-listMonth-button {
+          text-indent: -9999px;
+          width: 32px;
+          height: 32px;
+          position: relative;
+          color: transparent;
+
+          &::before {
+            position: absolute;
+            top: 6px;
+            left: 10px;
+            z-index: 100;
+            display: inline-block;
+            text-indent: 0;
+            font-size: 12px;
+            font-weight: 700;
+            color: $body-color;
+          }
+        }
+
+        &.fc-month-button::before { content: 'M'; }
+        &.fc-agendaWeek-button::before { content: 'W'; }
+        &.fc-agendaDay-button::before { content: 'D'; }
+        &.fc-listWeek-button::before,
+        &.fc-listMonth-button::before {
+          content: 'L';
+          left: 11px;
+        }
+      }
+    }
+  }
+
+  .fc-icon-left-single-arrow,
+  .fc-icon-right-single-arrow {
+    top: 0;
+
+    &::after {
+      font-family: 'Ionicons';
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1;
+
+      @include media-breakpoint-up(lg) { line-height: .75; }
+    }
+  }
+
+
+  .fc-icon-left-single-arrow::after { content: '\f3cf'; }
+  .fc-icon-right-single-arrow::after { content: '\f3d1'; }
+
+
+
+  .fc-head-container {
+    .fc-day-header {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 5px 0;
+      color: $gray-900;
+
+      @include media-breakpoint-up(sm) { font-size: 12px; }
+    }
+  }
+
+  .fc-view {
+    > table {
+      background-color: #fff;
+
+      > thead {
+        th, td {
+          border-color: $gray-300;
+
+          @include media-breakpoint-down(md) {
+            &:first-child { border-left-width: 0; }
+            &:last-child { border-right-width: 0; }
+          }
+        }
+      }
+
+      > tbody > tr > td {
+        border-color: $gray-300;
+
+        @include media-breakpoint-down(md) {
+          &:first-child { border-left-width: 0; }
+          &:last-child { border-right-width: 0; }
+        }
+      }
+    }
+
+    .fc-other-month { background-color: #fcfcfc; }
+
+    .fc-day-number {
+      font-size: 14px;
+      font-weight: 400;
+      font-family: Arial, sans-serif;
+      color: $gray-700;
+      display: inline-block;
+      padding: 5px 8px;
+      position: relative;
+      @include transition($transition-base);
+      margin: 2px 2px 0 0;
+      min-width: 20px;
+      text-align: center;
+
+      &:hover,
+      &:focus {
+        color: $gray-900;
+        background-color: $gray-100;
+      }
+    }
+
+    .fc-scroller {
+      height: auto !important;
+      overflow: visible !important;
+    }
+
+    &.fc-agenda-view {
+      .fc-day-header {
+        > a > span {
+          display: block;
+
+          &:first-child {
+            color: $gray-600;
+            font-size: 8px;
+            font-weight: 400;
+            line-height: 1.2;
+
+            @include media-breakpoint-up(sm) {
+              font-size: 11px;
+              font-weight: 600;
+            }
+          }
+
+          &:last-child {
+            font-weight: 700;
+            font-size: 14px;
+            font-family: Helvetica, Arial, sans-serif;
+            line-height: 1;
+
+            @include media-breakpoint-up(sm) { font-size: 25px; }
+          }
+        }
+
+        &.fc-today > a { color: $az-color-primary; }
+      }
+    }
+
+    &.fc-listMonth-view,
+    &.fc-listWeek-view {
+      border-width: 0;
+
+      .fc-scroller {
+        padding: 0 20px 20px;
+        @include media-breakpoint-up(lg) { padding: 0; }
+      }
+
+      .fc-list-table {
+        border-collapse: separate;
+        display: block;
+
+        > tbody {
+          display: flex;
+          flex-wrap: wrap;
+        }
+      }
+
+      .fc-list-heading {
+        flex: 0 0 20%;
+        max-width: 20%;
+        margin-top: 15px;
+
+        @include media-breakpoint-up(sm) {
+          flex: 0 0 15%;
+          max-width: 15%;
+        }
+
+        @include media-breakpoint-up(md) {
+          flex: 0 0 12%;
+          max-width: 12%;
+        }
+
+        @include media-breakpoint-up(lg) {
+          flex: 0 0 10%;
+          max-width: 10%;
+        }
+
+        @include media-breakpoint-up(xl) {
+          flex: 0 0 8%;
+          max-width: 8%;
+        }
+
+        &:first-child {
+          margin-top: 0;
+          + .fc-list-item { margin-top: 0; }
+        }
+
+        td {
+          background-color: transparent;
+          border-width: 0;
+          padding: 0;
+        }
+      }
+
+      .fc-list-heading-main {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        color: $gray-600;
+        font-weight: 600;
+        padding: 5px;
+        text-align: center;
+
+        span:last-child {
+          display: block;
+          font-size: 30px;
+          font-weight: 700;
+          font-family: Helvetica, Arial, sans-serif;
+          letter-spacing: -1px;
+          color: $gray-900;
+          line-height: 1;
+        }
+
+        &.now {
+          color: $az-color-primary;
+          span:last-child { color: $az-color-primary; }
+        }
+      }
+
+      .fc-list-item {
+        flex: 0 0 calc(80% - 5px);
+        max-width: calc(80% - 5px);
+        dispLay: flex;
+        flex-direction: column;
+        border-left: 4px solid transparent;
+        background-color: #fff;
+        margin-top: 15px;
+
+        @include media-breakpoint-up(sm) {
+          flex: 0 0 calc(85% - 5px);
+          max-width: calc(85% - 5px);
+        }
+
+        @include media-breakpoint-up(md) {
+          flex: 0 0 calc(88% - 5px);
+          max-width: calc(88% - 5px);
+        }
+
+        @include media-breakpoint-up(lg) {
+          flex: 0 0 calc(90% - 5px);
+          max-width: calc(90% - 5px);
+        }
+
+        @include media-breakpoint-up(xl) {
+          flex: 0 0 calc(92% - 5px);
+          max-width: calc(92% - 5px);
+        }
+
+
+
+        &:hover,
+        &:focus {
+          cursor: pointer;
+          td { background-color: transparent; }
+        }
+
+        > td {
+          border-width: 0;
+
+          &.fc-list-item-time {
+            border-top: 1px solid $gray-200;
+            border-right: 1px solid $gray-200;
+            box-sizing: border-box;
+          }
+
+          &.fc-list-item-title {
+            border-bottom: 1px solid $gray-200;
+            border-right: 1px solid $gray-200;
+            box-sizing: border-box;
+          }
+        }
+
+        + .fc-list-item {
+          margin-left: 20%;
+
+          @include media-breakpoint-up(sm) { margin-left: 15%; }
+          @include media-breakpoint-up(md) { margin-left: 12%; }
+          @include media-breakpoint-up(lg) { margin-left: 10%; }
+          @include media-breakpoint-up(xl) { margin-left: 8%; }
+        }
+      }
+
+      .fc-list-item-marker { display: none; }
+
+      .fc-list-item-time {
+        padding: 12px 15px 2px;
+        font-size: 13px;
+        text-transform: capitalize;
+        width: 100%;
+      }
+
+      .fc-list-item-title {
+        padding: 0 15px 12px;
+
+        a {
+          display: block;
+          font-weight: 700;
+          font-size: 15px;
+          margin-bottom: 5px;
+          color: $gray-900;
+        }
+
+        .fc-desc {
+          font-size: 13px;
+          line-height: 1.375;
+          display: block;
+        }
+      }
+    }
+  }
+
+  td.fc-today {
+    background-color: $gray-100;
+
+    .fc-day-number {
+      &,
+      &:hover,
+      &:focus {
+        background-color: $az-color-primary;
+        color: #fff;
+        @include border-radius(1px);
+      }
+    }
+  }
+
+  .fc-axis {
+    font-size: 11px;
+    @include media-breakpoint-up(sm) { font-size: 13px; }
+  }
+
+  .fc-event {
+    border-width: 0;
+    border-top-width: 5px;
+    border-radius: 0;
+
+    @include media-breakpoint-up(sm) {
+      border-top-width: 0;
+      border-left-width: 2px;
+      padding: 3px 4px;
+    }
+
+    &.fc-day-grid-event > div {
+      display: none;
+      @include media-breakpoint-up(sm) { display: block; }
+
+      .fc-time { font-weight: 500; }
+      .fc-desc { display: none; }
+    }
+  }
+
+  .fc-time-grid-event {
+    padding: 5px;
+    border-left-width: 0;
+    border-top-width: 2px;
+
+    .fc-time { font-size: 12px; }
+    .fc-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: $gray-900;
+      margin-bottom: 10px;
+    }
+
+    .fc-desc {
+      font-size: 13px;
+      line-height: 1.3;
+      color: rgba($gray-900, .8);
+    }
+  }
+
+  .fc-agendaWeek-view {
+    .fc-time-grid-event > div {
+      display: none;
+      @include media-breakpoint-up(sm) { display: block; }
+
+      .fc-time { font-size: 11px; }
+      .fc-title { font-size: 13px; }
+      .fc-desc {
+        display: none;
+        @include media-breakpoint-up(lg) { display: block; }
+      }
+    }
+  }
+
+  .fc-list-empty {
+    padding: 20px 0;
+    background-color: #fff;
+    border: 1px solid $gray-300;
+  }
+}
+
+.az-modal-calendar-schedule {
+  .modal-content {
+    border-width: 0;
+    position: relative;
+
+    > .close {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 28px;
+      font-weight: 700;
+      color: $gray-600;
+      text-shadow: none;
+    }
+  }
+  .modal-header { padding: 20px 25px; }
+  .modal-body { padding: 30px 25px; }
+
+  .form-group-date {
+    display: flex;
+    align-items: center;
+    border: 1px solid $input-border-color;
+    background-color: $gray-100;
+    padding: 10px 5px;
+    color: $gray-900;
+    font-size: 13px;
+    font-weight: 600;
+
+    > i {
+      font-size: 32px;
+      line-height: 0;
+      margin-right: 10px;
+      opacity: .5;
+    }
+  }
+
+  .select2-container { width: 100% !important; }
+}
+
+.az-modal-calendar-event {
+  .modal-content {
+    border-width: 0;
+    position: relative;
+    background-color: transparent;
+
+    > .close {
+      font-size: 18px;
+      text-shadow: none;
+    }
+  }
+
+  .modal-header {
+    position: relative;
+    padding: 20px;
+    border-bottom-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    @include border-top-radius(0);
+
+    @include media-breakpoint-up(sm) { padding: 20px 25px; }
+  }
+
+  .nav-modal-event {
+    align-items: center;
+
+    .nav-link {
+      padding: 0;
+      color: rgba(#fff, .75);
+      font-size: 21px;
+      line-height: 0;
+      position: relative;
+      @include transition($transition-base);
+
+      &:hover,
+      &:focus { color: #fff; }
+
+      + .nav-link { margin-left: 15px; }
+
+      &:last-child { font-size: 24px; }
+    }
+  }
+
+  .event-title {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 0;
+    line-height: 1;
+  }
+
+  .modal-body {
+    padding: 20px;
+    background-color: #fff;
+
+    @include media-breakpoint-up(sm) { padding: 30px; }
+  }
+
+  .event-start-date,
+  .event-end-date {
+    color: $gray-900;
+    font-weight: 500;
+  }
+
+  .event-desc { margin-top: 5px; }
+
+  .event-desc:empty { margin-bottom: 5px; }
+}

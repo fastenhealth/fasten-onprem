@@ -1,0 +1,34 @@
+/* ###### 4.6 List   ###### */
+
+.az-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+
+  + .az-list-item { border-top: 1px solid $gray-200; }
+
+  &:last-child { padding-bottom: 0; }
+
+  h6 {
+    margin-bottom: 2px;
+    font-weight: 600;
+  }
+
+  > div {
+    &:first-child h6 { color: $gray-900; }
+
+    span {
+      color: $gray-600;
+      font-size: 12px;
+    }
+
+    &:last-child {
+      text-align: right;
+
+      h6 {
+        line-height: 1;
+      }
+    }
+  }
+}

@@ -1,0 +1,91 @@
+/* ###### 5.5 jQVMap ###### */
+
+.jqvmap-label {
+  padding: 2px 8px;
+  background-color: rgba(#111, 0.9);
+  @include border-radius(2px);
+}
+
+.jqvmap-zoomin,
+.jqvmap-zoomout {
+  font-size: 20px;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include border-radius(2px);
+}
+
+.jqvmap-zoomout { top: 32px; }
+
+/* Setup basic CSS for Label */
+.jqvmap-pin {
+  font-family: $font-family-base;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Hide Whichever Labels you want */
+#jqvmap1_ri_pin, #jqvmap1_dc_pin, #jqvmap1_de_pin, #jqvmap1_md_pin {
+  display: none;
+}
+
+/* Reposition Labels that are not quite right ( labels are centered in shape, and sometimes need tweaking ) */
+
+#jqvmap1_ak_pin { margin-top: -2%; }
+#jqvmap1_ca_pin { margin-left: -2%; }
+#jqvmap1_ct_pin {
+  margin-top: -0.25%;
+  margin-left: -0.25%;
+}
+#jqvmap1_fl_pin { margin-left: 5%; }
+#jqvmap1_id_pin {
+  margin-top: 3%;
+  margin-left: -1%;
+}
+#jqvmap1_ky_pin { margin-left: 2%; }
+#jqvmap1_la_pin { margin-left: -2%; }
+#jqvmap1_mi_pin {
+  margin-top: 4%;
+  margin-left: 3%;
+}
+#jqvmap1_ma_pin { margin-top: -0.25%; }
+#jqvmap1_mn_pin {
+  margin-top: 2%;
+  margin-left: -2%;
+}
+#jqvmap1_nh_pin {
+  margin-top: 1%;
+  margin-left: -0.25%;
+}
+#jqvmap1_nj_pin { margin-top: 1%; }
+#jqvmap1_ok_pin { margin-left: 2%; }
+#jqvmap1_va_pin { margin-left: 2%; }
+#jqvmap1_wv_pin {
+  margin-left: -1%;
+  margin-top: 1%;
+}
+
+/* Add responsibe support to resize labels for difference screen sizes */
+
+@media only screen and (min-width: 320px) {
+  .jqvmap-pin { font-size: 6px; }
+}
+
+@media only screen and (min-width: 480px) {
+  .jqvmap-pin { font-size: 8px; }
+}
+
+@media only screen and (min-width: 640px) {
+  .jqvmap-pin { font-size: 10px; }
+}
+
+@media only screen and (min-width: 800px) {
+  .jqvmap-pin { font-size: 12px; }
+}
+
+@media only screen and (min-width: 1024px) {
+  .jqvmap-pin { font-size: 14px; }
+}

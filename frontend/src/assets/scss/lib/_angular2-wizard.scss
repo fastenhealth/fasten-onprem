@@ -1,0 +1,22 @@
+form-wizard {
+  .card {
+    .card-header {
+      .nav {
+        .nav-item {
+          border-bottom-color: theme-color(primary);
+          &.active {
+            border-bottom-color: darken(theme-color(primary), 25%) !important;
+          }
+        }
+      }
+    }
+    .card-block {
+      @extend .card-body;
+      min-height: 300px;
+    }
+    .card-footer {
+      border-top: 1px solid $border-color;
+      @extend .card-body;
+    }
+  }
+}

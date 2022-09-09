@@ -1,0 +1,89 @@
+/* ###### 3.14 Pagination ###### */
+
+.page-item {
+  &:first-child .page-link,
+  &:last-child .page-link { border-radius: 0; }
+
+  + .page-item { margin-left: 1px; }
+
+  &.active .page-link { background-color: $az-color-primary; }
+}
+
+.page-link {
+  color: $gray-700;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: $az-height-base;
+  border-width: 0;
+  background-color: $gray-200;
+  margin-left: 0;
+  font-weight: 500;
+
+  i {
+    font-size: 18px;
+    line-height: 0;
+  }
+
+  @include hover-focus() {
+    color: $gray-900;
+    background-color: $gray-300;
+  }
+}
+
+.pagination-dark {
+  .page-item {
+    &.active {
+      .page-link {
+        background-color: $az-color-primary;
+        color: #fff;
+      }
+    }
+    &.disabled {
+      .page-link {
+        background-color: inherit;
+      }
+    }
+  }
+  .page-link {
+    font-weight: 400;
+    background-color: rgba(#fff, .05);
+    color: rgba(#fff, .8);
+
+    @include hover-focus() {
+      color: #fff;
+      background-color: rgba(#fff, .08);
+    }
+  }
+}
+
+.pagination-primary {
+  .page-item.active .page-link {
+    background-color: $blue;
+  }
+}
+
+.pagination-success {
+  .page-item.active .page-link {
+    background-color: $green;
+  }
+}
+
+.pagination-circled {
+  .page-item {
+    + .page-item { margin-left: 5px; }
+
+    &:first-child,
+    &:last-child {
+      .page-link { @include border-radius(100%); }
+    }
+  }
+
+  .page-link {
+    padding: 0;
+    width: 40px;
+    @include border-radius(100%);
+  }
+}

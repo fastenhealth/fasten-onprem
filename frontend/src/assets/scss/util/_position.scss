@@ -1,0 +1,76 @@
+/* ###### 9.7 Position   ###### */
+
+// Position
+.pos-absolute { position: absolute; }
+.pos-relative { position: relative; }
+.pos-fixed { position: fixed; }
+.pos-static { position: static; }
+
+.pos-absolute-f { position: absolute !important; }
+.pos-relative-f { position: relative !important; }
+.pos-fixed-f { position: fixed !important; }
+.pos-static-f { position: static !important; }
+
+
+// Top,Right,Bottom,Left Position
+$num: 0;
+@while $num <= 100 {
+  .t-#{$num} { top: #{$num}px; }
+  .r-#{$num} { right: #{$num}px; }
+  .b-#{$num} { bottom: #{$num}px; }
+  .l-#{$num} { left: #{$num}px; }
+
+  .t--#{$num} { top: -#{$num}px; }
+  .r--#{$num} { right: -#{$num}px; }
+  .b--#{$num} { bottom: -#{$num}px; }
+  .l--#{$num} { left: -#{$num}px; }
+
+  .a-#{$num} {
+    top: #{$num}px;
+    right: #{$num}px;
+    bottom: #{$num}px;
+    left: #{$num}px;
+  }
+
+  .x-#{$num} {
+    left: #{$num}px;
+    right: #{$num}px;
+  }
+
+  .y-#{$num} {
+    left: #{$num}px;
+    right: #{$num}px;
+  }
+
+  $num: $num + 5;
+}
+
+// custome positioning
+.t-2 { top: 2px; }
+.r--5 { right: -5px; }
+
+// z-index property
+.z-index-0 { z-index: 0; }
+.z-index-10  { z-index: 10;  }
+.z-index-50  { z-index: 50;  }
+.z-index-100 { z-index: 100; }
+.z-index-150 { z-index: 150; }
+.z-index-200 { z-index: 200; }
+
+@mixin do-position($viewport) {
+  .pos-#{$viewport}-absolute { position: absolute; }
+  .pos-#{$viewport}-relative { position: relative; }
+  .pos-#{$viewport}-fixed { position: fixed; }
+  .pos-#{$viewport}-static { position: static; }
+
+  .t-#{$viewport}-auto { top: auto; }
+  .r-#{$viewport}-auto { right: auto; }
+  .b-#{$viewport}-auto { bottom: auto; }
+  .l-#{$viewport}-auto { left: auto; }
+}
+
+@media (min-width: 480px) { @include do-position("xs"); }
+@include media-breakpoint-up(sm) { @include do-position("sm"); }
+@include media-breakpoint-up(md) { @include do-position("md"); }
+@include media-breakpoint-up(lg) { @include do-position("lg"); }
+@include media-breakpoint-up(xl) { @include do-position("xl"); }

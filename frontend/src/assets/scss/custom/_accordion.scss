@@ -1,0 +1,46 @@
+/* ###### 4.1 Accordion ###### */
+
+.az-accordion {
+  .accordion-item {
+    background-color: $gray-100;
+    border: 1px solid $az-border-base;
+    position: relative;
+    @include transition($transition-base);
+
+    @include hover-focus() {
+      cursor: pointer;
+      background-color: darken($gray-100, 1%);
+      border-color: darken($az-border-base, 10%);
+      z-index: 4;
+    }
+
+    &.active {
+      background-color: #fff;
+      z-index: 5;
+      border-color: darken($az-border-base, 10%);
+
+      .accordion-title { color: $blue; }
+      .accordion-body { display: block; }
+    }
+
+    + .accordion-item { margin-top: -1px; }
+  }
+
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+  }
+
+  .accordion-title {
+    font-weight: 700;
+    color: $body-color;
+    margin: 0;
+    @include transition($transition-base);
+  }
+
+  .accordion-body {
+    display: none;
+    padding: 0 20px 20px;
+  }
+}

@@ -1,0 +1,39 @@
+/* ###### 3.12 Modal ###### */
+
+.modal-backdrop {
+  background-color: darken($gray-900, 10%);
+
+  &.show { opacity: .8; }
+}
+
+.modal-content {
+  border-radius: 0;
+  border-width: 0;
+
+  .close {
+    font-size: 28px;
+    padding: 0;
+    margin: 0;
+    line-height: .5;
+  }
+}
+
+.modal-header {
+  align-items: center;
+  padding: 15px;
+
+  @include media-breakpoint-up(sm) { padding: 15px 20px; }
+  @include media-breakpoint-up(lg) { padding: 20px; }
+  @include media-breakpoint-up(xl) { padding: 20px 25px; }
+
+  .modal-title { margin-bottom: 0; }
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: $gray-900;
+  line-height: 1;
+}
+
+.modal-body { padding: 25px; }

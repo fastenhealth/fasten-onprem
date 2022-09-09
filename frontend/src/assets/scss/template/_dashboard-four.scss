@@ -1,0 +1,647 @@
+/* ###### 8.4 Dashboard Four  ###### */
+
+.az-navbar-dashboard-four {
+  box-shadow: 0 0 30px rgba($gray-900, .08);
+  
+  .container-fluid {
+    @include media-breakpoint-up(lg) {
+      padding-left: 25px;
+      padding-right: 25px;
+    }
+  }
+}
+
+.az-content-dashboard-four {
+  padding: 20px;
+
+  @include media-breakpoint-up(lg) {
+    flex: 1;
+    padding: 30px 25px;
+  }
+
+  ~ .az-footer {
+    .container,
+    .container-fluid {
+      padding-left: 25px;
+      padding-right: 25px;
+    }
+  }
+
+  > .media-dashboard {
+    display: block;
+
+    @include media-breakpoint-up(xl) {
+      display: flex;
+      align-items: stretch;
+      height: 100%;
+    }
+
+    .media-aside {
+      margin-top: 20px;
+
+      @include media-breakpoint-up(xl) {
+        margin-top: 0;
+        display: block;
+        width: 320px;
+      }
+    }
+
+    > .media-body {
+      @include media-breakpoint-up(xl) { padding: 0 20px 0 0; }
+    }
+  }
+
+  .az-content-header {
+    height: auto;
+    margin-bottom: 20px;
+    align-items: flex-start;
+    padding: 0;
+
+    @include media-breakpoint-up(md) { display: flex; }
+  }
+}
+
+.az-content-header-right {
+  display: none;
+
+  @include media-breakpoint-up(lg) {
+    display: flex;
+    align-items: center;
+  }
+
+  .media {
+    label {
+      margin-bottom: 2px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      color: $gray-500;
+    }
+
+    h6 {
+      color: $gray-900;
+      margin-bottom: 0;
+    }
+
+    + .media {
+      margin-left: 20px;
+      padding-left: 20px;
+      border-left: 1px solid $gray-300;
+    }
+  }
+
+  .btn {
+    &:first-of-type { margin-left: 30px; }
+    + .btn { margin-left: 5px; }
+  }
+}
+
+.card-dashboard-calendar {
+  border-color: $gray-300;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba($gray-900, 0.1);
+
+  .card-title {
+    color: $gray-900;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+  }
+
+  .card-body { padding: 0; }
+
+  .ui-datepicker-inline {
+    border-width: 0;
+    max-width: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .ui-datepicker {
+    .ui-datepicker-header {
+      border-bottom: 1px solid $gray-300;
+      padding: 10px;
+      margin-bottom: 5px;
+
+      .ui-datepicker-next::before,
+      .ui-datepicker-prev::before {
+        top: 8px;
+      }
+    }
+
+    .ui-datepicker-month { color: $az-color-primary; }
+    .ui-datepicker-calendar {
+      width: calc(100% - 20px);
+      @include media-breakpoint-up(sm) { width: 100%; }
+
+      th {
+        font-size: 10px;
+      }
+
+      th,
+      td { text-align: center; }
+
+      td a {
+        display: block;
+        width: 34px;
+        height: 34px;
+        font-size: 12px;
+        font-family: 'Archivo', sans-serif;
+        @include border-radius(100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .ui-datepicker-today a {
+        background-color: transparent;
+        border: 2px solid $az-color-secondary;
+        color: $az-color-secondary;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+.card-dashboard-twelve {
+  border-color: $gray-300;
+  box-shadow: 0 0 10px rgba($gray-900, 0.1);
+
+  .card-header {
+    background-color: transparent;
+    border-bottom: 1px solid $gray-200;
+    padding: 20px;
+  }
+
+  .card-title {
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 20px;
+
+    span {
+      font-weight: 400;
+      color: $body-color;
+      text-transform: capitalize;
+    }
+  }
+
+  .sales-overview {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    @include media-breakpoint-up(lg) {
+      margin-bottom: 10px;
+      flex-wrap: nowrap;
+    }
+
+    .media {
+      align-items: flex-end;
+      flex-shrink: 0;
+      flex-basis: calc(50% - 10px);
+
+      @include media-breakpoint-up(sm) {
+        flex-basis: auto;
+      }
+
+      + .media {
+        margin-left: 20px;
+
+        @include media-breakpoint-up(sm) { margin-left: 40px; }
+        @include media-breakpoint-up(lg) { margin-left: 50px; }
+      }
+
+      &:nth-child(3) {
+        @include media-breakpoint-only(xs) {
+          margin-left: 0;
+          margin-top: 15px;
+        }
+      }
+
+      &:last-child {
+        display: none;
+        @include media-breakpoint-up(md) {
+          flex: 1;
+          display: block;
+        }
+      }
+    }
+
+    .media-icon {
+      width: 45px;
+      height: 45px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      top: -5px;
+      margin-right: 15px;
+      @include border-radius(100%);
+      display: none;
+
+      .typcn {
+        line-height: .9;
+        font-size: 24px;
+      }
+    }
+
+    label {
+      text-transform: uppercase;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      color: $body-color;
+      margin-bottom: 8px;
+
+      @include media-breakpoint-up(sm) {
+        font-size: 10px;
+        margin-bottom: 10px;
+      }
+    }
+
+    h4 {
+      font-size: 20px;
+      font-family: 'Archivo', $font-family-base;
+      font-weight: 600;
+      color: $gray-900;
+      line-height: 1;
+      letter-spacing: -1px;
+      margin-bottom: 3px;
+
+      @include media-breakpoint-up(sm) {
+        font-size: 28px;
+      }
+
+      span {
+        color: $body-color;
+        font-weight: 400;
+      }
+    }
+
+    .media-body > span {
+      display: block;
+      font-size: 10px;
+      color: $gray-500;
+
+      @include media-breakpoint-up(sm) { font-size: 11px; }
+
+      strong {
+        font-weight: 500;
+        color: $body-color;
+      }
+    }
+
+    p {
+      font-size: 11px;
+      margin-bottom: 0;
+      color: $gray-500;
+    }
+  }
+
+  .card-body {
+    position: relative;
+    padding: 20px 5px;
+
+    @include media-breakpoint-up(sm) { padding: 20px; }
+  }
+
+  .chart-legend {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 5px;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+
+    @include media-breakpoint-up(sm) { top: 65px; }
+
+    div {
+      display: flex;
+      align-items: center;
+
+      + div {
+        margin-left: 15px;
+        @include media-breakpoint-up(sm) { margin-left: 30px; }
+      }
+    }
+
+    span {
+      width: 10px;
+      height: 4px;
+      display: block;
+      margin-right: 5px;
+
+      @include media-breakpoint-up(sm) {
+        width: 40px;
+        margin-right: 10px;
+      }
+    }
+  }
+
+  .chart-wrapper {
+    position: relative;
+    margin-left: -13px;
+    margin-right: -13px;
+
+    @include media-breakpoint-up(sm) {
+      margin-left: -10px;
+      margin-right: -15px;
+    }
+  }
+
+  .flot-chart {
+    width: 100%;
+    height: 200px;
+    position: relative;
+
+    @include media-breakpoint-up(md) {
+      height: 250px;
+    }
+
+    @include media-breakpoint-up(lg) { height: 300px; }
+
+    .flot-x-axis > div {
+      span:first-child {
+        display: block;
+        text-transform: uppercase;
+        font-family: $font-family-base;
+        font-weight: 500;
+        font-size: 10px;
+        color: $gray-600;
+      }
+
+      span:last-child {
+        display: block;
+        font-size: 16px;
+        font-weight: 700;
+        font-family: 'Archivo', $font-family-base;
+        color: $gray-900;
+        line-height: 1;
+      }
+    }
+  }
+}
+
+.az-media-date {
+  h1 {
+    font-size: 42px;
+    font-family: 'Archivo', $font-family-base;
+    color: $gray-900;
+    line-height: .95;
+  }
+
+  .media-body { margin-left: 5px; }
+
+  p {
+    color: $gray-900;
+    font-weight: 700;
+    margin-bottom: 0;
+    text-transform: uppercase;
+  }
+
+  span {
+    display: block;
+    line-height: 1.2;
+  }
+}
+
+.card-dashboard-thirteen {
+  border-color: $gray-300;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba($gray-900, 0.1);
+
+  .az-content-label { font-size: 13px; }
+
+  .media { margin-bottom: 15px; }
+
+  .media-icon {
+    font-size: 45px;
+    line-height: 1;
+    margin-right: 10px;
+    display: flex;
+
+    i { line-height: 0; }
+  }
+
+  .media-body {
+    h6 {
+      font-size: 22px;
+      font-weight: 600;
+      font-family: 'Archivo', $font-family-base;
+      color: $gray-900;
+      letter-spacing: -.5px;
+      margin-bottom: 2px;
+
+      span {
+        font-weight: 400;
+        color: $body-color;
+      }
+    }
+
+    label {
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 0;
+      display: block;
+      letter-spacing: .5px;
+    }
+  }
+}
+
+.card-dashboard-events {
+  border-color: $gray-300;
+  box-shadow: 0 0 10px rgba($gray-900, 0.1);
+
+  .card-header {
+    padding: 20px;
+    background-color: transparent;
+  }
+
+  .card-title {
+    color: $gray-600;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+
+  .card-subtitle {
+    color: $gray-900;
+    font-weight: 400;
+    font-size: 18px;
+  }
+
+  .card-body { padding: 0; }
+
+  .list-group-item {
+    padding: 15px 20px 15px 40px;
+    border-left-width: 0;
+    border-right-width: 0;
+    position: relative;
+
+    &:first-child,
+    &:last-child { border-radius: 0; }
+
+    label {
+      text-transform: uppercase;
+      font-weight: 700;
+      font-size: 10px;
+      color: $gray-700;
+      margin-bottom: 5px;
+      letter-spacing: .5px;
+
+      span {
+        color: $gray-500;
+        font-weight: 500;
+      }
+    }
+
+    h6 {
+      font-size: 14px;
+      font-weight: 700;
+      color: $gray-900;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    p {
+      margin-bottom: 5px;
+      strong { font-weight: 500; }
+    }
+
+    small {
+      font-size: 11px;
+
+      span {
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  .event-indicator {
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    top: 21px;
+    left: 20px;
+    @include border-radius(100%);
+  }
+
+  .event-user {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+
+    .az-img-user {
+      width: 28px;
+      height: 28px;
+
+      &::after { display: none; }
+
+      + .az-img-user { margin-left: -6px; }
+    }
+
+    a:last-child {
+      margin-left: 10px;
+      color: $gray-600;
+      font-weight: 500;
+      font-size: 11px;
+
+      @include hover-focus() { color: $gray-700; }
+    }
+  }
+}
+
+.card-dashboard-fourteen {
+  border-color: $gray-300;
+  box-shadow: 0 0 10px rgba($gray-900, 0.1);
+  padding: 20px;
+
+  @include media-breakpoint-up(md) { height: 100%; }
+
+  .az-content-label {
+    font-size: $font-size-base;
+    margin-bottom: 20px;
+
+    span {
+      font-weight: 400;
+      color: $gray-500;
+      text-transform: none;
+    }
+  }
+
+  .card-body {
+    padding: 0;
+    min-height: 100px;
+
+    h1 {
+      color: $gray-900;
+      font-family: 'Archivo', $font-family-base;
+      font-weight: 600;
+      letter-spacing: -1px;
+      margin-bottom: 0;
+
+      span {
+        color: $gray-500;
+        letter-spacing: normal;
+        font-weight: 400;
+        margin-right: 5px;
+      }
+    }
+
+    h4 {
+      color: $gray-900;
+      font-weight: 700;
+      font-family: 'Archivo', $font-family-base;
+      margin-bottom: 0;
+      letter-spacing: -.5px;
+    }
+
+    .progress { margin-bottom: 2px; }
+
+    small {
+      font-size: 11px;
+      color: $gray-500;
+    }
+  }
+
+  .sparkline-wrapper canvas { width: 100% !important; }
+
+  .card-footer {
+    background-color: transparent;
+    padding: 0;
+    margin-top: 15px;
+    border-top-width: 0;
+
+    h6 {
+      color: $gray-900;
+      font-size: 20px;
+      font-weight: 700;
+      font-family: 'Archivo', $font-family-base;
+      margin-bottom: 0;
+      letter-spacing: -.5px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0;
+      color: $gray-500;
+      font-size: 11px;
+
+      @include media-breakpoint-up(sm) { font-size: $font-size-base; }
+    }
+  }
+}

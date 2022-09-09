@@ -1,0 +1,40 @@
+
+$gray-100:                      #f4f5f8;
+$gray-200:                      #e3e7ed;
+$gray-300:                      #cdd4e0;
+$gray-400:                      #b4bdce;
+$gray-500:                      #97a3b9;
+$gray-600:                      #7987a1;
+$gray-700:                      #596882;
+$gray-800:                      #3b4863;
+$gray-900:                      #1c273c;
+
+$body-color:                    #031b4e;
+
+// Color
+$blue:                          #3366ff;
+$green:                         #3bb001;
+$teal:                          #00cccc;
+$pink:                          #f10075;
+$indigo:                        #5b47fb;
+
+// Border
+$border-radius:                 3px;
+$border-color:                  $gray-300;
+
+// Buttons & Inputs
+$btn-focus-box-shadow:          none;
+$btn-active-box-shadow:         none;
+
+// Forms
+$input-border-color:            $gray-300;
+
+// Typography
+$font-family-roboto:            'Roboto', sans-serif;
+$font-family-montserrat:        'Montserrat', sans-serif;
+$font-family-raleway:           'Raleway', sans-serif;
+
+$font-family-secondary:         $font-family-roboto;
+$font-size-base:                .875rem;
+
+$link-hover-decoration:         none;

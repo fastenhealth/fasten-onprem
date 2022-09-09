@@ -1,0 +1,225 @@
+/* ###### 9.8 Typography   ###### */
+
+// Font weights
+.tx-black       { font-weight: 900; }
+.tx-bold      { font-weight: 700; }
+.tx-semibold  { font-weight: 600; }
+.tx-medium    { font-weight: 500; }
+.tx-normal    { font-weight: 400; }
+.tx-light     { font-weight: 300; }
+.tx-thin      { font-weight: 200; }
+.tx-xthin     { font-weight: 100; }
+
+// Font Family
+.tx-sserif    { font-family: $font-family-sans-serif; }
+.tx-roboto    { font-family: 'Roboto', sans-serif; }
+
+// Font colors
+.tx-white     { color: #fff; }
+.tx-black     { color: $black; }
+.tx-primary   { color: $blue; }
+.tx-success   { color: $green; }
+.tx-warning   { color: $yellow; }
+.tx-danger    { color: $red; }
+.tx-info      { color: $cyan; }
+.tx-inverse   { color: $gray-900; }
+.tx-teal      { color: $teal; }
+.tx-dark      { color: $gray-900; }
+.tx-indigo    { color: $indigo; }
+.tx-purple    { color: $purple; }
+.tx-orange    { color: $orange; }
+.tx-pink      { color: $pink; }
+
+.tx-gray-100 { color: $gray-100; }
+.tx-gray-200 { color: $gray-200; }
+.tx-gray-300 { color: $gray-300; }
+.tx-gray-400 { color: $gray-400; }
+.tx-gray-500 { color: $gray-500; }
+.tx-gray-600 { color: $gray-600; }
+.tx-gray-700 { color: $gray-700; }
+.tx-gray-800 { color: $gray-800; }
+.tx-gray-900 { color: $gray-900; }
+
+// text white half transparency
+.tx-white-2 { color: rgba(#fff, .2); }
+.tx-white-3 { color: rgba(#fff, .3); }
+.tx-white-4 { color: rgba(#fff, .4); }
+.tx-white-5 { color: rgba(#fff, .5); }
+.tx-white-6 { color: rgba(#fff, .6); }
+.tx-white-7 { color: rgba(#fff, .7); }
+.tx-white-8 { color: rgba(#fff, .8); }
+
+// Font spacing
+.tx-spacing-1 { letter-spacing: 0.5px; }
+.tx-spacing-2 { letter-spacing: 1px; }
+.tx-spacing-3 { letter-spacing: 1.5px; }
+.tx-spacing-4 { letter-spacing: 2px; }
+.tx-spacing-5 { letter-spacing: 2.5px; }
+.tx-spacing-6 { letter-spacing: 3px; }
+.tx-spacing-7 { letter-spacign: 3.5px; }
+.tx-spacing-8 { letter-spacing: 4px; }
+
+.tx-spacing--1 { letter-spacing: -0.5px; }
+.tx-spacing--2 { letter-spacing: -1px; }
+.tx-spacing--3 { letter-spacing: -1.5px; }
+.tx-spacing--4 { letter-spacing: -2px; }
+.tx-spacing--5 { letter-spacing: -2.5px; }
+.tx-spacing--6 { letter-spacing: -3px; }
+.tx-spacing--7 { letter-spacing: -3.5px; }
+.tx-spacing--8 { letter-spacing: -4px; }
+
+.tx-uppercase { text-transform: uppercase; }
+.tx-lowercase { text-transform: lowercase; }
+.tx-transform-none { text-transform: none; }
+
+.tx-center { text-align: center; }
+.tx-right { text-align: right; }
+.tx-left { text-align: left; }
+
+.tx-center-f { text-align: center !important; }
+.tx-right-f { text-align: right !important; }
+.tx-left-f { text-align: left !important; }
+
+.tx-italic { font-style: italic; }
+.tx-style-normal { font-style: normal; }
+
+// Line Height
+.lh-base   { line-height: $line-height-base; }
+.lh-normal { line-height: normal; }
+
+.lh-0 { line-height: 0; }
+.lh--1 { line-height: .1; }
+.lh--2 { line-height: .2; }
+.lh--3 { line-height: .3; }
+.lh--4 { line-height: .4; }
+.lh--5 { line-height: .5; }
+.lh--6 { line-height: .6; }
+.lh--7 { line-height: .7; }
+.lh--8 { line-height: .8; }
+.lh--9 { line-height: .9; }
+.lh-1 { line-height: 1.1; }
+.lh-2 { line-height: 1.2; }
+.lh-3 { line-height: 1.3; }
+.lh-4 { line-height: 1.4; }
+.lh-5 { line-height: 1.5; }
+.lh-6 { line-height: 1.6; }
+.lh-7 { line-height: 1.7; }
+.lh-8 { line-height: 1.8; }
+.lh-9 { line-height: 1.9; }
+.lh-10 { line-height: 2.0; }
+.lh-11 { line-height: 2.1; }
+.lh-12 { line-height: 2.2; }
+.lh-13 { line-height: 2.3; }
+.lh-14 { line-height: 2.4; }
+.lh-15 { line-height: 2.5; }
+
+// Vertical align
+.valign-top { vertical-align: top; }
+.valign-middle { vertical-align: middle; }
+.valign-bottom { vertical-align: baseline; }
+
+.valign-top-f { vertical-align: top !important; }
+.valign-middle-f { vertical-align: middle !important; }
+.valign-bottom-f { vertical-align: baseline !important; }
+
+// Font sizes
+.tx-base { font-size: $font-size-base; }
+
+@mixin font-size($num, $viewport:"") {
+  @if $viewport == "" {
+    $viewport: "-";
+  } @else {
+    $viewport: "-" + $viewport + "-";
+  }
+
+  .tx#{$viewport}#{$num} { font-size: #{$num}px; }
+  .tx#{$viewport}#{$num}-f { font-size: #{$num}px !important; }
+}
+
+@mixin do-font-size($viewport) {
+  $num: 8;
+  @while $num <= 16 {
+    @include font-size($num,$viewport);
+    $num: $num + 1;
+  }
+
+  $num: 18;
+  @while $num <= 140 {
+    @include font-size($num,$viewport);
+    $num: $num + 2;
+  }
+}
+
+@mixin do-font-breakpoint($viewport) {
+  .tx-#{$viewport}-base      { font-size: $font-size-base; }
+
+  .tx-#{$viewport}-bold      { font-weight: 700; }
+  .tx-#{$viewport}-semibold  { font-weight: 600; }
+  .tx-#{$viewport}-medium    { font-weight: 500; }
+  .tx-#{$viewport}-normal    { font-weight: 400; }
+  .tx-#{$viewport}-light     { font-weight: 300; }
+  .tx-#{$viewport}-thin      { font-weight: 200; }
+  .tx-#{$viewport}-xthin     { font-weight: 100; }
+
+  .lh-#{$viewport}-0 { line-height: 0; }
+  .lh-#{$viewport}-1 { line-height: 1.1; }
+  .lh-#{$viewport}-2 { line-height: 1.2; }
+  .lh-#{$viewport}-3 { line-height: 1.3; }
+  .lh-#{$viewport}-4 { line-height: 1.4; }
+  .lh-#{$viewport}-5 { line-height: 1.5; }
+  .lh-#{$viewport}-6 { line-height: 1.6; }
+  .lh-#{$viewport}-7 { line-height: 1.7; }
+  .lh-#{$viewport}-8 { line-height: 1.8; }
+  .lh-#{$viewport}-9 { line-height: 1.9; }
+  .lh-#{$viewport}-10 { line-height: 2.0; }
+  .lh-#{$viewport}-11 { line-height: 2.1; }
+  .lh-#{$viewport}-12 { line-height: 2.2; }
+  .lh-#{$viewport}-13 { line-height: 2.3; }
+  .lh-#{$viewport}-14 { line-height: 2.4; }
+  .lh-#{$viewport}-15 { line-height: 2.5; }
+
+  .tx-#{$viewport}-center { text-align: center; }
+  .tx-#{$viewport}-right { text-align: right; }
+  .tx-#{$viewport}-left { text-align: left; }
+
+  .tx-#{$viewport}-center-f { text-align: center !important; }
+  .tx-#{$viewport}-right-f { text-align: right !important; }
+  .tx-#{$viewport}-left-f { text-align: left !important; }
+}
+
+$num: 8;
+@while $num <= 16 {
+  @include font-size($num);
+  $num: $num + 1;
+}
+
+$num: 18;
+@while $num <= 140 {
+  @include font-size($num);
+  $num: $num + 2;
+}
+
+@media (min-width: 480px) {
+  @include do-font-size("xs");
+  @include do-font-breakpoint("xs");
+}
+
+@include media-breakpoint-up(sm) {
+  @include do-font-size("sm");
+  @include do-font-breakpoint("sm");
+}
+
+@include media-breakpoint-up(md) {
+  @include do-font-size("md");
+  @include do-font-breakpoint("md");
+}
+
+@include media-breakpoint-up(lg) {
+  @include do-font-size("lg");
+  @include do-font-breakpoint("lg");
+}
+
+@include media-breakpoint-up(xl) {
+  @include do-font-size("xl");
+  @include do-font-breakpoint("xl");
+}

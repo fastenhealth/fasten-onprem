@@ -1,0 +1,59 @@
+/* ###### 6.3 Global  ###### */
+
+body {
+  font-family: $font-family-roboto;
+}
+
+.az-body,
+.az-dashboard {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
+}
+
+.az-body::before {
+  content: 'az';
+  position: fixed;
+  top: 45%;
+  left: 70%;
+  transform: translate3d(-50%, -58%, 0);
+  font-size: 1300px;
+  font-weight: 600;
+  letter-spacing: -10px;
+  line-height: .5;
+  opacity: .02;
+  z-index: -1;
+  display: none;
+
+  //@include media-breakpoint-up(lg) { display: block; }
+}
+
+.az-table-reference {
+  margin-top: 40px;
+  background-color: #fff;
+
+  > thead > tr,
+  > tbody > tr {
+    > th,
+    > td {
+      padding: 8px 10px;
+      border: 1px solid $gray-300;
+      font-size: 13px;
+    }
+  }
+
+  > thead > tr {
+    > th,
+    > td {
+      background-color: $gray-100;
+      color: $gray-600;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 0;
+    }
+  }
+}

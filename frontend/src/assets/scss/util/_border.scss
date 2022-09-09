@@ -1,0 +1,123 @@
+/* ###### 9.2 Border   ###### */
+
+// Borders
+.bd-transparent{ border-color: transparent; }
+
+.bd { border: 1px solid $gray-300; }
+.bd-t { border-top: 1px solid $gray-300; }
+.bd-r { border-right: 1px solid $gray-300; }
+.bd-b { border-bottom: 1px solid $gray-300; }
+.bd-l { border-left: 1px solid $gray-300; }
+
+.bd-y {
+  border-top: 1px solid $gray-300;
+  border-bottom: 1px solid $gray-300;
+}
+
+.bd-x {
+  border-left: 1px solid $gray-300;
+  border-right: 1px solid $gray-300;
+}
+
+.bd-0 { border-width: 0; }
+.bd-1 { border-width: 1px; }
+.bd-2 { border-width: 2px; }
+.bd-3 { border-width: 3px; }
+.bd-4 { border-width: 4px; }
+.bd-5 { border-width: 5px; }
+
+.bd-t-0 { border-top: 0; }
+.bd-r-0 { border-right: 0; }
+.bd-b-0 { border-bottom: 0; }
+.bd-l-0 { border-left: 0; }
+
+.bd-t-0-f { border-top: 0 !important; }
+.bd-r-0-f { border-right: 0 !important; }
+.bd-b-0-f { border-bottom: 0 !important; }
+.bd-l-0-f { border-left: 0 !important; }
+
+.bd-y-0 {
+  border-top-width: 0;
+  border-bottom-width: 0;
+}
+
+.bd-y-1 {
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+}
+
+.bd-x-0 {
+  border-left-width: 0;
+  border-right-width: 0;
+}
+
+.bd-x-1 {
+  border-left-width: 1px;
+  border-right-width: 1px;
+}
+
+
+// Border colors
+.bd-primary { border-color: theme-color('primary'); }
+.bd-success { border-color: theme-color('success'); }
+.bd-warning { border-color: theme-color('warning'); }
+.bd-danger { border-color: theme-color('danger'); }
+.bd-info { border-color: theme-color('info'); }
+.bd-white { border-color: #fff; }
+
+// Gray border color
+.bd-gray-100 { border-color: $gray-100; }
+.bd-gray-200 { border-color: $gray-200; }
+.bd-gray-300 { border-color: $gray-300; }
+.bd-gray-400 { border-color: $gray-400; }
+.bd-gray-500 { border-color: $gray-500; }
+.bd-gray-600 { border-color: $gray-600; }
+.bd-gray-700 { border-color: $gray-700; }
+.bd-gray-800 { border-color: $gray-800; }
+.bd-gray-900 { border-color: $gray-900; }
+
+// White border color
+.bd-white-1 { border-color: rgba(#fff,.1); }
+.bd-white-2 { border-color: rgba(#fff,.2); }
+.bd-white-3 { border-color: rgba(#fff,.3); }
+.bd-white-4 { border-color: rgba(#fff,.4); }
+.bd-white-5 { border-color: rgba(#fff,.5); }
+.bd-white-6 { border-color: rgba(#fff,.6); }
+.bd-white-7 { border-color: rgba(#fff,.7); }
+.bd-white-8 { border-color: rgba(#fff,.8); }
+
+// Border Radius
+.rounded-5 { @include border-radius(5px); }
+.rounded-10 { @include border-radius(10px); }
+.rounded-20 { @include border-radius(20px); }
+.rounded-30 { @include border-radius(30px); }
+.rounded-40 { @include border-radius(40px); }
+.rounded-50 { @include border-radius(50px); }
+
+.bd-dashed { border-style: dashed; }
+.bd-dotted { border-style: dotted; }
+
+
+@mixin border-breakpoint($viewport) {
+  .bd-#{$viewport} { border: 1px solid $gray-300; }
+  .bd-#{$viewport}-t { border-top: 1px solid $gray-300; }
+  .bd-#{$viewport}-r { border-right: 1px solid $gray-300; }
+  .bd-#{$viewport}-b { border-bottom: 1px solid $gray-300; }
+  .bd-#{$viewport}-l { border-left: 1px solid $gray-300; }
+
+  .bd-#{$viewport}-y {
+    border-top: 1px solid $gray-300;
+    border-bottom: 1px solid $gray-300;
+  }
+
+  .bd-#{$viewport}-x {
+    border-left: 1px solid $gray-300;
+    border-right: 1px solid $gray-300;
+  }
+}
+
+@media (min-width: 480px) { @include border-breakpoint("xs"); }
+@include media-breakpoint-up(sm) { @include border-breakpoint("sm"); }
+@include media-breakpoint-up(md) { @include border-breakpoint("md"); }
+@include media-breakpoint-up(lg) { @include border-breakpoint("lg"); }
+@include media-breakpoint-up(xl) { @include border-breakpoint("xl"); }

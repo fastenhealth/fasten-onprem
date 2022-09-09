@@ -1,0 +1,140 @@
+/* ###### 8.5 Dashboard Five  ###### */
+
+.az-body-sidebar.az-light {
+  .az-sidebar {
+    background-color: $gray-100;
+    border-right-color: $gray-300;
+    box-shadow: 2px 0 3px rgba($gray-900, .04);
+  }
+}
+
+.az-content-dashboard-five {
+  background-color: darken($gray-100, 2%);
+  @include transition(all 0.4s);
+
+  .az-header {
+    background-color: #fcfcfc;
+    box-shadow: 0 2px 3px rgba($gray-900, .05);
+  }
+
+  .az-header-menu-icon { margin-right: 0; }
+  .az-header-center .form-control { border-color: $gray-300; }
+
+  .az-content-header {
+    padding: 20px 20px 0;
+    @include media-breakpoint-up(xl) { padding: 25px 25px 0; }
+  }
+
+  .az-content-body { padding: 20px; }
+
+  .card {
+    background-color: #fcfcfc;
+    border-color: $gray-300;
+    box-shadow: 0 0 10px rgba($gray-900, 0.1);
+  }
+
+  .card-header {
+    padding: 20px 20px 0;
+    background-color: transparent;
+  }
+
+  .card-text {
+    font-size: 12px;
+    line-height: 1.4;
+    color: $gray-500;
+    margin-bottom: 0;
+  }
+}
+
+.card-dashboard-fifteen {
+  padding: 20px 20px 0;
+  overflow: hidden;
+
+  h1 {
+    font-size: 40px;
+    font-weight: 500;
+    font-family: 'Archivo', $font-family-base;
+    color: $gray-900;
+    margin-bottom: 0;
+    line-height: 1;
+
+    span {
+      display: inline;
+      font-size: 18px;
+      color: $gray-600;
+    }
+  }
+
+  label {
+    font-size: 14px;
+    font-weight: 500;
+    display: block;
+  }
+
+  span {
+    color: $gray-500;
+    display: block;
+    font-size: 12px;
+  }
+
+  .chart-wrapper {
+    position: relative;
+    margin-left: -32px;
+    margin-right: -32px;
+    margin-bottom: -10px;
+  }
+
+  .flot-chart {
+    width: 100%;
+    height: 127px;
+    position: relative;
+    margin-top: 20px;
+
+    .flot-x-axis > div:nth-child(4) { color: $gray-900 !important; }
+  }
+}
+
+.table-talk-time {
+  margin-bottom: 0;
+
+  thead > tr,
+  tbody > tr {
+    th,
+    td {
+      padding: 7px 10px;
+    }
+
+    th:first-child,
+    td:first-child {
+      padding-left: 20px;
+    }
+  }
+}
+
+.card-dashboard-sixteen {
+  .az-img-user::after { display: none; }
+
+  .table {
+    tbody > tr {
+      background-color: transparent;
+
+      th,td {
+        padding: 10px 10px 10px 0;
+        vertical-align: middle;
+        white-space: nowrap;
+
+        &:first-child { width: 10%; }
+        &:nth-child(2) { width: 60%; }
+        &:last-child { width: 30%; }
+      }
+    }
+  }
+}
+
+.dashboard-five-stacked-chart {
+  height: 200px;
+  @include media-breakpoint-up(md) { height: 240px; }
+  @media (min-width: 847px) { height: 260px; }
+  @include media-breakpoint-up(lg) { height: 240px; }
+  @media (min-width: 1067px) { height: 260px; }
+}

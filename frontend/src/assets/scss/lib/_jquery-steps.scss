@@ -1,0 +1,400 @@
+/* ###### 5.4 jQuery Steps ###### */
+
+/***** DEFAULT STYLE WIZARD *****/
+.wizard {
+  border: 1px solid $gray-200;
+  background-color: #fff;
+
+  > .steps {
+    padding: 20px;
+
+    @include media-breakpoint-up(md) { padding: 25px; }
+    @include media-breakpoint-up(lg) { padding: 30px; }
+
+    > ul {
+      padding: 0;
+      margin-bottom: 0;
+      display: flex;
+
+      li {
+        float: none;
+        display: block;
+        width: auto;
+
+        .current-info { display: none; }
+
+        .title {
+          margin-left: 5px;
+          white-space: nowrap;
+          @include transition($transition-base);
+
+          @include media-breakpoint-up(sm) {
+            display: none;
+            margin-left: 10px;
+          }
+
+          @include media-breakpoint-up(md) { display: inline-block; }
+        }
+
+        + li {
+          margin-left: 5px;
+          @include media-breakpoint-up(sm) { margin-left: 20px; }
+          @include media-breakpoint-up(lg) { margin-left: 30px; }
+        }
+      }
+    }
+
+    a,
+    a:hover,
+    a:active {
+      color: $gray-900;
+      font-weight: 500;
+      font-size: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      @include media-breakpoint-up(xl) {
+        justify-content: flex-start;
+      }
+
+      .number {
+        flex-shrink: 0;
+        font-weight: 700;
+        font-family: $font-family-sans-serif;
+        color: #fff;
+        display: block;
+        text-align: center;
+        line-height: 2;
+        width: 30px;
+        height: 30px;
+        background-color: $gray-400;
+        @include border-radius(100%);
+        @include transition($transition-base);
+
+        @include media-breakpoint-up(sm) {
+          font-size: 18px;
+          font-weight: 600;
+          line-height: 2.1;
+          width: 40px;
+          height: 40px;
+        }
+      }
+    }
+
+    .disabled {
+      display: none;
+      @include media-breakpoint-up(sm) { display: block; }
+
+      a,
+      a:hover,
+      a:active { color: $gray-500; }
+    }
+
+    .current a {
+      &,&:hover,&:active {
+        color: $az-color-primary;
+
+        .title { display: inline-block; }
+        .number { background-color: $az-color-primary; }
+      }
+    }
+
+    .done a {
+      &,&:hover,&:active {
+        color: $teal;
+
+        .title {
+          display: none;
+          @include media-breakpoint-up(md) { display: inline-block; }
+        }
+
+        .number { background-color: $teal; }
+      }
+    }
+  }
+
+  > .content {
+    border-top: 1px solid $gray-200;
+    border-bottom: 1px solid $gray-200;
+    min-height: 150px;
+    padding: 20px;
+
+    @include media-breakpoint-up(md) { padding: 25px; }
+    @include media-breakpoint-up(lg) { padding: 30px; }
+
+    > .title {
+      font-size: 18px;
+      color: $gray-900;
+      font-weight: 700;
+      margin-bottom: 5px;
+      display: none;
+
+      &.current { display: block; }
+    }
+
+    > .body {
+      float: none;
+      position: static;
+      width: auto;
+      height: auto;
+
+      input.parsley-error {
+        border-color: theme-color('danger');
+
+        + ul { list-style: none !important; }
+      }
+    }
+  }
+
+  > .actions {
+    padding: 20px;
+    @include media-breakpoint-up(md) { padding: 25px; }
+    @include media-breakpoint-up(lg) { padding: 30px; }
+
+    > ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+
+      > li:last-child a { background-color: $teal; }
+    }
+
+    a,
+    a:hover,
+    a:active {
+      display: block;
+      background-color: $az-color-primary;
+      padding: 9px 25px;
+      line-height: 1.573;
+      color: #fff;
+    }
+
+    .disabled {
+      a,
+      a:hover,
+      a:active { background-color: $gray-500; }
+    }
+  }
+
+  &.vertical {
+    > .steps {
+      padding: 20px;
+
+      @include media-breakpoint-up(sm) {
+        float: left;
+        width: 20%;
+      }
+
+      @include media-breakpoint-up(md) { width: 15%; }
+
+      @include media-breakpoint-up(lg) {
+        padding: 25px;
+        width: 30%;
+      }
+
+      ul {
+        @include media-breakpoint-up(sm) { flex-direction: column; }
+
+        li {
+          + li {
+            margin-left: 10px;
+
+            @include media-breakpoint-up(sm) {
+              margin-top: 10px;
+              margin-left: 0;
+            }
+
+            @include media-breakpoint-up(md) { margin-top: 20px; }
+          }
+
+          .title {
+            display: none;
+            @include media-breakpoint-up(lg) {
+              display: block;
+            }
+          }
+        }
+      }
+
+      a {
+        @include media-breakpoint-up(lg) { justify-content: flex-start; }
+      }
+
+      .current a {
+          .title {
+            display: inline-block;
+            @include media-breakpoint-up(sm) { display: none; }
+            @include media-breakpoint-up(lg) { display: inline-block; }
+          }
+      }
+    }
+
+    > .content {
+      margin: 0;
+      padding: 20px;
+
+      @include media-breakpoint-up(sm) {
+        border-top-width: 0;
+        border-bottom-width: 0;
+        width: 80%;
+        float: right;
+        border-left: 1px solid $gray-300;
+      }
+
+      @include media-breakpoint-up(md) { width: 85%; }
+
+      @include media-breakpoint-up(lg) {
+        width: 70%;
+        padding: 25px;
+      }
+    }
+
+    > .actions {
+      padding: 20px;
+
+      @include media-breakpoint-up(sm) {
+        width: 80%;
+        float: right;
+        border-left: 1px solid $gray-300;
+      }
+
+      @include media-breakpoint-up(md) { width: 85%; }
+
+      @include media-breakpoint-up(lg) {
+        width: 70%;
+        padding: 25px;
+      }
+
+      ul {
+        float: none;
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+}
+
+/****** EQUAL COLUMN WIDTH STEP INDICATOR *****/
+.step-equal-width {
+  > .steps {
+    > ul {
+      display: flex;
+
+      > li {
+        flex: 1;
+        width: auto;
+        float: none;
+      }
+    }
+  }
+  > .content {}
+  > .actions {}
+}
+
+/****** EQUAL COLUMN WIDTH STEP INDICATOR *****/
+.step-equal-width {
+  > .steps {
+    > ul {
+      display: flex;
+
+      > li {
+        flex: 1;
+        width: auto;
+        float: none;
+      }
+    }
+  }
+  > .content {}
+  > .actions {}
+}
+
+/***** CUSTOM STYLES *****/
+.wizard-style-1 {
+  > .steps {
+    > ul {
+      a,a:hover,a:active {
+        padding: 0;
+        height: 50px;
+
+        .number {
+          width: 50px;
+          height: 100%;
+          border: 0;
+          font-size: 18px;
+          font-weight: bold;
+          color: $gray-600;
+          background-color: $gray-300;
+          @include border-radius(0);
+        }
+
+        .title {
+          margin-right: 20px;
+          margin-left: 20px;
+        }
+      }
+
+      .current a {
+        &,&:hover,&:active {
+          .number {
+            background-color: darken($az-color-primary, 5%);
+            color: #fff;
+          }
+        }
+      }
+
+      .done a {
+        &,&:hover,&:active {
+          .number {
+            background-color: darken($purple, 5%);
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}
+
+.wizard-style-2 {
+  > .steps {
+    > ul {
+      a,a:hover,a:active {
+        padding: 0;
+        height: 50px;
+        @include border-radius(50px);
+
+        .number {
+          width: 50px;
+          height: 100%;
+          border: 2px solid $gray-200;
+          font-size: 18px;
+          font-weight: bold;
+          color: $gray-600;
+          background-color: #fff;
+        }
+
+        .title { margin-right: 20px; }
+      }
+
+      .current a {
+        &,&:hover,&:active {
+          .number {
+            border-color: $az-color-primary;
+            color: $az-color-primary;
+          }
+        }
+      }
+
+      .done a {
+        &,&:hover,&:active {
+          .number {
+            border-color: $purple;
+            color: $purple;
+          }
+        }
+      }
+    }
+  }
+}

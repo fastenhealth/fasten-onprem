@@ -1,0 +1,196 @@
+/* ###### 5.1 Datatables ###### */
+
+table.dataTable {
+  border: 1px solid $border-color;
+
+  &.no-footer { border-bottom-color: $border-color; }
+
+  thead th,
+  thead td {
+    border-top-width: 0;
+    border-bottom-width: 0;
+    padding: 8px 10px;
+    font-weight: 700;
+    font-size: 12px;
+    color: $gray-900;
+  }
+
+  thead .sorting_asc,
+  thead .sorting_desc {
+    background-image: none;
+    background-color: lighten($gray-200, 3%);
+    position: relative;
+
+    &::after {
+      font-family: 'Ionicons';
+      font-size: 11px;
+      position: absolute;
+      line-height: 0;
+      top: 50%;
+      right: 10px;
+    }
+  }
+
+  thead .sorting_asc::after { content: '\f3d8'; }
+  thead .sorting_desc::after { content: '\f3d0'; }
+
+  thead .sorting {
+    background-image: none;
+    position: relative;
+
+    &::before,
+    &::after {
+      font-family: 'Ionicons';
+      font-size: 11px;
+      position: absolute;
+      line-height: 0;
+      right: 10px;
+    }
+
+    &::before {
+      content: '\f3d8';
+      top: 40%;
+    }
+
+    &::after {
+      content: '\f3d0';
+      top: 60%;
+    }
+  }
+
+  tbody td.sorting_1 {
+    background-color: lighten($gray-200, 5%);
+  }
+
+  &.dtr-inline.collapsed,
+  &.dtr-inline.collapsed {
+    > tbody > tr[role="row"] > td:first-child::before {
+      top: 9.5px;
+      left: 7px;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-width: 0;
+      box-shadow: none;
+      background-color: $gray-300;
+      font-size: 14px;
+      font-weight: 700;
+      color: $gray-500;
+    }
+  }
+
+  > tbody > tr.child {
+    ul.dtr-details { display: block; }
+    span.dtr-title { font-weight: 500; }
+  }
+}
+
+.dataTables_wrapper {
+  width: 99%;
+  .dataTables_length {
+    text-align: left;
+
+    @include media-breakpoint-up(sm) { float: left; }
+
+    label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      select {
+        @extend .form-control;
+        margin: 0 8px;
+        height: 30px;
+      }
+    }
+  }
+
+  .dataTables_filter {
+    text-align: left;
+
+    @include media-breakpoint-up(sm) {
+      float: right;
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 15px;
+      input {
+        margin-left: 8px;
+      }
+    }
+
+    input {
+      margin-left: 0;
+      border: 1px solid $border-color;
+      padding: 5px 10px;
+      line-height: 1.539;
+      color: $body-color;
+      @include border-radius();
+      width: 100%;
+
+      @include media-breakpoint-up(sm) { width: auto; }
+
+      &::placeholder { color: $gray-500; }
+    }
+  }
+
+  .dataTables_info {
+    margin-top: 15px;
+    padding: 5px 0;
+    text-align: left;
+
+    @include media-breakpoint-up(sm) {
+      float: left;
+    }
+  }
+
+  .dataTables_paginate {
+    padding-top: 0;
+    margin-top: 15px;
+    text-align: left;
+
+    @include media-breakpoint-up(sm) {
+      float: right;
+    }
+
+    .paginate_button {
+      background-color: $gray-200;
+      padding: 5px 10px;
+      margin: 0;
+      border: 0;
+      @include border-radius(1px);
+      @include transition($transition-base);
+
+      + .paginate_button { margin-left: 3px; }
+
+      &.disabled {
+        &,&:hover,&:focus {
+          background-color: lighten($gray-200, 3%);
+          color: $gray-300 !important;
+        }
+      }
+
+      &.previous { margin-right: 3px; }
+      &.next { margin-left: 3px; }
+
+      @include hover-focus() {
+        border: 0;
+        background-image: none;
+        background-color: $gray-300;
+        color: $body-color !important;
+      }
+
+      &.current {
+        &,&:hover,&:focus {
+          border: 0;
+          background-image: none;
+          background-color: $az-color-primary;
+          color: #fff !important;
+        }
+      }
+    }
+  }
+}

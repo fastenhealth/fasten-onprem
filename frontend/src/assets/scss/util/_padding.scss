@@ -1,0 +1,105 @@
+/* ###### 9.6 Padding   ###### */
+
+@mixin padding-variant($num, $viewport:"") {
+
+  @if $viewport == "" {
+    $viewport: "-";
+  } @else {
+    $viewport: "-" + $viewport + "-";
+  }
+
+  //ie. .pd-sm-0
+  //ie. .pd-sm-0-f
+  .pd#{$viewport}#{$num} { padding: #{$num}px; }
+  .pd#{$viewport}#{$num}-f { padding: #{$num}px !important; }
+
+  //ie. .pd-sm-y-0
+  .pd#{$viewport}y-#{$num} {
+    padding-top: #{$num}px;
+    padding-bottom: #{$num}px;
+  }
+
+  //ie. .pd-sm-y-0-f
+  .pd#{$viewport}y-#{$num}-f {
+    padding-top: #{$num}px !important;
+    padding-bottom: #{$num}px !important;
+  }
+
+  //ie. .pd-sm-x-0
+  .pd#{$viewport}x-#{$num} {
+    padding-left: #{$num}px;
+    padding-right: #{$num}px;
+  }
+
+  //ie. .pd-sm-x-0-f
+  .pd#{$viewport}x-#{$num}-f {
+    padding-left: #{$num}px !important;
+    padding-right: #{$num}px !important;
+  }
+
+  //ie. .pd-sm-t-0
+  .pd#{$viewport}t-#{$num} { padding-top: #{$num}px; }
+  .pd#{$viewport}r-#{$num} { padding-right: #{$num}px; }
+  .pd#{$viewport}b-#{$num} { padding-bottom: #{$num}px; }
+  .pd#{$viewport}l-#{$num} { padding-left: #{$num}px; }
+
+  //ie. .pd-sm-t-0-f
+  .pd#{$viewport}t-#{$num}-f { padding-top: #{$num}px !important; }
+  .pd#{$viewport}r-#{$num}-f { padding-right: #{$num}px !important; }
+  .pd#{$viewport}b-#{$num}-f { padding-bottom: #{$num}px !important; }
+  .pd#{$viewport}l-#{$num}-f { padding-left: #{$num}px !important; }
+}
+
+@mixin do-padding-variant($viewport) {
+  //padding: 0px to 9px
+  $num: 0;
+  @while $num < 10 {
+    @include padding-variant($num,$viewport);
+    $num: $num + 1;
+  }
+
+  //padding: 10px to 95px with step of 5px
+  $num: 10;
+  @while $num < 100 {
+    @include padding-variant($num,$viewport);
+    $num: $num + 5;
+  }
+
+  //padding: 100px to 200px with step of 10px
+  $num: 100;
+  @while $num <= 200 {
+    @include padding-variant($num,$viewport);
+    $num: $num + 10;
+  }
+}
+
+//padding: 0px to 9px
+$num: 0;
+@while $num < 10 {
+  @include padding-variant($num);
+  $num: $num + 1;
+}
+
+//padding: 10px to 95px with step of 5px
+$num: 10;
+@while $num < 100 {
+  @include padding-variant($num);
+  $num: $num + 5;
+}
+
+//padding: 100px to 200px with step of 10px
+$num: 100;
+@while $num <= 200 {
+  @include padding-variant($num);
+  $num: $num + 10;
+}
+
+@media (min-width: 480px) { @include do-padding-variant("xs"); }
+@include media-breakpoint-up(sm) { @include do-padding-variant("sm"); }
+@include media-breakpoint-up(md) { @include do-padding-variant("md"); }
+@include media-breakpoint-up(lg) { @include do-padding-variant("lg"); }
+@include media-breakpoint-up(xl) { @include do-padding-variant("xl"); }
+
+// Custom Padding
+@include padding-variant(12);
+@include padding-variant(13);

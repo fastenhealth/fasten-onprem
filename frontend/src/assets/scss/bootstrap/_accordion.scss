@@ -1,0 +1,55 @@
+/* ###### 3.1 Accordion ###### */
+
+.accordion {
+  .card {
+    border-width: 0;
+
+    + .card { margin-top: 1px; }
+  }
+
+  .card-header {
+    padding: 0;
+    background-color: transparent;
+    font-weight: 500;
+
+    button {
+      width: 100%;
+      text-align: left;
+      padding: 14px 20px;
+      color: $gray-900;
+      position: relative;
+      font-weight: 500;
+      font-size: 14px;
+      background-color: $gray-100;
+
+      &:hover,
+      &:focus {
+        color: $gray-900;
+      }
+
+      &.collapsed {
+        color: $gray-700;
+        background-color: $gray-200;
+        border-bottom-color: transparent;
+
+        &:hover,
+        &:focus {
+          color: $gray-900;
+          background-color: $gray-300;
+        }
+      }
+    }
+  }
+
+  .card-body {
+    padding: 0 20px 20px;
+    background-color: $gray-100;
+    transition: none;
+  }
+}
+
+// Accordion Color Variant
+.accordion-indigo { @include accordion-variant($indigo); }
+.accordion-blue { @include accordion-variant($blue); }
+.accordion-dark { @include accordion-variant($gray-900); }
+.accordion-gray { @include accordion-variant($gray-600); }

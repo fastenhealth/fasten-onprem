@@ -1,0 +1,77 @@
+/* ###### 5.11 Select2 ###### */
+
+/* Select2 */
+.select2-example {
+  .select2-container {
+    .select2-selection--single {
+        @extend .form-control;
+        padding-left: 3px;
+        .select2-selection__rendered,
+            .select2-selection__arrow {
+            line-height: 1.5rem;
+            height: 100%;
+        }
+    }
+    .select2-selection--multiple {
+      @extend .form-control;
+      padding: 0 3px;
+      .select2-selection__rendered {
+        li {
+          input {
+            line-height: 28px;
+          }
+        }
+      }
+      .select2-selection__choice {
+        color: #fff;
+        border: 0;
+        border-radius: 0;
+        padding: 6px;
+        padding-left: 6px;
+        font-size: .875rem;
+        font-family: inherit;
+        line-height: 1;
+        .select2-selection__choice__remove {
+          top: 7px;
+          color: #eee;
+          margin-right: 4px;
+        }
+        &:nth-child(5n+1) {
+          background: theme-color(primary);
+        }
+        &:nth-child(5n+2) {
+          background: theme-color(success);
+        }
+        &:nth-child(5n+3) {
+          background: theme-color(info);
+        }
+        &:nth-child(5n+4) {
+          background: theme-color(danger);
+        }
+        &:nth-child(5n+5) {
+          background: theme-color(warning);
+        }
+      }
+    }
+  }
+}
+
+// Alert State
+.has-success .select2-container--default .select2-selection--single { border-color: theme-color('success'); }
+.has-warning .select2-container--default .select2-selection--single { border-color: theme-color('warning'); }
+.has-danger .select2-container--default .select2-selection--single { border-color: theme-color('danger'); }
+
+
+// Size
+.select2-xs + .select2-container { font-size: 12px; }
+.select2-dropdown-xs .select2-results__option {  font-size: 12px; }
+
+.select2-sm + .select2-container { font-size: 14px; }
+.select2-dropdown-sm .select2-results__option {  font-size: 14px; }
+
+// Border
+.select2-bd-0 + .select2-container--default .select2-selection--single { border-width: 0; }
+.bg-gray + .select2-container--default .select2-selection--single {
+  background-color: lighten($gray-800, 5%);
+  .select2-selection__rendered { color: $gray-300; }
+}

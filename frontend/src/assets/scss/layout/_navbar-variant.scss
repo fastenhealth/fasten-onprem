@@ -1,0 +1,111 @@
+/* ###### 6.7 Navbar Variant  ###### */
+
+.az-navbar-two {
+  .nav-item.active {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+
+      @include media-breakpoint-up(lg) {
+        top: 33px;
+        left: 0;
+        right: 12px;
+        bottom: auto;
+        border-bottom: 2px solid $az-color-primary;
+        z-index: 5;
+      }
+    }
+  }
+
+  .nav-item.show .nav-link::before { display: none; }
+
+  .nav-link {
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .nav-sub {
+    border-width: 1px;
+    top: 35px;
+    border-top-width: 0;
+  }
+
+  .nav-sub-item {
+    > .nav-sub {
+      left: 178px;
+      top: -8px;
+      border-top-width: 1px;
+    }
+  }
+
+  .nav-sub-mega {
+    top: 48px;
+  }
+}
+
+// minimalist navbar
+.az-navbar-three {
+  .nav-item {
+    display: block;
+
+    + .nav-item {
+      border-left-width: 0;
+      padding-left: 0;
+
+      @include media-breakpoint-up(lg) { margin-left: 25px; }
+    }
+
+    &.show {
+      .nav-link::before { display: none; }
+    }
+
+    &.active {
+      .nav-link {
+        color: $az-color-primary;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .nav-link {
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 700;
+    color: $gray-800;
+    position: relative;
+
+    @include media-breakpoint-up(lg) { display: block; }
+
+    @include hover-focus() { color: $gray-900; }
+
+    i { @include media-breakpoint-up(lg) { display: none; } }
+  }
+
+  .nav-sub {
+    top: 35px;
+    border-width: 0;
+    padding-bottom: 5px;
+
+    @include media-breakpoint-up(lg) {
+      box-shadow: 0 0 0 2px rgba($gray-400, .5);
+      padding-bottom: 8px;
+    }
+  }
+
+  .nav-sub-item {
+    + .nav-sub-item { border-top: 0; }
+
+    .nav-sub {
+      top: -8px;
+      left: 182px;
+    }
+  }
+
+  .nav-sub-link {
+    height: 30px;
+    @include media-breakpoint-up(lg) { height: 36px; }
+  }
+}

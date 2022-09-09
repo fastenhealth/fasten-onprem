@@ -1,0 +1,145 @@
+/* ###### 7.10 Signup  ###### */
+
+.az-signup-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: rgba($gray-100, .2);
+
+  @include media-breakpoint-up(lg) { justify-content: flex-end; }
+}
+
+.az-column-signup-left {
+  flex: 1;
+  padding: 30px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  display: none;
+
+  @include media-breakpoint-up(sm) { padding: 40px; }
+  @include media-breakpoint-up(lg) { display: flex; }
+
+  > div { max-width: 500px; }
+
+  .typcn {
+    font-size: 80px;
+    margin-bottom: 50px;
+
+    &::before { width: auto; }
+  }
+
+  .az-logo {
+    font-size: 40px;
+    line-height: 1;
+  }
+
+  h5 {
+    color: $gray-900;
+    font-weight: 500;
+    font-size: 18px;
+    margin-bottom: 25px;
+  }
+
+  p {
+    line-height: 1.7;
+    margin-bottom: 25px;
+  }
+
+  .btn {
+    border-width: 2px;
+    padding-left: 25px;
+    padding-right: 25px;
+    font-weight: 700;
+    text-transform: uppercase;
+    height: $az-height-base;
+  }
+}
+
+.az-column-signup {
+  background-color: #fff;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  @include media-breakpoint-up(sm) {
+    padding: 40px;
+    width: 500px;
+  }
+
+  @include media-breakpoint-up(lg) {
+    border-left: 1px solid $gray-300;
+  }
+}
+
+.az-signup-header {
+  h2 {
+    font-weight: 500;
+    color: $az-color-primary;
+    letter-spacing: -1px;
+  }
+
+  h4 {
+    font-size: 20px;
+    font-weight: 400;
+    color: $gray-900;
+    margin-bottom: 25px;
+  }
+
+  label { color: $gray-600; }
+
+  .form-control {
+    color: $gray-900;
+    font-weight: 500;
+    border-width: 2px;
+    border-color: $gray-300;
+
+    &:focus {
+      border-color: $gray-400;
+      box-shadow: none;
+    }
+
+    &::placeholder {
+      font-weight: 400;
+      color: $gray-500;
+    }
+  }
+
+  > .btn { margin-top: 25px; }
+
+  .row {
+    margin-top: 20px;
+    > div {
+      .btn i {
+        font-size: 15px;
+        line-height: 0;
+        margin-right: 5px;
+      }
+
+      &:first-child .btn {
+        background-color: #4267b2;
+        color: #fff;
+        @include hover-focus() {
+          background-color: darken(#4267b2, 8%);
+          color: #fff;
+        }
+      }
+    }
+  }
+}
+
+.az-signup-footer {
+  p {
+    color: $gray-600;
+    margin-bottom: 0;
+  }
+
+  a {
+    color: $gray-900;
+    font-weight: 700;
+
+    @include hover-focus() { color: $az-color-primary; }
+  }
+}

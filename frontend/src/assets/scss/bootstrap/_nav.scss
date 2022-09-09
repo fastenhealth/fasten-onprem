@@ -1,0 +1,63 @@
+/* ###### 3.13 Nav ###### */
+
+.nav-link {
+  &:hover,
+  &:focus,
+  &:active { outline: none; }
+}
+
+.nav-pills {
+  .nav-link {
+    color: $gray-700;
+    @include hover-focus() { color: $gray-900; }
+
+    &.active {
+      border-radius: 2px;
+      background-color: $az-color-primary;
+      @include hover-focus() { color: #fff; }
+    }
+  }
+}
+
+.nav-dark {
+  .nav-link {
+    color: $gray-500;
+    @include hover-focus() { color: #fff; }
+  }
+}
+
+.nav-tabs {
+  @extend .bg-gray-400;
+  padding: 0.75rem 1.25rem 0 1.25rem;
+  border-bottom-width: 0;
+
+  .nav-link {
+    background-color: rgba(#fff, .3);
+    border-width: 0;
+    border-radius: 0;
+    padding: 10px 15px;
+    line-height: 1.428;
+    color: $gray-700;
+
+    @include media-breakpoint-up(md) { padding: 10px 20px; }
+
+    @include hover-focus() {
+      background-color: rgba(#fff, .5);
+      color: $gray-900;
+    }
+
+    + .nav-link { margin-left: 3px; }
+
+    &.active {
+      background-color: #fff;
+      color: $gray-900;
+      font-weight: 500;
+      letter-spacing: -.1px;
+    }
+  }
+  + .tab-content {
+    @extend .card;
+    @extend .card-body;
+    border-top: 0;
+  }
+}

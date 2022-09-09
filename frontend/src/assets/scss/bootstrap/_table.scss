@@ -1,0 +1,42 @@
+/* ###### 3.17 Table ###### */
+
+.table {
+  color: $gray-800;
+
+  thead th,
+  thead td {
+    color: $gray-600;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    border-bottom-width: 1px;
+    border-top-width: 0;
+    padding: 0 15px 5px;
+  }
+
+  tbody tr {
+    background-color: rgba(#fff, .5);
+    th { font-weight: 500; }
+  }
+
+  th,
+  td {
+    padding: 9px 15px;
+    line-height: 1.462;
+  }
+}
+
+.table-striped {
+  tbody tr:nth-of-type(2n+1) { background-color: rgba($gray-500, .1); }
+}
+
+.table-bordered {
+  thead th,
+  thead td {
+    border-top-width: 1px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    background-color: rgba(#fff, .5);
+  }
+}

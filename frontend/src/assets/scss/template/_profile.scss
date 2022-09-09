@@ -1,0 +1,277 @@
+/* ###### 7.8 Profile  ###### */
+
+
+.az-content-profile {
+  flex: 1;
+
+  .container,
+  .container-fluid {
+    @include media-breakpoint-down(md) {
+      display: block;
+    }
+  }
+}
+
+.az-content-left-profile {
+  padding-left: 0;
+  padding-right: 0;
+  display: block;
+  border-bottom: 1px solid $gray-300;
+  padding-bottom: 25px;
+  width: auto;
+
+  @include media-breakpoint-up(lg) {
+    width: 270px;
+    padding-right: 20px;
+    padding-bottom: 0;
+    border-right: 1px solid $gray-300;
+    border-bottom: 0;
+  }
+
+  @include media-breakpoint-up(xl) { padding-right: 25px; }
+}
+
+.az-profile-overview {
+  .az-img-user {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+    &::after { display: none; }
+  }
+
+  .btn-icon-list .btn { @include border-radius(100%); }
+}
+
+.az-profile-name {
+  color: $gray-900;
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.az-profile-name-text {
+  color: $gray-600;
+  font-size: 13px;
+  margin-bottom: 0;
+}
+
+.az-profile-bio {
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.az-profile-social-list {
+  .media {
+    align-items: center;
+
+    + .media { margin-top: 20px; }
+  }
+
+  .media-icon {
+    font-size: 34px;
+    width: 30px;
+    line-height: 0;
+  }
+
+  .media-body {
+    margin-left: 20px;
+
+    span {
+      display: block;
+      font-size: 12px;
+    }
+
+    a { font-size: 13px; }
+  }
+}
+
+.az-content-body-profile {
+  .nav {
+    flex-direction: column;
+    padding: 20px 20px 20px 0;
+    border-bottom: 1px solid $gray-300;
+
+    @include media-breakpoint-up(sm) {
+      flex-direction: row;
+      align-items: center;
+      padding-bottom: 10px;
+    }
+
+    @include media-breakpoint-up(lg) { padding-left: 20px; }
+
+    @include media-breakpoint-up(xl) { padding-left: 25px; }
+  }
+
+  .az-nav-line {
+    .nav-link {
+      text-transform: uppercase;
+      font-size: 13px;
+      font-weight: 500;
+      color: $gray-800;
+
+      &.active {
+        font-weight: 700;
+        color: $az-color-primary;
+
+        &::before {
+          background-color: $az-color-primary;
+
+          @include media-breakpoint-only(sm) {
+            width: auto;
+            top: auto;
+            left: 0;
+            right: 0;
+            height: 2px;
+          }
+
+          @include media-breakpoint-up(sm) { bottom: -11px; }
+        }
+      }
+
+      + .nav-link {
+        @include media-breakpoint-only(sm) {
+          margin-top: 0;
+          margin-left: 20px;
+        }
+      }
+    }
+  }
+}
+
+.az-profile-body {
+  padding: 15px 0 0;
+  @include media-breakpoint-up(sm) { padding-top: 20px; }
+  @include media-breakpoint-up(lg) { padding: 25px 0 0 20px; }
+  @include media-breakpoint-up(xl) { padding-left: 25px; }
+}
+
+.az-profile-view-chart {
+  position: relative;
+  width: calc(100% - 10px);
+  height: 200px;
+
+  @media (min-width: 375px) { width: 100%; }
+  @include media-breakpoint-up(sm) {
+    height: 250px;
+  }
+}
+
+.az-profile-view-info {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  h6 {
+    font-size: 32px;
+    font-weight: 500;
+    color: $gray-900;
+    margin-bottom: 0;
+  }
+
+  span {
+    font-size: 12px;
+    color: $pink;
+    margin-left: 5px;
+  }
+
+  p {
+    font-size: 13px;
+    margin-bottom: 0;
+  }
+}
+
+.az-traffic-detail-item {
+  > div:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 7px;
+
+    > span:first-child { color: $gray-600; }
+    > span:last-child {
+      font-size: 11px;
+      font-weight: 700;
+      color: $gray-900;
+
+      span {
+        color: $gray-600;
+        font-weight: 400;
+      }
+    }
+  }
+
+  + .az-traffic-detail-item { margin-top: 25px; }
+
+  .progress { height: 8px; }
+}
+
+.az-profile-work-list {
+  .media + .media { margin-top: 25px; }
+
+  .media-logo {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    color: #fff;
+    font-size: 21px;
+    position: relative;
+    top: 2px;
+    @include border-radius(100%);
+  }
+
+  .media-body {
+    margin-left: 20px;
+
+    h6 {
+      color: $gray-900;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    span {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    p {
+      margin-bottom: 0;
+      font-size: 12px;
+      color: $gray-600;
+    }
+  }
+}
+
+.az-profile-contact-list {
+  .media {
+    align-items: center;
+    + .media { margin-top: 25px; }
+  }
+
+  .media-icon {
+    line-height: 0;
+    font-size: 36px;
+    width: 35px;
+    text-align: center;
+  }
+
+  .media-body {
+    margin-left: 25px;
+
+    span {
+      font-size: 12px;
+      color: $gray-600;
+      display: block;
+      line-height: 1.3;
+    }
+
+    div {
+      font-weight: 500;
+      color: $gray-900;
+    }
+  }
+
+}

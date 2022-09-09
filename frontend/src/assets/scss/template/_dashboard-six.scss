@@ -1,0 +1,370 @@
+/* ###### 8.6 Dashboard Six  ###### */
+
+.az-light {
+  .az-iconbar { background-color: $gray-200; }
+  .az-iconbar-aside {
+    background-color: $gray-200;
+    &.show + .az-content {
+      @include media-breakpoint-only(lg) {
+        box-shadow: none;
+      }
+    }
+  }
+
+  .az-iconbar-body {
+    .nav { border-left-color: $gray-300; }
+    .nav-item + .nav-item { border-top-color: darken($gray-300, 5%); }
+    .nav-sub { border-top-color: darken($gray-300, 5%); }
+    .nav-sub-item + .nav-sub-item { border-top-color: darken($gray-300, 5%); }
+  }
+}
+
+.az-content-dashboard-six {
+  border-left-color: $gray-300;
+  box-shadow: 0 0 7px rgba($gray-900, .08);
+  position: relative;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: $gray-100;
+
+  @include media-breakpoint-up(lg) {
+    border-left: 1px solid $gray-300;
+    margin-left: $az-height-header;
+    z-index: 550;
+  }
+}
+
+.az-header-dashboard-six {
+  background-color: #fff;
+  border-bottom: 1px solid $gray-300;
+  box-shadow: 0 0 10px rgba($gray-900, 0.06);
+
+  .az-header-center {
+    @include media-breakpoint-only(lg) { margin-left: 5px; }
+    @include media-breakpoint-up(xl) { margin-left: 0; }
+  }
+
+  .az-header-menu-icon {
+    margin-right: 0;
+    @include media-breakpoint-up(lg) { display: none; }
+  }
+}
+
+.az-content-body-dashboard-six {
+  padding: 25px;
+
+  .az-content-title { letter-spacing: -.8px; }
+
+  .card {
+    border-color: $gray-300;
+    box-shadow: 0 0 10px rgba($gray-900, 0.06);
+  }
+
+  .card-header {
+    background-color: transparent;
+    padding: 20px 20px 0;
+  }
+
+  .card-title {
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+}
+
+.card-dashboard-donut {
+  .card-body {
+    padding: 25px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  //donut-chart($name, $perc, $size, $width, $base, $center, $color, $textColor: $color, $textSize: 40px)
+
+  // $name = class name
+  // $perc = donut percentage value
+  // $size = size of donut
+  // $width = width of chart
+  // $base = thickness of donut
+  // $center = background color of the percentage
+  // $color = background color of donut hole
+  // $textColor = color of text in center and the percentage
+  // $textSize = size of text
+
+  @include donut-chart('.chart1', 75, 140px, 10px, $gray-300, #fff, $purple);
+  @include donut-chart('.chart2', 68, 140px, 10px, $gray-300, #fff, $blue);
+
+  // addon styles of chart
+  .az-donut-chart.chart1,
+  .az-donut-chart.chart2 {
+    .chart-center span {
+      font-weight: 600;
+      font-family: 'Archivo', $font-family-base;
+      font-size: 32px;
+    }
+  }
+}
+
+.card-dashboard-balance {
+  position: relative;
+  overflow: hidden;
+
+  @include media-breakpoint-up(sm) {
+    min-height: 260px;
+    height: 100%;
+  }
+
+  .card-body {
+    padding: 20px;
+    position: relative;
+    z-index: 5;
+
+    @include media-breakpoint-up(sm) {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  }
+
+  .fab {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 48px;
+    color: $blue;
+    z-index: 5;
+    background-color: #fff;
+  }
+
+  .az-content-label {
+    color: $gray-600;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+
+    @include media-breakpoint-up(sm) { font-size: 11px; }
+  }
+
+  .balance-amount {
+    color: $gray-900;
+    font-family: 'Archivo', $font-family-base;
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+
+    @include media-breakpoint-up(sm) { font-size: 36px; }
+
+    span {
+      color: $gray-500;
+      font-weight: 400;
+      letter-spacing: normal;
+    }
+  }
+
+  .account-number {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'Archivo', $font-family-base;
+    color: $gray-900;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+
+    @include media-breakpoint-up(sm) { font-size: 28px; }
+
+    span {
+      display: flex;
+      align-items: center;
+      line-height: 1;
+
+      + span {
+        margin-left: 20px;
+        @include media-breakpoint-up(sm) { margin-left: 30px; }
+        @include media-breakpoint-up(xl) { margin-left: 50px; }
+      }
+
+      i {
+        width: 5px;
+        height: 5px;
+        background-color: $gray-900;
+        @include border-radius(100%);
+
+        @include media-breakpoint-up(sm) {
+          width: 10px;
+          height: 10px;
+        }
+
+        + i { margin-left: 5px; }
+      }
+    }
+  }
+
+  .account-name {
+    color: $gray-900;
+    font-weight: 400;
+    margin-bottom: 0;
+  }
+
+  .chart-wrapper {
+    position: absolute;
+    top: 20px;
+    bottom: 10px;
+    left: -10px;
+    right: -10px;
+    opacity: .3;
+    z-index: 4;
+  }
+
+  .flot-chart {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.card-dashboard-ratio {
+  @include media-breakpoint-up(xl) { height: 350px; }
+
+  .card-body {
+    display: flex;
+    align-items: center;
+
+    + .card-body { padding-top: 0px; }
+
+    > div:first-child {
+      width: 140px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      @include media-breakpoint-up(sm) { display: flex; }
+    }
+
+    > div:last-child {
+      flex: 1;
+      @include media-breakpoint-up(sm) { margin-left: 30px; }
+    }
+
+    h5 {
+      font-size: 28px;
+      font-weight: 600;
+      font-family: 'Archivo', $font-family-base;
+      color: $gray-900;
+      letter-spacing: -1px;
+      margin-bottom: 2px;
+    }
+  }
+
+  .card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $gray-300;
+    font-size: 140px;
+
+    .typcn {
+      line-height: 1;
+      &::before { width: auto; }
+    }
+  }
+}
+
+.card-dashboard-finance {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  @include media-breakpoint-up(lg) { min-height: 172px; }
+  @include media-breakpoint-up(xl) { min-height: 165px; }
+
+  .card-title {
+    margin-bottom: 20px;
+    @include media-breakpoint-up(lg) { margin-bottom: auto; }
+  }
+
+  h2 {
+    line-height: 1;
+    color: $gray-900;
+    font-weight: 600;
+    font-size: 30px;
+    font-family: 'Archivo', $font-family-base;
+    letter-spacing: -1px;
+    margin-top: 10px;
+    margin-bottom: 2px;
+
+    span {
+      letter-spacing: normal;
+      color: $gray-500;
+      font-weight: 400;
+      margin-right: 5px;
+    }
+  }
+}
+
+.card-dashboard-table-six {
+  .card-title {
+    padding: 15px 20px;
+    margin-bottom: 0;
+    border-bottom: 1px solid $gray-300;
+  }
+
+  .table-responsive {
+    width: calc(100vw - 42px);
+    @include media-breakpoint-up(lg) { width: 100%; }
+  }
+
+  .table {
+    margin-bottom: 0;
+
+    thead {
+      tr th { white-space: nowrap; }
+
+      tr:first-child {
+        background-color: $gray-200;
+
+        th {
+          padding: 10px 12px;
+          line-height: 1;
+
+          &:last-child { border-left: 1px solid $gray-300; }
+        }
+      }
+
+      tr:last-child {
+        th {
+          width: 13%;
+          padding: 10px 12px;
+          line-height: 1;
+          text-align: right;
+
+          &:first-child { width: 22%; }
+          &:nth-child(2) { border-left: 1px solid $gray-300; }
+          &:nth-child(6) { border-left: 1px solid $gray-300; }
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        td {
+          text-align: right;
+          white-space: nowrap;
+        }
+
+        td:first-child { text-align: left; }
+        td:nth-child(2) { border-left: 1px solid $gray-300; }
+        td:nth-child(6) { border-left: 1px solid $gray-300; }
+
+        &:last-child td {
+          font-weight: 500;
+          color: $gray-900;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,34 @@
+/* ###### 6.2 Footer  ###### */
+
+.az-footer {
+  background-color: #fff;
+  border-top: 1px solid $gray-300;
+  margin-top: auto;
+  display: none;
+
+  @include media-breakpoint-up(lg) { display: block; }
+
+  .container,
+  .container-fluid {
+    font-size: 12px;
+    padding: 10px 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: $gray-600;
+  }
+
+  .container {
+    @include media-breakpoint-up(lg) { padding: 10px 0 0; }
+  }
+
+  .container-fluid {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.az-footer-app {
+  .container,
+  .container-fluid { border-top-width: 0; }
+}

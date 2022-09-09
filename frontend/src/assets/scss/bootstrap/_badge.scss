@@ -1,0 +1,15 @@
+/* ###### 3.3 Badge ###### */
+
+.badge {
+  font-size: 10px;
+  font-weight: 500;
+  font-family: $font-family-sans-serif;
+  padding: 3px 5px 4px;
+}
+
+.badge-light { background-color: $gray-300; }
+
+.badge-pill {
+  padding-left: 8px;
+  padding-right: 8px;
+}

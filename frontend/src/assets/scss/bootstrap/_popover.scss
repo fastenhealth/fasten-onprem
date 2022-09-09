@@ -1,0 +1,52 @@
+
+/* ###### 3.15 Popover ###### */
+
+.popover {
+  font-size: 12px;
+  padding: 0;
+  @include border-radius(0);
+}
+
+.popover-header {
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
+  color: $gray-800;
+  letter-spacing: 0.5px;
+  padding: 12px 15px;
+  background-color: #fff;
+  border-color: $az-border-color;
+  @include border-top-radius(0);
+
+  &::before { display: none !important; }
+}
+
+.popover-body {
+  padding: 15px;
+
+  p:last-child { margin-bottom: 0;}
+}
+
+// colored head
+.popover-head-primary { @include popover-head-variant($az-color-primary); }
+.popover-head-secondary { @include popover-head-variant($az-color-secondary); }
+
+.popover-head-primary,
+.popover-head-secondary {
+  &,.popover-header { border: 0; }
+
+  .popover-body {
+    border: 1px solid $az-border-color;
+    border-top-width: 0;
+    @include border-bottom-radius(2px);
+  }
+
+  &.bs-popover-bottom,
+  &.bs-popover-auto[x-placement^="bottom"] {
+    .arrow::before { display: none; }
+  }
+}
+
+// colored body popover
+.popover-primary { @include popover-full-color($az-color-primary); }
+.popover-secondary { @include popover-full-color($az-color-secondary); }

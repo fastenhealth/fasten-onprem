@@ -1,0 +1,125 @@
+/* ###### 9.4 Margin   ###### */
+
+@mixin margin-variant($num, $viewport:"") {
+
+  @if $viewport == "" {
+    $viewport: "-";
+  } @else {
+    $viewport: "-" + $viewport + "-";
+  }
+
+  //ie. .mg-sm-0
+  //ie. .mg-sm-0-f
+  .mg#{$viewport}#{$num} { margin: #{$num}px; }
+  .mg#{$viewport}#{$num}-f { margin: #{$num}px !important; }
+
+  //ie. .mg-sm-y-0
+  .mg#{$viewport}y-#{$num} {
+    margin-top: #{$num}px;
+    margin-bottom: #{$num}px;
+  }
+
+  //ie. .mg-sm-y-0-f
+  .mg#{$viewport}y-#{$num}-f {
+    margin-top: #{$num}px !important;
+    margin-bottom: #{$num}px !important;
+  }
+
+  //ie. .mg-sm-x-0
+  .mg#{$viewport}x-#{$num} {
+    margin-left: #{$num}px;
+    margin-right: #{$num}px;
+  }
+
+  //ie. .mg-sm-x-0-f
+  .mg#{$viewport}x-#{$num}-f {
+    margin-left: #{$num}px !important;
+    margin-right: #{$num}px !important;
+  }
+
+  //ie. .mg-sm-t-0
+  .mg#{$viewport}t-#{$num} { margin-top: #{$num}px; }
+  .mg#{$viewport}r-#{$num} { margin-right: #{$num}px; }
+  .mg#{$viewport}b-#{$num} { margin-bottom: #{$num}px; }
+  .mg#{$viewport}l-#{$num} { margin-left: #{$num}px; }
+
+  //ie. .mg-sm-t-0-f
+  .mg#{$viewport}t-#{$num}-f { margin-top: #{$num}px !important; }
+  .mg#{$viewport}r-#{$num}-f { margin-right: #{$num}px !important; }
+  .mg#{$viewport}b-#{$num}-f { margin-bottom: #{$num}px !important; }
+  .mg#{$viewport}l-#{$num}-f { margin-left: #{$num}px !important; }
+}
+
+@mixin do-margin-variant($viewport) {
+  $num: 0;
+  @while $num < 10 {
+    @include margin-variant($num, $viewport);
+    $num: $num + 1;
+  }
+
+  //margin: 10x to 100px with step of 5px
+  $num: 10;
+  @while $num <= 100 {
+    @include margin-variant($num, $viewport);
+    $num: $num + 5;
+  }
+}
+
+
+//margin: 0px to 9px
+$num: 0;
+@while $num < 10 {
+  @include margin-variant($num);
+  $num: $num + 1;
+}
+
+//margin: 10x to 120px with step of 5px
+$num: 10;
+@while $num <= 120 {
+  @include margin-variant($num);
+  $num: $num + 5;
+}
+
+.mg-t-auto { margin-top: auto; }
+.mg-r-auto { margin-right: auto; }
+.mg-b-auto { margin-bottom: auto; }
+.mg-l-auto { margin-left: auto; }
+.mg-x-auto { margin: auto; }
+
+@mixin margin-breakpoint($viewport) {
+
+  .mg-#{$viewport}-t-auto { margin-top: auto; }
+  .mg-#{$viewport}-r-auto { margin-right: auto; }
+  .mg-#{$viewport}-b-auto { margin-bottom: auto; }
+  .mg-#{$viewport}-l-auto { margin-left: auto; }
+  .mg-#{$viewport}-auto { margin: auto; }
+  .mg-#{$viewport}-x-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (min-width: 480px) {
+  @include do-margin-variant("xs");
+  @include margin-breakpoint("xs");
+}
+
+@include media-breakpoint-up(sm) {
+  @include do-margin-variant("sm");
+  @include margin-breakpoint("sm");
+}
+
+@include media-breakpoint-up(md) {
+  @include do-margin-variant("md");
+  @include margin-breakpoint("md");
+}
+
+@include media-breakpoint-up(lg) {
+  @include do-margin-variant("lg");
+  @include margin-breakpoint("lg");
+}
+
+@include media-breakpoint-up(xl) {
+  @include do-margin-variant("xl");
+  @include margin-breakpoint("xl");
+}

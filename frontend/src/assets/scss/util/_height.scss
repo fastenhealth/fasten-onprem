@@ -1,0 +1,105 @@
+/* ###### 9.3 Height   ###### */
+
+//height mixin
+@mixin make-height($num, $viewport: "") {
+  $p: $num + "%";
+
+  @if $viewport == "" {
+    $viewport: "-";
+  } @else {
+    $viewport: "-" + $viewport + "-";
+  }
+
+  .ht#{$viewport}#{$num} { height: #{$num}px; }
+  .ht#{$viewport}#{$num}p { height: #{$p}; }
+  .mx-ht#{$viewport}#{$num}p { max-height: #{$p}; }
+  .mn-ht#{$viewport}#{$num}p { min-height: #{$p}; }
+
+  .ht#{$viewport}#{$num}-f { height: #{$num}px !important; }
+  .ht#{$viewport}#{$num}p-f { height: #{$p} !important; }
+}
+
+@mixin do-make-height($viewport) {
+  $num: 5;
+  @while $num <= 100 {
+    @include make-height($num,$viewport);
+    $num: $num + 5;
+  }
+}
+
+@mixin do-make-height-lg($viewport) {
+  $num: 150;
+  @while $num <= 850 {
+    @include make-height($num,$viewport);
+    $num: $num + 50;
+  }
+}
+
+$num: 5;
+@while $num <= 100 {
+  @include make-height($num);
+  $num: $num + 5;
+}
+
+//height: 100px to 800px with step of 50px
+$num: 150;
+@while $num < 850 {
+  .ht-#{$num} { height: #{$num}px; }
+  $num: $num + 50;
+}
+
+// viewport height
+.ht-100v { height: 100vh; }
+
+//custom heights
+.ht-1    { height: 1px;  }
+.ht-2    { height: 2px;  }
+.ht-3    { height: 3px;  }
+.ht-4    { height: 4px;  }
+.ht-6    { height: 6px;  }
+.ht-7    { height: 7px;  }
+.ht-8    { height: 8px;  }
+.ht-9    { height: 9px;  }
+
+.ht-auto { height: auto; }
+.ht-16   { height: 16px; }
+.ht-32   { height: 32px; }
+.ht-36   { height: 36px; }
+.ht-48   { height: 48px; }
+.ht-64   { height: 64px; }
+.ht-72   { height: 72px; }
+.ht-115  { height: 115px; }
+.ht-120  { height: 120px; }
+.ht-160  { height: 160px; }
+
+
+// media queries
+@media (min-width: 480px) {
+  @include do-make-height("xs");
+  @include do-make-height-lg("xs");
+  .ht-xs-100v { height: 100vh; }
+}
+
+@include media-breakpoint-up(sm) {
+  @include do-make-height("sm");
+  @include do-make-height-lg("sm");
+  .ht-sm-100v { height: 100vh; }
+}
+
+@include media-breakpoint-up(md) {
+  @include do-make-height("md");
+  @include do-make-height-lg("md");
+  .ht-md-100v { height: 100vh; }
+}
+
+@include media-breakpoint-up(lg) {
+  @include do-make-height("lg");
+  @include do-make-height-lg("lg");
+  .ht-lg-100v { height: 100vh; }
+}
+
+@include media-breakpoint-up(xl) {
+  @include do-make-height("xl");
+  @include do-make-height-lg("xl");
+  .ht-xl-100v { height: 100vh; }
+}

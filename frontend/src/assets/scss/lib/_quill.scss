@@ -1,0 +1,208 @@
+/* ###### 5.8 Quill ###### */
+
+.ql-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.ql-wrapper-modal {
+  .ql-snow {
+    &.ql-toolbar {
+      border-width: 0;
+      border-bottom-width: 1px;
+
+      @include media-breakpoint-up(sm) { padding: 15px 20px; }
+    }
+
+    &.ql-container { border-width: 0; }
+
+    .ql-editor { padding: 20px; }
+  }
+}
+
+.ql-bubble {
+  &.ql-container {
+    border: 2px solid $gray-200;
+
+    &:not(.ql-disabled) a::before {
+      background-color: $gray-900;
+      border-radius: 2px;
+    }
+  }
+
+  .ql-tooltip {
+    background-color: $gray-900;
+    border-radius: 2px;
+
+    &.ql-flip .ql-tooltip-arrow { border-top-color: $gray-900; }
+    &:not(.ql-flip) .ql-tooltip-arrow { border-bottom-color: $gray-900; }
+  }
+
+  .ql-toolbar {
+    padding: 0 8px 8px;
+
+    button {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: darken($gray-500, 5%);
+      outline: none;
+
+      i {
+        font-size: 24px;
+        line-height: 0;
+        display: inline-block;
+
+        &.la-bold,
+        &.la-underline { width: 21px; }
+      }
+
+      .ql-fill { fill: darken($gray-500, 5%); }
+      .ql-stroke { stroke: darken($gray-500, 5%); }
+
+      &.ql-active {
+        color: #fff;
+        background-color: rgba(#fff, .08);
+      }
+    }
+
+    .ql-formats {
+      margin: 8px 8px 0 0;
+      &:first-child { margin-left: 0; }
+
+      @include media-breakpoint-up(sm) {
+        margin: 8px 0 0;
+        &:first-child { margin-left: 0; }
+      }
+    }
+  }
+}
+
+
+.ql-snow {
+  &.ql-container {
+    border-color: $gray-200;
+    border-width: 2px;
+  }
+
+  &.ql-toolbar {
+    border-width: 2px;
+    border-color: $gray-200;
+    border-bottom-width: 1px;
+    padding: 5px 10px 10px;
+
+    @include media-breakpoint-up(sm) { padding: 15px; }
+
+    .ql-picker-label {
+      border-color: $gray-400;
+
+      &.ql-active {
+        background-color: $gray-200;
+        border-color: transparent;
+        color: $gray-900;
+        font-weight: 500;
+
+        .ql-stroke { stroke: $body-color; }
+      }
+    }
+
+    button {
+      border: 1px solid transparent;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $body-color;
+      outline: none;
+
+      svg {
+        width: 20px;
+        float: none;
+      }
+
+      i {
+        font-size: 24px;
+        line-height: 0;
+        display: inline-block;
+
+        &.la-bold,
+        &.la-underline { width: 21px; }
+      }
+
+      .ql-stroke { stroke-width: 2px; }
+
+      @include hover-focus() {
+        border-color: $gray-400;
+        color: lighten($body-color, 15%);
+
+        .ql-stroke { stroke: $gray-600; }
+      }
+
+      &.ql-active {
+        background-color: $gray-200;
+        color: $gray-800;
+        border-color: transparent;
+
+        .ql-fill { fill: $gray-800; }
+        .ql-stroke { stroke: $gray-800; }
+      }
+    }
+
+    .ql-formats {
+      margin-top: 5px;
+      margin-right: 5px;
+    }
+  }
+
+  .ql-formats {
+    button + button { margin: 0 0 0 2px; }
+  }
+
+  .ql-picker {
+    display: block;
+    border-width: 0;
+    height: 32px;
+    color: $gray-700;
+
+    &:not(.ql-color-picker):not(.ql-icon-picker) svg { right: 3px; }
+
+    @include hover-focus() {
+      .ql-picker-label {
+        color: $gray-900;
+        .ql-stroke { stroke: $body-color; }
+      }
+    }
+
+    &.ql-header { width: 120px; }
+  }
+
+  .ql-picker-label {
+    display: block;
+    padding-left: 10px;
+    font-size: $font-size-sm;
+    font-family: $font-family-base;
+    border: 1px solid $gray-300;
+    background-color: #fff;
+    outline: none;
+
+    &::before {
+      line-height: 2.25;
+      font-weight: 400;
+    }
+  }
+
+  .ql-stroke {
+    stroke: $body-color;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+    stroke-width: 1;
+  }
+
+  .ql-editor {
+    padding: 20px;
+    color: $gray-800;
+  }
+}

@@ -1,0 +1,31 @@
+/* ###### 5.10 Perfect Scrollbar ###### */
+
+.ps {
+  overflow: hidden;
+
+  > .ps__rail-y {
+    width: 5px;
+    background-color: rgba($gray-900, .04);
+    z-index: 10;
+    position: absolute;
+    left: auto !important;
+    right: 0;
+    opacity: 0;
+    @include transition(opacity .2s);
+
+    > .ps__thumb-y {
+      position: absolute;
+      @include border-radius(0);
+      width: 2px;
+      left: 2px;
+      background-color: $gray-500;
+    }
+  }
+
+  &.ps--active-y {
+    &:hover,
+    &:focus {
+      > .ps__rail-y { opacity: 1; }
+    }
+  }
+}

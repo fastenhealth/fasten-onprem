@@ -1,0 +1,102 @@
+
+// Ion Rangeslider Skins
+@mixin irs-color-variant($color) {
+  .irs-bar,
+  .irs-bar-edge,
+  .irs-slider::before { background-color: $color; }
+
+  .irs-from,
+  .irs-to,
+  .irs-single {
+    background-color: $color;
+    &::after { border-top-color: $color; }
+  }
+}
+
+@mixin irs-modern-slider-variant($color) {
+  .irs-slider {
+    border-color: $color;
+    &::before { border-color: $color; }
+  }
+}
+
+@mixin irs-outline-variant($color) {
+  .irs-line,
+  .irs-slider {
+    border-color: $color;
+    &:hover,
+    &:focus {
+      &::before { background-color: darken($color, 5%); }
+    }
+  }
+}
+
+
+// $name = class name
+// $perc = donut percentage value
+// $size = size of donut
+// $width = width of chart
+// $base = thickness of donut
+// $center = background color of the percentage
+// $color = background color of donut hole
+// $textColor = color of text in center and the percentage
+// $textSize = size of text
+@mixin donut-chart($name, $perc, $size, $width, $base, $center, $color, $textColor: $color, $textSize: 40px) {
+
+  $color2: $color;
+  $base2: $base;
+	$deg: ($perc/100*360)+deg;
+	$deg1: 90deg;
+	$deg2: $deg;
+
+	// If percentage is less than 50%
+	@if $perc < 50 {
+		$base: $color;
+    $color: $base2;
+    $color2: $base2;
+    $deg1: ($perc/100*360+90)+deg;
+		$deg2: 0deg;
+	}
+
+  .az-donut-chart {
+    &#{$name} {
+      width: $size;
+      height: $size;
+      background: $base;
+
+      .slice {
+        &.one {
+          clip: rect(0 $size $size/2 0);
+          -webkit-transform: rotate($deg1);
+          transform: rotate($deg1);
+          background: $color;
+        }
+
+        &.two {
+          clip: rect(0 $size/2 $size 0);
+          -webkit-transform: rotate($deg2);
+          transform: rotate($deg2);
+          background: $color2;
+        }
+      }
+
+      .chart-center {
+        top: $width;
+        left: $width;
+        width: $size - ($width * 2);
+        height: $size - ($width * 2);
+        background: $center;
+
+        span {
+          font-size: $textSize;
+          line-height: $size - ($width * 2);
+          color: $textColor;
+
+          &:after {
+          content: '#{$perc}%';
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,452 @@
+/* ###### 7.6 Mail  ###### */
+
+
+.az-content-mail {
+  .container,
+  .container-fluid {
+    padding: 20px 0 0;
+    @include media-breakpoint-up(lg) { padding: 0; }
+  }
+}
+
+.az-content-left-mail {
+  @include media-breakpoint-up(sm) { width: 300px; }
+  @include media-breakpoint-up(lg) {
+    width: 230px;
+    display: block;
+    padding: 0;
+    border-right: 1px solid $gray-300;
+  }
+
+  .btn-compose {
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 11px;
+    padding: 0 20px;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+
+    @include media-breakpoint-up(lg) { margin-right: 25px; }
+  }
+}
+
+.az-mail-menu {
+  position: relative;
+  padding-right: 0;
+
+  @include media-breakpoint-up(lg) { padding-right: 25px; }
+
+  .nav-link {
+    height: 38px;
+
+    @include media-breakpoint-up(lg) { font-size: 13px; }
+
+    i { font-size: 22px; }
+  }
+}
+
+.az-mail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 0 20px;
+
+  @include media-breakpoint-up(lg) {
+    padding: 0 0 0 25px;
+    margin-bottom: 25px;
+  }
+
+  > div:first-child {
+    p {
+      font-size: 13px;
+      margin-bottom: 0;
+    }
+  }
+
+  > div:last-child {
+    display: none;
+    @include media-breakpoint-up(md) {
+      display: flex;
+      align-items: center;
+    }
+
+    > span {
+      font-size: 12px;
+      margin-right: 10px;
+    }
+  }
+
+  .btn-group .btn {
+    font-size: 21px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    line-height: 0;
+    padding: 0;
+    position: relative;
+    z-index: 1;
+    border-color: $gray-300;
+    background-color: #fff;
+
+    @include hover-focus() {
+      color: $gray-900;
+      background-color: $gray-100;
+    }
+
+    &.disabled {
+      background-color: #fff;
+      color: $gray-300;
+      border-color: $gray-300;
+      z-index: 0;
+
+      &:focus,
+      &:active { box-shadow: none; }
+    }
+
+    + .btn { margin-left: -2px; }
+  }
+}
+
+.az-mail-options {
+  padding: 5px 10px 5px 20px;
+  border: 1px solid $gray-300;
+  border-left-width: 0;
+  border-right-width: 0;
+  display: none;
+  align-items: center;
+  justify-content: flex-end;
+
+  @include media-breakpoint-up(lg) {
+    padding-left: 25px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .btn {
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: transparent;
+
+    @include hover-focus() {
+      background-color: $gray-200;
+    }
+
+    i {
+      line-height: 0;
+      &.typcn { line-height: .75; }
+    }
+
+    &.disabled {
+      background-color: transparent;
+      color: $gray-600;
+    }
+  }
+}
+
+.az-mail-list {
+  border-top: 1px solid $gray-200;
+  @include media-breakpoint-up(lg) { border-top-width: 0; }
+}
+
+.az-mail-item {
+  padding: 10px 15px;
+  border-top: 1px solid $gray-200;
+  border-bottom: 1px solid $gray-200;
+  background-color: #fcfcfc;
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100vw;
+
+  @include media-breakpoint-up(sm) { padding: 10px 20px; }
+
+  @include media-breakpoint-up(lg) {
+    width: auto;
+    padding: 10px 25px;
+  }
+
+  + .az-mail-item { margin-top: -1px; }
+
+  &:first-child { border-top-width: 0; }
+
+  .az-img-user,
+  .az-avatar {
+    flex-shrink: 0;
+    margin-right: 15px;
+
+    &::after { display: none; }
+  }
+
+  @include hover-focus() {
+    background-color: $gray-100;
+  }
+
+  &.unread { background-color: #fff; }
+  &.selected { background-color: lighten($blue, 48%); }
+}
+
+.az-mail-checkbox {
+  margin-right: 15px;
+  display: none;
+  @include media-breakpoint-up(lg) { display: block; }
+}
+
+.az-mail-star {
+  margin-right: 15px;
+  font-size: 18px;
+  line-height: .9;
+  color: $gray-300;
+  position: absolute;
+  bottom: 10px;
+  right: 0;
+
+  @include media-breakpoint-up(lg) {
+    position: relative;
+    bottom: auto;
+    top: 2px;
+  }
+
+  &.active { color: $yellow; }
+}
+
+
+.az-mail-body {
+  width: calc(100% - 80px);
+  cursor: pointer;
+
+  @include media-breakpoint-up(lg) {
+    max-width: 460px;
+    margin-right: 15px;
+    flex: 1;
+  }
+
+  @include media-breakpoint-up(xl) { max-width: 640px; }
+}
+
+.az-mail-from {
+  font-size: 13px;
+}
+
+.az-mail-subject {
+
+  @include media-breakpoint-up(sm) {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  strong {
+    font-weight: 700;
+    font-size: 14px;
+    color: $gray-900;
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+
+    @include media-breakpoint-up(sm) {
+      display: inline;
+      width: auto;
+      white-space: normal;
+      text-overflow: inherit;
+      overflow: visible;
+    }
+  }
+
+  span {
+    font-size: 13px;
+    color: $gray-600;
+    display: none;
+
+    @include media-breakpoint-up(sm) { display: inline; }
+  }
+}
+
+.az-mail-attachment {
+  margin-right: 15px;
+  font-size: 21px;
+  line-height: .9;
+  display: none;
+  @include media-breakpoint-up(lg) { display: block; }
+}
+
+.az-mail-date {
+  font-size: 11px;
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  color: $gray-500;
+  margin-left: auto;
+
+  @include media-breakpoint-up(lg) {
+    position: static;
+    font-size: 13px;
+  }
+}
+
+.az-mail-compose {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba($gray-900, .5);
+  z-index: 1000;
+  display: none;
+
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .container {
+    @include media-breakpoint-up(lg) { padding: 0; }
+  }
+}
+
+.az-mail-compose-box {
+  box-shadow: 0 0 30px rgba($gray-900, .2);
+  @include border-radius();
+}
+
+.az-mail-compose-header {
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: $gray-900;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  @include border-top-radius($border-radius);
+
+  @include media-breakpoint-up(lg) { padding: 20px 25px; }
+
+  .nav-link {
+    color: rgba(#fff, .3);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    @include transition($transition-base);
+
+    &:hover,
+    &:focus { color: #fff; }
+
+    + .nav-link { margin-left: 15px; }
+
+    &:nth-child(2) {
+      display: none;
+      @include media-breakpoint-up(md) { display: block; }
+    }
+  }
+}
+
+.az-mail-compose-body {
+  background-color: #fff;
+  padding: 20px;
+  @include border-bottom-radius($border-radius);
+
+  @include media-breakpoint-up(lg) { padding: 25px; }
+
+  .form-group {
+    display: flex;
+    align-items: center;
+
+    > div {
+      flex: 1;
+      margin-left: 10px;
+    }
+
+    .form-label {
+      margin: 0;
+      color: $gray-900;
+    }
+
+    .form-control {
+      border-width: 0;
+      border-radius: 0;
+      padding: 0;
+
+      &:focus { box-shadow: none !important; }
+    }
+
+    + .form-group {
+      border-top: 1px dotted $gray-300;
+      padding-top: 1rem;
+    }
+
+    &:last-child {
+      display: block;
+
+      @include media-breakpoint-up(sm) {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .btn {
+        width: 100%;
+        margin-top: 15px;
+        padding-left: 20px;
+        padding-right: 20px;
+
+        @include media-breakpoint-up(sm) {
+          width: auto;
+          margin-top: 0;
+        }
+      }
+    }
+
+    .nav-link {
+      padding: 0;
+      font-size: 18px;
+      line-height: 0;
+      color: $body-color;
+      position: relative;
+      @include transition($transition-base);
+
+      &:hover,
+      &:focus { color: $gray-900; }
+
+      + .nav-link {
+        margin-left: 15px;
+      }
+    }
+  }
+}
+
+.az-mail-compose-compress {
+  top: auto;
+  left: auto;
+  bottom: 0;
+  right: 30px;
+  width: 560px;
+  height: auto;
+  background-color: transparent;
+
+  .container {
+    max-width: none;
+    padding: 0;
+  }
+}
+
+.az-mail-compose-minimize {
+  @extend .az-mail-compose-compress;
+
+  .az-mail-compose-body { display: none; }
+}

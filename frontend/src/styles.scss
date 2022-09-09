@@ -1,1 +1,208 @@
 /* You can add global styles to this file, and also import other style files */
+/*
+* Azia v1.0.0 (https://www.bootstrapdash.com/demo/azia/v1.0/)
+* Copyright 2019 BootstrapDash
+* Licensed under BootstrapDash License
+*
+*
+* ------ Table Of Contents -------
+*
+*   1. FONTS IMPORT
+*   2. BOOTSTRAP FRAMEWORK
+*   3. BOOTSTRAP OVERRIDES
+*      3.1  Accordion
+*      3.2  Alerts
+*      3.3  Badge
+*      3.4  Breadcrumb
+*      3.5  Buttons
+*      3.6  Cards
+*      3.7  Carousel
+*      3.8  Dropdown
+*      3.9  Forms
+*      3.10 Grid
+*      3.11 Input Group
+*      3.12 Modal
+*      3.13 Nav
+*      3.14 Pagination
+*      3.15 Popover
+*      3.16 Progress
+*      3.17 Table
+*      3.18 Toast
+*      3.19 Tooltip
+*   4. CUSTOM ELEMENT STYLES
+*      4.1  Accordion
+*      4.2  Buttons
+*      4.3  Charts
+*      4.4  Forms
+*      4.5  Image
+*      4.6  List
+*      4.7  Modal
+*      4.8  Nav
+*   5. CUSTOM VENDOR STYLES
+*      5.1  DataTables
+*      5.2  DatePicker
+*      5.3  DateTimePicker
+*      5.4  jQuery Steps
+*      5.5  jQVMap
+*      5.6  Morris
+*      5.7  Parsley
+*      5.8  Quill
+*      5.9  RangSlider
+*      5.10 Scrollbar
+*      5.11 Select2
+*      5.12 Spectrum
+*   6. PAGE LAYOUT STYLES
+*      6.1  Content
+*      6.2  Footer
+*      6.3  Global
+*      6.4  Header
+*      6.5  Iconbar
+*      6.6  Navbar
+*      6.7  Navbar Variant
+*      6.8  Sidebar
+*   7. TEMPLATE STYLES
+*      7.1  Demo
+*      7.2  Calendar
+*      7.3  Chat
+*      7.4  Contacts
+*      7.5  Invoice
+*      7.6  Mail
+*      7.7  Profile
+*      7.8  Signin
+*      7.9  Signup
+*      7.10 Error
+*   8. DASHBOARD STYLES
+*      8.1  Dashboard One
+*      8.2  Dashboard Two
+*      8.3  Dashboard Three
+*      8.4  Dashboard Four
+*      8.5  Dashboard Five
+*      8.6  Dashboard Six
+*      8.7  Dashboard Seven
+*      8.8  Dashboard Eight
+*      8.9  Dashboard Nine
+*      8.10 Dashboard Ten
+*   9. UTILITIES/HELPER CLASSES
+*      9.1  Background
+*      9.2  Border
+*      9.3  Height
+*      9.4  Margin
+*      9.5  Misc
+*      9.6  Padding
+*      9.7  Position
+*      9.8  Typography
+*      9.9  Width
+*
+*/
+
+
+/* ############### FONTS IMPORT ############### */
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,800');
+@import url('https://fonts.googleapis.com/css?family=Raleway:400,500,600,700,800');
+//@import "~typicons.font/src/font/typicons.css";
+//@import "~ionicons/dist/css/ionicons.css";
+//@import "~@fortawesome/fontawesome-free/css/all.min.css";
+//@import "~flag-icon-css/css/flag-icon.min.css";
+//@import "~@ng-select/ng-select/themes/default.theme.css";
+// @import "~@ng-select/ng-select/themes/material.theme.css";
+
+
+
+
+// Bootstrap variable overrides
+@import "./assets/scss/bootstrap/variables";
+@import "./assets/scss/bootstrap/mixins";
+
+/* ############### BOOTSTRAP FRAMEWORK ############### */
+@import "~bootstrap/scss/bootstrap";
+
+/* ############### Compass Mixins ############### */
+//@import "~compass-mixins/lib/compass";
+//@import "~compass-mixins/lib/animate";
+
+// Custom variables and mixins
+@import "./assets/scss/custom/variables";
+@import "./assets/scss/custom/mixins";
+
+/* ########## BOOTSTRAP OVERRIDES ########## */
+@import "./assets/scss/bootstrap/accordion";
+@import "./assets/scss/bootstrap/alerts";
+@import "./assets/scss/bootstrap/badge";
+@import "./assets/scss/bootstrap/breadcrumb";
+@import "./assets/scss/bootstrap/buttons";
+@import "./assets/scss/bootstrap/cards";
+@import "./assets/scss/bootstrap/dropdown";
+@import "./assets/scss/bootstrap/forms";
+@import "./assets/scss/bootstrap/grid";
+@import "./assets/scss/bootstrap/input-group";
+@import "./assets/scss/bootstrap/nav";
+@import "./assets/scss/bootstrap/pagination";
+@import "./assets/scss/bootstrap/popover";
+@import "./assets/scss/bootstrap/progress";
+@import "./assets/scss/bootstrap/table";
+
+/* ############### CUSTOM ELEMENT STYLES ############### */
+@import "./assets/scss/custom/buttons";
+@import "./assets/scss/custom/charts";
+@import "./assets/scss/custom/forms";
+@import "./assets/scss/custom/image";
+@import "./assets/scss/custom/list";
+@import "./assets/scss/custom/nav";
+
+/* ############### CUSTOM VENDOR STYLES ############### */
+@import "./assets/scss/lib/select2";
+@import "./assets/scss/lib/spectrum";
+
+/* ############### PAGE LAYOUT STYLES ############### */
+@import "./assets/scss/layout/content";
+@import "./assets/scss/layout/footer";
+@import "./assets/scss/layout/global";
+@import "./assets/scss/layout/header";
+@import "./assets/scss/layout/iconbar";
+@import "./assets/scss/layout/navbar";
+@import "./assets/scss/layout/navbar-variant";
+@import "./assets/scss/layout/sidebar";
+
+/* ############### TEMPLATE STYLES ############### */
+@import "./assets/scss/template/demo";
+
+@import "./assets/scss/template/calendar";
+@import "./assets/scss/template/chat";
+@import "./assets/scss/template/contacts";
+@import "./assets/scss/template/invoice";
+@import "./assets/scss/template/mail";
+@import "./assets/scss/template/mail-two";
+@import "./assets/scss/template/profile";
+@import "./assets/scss/template/signin";
+@import "./assets/scss/template/signup";
+@import "./assets/scss/template/error";
+
+/* ############### DASHBOARD STYLES ############### */
+@import "./assets/scss/template/dashboard-one";
+@import "./assets/scss/template/dashboard-two";
+@import "./assets/scss/template/dashboard-three";
+@import "./assets/scss/template/dashboard-four";
+@import "./assets/scss/template/dashboard-five";
+@import "./assets/scss/template/dashboard-six";
+@import "./assets/scss/template/dashboard-seven";
+@import "./assets/scss/template/dashboard-eight";
+@import "./assets/scss/template/dashboard-nine";
+@import "./assets/scss/template/dashboard-ten";
+
+/* ############### UTILITIES/HELPER CLASSES ############### */
+@import "./assets/scss/util/background";
+@import "./assets/scss/util/border";
+@import "./assets/scss/util/height";
+@import "./assets/scss/util/margin";
+@import "./assets/scss/util/misc";
+@import "./assets/scss/util/padding";
+@import "./assets/scss/util/position";
+@import "./assets/scss/util/typography";
+@import "./assets/scss/util/width";
+
+/* ############### PLUGIN STYLES ############### */
+//@import "~morris.js/morris.css";
+//@import "~datatables.net-dt/css/jquery.dataTables.css";
+//@import '~@fullcalendar/core/main.css';
+//@import '~perfect-scrollbar/css/perfect-scrollbar.css';

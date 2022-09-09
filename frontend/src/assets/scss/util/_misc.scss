@@ -1,0 +1,60 @@
+/* ###### 9.5 Misc   ###### */
+
+
+// This generate a class name of .op-1 having a style of opacity: 0.1.
+// Values goes up to 0.9;
+$num: 0;
+@while $num < 10 {
+  .op-#{$num} { opacity: 0 + ($num * 0.1); }
+  .op-#{$num}-f { opacity: 0 + ($num * 0.1) !important; }
+  $num: $num + 1;
+}
+
+@mixin do-opacity($viewport) {
+  $num: 0;
+  @while $num < 10 {
+    .op-#{$viewport}-#{$num} { opacity: 0 + ($num * 0.1); }
+    .op-#{$viewport}-#{$num}-f { opacity: 0 + ($num * 0.1) !important; }
+    $num: $num + 1;
+  }
+}
+
+.opacity-1 { opacity: 1; }
+.shadow-base { box-shadow: 0 0 2px 2px rgba($gray-900, .03); }
+.shadow-1 { box-shadow: 0 0 7px 7px rgba($gray-900, .1); }
+.shadow-2 { box-shadow: 0 0 30px rgba($gray-900, .08); }
+.shadow-none { box-shadow: none; }
+
+.overflow-y-auto { overflow-y: auto; }
+.overflow-hidden { overflow: hidden; }
+
+// Flex
+.flex-1 { flex: 1; }
+.flex-0 { flex: 0; }
+
+.img-fit-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+@media (min-width: 480px) {
+  @include do-opacity("xs");
+}
+
+@include media-breakpoint-up(sm) {
+  @include do-opacity("sm");
+}
+
+@include media-breakpoint-up(md) {
+  @include do-opacity("md");
+}
+
+@include media-breakpoint-up(lg) {
+  @include do-opacity("lg");
+}
+
+@include media-breakpoint-up(xl) {
+  @include do-opacity("xl");
+}

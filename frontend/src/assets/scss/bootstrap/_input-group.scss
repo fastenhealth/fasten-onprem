@@ -1,0 +1,15 @@
+
+/* ###### 3.11 Input Group ###### */
+
+.input-group-prepend,
+.input-group-append {
+  @include border-radius(0);
+}
+
+.input-group-text {
+  padding-top: 0;
+  padding-bottom: 0;
+  align-items: center;
+
+  @include border-radius(0);
+}

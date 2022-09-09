@@ -1,0 +1,340 @@
+/* ###### 7.4 Contacts  ###### */
+
+
+.az-content-body-show {
+  @include media-breakpoint-only(md) {
+    .az-header-contacts .az-header-menu-icon { display: flex; }
+    .az-content-left-contacts { display: block; }
+  }
+}
+
+.az-content-contacts {
+  @include media-breakpoint-only(md) { height: calc(100vh - #{$az-height-header-mobile}); }
+}
+
+.az-content-left-contacts {
+  width: 100%;
+  display: block;
+  padding: 0;
+
+  @include media-breakpoint-up(md) {
+    width: 300px;
+    border-right: 1px solid $gray-300;
+  }
+
+  .az-content-breadcrumb,
+  .az-content-title {
+    padding-left: 20px;
+    @include media-breakpoint-up(lg) { padding-left: 0; }
+  }
+}
+
+.az-contacts-list {
+  @include media-breakpoint-up(md) {
+    height: calc(100% - 102px);
+    position: relative;
+  }
+}
+
+.az-contact-label {
+  padding-top: 20px;
+  padding-bottom: 5px;
+  padding-left: 20px;
+  font-weight: 500;
+  font-size: 12px;
+  color: $gray-500;
+  position: relative;
+
+  @include media-breakpoint-up(lg) { padding-left: 0; }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    border-bottom: 1px solid $gray-300;
+    z-index: 5;
+  }
+}
+
+.az-contact-item {
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-right-width: 0;
+  display: flex;
+  position: relative;
+  cursor: pointer;
+
+  @include media-breakpoint-up(lg) { padding: 10px 15px; }
+
+  + .az-contact-item {
+    margin-top: -1px;
+    border-top-color: transparent;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 65px;
+      right: 0;
+      border-top: 1px solid $gray-200;
+    }
+  }
+
+  @include hover-focus() {
+    background-color: $gray-100;
+    border-top-color: $gray-200;
+    border-bottom-color: $gray-200;
+  }
+
+  &.selected {
+    z-index: 1;
+    border-left-color: $az-color-primary;
+    border-top-color: $gray-200;
+    border-bottom-color: $gray-200;
+    background-color: $gray-100;
+  }
+}
+
+.az-contact-body {
+  flex: 1;
+  margin-left: 15px;
+
+  h6 {
+    color: $gray-900;
+    font-weight: 500;
+    //font-size: 14px;
+    margin-bottom: 2px;
+  }
+
+  span {
+    font-size: 13px;
+    color: $gray-600;
+  }
+}
+
+.az-contact-star {
+  font-size: 16px;
+  color: $gray-500;
+
+  @include hover-focus() { color: $gray-600; }
+
+  &.active { color: $yellow }
+}
+
+.az-content-body-contacts {
+  display: none;
+
+  @include media-breakpoint-up(md) {
+    display: block;
+    overflow-y: auto;
+  }
+
+  @include media-breakpoint-up(lg) { overflow: visible; }
+}
+
+.az-contact-info-header {
+  padding-top: 40px;
+  padding-left: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid $gray-300;
+  position: relative;
+
+  @include media-breakpoint-up(sm) { padding-top: 0; }
+
+  @include media-breakpoint-up(lg) {
+    padding-left: 30px;
+    padding-bottom: 25px;
+  }
+
+  .media {
+    display: block;
+
+    @include media-breakpoint-up(lg) {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .az-img-user {
+    width: 100px;
+    height: 100px;
+
+    &::after { display: none; }
+
+    a {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background-color: $gray-600;
+      color: #fff;
+      font-size: 18px;
+      line-height: .9;
+      box-shadow: 0 0 0 2px #fff;
+      @include border-radius(100%);
+
+      @include hover-focus() { background-color: $az-color-secondary; }
+    }
+  }
+
+  .media-body {
+    margin-top: 30px;
+
+    @include media-breakpoint-up(lg) {
+      margin-top: 0;
+      margin-left: 30px;
+    }
+
+    h4 {
+      color: $gray-900;
+      font-size: 26px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+
+    p {
+      color: $body-color;
+      margin-bottom: 15px;
+    }
+
+    .nav-link {
+      padding: 0;
+      display: flex;
+      align-items: center;
+      color: $gray-600;
+      font-size: 13px;
+
+      @include media-breakpoint-up(sm) { font-size: $font-size-base; }
+
+      i {
+        font-size: 21px;
+        line-height: 0;
+        margin-right: 5px;
+
+        @include media-breakpoint-up(sm) { margin-right: 7px; }
+
+        &.typcn {
+          line-height: .9;
+          &::before { width: auto; }
+        }
+      }
+
+      @include hover-focus() {
+        color: $az-color-secondary;
+      }
+
+      + .nav-link {
+        margin-left: 10px;
+        @include media-breakpoint-up(sm) { margin-left: 25px; }
+      }
+    }
+  }
+}
+
+.az-contact-action {
+  position: absolute;
+  top: 0;
+  right: 20px;
+  display: flex;
+
+  @include media-breakpoint-up(lg) {
+    right: 0;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    color: $gray-600;
+    font-size: 12px;
+
+    @include hover-focus() { color: $az-color-secondary; }
+
+    i {
+      font-size: 21px;
+      line-height: .7;
+      margin-right: 5px;
+    }
+
+    + a { margin-left: 15px; }
+  }
+}
+
+.az-contact-info-body {
+  padding-left: 20px;
+
+  @include media-breakpoint-up(lg) {
+    padding-left: 30px;
+    height: calc(100% - 126px);
+    position: relative;
+  }
+
+  .media-list {
+    padding: 20px 0;
+    @include media-breakpoint-up(lg) { padding: 25px 0; }
+  }
+
+  .media {
+    align-items: center;
+    position: relative;
+
+    + .media {
+      margin-top: 30px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -15px;
+        left: 130px;
+        right: 0;
+        border-top: 1px dotted $gray-300;
+      }
+    }
+
+    &:last-child { margin-bottom: 15px; }
+  }
+
+  .media-icon {
+    font-size: 32px;
+    color: $gray-500;
+    line-height: 1;
+    width: 40px;
+    text-align: center;
+
+    @include media-breakpoint-up(lg) { width: 100px; }
+  }
+
+  .media-body {
+    margin-left: 30px;
+
+    @include media-breakpoint-up(lg) { display: flex; }
+
+    > div {
+      @include media-breakpoint-up(lg) { flex: 1; }
+
+      + div {
+        margin-top: 15px;
+        @include media-breakpoint-up(lg) { margin-top: 0; }
+      }
+    }
+
+    label {
+      color: $gray-600;
+      margin-bottom: 0;
+      display: block;
+      font-size: 13px;
+    }
+
+    span {
+      display: block;
+      color: $gray-900;
+      font-weight: 500;
+    }
+  }
+}

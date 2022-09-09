@@ -1,0 +1,74 @@
+/* ###### 7.9 Signin  ###### */
+
+.az-signin-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.az-card-signin {
+  height: 560px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: rgba(#fff, .5);
+
+  @media (min-width: 480px) {
+    border: 1px solid $gray-300;
+    width: 360px;
+    padding: 30px 35px;
+  }
+}
+
+.az-signin-header {
+  h2 {
+    font-weight: 500;
+    color: $az-color-primary;
+    letter-spacing: -1px;
+  }
+
+  h4 {
+    font-weight: 400;
+    color: $gray-900;
+    margin-bottom: 25px;
+  }
+
+  label { color: $gray-600; }
+
+  .form-control {
+    color: $gray-900;
+    font-weight: 500;
+    border-width: 2px;
+    border-color: $gray-300;
+
+    &:focus {
+      border-color: $gray-400;
+      box-shadow: none;
+    }
+
+    &::placeholder {
+      font-weight: 400;
+      color: $gray-500;
+    }
+  }
+
+  .btn { margin-top: 25px; }
+}
+
+.az-signin-footer {
+  p {
+    color: $gray-600;
+    &:first-child { margin-bottom: 5px; }
+    &:last-child { margin-bottom: 0; }
+  }
+
+  a {
+    color: $gray-900;
+    font-weight: 700;
+
+    @include hover-focus() { color: $az-color-primary; }
+  }
+}

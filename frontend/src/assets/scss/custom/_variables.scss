@@ -1,0 +1,28 @@
+
+$az-height-base:                  38px;
+$az-height-header:                64px;
+$az-height-header-mobile:         60px;
+$az-height-navbar:                48px;
+$az-height-navbar-compact:        42px;
+$az-height-footer:                40px;
+$az-height-content:               calc(100vh - #{$az-height-header + $az-height-footer});
+
+$az-width-sidebar:                240px;
+$az-width-iconbar-aside:          230px;
+
+$az-border-color:                 rgba($gray-900, .2);
+$az-border-base:                  #dee2ef;
+
+$ckbox-size:                      16px;
+$rdiobox-size:                    16px;
+
+$az-color-primary:                $indigo;
+$az-color-secondary:              $blue;
+$az-color-headline:               #031b4e;
+$az-color-text:                   #4e5f83;
+
+$font-size-sm:                    13px;
+$font-size-md:                    $font-size-base + 0.0625;
+$font-weight:                     500;
+
+$input-btn-focus-color:           rgba($az-color-primary, .25);

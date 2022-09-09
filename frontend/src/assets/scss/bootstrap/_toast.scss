@@ -1,0 +1,17 @@
+/* ###### 3.18 Toast ###### */
+
+.toast {
+  background-color: rgba(#fff, .95);
+  border-color: rgba($gray-900, .16);
+  box-shadow: 0 2px 3px rgba($gray-900, .06);
+  @include border-radius(3px);
+}
+
+.toast-header {
+  border-bottom-color: rgba($gray-300, .4);
+
+  .close {
+    font-weight: 300;
+    color: $gray-500;
+  }
+}

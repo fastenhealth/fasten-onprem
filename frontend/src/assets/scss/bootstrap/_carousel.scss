@@ -1,0 +1,20 @@
+/* ###### 3.7 Carousel ###### */
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+
+  svg {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.carousel-indicators li {
+  width: 10px;
+  height: 10px;
+  @include border-radius(100%);
+}

@@ -1,0 +1,507 @@
+/* ###### 8.10 Dashboard Ten  ###### */
+
+// Utilities
+.bg-primary-dark { background-color: darken($blue, 20%); }
+
+
+.az-iconbar-primary {
+  background-color: darken($blue, 10%);
+  padding-top: 0;
+
+  .az-img-user::after { box-shadow: none; }
+
+  .az-iconbar-logo {
+    background-color: darken($blue, 15%);
+    color: #fff;
+    height: $az-height-header;
+
+    &::after { display: none; }
+  }
+
+  .nav { justify-content: center; }
+  .nav-link {
+    width: 42px;
+    height: 42px;
+    color: rgba(#fff, .5);
+    @include border-radius();
+    @include transition($transition-base);
+
+    @include hover-focus() {
+      color: #fff;
+      background-color: rgba(#fff, .1);
+    }
+
+    &.active {
+      color: #fff;
+      background-color: rgba(#fff, .2);
+    }
+  }
+
+  .az-iconbar-help {
+    color: rgba(#fff, .5);
+    @include hover-focus() { color: #fff; }
+  }
+}
+
+.az-iconbar-aside-primary {
+  width: $az-width-iconbar-aside + 20px;
+  background-color: $gray-100;
+  box-shadow: 0 0 16px rgba($gray-900, .08);
+  border-right: 1px solid $gray-300;
+
+  .az-iconbar-header {
+    padding: 18px 25px;
+    background-color: #fff;
+    border-bottom: 1px solid $gray-200;
+  }
+
+  .az-iconbar-body {
+    padding: 20px 25px;
+
+    .nav {
+      padding-top: 0;
+      padding-left: 0;
+      border-left-width: 0;
+    }
+
+    .nav-item + .nav-item { border-top-color: $gray-300; }
+    .nav-sub { border-top-color: $gray-300; }
+    .nav-sub-item + .nav-sub-item { border-top-color: $gray-300; }
+
+    .nav-link {
+      @include hover-focus() { color: $blue; }
+      &.active { color: $blue; }
+    }
+  }
+
+  .az-iconbar-toggle-menu { display: none; }
+
+  &.show + .az-content {
+    @include media-breakpoint-up(lg) {
+      margin-left: $az-height-header;
+    }
+  }
+}
+
+.az-content-dashboard-ten {
+  padding: 0;
+  min-height: 100vh;
+  background-color: $gray-200;
+
+  @include media-breakpoint-up(lg) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-left: $az-height-header;
+  }
+
+  .az-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+
+    @include media-breakpoint-up(lg) {
+      left: $az-height-header;
+    }
+
+    .container-fluid {
+      @include media-breakpoint-up(lg) {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+    }
+  }
+
+  .az-header-center { margin-left: 0; }
+
+  .az-content-body {
+    margin-top: $az-height-header;
+    @include media-breakpoint-up(xl) { display: flex; }
+  }
+
+  .az-content-body-left {
+    flex: 1;
+    padding: 20px;
+  }
+
+  .az-content-body-right {
+    background-color: #fcfcfc; //$gray-100;
+    padding: 20px;
+    display: none;
+
+    @include media-breakpoint-up(xl) {
+      display: block;
+      width: 280px;
+      box-shadow: 0 0 6px rgba($gray-900, .1);
+    }
+
+    @media (min-width: 1300px) { width: 300px; }
+  }
+
+  .az-content-title { letter-spacing: -.8px; }
+
+  .card {
+    border-width: 0;
+    box-shadow: 0 0 6px rgba($gray-900, .12);
+  }
+
+  .az-footer { margin-top: auto; }
+}
+
+.card-dashboard-twentyfour {
+  .card-header {
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 0;
+  }
+
+  .card-title {
+    font-size: 14px;
+    margin-bottom: 0;
+  }
+
+  .card-body { padding: 15px 20px 20px; }
+  .card-body-top {
+    display: flex;
+    margin-bottom: 20px;
+
+    h6 {
+      color: $gray-900;
+      font-size: 18px;
+      font-weight: 600;
+      font-family: 'Archivo', $font-family-base;
+      margin-bottom: 0;
+      letter-spacing: -.75px;
+
+      @include media-breakpoint-up(sm) { font-size: 22px; }
+
+      small { font-weight: 600; }
+
+      span {
+        color: $gray-500;
+        font-weight: 400;
+        letter-spacing: normal;
+      }
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0;
+      color: $gray-600;
+      font-size: 11px;
+
+      @include media-breakpoint-up(sm) { font-size: $font-size-base; }
+    }
+
+    > div + div { margin-left: 30px; }
+  }
+
+  .az-content-label {
+    font-size: 10px;
+    color: $body-color;
+    letter-spacing: .5px;
+    margin-bottom: 0;
+  }
+
+  .chart-legend {
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    line-height: .6;
+
+    span {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 5px;
+    }
+
+    > div {
+      display: flex;
+      align-items: center;
+
+      + div { margin-left: 20px; }
+    }
+  }
+
+  .chart-wrapper {
+    position: relative;
+    margin-right: -10px;
+  }
+
+  .flot-chart {
+    width: 100%;
+    height: 130px;
+  }
+}
+
+.card-dashboard-twentyfive {
+  .card-title {
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  .col + .col { border-left: 1px solid $gray-300; }
+
+  .card-label {
+    display: block;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .5px;
+    margin-bottom: 2px;
+    color: $gray-500;
+    white-space: nowrap;
+  }
+
+  .card-value {
+    font-size: 22px;
+    font-weight: 600;
+    font-family: 'Archivo', $font-family-base;
+    color: $gray-900;
+    margin-bottom: 0;
+    letter-spacing: -1px;
+  }
+
+  .chart-wrapper {
+    position: relative;
+    margin: 0 -8px -5px;
+  }
+
+  .flot-chart {
+    width: 100%;
+    height: 35px;
+  }
+}
+
+.card-dashboard-twentysix {
+  .card-header {
+    padding: 15px 15px 10px;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    margin-bottom: 0;
+    text-transform: uppercase;
+  }
+
+  .chart-legend {
+    display: flex;
+    align-items: center;
+
+    > div {
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+
+      + div { margin-left: 15px; }
+    }
+
+    span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 2px;
+    }
+  }
+
+  .card-body {
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+
+    h6 {
+      margin-bottom: 0;
+      color: $gray-900;
+      font-size: 22px;
+      font-weight: 600;
+      font-family: 'Archivo', $font-family-base;
+      letter-spacing: -.5px;
+      line-height: 1;
+
+      span {
+        font-weight: 400;
+        font-size: 18px;
+        letter-spacing: -1px;
+      }
+    }
+
+    label {
+      font-size: 12px;
+      margin-bottom: 0;
+      color: $gray-500;
+    }
+  }
+
+  .chart-wrapper {
+    position: relative;
+    margin: -30px -18px -15px -18px;
+  }
+
+  .flot-chart {
+    width: 100%;
+    height: 120px;
+
+    .flot-x-axis > div {
+      font-size: 10px;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      color: rgba(#fff, .75);
+      transform: translateY(-20px);
+    }
+
+    .flot-y-axis > div {
+      font-size: 10px;
+      transform: translateX(33px);
+      color: rgba($gray-900, .5);
+    }
+  }
+
+  &.card-dark-one,
+  &.card-dark-two {
+    .card-title { color: #fff; }
+
+    .card-body {
+      h6 {
+        color: #fff;
+        span { color: rgba(#fff, .5); }
+      }
+
+      label { color: rgba(#fff, .7); }
+    }
+
+    .flot-chart {
+      .flot-y-axis > div {
+        color: rgba(#fff, .2);
+      }
+    }
+  }
+
+  &.card-dark-one {
+    background-color: darken($blue, 15%);
+    @include gradient-y(darken($indigo, 15%), darken($blue, 15%));
+  }
+
+  &.card-dark-two {
+    background-color: darken($blue, 10%);
+    @include gradient-y(darken($blue,8%), $blue);
+  }
+}
+
+.az-rating-value {
+  font-size: 40px;
+  font-weight: 400;
+  font-family: 'Archivo', $font-family-base;
+  color: $gray-900;
+  margin-bottom: 0;
+  letter-spacing: -.5px;
+  line-height: .7;
+}
+
+.az-rating-label {
+  margin-bottom: 10px;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.az-media-list-reviews {
+  .media + .media { margin-top: 25px; }
+
+  .az-img-user {
+    width: 32px;
+    height: 32px;
+
+    &::after { display: none; }
+  }
+
+  .media-body {
+    margin-left: 15px;
+
+    h6 {
+      margin-bottom: 2px;
+      line-height: 1;
+    }
+
+    small {
+      display: inline-block;
+      font-size: 12px;
+      color: $gray-500;
+      line-height: 1;
+    }
+  }
+}
+
+.az-star-group {
+  display: flex;
+  align-items: center;
+
+  span:last-child {
+    display: block;
+    font-weight: 500;
+    font-size: 11px;
+    margin-left: 5px;
+    color: $gray-600;
+  }
+}
+
+.az-star-item {
+  color: $blue;
+  font-size: 14px;
+  position: relative;
+
+  + .az-star-item { margin-left: 3px; }
+}
+
+.az-media-list-activity {
+  .media + .media { margin-top: 25px; }
+
+  .media-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    @include border-radius(100%);
+
+    i {
+      font-size: 21px;
+      line-height: 0;
+
+      &.typcn { line-height: .9; }
+    }
+  }
+
+  .media-body {
+    margin-left: 15px;
+
+    h6 {
+      margin-bottom: 2px;
+      color: $gray-900;
+    }
+
+    span {
+      display: block;
+      font-size: 11px;
+      color: $gray-500;
+    }
+  }
+
+  .media-right {
+    font-size: 11px;
+    color: $gray-500;
+  }
+}

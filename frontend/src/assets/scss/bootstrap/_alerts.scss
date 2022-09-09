@@ -1,0 +1,48 @@
+/* ###### 3.2 Alerts ###### */
+
+.alert {
+  border-width: 0;
+  padding: 12px 15px;
+  @include border-radius(0);
+
+  .close {
+    text-shadow: none;
+    opacity: .2;
+  }
+
+  strong { font-weight: 600; }
+}
+
+[class*=alert-outline-] {
+  border: 1px solid transparent;
+}
+
+.alert-outline-success {
+  border-color: lighten($green, 20%);
+  color: $green;
+}
+
+.alert-outline-info {
+  border-color: lighten($cyan, 5%);
+  color: $cyan;
+}
+
+.alert-outline-warning {
+  border-color: lighten($yellow, 20%);
+  color: darken($yellow, 10%);
+}
+
+.alert-outline-danger {
+  border-color: lighten($red, 20%);
+  color: darken($red, 10%);
+}
+
+[class*=alert-solid-] {
+  border-width: 0;
+  color: #fff;
+}
+
+.alert-solid-success { background-color: $green; }
+.alert-solid-info { background-color: $cyan; }
+.alert-solid-warning { background-color: $yellow; }
+.alert-solid-danger { background-color: $red; }

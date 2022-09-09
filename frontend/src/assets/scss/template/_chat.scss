@@ -1,0 +1,440 @@
+/* ###### 7.3 Chat  ###### */
+
+.az-content-body-show {
+  @include media-breakpoint-down(md) {
+    .az-header-menu-icon { display: none; }
+    .az-header-left .az-header-arrow { display: block; }
+
+    .az-content-left-chat { display: none; }
+    .az-content-body-chat { display: flex; }
+  }
+}
+
+.az-content-left-chat {
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+
+  @include media-breakpoint-up(lg) {
+    width: 320px;
+    border-right: 1px solid $gray-300;
+  }
+}
+
+.az-nav-line-chat {
+  border-bottom: 1px solid $gray-300;
+  padding-bottom: 5px;
+  flex-shrink: 0;
+  flex-direction: row;
+  padding-left: 20px;
+
+  @include media-breakpoint-up(lg) { padding-left: 0; }
+
+  .nav-link {
+    font-size: 13px;
+    font-weight: 500;
+    color: $gray-800;
+    text-transform: uppercase;
+
+    &:hover,
+    &:focus,
+    &:active { outline: none; }
+
+    + .nav-link {
+      margin-top: 0;
+      margin-left: 30px;
+    }
+
+    &.active {
+      color: $az-color-primary;
+      &::before {
+        top: auto;
+        left: 0;
+        right: 0;
+        width: auto;
+        bottom: -6px;
+        background-color: $az-color-primary;
+      }
+    }
+  }
+}
+
+.az-chat-contacts-wrapper {
+  padding: 10px 20px;
+  flex-shrink: 0;
+  border-bottom: 1px solid $gray-300;
+  overflow: hidden;
+
+  @include media-breakpoint-up(lg) { padding: 10px 15px 10px 0; }
+
+  .az-content-label {
+    margin-bottom: 15px;
+    line-height: 1;
+  }
+
+  .lSSlideOuter,
+  .lSSlideWrapper { overflow: visible; }
+}
+
+.az-chat-contacts {
+  padding-left: 20px;
+  display: flex;
+  max-width: 100%;
+  overflow: scroll;
+
+  .lslide {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    float: none;
+  }
+
+  small {
+    font-size: 11px;
+    width: 36px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-top: 3px;
+    text-align: center;
+  }
+}
+
+.az-chat-contacts-more {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include border-radius(100%);
+  background-color: $gray-300;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.az-chat-list {
+  @include media-breakpoint-up(lg) {
+    height: calc(100% - 134px);
+    position: relative;
+  }
+
+  .media {
+    padding: 12px 20px;
+    border: 1px solid transparent;
+    position: relative;
+
+    @include media-breakpoint-up(lg) { padding: 12px 15px; }
+
+    .az-img-user {
+      flex-shrink: 0;
+      top: 3px;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      bottom: -1px;
+      left: 0;
+      width: 1px;
+      background-color: $blue;
+      display: none;
+    }
+
+    + .media {
+      margin-top: -1px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -1px;
+        left: 65px;
+        right: 0;
+        border-top: 1px solid $gray-200;
+      }
+    }
+
+    &.new {
+      background-color: #fff;
+
+      .az-img-user span { display: flex; }
+
+      .media-contact-name span:first-child {
+        font-weight: 700;
+        color: $gray-900;
+      }
+
+      .media-body p { color: $body-color; }
+    }
+
+    @include hover-focus() {
+      cursor: pointer;
+      background-color: #fcfcfc;
+      border-top-color: $gray-200;
+      border-bottom-color: $gray-200;
+      z-index: 1;
+
+      &:first-child { border-top-color: transparent; }
+    }
+
+    &.selected {
+      background-color: $gray-100;
+      border-top-color: $gray-200;
+      border-bottom-color: $gray-200;
+      z-index: 2;
+
+      &:first-child { border-top-color: transparent; }
+
+      &::after { display: block; }
+
+      .media-contact-name span:first-child { color: $gray-900; }
+      .media-body p { color: $body-color; }
+    }
+  }
+
+  .az-img-user span {
+    position: absolute;
+    top: 0;
+    left: -2px;
+    width: 14px;
+    height: 14px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    @include border-radius(100%);
+    font-size: 9px;
+    font-weight: 500;
+    color: #fff;
+    background-color: $red;
+    box-shadow: 0 0 0 2px #fff;
+  }
+
+  .media-body {
+    margin-left: 15px;
+
+    p {
+      font-size: 13px;
+      margin-bottom: 0;
+      color: $gray-600;
+      line-height: 1.35;
+    }
+  }
+
+  .media-contact-name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2px;
+
+    span:first-child {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: $gray-900;
+    }
+
+    span:last-child {
+      display: block;
+      font-size: 11px;
+      color: $gray-500;
+    }
+  }
+}
+
+.az-content-body-chat {
+  flex-direction: column;
+  display: none;
+
+  @include media-breakpoint-up(lg) { display: flex; }
+}
+
+.az-chat-header {
+  flex-shrink: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 20px 12px;
+  border-bottom: 1px solid $gray-300;
+
+  .nav {
+    margin-left: auto;
+    align-items: center;
+  }
+
+  .nav-link {
+    padding: 0;
+    color: $gray-300;
+    font-size: 20px;
+    display: none;
+    &:first-child { display: block; }
+
+    @include media-breakpoint-up(sm) {
+      display: block;
+      &:first-child { display: none; }
+    }
+
+    i { line-height: 0; }
+    .typcn {
+      line-height: .9;
+      &::before { width: auto; }
+    }
+
+    @include hover-focus() {
+      color: $az-color-primary;
+    }
+
+    + .nav-link { margin-left: 15px; }
+  }
+}
+
+.az-chat-msg-name {
+  margin-left: 15px;
+
+  h6 {
+    margin-bottom: 2px;
+    font-size: 15px;
+    font-weight: 700;
+    color: $gray-900;
+  }
+
+  small {
+    font-size: 12px;
+    color: $gray-600;
+  }
+}
+
+.az-chat-body {
+  position: relative;
+  padding-bottom: 50px;
+
+  @include media-breakpoint-up(lg) {
+    padding-bottom: 0;
+    height: calc(100% - 105px);
+    overflow: hidden;
+  }
+
+  .content-inner { padding: 20px; }
+
+  .media {
+    + .media { margin-top: 20px; }
+
+    &.flex-row-reverse {
+      .media-body {
+        margin-left: 0;
+        margin-right: 20px;
+        align-items: flex-end;
+
+        @include media-breakpoint-up(sm) { margin-left: 55px; }
+      }
+
+      .az-msg-wrapper {
+        background-color: $az-color-primary;
+        color: #fff;
+      }
+    }
+  }
+
+  .media-body {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    @include media-breakpoint-up(sm) { margin-right: 55px; }
+
+    > div:last-child {
+      font-size: 11px;
+      color: $gray-600;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.az-chat-time {
+  display: block;
+  position: relative;
+  text-align: center;
+  margin: 20px 0;
+
+  &:first-of-type { margin-top: 0; }
+
+  span {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+.az-msg-wrapper {
+  padding: 10px 15px;
+  background-color: $gray-300;
+  font-size: $font-size-sm;
+  margin-bottom: 5px;
+  @include border-radius(2px);
+  display: inline-block;
+}
+
+.az-chat-footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  height: 50px;
+  padding: 0 20px;
+  border-top: 1px solid $gray-300;
+  background-color: #fff;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  @include media-breakpoint-up(lg) {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+  }
+
+  .nav { align-items: center; }
+  .nav-link {
+    padding: 0;
+    color: $gray-500;
+    font-size: 16px;
+    display: none;
+
+    + .nav-link { margin-left: 10px; }
+
+    &:last-child {
+      display: block;
+      margin-left: 0;
+    }
+
+    @include media-breakpoint-up(sm) {
+      display: block;
+      &:last-child { display: none; }
+    }
+  }
+
+  .form-control {
+    flex: 1;
+    margin: 0 10px;
+    padding-left: 0;
+    padding-right: 0;
+    border-width: 0;
+
+    @include media-breakpoint-up(sm) { margin-left: 20px; }
+    @include media-breakpoint-up(md) { margin: 0 20px; }
+
+    @include hover-focus() { box-shadow: none; }
+  }
+}
+
+.az-msg-send {
+  font-size: 20px;
+  color: $az-color-secondary;
+}

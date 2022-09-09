@@ -1,0 +1,111 @@
+
+
+// Accordion One Variant
+@mixin accordion-variant($color) {
+  .card { border-color: $color; }
+
+  .card-header button {
+    &,
+    &:hover,
+    &:focus { color: $color; }
+
+    &.collapsed {
+      background-color: $color;
+      color: rgba(#fff, .8);
+      font-weight: 500;
+      letter-spacing: -.1px;
+
+      &:hover,
+      &:focus {
+        background-color: darken($color, 5%);
+        color: #fff;
+      }
+    }
+  }
+}
+
+@mixin tooltip-variant($color, $text-color: #fff) {
+  .tooltip-inner {
+    background-color: $color;
+    color: $text-color;
+  }
+
+  &.bs-tooltip-top,
+  &.bs-tooltip-auto[x-placement^="top"] {
+    .arrow::before { border-top-color: $color; }
+  }
+
+  &.bs-tooltip-bottom,
+  &.bs-tooltip-auto[x-placement^="bottom"] {
+    .arrow::before { border-bottom-color: $color; }
+  }
+
+  &.bs-tooltip-left,
+  &.bs-tooltip-auto[x-placement^="left"] {
+    .arrow::before { border-left-color: $color; }
+  }
+
+  &.bs-tooltip-right,
+  &.bs-tooltip-auto[x-placement^="right"] {
+    .arrow::before { border-right-color: $color; }
+  }
+}
+
+@mixin popover-head-variant($color, $text-color: #fff) {
+
+  .popover-header {
+    color: $text-color;
+    background-color: $color;
+  }
+
+  &.bs-popover-top .arrow { bottom: -7px; }
+  &.bs-popover-left .arrow { right: -7px; }
+  &.bs-popover-right .arrow { left: -7px; }
+
+  &.bs-popover-bottom,
+  &.bs-popover-auto[x-placement^="bottom"] {
+    .arrow::after {
+      border-bottom-color: $color;
+    }
+  }
+}
+
+@mixin popover-full-color($color) {
+  background-color: $color;
+  border-width: 0;
+  padding: 15px;
+
+  .popover-header {
+    background-color: transparent;
+    border-bottom-width: 0;
+    padding: 0 0 15px;
+    color: #fff;
+  }
+
+  .popover-body {
+    padding: 0;
+    color: rgba(#fff, .75);
+  }
+
+  .arrow::before { display: none; }
+
+  &.bs-popover-top,
+  &.bs-popover-auto[x-placement^="top"] {
+    .arrow::after { border-top-color: $color; }
+  }
+
+  &.bs-popover-bottom,
+  &.bs-popover-auto[x-placement^="bottom"] {
+    .arrow::after { border-bottom-color: $color; }
+  }
+
+  &.bs-popover-left,
+  &.bs-popover-auto[x-placement^="left"] {
+    .arrow::after { border-left-color: $color; }
+  }
+
+  &.bs-popover-right,
+  &.bs-popover-auto[x-placement^="right"] {
+    .arrow::after { border-right-color: $color; }
+  }
+}

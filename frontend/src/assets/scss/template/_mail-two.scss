@@ -1,0 +1,52 @@
+/* ###### 7.7 Mail Two  ###### */
+
+.az-mail-two {
+  .az-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .az-header {
+    width: 100%;
+    border-bottom: 1px solid $gray-300;
+  }
+
+  .az-footer { width: 100%; }
+
+  .az-header-menu-icon { margin-right: 0; }
+
+  .az-content-body {
+    display: flex;
+    padding: 0;
+  }
+}
+
+.az-mail-left {
+  background-color: #f9f9f9;
+  width: $az-width-sidebar;
+  border-right: 1px solid $gray-400;
+  padding: 20px;
+  display: none;
+
+  @include media-breakpoint-up(xl) { display: block; }
+
+  .btn-compose {
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  .az-mail-menu { padding-right: 0; }
+}
+
+.az-mail-content {
+  background-color: #fcfcfc;
+  flex: 1;
+  max-width: (100vw - #{$az-width-sidebar * 2});
+
+  .az-mail-header {
+    margin-bottom: 0;
+    padding: 20px;
+  }
+
+  .az-mail-body { max-width: 590px; }
+}

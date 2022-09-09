@@ -1,0 +1,158 @@
+
+/* ###### 5.9 RangeSlider ###### */
+.irs-min, .irs-max {
+  font-family: $font-family-roboto;
+  @include border-radius(0);
+}
+
+.irs-from, .irs-to, .irs-single {
+  font-family: $font-family-roboto;
+  background-color: $az-color-primary;
+  @include border-radius(0);
+}
+
+.irs-bar {
+  background-image: none;
+  background-color: $az-color-primary;
+}
+
+.irs-bar-edge {
+  background-image: none;
+  background-color: $az-color-primary;
+  @include border-left-radius(0);
+}
+
+.irs-line-left {
+  background-image: none;
+  background-color: $gray-300;
+  @include border-left-radius(0);
+}
+
+.irs-line-mid {
+  background-image: none;
+  background-color: $gray-300;
+}
+
+.irs-line-right {
+  background-image: none;
+  background-color: $gray-300;
+  @include border-right-radius(0);
+}
+
+.irs-from::after, .irs-to::after,
+.irs-single::after {
+	border-top-color: $az-color-primary;
+}
+
+.irs-slider {
+  background-image: none;
+
+  &:before {
+    content: '';
+    width: 2px;
+    height: 18px;
+    position: absolute;
+    background-color: $az-color-primary;
+    left: 50%;
+    margin-left: -1px;
+  }
+
+  &:hover,
+  &:focus {
+    &:before { background-color: darken($az-color-primary, 12%); }
+  }
+}
+
+
+/* #################### COLOR VARIANT SKINS #################### */
+
+.irs-primary { @include irs-color-variant($blue); }
+.irs-success { @include irs-color-variant($green); }
+.irs-dark    { @include irs-color-variant($gray-800); }
+
+
+/* #################### MODERN SKIN #################### */
+
+.irs-modern {
+  .irs-line-left,
+  .irs-line-mid,
+  .irs-line-right {
+    height: 6px;
+    box-shadow: inset -2px 2px 2px 0 rgba(#222, 0.1);
+  }
+
+  .irs-bar,
+  .irs-bar-edge {
+    height: 6px;
+    box-shadow: inset 0 1px 1px 0 rgba(#222, 0.1);
+  }
+
+  .irs-slider {
+    top: 19px;
+    background-color: #fff;
+    border: 1px solid $az-color-primary;
+    @include border-radius(0);
+
+    &::before {
+      width: 4px;
+      height: 9px;
+      background-color: #fff;
+      border-left: 1px solid $az-color-primary;
+      border-right: 1px solid $az-color-primary;
+      margin-left: -2px;
+      top: 3px;
+    }
+  }
+
+  &.irs-primary { @include irs-modern-slider-variant($blue); }
+  &.irs-success { @include irs-modern-slider-variant($green); }
+  &.irs-dark { @include irs-modern-slider-variant($gray-900); }
+
+}
+
+
+/* #################### OUTLINE SKIN #################### */
+.irs-outline {
+  .irs-line {
+    border: 1px solid $az-color-primary;
+    height: 10px;
+    @include border-radius(5px);
+  }
+
+  .irs-line-left,
+  .irs-line-mid,
+  .irs-line-right {
+    height: 10px;
+    background-color: transparent;
+  }
+
+  .irs-bar,
+  .irs-bar-edge { height: 10px; }
+
+  .irs-bar-edge { @include border-left-radius(5px); }
+
+  .irs-slider {
+    top: 21px;
+    width: 18px;
+    background-color: #fff;
+    border: 1px solid $az-color-primary;
+    @include border-radius(100%);
+
+    &::before {
+      margin-left: -4px;
+      top: 4px;
+      width: 8px;
+      height: 8px;
+      @include border-radius(100%);
+    }
+
+    &:hover,
+    &:focus {
+      &::before { background-color: darken($az-color-primary, 5%); }
+    }
+  }
+
+  &.irs-primary { @include irs-outline-variant($blue); }
+  &.irs-success { @include irs-outline-variant($green); }
+  &.irs-dark { @include irs-outline-variant($gray-800); }
+}

@@ -1,0 +1,47 @@
+/* ###### 3.4 Breadcrumb ###### */
+
+.breadcrumb {
+  background-color: $gray-300;
+}
+
+.breadcrumb-style1,
+.breadcrumb-style2,
+.breadcrumb-style3 {
+  @include border-radius(0);
+  background-color: transparent;
+  padding: 0;
+
+  .breadcrumb-item {
+    font-size: 11px;
+    font-weight: 500;
+    font-family: $font-family-sans-serif;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+
+    a {
+      color: $gray-900;
+      @include hover-focus() { color: $az-color-primary; }
+    }
+
+    &.active { color: $az-color-primary; }
+
+    + .breadcrumb-item::before { color: $gray-500; }
+  }
+}
+
+.breadcrumb-style2,
+.breadcrumb-style3 {
+  .breadcrumb-item + .breadcrumb-item::before {
+    width: 16px;
+    text-align: center;
+    font-family: 'Ionicons';
+  }
+}
+
+.breadcrumb-style2 {
+  .breadcrumb-item + .breadcrumb-item::before { content: '\f3d1'; }
+}
+
+.breadcrumb-style3 {
+  .breadcrumb-item + .breadcrumb-item::before { content: '\f287'; }
+}

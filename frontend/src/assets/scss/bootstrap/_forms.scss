@@ -1,0 +1,32 @@
+/* ###### 3.9 Forms ###### */
+
+.form-control {
+  height: $az-height-base;
+  @include border-radius(0);
+
+  &:focus {
+    border-color: $gray-500;
+    box-shadow: none;
+  }
+}
+
+.custom-file,
+.custom-file-input,
+.custom-file-label {
+  height: $az-height-base;
+}
+
+.custom-file-label {
+  &,&::after {
+    line-height: 1.8;
+    border-radius: 0;
+  }
+
+  &::after { height: auto; }
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 5px;
+  color: $gray-700;
+}

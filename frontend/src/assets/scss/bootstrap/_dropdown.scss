@@ -1,0 +1,18 @@
+
+/* ###### 3.8 Dropdown ###### */
+
+.dropdown-menu {
+  padding: 0;
+  border-width: 2px;
+  @include border-radius(0);
+}
+
+.dropdown-item {
+  padding: 8px 15px;
+  font-size: $font-size-sm;
+}
+
+.dropdown-header {
+  padding-left: 15px;
+  padding-right: 15px;
+}
