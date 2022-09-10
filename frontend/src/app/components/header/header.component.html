@@ -11,10 +11,10 @@
       </div><!-- az-header-menu-header -->
       <ul class="nav">
         <li class="nav-item" ngbDropdown [ngClass]="{ 'active': dashboard.isActive }">
-          <a routerLink="/dashboard" routerLinkActive="active" #dashboard="routerLinkActive" class="nav-link"><i class="typcn typcn-chart-area-outline"></i> Dashboard</a>
+          <a routerLink="/dashboard" routerLinkActive="active" #dashboard="routerLinkActive" class="nav-link"><fa-icon [icon]="['fas', 'table-columns']"></fa-icon>&nbsp; Dashboard</a>
         </li>
         <li class="nav-item" ngbDropdown [ngClass]="{ 'active': sources.isActive }">
-          <a routerLink="/sources" routerLinkActive="active" #sources="routerLinkActive" class="nav-link"><i class="typcn typcn-document"></i> Sources</a>
+          <a routerLink="/sources" routerLinkActive="active" #sources="routerLinkActive" class="nav-link"><fa-icon [icon]="['fas', 'hospital']"></fa-icon>&nbsp; Sources</a>
         </li>
       </ul>
     </div><!-- az-header-menu -->

@@ -11,6 +11,9 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { MedicalSourcesComponent } from './pages/medical-sources/medical-sources.component';
 import { ChartsModule } from 'ng2-charts';
 import {SharedModule} from './components/shared.module';
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome'
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
 
 @NgModule({
   declarations: [
@@ -22,6 +25,7 @@ import {SharedModule} from './components/shared.module';
   ],
   imports: [
     BrowserModule,
+    FontAwesomeModule,
     SharedModule,
     AppRoutingModule,
     HttpClientModule,
@@ -31,4 +35,8 @@ import {SharedModule} from './components/shared.module';
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(library: FaIconLibrary) {
+    library.addIconPacks(fas, far);
+  }
+}

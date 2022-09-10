@@ -28,4 +28,14 @@ export class FastenApiService {
         })
       );
   }
+
+  getResources(resourceType: string, resourceId?: string ) {
+    return this._httpClient.get<any>(`${this.getBasePath()}/api/fhir/${resourceType}/${resourceId ? resourceId : ''}`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("RESPONSE", response)
+          return response.data
+        })
+      );
+  }
 }

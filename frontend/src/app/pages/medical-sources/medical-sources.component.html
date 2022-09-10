@@ -30,131 +30,20 @@
         Please click the logos below to initiate the connection.</p>
 
       <div class="row row-sm">
-        <div (click)="connect($event, 'aetna')" class="col-md-6 col-lg-4 d-flex align-items-stretch">
-          <div class="card bd-0">
-            <img src="assets/sources/aetna.png" alt="Image" class="img-fluid">
-            <div class="card-body bd bd-t-0">
-              <p class="card-text">Aetna</p>
+
+        <div *ngFor="let sourceData of sourceDataList" (click)="connect($event, sourceData['providerId'])" class="col-md-6 col-lg-4 d-flex align-items-stretch mg-b-20">
+          <div class="card bd">
+            <img [src]="'assets/sources/'+sourceData['providerId']+'.png'" alt="Image" class="img-fluid">
+            <div class="card-body">
+              <p class="card-text">{{sourceData['display']}}</p>
             </div>
           </div>
         </div>
-
-        <div (click)="connect($event, 'anthem')" class="col-md-6 col-lg-4 d-flex align-items-stretch">
-          <div class="card bd-0">
-            <img src="assets/sources/anthem.png" alt="Image" class="img-fluid">
-            <div class="card-body bd bd-t-0">
-              <p class="card-text">Anthem</p>
-            </div>
-          </div>
-        </div>
-
-        <div (click)="connect($event, 'cigna')" class="col-md-6 col-lg-4 d-flex align-items-stretch">
-          <div class="card bd-0">
-            <img src="assets/sources/cigna.png" alt="Image" class="img-fluid">
-            <div class="card-body bd bd-t-0">
-              <p class="card-text">Cigna</p>
-            </div>
-          </div>
-        </div>
-
-        <div (click)="connect($event, 'humana')" class="col-md-6 col-lg-4 d-flex align-items-stretch">
-          <div class="card bd-0">
-            <img src="assets/sources/humana.png" alt="Image" class="img-fluid">
-            <div class="card-body bd bd-t-0">
-              <p class="card-text">Humana</p>
-            </div>
-          </div>
-        </div>
-
-        <div (click)="connect($event, 'kaiser')" class="col-md-6 col-lg-4 d-flex align-items-stretch">
-          <div class="card bd-0">
-            <img src="assets/sources/kaiser.png" alt="Image" class="img-fluid">
-            <div class="card-body bd bd-t-0">
-              <p class="card-text">Kaiser</p>
-            </div>
-          </div>
-        </div>
-
-        <div (click)="connect($event, 'unitedhealthcare')" class="col-md-6 col-lg-4 d-flex align-items-stretch">
-          <div class="card bd-0">
-            <img src="assets/sources/unitedhealthcare.png" alt="Image" class="img-fluid">
-            <div class="card-body bd bd-t-0">
-              <p class="card-text">United Healthcare</p>
-            </div>
-          </div>
-        </div>
-
 
       </div><!-- row -->
-
-
 
       <div class="ht-40"></div>
 
     </div><!-- az-content-body -->
   </div><!-- container -->
 </div><!-- az-content -->
-
-
-<!--<div class=" content">-->
-<!--  <div class=" row">-->
-<!--    <div class=" col-md-12">-->
-<!--      <div class=" card">-->
-<!--        <div class=" card-header">-->
-<!--          <h5 class=" title">Medical Sources</h5>-->
-<!--          <p class=" category">-->
-<!--            The following medical sources have API's which Fasten can use to retrieve your medical history.-->
-<!--            Please click the logos below to initiate the connection.-->
-<!--          </p>-->
-<!--        </div>-->
-<!--        <div class=" card-body all-icons">-->
-<!--          <div class=" row">-->
-
-<!--            <div  class=" font-icon-list col-lg-2 col-md-3 col-sm-4 col-xs-6 col-xs-6">-->
-<!--              <button (click)="connect($event, 'aetna')">-->
-<!--                <img class=" tim-icons icon-alert-circle-exc" style="max-width:100px;" src="assets/sources/aetna.png">-->
-<!--                <p>Aetna</p>-->
-<!--              </button>-->
-<!--            </div>-->
-
-
-<!--            <div class=" font-icon-list col-lg-2 col-md-3 col-sm-4 col-xs-6 col-xs-6">-->
-<!--              <button (click)="connect($event, 'anthem')">-->
-<!--                <img class=" tim-icons icon-alert-circle-exc" style="max-width:100px;" src="assets/sources/anthem.png">-->
-<!--                <p>Anthem</p>-->
-<!--              </button>-->
-<!--            </div>-->
-
-<!--            <div class=" font-icon-list col-lg-2 col-md-3 col-sm-4 col-xs-6 col-xs-6">-->
-<!--              <button (click)="connect($event, 'cigna')">-->
-<!--                <img class=" tim-icons icon-alert-circle-exc" style="max-width:100px;" src="assets/sources/cigna.png">-->
-<!--                <p>Cigna</p>-->
-<!--              </button>-->
-<!--            </div>-->
-
-<!--            <div class=" font-icon-list col-lg-2 col-md-3 col-sm-4 col-xs-6 col-xs-6">-->
-<!--              <button (click)="connect($event, 'humana')" >-->
-<!--                <img class=" tim-icons icon-alert-circle-exc" style="max-width:100px;" src="assets/sources/humana.png">-->
-<!--                <p>Humana</p>-->
-<!--              </button>-->
-<!--            </div>-->
-
-<!--            <div class=" font-icon-list col-lg-2 col-md-3 col-sm-4 col-xs-6 col-xs-6">-->
-<!--              <button (click)="connect($event, 'kaiser')">-->
-<!--                <img class=" tim-icons icon-alert-circle-exc" style="max-width:100px;" src="assets/sources/kaiser.png">-->
-<!--                <p>Kaiser</p>-->
-<!--              </button>-->
-<!--            </div>-->
-
-<!--            <div class=" font-icon-list col-lg-2 col-md-3 col-sm-4 col-xs-6 col-xs-6">-->
-<!--              <button (click)="connect($event, 'united_healthcare')">-->
-<!--                <img class=" tim-icons icon-alert-circle-exc" style="max-width:100px;" src="assets/sources/unitedhealthcare.png">-->
-<!--                <p>United Healthcare</p>-->
-<!--              </button>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->

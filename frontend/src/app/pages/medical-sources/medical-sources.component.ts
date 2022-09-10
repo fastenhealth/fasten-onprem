@@ -26,6 +26,32 @@ export class MedicalSourcesComponent implements OnInit {
     private fastenApi: FastenApiService,
   ) { }
 
+  sourceDataList = [
+    {
+      "providerId": "aetna",
+      "display": "Aetna",
+    },
+    {
+      "providerId": "anthem",
+      "display": "Anthem",
+    },
+    {
+      "providerId": "cigna",
+      "display": "Cigna",
+    },
+    {
+      "providerId": "humana",
+      "display": "Humana",
+    },
+    {
+      "providerId": "kaiser",
+      "display": "Kaiser",
+    },
+    {
+      "providerId": "unitedhealthcare",
+      "display": "United Healthcare",
+    }
+  ]
   ngOnInit(): void {
   }
 

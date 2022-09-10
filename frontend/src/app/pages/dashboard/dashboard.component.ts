@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {FastenApiService} from '../../services/fasten-api.service';
+import {ProviderConfig} from '../../models/passport/provider-config';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,9 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor() { }
+  patients = []
+
+  constructor(private fastenApi: FastenApiService) { }
 
   ngOnInit() {
+    this.fastenApi.getResources('Patient')
+      .subscribe( (patientsList) => {
+        console.log(patientsList);
+        this.patients = patientsList
+      })
   }
 
 

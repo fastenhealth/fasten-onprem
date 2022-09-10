@@ -22,10 +22,10 @@ func (base *ModelBase) BeforeCreate(tx *gorm.DB) error {
 
 type OriginBase struct {
 	ModelBase
-	User   User      `json:"user" gorm:"-"`
+	User   *User     `json:"user,omitempty" gorm:"-"`
 	UserID uuid.UUID `json:"user_id"`
 
-	Source   Source    `json:"source" gorm:"-"`
+	Source   *Source   `json:"source,omitempty" gorm:"-"`
 	SourceID uuid.UUID `json:"source_id" gorm:"not null;index:,unique,composite:source_resource_id"`
 
 	SourceResourceType string `json:"source_resource_type" gorm:"not null;index:,unique,composite:source_resource_id"`
