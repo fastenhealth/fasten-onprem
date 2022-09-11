@@ -5,8 +5,14 @@ import { Routes, RouterModule } from "@angular/router";
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { MedicalSourcesComponent } from './pages/medical-sources/medical-sources.component';
 import {ResourceDetailComponent} from './pages/resource-detail/resource-detail.component';
+import {AuthSigninComponent} from './pages/auth-signin/auth-signin.component';
+import {AuthSignupComponent} from './pages/auth-signup/auth-signup.component';
 
 const routes: Routes = [
+
+  { path: 'auth/signin', component: AuthSigninComponent },
+  { path: 'auth/signup', component: AuthSignupComponent },
+
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'detail', component: ResourceDetailComponent },

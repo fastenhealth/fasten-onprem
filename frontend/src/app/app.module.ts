@@ -15,6 +15,8 @@ import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontaweso
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { ResourceDetailComponent } from './pages/resource-detail/resource-detail.component';
+import { AuthSignupComponent } from './pages/auth-signup/auth-signup.component';
+import { AuthSigninComponent } from './pages/auth-signin/auth-signin.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +26,8 @@ import { ResourceDetailComponent } from './pages/resource-detail/resource-detail
     DashboardComponent,
     MedicalSourcesComponent,
     ResourceDetailComponent,
+    AuthSignupComponent,
+    AuthSigninComponent,
   ],
   imports: [
     BrowserModule,
