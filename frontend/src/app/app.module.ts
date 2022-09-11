@@ -14,6 +14,7 @@ import {SharedModule} from './components/shared.module';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome'
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
+import { ResourceDetailComponent } from './pages/resource-detail/resource-detail.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { far } from '@fortawesome/free-regular-svg-icons';
     FooterComponent,
     DashboardComponent,
     MedicalSourcesComponent,
+    ResourceDetailComponent,
   ],
   imports: [
     BrowserModule,

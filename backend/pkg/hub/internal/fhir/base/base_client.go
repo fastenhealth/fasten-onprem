@@ -97,7 +97,7 @@ func (c *BaseClient) GetRequest(resourceSubpath string, decodeModelPtr interface
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 300 || resp.StatusCode < 200 {
-		return fmt.Errorf("An error occurred during request - %d - %s", resp.StatusCode, resp.Status)
+		return fmt.Errorf("An error occurred during request %s - %d - %s", url, resp.StatusCode, resp.Status)
 	}
 
 	err = json.NewDecoder(resp.Body).Decode(decodeModelPtr)

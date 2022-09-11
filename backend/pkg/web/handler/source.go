@@ -83,6 +83,7 @@ func RawRequestSource(c *gin.Context) {
 	for _, source := range sources {
 		if source.ProviderId == c.Param("sourceType") {
 			foundSource = &source
+			break
 		}
 	}
 

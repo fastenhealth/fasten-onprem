@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/aetna"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/base"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/cigna"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
@@ -17,6 +18,8 @@ func NewClient(providerId string, appConfig config.Interface, globalLogger logru
 	var updatedSource *models.Source
 	var err error
 	switch providerId {
+	case "aetna":
+		providerClient, updatedSource, err = aetna.NewClient(appConfig, globalLogger, credentials, testHttpClient...)
 	case "anthem":
 		providerClient, updatedSource, err = cigna.NewClient(appConfig, globalLogger, credentials, testHttpClient...)
 	case "cigna":
