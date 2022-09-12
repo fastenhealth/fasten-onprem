@@ -7,6 +7,7 @@ import { MedicalSourcesComponent } from './pages/medical-sources/medical-sources
 import {ResourceDetailComponent} from './pages/resource-detail/resource-detail.component';
 import {AuthSigninComponent} from './pages/auth-signin/auth-signin.component';
 import {AuthSignupComponent} from './pages/auth-signup/auth-signup.component';
+import {CanActivateAuthGuard} from './services/can-activate.auth-guard';
 
 const routes: Routes = [
 
@@ -14,9 +15,9 @@ const routes: Routes = [
   { path: 'auth/signup', component: AuthSignupComponent },
 
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'detail', component: ResourceDetailComponent },
-  { path: 'sources', component: MedicalSourcesComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [ CanActivateAuthGuard] },
+  { path: 'detail', component: ResourceDetailComponent, canActivate: [ CanActivateAuthGuard] },
+  { path: 'sources', component: MedicalSourcesComponent, canActivate: [ CanActivateAuthGuard] },
   // { path: 'general-pages', loadChildren: () => import('./general-pages/general-pages.module').then(m => m.GeneralPagesModule) },
   // { path: 'ui-elements', loadChildren: () => import('./ui-elements/ui-elements.module').then(m => m.UiElementsModule) },
   // { path: 'form', loadChildren: () => import('./form/form.module').then(m => m.FormModule) },

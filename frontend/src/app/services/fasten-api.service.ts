@@ -66,8 +66,12 @@ export class FastenApiService {
   }
 
 
+  /*
+  SECURE ENDPOINTS
+  */
+
   createSource(source: Source): Observable<Source> {
-    return this._httpClient.post<any>(`${this.getBasePath()}/api/source`, source)
+    return this._httpClient.post<any>(`${this.getBasePath()}/api/secure/source`, source)
       .pipe(
         map((response: ResponseWrapper) => {
           console.log("SOURCE RESPONSE", response)
@@ -77,7 +81,7 @@ export class FastenApiService {
   }
 
   getResources(resourceType: string, resourceId?: string ) {
-    return this._httpClient.get<any>(`${this.getBasePath()}/api/fhir/${resourceType}/${resourceId ? resourceId : ''}`)
+    return this._httpClient.get<any>(`${this.getBasePath()}/api/secure/fhir/${resourceType}/${resourceId ? resourceId : ''}`)
       .pipe(
         map((response: ResponseWrapper) => {
           console.log("RESPONSE", response)

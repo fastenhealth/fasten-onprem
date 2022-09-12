@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -18,6 +18,10 @@ import { ResourceDetailComponent } from './pages/resource-detail/resource-detail
 import { AuthSignupComponent } from './pages/auth-signup/auth-signup.component';
 import { AuthSigninComponent } from './pages/auth-signin/auth-signin.component';
 import { FormsModule } from '@angular/forms';
+
+import { AuthInterceptorService } from './services/auth-interceptor.service';
+import { CanActivateAuthGuard } from './services/can-activate.auth-guard';
+import {FastenApiService} from './services/fasten-api.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -39,7 +43,15 @@ import { FormsModule } from '@angular/forms';
     NgbModule,
     ChartsModule
   ],
-  providers: [],
+  providers: [
+    FastenApiService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptorService,
+      multi: true
+    },
+    CanActivateAuthGuard
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

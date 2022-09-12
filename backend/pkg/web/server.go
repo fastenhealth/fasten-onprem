@@ -43,11 +43,14 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 			api.POST("/auth/signup", handler.AuthSignup)
 			api.POST("/auth/signin", handler.AuthSignin)
 
-			api.POST("/source", handler.CreateSource)
-			api.GET("/source", handler.ListSource)
-			api.GET("/source/raw/:sourceType/*path", handler.RawRequestSource)
+			secure := api.Group("/secure").Use(middleware.RequireAuth())
+			{
+				secure.POST("/source", handler.CreateSource)
+				secure.GET("/source", handler.ListSource)
+				secure.GET("/source/raw/:sourceType/*path", handler.RawRequestSource)
 
-			api.GET("/fhir/:sourceResourceType/*sourceResourceId", handler.RequestResourceFhir)
+				secure.GET("/fhir/:sourceResourceType/*sourceResourceId", handler.RequestResourceFhir)
+			}
 		}
 	}
 
