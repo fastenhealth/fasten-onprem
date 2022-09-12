@@ -5,21 +5,42 @@
       <h2>Welcome back!</h2>
       <h4>Please sign in to continue</h4>
 
-      <form>
+      <form (ngSubmit)="signinSubmit()" #userForm="ngForm">
         <div class="form-group">
           <label>Email</label>
-          <input type="text" class="form-control" placeholder="Enter your email" value="demo@bootstrapdash.com">
+          <input [(ngModel)]="existingUser.username" name="username" #username="ngModel" required minlength="2" type="text" class="form-control" placeholder="Enter your email">
+
+          <div *ngIf="username.invalid && (username.dirty || username.touched)" class="alert alert-danger">
+            <div *ngIf="username.errors?.['required']">
+              Email is required.
+            </div>
+            <div *ngIf="username.errors?.['minlength']">
+              Email must be at least 4 characters long.
+            </div>
+            <div *ngIf="username.errors?.['email']">
+              Email is not a valid email address.
+            </div>
+          </div>
         </div><!-- form-group -->
         <div class="form-group">
           <label>Password</label>
-          <input type="password" class="form-control" placeholder="Enter your password" value="thisisademo">
+          <input [(ngModel)]="existingUser.password" name="password" #password="ngModel" required minlength="8" type="password" class="form-control" placeholder="Enter your password">
+
+          <div *ngIf="password.invalid && (password.dirty || password.touched)" class="alert alert-danger">
+            <div *ngIf="password.errors?.['required']">
+              Password is required.
+            </div>
+            <div *ngIf="password.errors?.['minlength']">
+              Password must be at least 8 characters long.
+            </div>
+          </div>
         </div><!-- form-group -->
-        <a class="btn btn-az-primary btn-block" routerLink="/">Sign In</a>
+        <button [disabled]="!userForm.form.valid" type="submit" class="btn btn-az-primary btn-block">Sign In</button>
       </form>
     </div><!-- az-signin-header -->
     <div class="az-signin-footer">
       <p><a href="">Forgot password?</a></p>
-      <p>Don't have an account? <a routerLink="/general-pages/signup">Create an Account</a></p>
+      <p>Don't have an account? <a routerLink="/auth/signup">Create an Account</a></p>
     </div><!-- az-signin-footer -->
   </div><!-- az-card-signin -->
 </div><!-- az-signin-wrapper -->

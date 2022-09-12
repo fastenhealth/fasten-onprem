@@ -46,23 +46,19 @@ export class FastenApiService {
   }
 
 
-  signin(email: string, pass: string) {
-    const headers = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' })
-    };
+  signin(username: string, pass: string): Observable<any> {
 
     const data = {
-      email: email,
+      username: username,
       password: pass
     };
 
-    this._httpClient.post<any>(`${this.getBasePath()}/api/auth/signin`, data, headers).subscribe(
-      (res: any) => {
-        localStorage.setItem(this.AUTH_TOKEN_KEY, res.token);
-
-        this.router.navigateByUrl('/dashboard');
+    return this._httpClient.post<any>(`${this.getBasePath()}/api/auth/signin`, data).pipe(
+      map((res: any) => {
+        localStorage.setItem(this.AUTH_TOKEN_KEY, res.data);
+        return res.data
       }
-    );
+    ));
   }
 
 

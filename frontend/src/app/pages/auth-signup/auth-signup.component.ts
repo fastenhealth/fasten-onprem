@@ -26,7 +26,6 @@ export class AuthSignupComponent implements OnInit {
 
         this.router.navigateByUrl('/dashboard');
       })
-
   }
 
 }

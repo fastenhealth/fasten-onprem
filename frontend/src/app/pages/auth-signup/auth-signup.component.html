@@ -7,8 +7,6 @@
       <p>We are excited to launch our new company and product Azia. After being featured in too many magazines to mention and having created an online stir, we know that BootstrapDash is going to be big. We also hope to win Startup Fictional Business of the Year this year.</p>
       <p>Browse our site and see for yourself why you need Azia.</p>
       <a routerLink="/" class="btn btn-outline-indigo">Learn More</a>
-
-      {{ newUser | json }}
     </div>
   </div><!-- az-column-signup-left -->
   <div class="az-column-signup">
@@ -58,7 +56,7 @@
               Password is required.
             </div>
             <div *ngIf="password.errors?.['minlength']">
-              Name must be at least 8 characters long.
+              Password must be at least 8 characters long.
             </div>
           </div>
         </div><!-- form-group -->
@@ -66,7 +64,7 @@
       </form>
     </div><!-- az-signup-header -->
     <div class="az-signup-footer">
-      <p>Already have an account? <a routerLink="auth/signin">Sign In</a></p>
+      <p>Already have an account? <a routerLink="/auth/signin">Sign In</a></p>
     </div><!-- az-signin-footer -->
   </div><!-- az-column-signup -->
 </div><!-- az-signup-wrapper -->
