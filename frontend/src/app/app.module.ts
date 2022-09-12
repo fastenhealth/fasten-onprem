@@ -17,7 +17,7 @@ import { far } from '@fortawesome/free-regular-svg-icons';
 import { ResourceDetailComponent } from './pages/resource-detail/resource-detail.component';
 import { AuthSignupComponent } from './pages/auth-signup/auth-signup.component';
 import { AuthSigninComponent } from './pages/auth-signin/auth-signin.component';
-
+import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,6 +30,7 @@ import { AuthSigninComponent } from './pages/auth-signin/auth-signin.component';
     AuthSigninComponent,
   ],
   imports: [
+    FormsModule,
     BrowserModule,
     FontAwesomeModule,
     SharedModule,

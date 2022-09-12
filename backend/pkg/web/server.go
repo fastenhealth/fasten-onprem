@@ -39,6 +39,10 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 					"success": true,
 				})
 			})
+
+			api.POST("/auth/signup", handler.AuthSignup)
+			api.POST("/auth/signin", handler.AuthSignin)
+
 			api.POST("/source", handler.CreateSource)
 			api.GET("/source", handler.ListSource)
 			api.GET("/source/raw/:sourceType/*path", handler.RawRequestSource)

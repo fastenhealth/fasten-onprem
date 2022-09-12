@@ -78,6 +78,26 @@ func (sr *sqliteRepository) Close() error {
 	return nil
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// User
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (sr *sqliteRepository) CreateUser(ctx context.Context, user *models.User) error {
+	if err := user.HashPassword(user.Password); err != nil {
+		return err
+	}
+	record := sr.gormClient.Create(&user)
+	if record.Error != nil {
+		return record.Error
+	}
+	return nil
+}
+func (sr *sqliteRepository) GetUserByEmail(ctx context.Context, username string) (*models.User, error) {
+	var foundUser models.User
+	result := sr.gormClient.Model(models.User{}).Where(models.User{Username: username}).First(&foundUser)
+	return &foundUser, result.Error
+}
+
 func (sr *sqliteRepository) GetCurrentUser() models.User {
 	var currentUser models.User
 	sr.gormClient.Model(models.User{}).First(&currentUser)

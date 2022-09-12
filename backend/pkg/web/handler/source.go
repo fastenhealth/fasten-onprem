@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"strings"
 )
 
 func CreateSource(c *gin.Context) {
@@ -109,7 +110,7 @@ func RawRequestSource(c *gin.Context) {
 	}
 
 	var resp map[string]interface{}
-	err = client.GetRequest(c.Param("path"), &resp)
+	err = client.GetRequest(strings.TrimSuffix(c.Param("path"), "/"), &resp)
 	if err != nil {
 		logger.Errorf("Error making raw request", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
