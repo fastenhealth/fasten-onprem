@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/auth"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
@@ -43,20 +44,20 @@ func AuthSignin(c *gin.Context) {
 
 	foundUser, err := databaseRepo.GetUserByEmail(c, user.Username)
 	if err != nil || foundUser == nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": fmt.Sprintf("could not find user: %s", user.Username)})
 		return
 	}
 
 	err = foundUser.CheckPassword(user.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"success": false})
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": fmt.Sprintf("username or password does not match: %s", user.Username)})
 		return
 	}
 
 	// return JWT
 	tokenString, err := auth.GenerateJWT(user.Username)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "an error occurred generating JWT token"})
 		return
 	}
 
