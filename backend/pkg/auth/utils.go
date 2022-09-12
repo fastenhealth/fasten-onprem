@@ -35,6 +35,9 @@ func ValidateToken(signedToken string) (err error) {
 		signedToken,
 		&JWTClaim{},
 		func(token *jwt.Token) (interface{}, error) {
+			if jwt.SigningMethodHS256 != token.Method {
+				return nil, errors.New("Invalid signing algorithm")
+			}
 			return []byte(jwtKey), nil
 		},
 	)
