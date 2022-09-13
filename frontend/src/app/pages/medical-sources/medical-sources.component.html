@@ -5,7 +5,20 @@
       <div class="az-content-breadcrumb">
         <span>Medical Sources</span>
       </div>
-      <h2 class="az-content-title">Medical Sources</h2>
+
+      <h2 class="az-content-title">Connected Sources</h2>
+
+      <div class="row">
+        <div *ngFor="let sourceData of connectedSourceList" (click)="connect($event, sourceData['providerId'])" class="col-sm-3 mg-b-20 px-3">
+          <div class="card h-100 d-flex align-items-center justify-content-center p-3 rounded-0">
+            <div class="card-body">
+              <img [src]="'assets/sources/'+sourceData['providerId']+'.png'" alt="client" class="img-fluid">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="az-content-title mg-t-40">Medical Sources</h2>
 
       <div class="az-content-label mg-b-5">Hospitals & Medical Clinics</div>
       <p class="mg-b-20">The following medical insurance companies have API's which Fasten can use to retrieve your medical history.
@@ -31,11 +44,11 @@
 
       <div class="row row-sm">
 
-        <div *ngFor="let sourceData of sourceDataList" (click)="connect($event, sourceData['providerId'])" class="col-md-6 col-lg-4 d-flex align-items-stretch mg-b-20">
-          <div class="card bd">
-            <img [src]="'assets/sources/'+sourceData['providerId']+'.png'" alt="Image" class="img-fluid">
+
+        <div *ngFor="let sourceData of availableSourceList" (click)="connect($event, sourceData['providerId'])" class="col-sm-3 mg-b-20 px-3">
+          <div class="card h-100 d-flex align-items-center justify-content-center p-3 rounded-0">
             <div class="card-body">
-              <p class="card-text">{{sourceData['display']}}</p>
+              <img [src]="'assets/sources/'+sourceData['providerId']+'.png'" alt="client" class="img-fluid">
             </div>
           </div>
         </div>

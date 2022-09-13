@@ -75,6 +75,16 @@ export class FastenApiService {
       );
   }
 
+  getSources(): Observable<Source[]> {
+    return this._httpClient.get<any>(`${this.getBasePath()}/api/secure/source`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("SOURCE RESPONSE", response)
+          return response.data as Source[]
+        })
+      );
+  }
+
   getResources(resourceType: string, resourceId?: string ) {
     return this._httpClient.get<any>(`${this.getBasePath()}/api/secure/fhir/${resourceType}/${resourceId ? resourceId : ''}`)
       .pipe(

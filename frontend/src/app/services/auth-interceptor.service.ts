@@ -27,6 +27,11 @@ export class AuthInterceptorService implements HttpInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    //only intercept requests to the fasten API, all other requests should be sent as-is
+    if(!req.url.startsWith('/api/secure/')){
+      return next.handle(req)
+    }
+
     // Clone the request to add the new header.
     const authReq = req.clone({headers: req.headers.set('Authorization', 'Bearer ' + this.fastenApiService.token())});
     // catch the error, make specific functions for catching specific errors and you can chain through them with more catch operators

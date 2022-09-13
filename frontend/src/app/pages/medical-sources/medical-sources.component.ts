@@ -26,33 +26,42 @@ export class MedicalSourcesComponent implements OnInit {
     private fastenApi: FastenApiService,
   ) { }
 
-  sourceDataList = [
-    {
-      "providerId": "aetna",
-      "display": "Aetna",
-    },
-    {
-      "providerId": "anthem",
-      "display": "Anthem",
-    },
-    {
-      "providerId": "cigna",
-      "display": "Cigna",
-    },
-    {
-      "providerId": "humana",
-      "display": "Humana",
-    },
-    {
-      "providerId": "kaiser",
-      "display": "Kaiser",
-    },
-    {
-      "providerId": "unitedhealthcare",
-      "display": "United Healthcare",
-    }
-  ]
+  sourceLookup = {
+    "aetna": {"display": "Aetna"},
+    "anthem": {"display": "Anthem"},
+    "cigna": {"display": "Cigna"},
+    "humana": {"display": "Humana"},
+    "kaiser": {"display": "Kaiser"},
+    "unitedhealthcare": {"display": "United Healthcare"},
+  }
+
+  connectedSourceList = []
+  availableSourceList = []
+
+
+
+
   ngOnInit(): void {
+    this.fastenApi.getSources()
+      .subscribe((sourceList: Source[]) => {
+
+        for (const sourceId in this.sourceLookup) {
+          let isConnected = false
+          for(const connectedSource of sourceList){
+            if(connectedSource.provider_id == sourceId){
+              this.connectedSourceList.push({"providerId": sourceId, "display": this.sourceLookup[sourceId]["display"]})
+              isConnected = true
+              break
+            }
+          }
+
+          if(!isConnected){
+            //this source has not been found in the connected list, lets add it to the available list.
+            this.availableSourceList.push({"providerId": sourceId, "display": this.sourceLookup[sourceId]["display"]})
+          }
+        }
+
+      })
   }
 
   connect($event: MouseEvent, providerId: string) {
