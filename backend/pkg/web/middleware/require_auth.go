@@ -9,30 +9,34 @@ import (
 )
 
 func RequireAuth() gin.HandlerFunc {
-	return func(context *gin.Context) {
-		authHeader := context.GetHeader("Authorization")
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
 		authHeaderParts := strings.Split(authHeader, " ")
 
 		if len(authHeaderParts) != 2 {
 			log.Println("Authentication header is invalid: " + authHeader)
-			context.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "request does not contain a valid token"})
-			context.Abort()
+			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "request does not contain a valid token"})
+			c.Abort()
 			return
 		}
 
 		tokenString := authHeaderParts[1]
 
 		if tokenString == "" {
-			context.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "request does not contain an access token"})
-			context.Abort()
+			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "request does not contain an access token"})
+			c.Abort()
 			return
 		}
-		err := auth.ValidateToken(tokenString)
+		claim, err := auth.ValidateToken(tokenString)
 		if err != nil {
-			context.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": err.Error()})
-			context.Abort()
+			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": err.Error()})
+			c.Abort()
 			return
 		}
-		context.Next()
+
+		c.Set("AUTH_TOKEN", tokenString)
+		c.Set("AUTH_USERNAME", claim.Username)
+
+		c.Next()
 	}
 }

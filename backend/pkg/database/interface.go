@@ -11,7 +11,7 @@ type DatabaseRepository interface {
 
 	CreateUser(context.Context, *models.User) error
 	GetUserByEmail(context.Context, string) (*models.User, error)
-	GetCurrentUser() models.User
+	GetCurrentUser(context.Context) models.User
 
 	UpsertResource(context.Context, models.ResourceFhir) error
 	ListResources(context.Context, string, string) ([]models.ResourceFhir, error)

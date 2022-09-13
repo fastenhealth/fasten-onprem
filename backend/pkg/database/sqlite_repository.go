@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/gin-gonic/gin"
 	"github.com/glebarez/sqlite"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -98,9 +99,10 @@ func (sr *sqliteRepository) GetUserByEmail(ctx context.Context, username string)
 	return &foundUser, result.Error
 }
 
-func (sr *sqliteRepository) GetCurrentUser() models.User {
+func (sr *sqliteRepository) GetCurrentUser(ctx context.Context) models.User {
+	ginCtx := ctx.(*gin.Context)
 	var currentUser models.User
-	sr.gormClient.Model(models.User{}).First(&currentUser)
+	sr.gormClient.Model(models.User{}).First(&currentUser, models.User{Username: ginCtx.MustGet("AUTH_USERNAME").(string)})
 
 	return currentUser
 }
@@ -128,7 +130,7 @@ func (sr *sqliteRepository) ListResources(ctx context.Context, sourceResourceTyp
 
 	queryParam := models.ResourceFhir{
 		OriginBase: models.OriginBase{
-			UserID:             sr.GetCurrentUser().ID,
+			UserID:             sr.GetCurrentUser(ctx).ID,
 			SourceResourceType: sourceResourceType,
 		},
 	}
@@ -150,7 +152,7 @@ func (sr *sqliteRepository) ListResources(ctx context.Context, sourceResourceTyp
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func (sr *sqliteRepository) CreateSource(ctx context.Context, providerCreds *models.Source) error {
-	providerCreds.UserID = sr.GetCurrentUser().ID
+	providerCreds.UserID = sr.GetCurrentUser(ctx).ID
 
 	if sr.gormClient.WithContext(ctx).Model(&providerCreds).
 		Where(models.Source{
@@ -166,7 +168,7 @@ func (sr *sqliteRepository) GetSources(ctx context.Context) ([]models.Source, er
 
 	var providerCredentials []models.Source
 	results := sr.gormClient.WithContext(ctx).
-		Where(models.Source{UserID: sr.GetCurrentUser().ID}).
+		Where(models.Source{UserID: sr.GetCurrentUser(ctx).ID}).
 		Find(&providerCredentials)
 
 	return providerCredentials, results.Error
