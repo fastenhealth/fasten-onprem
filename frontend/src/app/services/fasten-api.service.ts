@@ -33,7 +33,6 @@ export class FastenApiService {
 
   logout() {
     localStorage.removeItem(this.AUTH_TOKEN_KEY);
-    this.router.navigateByUrl('/');
   }
 
   signup(newUser: User): Observable<any> {

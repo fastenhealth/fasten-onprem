@@ -22,6 +22,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { CanActivateAuthGuard } from './services/can-activate.auth-guard';
 import {FastenApiService} from './services/fasten-api.service';
+import {Router} from '@angular/router';
 @NgModule({
   declarations: [
     AppComponent,
@@ -44,11 +45,11 @@ import {FastenApiService} from './services/fasten-api.service';
     ChartsModule
   ],
   providers: [
-    FastenApiService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptorService,
-      multi: true
+      multi: true,
+      deps: [FastenApiService, Router]
     },
     CanActivateAuthGuard
   ],
