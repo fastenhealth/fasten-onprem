@@ -14,8 +14,8 @@ type CignaClient struct {
 	*base.FHIR401Client
 }
 
-func NewClient(appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) (base.Client, *models.Source, error) {
-	baseClient, updatedSource, err := base.NewFHIR401Client(appConfig, globalLogger, source, testHttpClient...)
+func NewClient(ctx context.Context, appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) (base.Client, *models.Source, error) {
+	baseClient, updatedSource, err := base.NewFHIR401Client(ctx, appConfig, globalLogger, source, testHttpClient...)
 	return CignaClient{
 		baseClient,
 	}, updatedSource, err

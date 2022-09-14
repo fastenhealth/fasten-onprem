@@ -1,6 +1,6 @@
 export class Source {
   user_id?: number
-  provider_id: string
+  source_type: string
   patient_id: string
 
   oauth_endpoint_base_url: string

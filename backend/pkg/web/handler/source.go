@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
@@ -14,24 +15,24 @@ func CreateSource(c *gin.Context) {
 	logger := c.MustGet("LOGGER").(*logrus.Entry)
 	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
 
-	providerCred := models.Source{}
-	if err := c.ShouldBindJSON(&providerCred); err != nil {
-		logger.Errorln("An error occurred while parsing posted provider credential", err)
+	sourceCred := models.Source{}
+	if err := c.ShouldBindJSON(&sourceCred); err != nil {
+		logger.Errorln("An error occurred while parsing posted source credential", err)
 		c.JSON(http.StatusBadRequest, gin.H{"success": false})
 		return
 	}
 
-	logger.Infof("Parsed Create Provider Credentials Payload: %v", providerCred)
+	logger.Infof("Parsed Create Source Credentials Payload: %v", sourceCred)
 
-	err := databaseRepo.CreateSource(c, &providerCred)
+	err := databaseRepo.CreateSource(c, &sourceCred)
 	if err != nil {
-		logger.Errorln("An error occurred while storing provider credential", err)
+		logger.Errorln("An error occurred while storing source credential", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
 
 	// after creating the source, we should do a bulk import
-	sourceClient, updatedSource, err := hub.NewClient(providerCred.ProviderId, nil, logger, providerCred)
+	sourceClient, updatedSource, err := hub.NewClient(sourceCred.SourceType, c, nil, logger, sourceCred)
 	if err != nil {
 		logger.Errorln("An error occurred while initializing hub client using source credential", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
@@ -40,7 +41,7 @@ func CreateSource(c *gin.Context) {
 	if updatedSource != nil {
 		err := databaseRepo.CreateSource(c, updatedSource)
 		if err != nil {
-			logger.Errorln("An error occurred while updating provider credential", err)
+			logger.Errorln("An error occurred while updating source credential", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 			return
 		}
@@ -53,20 +54,20 @@ func CreateSource(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"success": true, "data": providerCred})
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceCred})
 }
 
 func ListSource(c *gin.Context) {
 	logger := c.MustGet("LOGGER").(*logrus.Entry)
 	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
 
-	providerCredentials, err := databaseRepo.GetSources(c)
+	sourceCreds, err := databaseRepo.GetSources(c)
 	if err != nil {
-		logger.Errorln("An error occurred while storing provider credential", err)
+		logger.Errorln("An error occurred while storing source credential", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"success": true, "data": providerCredentials})
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceCreds})
 }
 
 func RawRequestSource(c *gin.Context) {
@@ -75,14 +76,14 @@ func RawRequestSource(c *gin.Context) {
 
 	sources, err := databaseRepo.GetSources(c)
 	if err != nil {
-		logger.Errorln("An error occurred while storing provider credential", err)
+		logger.Errorln("An error occurred while storing source credential", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
 
 	var foundSource *models.Source
 	for _, source := range sources {
-		if source.ProviderId == c.Param("sourceType") {
+		if source.SourceType == pkg.SourceType(c.Param("sourceType")) {
 			foundSource = &source
 			break
 		}
@@ -94,7 +95,7 @@ func RawRequestSource(c *gin.Context) {
 		return
 	}
 
-	client, updatedSource, err := hub.NewClient(c.Param("sourceType"), nil, logger, *foundSource)
+	client, updatedSource, err := hub.NewClient(pkg.SourceType(c.Param("sourceType")), c, nil, logger, *foundSource)
 	if err != nil {
 		logger.Errorf("Could not initialize source client", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
@@ -103,7 +104,7 @@ func RawRequestSource(c *gin.Context) {
 	if updatedSource != nil {
 		err := databaseRepo.CreateSource(c, updatedSource)
 		if err != nil {
-			logger.Errorln("An error occurred while updating provider credential", err)
+			logger.Errorln("An error occurred while updating source credential", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 			return
 		}

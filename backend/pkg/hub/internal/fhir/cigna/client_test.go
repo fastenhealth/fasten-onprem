@@ -1,6 +1,7 @@
 package cigna
 
 import (
+	"context"
 	mock_config "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config/mock"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/base"
@@ -28,8 +29,8 @@ func TestCignaClient_SyncAll(t *testing.T) {
 		"type": "test",
 	})
 	httpClient := base.OAuthVcrSetup(t, false)
-	client, err := NewClient(fakeConfig, testLogger, models.Source{
-		ProviderId:         "cigna",
+	client, _, err := NewClient(context.Background(), fakeConfig, testLogger, models.Source{
+		SourceType:         "cigna",
 		PatientId:          "A00000000000005",
 		ApiEndpointBaseUrl: "https://p-hi2.digitaledge.cigna.com/PatientAccess/v1-devportal",
 		ClientId:           "e434426c-2aaf-413a-a39a-8f5f6130f287",

@@ -148,37 +148,37 @@ func (sr *sqliteRepository) ListResources(ctx context.Context, sourceResourceTyp
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ProviderCredentials
+// Source
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (sr *sqliteRepository) CreateSource(ctx context.Context, providerCreds *models.Source) error {
-	providerCreds.UserID = sr.GetCurrentUser(ctx).ID
+func (sr *sqliteRepository) CreateSource(ctx context.Context, sourceCreds *models.Source) error {
+	sourceCreds.UserID = sr.GetCurrentUser(ctx).ID
 
-	if sr.gormClient.WithContext(ctx).Model(&providerCreds).
+	if sr.gormClient.WithContext(ctx).Model(&sourceCreds).
 		Where(models.Source{
-			UserID:     providerCreds.UserID,
-			ProviderId: providerCreds.ProviderId,
-			PatientId:  providerCreds.PatientId}).Updates(&providerCreds).RowsAffected == 0 {
-		return sr.gormClient.WithContext(ctx).Create(&providerCreds).Error
+			UserID:     sourceCreds.UserID,
+			SourceType: sourceCreds.SourceType,
+			PatientId:  sourceCreds.PatientId}).Updates(&sourceCreds).RowsAffected == 0 {
+		return sr.gormClient.WithContext(ctx).Create(&sourceCreds).Error
 	}
 	return nil
 }
 
 func (sr *sqliteRepository) GetSources(ctx context.Context) ([]models.Source, error) {
 
-	var providerCredentials []models.Source
+	var sourceCreds []models.Source
 	results := sr.gormClient.WithContext(ctx).
 		Where(models.Source{UserID: sr.GetCurrentUser(ctx).ID}).
-		Find(&providerCredentials)
+		Find(&sourceCreds)
 
-	return providerCredentials, results.Error
+	return sourceCreds, results.Error
 }
 
 //func (sr *sqliteRepository) GetSource(ctx context.Context, providerId string) (models.Source, error) {
 //
 //	var providerCredentials models.Source
 //	results := sr.gormClient.WithContext(ctx).
-//		Where(models.Source{UserID: sr.GetCurrentUser().ID, ProviderId: providerId}).
+//		Where(models.Source{UserID: sr.GetCurrentUser().ID, SourceType: providerId}).
 //		Find(&providerCredentials)
 //
 //	return providerCredential, results.Error

@@ -1,14 +1,17 @@
 package models
 
-import "github.com/google/uuid"
+import (
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
+	"github.com/google/uuid"
+)
 
 // Source Data/Medical Provider Credentials
 type Source struct {
 	ModelBase
-	User       User      `json:"user,omitempty"`
-	UserID     uuid.UUID `json:"user_id" gorm:"uniqueIndex:idx_user_provider_patient"`
-	ProviderId string    `json:"provider_id" gorm:"uniqueIndex:idx_user_provider_patient"`
-	PatientId  string    `json:"patient_id" gorm:"uniqueIndex:idx_user_provider_patient"`
+	User       User           `json:"user,omitempty"`
+	UserID     uuid.UUID      `json:"user_id" gorm:"uniqueIndex:idx_user_source_patient"`
+	SourceType pkg.SourceType `json:"source_type" gorm:"uniqueIndex:idx_user_source_patient"`
+	PatientId  string         `json:"patient_id" gorm:"uniqueIndex:idx_user_source_patient"`
 
 	OauthEndpointBaseUrl string `json:"oauth_endpoint_base_url"`
 	ApiEndpointBaseUrl   string `json:"api_endpoint_base_url"`

@@ -8,6 +8,7 @@ import {map} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
 import {Source} from '../models/fasten/source';
 import {User} from '../models/fasten/user';
+import {ResourceFhir} from '../models/fasten/resource_fhir';
 
 @Injectable({
   providedIn: 'root'
@@ -85,12 +86,12 @@ export class FastenApiService {
       );
   }
 
-  getResources(resourceType: string, resourceId?: string ): Observable<any[]> {
+  getResources(resourceType: string, resourceId?: string ): Observable<ResourceFhir[]> {
     return this._httpClient.get<any>(`${this.getBasePath()}/api/secure/fhir/${resourceType}/${resourceId ? resourceId : ''}`)
       .pipe(
         map((response: ResponseWrapper) => {
           console.log("RESPONSE", response)
-          return response.data
+          return response.data as ResourceFhir[]
         })
       );
   }

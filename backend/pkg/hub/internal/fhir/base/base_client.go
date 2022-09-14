@@ -14,6 +14,7 @@ import (
 )
 
 type BaseClient struct {
+	Context   context.Context
 	AppConfig config.Interface
 	Logger    logrus.FieldLogger
 
@@ -21,14 +22,13 @@ type BaseClient struct {
 	Source      models.Source
 }
 
-func NewBaseClient(appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) (*BaseClient, *models.Source, error) {
+func NewBaseClient(ctx context.Context, appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) (*BaseClient, *models.Source, error) {
 	var httpClient *http.Client
 	var updatedSource *models.Source
 	if len(testHttpClient) == 0 {
 		//check if we need to refresh the access token
 		//https://github.com/golang/oauth2/issues/84#issuecomment-520099526
 		// https://chromium.googlesource.com/external/github.com/golang/oauth2/+/8f816d62a2652f705144857bbbcc26f2c166af9e/oauth2.go#239
-		ctx := context.Background()
 		conf := &oauth2.Config{
 			ClientID:     source.ClientId,
 			ClientSecret: "",
@@ -77,6 +77,7 @@ func NewBaseClient(appConfig config.Interface, globalLogger logrus.FieldLogger, 
 
 	httpClient.Timeout = 10 * time.Second
 	return &BaseClient{
+		Context:     ctx,
 		AppConfig:   appConfig,
 		Logger:      globalLogger,
 		OauthClient: httpClient,

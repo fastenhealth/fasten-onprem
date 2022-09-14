@@ -1,8 +1,10 @@
 package hub
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/aetna"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/base"
@@ -12,21 +14,21 @@ import (
 	"net/http"
 )
 
-func NewClient(providerId string, appConfig config.Interface, globalLogger logrus.FieldLogger, credentials models.Source, testHttpClient ...*http.Client) (base.Client, *models.Source, error) {
+func NewClient(sourceType pkg.SourceType, ctx context.Context, appConfig config.Interface, globalLogger logrus.FieldLogger, credentials models.Source, testHttpClient ...*http.Client) (base.Client, *models.Source, error) {
 
-	var providerClient base.Client
+	var sourceClient base.Client
 	var updatedSource *models.Source
 	var err error
-	switch providerId {
-	case "aetna":
-		providerClient, updatedSource, err = aetna.NewClient(appConfig, globalLogger, credentials, testHttpClient...)
-	case "anthem":
-		providerClient, updatedSource, err = cigna.NewClient(appConfig, globalLogger, credentials, testHttpClient...)
-	case "cigna":
-		providerClient, updatedSource, err = cigna.NewClient(appConfig, globalLogger, credentials, testHttpClient...)
+	switch sourceType {
+	case pkg.SourceTypeAetna:
+		sourceClient, updatedSource, err = aetna.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
+	case pkg.SourceTypeAnthem:
+		sourceClient, updatedSource, err = cigna.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
+	case pkg.SourceTypeCigna:
+		sourceClient, updatedSource, err = cigna.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
 	default:
-		return nil, updatedSource, errors.New(fmt.Sprintf("Unknown Provider Type: %s", providerId))
+		return nil, updatedSource, errors.New(fmt.Sprintf("Unknown Source Type: %s", sourceType))
 	}
 
-	return providerClient, updatedSource, err
+	return sourceClient, updatedSource, err
 }

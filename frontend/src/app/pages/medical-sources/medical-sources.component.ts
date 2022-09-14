@@ -49,7 +49,7 @@ export class MedicalSourcesComponent implements OnInit {
         for (const sourceId in this.sourceLookup) {
           let isConnected = false
           for(const connectedSource of sourceList){
-            if(connectedSource.provider_id == sourceId){
+            if(connectedSource.source_type == sourceId){
               this.connectedSourceList.push({"providerId": sourceId, "display": this.sourceLookup[sourceId]["display"]})
               isConnected = true
               break
@@ -128,7 +128,7 @@ export class MedicalSourcesComponent implements OnInit {
 
           //Create FHIR Client
           const sourceCredential: Source = {
-            provider_id: providerId,
+            source_type: providerId,
             oauth_endpoint_base_url: connectData.oauth_endpoint_base_url,
             api_endpoint_base_url:   connectData.api_endpoint_base_url,
             client_id:             connectData.client_id,

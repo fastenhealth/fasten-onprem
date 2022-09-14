@@ -10,7 +10,7 @@ import {
 
 export class Patient {
   //fields
-  provider_id: string
+  source_type: string
   patient_id: string
 
   age: string

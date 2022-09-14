@@ -1,6 +1,7 @@
 package base
 
 import (
+	"context"
 	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
@@ -13,8 +14,8 @@ type FHIR430Client struct {
 	*BaseClient
 }
 
-func NewFHIR430Client(appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) (*FHIR430Client, *models.Source, error) {
-	baseClient, updatedSource, err := NewBaseClient(appConfig, globalLogger, source, testHttpClient...)
+func NewFHIR430Client(ctx context.Context, appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) (*FHIR430Client, *models.Source, error) {
+	baseClient, updatedSource, err := NewBaseClient(ctx, appConfig, globalLogger, source, testHttpClient...)
 	return &FHIR430Client{
 		baseClient,
 	}, updatedSource, err
