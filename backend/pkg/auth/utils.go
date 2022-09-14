@@ -6,9 +6,6 @@ import (
 	"time"
 )
 
-//TODO: this key should be dynamically generated/taken from config file.
-var jwtKey = []byte("supersecretkey")
-
 //TODO: this should match the ID and username for the user.
 type JWTClaim struct {
 	Username string `json:"username"`
@@ -16,7 +13,7 @@ type JWTClaim struct {
 	jwt.StandardClaims
 }
 
-func GenerateJWT(username string) (tokenString string, err error) {
+func GenerateJWT(encryptionKey string, username string) (tokenString string, err error) {
 	expirationTime := time.Now().Add(2 * time.Hour)
 	claims := &JWTClaim{
 		Username: username,
@@ -26,11 +23,11 @@ func GenerateJWT(username string) (tokenString string, err error) {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err = token.SignedString(jwtKey)
+	tokenString, err = token.SignedString([]byte(encryptionKey))
 	return
 }
 
-func ValidateToken(signedToken string) (*JWTClaim, error) {
+func ValidateToken(encryptionKey string, signedToken string) (*JWTClaim, error) {
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&JWTClaim{},
@@ -38,7 +35,7 @@ func ValidateToken(signedToken string) (*JWTClaim, error) {
 			if jwt.SigningMethodHS256 != token.Method {
 				return nil, errors.New("Invalid signing algorithm")
 			}
-			return []byte(jwtKey), nil
+			return []byte(encryptionKey), nil
 		},
 	)
 	if err != nil {

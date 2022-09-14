@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/auth"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -10,6 +11,8 @@ import (
 
 func RequireAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		appConfig := c.MustGet("CONFIG").(config.Interface)
+
 		authHeader := c.GetHeader("Authorization")
 		authHeaderParts := strings.Split(authHeader, " ")
 
@@ -27,13 +30,14 @@ func RequireAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		claim, err := auth.ValidateToken(tokenString)
+		claim, err := auth.ValidateToken(appConfig.GetString("web.jwt.encryptionKey"), tokenString)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": err.Error()})
 			c.Abort()
 			return
 		}
 
+		//todo, is this shared between all sessions??
 		c.Set("AUTH_TOKEN", tokenString)
 		c.Set("AUTH_USERNAME", claim.Username)
 

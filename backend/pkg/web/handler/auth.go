@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/auth"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,7 @@ import (
 
 func AuthSignup(c *gin.Context) {
 	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	appConfig := c.MustGet("CONFIG").(config.Interface)
 
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
@@ -24,7 +26,7 @@ func AuthSignup(c *gin.Context) {
 	}
 
 	// return JWT
-	tokenString, err := auth.GenerateJWT(user.Username)
+	tokenString, err := auth.GenerateJWT(appConfig.GetString("web.jwt.encryptionKey"), user.Username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
@@ -35,6 +37,7 @@ func AuthSignup(c *gin.Context) {
 
 func AuthSignin(c *gin.Context) {
 	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	appConfig := c.MustGet("CONFIG").(config.Interface)
 
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
@@ -55,7 +58,7 @@ func AuthSignin(c *gin.Context) {
 	}
 
 	// return JWT
-	tokenString, err := auth.GenerateJWT(user.Username)
+	tokenString, err := auth.GenerateJWT(appConfig.GetString("web.jwt.encryptionKey"), user.Username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "an error occurred generating JWT token"})
 		return
