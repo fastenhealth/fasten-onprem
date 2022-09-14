@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { PassportService } from './passport.service';
+import { LighthouseService } from './lighthouse.service';
 
 describe('PassportService', () => {
-  let service: PassportService;
+  let service: LighthouseService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(PassportService);
+    service = TestBed.inject(LighthouseService);
   });
 
   it('should be created', () => {

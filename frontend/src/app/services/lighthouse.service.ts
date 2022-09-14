@@ -10,13 +10,13 @@ import {AuthorizeClaim} from '../models/passport/authorize-claim';
 @Injectable({
   providedIn: 'root'
 })
-export class PassportService {
+export class LighthouseService {
 
   constructor(private _httpClient: HttpClient) {
   }
 
   getProviderConfig(providerId: string): Observable<ProviderConfig> {
-    return this._httpClient.get<any>(`${environment.fasten_api_endpoint_base}/v1/connect/${providerId}`)
+    return this._httpClient.get<any>(`${environment.lighthouse_api_endpoint_base}/connect/${providerId}`)
       .pipe(
         map((response: ResponseWrapper) => {
           return response.data as ProviderConfig
@@ -41,7 +41,7 @@ export class PassportService {
   }
 
   getProviderAuthorizeClaim(providerId: string, state: string): Observable<AuthorizeClaim> {
-    return this._httpClient.get<any>(`${environment.fasten_api_endpoint_base}/v1/claim/${providerId}`, {params: {"state": state}})
+    return this._httpClient.get<any>(`${environment.lighthouse_api_endpoint_base}/claim/${providerId}`, {params: {"state": state}})
       .pipe(
         map((response: ResponseWrapper) => {
           return response.data as AuthorizeClaim

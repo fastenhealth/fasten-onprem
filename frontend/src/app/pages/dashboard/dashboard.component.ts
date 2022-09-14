@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {ProviderConfig} from '../../models/passport/provider-config';
+import {Patient} from '../../models/display/patient';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,7 +18,12 @@ export class DashboardComponent implements OnInit {
     this.fastenApi.getResources('Patient')
       .subscribe( (patientsList) => {
         console.log(patientsList);
-        this.patients = patientsList
+        let display_patients = this.patients
+        patientsList.forEach(function(fhirPatientResource){
+          display_patients.push(new Patient(fhirPatientResource.payload))
+        })
+        console.log(display_patients)
+        this.patients = display_patients
       })
   }
 

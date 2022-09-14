@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  fasten_api_endpoint_base: 'https://sandbox-api.fastenhealth.com'
+  lighthouse_api_endpoint_base: 'https://lighthouse.fastenhealth.com/sandbox'
 };
 
 /*

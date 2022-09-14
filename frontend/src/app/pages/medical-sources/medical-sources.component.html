@@ -49,6 +49,10 @@
           <div class="card h-100 d-flex align-items-center justify-content-center p-3 rounded-0">
             <div class="card-body">
               <img [src]="'assets/sources/'+sourceData['providerId']+'.png'" alt="client" class="img-fluid">
+
+              <div *ngIf="status[sourceData['providerId']]" class="progress">
+                <div [style.width]="status[sourceData['providerId']] == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
+              </div>
             </div>
           </div>
         </div>

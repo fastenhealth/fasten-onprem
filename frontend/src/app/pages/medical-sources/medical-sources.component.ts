@@ -1,5 +1,5 @@
 import {Component, HostListener, OnInit} from '@angular/core';
-import {PassportService} from '../../services/passport.service';
+import {LighthouseService} from '../../services/lighthouse.service';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {ProviderConfig} from '../../models/passport/provider-config';
 import * as Oauth from '@panva/oauth4webapi';
@@ -22,9 +22,10 @@ export const retryWaitMilliSeconds = 5000; //wait 5 seconds
 export class MedicalSourcesComponent implements OnInit {
 
   constructor(
-    private passportApi: PassportService,
+    private passportApi: LighthouseService,
     private fastenApi: FastenApiService,
   ) { }
+  status: { [name: string]: string } = {}
 
   sourceLookup = {
     "aetna": {"display": "Aetna"},
@@ -66,6 +67,7 @@ export class MedicalSourcesComponent implements OnInit {
 
   connect($event: MouseEvent, providerId: string) {
     ($event.currentTarget as HTMLButtonElement).disabled = true;
+    this.status[providerId] = "authorize"
 
     this.passportApi.getProviderConfig(providerId)
       .subscribe(async (connectData: ProviderConfig) => {
@@ -86,7 +88,7 @@ export class MedicalSourcesComponent implements OnInit {
         //wait for response
         this.waitForClaimOrTimeout(providerId, state).subscribe(async (claimData: AuthorizeClaim) => {
           console.log("claim response:", claimData)
-
+          this.status[providerId] = "token"
 
           //swap code for token
           let sub: string
@@ -174,7 +176,10 @@ export class MedicalSourcesComponent implements OnInit {
           // const result = await oauth.processUserInfoResponse(as, client, sub, response)
           // console.log('result', result)
 
+          delete this.status[providerId]
 
+          //reload the current page after finishing connection
+          window.location.reload();
 
         })
 
