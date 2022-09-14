@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {FastenApiService} from '../../services/fasten-api.service';
-import {ProviderConfig} from '../../models/passport/provider-config';
+import {LighthouseSource} from '../../models/lighthouse/lighthouse-source';
 import {Patient} from '../../models/display/patient';
 
 @Component({

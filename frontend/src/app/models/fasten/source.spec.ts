@@ -1,6 +1,6 @@
 import { Source } from './source';
 
-describe('ProviderCredential', () => {
+describe('Source', () => {
   it('should create an instance', () => {
     expect(new Source()).toBeTruthy();
   });

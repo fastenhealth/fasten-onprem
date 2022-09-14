@@ -1,9 +1,9 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {LighthouseService} from '../../services/lighthouse.service';
 import {FastenApiService} from '../../services/fasten-api.service';
-import {ProviderConfig} from '../../models/passport/provider-config';
+import {LighthouseSource} from '../../models/lighthouse/lighthouse-source';
 import * as Oauth from '@panva/oauth4webapi';
-import {AuthorizeClaim} from '../../models/passport/authorize-claim';
+import {AuthorizeClaim} from '../../models/lighthouse/authorize-claim';
 import {Source} from '../../models/fasten/source';
 import {getAccessTokenExpiration} from 'fhirclient/lib/lib';
 import BrowserAdapter from 'fhirclient/lib/adapters/BrowserAdapter';
@@ -22,7 +22,7 @@ export const retryWaitMilliSeconds = 5000; //wait 5 seconds
 export class MedicalSourcesComponent implements OnInit {
 
   constructor(
-    private passportApi: LighthouseService,
+    private lighthouseApi: LighthouseService,
     private fastenApi: FastenApiService,
   ) { }
   status: { [name: string]: string } = {}
@@ -46,11 +46,11 @@ export class MedicalSourcesComponent implements OnInit {
     this.fastenApi.getSources()
       .subscribe((sourceList: Source[]) => {
 
-        for (const sourceId in this.sourceLookup) {
+        for (const sourceType in this.sourceLookup) {
           let isConnected = false
           for(const connectedSource of sourceList){
-            if(connectedSource.source_type == sourceId){
-              this.connectedSourceList.push({"providerId": sourceId, "display": this.sourceLookup[sourceId]["display"]})
+            if(connectedSource.source_type == sourceType){
+              this.connectedSourceList.push({"source_type": sourceType, "display": this.sourceLookup[sourceType]["display"]})
               isConnected = true
               break
             }
@@ -58,19 +58,19 @@ export class MedicalSourcesComponent implements OnInit {
 
           if(!isConnected){
             //this source has not been found in the connected list, lets add it to the available list.
-            this.availableSourceList.push({"providerId": sourceId, "display": this.sourceLookup[sourceId]["display"]})
+            this.availableSourceList.push({"source_type": sourceType, "display": this.sourceLookup[sourceType]["display"]})
           }
         }
 
       })
   }
 
-  connect($event: MouseEvent, providerId: string) {
+  connect($event: MouseEvent, sourceType: string) {
     ($event.currentTarget as HTMLButtonElement).disabled = true;
-    this.status[providerId] = "authorize"
+    this.status[sourceType] = "authorize"
 
-    this.passportApi.getProviderConfig(providerId)
-      .subscribe(async (connectData: ProviderConfig) => {
+    this.lighthouseApi.getLighthouseSource(sourceType)
+      .subscribe(async (connectData: LighthouseSource) => {
         console.log(connectData);
 
         // https://github.com/panva/oauth4webapi/blob/8eba19eac408bdec5c1fe8abac2710c50bfadcc3/examples/public.ts
@@ -79,16 +79,16 @@ export class MedicalSourcesComponent implements OnInit {
         const codeChallengeMethod = 'S256';
         const state = this.uuidV4()
 
-        const authorizationUrl = this.passportApi.generatePKCEProviderAuthorizeUrl(codeVerifier, codeChallenge, codeChallengeMethod, state, connectData)
+        const authorizationUrl = this.lighthouseApi.generatePKCESourceAuthorizeUrl(codeVerifier, codeChallenge, codeChallengeMethod, state, connectData)
 
         console.log('authorize url:', authorizationUrl.toString());
         // open new browser window
         window.open(authorizationUrl.toString(), "_blank");
 
         //wait for response
-        this.waitForClaimOrTimeout(providerId, state).subscribe(async (claimData: AuthorizeClaim) => {
+        this.waitForClaimOrTimeout(sourceType, state).subscribe(async (claimData: AuthorizeClaim) => {
           console.log("claim response:", claimData)
-          this.status[providerId] = "token"
+          this.status[sourceType] = "token"
 
           //swap code for token
           let sub: string
@@ -128,7 +128,7 @@ export class MedicalSourcesComponent implements OnInit {
 
           //Create FHIR Client
           const sourceCredential: Source = {
-            source_type: providerId,
+            source_type: sourceType,
             oauth_endpoint_base_url: connectData.oauth_endpoint_base_url,
             api_endpoint_base_url:   connectData.api_endpoint_base_url,
             client_id:             connectData.client_id,
@@ -144,7 +144,7 @@ export class MedicalSourcesComponent implements OnInit {
           }
 
           this.fastenApi.createSource(sourceCredential).subscribe( (respData) => {
-            console.log("provider credential create response:", respData)
+            console.log("source credential create response:", respData)
           })
 
 
@@ -176,7 +176,7 @@ export class MedicalSourcesComponent implements OnInit {
           // const result = await oauth.processUserInfoResponse(as, client, sub, response)
           // console.log('result', result)
 
-          delete this.status[providerId]
+          delete this.status[sourceType]
 
           //reload the current page after finishing connection
           window.location.reload();
@@ -202,8 +202,8 @@ export class MedicalSourcesComponent implements OnInit {
 
 
 
-  waitForClaimOrTimeout(providerId: string, state: string): Observable<any> {
-    return this.passportApi.getProviderAuthorizeClaim(providerId, state).pipe(
+  waitForClaimOrTimeout(sourceType: string, state: string): Observable<AuthorizeClaim> {
+    return this.lighthouseApi.getSourceAuthorizeClaim(sourceType, state).pipe(
       retryWhen(error =>
         error.pipe(
           concatMap((error, count) => {

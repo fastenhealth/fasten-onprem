@@ -1,4 +1,4 @@
-export class ProviderConfig {
+export class LighthouseSource {
   oauth_endpoint_base_url: string
   api_endpoint_base_url: string
   response_type: string

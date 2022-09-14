@@ -174,11 +174,11 @@ func (sr *sqliteRepository) GetSources(ctx context.Context) ([]models.Source, er
 	return sourceCreds, results.Error
 }
 
-//func (sr *sqliteRepository) GetSource(ctx context.Context, providerId string) (models.Source, error) {
+//func (sr *sqliteRepository) GetSource(ctx context.Context, source_type string) (models.Source, error) {
 //
 //	var providerCredentials models.Source
 //	results := sr.gormClient.WithContext(ctx).
-//		Where(models.Source{UserID: sr.GetCurrentUser().ID, SourceType: providerId}).
+//		Where(models.Source{UserID: sr.GetCurrentUser().ID, SourceType: source_type}).
 //		Find(&providerCredentials)
 //
 //	return providerCredential, results.Error

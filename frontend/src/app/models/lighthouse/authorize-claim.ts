@@ -1,5 +1,5 @@
 export class AuthorizeClaim {
-  providerId: string
+  source_type: string
   state:      string
   code:       string
   ttl:        number
