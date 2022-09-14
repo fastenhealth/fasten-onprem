@@ -30,7 +30,7 @@ func RequireAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		claim, err := auth.ValidateToken(appConfig.GetString("web.jwt.encryptionKey"), tokenString)
+		claim, err := auth.ValidateToken(appConfig.GetString("web.jwt.encryptionkey"), tokenString)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": err.Error()})
 			c.Abort()

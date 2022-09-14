@@ -143,43 +143,18 @@ export class MedicalSourcesComponent implements OnInit {
             code_verifier:         codeVerifier,
           }
 
-          this.fastenApi.createSource(sourceCredential).subscribe( (respData) => {
-            console.log("source credential create response:", respData)
-          })
+          await this.fastenApi.createSource(sourceCredential).subscribe(
+            (respData) => {
+                console.log("source credential create response:", respData)
+              },
+            (err) => {console.log(err)},
+            () => {
+              delete this.status[sourceType]
+              //reload the current page after finishing connection
+              window.location.reload();
+            }
+          )
 
-
-
-
-          // console.log("STARTING--- FHIR.client(clientState)", clientState)
-          // const fhirClient = FHIR.client(clientState);
-          //
-          // console.log("STARTING--- client.request(Patient)")
-          // const patientResponse = await fhirClient.request("PatientAccess/v1/$userinfo")
-          // console.log(patientResponse)
-
-
-
-
-
-          // // fetch userinfo response
-          //
-          // const response = await oauth.userInfoRequest(as, client, access_token)
-          //
-          // let challenges: oauth.WWWAuthenticateChallenge[] | undefined
-          // if ((challenges = oauth.parseWwwAuthenticateChallenges(response))) {
-          //   for (const challenge of challenges) {
-          //     console.log('challenge', challenge)
-          //   }
-          //   throw new Error() // Handle www-authenticate challenges as needed
-          // }
-          //
-          // const result = await oauth.processUserInfoResponse(as, client, sub, response)
-          // console.log('result', result)
-
-          delete this.status[sourceType]
-
-          //reload the current page after finishing connection
-          window.location.reload();
 
         })
 

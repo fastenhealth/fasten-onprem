@@ -8,7 +8,7 @@ version: 1
 web:
   jwt:
     # used to encrypt/validate JWT session key (used for authentication)
-    encryptionKey: 'changethissupersecretkey'
+    encryptionkey: 'changethissupersecretkey'
   listen:
     port: 9090
     host: 0.0.0.0
