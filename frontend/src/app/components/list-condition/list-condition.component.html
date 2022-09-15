@@ -1,0 +1,26 @@
+<p class="mg-b-20">A clinical condition, problem, diagnosis, or other event, situation, issue, or clinical concept that has risen to a level of concern.</p>
+<div class="table-responsive">
+  <table class="table table-bordered mg-b-0">
+    <thead>
+    <tr>
+      <th>Condition</th>
+      <th>Clinical Status</th>
+      <th>Verification Status</th>
+      <th>Onset Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let condition of conditionList">
+      <td>
+        {{condition.name}}
+        <small class="text-muted pull-right">
+          {{ condition.nameCode}} {{ condition.nameCodeSystem }}
+        </small>
+      </td>
+      <td>{{condition.clinicalStatus}}</td>
+      <td>{{condition.verificationStatus}}</td>
+      <td>{{condition.onset}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

@@ -17,6 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "sourceMap": true,
             "outputPath": "dist/fastenhealth",
             "index": "src/index.html",
             "main": "src/main.ts",

@@ -16,9 +16,7 @@
 
       <h2 class="az-content-title mg-t-40">{{selectedResourceType}}</h2>
 
-      <div class="az-content-label mg-b-5">Insurance Companies</div>
-      <p class="mg-b-20">The following medical insurance companies have API's which Fasten can use to retrieve your medical history.
-        Please click the logos below to initiate the connection.</p>
+      <app-list-condition *ngIf="selectedResourceType == 'Condition'" [resourceList]="selectedResources"></app-list-condition>
 
       <div class="table-responsive">
         <table class="table table-bordered mg-b-0">
