@@ -14,7 +14,9 @@ type DatabaseRepository interface {
 	GetCurrentUser(context.Context) models.User
 
 	UpsertResource(context.Context, models.ResourceFhir) error
-	ListResources(context.Context, string, string) ([]models.ResourceFhir, error)
+	GetResource(context.Context, string) (*models.ResourceFhir, error)
+	GetResourceBySourceId(context.Context, string, string) (*models.ResourceFhir, error)
+	ListResources(context.Context, models.ListResourceQueryOptions) ([]models.ResourceFhir, error)
 	//UpsertProfile(context.Context, *models.Profile) error
 	//UpsertOrganziation(context.Context, *models.Organization) error
 

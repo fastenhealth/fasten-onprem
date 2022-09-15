@@ -2,17 +2,15 @@
   <div class="container">
     <div class="az-content-left">
       <ul class="list-group">
-        <li class="list-group-item">Cras justo odio</li>
-        <li class="list-group-item active">Dapibus ac facilisis in</li>
-        <li class="list-group-item">Morbi leo risus</li>
-        <li class="list-group-item">Porta ac consectetur ac</li>
-        <li class="list-group-item">Vestibulum at eros</li>
+        <li *ngFor="let resourceGroup of resourcesGroupedByType | keyvalue" class="list-group-item d-flex justify-content-between align-items-center">
+          {{resourceGroup.key}} <span class="badge badge-primary badge-pill">{{resourceGroup.value.length}}</span>
+        </li>
       </ul>
     </div>
     <div class="az-content-body pd-lg-l-40 d-flex flex-column">
       <div class="az-content-breadcrumb">
         <span>Sources</span>
-        <span>Aetna</span>
+        <span>{{selectedSource.source_type}}</span>
         <span>Details</span>
       </div>
 

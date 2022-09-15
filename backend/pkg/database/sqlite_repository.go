@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
@@ -127,18 +128,29 @@ func (sr *sqliteRepository) UpsertResource(ctx context.Context, resourceModel mo
 	return nil
 }
 
-func (sr *sqliteRepository) ListResources(ctx context.Context, sourceResourceType string, sourceResourceId string) ([]models.ResourceFhir, error) {
+func (sr *sqliteRepository) ListResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceFhir, error) {
 
 	queryParam := models.ResourceFhir{
 		OriginBase: models.OriginBase{
-			UserID:             sr.GetCurrentUser(ctx).ID,
-			SourceResourceType: sourceResourceType,
+			UserID: sr.GetCurrentUser(ctx).ID,
 		},
 	}
 
-	if len(sourceResourceId) > 0 {
-		queryParam.SourceResourceID = sourceResourceId
+	if len(queryOptions.SourceResourceType) > 0 {
+		queryParam.OriginBase.SourceResourceType = queryOptions.SourceResourceType
 	}
+
+	if len(queryOptions.SourceID) > 0 {
+		sourceUUID, err := uuid.Parse(queryOptions.SourceID)
+		if err != nil {
+			return nil, err
+		}
+
+		queryParam.OriginBase.SourceID = sourceUUID
+	}
+
+	manifestJson, _ := json.MarshalIndent(queryParam, "", "  ")
+	sr.logger.Infof("THE QUERY OBJECT===========> %v", string(manifestJson))
 
 	var wrappedResourceModels []models.ResourceFhir
 	results := sr.gormClient.WithContext(ctx).
@@ -146,6 +158,46 @@ func (sr *sqliteRepository) ListResources(ctx context.Context, sourceResourceTyp
 		Find(&wrappedResourceModels)
 
 	return wrappedResourceModels, results.Error
+}
+
+func (sr *sqliteRepository) GetResourceBySourceId(ctx context.Context, sourceResourceType string, sourceResourceId string) (*models.ResourceFhir, error) {
+	queryParam := models.ResourceFhir{
+		OriginBase: models.OriginBase{
+			UserID:             sr.GetCurrentUser(ctx).ID,
+			SourceResourceType: sourceResourceType,
+			SourceResourceID:   sourceResourceId,
+		},
+	}
+
+	var wrappedResourceModel models.ResourceFhir
+	results := sr.gormClient.WithContext(ctx).
+		Where(queryParam).
+		First(&wrappedResourceModel)
+
+	return &wrappedResourceModel, results.Error
+}
+
+func (sr *sqliteRepository) GetResource(ctx context.Context, resourceId string) (*models.ResourceFhir, error) {
+	resourceUUID, err := uuid.Parse(resourceId)
+	if err != nil {
+		return nil, err
+	}
+
+	queryParam := models.ResourceFhir{
+		OriginBase: models.OriginBase{
+			ModelBase: models.ModelBase{
+				ID: resourceUUID,
+			},
+			UserID: sr.GetCurrentUser(ctx).ID,
+		},
+	}
+
+	var wrappedResourceModel models.ResourceFhir
+	results := sr.gormClient.WithContext(ctx).
+		Where(queryParam).
+		First(&wrappedResourceModel)
+
+	return &wrappedResourceModel, results.Error
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

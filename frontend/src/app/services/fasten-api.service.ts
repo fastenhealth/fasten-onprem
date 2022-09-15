@@ -96,8 +96,16 @@ export class FastenApiService {
       );
   }
 
-  getResources(resourceType: string, resourceId?: string ): Observable<ResourceFhir[]> {
-    return this._httpClient.get<any>(`${this.getBasePath()}/api/secure/fhir/${resourceType}/${resourceId ? resourceId : ''}`)
+  getResources(sourceResourceType?: string, sourceID?: string): Observable<ResourceFhir[]> {
+    let queryParams = {}
+    if(sourceResourceType){
+      queryParams["sourceResourceType"] = sourceResourceType
+    }
+    if(sourceID){
+      queryParams["sourceID"] = sourceID
+    }
+
+    return this._httpClient.get<any>(`${this.getBasePath()}/api/secure/resource/fhir`, {params: queryParams})
       .pipe(
         map((response: ResponseWrapper) => {
           console.log("RESPONSE", response)
