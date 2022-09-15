@@ -7,6 +7,7 @@ import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
 	"github.com/glebarez/sqlite"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"net/url"
@@ -164,6 +165,20 @@ func (sr *sqliteRepository) CreateSource(ctx context.Context, sourceCreds *model
 	return nil
 }
 
+func (sr *sqliteRepository) GetSource(ctx context.Context, sourceId string) (*models.Source, error) {
+	sourceUUID, err := uuid.Parse(sourceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var sourceCred models.Source
+	results := sr.gormClient.WithContext(ctx).
+		Where(models.Source{UserID: sr.GetCurrentUser(ctx).ID, ModelBase: models.ModelBase{ID: sourceUUID}}).
+		First(&sourceCred)
+
+	return &sourceCred, results.Error
+}
+
 func (sr *sqliteRepository) GetSources(ctx context.Context) ([]models.Source, error) {
 
 	var sourceCreds []models.Source
@@ -173,16 +188,6 @@ func (sr *sqliteRepository) GetSources(ctx context.Context) ([]models.Source, er
 
 	return sourceCreds, results.Error
 }
-
-//func (sr *sqliteRepository) GetSource(ctx context.Context, source_type string) (models.Source, error) {
-//
-//	var providerCredentials models.Source
-//	results := sr.gormClient.WithContext(ctx).
-//		Where(models.Source{UserID: sr.GetCurrentUser().ID, SourceType: source_type}).
-//		Find(&providerCredentials)
-//
-//	return providerCredential, results.Error
-//}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utilities

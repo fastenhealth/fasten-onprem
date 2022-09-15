@@ -141,27 +141,38 @@
           </div>
         </div>
         <div class="card-body">
-          <p class="az-content-text mg-b-20">Part of this date range occurs before the new users metric had been calculated, so the old users metric is displayed.</p>
           <div class="table-responsive">
-            <table class="table">
-              <thead>
-              <tr>
-                <th class="wd-45p">Name</th>
-                <th>Source</th>
-                <th>Identifier</th>
-                <th>Last Updated</th>
-              </tr>
-              </thead>
+            <table class="table mg-b-0">
               <tbody>
-              <tr *ngFor="let patient of patients">
-                <td><strong>{{patient.user_id}}</strong></td>
-                <td><strong>{{patient.source_id}}</strong></td>
-                <td>{{patient.source_resource_id}}</td>
-                <td>{{patient.UpdatedAt | date}}</td>
+              <tr *ngFor="let source of sources" (click)="selectSource(source)" class="alert" role="alert">
+                <td class="align-middle">
+                  <div class="media">
+                    <img [src]="'assets/sources/'+source.source_type+'.png'"
+                         alt="Geeks"
+                         class="mr-3"
+                         style="width:100px;">
+                    <div class="media-body">
+                      <h5>{{source.source_type}}</h5>
+                      <p>
+                        GeeksforGeeks is a computer science portal.
+                        It is a best programming platform.
+                      </p>
+
+                    </div>
+                  </div>
+                </td>
+                <td class="align-middle"><p><small class="tx-gray-600">status:</small><br/> active</p></td>
+                <td class="align-middle"><p><small class="tx-gray-600">last updated:</small><br/> {{source.updated_at | date}}</p></td>
+                <td class="align-middle"><p><small class="tx-gray-600">expires:</small><br/> {{source.expires_at}}</p></td>
+                <td class="align-middle"><p><i class="fas fa-chevron-right"></i></td>
               </tr>
 
               </tbody>
             </table>
+
+
+
+
           </div><!-- table-responsive -->
         </div>
       </div>

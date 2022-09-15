@@ -8,6 +8,7 @@ import {ResourceDetailComponent} from './pages/resource-detail/resource-detail.c
 import {AuthSigninComponent} from './pages/auth-signin/auth-signin.component';
 import {AuthSignupComponent} from './pages/auth-signup/auth-signup.component';
 import {CanActivateAuthGuard} from './services/can-activate.auth-guard';
+import {SourceDetailComponent} from './pages/source-detail/source-detail.component';
 
 const routes: Routes = [
 
@@ -16,7 +17,8 @@ const routes: Routes = [
 
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, canActivate: [ CanActivateAuthGuard] },
-  { path: 'detail', component: ResourceDetailComponent, canActivate: [ CanActivateAuthGuard] },
+  { path: 'source/:source_id', component: SourceDetailComponent, canActivate: [ CanActivateAuthGuard] },
+  { path: 'source/:source_id:/resource/:resource_id', component: ResourceDetailComponent, canActivate: [ CanActivateAuthGuard] },
   { path: 'sources', component: MedicalSourcesComponent, canActivate: [ CanActivateAuthGuard] },
   // { path: 'general-pages', loadChildren: () => import('./general-pages/general-pages.module').then(m => m.GeneralPagesModule) },
   // { path: 'ui-elements', loadChildren: () => import('./ui-elements/ui-elements.module').then(m => m.UiElementsModule) },

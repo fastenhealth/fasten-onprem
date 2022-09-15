@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {LighthouseSource} from '../../models/lighthouse/lighthouse-source';
 import {Patient} from '../../models/display/patient';
+import {Source} from '../../models/fasten/source';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,21 +12,25 @@ import {Patient} from '../../models/display/patient';
 })
 export class DashboardComponent implements OnInit {
 
-  patients = []
+  sources: Source[] = []
 
-  constructor(private fastenApi: FastenApiService) { }
+  constructor(private fastenApi: FastenApiService, private router: Router) { }
 
   ngOnInit() {
-    this.fastenApi.getResources('Patient')
-      .subscribe( (patientsList) => {
-        console.log(patientsList);
-        let display_patients = this.patients
-        patientsList.forEach(function(fhirPatientResource){
-          display_patients.push(new Patient(fhirPatientResource.payload))
-        })
-        console.log(display_patients)
-        this.patients = display_patients
+
+    this.fastenApi.getSources()
+      .subscribe( (sourcesList) => {
+        console.log(sourcesList);
+        this.sources = sourcesList
       })
+    // this.fastenApi.getResources('Patient')
+
+  }
+
+  selectSource(selectedSource: Source){
+    this.router.navigateByUrl(`/source/${selectedSource.id}`, {
+      state: selectedSource
+    });
   }
 
 

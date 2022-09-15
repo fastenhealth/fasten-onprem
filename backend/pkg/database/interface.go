@@ -19,5 +19,6 @@ type DatabaseRepository interface {
 	//UpsertOrganziation(context.Context, *models.Organization) error
 
 	CreateSource(context.Context, *models.Source) error
+	GetSource(context.Context, string) (*models.Source, error)
 	GetSources(context.Context) ([]models.Source, error)
 }

@@ -57,13 +57,26 @@ func CreateSource(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceCred})
 }
 
+func GetSource(c *gin.Context) {
+	logger := c.MustGet("LOGGER").(*logrus.Entry)
+	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+
+	sourceCred, err := databaseRepo.GetSource(c, c.Param("sourceId"))
+	if err != nil {
+		logger.Errorln("An error occurred while retrieving source credential", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceCred})
+}
+
 func ListSource(c *gin.Context) {
 	logger := c.MustGet("LOGGER").(*logrus.Entry)
 	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
 
 	sourceCreds, err := databaseRepo.GetSources(c)
 	if err != nil {
-		logger.Errorln("An error occurred while storing source credential", err)
+		logger.Errorln("An error occurred while listing source credentials", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}

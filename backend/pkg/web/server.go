@@ -47,6 +47,8 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 			{
 				secure.POST("/source", handler.CreateSource)
 				secure.GET("/source", handler.ListSource)
+				secure.GET("/source/:sourceId", handler.GetSource)
+
 				secure.GET("/source/raw/:sourceType/*path", handler.RawRequestSource)
 
 				secure.GET("/fhir/:sourceResourceType/*sourceResourceId", handler.RequestResourceFhir)
@@ -64,7 +66,12 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 
 	//catch-all, serve index page.
 	r.NoRoute(func(c *gin.Context) {
-		c.File(fmt.Sprintf("%s/index.html", ae.Config.GetString("web.src.frontend.path")))
+		path := c.Request.URL.Path
+		if strings.HasPrefix(path, "/api") {
+			c.JSON(http.StatusNotFound, gin.H{"success": false, "error": "404 endpoint not found"})
+		} else {
+			c.File(fmt.Sprintf("%s/index.html", ae.Config.GetString("web.src.frontend.path")))
+		}
 	})
 	return r
 }
