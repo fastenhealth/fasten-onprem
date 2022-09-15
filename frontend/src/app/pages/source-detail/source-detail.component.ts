@@ -12,6 +12,8 @@ import {FastenApiService} from '../../services/fasten-api.service';
 export class SourceDetailComponent implements OnInit {
 
   selectedSource: Source = null
+  selectedResourceType: string = null
+  selectedResources: any[] = []
 
   resourcesGroupedByType: { [name: string]: any[] } = {}
 
@@ -41,4 +43,8 @@ export class SourceDetailComponent implements OnInit {
     })
   }
 
+  selectResourceType(resourceType: string) {
+    this.selectedResourceType = resourceType
+    this.selectedResources = this.resourcesGroupedByType[resourceType]
+  }
 }

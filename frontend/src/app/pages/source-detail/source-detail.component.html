@@ -2,7 +2,7 @@
   <div class="container">
     <div class="az-content-left">
       <ul class="list-group">
-        <li *ngFor="let resourceGroup of resourcesGroupedByType | keyvalue" class="list-group-item d-flex justify-content-between align-items-center">
+        <li *ngFor="let resourceGroup of resourcesGroupedByType | keyvalue" (click)="selectResourceType(resourceGroup.key)" class="list-group-item d-flex justify-content-between align-items-center">
           {{resourceGroup.key}} <span class="badge badge-primary badge-pill">{{resourceGroup.value.length}}</span>
         </li>
       </ul>
@@ -14,7 +14,7 @@
         <span>Details</span>
       </div>
 
-      <h2 class="az-content-title mg-t-40">Medical Sources</h2>
+      <h2 class="az-content-title mg-t-40">{{selectedResourceType}}</h2>
 
       <div class="az-content-label mg-b-5">Insurance Companies</div>
       <p class="mg-b-20">The following medical insurance companies have API's which Fasten can use to retrieve your medical history.
@@ -31,35 +31,11 @@
           </tr>
           </thead>
           <tbody>
-          <tr>
+          <tr *ngFor="let resource of selectedResources">
             <th scope="row">1</th>
             <td>Tiger Nixon</td>
             <td>System Architect</td>
             <td>$320,800</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Garrett Winters</td>
-            <td>Accountant</td>
-            <td>$170,750</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td>Ashton Cox</td>
-            <td>Junior Technical Author</td>
-            <td>$86,000</td>
-          </tr>
-          <tr>
-            <th scope="row">4</th>
-            <td>Cedric Kelly</td>
-            <td>Senior Javascript Developer</td>
-            <td>$433,060</td>
-          </tr>
-          <tr>
-            <th scope="row">5</th>
-            <td>Airi Satou</td>
-            <td>Accountant</td>
-            <td>$162,700</td>
           </tr>
           </tbody>
         </table>
