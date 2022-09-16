@@ -20,7 +20,10 @@
       <app-list-care-plan *ngIf="selectedResourceType == 'CarePlan'" [resourceList]="selectedResources"></app-list-care-plan>
       <app-list-encounter *ngIf="selectedResourceType == 'Encounter'" [resourceList]="selectedResources"></app-list-encounter>
       <app-list-immunization *ngIf="selectedResourceType == 'Immunization'" [resourceList]="selectedResources"></app-list-immunization>
-
+      <app-list-medication *ngIf="selectedResourceType == 'Medication'" [resourceList]="selectedResources"></app-list-medication>
+      <app-list-medication-request *ngIf="selectedResourceType == 'MedicationRequest'" [resourceList]="selectedResources"></app-list-medication-request>
+      <app-list-observation *ngIf="selectedResourceType == 'Observation'" [resourceList]="selectedResources"></app-list-observation>
+      <app-list-procedure *ngIf="selectedResourceType == 'Procedure'" [resourceList]="selectedResources"></app-list-procedure>
 
     </div><!-- az-content-body -->
   </div><!-- container -->
