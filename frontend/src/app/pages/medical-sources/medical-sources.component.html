@@ -20,19 +20,18 @@
 
       <h2 class="az-content-title mg-t-40">Medical Sources</h2>
 
-      <div class="az-content-label mg-b-5">Hospitals & Medical Clinics</div>
+      <div class="az-content-label mg-b-5">Manual Upload</div>
       <p class="mg-b-20">The following medical insurance companies have API's which Fasten can use to retrieve your medical history.
         Please click the logos below to initiate the connection.</p>
 
       <div class="row row-sm">
         <div class="col-lg">
-          <input class="form-control" placeholder="Input box" type="text">
-        </div><!-- col -->
-        <div class="col-lg mg-t-10 mg-lg-t-0">
-          <input class="form-control" placeholder="Input box (readonly)" readonly="" type="text">
-        </div><!-- col -->
-        <div class="col-lg mg-t-10 mg-lg-t-0">
-          <input class="form-control" placeholder="Input box (disabled)" disabled="" type="text">
+          <ngx-dropzone [multiple]="false" (change)="uploadSourceBundle($event)">
+            <ngx-dropzone-label>Drop it, baby!</ngx-dropzone-label>
+            <ngx-dropzone-preview *ngFor="let f of uploadedFile" [removable]="false">
+              <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+            </ngx-dropzone-preview>
+          </ngx-dropzone>
         </div><!-- col -->
       </div><!-- row -->
 

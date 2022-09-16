@@ -76,6 +76,20 @@ export class FastenApiService {
       );
   }
 
+  createManualSource(file: File): Observable<Source> {
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this._httpClient.post<any>(`${this.getBasePath()}/api/secure/source/manual`, formData)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("MANUAL SOURCE RESPONSE", response)
+          return response.data as Source
+        })
+      );
+  }
+
   getSources(): Observable<Source[]> {
     return this._httpClient.get<any>(`${this.getBasePath()}/api/secure/source`)
       .pipe(

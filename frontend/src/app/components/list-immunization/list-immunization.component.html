@@ -1,1 +1,19 @@
-<p>list-immunization works!</p>
+<p class="mg-b-20">A clinical condition, problem, diagnosis, or other event, situation, issue, or clinical concept that has risen to a level of concern.</p>
+<div class="table-responsive">
+  <table class="table table-bordered mg-b-0">
+    <thead>
+    <tr>
+      <th>Type</th>
+      <th>Status</th>
+      <th>Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let immunization of immunizationList">
+      <td>{{immunization.immunizationType}}</td>
+      <td class="align-middle">{{immunization.status || '-'}}</td>
+      <td class="align-middle">{{immunization.date }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

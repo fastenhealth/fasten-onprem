@@ -5,10 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
+	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -20,6 +23,10 @@ type BaseClient struct {
 
 	OauthClient *http.Client
 	Source      models.Source
+}
+
+func (c *BaseClient) SyncAllBundle(db database.DatabaseRepository, bundleFile *os.File) error {
+	panic("SyncAllBundle functionality is not available on this client")
 }
 
 func NewBaseClient(ctx context.Context, appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) (*BaseClient, *models.Source, error) {
@@ -76,6 +83,7 @@ func NewBaseClient(ctx context.Context, appConfig config.Interface, globalLogger
 	}
 
 	httpClient.Timeout = 10 * time.Second
+
 	return &BaseClient{
 		Context:     ctx,
 		AppConfig:   appConfig,
@@ -101,13 +109,19 @@ func (c *BaseClient) GetRequest(resourceSubpath string, decodeModelPtr interface
 		return fmt.Errorf("An error occurred during request %s - %d - %s", url, resp.StatusCode, resp.Status)
 	}
 
-	err = json.NewDecoder(resp.Body).Decode(decodeModelPtr)
-	if err != nil {
-		return err
-	}
+	err = ParseBundle(resp.Body, decodeModelPtr)
 	return err
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Helper Functions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func ParseBundle(r io.Reader, decodeModelPtr interface{}) error {
+	decoder := json.NewDecoder(r)
+	//decoder.DisallowUnknownFields() //make sure we throw an error if unknown fields are present.
+	err := decoder.Decode(decodeModelPtr)
+	if err != nil {
+		return err
+	}
+	return err
+}

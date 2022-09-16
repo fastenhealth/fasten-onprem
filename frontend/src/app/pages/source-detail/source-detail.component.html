@@ -17,27 +17,10 @@
       <h2 class="az-content-title mg-t-40">{{selectedResourceType}}</h2>
 
       <app-list-condition *ngIf="selectedResourceType == 'Condition'" [resourceList]="selectedResources"></app-list-condition>
+      <app-list-care-plan *ngIf="selectedResourceType == 'CarePlan'" [resourceList]="selectedResources"></app-list-care-plan>
+      <app-list-encounter *ngIf="selectedResourceType == 'Encounter'" [resourceList]="selectedResources"></app-list-encounter>
+      <app-list-immunization *ngIf="selectedResourceType == 'Immunization'" [resourceList]="selectedResources"></app-list-immunization>
 
-      <div class="table-responsive">
-        <table class="table table-bordered mg-b-0">
-          <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Position</th>
-            <th>Salary</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let resource of selectedResources">
-            <th scope="row">1</th>
-            <td>Tiger Nixon</td>
-            <td>System Architect</td>
-            <td>$320,800</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
 
     </div><!-- az-content-body -->
   </div><!-- container -->

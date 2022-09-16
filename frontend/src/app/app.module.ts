@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -18,7 +17,7 @@ import { ResourceDetailComponent } from './pages/resource-detail/resource-detail
 import { AuthSignupComponent } from './pages/auth-signup/auth-signup.component';
 import { AuthSigninComponent } from './pages/auth-signin/auth-signin.component';
 import { FormsModule } from '@angular/forms';
-
+import { NgxDropzoneModule } from 'ngx-dropzone';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { CanActivateAuthGuard } from './services/can-activate.auth-guard';
 import {FastenApiService} from './services/fasten-api.service';
@@ -44,7 +43,8 @@ import { SourceDetailComponent } from './pages/source-detail/source-detail.compo
     AppRoutingModule,
     HttpClientModule,
     NgbModule,
-    ChartsModule
+    ChartsModule,
+    NgxDropzoneModule
   ],
   providers: [
     {

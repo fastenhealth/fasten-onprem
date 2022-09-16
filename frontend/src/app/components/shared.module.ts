@@ -10,6 +10,7 @@ import { ListEncounterComponent } from './list-encounter/list-encounter.componen
 import { ListConditionComponent } from './list-condition/list-condition.component';
 import { ListCarePlanComponent } from './list-care-plan/list-care-plan.component';
 import {BrowserModule} from '@angular/platform-browser';
+import { ListGenericResourceComponent } from './list-generic-resource/list-generic-resource.component';
 
 @NgModule({
   imports: [
@@ -25,12 +26,19 @@ import {BrowserModule} from '@angular/platform-browser';
     ListImmunizationComponent,
     ListEncounterComponent,
     ListConditionComponent,
-    ListCarePlanComponent
+    ListCarePlanComponent,
+    ListGenericResourceComponent
   ],
     exports: [
-        ComponentsSidebarComponent,
-        UtilitiesSidebarComponent,
-        ListConditionComponent
+      ComponentsSidebarComponent,
+      UtilitiesSidebarComponent,
+      ListPatientComponent,
+      ListObservationComponent,
+      ListExplanationOfBenefitComponent,
+      ListImmunizationComponent,
+      ListEncounterComponent,
+      ListConditionComponent,
+      ListCarePlanComponent
     ]
 })
 

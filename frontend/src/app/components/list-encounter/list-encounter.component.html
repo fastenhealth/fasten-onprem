@@ -1,1 +1,27 @@
-<p>list-encounter works!</p>
+<p class="mg-b-20">A clinical condition, problem, diagnosis, or other event, situation, issue, or clinical concept that has risen to a level of concern.</p>
+<div class="table-responsive">
+  <table class="table table-bordered mg-b-0">
+    <thead>
+    <tr>
+      <th>Type</th>
+      <th>Reason</th>
+      <th>Class</th>
+      <th>Status</th>
+      <th>Time</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let encounter of encounterList">
+      <td>
+        <b *ngIf="encounter.encounterType">{{encounter.encounterType}}</b>
+        <span *ngIf="!encounter.encounterType && encounter.encounterClass" class="text-muted">{{encounter.encounterClass}} encounter</span>
+        <small *ngIf="!encounter.encounterType && !encounter.encounterClass" class="text-muted">N/A</small>
+      </td>
+      <td class="align-middle">{{encounter.reason ? encounter.reason : 'N/A' }}</td>
+      <td class="align-middle">{{encounter.encounterClass ? encounter.encounterClass : 'N/A' }}</td>
+      <td class="align-middle">{{encounter.status ? encounter.status : 'N/A'}}</td>
+      <td class="align-middle">-</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

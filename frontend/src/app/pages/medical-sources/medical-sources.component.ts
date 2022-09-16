@@ -39,8 +39,7 @@ export class MedicalSourcesComponent implements OnInit {
   connectedSourceList = []
   availableSourceList = []
 
-
-
+  uploadedFile: File[] = []
 
   ngOnInit(): void {
     this.fastenApi.getSources()
@@ -190,6 +189,20 @@ export class MedicalSourcesComponent implements OnInit {
           delay(retryWaitMilliSeconds)
         )
       )
+    )
+  }
+
+
+  uploadSourceBundle(event) {
+    this.uploadedFile = [event.addedFiles[0]]
+    this.fastenApi.createManualSource(event.addedFiles[0]).subscribe(
+      (respData) => {
+        console.log("source manual source create response:", respData)
+      },
+      (err) => {console.log(err)},
+      () => {
+        this.uploadedFile = []
+      }
     )
   }
 

@@ -1,12 +1,14 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -55,6 +57,52 @@ func CreateSource(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceCred})
+}
+
+func CreateManualSource(c *gin.Context) {
+	logger := c.MustGet("LOGGER").(*logrus.Entry)
+	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+
+	// single file
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not extract file from form"})
+		return
+	}
+	fmt.Printf("Uploaded filename: %s", file.Filename)
+
+	// create a temporary file to store this uploaded file
+	bundleFile, err := ioutil.TempFile("", file.Filename)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not create temp file"})
+		return
+	}
+
+	// Upload the file to specific bundleFile.
+	err = c.SaveUploadedFile(file, bundleFile.Name())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not save temp file"})
+		return
+	}
+
+	// We cannot save the "Source" object yet, as we do not know the patientID
+
+	// create a "manual" client, which we can use to parse the
+	manualSourceClient, _, err := hub.NewClient(pkg.SourceTypeManual, c, nil, logger, models.Source{})
+	if err != nil {
+		logger.Errorln("An error occurred while initializing hub client using manual source without credentials", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+
+	err = manualSourceClient.SyncAllBundle(databaseRepo, bundleFile)
+	if err != nil {
+		logger.Errorln("An error occurred while processing bundle", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": fmt.Sprintf("'%s' uploaded!", file.Filename)})
 }
 
 func GetSource(c *gin.Context) {

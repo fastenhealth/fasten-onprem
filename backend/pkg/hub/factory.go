@@ -9,6 +9,7 @@ import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/aetna"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/base"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/cigna"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/manual"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -26,6 +27,8 @@ func NewClient(sourceType pkg.SourceType, ctx context.Context, appConfig config.
 		sourceClient, updatedSource, err = cigna.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
 	case pkg.SourceTypeCigna:
 		sourceClient, updatedSource, err = cigna.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
+	case pkg.SourceTypeManual:
+		sourceClient, updatedSource, err = manual.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
 	default:
 		return nil, updatedSource, errors.New(fmt.Sprintf("Unknown Source Type: %s", sourceType))
 	}

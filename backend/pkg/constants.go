@@ -5,6 +5,8 @@ package pkg
 type SourceType string
 
 const (
+	SourceTypeManual SourceType = "manual"
+
 	SourceTypeAetna            SourceType = "aetna"
 	SourceTypeAnthem           SourceType = "anthem"
 	SourceTypeCigna            SourceType = "cigna"
