@@ -118,6 +118,19 @@ func GetSource(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceCred})
 }
 
+func GetSourceSummary(c *gin.Context) {
+	logger := c.MustGet("LOGGER").(*logrus.Entry)
+	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+
+	sourceSummary, err := databaseRepo.GetSourceSummary(c, c.Param("sourceId"))
+	if err != nil {
+		logger.Errorln("An error occurred while retrieving source summary", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceSummary})
+}
+
 func ListSource(c *gin.Context) {
 	logger := c.MustGet("LOGGER").(*logrus.Entry)
 	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)

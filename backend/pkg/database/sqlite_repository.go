@@ -231,6 +231,40 @@ func (sr *sqliteRepository) GetSource(ctx context.Context, sourceId string) (*mo
 	return &sourceCred, results.Error
 }
 
+func (sr *sqliteRepository) GetSourceSummary(ctx context.Context, sourceId string) (*models.SourceSummary, error) {
+	sourceUUID, err := uuid.Parse(sourceId)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceSummary := &models.SourceSummary{}
+
+	source, err := sr.GetSource(ctx, sourceId)
+	if err != nil {
+		return nil, err
+	}
+	sourceSummary.Source = source
+
+	//group by resource type and return counts
+	// SELECT source_resource_type as resource_type, COUNT(*) as count FROM resource_fhirs WHERE source_id = "53c1e930-63af-46c9-b760-8e83cbc1abd9" GROUP BY source_resource_type;
+
+	var results []map[string]interface{}
+
+	sr.gormClient.WithContext(ctx).
+		Model(models.ResourceFhir{}).
+		Select("source_id, source_resource_type as resource_type, count(*) as count").
+		Group("source_resource_type").
+		Where(models.OriginBase{
+			UserID:   sr.GetCurrentUser(ctx).ID,
+			SourceID: sourceUUID,
+		}).
+		Scan(&results)
+
+	sourceSummary.ResourceTypeCounts = results
+
+	return sourceSummary, nil
+}
+
 func (sr *sqliteRepository) GetSources(ctx context.Context) ([]models.Source, error) {
 
 	var sourceCreds []models.Source

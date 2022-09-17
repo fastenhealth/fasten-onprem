@@ -49,6 +49,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 				secure.POST("/source/manual", handler.CreateManualSource)
 				secure.GET("/source", handler.ListSource)
 				secure.GET("/source/:sourceId", handler.GetSource)
+				secure.GET("/source/:sourceId/summary", handler.GetSourceSummary)
 				//in debug mode, this endpoint lets us request data directly from the source api
 				secure.GET("/source/raw/:sourceType/*path", handler.RawRequestSource)
 

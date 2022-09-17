@@ -1,5 +1,6 @@
-import {Component} from '@angular/core';
-import {GenericColumnDefn, ListGenericResourceComponent} from './list-generic-resource.component';
+import {Component, OnInit} from '@angular/core';
+import {GenericColumnDefn, ListGenericResourceComponent, ResourceListComponentInterface} from './list-generic-resource.component';
+import {FORMATTERS} from './utils';
 
 @Component({
   selector: 'app-list-condition',

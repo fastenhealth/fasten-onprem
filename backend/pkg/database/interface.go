@@ -22,5 +22,6 @@ type DatabaseRepository interface {
 
 	CreateSource(context.Context, *models.Source) error
 	GetSource(context.Context, string) (*models.Source, error)
+	GetSourceSummary(context.Context, string) (*models.SourceSummary, error)
 	GetSources(context.Context) ([]models.Source, error)
 }

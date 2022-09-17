@@ -9,6 +9,7 @@ import {ResponseWrapper} from '../models/response-wrapper';
 import {Source} from '../models/fasten/source';
 import {User} from '../models/fasten/user';
 import {ResourceFhir} from '../models/fasten/resource_fhir';
+import {SourceSummary} from '../models/fasten/source-summary';
 
 @Injectable({
   providedIn: 'root'
@@ -106,6 +107,16 @@ export class FastenApiService {
         map((response: ResponseWrapper) => {
           console.log("SOURCE RESPONSE", response)
           return response.data as Source
+        })
+      );
+  }
+
+  getSourceSummary(sourceId: string): Observable<SourceSummary> {
+    return this._httpClient.get<any>(`${this.getBasePath()}/api/secure/source/${sourceId}/summary`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("SOURCE RESPONSE", response)
+          return response.data as SourceSummary
         })
       );
   }
