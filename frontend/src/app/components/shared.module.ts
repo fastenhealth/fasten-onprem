@@ -1,5 +1,4 @@
 import { ComponentsSidebarComponent } from './components-sidebar/components-sidebar.component';
-import { ListExplanationOfBenefitComponent } from './list-explanation-of-benefit/list-explanation-of-benefit.component';
 import { ListGenericResourceComponent,} from './list-generic-resource/list-generic-resource.component';
 import { ListPatientComponent } from './list-patient/list-patient.component';
 import { NgModule } from '@angular/core';
@@ -24,9 +23,10 @@ import {ListCoverageComponent} from './list-generic-resource/list-coverage.compo
 import {ListServiceRequestComponent} from './list-generic-resource/list-service-request.component';
 import {ListDocumentReferenceComponent} from './list-generic-resource/list-document-reference.component';
 import { ResourceListComponent } from './resource-list/resource-list.component';
-import {ResourceListOutletDirective} from '../directive/resource-list-outlet.directive';
 import {ListCarePlanComponent} from './list-generic-resource/list-care-plan.component';
 import {ListAllergyIntoleranceComponent} from './list-generic-resource/list-allergy-intolerance.component';
+import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.directive';
+import {ListAppointmentComponent} from './list-generic-resource/list-appointment.component';
 
 @NgModule({
   imports: [
@@ -43,7 +43,6 @@ import {ListAllergyIntoleranceComponent} from './list-generic-resource/list-alle
     ListCommunicationComponent,
     ListConditionComponent,
     ListEncounterComponent,
-    ListExplanationOfBenefitComponent,
     ListGenericResourceComponent,
     ListImmunizationComponent,
     ListMedicationAdministrationComponent,
@@ -58,10 +57,9 @@ import {ListAllergyIntoleranceComponent} from './list-generic-resource/list-alle
     ListCoverageComponent,
     ListServiceRequestComponent,
     ListDocumentReferenceComponent,
+    ListAppointmentComponent,
     ResourceListComponent,
     ResourceListOutletDirective,
-
-
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -71,7 +69,7 @@ import {ListAllergyIntoleranceComponent} from './list-generic-resource/list-alle
         ListCommunicationComponent,
         ListConditionComponent,
         ListEncounterComponent,
-        ListExplanationOfBenefitComponent,
+        ListAppointmentComponent,
         ListGenericResourceComponent,
         ListImmunizationComponent,
         ListMedicationAdministrationComponent,
@@ -87,7 +85,8 @@ import {ListAllergyIntoleranceComponent} from './list-generic-resource/list-alle
         ListCoverageComponent,
         ListServiceRequestComponent,
         ListDocumentReferenceComponent,
-        ResourceListComponent
+        ResourceListComponent,
+      ResourceListOutletDirective
     ]
 })
 

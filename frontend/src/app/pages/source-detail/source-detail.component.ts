@@ -2,7 +2,6 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Source} from '../../models/fasten/source';
 import {FastenApiService} from '../../services/fasten-api.service';
-import {ResourceListOutletDirective} from '../../directive/resource-list-outlet.directive';
 
 
 @Component({

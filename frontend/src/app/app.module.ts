@@ -23,8 +23,8 @@ import { CanActivateAuthGuard } from './services/can-activate.auth-guard';
 import {FastenApiService} from './services/fasten-api.service';
 import {Router} from '@angular/router';
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
-import { ResourceListOutletDirective } from './directive/resource-list-outlet.directive';
 import {ResourceListComponent} from './components/resource-list/resource-list.component';
+
 @NgModule({
   declarations: [
     AppComponent,

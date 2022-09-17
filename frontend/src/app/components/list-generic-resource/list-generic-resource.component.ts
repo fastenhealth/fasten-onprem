@@ -43,7 +43,7 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
   constructor(public changeRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    console.log("INIT CHILD")
+    console.log("INIT GENERIC RESOURCE")
 
     this.renderList()
   }
@@ -52,7 +52,7 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
   }
 
   renderList(){
-    console.log("GENERIC RESOURCE INIT")
+    console.log("GENERIC RESOURCE RENDERLSIT")
     this.columns = this.columnDefinitions.map((defn) => {
       let column = {name: defn.title, prop: defn.title.replace(/[^A-Z0-9]/ig, "_")}
       return column
@@ -70,9 +70,6 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
           //ignore
         }
       })
-
-      console.log("ROW:", row)
-
       return row
     })
   }

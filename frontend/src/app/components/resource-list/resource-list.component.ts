@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, Type, ViewChild} from '@angular/core';
-import {ResourceListOutletDirective} from '../../directive/resource-list-outlet.directive';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {Source} from '../../models/fasten/source';
 import {Observable, of} from 'rxjs';
@@ -25,6 +24,8 @@ import {ResponseWrapper} from '../../models/response-wrapper';
 import {ListGenericResourceComponent, ResourceListComponentInterface} from '../list-generic-resource/list-generic-resource.component';
 import {ListCarePlanComponent} from '../list-generic-resource/list-care-plan.component';
 import {ListAllergyIntoleranceComponent} from '../list-generic-resource/list-allergy-intolerance.component';
+import {ResourceListOutletDirective} from './resource-list-outlet.directive';
+import {ListAppointmentComponent} from '../list-generic-resource/list-appointment.component';
 
 @Component({
   selector: 'source-resource-list',
@@ -88,6 +89,9 @@ export class ResourceListComponent implements OnInit, OnChanges {
 
   typeLookup(resourceType: string): Type<any> {
     switch(resourceType) {
+      case "Appointment": {
+        return ListAppointmentComponent;
+      }
       case "AllergyIntolerance": {
         return ListAllergyIntoleranceComponent;
       }
