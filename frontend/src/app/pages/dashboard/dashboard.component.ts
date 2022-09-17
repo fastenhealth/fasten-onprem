@@ -3,6 +3,8 @@ import {FastenApiService} from '../../services/fasten-api.service';
 import {LighthouseSource} from '../../models/lighthouse/lighthouse-source';
 import {Source} from '../../models/fasten/source';
 import {Router} from '@angular/router';
+import {Summary} from '../../models/fasten/summary';
+import {ResourceTypeCounts} from '../../models/fasten/source-summary';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,15 +14,25 @@ import {Router} from '@angular/router';
 export class DashboardComponent implements OnInit {
 
   sources: Source[] = []
+  encounterCount: number = 0
+  recordsCount: number = 0
 
   constructor(private fastenApi: FastenApiService, private router: Router) { }
 
   ngOnInit() {
 
-    this.fastenApi.getSources()
-      .subscribe( (sourcesList) => {
-        console.log(sourcesList);
-        this.sources = sourcesList
+    this.fastenApi.getSummary()
+      .subscribe( (summary) => {
+        console.log(summary);
+        this.sources = summary.sources
+
+        //calculate the number of records
+        summary.resource_type_counts.forEach((resourceTypeInfo) => {
+          this.recordsCount += resourceTypeInfo.count
+          if(resourceTypeInfo.resource_type == "Encounter"){
+            this.encounterCount = resourceTypeInfo.count
+          }
+        })
       })
     // this.fastenApi.getResources('Patient')
 

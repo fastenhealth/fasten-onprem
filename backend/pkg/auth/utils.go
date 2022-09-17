@@ -9,15 +9,17 @@ import (
 //TODO: this should match the ID and username for the user.
 type JWTClaim struct {
 	Username string `json:"username"`
+	UserId   string `json:"user_id"`
 	Email    string `json:"email"`
 	jwt.StandardClaims
 }
 
-func GenerateJWT(encryptionKey string, username string) (tokenString string, err error) {
+func GenerateJWT(encryptionKey string, username string, userId string) (tokenString string, err error) {
 	expirationTime := time.Now().Add(2 * time.Hour)
 	claims := &JWTClaim{
 		Username: username,
 		Email:    username,
+		UserId:   userId,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},

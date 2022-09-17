@@ -110,6 +110,43 @@ func (sr *sqliteRepository) GetCurrentUser(ctx context.Context) models.User {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// User
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (sr *sqliteRepository) GetSummary(ctx context.Context) (*models.Summary, error) {
+
+	// we want a count of all resources for this user by type
+	var resourceCountResults []map[string]interface{}
+
+	//group by resource type and return counts
+	// SELECT source_resource_type as resource_type, COUNT(*) as count FROM resource_fhirs WHERE source_id = "53c1e930-63af-46c9-b760-8e83cbc1abd9" GROUP BY source_resource_type;
+	result := sr.gormClient.WithContext(ctx).
+		Model(models.ResourceFhir{}).
+		Select("source_id, source_resource_type as resource_type, count(*) as count").
+		Group("source_resource_type").
+		Where(models.OriginBase{
+			UserID: sr.GetCurrentUser(ctx).ID,
+		}).
+		Scan(&resourceCountResults)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	// we want a list of all sources (when they were last updated)
+	sources, err := sr.GetSources(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	summary := &models.Summary{
+		Sources:            sources,
+		ResourceTypeCounts: resourceCountResults,
+	}
+
+	return summary, nil
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Resource
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -248,9 +285,9 @@ func (sr *sqliteRepository) GetSourceSummary(ctx context.Context, sourceId strin
 	//group by resource type and return counts
 	// SELECT source_resource_type as resource_type, COUNT(*) as count FROM resource_fhirs WHERE source_id = "53c1e930-63af-46c9-b760-8e83cbc1abd9" GROUP BY source_resource_type;
 
-	var results []map[string]interface{}
+	var resourceTypeCounts []map[string]interface{}
 
-	sr.gormClient.WithContext(ctx).
+	result := sr.gormClient.WithContext(ctx).
 		Model(models.ResourceFhir{}).
 		Select("source_id, source_resource_type as resource_type, count(*) as count").
 		Group("source_resource_type").
@@ -258,9 +295,13 @@ func (sr *sqliteRepository) GetSourceSummary(ctx context.Context, sourceId strin
 			UserID:   sr.GetCurrentUser(ctx).ID,
 			SourceID: sourceUUID,
 		}).
-		Scan(&results)
+		Scan(&resourceTypeCounts)
 
-	sourceSummary.ResourceTypeCounts = results
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	sourceSummary.ResourceTypeCounts = resourceTypeCounts
 
 	return sourceSummary, nil
 }

@@ -45,6 +45,8 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 
 			secure := api.Group("/secure").Use(middleware.RequireAuth())
 			{
+				secure.GET("/summary", handler.GetSummary)
+
 				secure.POST("/source", handler.CreateSource)
 				secure.POST("/source/manual", handler.CreateManualSource)
 				secure.GET("/source", handler.ListSource)

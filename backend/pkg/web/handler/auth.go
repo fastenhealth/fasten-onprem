@@ -26,7 +26,7 @@ func AuthSignup(c *gin.Context) {
 	}
 
 	// return JWT
-	tokenString, err := auth.GenerateJWT(appConfig.GetString("web.jwt.encryptionkey"), user.Username)
+	tokenString, err := auth.GenerateJWT(appConfig.GetString("web.jwt.encryptionkey"), user.Username, user.ID.String())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
@@ -58,7 +58,7 @@ func AuthSignin(c *gin.Context) {
 	}
 
 	// return JWT
-	tokenString, err := auth.GenerateJWT(appConfig.GetString("web.jwt.encryptionkey"), user.Username)
+	tokenString, err := auth.GenerateJWT(appConfig.GetString("web.jwt.encryptionkey"), user.Username, user.ID.String())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "an error occurred generating JWT token"})
 		return
