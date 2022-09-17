@@ -27,6 +27,9 @@ import {ListCarePlanComponent} from './list-generic-resource/list-care-plan.comp
 import {ListAllergyIntoleranceComponent} from './list-generic-resource/list-allergy-intolerance.component';
 import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.directive';
 import {ListAppointmentComponent} from './list-generic-resource/list-appointment.component';
+import {ListDeviceComponent} from './list-generic-resource/list-device.component';
+import {ListDiagnosticReportComponent} from './list-generic-resource/list-diagnostic-report.component';
+import {ListGoalComponent} from './list-generic-resource/list-goal.component';
 
 @NgModule({
   imports: [
@@ -58,36 +61,42 @@ import {ListAppointmentComponent} from './list-generic-resource/list-appointment
     ListServiceRequestComponent,
     ListDocumentReferenceComponent,
     ListAppointmentComponent,
+    ListDeviceComponent,
+    ListDiagnosticReportComponent,
+    ListGoalComponent,
     ResourceListComponent,
     ResourceListOutletDirective,
   ],
-    exports: [
-        ComponentsSidebarComponent,
-        ListAllergyIntoleranceComponent,
-        ListAdverseEventComponent,
-        ListCarePlanComponent,
-        ListCommunicationComponent,
-        ListConditionComponent,
-        ListEncounterComponent,
-        ListAppointmentComponent,
-        ListGenericResourceComponent,
-        ListImmunizationComponent,
-        ListMedicationAdministrationComponent,
-        ListMedicationComponent,
-        ListMedicationDispenseComponent,
-        ListMedicationRequestComponent,
-        ListNutritionOrderComponent,
-        ListObservationComponent,
-        ListPatientComponent,
-        ListProcedureComponent,
-        ListDeviceRequestComponent,
-        UtilitiesSidebarComponent,
-        ListCoverageComponent,
-        ListServiceRequestComponent,
-        ListDocumentReferenceComponent,
-        ResourceListComponent,
-      ResourceListOutletDirective
-    ]
+  exports: [
+    ComponentsSidebarComponent,
+    ListAllergyIntoleranceComponent,
+    ListAdverseEventComponent,
+    ListCarePlanComponent,
+    ListCommunicationComponent,
+    ListConditionComponent,
+    ListEncounterComponent,
+    ListAppointmentComponent,
+    ListGenericResourceComponent,
+    ListImmunizationComponent,
+    ListMedicationAdministrationComponent,
+    ListMedicationComponent,
+    ListMedicationDispenseComponent,
+    ListMedicationRequestComponent,
+    ListNutritionOrderComponent,
+    ListObservationComponent,
+    ListPatientComponent,
+    ListProcedureComponent,
+    ListDeviceRequestComponent,
+    UtilitiesSidebarComponent,
+    ListCoverageComponent,
+    ListServiceRequestComponent,
+    ListDocumentReferenceComponent,
+    ListDeviceComponent,
+    ListDiagnosticReportComponent,
+    ListGoalComponent,
+    ResourceListComponent,
+    ResourceListOutletDirective
+  ]
 })
 
 export class SharedModule { }

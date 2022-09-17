@@ -26,6 +26,9 @@ import {ListCarePlanComponent} from '../list-generic-resource/list-care-plan.com
 import {ListAllergyIntoleranceComponent} from '../list-generic-resource/list-allergy-intolerance.component';
 import {ResourceListOutletDirective} from './resource-list-outlet.directive';
 import {ListAppointmentComponent} from '../list-generic-resource/list-appointment.component';
+import {ListDeviceComponent} from '../list-generic-resource/list-device.component';
+import {ListDiagnosticReportComponent} from '../list-generic-resource/list-diagnostic-report.component';
+import {ListGoalComponent} from '../list-generic-resource/list-goal.component';
 
 @Component({
   selector: 'source-resource-list',
@@ -110,14 +113,23 @@ export class ResourceListComponent implements OnInit, OnChanges {
       case "Coverage": {
         return ListCoverageComponent;
       }
+      case "Device": {
+        return ListDeviceComponent;
+      }
       case "DeviceRequest": {
         return ListDeviceRequestComponent;
+      }
+      case "DiagnosticReport": {
+        return ListDiagnosticReportComponent;
       }
       case "DocumentReference": {
         return ListDocumentReferenceComponent;
       }
       case "Encounter": {
         return ListEncounterComponent;
+      }
+      case "Goal": {
+        return ListGoalComponent;
       }
       case "Immunization": {
         return ListImmunizationComponent;
