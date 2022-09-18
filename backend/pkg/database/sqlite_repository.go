@@ -138,9 +138,16 @@ func (sr *sqliteRepository) GetSummary(ctx context.Context) (*models.Summary, er
 		return nil, err
 	}
 
+	// we want the main Patient for each source
+	patients, err := sr.GetPatientForSources(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	summary := &models.Summary{
 		Sources:            sources,
 		ResourceTypeCounts: resourceCountResults,
+		Patients:           patients,
 	}
 
 	return summary, nil
@@ -235,6 +242,29 @@ func (sr *sqliteRepository) GetResource(ctx context.Context, resourceId string) 
 		First(&wrappedResourceModel)
 
 	return &wrappedResourceModel, results.Error
+}
+
+// Get the patient for each source (for the current user)
+func (sr *sqliteRepository) GetPatientForSources(ctx context.Context) ([]models.ResourceFhir, error) {
+
+	//SELECT * FROM resource_fhirs WHERE user_id = "" and source_resource_type = "Patient" GROUP BY source_id
+
+	//var sourceCred models.Source
+	//results := sr.gormClient.WithContext(ctx).
+	//	Where(models.Source{UserID: sr.GetCurrentUser(ctx).ID, ModelBase: models.ModelBase{ID: sourceUUID}}).
+	//	First(&sourceCred)
+
+	var wrappedResourceModels []models.ResourceFhir
+	results := sr.gormClient.WithContext(ctx).
+		Model(models.ResourceFhir{}).
+		Group("source_id").
+		Where(models.OriginBase{
+			UserID:             sr.GetCurrentUser(ctx).ID,
+			SourceResourceType: "Patient",
+		}).
+		Find(&wrappedResourceModels)
+
+	return wrappedResourceModels, results.Error
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

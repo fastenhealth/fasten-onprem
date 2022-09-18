@@ -5,6 +5,7 @@ import {Source} from '../../models/fasten/source';
 import {Router} from '@angular/router';
 import {Summary} from '../../models/fasten/summary';
 import {ResourceTypeCounts} from '../../models/fasten/source-summary';
+import {ResourceFhir} from '../../models/fasten/resource_fhir';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +17,7 @@ export class DashboardComponent implements OnInit {
   sources: Source[] = []
   encounterCount: number = 0
   recordsCount: number = 0
+  patientForSource: {[name: string]: ResourceFhir} = {}
 
   constructor(private fastenApi: FastenApiService, private router: Router) { }
 
@@ -33,9 +35,11 @@ export class DashboardComponent implements OnInit {
             this.encounterCount = resourceTypeInfo.count
           }
         })
-      })
-    // this.fastenApi.getResources('Patient')
 
+        summary.patients.forEach((resourceFhir) => {
+          this.patientForSource[resourceFhir.source_id] = resourceFhir
+        })
+      })
   }
 
   selectSource(selectedSource: Source){
@@ -44,6 +48,12 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  getPatientSummary(patient: any) {
+    if(patient && patient.name && patient.name[0]){
+      return `${patient.name[0].family}, ${patient.name[0].given.join(' ')}`
+    }
+    return ''
+  }
 
   pageViewChartData = [{
     label: 'This week',

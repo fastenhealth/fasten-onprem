@@ -5,7 +5,7 @@ import {LighthouseSource} from '../../models/lighthouse/lighthouse-source';
 import * as Oauth from '@panva/oauth4webapi';
 import {AuthorizeClaim} from '../../models/lighthouse/authorize-claim';
 import {Source} from '../../models/fasten/source';
-import {getAccessTokenExpiration} from 'fhirclient/lib/lib';
+import {getAccessTokenExpiration, jwtDecode} from 'fhirclient/lib/lib';
 import BrowserAdapter from 'fhirclient/lib/adapters/BrowserAdapter';
 import {Observable, of, throwError} from 'rxjs';
 import {concatMap, delay, retryWhen} from 'rxjs/operators';
@@ -34,6 +34,7 @@ export class MedicalSourcesComponent implements OnInit {
     "humana": {"display": "Humana"},
     "kaiser": {"display": "Kaiser"},
     "unitedhealthcare": {"display": "United Healthcare"},
+    "logica": {"display": "Logica Sandbox"},
   }
 
   connectedSourceList = []
@@ -103,7 +104,7 @@ export class MedicalSourcesComponent implements OnInit {
             issuer: `${authorizationUrl.protocol}//${authorizationUrl.host}`,
             authorization_endpoint:	`${connectData.oauth_endpoint_base_url}/authorize`,
             token_endpoint:	`${connectData.oauth_endpoint_base_url}/token`,
-            introspect_endpoint: `${connectData.oauth_endpoint_base_url}/introspect`,
+            introspection_endpoint: `${connectData.oauth_endpoint_base_url}/introspect`,
           }
 
           console.log("STARTING--- Oauth.validateAuthResponse")
@@ -124,6 +125,15 @@ export class MedicalSourcesComponent implements OnInit {
           const payload = await response.json()
           console.log("ENDING--- Oauth.authorizationCodeGrantRequest", payload)
 
+
+          //If payload.patient is not set, make sure we extract the patient ID from the id_token or make an introspection req
+          if(!payload.patient){
+            //
+            console.log("NO PATIENT ID present, decoding jwt to extract patient")
+            //const introspectionResp = await Oauth.introspectionRequest(as, client, payload.access_token)
+            //console.log(introspectionResp)
+            payload.patient = jwtDecode(payload.id_token, new BrowserAdapter())["profile"].replace(/^(Patient\/)/,'')
+          }
 
           //Create FHIR Client
           const sourceCredential: Source = {

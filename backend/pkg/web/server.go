@@ -52,11 +52,16 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 				secure.GET("/source", handler.ListSource)
 				secure.GET("/source/:sourceId", handler.GetSource)
 				secure.GET("/source/:sourceId/summary", handler.GetSourceSummary)
-				//in debug mode, this endpoint lets us request data directly from the source api
-				secure.GET("/source/raw/:sourceType/*path", handler.RawRequestSource)
-
 				secure.GET("/resource/fhir", handler.ListResourceFhir) //
 				secure.GET("/resource/fhir/:resourceId", handler.GetResourceFhir)
+			}
+
+			if ae.Config.GetString("log.level") == "DEBUG" {
+				//in debug mode, this endpoint lets us request data directly from the source api
+				ae.Logger.Warningf("***INSECURE*** ***INSECURE*** DEBUG mode enables developer functionality, including unauthenticated raw api requests")
+
+				//http://localhost:9090/api/raw/test@test.com/436d7277-ad56-41ce-9823-44e353d1b3f6/Patient/smart-1288992
+				api.GET("/raw/:username/:sourceId/*path", handler.RawRequestSource)
 			}
 		}
 	}

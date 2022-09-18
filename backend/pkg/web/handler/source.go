@@ -148,38 +148,34 @@ func RawRequestSource(c *gin.Context) {
 	logger := c.MustGet("LOGGER").(*logrus.Entry)
 	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
 
-	sources, err := databaseRepo.GetSources(c)
-	if err != nil {
-		logger.Errorln("An error occurred while storing source credential", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
-		return
-	}
+	//!!!!!!INSECURE!!!!!!S
+	//We're setting the username to a user provided value, this is insecure, but required for calling databaseRepo fns
+	c.Set("AUTH_USERNAME", c.Param("username"))
 
-	var foundSource *models.Source
-	for _, source := range sources {
-		if source.SourceType == pkg.SourceType(c.Param("sourceType")) {
-			foundSource = &source
-			break
-		}
+	foundSource, err := databaseRepo.GetSource(c, c.Param("sourceId"))
+	if err != nil {
+		logger.Errorln("An error occurred while finding source credential", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		return
 	}
 
 	if foundSource == nil {
 		logger.Errorf("Did not source credentials for %s", c.Param("sourceType"))
-		c.JSON(http.StatusNotFound, gin.H{"success": false})
+		c.JSON(http.StatusNotFound, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
-	client, updatedSource, err := hub.NewClient(pkg.SourceType(c.Param("sourceType")), c, nil, logger, *foundSource)
+	client, updatedSource, err := hub.NewClient(foundSource.SourceType, c, nil, logger, *foundSource)
 	if err != nil {
 		logger.Errorf("Could not initialize source client", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 	if updatedSource != nil {
 		err := databaseRepo.CreateSource(c, updatedSource)
 		if err != nil {
 			logger.Errorln("An error occurred while updating source credential", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 			return
 		}
 	}
@@ -188,7 +184,7 @@ func RawRequestSource(c *gin.Context) {
 	err = client.GetRequest(strings.TrimSuffix(c.Param("path"), "/"), &resp)
 	if err != nil {
 		logger.Errorf("Error making raw request", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": resp})

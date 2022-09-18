@@ -94,7 +94,7 @@
                     <canvas baseChart [chartType]="'doughnut'" [datasets]="sessionsChartTwoData" [labels]="sessionsChartTwoLabels" [options]="sessionsChartTwoOptions" height="45"></canvas>
                   </div>
                   <div>
-                    <label>Updated</label>
+                    <label>Updates</label>
                     <h4>19</h4>
                   </div>
                 </div>
@@ -154,8 +154,7 @@
                     <div class="media-body">
                       <h5>{{source.source_type}}</h5>
                       <p>
-                        GeeksforGeeks is a computer science portal.
-                        It is a best programming platform.
+                        {{getPatientSummary(patientForSource[source.id]?.payload)}}
                       </p>
 
                     </div>

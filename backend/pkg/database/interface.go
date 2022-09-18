@@ -19,6 +19,7 @@ type DatabaseRepository interface {
 	GetResource(context.Context, string) (*models.ResourceFhir, error)
 	GetResourceBySourceId(context.Context, string, string) (*models.ResourceFhir, error)
 	ListResources(context.Context, models.ListResourceQueryOptions) ([]models.ResourceFhir, error)
+	GetPatientForSources(ctx context.Context) ([]models.ResourceFhir, error)
 	//UpsertProfile(context.Context, *models.Profile) error
 	//UpsertOrganziation(context.Context, *models.Organization) error
 

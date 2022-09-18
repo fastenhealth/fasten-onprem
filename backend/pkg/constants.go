@@ -13,4 +13,5 @@ const (
 	SourceTypeHumana           SourceType = "humana"
 	SourceTypeKaiser           SourceType = "kaiser"
 	SourceTypeUnitedHealthcare SourceType = "unitedhealthcare"
+	SourceTypeLogica           SourceType = "logica"
 )
