@@ -56,6 +56,8 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 				secure.GET("/resource/fhir/:resourceId", handler.GetResourceFhir)
 			}
 
+			api.GET("/metadata/source", handler.GetMetadataSource)
+
 			if ae.Config.GetString("log.level") == "DEBUG" {
 				//in debug mode, this endpoint lets us request data directly from the source api
 				ae.Logger.Warningf("***INSECURE*** ***INSECURE*** DEBUG mode enables developer functionality, including unauthenticated raw api requests")
@@ -77,7 +79,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 	//catch-all, serve index page.
 	r.NoRoute(func(c *gin.Context) {
 		path := c.Request.URL.Path
-		if strings.HasPrefix(path, "/api") {
+		if strings.HasPrefix(path, "/api") || strings.HasPrefix(path, "/api") {
 			c.JSON(http.StatusNotFound, gin.H{"success": false, "error": "404 endpoint not found"})
 		} else {
 			c.File(fmt.Sprintf("%s/index.html", ae.Config.GetString("web.src.frontend.path")))

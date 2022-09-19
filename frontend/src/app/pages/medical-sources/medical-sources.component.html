@@ -18,16 +18,15 @@
         </div>
       </div>
 
-      <h2 class="az-content-title mg-t-40">Medical Sources</h2>
+      <h2 class="az-content-title mg-t-40">Medical Record Sources</h2>
 
       <div class="az-content-label mg-b-5">Manual Upload</div>
-      <p class="mg-b-20">The following medical insurance companies have API's which Fasten can use to retrieve your medical history.
-        Please click the logos below to initiate the connection.</p>
+      <p class="mg-b-20">Fasten also supports manually uploaded electronic medical records (EMR). Click below to upload.</p>
 
       <div class="row row-sm">
         <div class="col-lg">
           <ngx-dropzone [multiple]="false" (change)="uploadSourceBundle($event)">
-            <ngx-dropzone-label>Drop it, baby!</ngx-dropzone-label>
+            <ngx-dropzone-label>Select your EMR bundle</ngx-dropzone-label>
             <ngx-dropzone-preview *ngFor="let f of uploadedFile" [removable]="false">
               <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
             </ngx-dropzone-preview>
@@ -37,8 +36,8 @@
 
       <hr class="mg-y-30">
 
-      <div class="az-content-label mg-b-5">Insurance Companies</div>
-      <p class="mg-b-20">The following medical insurance companies have API's which Fasten can use to retrieve your medical history.
+      <div class="az-content-label mg-b-5">Healthcare Companies</div>
+      <p class="mg-b-20">The following medical companies have API's which Fasten can use to retrieve your medical history.
         Please click the logos below to initiate the connection.</p>
 
       <div class="row row-sm">
@@ -47,7 +46,7 @@
         <div *ngFor="let sourceData of availableSourceList" (click)="connect($event, sourceData['source_type'])" class="col-sm-3 mg-b-20 px-3">
           <div class="card h-100 d-flex align-items-center justify-content-center p-3 rounded-0">
             <div class="card-body">
-              <img [src]="'assets/sources/'+sourceData['source_type']+'.png'" alt="client" class="img-fluid">
+              <img [src]="'assets/sources/'+sourceData['source_type']+'.png'" [alt]="metadataSources[sourceData['source_type']].display" class="img-fluid">
 
               <div *ngIf="status[sourceData['source_type']]" class="progress">
                 <div [style.width]="status[sourceData['source_type']] == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>

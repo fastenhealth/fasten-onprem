@@ -10,6 +10,7 @@ import BrowserAdapter from 'fhirclient/lib/adapters/BrowserAdapter';
 import {Observable, of, throwError} from 'rxjs';
 import {concatMap, delay, retryWhen} from 'rxjs/operators';
 import * as FHIR from "fhirclient"
+import {MetadataSource} from '../../models/fasten/metadata-source';
 
 export const retryCount = 24; //wait 2 minutes (5 * 24 = 120)
 export const retryWaitMilliSeconds = 5000; //wait 5 seconds
@@ -27,15 +28,7 @@ export class MedicalSourcesComponent implements OnInit {
   ) { }
   status: { [name: string]: string } = {}
 
-  sourceLookup = {
-    "aetna": {"display": "Aetna"},
-    "anthem": {"display": "Anthem"},
-    "cigna": {"display": "Cigna"},
-    "humana": {"display": "Humana"},
-    "kaiser": {"display": "Kaiser"},
-    "unitedhealthcare": {"display": "United Healthcare"},
-    "logica": {"display": "Logica Sandbox"},
-  }
+  metadataSources: {[name:string]: MetadataSource} = {}
 
   connectedSourceList = []
   availableSourceList = []
@@ -43,26 +36,32 @@ export class MedicalSourcesComponent implements OnInit {
   uploadedFile: File[] = []
 
   ngOnInit(): void {
-    this.fastenApi.getSources()
-      .subscribe((sourceList: Source[]) => {
+    this.fastenApi.getMetadataSources().subscribe((metadataSources: {[name:string]: MetadataSource}) => {
+      this.metadataSources = metadataSources
 
-        for (const sourceType in this.sourceLookup) {
-          let isConnected = false
-          for(const connectedSource of sourceList){
-            if(connectedSource.source_type == sourceType){
-              this.connectedSourceList.push({"source_type": sourceType, "display": this.sourceLookup[sourceType]["display"]})
-              isConnected = true
-              break
+      this.fastenApi.getSources()
+        .subscribe((sourceList: Source[]) => {
+
+          for (const sourceType in this.metadataSources) {
+            let isConnected = false
+            for(const connectedSource of sourceList){
+              if(connectedSource.source_type == sourceType){
+                this.connectedSourceList.push({"source_type": sourceType, "display": this.metadataSources[sourceType]["display"]})
+                isConnected = true
+                break
+              }
+            }
+
+            if(!isConnected){
+              //this source has not been found in the connected list, lets add it to the available list.
+              this.availableSourceList.push({"source_type": sourceType, "display": this.metadataSources[sourceType]["display"]})
             }
           }
 
-          if(!isConnected){
-            //this source has not been found in the connected list, lets add it to the available list.
-            this.availableSourceList.push({"source_type": sourceType, "display": this.sourceLookup[sourceType]["display"]})
-          }
-        }
+        })
+    })
 
-      })
+
   }
 
   connect($event: MouseEvent, sourceType: string) {

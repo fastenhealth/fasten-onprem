@@ -152,7 +152,7 @@
                          class="mr-3"
                          style="width:100px;">
                     <div class="media-body">
-                      <h5>{{source.source_type}}</h5>
+                      <h5>{{metadataSource[source.source_type]?.display}}</h5>
                       <p>
                         {{getPatientSummary(patientForSource[source.id]?.payload)}}
                       </p>
@@ -160,7 +160,7 @@
                     </div>
                   </div>
                 </td>
-                <td class="align-middle"><p><small class="tx-gray-600">status:</small><br/> active</p></td>
+                <td class="align-middle"><p><small class="tx-gray-600">status:</small><br/> {{isActive(source)}}</p></td>
                 <td class="align-middle"><p><small class="tx-gray-600">last updated:</small><br/> {{source.updated_at | date}}</p></td>
                 <td class="align-middle"><p><small class="tx-gray-600">expires:</small><br/> {{source.expires_at}}</p></td>
                 <td class="align-middle"><p><i class="fas fa-chevron-right"></i></td>

@@ -6,6 +6,8 @@ import {Router} from '@angular/router';
 import {Summary} from '../../models/fasten/summary';
 import {ResourceTypeCounts} from '../../models/fasten/source-summary';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
+import {forkJoin} from 'rxjs';
+import {MetadataSource} from '../../models/fasten/metadata-source';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,27 +21,63 @@ export class DashboardComponent implements OnInit {
   recordsCount: number = 0
   patientForSource: {[name: string]: ResourceFhir} = {}
 
+  metadataSource: { [name: string]: MetadataSource }
+
   constructor(private fastenApi: FastenApiService, private router: Router) { }
 
   ngOnInit() {
 
-    this.fastenApi.getSummary()
-      .subscribe( (summary) => {
-        console.log(summary);
-        this.sources = summary.sources
+    // this.fastenApi.getSummary()
+    //   .subscribe( (summary) => {
+    //     console.log(summary);
+    //     this.sources = summary.sources
+    //
+    //     //calculate the number of records
+    //     summary.resource_type_counts.forEach((resourceTypeInfo) => {
+    //       this.recordsCount += resourceTypeInfo.count
+    //       if(resourceTypeInfo.resource_type == "Encounter"){
+    //         this.encounterCount = resourceTypeInfo.count
+    //       }
+    //     })
+    //
+    //     summary.patients.forEach((resourceFhir) => {
+    //       this.patientForSource[resourceFhir.source_id] = resourceFhir
+    //     })
+    //   })
 
-        //calculate the number of records
-        summary.resource_type_counts.forEach((resourceTypeInfo) => {
-          this.recordsCount += resourceTypeInfo.count
-          if(resourceTypeInfo.resource_type == "Encounter"){
-            this.encounterCount = resourceTypeInfo.count
-          }
-        })
+    forkJoin([this.fastenApi.getSummary(), this.fastenApi.getMetadataSources()]).subscribe(results => {
+      let summary = results[0] as Summary
+      let metadataSource = results[1] as { [name: string]: MetadataSource }
 
-        summary.patients.forEach((resourceFhir) => {
-          this.patientForSource[resourceFhir.source_id] = resourceFhir
-        })
+      //process
+      console.log(summary);
+      this.sources = summary.sources
+      this.metadataSource = metadataSource
+      this.metadataSource["manual"] = {
+        "source_type": "manual",
+        "display": "Manual",
+        "category": ["Manual"],
+        "enabled": true,
+      }
+
+
+      //calculate the number of records
+      summary.resource_type_counts.forEach((resourceTypeInfo) => {
+        this.recordsCount += resourceTypeInfo.count
+        if(resourceTypeInfo.resource_type == "Encounter"){
+          this.encounterCount = resourceTypeInfo.count
+        }
       })
+
+      summary.patients.forEach((resourceFhir) => {
+        this.patientForSource[resourceFhir.source_id] = resourceFhir
+      })
+
+
+
+    });
+
+
   }
 
   selectSource(selectedSource: Source){
@@ -53,6 +91,15 @@ export class DashboardComponent implements OnInit {
       return `${patient.name[0].family}, ${patient.name[0].given.join(' ')}`
     }
     return ''
+  }
+
+  isActive(source: Source){
+    if(source.source_type == "manual"){
+      return '--'
+    }
+    let expiresDate = new Date(source.expires_at);
+    let currentDate = new Date()
+    return expiresDate < currentDate ? 'active' : 'expired'
   }
 
   pageViewChartData = [{

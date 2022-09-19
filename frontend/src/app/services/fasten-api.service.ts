@@ -11,6 +11,7 @@ import {User} from '../models/fasten/user';
 import {ResourceFhir} from '../models/fasten/resource_fhir';
 import {SourceSummary} from '../models/fasten/source-summary';
 import {Summary} from '../models/fasten/summary';
+import {MetadataSource} from '../models/fasten/metadata-source';
 
 @Injectable({
   providedIn: 'root'
@@ -145,6 +146,16 @@ export class FastenApiService {
         map((response: ResponseWrapper) => {
           console.log("RESPONSE", response)
           return response.data as ResourceFhir[]
+        })
+      );
+  }
+
+  getMetadataSources(): Observable<{[name: string]: MetadataSource}> {
+    return this._httpClient.get<any>(`${this.getBasePath()}/api/metadata/source`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("Metadata RESPONSE", response)
+          return response.data as {[name: string]: MetadataSource}
         })
       );
   }
