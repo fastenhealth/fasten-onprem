@@ -40,8 +40,8 @@ func NewBaseClient(ctx context.Context, appConfig config.Interface, globalLogger
 			ClientID:     source.ClientId,
 			ClientSecret: "",
 			Endpoint: oauth2.Endpoint{
-				AuthURL:  fmt.Sprintf("%s/authorize", source.OauthEndpointBaseUrl),
-				TokenURL: fmt.Sprintf("%s/token", source.OauthEndpointBaseUrl),
+				AuthURL:  source.OauthAuthorizationEndpoint,
+				TokenURL: source.OauthTokenEndpointAuthMethods,
 			},
 			//RedirectURL:  "",
 			//Scopes:       nil,

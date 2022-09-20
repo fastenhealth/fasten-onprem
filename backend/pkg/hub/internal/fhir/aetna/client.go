@@ -6,6 +6,7 @@ import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/base"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/fastenhealth/gofhir-models/fhir401"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
@@ -21,17 +22,25 @@ func NewClient(ctx context.Context, appConfig config.Interface, globalLogger log
 	}, updatedSource, err
 }
 
+func (c AetnaClient) GetPatientBundle(patientId string) (fhir401.Bundle, error) {
+
+	bundle := fhir401.Bundle{}
+	err := c.GetRequest("Patient", &bundle)
+	return bundle, err
+
+}
+
 func (c AetnaClient) SyncAll(db database.DatabaseRepository) error {
 
 	bundle, err := c.GetPatientBundle(c.Source.PatientId)
 	if err != nil {
-		c.Logger.Infof("An error occured while getting patient bundle %s", c.Source.PatientId)
+		c.Logger.Infof("An error occurred while getting patient bundle %s", c.Source.PatientId)
 		return err
 	}
 
 	wrappedResourceModels, err := c.ProcessBundle(bundle)
 	if err != nil {
-		c.Logger.Infof("An error occured while processing patient bundle %s", c.Source.PatientId)
+		c.Logger.Infof("An error occurred while processing patient bundle %s", c.Source.PatientId)
 		return err
 	}
 	//todo, create the resources in dependency order
@@ -39,7 +48,7 @@ func (c AetnaClient) SyncAll(db database.DatabaseRepository) error {
 	for _, apiModel := range wrappedResourceModels {
 		err = db.UpsertResource(context.Background(), apiModel)
 		if err != nil {
-			c.Logger.Info("An error occured while upserting resource")
+			c.Logger.Info("An error occurred while upserting resource")
 			return err
 		}
 	}

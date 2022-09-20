@@ -26,10 +26,6 @@
 
       <div class="az-dashboard-nav">
         <nav class="nav">
-          <a class="nav-link active" routerLink="/">Overview</a>
-          <a class="nav-link" routerLink="/">Audiences</a>
-          <a class="nav-link" routerLink="/">Demographics</a>
-          <a class="nav-link" routerLink="/">More</a>
         </nav>
 
         <nav class="nav">
@@ -144,7 +140,7 @@
           <div class="table-responsive">
             <table class="table mg-b-0">
               <tbody>
-              <tr *ngFor="let source of sources" (click)="selectSource(source)" class="alert" role="alert">
+              <tr *ngFor="let source of sources" (click)="selectSource(source)" class="alert cursor-pointer" role="alert">
                 <td class="align-middle">
                   <div class="media">
                     <img [src]="'assets/sources/'+source.source_type+'.png'"

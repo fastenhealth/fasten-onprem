@@ -10,7 +10,7 @@
 
       <div class="row">
         <div *ngFor="let sourceData of connectedSourceList" (click)="connect($event, sourceData['source_type'])" class="col-sm-3 mg-b-20 px-3">
-          <div class="card h-100 d-flex align-items-center justify-content-center p-3 rounded-0">
+          <div class="card h-100 d-flex align-items-center justify-content-center p-3 rounded-0 cursor-pointer">
             <div class="card-body">
               <img [src]="'assets/sources/'+sourceData['source_type']+'.png'" alt="client" class="img-fluid">
             </div>
@@ -44,7 +44,7 @@
 
 
         <div *ngFor="let sourceData of availableSourceList" (click)="connect($event, sourceData['source_type'])" class="col-sm-3 mg-b-20 px-3">
-          <div class="card h-100 d-flex align-items-center justify-content-center p-3 rounded-0">
+          <div class="card h-100 d-flex align-items-center justify-content-center p-3 rounded-0 cursor-pointer">
             <div class="card-body">
               <img [src]="'assets/sources/'+sourceData['source_type']+'.png'" [alt]="metadataSources[sourceData['source_type']].display" class="img-fluid">
 

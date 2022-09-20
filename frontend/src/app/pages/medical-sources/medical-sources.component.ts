@@ -99,11 +99,17 @@ export class MedicalSourcesComponent implements OnInit {
             token_endpoint_auth_method: 'none',
           }
 
+          //check if the oauth_token_endpoint_auth_methods_supported field is set
+          if(connectData.oauth_token_endpoint_auth_methods_supported){
+            let auth_methods = connectData.oauth_token_endpoint_auth_methods_supported.split(",")
+            client.token_endpoint_auth_method = auth_methods[0]
+          }
+
           const as = {
             issuer: `${authorizationUrl.protocol}//${authorizationUrl.host}`,
-            authorization_endpoint:	`${connectData.oauth_endpoint_base_url}/authorize`,
-            token_endpoint:	`${connectData.oauth_endpoint_base_url}/token`,
-            introspection_endpoint: `${connectData.oauth_endpoint_base_url}/introspect`,
+            authorization_endpoint:	connectData.oauth_authorization_endpoint,
+            token_endpoint:	connectData.oauth_token_endpoint,
+            introspection_endpoint: connectData.oauth_introspection_endpoint,
           }
 
           console.log("STARTING--- Oauth.validateAuthResponse")
@@ -137,11 +143,15 @@ export class MedicalSourcesComponent implements OnInit {
           //Create FHIR Client
           const sourceCredential: Source = {
             source_type: sourceType,
-            oauth_endpoint_base_url: connectData.oauth_endpoint_base_url,
+            oauth_authorization_endpoint: connectData.oauth_authorization_endpoint,
+            oauth_token_endpoint: connectData.oauth_token_endpoint,
+            oauth_registration_endpoint: connectData.oauth_registration_endpoint,
+            oauth_introspection_endpoint: connectData.oauth_introspection_endpoint,
+            oauth_token_endpoint_auth_methods_supported: connectData.oauth_token_endpoint_auth_methods_supported,
             api_endpoint_base_url:   connectData.api_endpoint_base_url,
             client_id:             connectData.client_id,
             redirect_uri:          connectData.redirect_uri,
-            scopes:               connectData.scopes.join(' '),
+            scopes:               connectData.scopes ? connectData.scopes.join(' ') : undefined,
             patient_id:            payload.patient,
             access_token:          payload.access_token,
             refresh_token:          payload.refresh_token,

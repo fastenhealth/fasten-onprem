@@ -4,7 +4,12 @@ export class Source {
   source_type: string
   patient_id: string
 
-  oauth_endpoint_base_url: string
+  oauth_authorization_endpoint: string
+  oauth_token_endpoint: string
+  oauth_registration_endpoint: string
+  oauth_introspection_endpoint: string
+  oauth_token_endpoint_auth_methods_supported: string
+
   api_endpoint_base_url:   string
   client_id:             string
   redirect_uri:          string

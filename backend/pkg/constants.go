@@ -25,6 +25,6 @@ const (
 	SourceTypeTrinity                      SourceType = "trinity"
 	SourceTypeUCSF                         SourceType = "ucsf"
 	SourceTypeUnitedHealthcare             SourceType = "unitedhealthcare"
-	SourceTypeVeteransHealthAdministration SourceType = "va"
+	SourceTypeVeteransHealthAdministration SourceType = "bluebutton"
 	SourceTypeVerity                       SourceType = "verity"
 )

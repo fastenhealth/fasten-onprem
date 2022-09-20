@@ -26,14 +26,16 @@ export class LighthouseService {
 
   generatePKCESourceAuthorizeUrl(codeVerifier: string, codeChallenge: string, codeChallengeMethod: string, state: string, lighthouseSource: LighthouseSource): URL {
     // generate the authorization url
-    const authorizationUrl = new URL(`${lighthouseSource.oauth_endpoint_base_url}/authorize`);
+    const authorizationUrl = new URL(lighthouseSource.oauth_authorization_endpoint);
     authorizationUrl.searchParams.set('client_id', lighthouseSource.client_id);
     authorizationUrl.searchParams.set('code_challenge', codeChallenge);
     authorizationUrl.searchParams.set('code_challenge_method', codeChallengeMethod);
     authorizationUrl.searchParams.set('redirect_uri', lighthouseSource.redirect_uri);
     authorizationUrl.searchParams.set('response_type', 'code');
-    authorizationUrl.searchParams.set('scope', lighthouseSource.scopes.join(' '));
     authorizationUrl.searchParams.set('state', state);
+    if(lighthouseSource.scopes && lighthouseSource.scopes.length){
+      authorizationUrl.searchParams.set('scope', lighthouseSource.scopes.join(' '));
+    }
     if (lighthouseSource.aud) {
       authorizationUrl.searchParams.set('aud', lighthouseSource.aud);
     }

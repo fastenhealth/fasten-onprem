@@ -29,7 +29,10 @@ func (c LogicaClient) SyncAll(db database.DatabaseRepository) error {
 	}
 
 	wrappedResourceModels, err := c.ProcessBundle(bundle)
-
+	if err != nil {
+		c.Logger.Infof("An error occurred while processing patient bundle %s", c.Source.PatientId)
+		return err
+	}
 	//todo, create the resources in dependency order
 
 	for _, apiModel := range wrappedResourceModels {
