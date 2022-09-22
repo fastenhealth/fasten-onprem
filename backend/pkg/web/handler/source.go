@@ -10,6 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -181,7 +182,17 @@ func RawRequestSource(c *gin.Context) {
 	}
 
 	var resp map[string]interface{}
-	err = client.GetRequest(strings.TrimSuffix(c.Param("path"), "/"), &resp)
+
+	parsedUrl, err := url.Parse(strings.TrimSuffix(c.Param("path"), "/"))
+	if err != nil {
+		logger.Errorf("Error parsing request, %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+	//make sure we include all query string parameters with the raw request.
+	parsedUrl.RawQuery = c.Request.URL.Query().Encode()
+
+	err = client.GetRequest(parsedUrl.String(), &resp)
 	if err != nil {
 		logger.Errorf("Error making raw request, %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})

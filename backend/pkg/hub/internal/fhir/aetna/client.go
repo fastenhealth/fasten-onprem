@@ -22,6 +22,7 @@ func NewClient(ctx context.Context, appConfig config.Interface, globalLogger log
 	}, updatedSource, err
 }
 
+//Overrides
 func (c AetnaClient) GetPatientBundle(patientId string) (fhir401.Bundle, error) {
 
 	bundle := fhir401.Bundle{}

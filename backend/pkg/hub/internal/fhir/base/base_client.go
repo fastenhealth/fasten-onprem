@@ -10,6 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -42,7 +43,7 @@ func NewBaseClient(ctx context.Context, appConfig config.Interface, globalLogger
 			ClientSecret: "",
 			Endpoint: oauth2.Endpoint{
 				AuthURL:  source.OauthAuthorizationEndpoint,
-				TokenURL: source.OauthTokenEndpointAuthMethods,
+				TokenURL: source.OauthTokenEndpoint,
 			},
 			//RedirectURL:  "",
 			//Scopes:       nil,
@@ -54,6 +55,7 @@ func NewBaseClient(ctx context.Context, appConfig config.Interface, globalLogger
 			Expiry:       time.Unix(source.ExpiresAt, 0),
 		}
 		if token.Expiry.Before(time.Now()) { // expired so let's update it
+			log.Println("access token expired, refreshing...")
 			src := conf.TokenSource(ctx, token)
 			newToken, err := src.Token() // this actually goes and renews the tokens
 			if err != nil {
