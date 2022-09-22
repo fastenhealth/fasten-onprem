@@ -11,6 +11,7 @@ import (
 	"golang.org/x/oauth2"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -96,9 +97,26 @@ func NewBaseClient(ctx context.Context, appConfig config.Interface, globalLogger
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HttpClient
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-func (c *BaseClient) GetRequest(resourceSubpath string, decodeModelPtr interface{}) error {
-	url := fmt.Sprintf("%s/%s", strings.TrimRight(c.Source.ApiEndpointBaseUrl, "/"), strings.TrimLeft(resourceSubpath, "/"))
-	resp, err := c.OauthClient.Get(url)
+func (c *BaseClient) GetRequest(resourceSubpathOrNext string, decodeModelPtr interface{}) error {
+	resourceUrl, err := url.Parse(resourceSubpathOrNext)
+	if err != nil {
+		return err
+	}
+	if !resourceUrl.IsAbs() {
+		resourceUrl, err = url.Parse(fmt.Sprintf("%s/%s", strings.TrimRight(c.Source.ApiEndpointBaseUrl, "/"), strings.TrimLeft(resourceSubpathOrNext, "/")))
+	}
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, resourceUrl.String(), nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Accept", "application/json+fhir")
+
+	//resp, err := c.OauthClient.Get(url)
+	resp, err := c.OauthClient.Do(req)
 
 	if err != nil {
 		return err
@@ -106,7 +124,7 @@ func (c *BaseClient) GetRequest(resourceSubpath string, decodeModelPtr interface
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 300 || resp.StatusCode < 200 {
-		return fmt.Errorf("An error occurred during request %s - %d - %s", url, resp.StatusCode, resp.Status)
+		return fmt.Errorf("An error occurred during request %s - %d - %s", resourceUrl, resp.StatusCode, resp.Status)
 	}
 
 	err = ParseBundle(resp.Body, decodeModelPtr)

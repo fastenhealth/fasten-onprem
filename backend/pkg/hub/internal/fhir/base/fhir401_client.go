@@ -32,6 +32,39 @@ func (c *FHIR401Client) GetPatientBundle(patientId string) (fhir401.Bundle, erro
 	// https://www.hl7.org/fhir/patient-operation-everything.html
 	bundle := fhir401.Bundle{}
 	err := c.GetRequest(fmt.Sprintf("Patient/%s/$everything", patientId), &bundle)
+	if err != nil {
+		return bundle, err
+	}
+	var next string
+	var self string
+	for _, link := range bundle.Link {
+		if link.Relation == "next" {
+			next = link.Url
+		} else if link.Relation == "self" {
+			self = link.Url
+		}
+	}
+
+	for len(next) > 0 && next != self {
+		c.Logger.Debugf("Paginated request => %s", next)
+		nextBundle := fhir401.Bundle{}
+		err := c.GetRequest(next, &nextBundle)
+		if err != nil {
+			return bundle, nil //ignore failures when paginating?
+		}
+		bundle.Entry = append(bundle.Entry, nextBundle.Entry...)
+
+		next = "" //reset the next pointer
+		self = ""
+		for _, link := range nextBundle.Link {
+			if link.Relation == "next" {
+				next = link.Url
+			} else if link.Relation == "self" {
+				self = link.Url
+			}
+		}
+	}
+
 	return bundle, err
 
 }
