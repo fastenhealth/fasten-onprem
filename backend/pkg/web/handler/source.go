@@ -154,7 +154,7 @@ func RawRequestSource(c *gin.Context) {
 
 	foundSource, err := databaseRepo.GetSource(c, c.Param("sourceId"))
 	if err != nil {
-		logger.Errorln("An error occurred while finding source credential", err)
+		logger.Errorf("An error occurred while finding source credential: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
@@ -167,14 +167,14 @@ func RawRequestSource(c *gin.Context) {
 
 	client, updatedSource, err := hub.NewClient(foundSource.SourceType, c, nil, logger, *foundSource)
 	if err != nil {
-		logger.Errorf("Could not initialize source client", err)
+		logger.Errorf("Could not initialize source client %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 	if updatedSource != nil {
 		err := databaseRepo.CreateSource(c, updatedSource)
 		if err != nil {
-			logger.Errorln("An error occurred while updating source credential", err)
+			logger.Errorf("An error occurred while updating source credential %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 			return
 		}
@@ -183,7 +183,7 @@ func RawRequestSource(c *gin.Context) {
 	var resp map[string]interface{}
 	err = client.GetRequest(strings.TrimSuffix(c.Param("path"), "/"), &resp)
 	if err != nil {
-		logger.Errorf("Error making raw request", err)
+		logger.Errorf("Error making raw request, %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}

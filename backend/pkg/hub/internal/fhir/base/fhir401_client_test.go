@@ -1,6 +1,7 @@
 package base
 
 import (
+	"context"
 	"encoding/json"
 	mock_config "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config/mock"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
@@ -9,6 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"testing"
 )
@@ -35,10 +37,10 @@ func TestNewFHIR401Client(t *testing.T) {
 	})
 
 	//test
-	client, _, err := NewFHIR401Client(fakeConfig, testLogger, models.Source{
+	client, _, err := NewFHIR401Client(context.Background(), fakeConfig, testLogger, models.Source{
 		RefreshToken: "test-refresh-token",
 		AccessToken:  "test-access-token",
-	})
+	}, &http.Client{})
 
 	//assert
 	require.NoError(t, err)
@@ -55,10 +57,10 @@ func TestFHIR401Client_ProcessBundle(t *testing.T) {
 	testLogger := logrus.WithFields(logrus.Fields{
 		"type": "test",
 	})
-	client, _, err := NewFHIR401Client(fakeConfig, testLogger, models.Source{
+	client, _, err := NewFHIR401Client(context.Background(), fakeConfig, testLogger, models.Source{
 		RefreshToken: "test-refresh-token",
 		AccessToken:  "test-access-token",
-	})
+	}, &http.Client{})
 	require.NoError(t, err)
 
 	jsonBytes, err := readTestFixture("testdata/fixtures/401-R4/bundle/cigna_syntheticuser05-everything.json")

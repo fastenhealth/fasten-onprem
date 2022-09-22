@@ -1,0 +1,7 @@
+/vendor
+/.idea
+/.github
+/.git
+/frontend/node_modules
+/frontend/.angular
+/dist

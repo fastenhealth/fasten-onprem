@@ -1,6 +1,5 @@
 package pkg
 
-//go:generate stringer -type=SourceType
 // SourceType contains all the various medical, insurance, health care providers which Fasten can communicate with
 type SourceType string
 
@@ -10,10 +9,12 @@ const (
 	SourceTypeAetna                        SourceType = "aetna"
 	SourceTypeAnthem                       SourceType = "anthem"
 	SourceTypeCedarSinai                   SourceType = "cedarssinai"
+	SourceTypeCerner                       SourceType = "cerner"
 	SourceTypeCigna                        SourceType = "cigna"
 	SourceTypeCommonSpirit                 SourceType = "commonspirit"
 	SourceTypeDeltaDental                  SourceType = "deltadental"
 	SourceTypeDignityHealth                SourceType = "dignityhealth"
+	SourceTypeEpic                         SourceType = "epic"
 	SourceTypeHCAHealthcare                SourceType = "hcahealthcare"
 	SourceTypeHumana                       SourceType = "humana"
 	SourceTypeKaiser                       SourceType = "kaiser"

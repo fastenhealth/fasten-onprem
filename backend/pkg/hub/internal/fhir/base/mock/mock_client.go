@@ -5,6 +5,7 @@
 package mock_base
 
 import (
+	os "os"
 	reflect "reflect"
 
 	database "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
@@ -60,4 +61,56 @@ func (m *MockClient) SyncAll(db database.DatabaseRepository) error {
 func (mr *MockClientMockRecorder) SyncAll(db interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SyncAll", reflect.TypeOf((*MockClient)(nil).SyncAll), db)
+}
+
+// SyncAllBundle mocks base method.
+func (m *MockClient) SyncAllBundle(db database.DatabaseRepository, bundleFile *os.File) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SyncAllBundle", db, bundleFile)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SyncAllBundle indicates an expected call of SyncAllBundle.
+func (mr *MockClientMockRecorder) SyncAllBundle(db, bundleFile interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SyncAllBundle", reflect.TypeOf((*MockClient)(nil).SyncAllBundle), db, bundleFile)
+}
+
+// MockResourceInterface is a mock of ResourceInterface interface.
+type MockResourceInterface struct {
+	ctrl     *gomock.Controller
+	recorder *MockResourceInterfaceMockRecorder
+}
+
+// MockResourceInterfaceMockRecorder is the mock recorder for MockResourceInterface.
+type MockResourceInterfaceMockRecorder struct {
+	mock *MockResourceInterface
+}
+
+// NewMockResourceInterface creates a new mock instance.
+func NewMockResourceInterface(ctrl *gomock.Controller) *MockResourceInterface {
+	mock := &MockResourceInterface{ctrl: ctrl}
+	mock.recorder = &MockResourceInterfaceMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockResourceInterface) EXPECT() *MockResourceInterfaceMockRecorder {
+	return m.recorder
+}
+
+// ResourceRef mocks base method.
+func (m *MockResourceInterface) ResourceRef() (string, *string) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ResourceRef")
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(*string)
+	return ret0, ret1
+}
+
+// ResourceRef indicates an expected call of ResourceRef.
+func (mr *MockResourceInterfaceMockRecorder) ResourceRef() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResourceRef", reflect.TypeOf((*MockResourceInterface)(nil).ResourceRef))
 }

@@ -4,6 +4,18 @@
   cursor: pointer;
 }
 
+
+//disable card
+
+.card-disable {
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+  background-color: lightgrey !important;
+  opacity: 0.5;
+  cursor: auto !important;
+}
+
+
 /* You can add global styles to this file, and also import other style files */
 /*
 * Azia v1.0.0 (https://www.bootstrapdash.com/demo/azia/v1.0/)

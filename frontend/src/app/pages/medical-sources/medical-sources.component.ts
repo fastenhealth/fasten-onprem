@@ -46,7 +46,7 @@ export class MedicalSourcesComponent implements OnInit {
             let isConnected = false
             for(const connectedSource of sourceList){
               if(connectedSource.source_type == sourceType){
-                this.connectedSourceList.push({"source_type": sourceType, "display": this.metadataSources[sourceType]["display"]})
+                this.connectedSourceList.push({"source_type": sourceType, "display": this.metadataSources[sourceType]["display"], "enabled": this.metadataSources[sourceType]["enabled"]})
                 isConnected = true
                 break
               }
@@ -54,7 +54,7 @@ export class MedicalSourcesComponent implements OnInit {
 
             if(!isConnected){
               //this source has not been found in the connected list, lets add it to the available list.
-              this.availableSourceList.push({"source_type": sourceType, "display": this.metadataSources[sourceType]["display"]})
+              this.availableSourceList.push({"source_type": sourceType, "display": this.metadataSources[sourceType]["display"], "enabled": this.metadataSources[sourceType]["enabled"]})
             }
           }
 
