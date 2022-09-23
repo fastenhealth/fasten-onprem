@@ -27,25 +27,28 @@ func NewFHIR401Client(ctx context.Context, appConfig config.Interface, globalLog
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FHIR
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-func (c *FHIR401Client) GetPatientBundle(patientId string) (fhir401.Bundle, error) {
+func (c *FHIR401Client) GetResourceBundle(relativeResourcePath string) (fhir401.Bundle, error) {
 
 	// https://www.hl7.org/fhir/patient-operation-everything.html
 	bundle := fhir401.Bundle{}
-	err := c.GetRequest(fmt.Sprintf("Patient/%s/$everything", patientId), &bundle)
+	err := c.GetRequest(relativeResourcePath, &bundle)
 	if err != nil {
 		return bundle, err
 	}
 	var next string
+	var prev string
 	var self string
 	for _, link := range bundle.Link {
 		if link.Relation == "next" {
 			next = link.Url
 		} else if link.Relation == "self" {
 			self = link.Url
+		} else if link.Relation == "previous" {
+			prev = link.Url
 		}
 	}
 
-	for len(next) > 0 && next != self {
+	for len(next) > 0 && next != self && next != prev {
 		c.Logger.Debugf("Paginated request => %s", next)
 		nextBundle := fhir401.Bundle{}
 		err := c.GetRequest(next, &nextBundle)
@@ -54,19 +57,26 @@ func (c *FHIR401Client) GetPatientBundle(patientId string) (fhir401.Bundle, erro
 		}
 		bundle.Entry = append(bundle.Entry, nextBundle.Entry...)
 
-		next = "" //reset the next pointer
+		next = "" //reset the pointers
 		self = ""
+		prev = ""
 		for _, link := range nextBundle.Link {
 			if link.Relation == "next" {
 				next = link.Url
 			} else if link.Relation == "self" {
 				self = link.Url
+			} else if link.Relation == "previous" {
+				prev = link.Url
 			}
 		}
 	}
 
 	return bundle, err
 
+}
+
+func (c *FHIR401Client) GetPatientBundle(patientId string) (fhir401.Bundle, error) {
+	return c.GetResourceBundle(fmt.Sprintf("Patient/%s/$everything", patientId))
 }
 
 func (c *FHIR401Client) GetPatient(patientId string) (fhir401.Patient, error) {

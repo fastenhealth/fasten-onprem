@@ -6,7 +6,6 @@ import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/base"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
-	"github.com/fastenhealth/gofhir-models/fhir401"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
@@ -23,17 +22,10 @@ func NewClient(ctx context.Context, appConfig config.Interface, globalLogger log
 }
 
 //Overrides
-func (c AetnaClient) GetPatientBundle(patientId string) (fhir401.Bundle, error) {
-
-	bundle := fhir401.Bundle{}
-	err := c.GetRequest("Patient", &bundle)
-	return bundle, err
-
-}
 
 func (c AetnaClient) SyncAll(db database.DatabaseRepository) error {
 
-	bundle, err := c.GetPatientBundle(c.Source.PatientId)
+	bundle, err := c.GetResourceBundle("Patient")
 	if err != nil {
 		c.Logger.Infof("An error occurred while getting patient bundle %s", c.Source.PatientId)
 		return err

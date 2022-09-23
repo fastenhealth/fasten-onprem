@@ -2,6 +2,7 @@ package cerner
 
 import (
 	"context"
+	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/base"
@@ -23,23 +24,50 @@ func NewClient(ctx context.Context, appConfig config.Interface, globalLogger log
 
 func (c CernerClient) SyncAll(db database.DatabaseRepository) error {
 
-	bundle, err := c.GetPatientBundle(c.Source.PatientId)
-	if err != nil {
-		return err
+	supportedResources := []string{
+		"AllergyIntolerance",
+		"CarePlan",
+		"CareTeam",
+		"Condition",
+		"Consent",
+		"Device",
+		"Encounter",
+		"FamilyMemberHistory",
+		"Goal",
+		"Immunization",
+		"InsurancePlan",
+		"MedicationRequest",
+		"NutritionOrder",
+		"Observation",
+		"Person",
+		"Procedure",
+		"Provenance",
+		"Questionnaire",
+		"QuestionnaireResponse",
+		"RelatedPerson",
+		"Schedule",
+		"ServiceRequest",
+		"Slot",
 	}
-
-	wrappedResourceModels, err := c.ProcessBundle(bundle)
-	if err != nil {
-		c.Logger.Infof("An error occurred while processing patient bundle %s", c.Source.PatientId)
-		return err
-	}
-	//todo, create the resources in dependency order
-
-	for _, apiModel := range wrappedResourceModels {
-		err = db.UpsertResource(context.Background(), apiModel)
+	for _, resourceType := range supportedResources {
+		bundle, err := c.GetResourceBundle(fmt.Sprintf("%s?patient=%s", resourceType, c.Source.PatientId))
 		if err != nil {
+			continue //TODO: skippping failures in the resource retrival
+		}
+		wrappedResourceModels, err := c.ProcessBundle(bundle)
+		if err != nil {
+			c.Logger.Infof("An error occurred while processing %s bundle %s", resourceType, c.Source.PatientId)
 			return err
 		}
+		//todo, create the resources in dependency order
+
+		for _, apiModel := range wrappedResourceModels {
+			err = db.UpsertResource(context.Background(), apiModel)
+			if err != nil {
+				return err
+			}
+		}
 	}
+
 	return nil
 }
