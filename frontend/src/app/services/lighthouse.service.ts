@@ -42,6 +42,23 @@ export class LighthouseService {
     return authorizationUrl
   }
 
+  generateConfidentialSourceAuthorizeUrl(state: string, lighthouseSource: LighthouseSource): URL {
+    // generate the authorization url
+    const authorizationUrl = new URL(lighthouseSource.oauth_authorization_endpoint);
+    authorizationUrl.searchParams.set('client_id', lighthouseSource.client_id);
+    authorizationUrl.searchParams.set('redirect_uri', lighthouseSource.redirect_uri);
+    authorizationUrl.searchParams.set('response_type', 'code');
+    authorizationUrl.searchParams.set('state', state);
+    if(lighthouseSource.scopes && lighthouseSource.scopes.length){
+      authorizationUrl.searchParams.set('scope', lighthouseSource.scopes.join(' '));
+    }
+    if (lighthouseSource.aud) {
+      authorizationUrl.searchParams.set('aud', lighthouseSource.aud);
+    }
+    return authorizationUrl
+  }
+
+
   getSourceAuthorizeClaim(sourceType: string, state: string): Observable<AuthorizeClaim> {
     return this._httpClient.get<any>(`${environment.lighthouse_api_endpoint_base}/claim/${sourceType}`, {params: {"state": state}})
       .pipe(

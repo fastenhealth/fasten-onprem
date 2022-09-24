@@ -20,4 +20,6 @@ export class Source {
   expires_at:            number
   code_challenge:        string
   code_verifier:         string
+
+  confidential: boolean
 }

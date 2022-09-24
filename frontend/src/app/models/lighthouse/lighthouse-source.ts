@@ -11,4 +11,6 @@ export class LighthouseSource {
   scopes: string[]
   redirect_uri: string
   aud: string
+
+  confidential: boolean
 }

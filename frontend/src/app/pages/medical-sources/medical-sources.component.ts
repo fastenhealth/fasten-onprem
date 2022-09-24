@@ -77,13 +77,25 @@ export class MedicalSourcesComponent implements OnInit {
       .subscribe(async (connectData: LighthouseSource) => {
         console.log(connectData);
 
-        // https://github.com/panva/oauth4webapi/blob/8eba19eac408bdec5c1fe8abac2710c50bfadcc3/examples/public.ts
-        const codeVerifier = Oauth.generateRandomCodeVerifier();
-        const codeChallenge = await Oauth.calculatePKCECodeChallenge(codeVerifier);
-        const codeChallengeMethod = 'S256';
         const state = this.uuidV4()
 
-        const authorizationUrl = this.lighthouseApi.generatePKCESourceAuthorizeUrl(codeVerifier, codeChallenge, codeChallengeMethod, state, connectData)
+        let authorizationUrl
+
+        //only set if this is not a "confidential" source.
+        let codeVerifier
+        let codeChallenge
+        let codeChallengeMethod
+
+        if(connectData.confidential){
+          authorizationUrl = this.lighthouseApi.generateConfidentialSourceAuthorizeUrl(state, connectData)
+        } else {
+          // https://github.com/panva/oauth4webapi/blob/8eba19eac408bdec5c1fe8abac2710c50bfadcc3/examples/public.ts
+          codeVerifier = Oauth.generateRandomCodeVerifier();
+          codeChallenge = await Oauth.calculatePKCECodeChallenge(codeVerifier);
+          codeChallengeMethod = 'S256';
+
+          authorizationUrl = this.lighthouseApi.generatePKCESourceAuthorizeUrl(codeVerifier, codeChallenge, codeChallengeMethod, state, connectData)
+        }
 
         console.log('authorize url:', authorizationUrl.toString());
         // open new browser window
@@ -94,56 +106,28 @@ export class MedicalSourcesComponent implements OnInit {
           console.log("claim response:", claimData)
           this.status[sourceType] = "token"
 
-          //swap code for token
-          let sub: string
-          let access_token: string
+          let payload: any
+          if(connectData.confidential){
 
-          // @ts-expect-error
-          const client: oauth.Client = {
-            client_id: connectData.client_id,
-            token_endpoint_auth_method: 'none',
+            // we should have an access_token (and optionally a refresh_token) in the claim
+            payload = claimData
+
+          } else {
+            payload = await this.swapOauthPKCEToken(state, codeVerifier, authorizationUrl, connectData, claimData)
           }
 
-          //check if the oauth_token_endpoint_auth_methods_supported field is set
-          if(connectData.oauth_token_endpoint_auth_methods_supported){
-            let auth_methods = connectData.oauth_token_endpoint_auth_methods_supported.split(",")
-            client.token_endpoint_auth_method = auth_methods[0]
-          }
-
-          const as = {
-            issuer: `${authorizationUrl.protocol}//${authorizationUrl.host}`,
-            authorization_endpoint:	connectData.oauth_authorization_endpoint,
-            token_endpoint:	connectData.oauth_token_endpoint,
-            introspection_endpoint: connectData.oauth_introspection_endpoint,
-          }
-
-          console.log("STARTING--- Oauth.validateAuthResponse")
-          const params = Oauth.validateAuthResponse(as, client, new URLSearchParams(claimData as any), state)
-          if (Oauth.isOAuth2Error(params)) {
-            console.log('error', params)
-            throw new Error() // Handle OAuth 2.0 redirect error
-          }
-          console.log("ENDING--- Oauth.validateAuthResponse")
-          console.log("STARTING--- Oauth.authorizationCodeGrantRequest")
-          const response = await Oauth.authorizationCodeGrantRequest(
-            as,
-            client,
-            params,
-            connectData.redirect_uri,
-            codeVerifier,
-          )
-          const payload = await response.json()
-          console.log("ENDING--- Oauth.authorizationCodeGrantRequest", payload)
 
 
           //If payload.patient is not set, make sure we extract the patient ID from the id_token or make an introspection req
-          if(!payload.patient){
+          if(!payload.patient && payload.id_token){
             //
             console.log("NO PATIENT ID present, decoding jwt to extract patient")
             //const introspectionResp = await Oauth.introspectionRequest(as, client, payload.access_token)
             //console.log(introspectionResp)
             payload.patient = jwtDecode(payload.id_token, new BrowserAdapter())["profile"].replace(/^(Patient\/)/,'')
           }
+
+
 
           //Create FHIR Client
 
@@ -167,7 +151,7 @@ export class MedicalSourcesComponent implements OnInit {
 
             // @ts-ignore - in some cases the getAccessTokenExpiration is a string, which cases failures to store Source in db.
             expires_at:            parseInt(getAccessTokenExpiration(payload, new BrowserAdapter())),
-
+            confidential: connectData.confidential
           }
 
           await this.fastenApi.createSource(sourceCredential).subscribe(
@@ -267,4 +251,45 @@ export class MedicalSourcesComponent implements OnInit {
       (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
     );
   }
+
+  private async swapOauthPKCEToken(state: string, codeVerifier: any, authorizationUrl: URL, connectData: LighthouseSource, claimData: AuthorizeClaim){
+    // @ts-expect-error
+    const client: oauth.Client = {
+      client_id: connectData.client_id,
+      token_endpoint_auth_method: 'none',
+    }
+
+    //check if the oauth_token_endpoint_auth_methods_supported field is set
+    if(connectData.oauth_token_endpoint_auth_methods_supported){
+      let auth_methods = connectData.oauth_token_endpoint_auth_methods_supported.split(",")
+      client.token_endpoint_auth_method = auth_methods[0]
+    }
+
+    const as = {
+      issuer: `${authorizationUrl.protocol}//${authorizationUrl.host}`,
+      authorization_endpoint:	connectData.oauth_authorization_endpoint,
+      token_endpoint:	connectData.oauth_token_endpoint,
+      introspection_endpoint: connectData.oauth_introspection_endpoint,
+    }
+
+    console.log("STARTING--- Oauth.validateAuthResponse")
+    const params = Oauth.validateAuthResponse(as, client, new URLSearchParams(claimData as any), state)
+    if (Oauth.isOAuth2Error(params)) {
+      console.log('error', params)
+      throw new Error() // Handle OAuth 2.0 redirect error
+    }
+    console.log("ENDING--- Oauth.validateAuthResponse")
+    console.log("STARTING--- Oauth.authorizationCodeGrantRequest")
+    const response = await Oauth.authorizationCodeGrantRequest(
+      as,
+      client,
+      params,
+      connectData.redirect_uri,
+      codeVerifier,
+    )
+    let payload = await response.json()
+    console.log("ENDING--- Oauth.authorizationCodeGrantRequest", payload)
+    return payload
+  }
+
 }

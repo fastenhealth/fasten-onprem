@@ -30,6 +30,8 @@ type Source struct {
 	ExpiresAt          int64  `json:"expires_at"`
 	CodeChallenge      string `json:"code_challenge"`
 	CodeVerifier       string `json:"code_verifier"`
+
+	Confidential bool `json:"confidential"`
 }
 
 /*

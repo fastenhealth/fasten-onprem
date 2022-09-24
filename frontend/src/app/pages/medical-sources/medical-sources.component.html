@@ -83,7 +83,7 @@
 
   <div class="modal-footer">
     <button (click)="syncSource(modalSourceInfo.source)" type="button" class="btn btn-indigo">Sync</button>
-    <button type="button" class="btn btn-outline-light">Reconnect</button>
+    <button (click)="connect($event, modalSourceInfo.source['source_type'])" type="button" class="btn btn-outline-light">Reconnect</button>
     <button type="button" class="btn btn-outline-danger">Delete</button>
     <button type="button" class="btn btn-outline-light">Close</button>
   </div>

@@ -10,8 +10,9 @@ import (
 func GetMetadataSource(c *gin.Context) {
 	metadataSource := map[string]models.MetadataSource{
 
-		string(pkg.SourceTypeLogica): {Display: "Logica (Sandbox)", SourceType: pkg.SourceTypeLogica, Category: []string{"Sandbox"}, Supported: true},
-		string(pkg.SourceTypeAthena): {Display: "Athena (Sandbox)", SourceType: pkg.SourceTypeAthena, Category: []string{"Sandbox"}, Supported: true},
+		string(pkg.SourceTypeLogica):   {Display: "Logica (Sandbox)", SourceType: pkg.SourceTypeLogica, Category: []string{"Sandbox"}, Supported: true},
+		string(pkg.SourceTypeAthena):   {Display: "Athena (Sandbox)", SourceType: pkg.SourceTypeAthena, Category: []string{"Sandbox"}, Supported: true},
+		string(pkg.SourceTypeHealthIT): {Display: "HealthIT (Sandbox)", SourceType: pkg.SourceTypeHealthIT, Category: []string{"Sandbox"}, Supported: true},
 
 		// enabled
 		string(pkg.SourceTypeAetna): {Display: "Aetna", SourceType: pkg.SourceTypeAetna, Category: []string{"Insurance"}, Supported: true},
@@ -20,9 +21,10 @@ func GetMetadataSource(c *gin.Context) {
 		//TODO: infinite pagination for Encounters??
 		string(pkg.SourceTypeCerner): {Display: "Cerner (Sandbox)", SourceType: pkg.SourceTypeCerner, Category: []string{"Sandbox"}, Supported: true},
 
-		//does not support PKCE
-		string(pkg.SourceTypeVeteransHealthAdministration): {Display: "Veterans Health (BlueButton)", SourceType: pkg.SourceTypeVeteransHealthAdministration, Category: []string{"Hospital"}, Supported: false},
-		string(pkg.SourceTypeEpic):                         {Display: "Epic (Sandbox)", SourceType: pkg.SourceTypeEpic, Category: []string{"Sandbox"}, Supported: false},
+		//does not support PKCE/Public Clients
+		string(pkg.SourceTypeBlueButtonMedicare): {Display: "Medicare/VA Health (BlueButton)", SourceType: pkg.SourceTypeBlueButtonMedicare, Category: []string{"Hospital"}, Supported: false},
+		string(pkg.SourceTypeEpic):               {Display: "Epic (Sandbox)", SourceType: pkg.SourceTypeEpic, Category: []string{"Sandbox"}, Supported: false},
+		string(pkg.SourceTypeCareEvolution):      {Display: "CareEvolution (Sandbox)", SourceType: pkg.SourceTypeCareEvolution, Category: []string{"Sandbox"}, Supported: false},
 
 		// pending
 		string(pkg.SourceTypeAnthem):           {Display: "Anthem", SourceType: pkg.SourceTypeAnthem, Category: []string{"Insurance"}},

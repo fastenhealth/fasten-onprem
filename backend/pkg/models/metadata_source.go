@@ -9,5 +9,6 @@ type MetadataSource struct {
 	Display    string         `json:"display"`
 	Category   []string       `json:"category"`
 
-	Supported bool `json:"enabled"`
+	Supported    bool `json:"enabled"`
+	Confidential bool `json:"confidential"`
 }
