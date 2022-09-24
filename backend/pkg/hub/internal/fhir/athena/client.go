@@ -26,6 +26,7 @@ func (c AthenaClient) SyncAll(db database.DatabaseRepository) error {
 
 	supportedResources := []string{
 		"AllergyIntolerance",
+		//"Binary",
 		"CarePlan",
 		"CareTeam",
 		"Condition",
@@ -35,15 +36,15 @@ func (c AthenaClient) SyncAll(db database.DatabaseRepository) error {
 		"Encounter",
 		"Goal",
 		"Immunization",
-		"Location",
-		"Medication",
-		"MedicationRequest",
+		//"Location",
+		//"Medication",
+		//"MedicationRequest",
 		"Observation",
-		"Organization",
-		"Patient",
-		"Practitioner",
+		//"Organization",
+		//"Patient",
+		//"Practitioner",
 		"Procedure",
-		"Provenance",
+		//"Provenance",
 	}
 	for _, resourceType := range supportedResources {
 		bundle, err := c.GetResourceBundle(fmt.Sprintf("%s?patient=%s", resourceType, c.Source.PatientId))

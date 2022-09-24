@@ -11,14 +11,18 @@ func GetMetadataSource(c *gin.Context) {
 	metadataSource := map[string]models.MetadataSource{
 
 		string(pkg.SourceTypeLogica): {Display: "Logica (Sandbox)", SourceType: pkg.SourceTypeLogica, Category: []string{"Sandbox"}, Supported: true},
-		string(pkg.SourceTypeEpic):   {Display: "Epic (Sandbox)", SourceType: pkg.SourceTypeEpic, Category: []string{"Sandbox"}, Supported: true},
-		string(pkg.SourceTypeCerner): {Display: "Cerner (Sandbox)", SourceType: pkg.SourceTypeCerner, Category: []string{"Sandbox"}, Supported: true},
 		string(pkg.SourceTypeAthena): {Display: "Athena (Sandbox)", SourceType: pkg.SourceTypeAthena, Category: []string{"Sandbox"}, Supported: true},
 
 		// enabled
-		string(pkg.SourceTypeAetna):                        {Display: "Aetna", SourceType: pkg.SourceTypeAetna, Category: []string{"Insurance"}, Supported: true},
-		string(pkg.SourceTypeCigna):                        {Display: "Cigna", SourceType: pkg.SourceTypeCigna, Category: []string{"Insurance", "Hospital"}, Supported: true},
-		string(pkg.SourceTypeVeteransHealthAdministration): {Display: "Veterans Health (BlueButton)", SourceType: pkg.SourceTypeVeteransHealthAdministration, Category: []string{"Hospital"}, Supported: true},
+		string(pkg.SourceTypeAetna): {Display: "Aetna", SourceType: pkg.SourceTypeAetna, Category: []string{"Insurance"}, Supported: true},
+		string(pkg.SourceTypeCigna): {Display: "Cigna", SourceType: pkg.SourceTypeCigna, Category: []string{"Insurance", "Hospital"}, Supported: true},
+
+		//TODO: infinite pagination for Encounters??
+		string(pkg.SourceTypeCerner): {Display: "Cerner (Sandbox)", SourceType: pkg.SourceTypeCerner, Category: []string{"Sandbox"}, Supported: true},
+
+		//does not support PKCE
+		string(pkg.SourceTypeVeteransHealthAdministration): {Display: "Veterans Health (BlueButton)", SourceType: pkg.SourceTypeVeteransHealthAdministration, Category: []string{"Hospital"}, Supported: false},
+		string(pkg.SourceTypeEpic):                         {Display: "Epic (Sandbox)", SourceType: pkg.SourceTypeEpic, Category: []string{"Sandbox"}, Supported: false},
 
 		// pending
 		string(pkg.SourceTypeAnthem):           {Display: "Anthem", SourceType: pkg.SourceTypeAnthem, Category: []string{"Insurance"}},
