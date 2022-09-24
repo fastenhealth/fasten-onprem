@@ -18,6 +18,7 @@ type Source struct {
 	OauthTokenEndpoint            string `json:"oauth_token_endpoint"`
 	OauthRegistrationEndpoint     string `json:"oauth_registration_endpoint"`
 	OauthIntrospectionEndpoint    string `json:"oauth_introspection_endpoint"`
+	OauthUserInfoEndpoint         string `json:"oauth_userinfo_endpoint"`
 	OauthTokenEndpointAuthMethods string `json:"oauth_token_endpoint_auth_methods_supported"`
 
 	ApiEndpointBaseUrl string `json:"api_endpoint_base_url"`

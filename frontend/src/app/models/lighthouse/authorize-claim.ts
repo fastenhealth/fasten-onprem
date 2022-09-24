@@ -7,5 +7,6 @@ export class AuthorizeClaim {
   access_token?: string
   refresh_token?: string
   id_token?: string
+  patient_id?: string
   expires_at?: number
 }

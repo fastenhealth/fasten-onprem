@@ -201,7 +201,7 @@ func RawRequestSource(c *gin.Context) {
 	err = client.GetRequest(parsedUrl.String(), &resp)
 	if err != nil {
 		logger.Errorf("Error making raw request, %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error(), "data": resp})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": resp})

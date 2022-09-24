@@ -9,6 +9,7 @@ import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/aetna"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/athena"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/base"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/bluebutton"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/cerner"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/cigna"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/logica"
@@ -30,6 +31,8 @@ func NewClient(sourceType pkg.SourceType, ctx context.Context, appConfig config.
 		sourceClient, updatedSource, err = athena.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
 	case pkg.SourceTypeAnthem:
 		sourceClient, updatedSource, err = cigna.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
+	case pkg.SourceTypeBlueButtonMedicare:
+		sourceClient, updatedSource, err = bluebutton.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
 	case pkg.SourceTypeCerner:
 		sourceClient, updatedSource, err = cerner.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
 	case pkg.SourceTypeCigna:

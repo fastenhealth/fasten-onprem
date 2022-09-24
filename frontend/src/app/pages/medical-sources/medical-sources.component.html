@@ -85,6 +85,6 @@
     <button (click)="syncSource(modalSourceInfo.source)" type="button" class="btn btn-indigo">Sync</button>
     <button (click)="connect($event, modalSourceInfo.source['source_type'])" type="button" class="btn btn-outline-light">Reconnect</button>
     <button type="button" class="btn btn-outline-danger">Delete</button>
-    <button type="button" class="btn btn-outline-light">Close</button>
+    <button (click)="modal.dismiss('Close click')" type="button" class="btn btn-outline-light">Close</button>
   </div>
 </ng-template>

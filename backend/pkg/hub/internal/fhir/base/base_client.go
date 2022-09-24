@@ -25,6 +25,7 @@ type BaseClient struct {
 
 	OauthClient *http.Client
 	Source      models.Source
+	Headers     map[string]string
 }
 
 func (c *BaseClient) SyncAllBundle(db database.DatabaseRepository, bundleFile *os.File) error {
@@ -93,6 +94,7 @@ func NewBaseClient(ctx context.Context, appConfig config.Interface, globalLogger
 		Logger:      globalLogger,
 		OauthClient: httpClient,
 		Source:      source,
+		Headers:     map[string]string{},
 	}, updatedSource, nil
 }
 
@@ -115,7 +117,11 @@ func (c *BaseClient) GetRequest(resourceSubpathOrNext string, decodeModelPtr int
 	if err != nil {
 		return err
 	}
-	req.Header.Add("Accept", "application/json+fhir")
+
+	for key, val := range c.Headers {
+		//req.Header.Add("Accept", "application/json+fhir")
+		req.Header.Add(key, val)
+	}
 
 	//resp, err := c.OauthClient.Get(url)
 	resp, err := c.OauthClient.Do(req)
@@ -126,7 +132,8 @@ func (c *BaseClient) GetRequest(resourceSubpathOrNext string, decodeModelPtr int
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 300 || resp.StatusCode < 200 {
-		return fmt.Errorf("An error occurred during request %s - %d - %s", resourceUrl, resp.StatusCode, resp.Status)
+		b, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("An error occurred during request %s - %d - %s [%s]", resourceUrl, resp.StatusCode, resp.Status, string(b))
 	}
 
 	err = ParseBundle(resp.Body, decodeModelPtr)

@@ -112,6 +112,9 @@ export class MedicalSourcesComponent implements OnInit {
             // we should have an access_token (and optionally a refresh_token) in the claim
             payload = claimData
 
+            //patient may be returned as patient_id
+            payload.patient = payload.patient ? payload.patient : payload.patient_id
+
           } else {
             payload = await this.swapOauthPKCEToken(state, codeVerifier, authorizationUrl, connectData, claimData)
           }
@@ -137,6 +140,7 @@ export class MedicalSourcesComponent implements OnInit {
             oauth_token_endpoint: connectData.oauth_token_endpoint,
             oauth_registration_endpoint: connectData.oauth_registration_endpoint,
             oauth_introspection_endpoint: connectData.oauth_introspection_endpoint,
+            oauth_userinfo_endpoint: connectData.oauth_userinfo_endpoint,
             oauth_token_endpoint_auth_methods_supported: connectData.oauth_token_endpoint_auth_methods_supported,
             api_endpoint_base_url:   connectData.api_endpoint_base_url,
             client_id:             connectData.client_id,
