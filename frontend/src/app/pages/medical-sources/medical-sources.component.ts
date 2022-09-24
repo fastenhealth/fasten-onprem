@@ -11,6 +11,7 @@ import {Observable, of, throwError} from 'rxjs';
 import {concatMap, delay, retryWhen} from 'rxjs/operators';
 import * as FHIR from "fhirclient"
 import {MetadataSource} from '../../models/fasten/metadata-source';
+import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 
 export const retryCount = 24; //wait 2 minutes (5 * 24 = 120)
 export const retryWaitMilliSeconds = 5000; //wait 5 seconds
@@ -25,15 +26,19 @@ export class MedicalSourcesComponent implements OnInit {
   constructor(
     private lighthouseApi: LighthouseService,
     private fastenApi: FastenApiService,
+    private modalService: NgbModal,
   ) { }
   status: { [name: string]: string } = {}
 
   metadataSources: {[name:string]: MetadataSource} = {}
 
-  connectedSourceList = []
-  availableSourceList = []
+  connectedSourceList:any[] = []
+  availableSourceList:MetadataSource[] = []
 
   uploadedFile: File[] = []
+
+  closeResult = '';
+  modalSourceInfo:any = null;
 
   ngOnInit(): void {
     this.fastenApi.getMetadataSources().subscribe((metadataSources: {[name:string]: MetadataSource}) => {
@@ -46,7 +51,7 @@ export class MedicalSourcesComponent implements OnInit {
             let isConnected = false
             for(const connectedSource of sourceList){
               if(connectedSource.source_type == sourceType){
-                this.connectedSourceList.push({"source_type": sourceType, "display": this.metadataSources[sourceType]["display"], "enabled": this.metadataSources[sourceType]["enabled"]})
+                this.connectedSourceList.push({source: connectedSource, metadata: this.metadataSources[sourceType]})
                 isConnected = true
                 break
               }
@@ -54,7 +59,7 @@ export class MedicalSourcesComponent implements OnInit {
 
             if(!isConnected){
               //this source has not been found in the connected list, lets add it to the available list.
-              this.availableSourceList.push({"source_type": sourceType, "display": this.metadataSources[sourceType]["display"], "enabled": this.metadataSources[sourceType]["enabled"]})
+              this.availableSourceList.push(this.metadataSources[sourceType])
             }
           }
 
@@ -141,6 +146,7 @@ export class MedicalSourcesComponent implements OnInit {
           }
 
           //Create FHIR Client
+
           const sourceCredential: Source = {
             source_type: sourceType,
             oauth_authorization_endpoint: connectData.oauth_authorization_endpoint,
@@ -156,9 +162,12 @@ export class MedicalSourcesComponent implements OnInit {
             access_token:          payload.access_token,
             refresh_token:          payload.refresh_token,
             id_token:              payload.id_token,
-            expires_at:            getAccessTokenExpiration(payload, new BrowserAdapter()),
             code_challenge:        codeChallenge,
             code_verifier:         codeVerifier,
+
+            // @ts-ignore - in some cases the getAccessTokenExpiration is a string, which cases failures to store Source in db.
+            expires_at:            parseInt(getAccessTokenExpiration(payload, new BrowserAdapter())),
+
           }
 
           await this.fastenApi.createSource(sourceCredential).subscribe(
@@ -189,13 +198,54 @@ export class MedicalSourcesComponent implements OnInit {
         // @ts-ignore
         event.origin);
     }, 5000);
-
-
   }
 
+  uploadSourceBundle(event) {
+    this.uploadedFile = [event.addedFiles[0]]
+    this.fastenApi.createManualSource(event.addedFiles[0]).subscribe(
+      (respData) => {
+        console.log("source manual source create response:", respData)
+      },
+      (err) => {console.log(err)},
+      () => {
+        this.uploadedFile = []
+      }
+    )
+  }
 
+  openModal(contentModalRef, sourceInfo: any) {
+    this.modalSourceInfo = sourceInfo
+    let modalSourceInfo = this.modalSourceInfo
+    this.modalService.open(contentModalRef, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      modalSourceInfo = null
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      modalSourceInfo = null
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
 
-  waitForClaimOrTimeout(sourceType: string, state: string): Observable<AuthorizeClaim> {
+  syncSource(source: Source){
+    this.modalService.dismissAll()
+    this.fastenApi.syncSource(source.id).subscribe(
+      (respData) => {
+        console.log("source sync response:", respData)
+      },
+      (err) => {console.log(err)},
+    )
+  }
+
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
+    }
+  }
+
+  private waitForClaimOrTimeout(sourceType: string, state: string): Observable<AuthorizeClaim> {
     return this.lighthouseApi.getSourceAuthorizeClaim(sourceType, state).pipe(
       retryWhen(error =>
         error.pipe(
@@ -211,21 +261,7 @@ export class MedicalSourcesComponent implements OnInit {
     )
   }
 
-
-  uploadSourceBundle(event) {
-    this.uploadedFile = [event.addedFiles[0]]
-    this.fastenApi.createManualSource(event.addedFiles[0]).subscribe(
-      (respData) => {
-        console.log("source manual source create response:", respData)
-      },
-      (err) => {console.log(err)},
-      () => {
-        this.uploadedFile = []
-      }
-    )
-  }
-
-  uuidV4(){
+  private uuidV4(){
     // @ts-ignore
     return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
       (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)

@@ -76,9 +76,8 @@ export class ResourceListComponent implements OnInit, OnChanges {
 
   getResources(): Observable<ResourceFhir[]>{
 
-    if(!this.resourceListCache[this.resourceListType]){
+    if(this.resourceListType && !this.resourceListCache[this.resourceListType]){
       // this resource type list has not been downloaded yet, do so now
-
       return this.fastenApi.getResources(this.resourceListType, this.source.id)
         .pipe(map((resourceList: ResourceFhir[]) => {
           //cache this response so we can skip the request next time
@@ -86,7 +85,7 @@ export class ResourceListComponent implements OnInit, OnChanges {
           return resourceList
         }))
     } else {
-      return of(this.resourceListCache[this.resourceListType])
+      return of(this.resourceListCache[this.resourceListType] || [])
     }
   }
 

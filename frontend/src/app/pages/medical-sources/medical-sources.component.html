@@ -9,10 +9,10 @@
       <h2 class="az-content-title">Connected Sources</h2>
 
       <div class="row">
-        <div *ngFor="let sourceData of connectedSourceList" (click)="connect($event, sourceData['source_type'])" class="col-sm-3 mg-b-20 px-3">
+        <div *ngFor="let sourceInfo of connectedSourceList" class="col-sm-3 mg-b-20 px-3">
           <div class="card h-100 d-flex align-items-center justify-content-center p-3 rounded-0 cursor-pointer">
-            <div class="card-body">
-              <img [src]="'assets/sources/'+sourceData['source_type']+'.png'" alt="client" class="img-fluid">
+            <div (click)="openModal(contentModalRef, sourceInfo)" class="card-body">
+              <img [src]="'assets/sources/'+sourceInfo.metadata['source_type']+'.png'" alt="client" class="img-fluid">
             </div>
           </div>
         </div>
@@ -62,3 +62,29 @@
     </div><!-- az-content-body -->
   </div><!-- container -->
 </div><!-- az-content -->
+
+<ng-template #contentModalRef let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{modalSourceInfo.metadata["display"]}}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <h6>Manage Source</h6>
+    <p>Existing connections can be "Synced", "Reconnected" or "Deleted"</p>
+    <ul>
+      <li><p><strong>Sync</strong> - Download all resources from this healthcare provider, storing them securely in Fasten</p></li>
+      <li><p><strong>Reconnect</strong> - If your healthcare connection has expired, you can use this button to reconnect</p></li>
+      <li><p><strong>Delete</strong> - Delete all resources for this healthcare provider. This will ONLY effect data stored in Fasten</p></li>
+    </ul>
+  </div>
+
+  <div class="modal-footer">
+    <button (click)="syncSource(modalSourceInfo.source)" type="button" class="btn btn-indigo">Sync</button>
+    <button type="button" class="btn btn-outline-light">Reconnect</button>
+    <button type="button" class="btn btn-outline-danger">Delete</button>
+    <button type="button" class="btn btn-outline-light">Close</button>
+  </div>
+</ng-template>

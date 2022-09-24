@@ -35,28 +35,34 @@ func CreateSource(c *gin.Context) {
 	}
 
 	// after creating the source, we should do a bulk import
-	sourceClient, updatedSource, err := hub.NewClient(sourceCred.SourceType, c, nil, logger, sourceCred)
+	err = syncSourceResources(c, logger, databaseRepo, sourceCred)
 	if err != nil {
-		logger.Errorln("An error occurred while initializing hub client using source credential", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
-		return
-	}
-	if updatedSource != nil {
-		err := databaseRepo.CreateSource(c, updatedSource)
-		if err != nil {
-			logger.Errorln("An error occurred while updating source credential", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
-			return
-		}
-	}
-
-	err = sourceClient.SyncAll(databaseRepo)
-	if err != nil {
-		logger.Errorln("An error occurred while bulk import of resources from source", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
 
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceCred})
+}
+
+func SourceSync(c *gin.Context) {
+	logger := c.MustGet("LOGGER").(*logrus.Entry)
+	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+
+	logger.Infof("Get Source Credentials: %v", c.Param("sourceId"))
+
+	sourceCred, err := databaseRepo.GetSource(c, c.Param("sourceId"))
+	if err != nil {
+		logger.Errorln("An error occurred while retrieving source credential", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+
+	// after creating the source, we should do a bulk import
+	err = syncSourceResources(c, logger, databaseRepo, *sourceCred)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceCred})
 }
 
@@ -199,4 +205,28 @@ func RawRequestSource(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": resp})
+}
+
+////// private functions
+func syncSourceResources(c *gin.Context, logger *logrus.Entry, databaseRepo database.DatabaseRepository, sourceCred models.Source) error {
+	// after creating the source, we should do a bulk import
+	sourceClient, updatedSource, err := hub.NewClient(sourceCred.SourceType, c, nil, logger, sourceCred)
+	if err != nil {
+		logger.Errorln("An error occurred while initializing hub client using source credential", err)
+		return err
+	}
+	if updatedSource != nil {
+		err := databaseRepo.CreateSource(c, updatedSource)
+		if err != nil {
+			logger.Errorln("An error occurred while updating source credential", err)
+			return err
+		}
+	}
+
+	err = sourceClient.SyncAll(databaseRepo)
+	if err != nil {
+		logger.Errorln("An error occurred while bulk import of resources from source", err)
+		return err
+	}
+	return nil
 }

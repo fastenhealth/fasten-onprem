@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-
+import {FastenApiService} from '../../services/fasten-api.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor() { }
+  constructor(private fastenApi: FastenApiService, private router: Router) { }
 
   ngOnInit() {
   }
@@ -22,4 +23,8 @@ export class HeaderComponent implements OnInit {
     document.querySelector('body').classList.toggle('az-header-menu-show');
   }
 
+  signOut(e) {
+    this.fastenApi.logout()
+    this.router.navigate(['auth/signin']);
+  }
 }

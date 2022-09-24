@@ -143,6 +143,7 @@
 @import "./assets/scss/custom/variables";
 @import "./assets/scss/custom/mixins";
 
+
 /* ########## BOOTSTRAP OVERRIDES ########## */
 @import "./assets/scss/bootstrap/accordion";
 @import "./assets/scss/bootstrap/alerts";
@@ -167,6 +168,7 @@
 @import "./assets/scss/custom/image";
 @import "./assets/scss/custom/list";
 @import "./assets/scss/custom/nav";
+@import "./assets/scss/custom/modal";
 
 /* ############### CUSTOM VENDOR STYLES ############### */
 @import "./assets/scss/lib/select2";
@@ -228,3 +230,4 @@
 @import '~@swimlane/ngx-datatable/index.css';
 @import '~@swimlane/ngx-datatable/themes/bootstrap.css';
 @import '~@swimlane/ngx-datatable/assets/icons.css';
+

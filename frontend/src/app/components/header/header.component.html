@@ -65,24 +65,21 @@
         </div><!-- dropdown-menu -->
       </div><!-- az-header-notification -->
       <div class="dropdown az-profile-menu" ngbDropdown>
-        <a class="az-img-user" id="profileDropdown" ngbDropdownToggle><img src="assets/images/img1.jpg" alt="user"></a>
+        <a class="az-img-user" id="profileDropdown" ngbDropdownToggle><img src="assets/logo/logo-text.png" alt="user"></a>
         <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="profileDropdown">
           <div class="az-dropdown-header d-sm-none">
             <a class="az-header-arrow" (click)="closeMenu($event)"><i class="icon ion-md-arrow-back"></i></a>
           </div>
           <div class="az-header-profile">
             <div class="az-img-user">
-              <img src="assets/images/img1.jpg" alt="">
+              <img src="assets/logo/logo-text.png" alt="">
             </div><!-- az-img-user -->
-            <h6>Aziana Pechon</h6>
-            <span>Premium Member</span>
+            <h6>John Doe</h6>
+            <span>Adminstrator</span>
           </div><!-- az-header-profile -->
 
-          <a routerLink="/general-pages/profile" class="dropdown-item"><i class="typcn typcn-user-outline"></i> My Profile</a>
-          <a routerLink="/general-pages/profile" class="dropdown-item"><i class="typcn typcn-edit"></i> Edit Profile</a>
           <a routerLink="/general-pages/profile" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>
-          <a routerLink="/general-pages/profile" class="dropdown-item"><i class="typcn typcn-cog-outline"></i> Account Settings</a>
-          <a routerLink="/general-pages/signin" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
+          <a (click)="signOut($event)" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
         </div><!-- dropdown-menu -->
       </div>
     </div><!-- az-header-right -->

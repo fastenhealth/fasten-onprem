@@ -7,6 +7,7 @@ const (
 	SourceTypeManual SourceType = "manual"
 
 	SourceTypeAetna                        SourceType = "aetna"
+	SourceTypeAthena                       SourceType = "athena"
 	SourceTypeAnthem                       SourceType = "anthem"
 	SourceTypeCedarSinai                   SourceType = "cedarssinai"
 	SourceTypeCerner                       SourceType = "cerner"

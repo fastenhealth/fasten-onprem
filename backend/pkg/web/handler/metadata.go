@@ -13,6 +13,7 @@ func GetMetadataSource(c *gin.Context) {
 		string(pkg.SourceTypeLogica): {Display: "Logica (Sandbox)", SourceType: pkg.SourceTypeLogica, Category: []string{"Sandbox"}, Supported: true},
 		string(pkg.SourceTypeEpic):   {Display: "Epic (Sandbox)", SourceType: pkg.SourceTypeEpic, Category: []string{"Sandbox"}, Supported: true},
 		string(pkg.SourceTypeCerner): {Display: "Cerner (Sandbox)", SourceType: pkg.SourceTypeCerner, Category: []string{"Sandbox"}, Supported: true},
+		string(pkg.SourceTypeAthena): {Display: "Athena (Sandbox)", SourceType: pkg.SourceTypeAthena, Category: []string{"Sandbox"}, Supported: true},
 
 		// enabled
 		string(pkg.SourceTypeAetna):                        {Display: "Aetna", SourceType: pkg.SourceTypeAetna, Category: []string{"Insurance"}, Supported: true},

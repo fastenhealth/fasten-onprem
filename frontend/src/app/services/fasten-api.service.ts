@@ -132,6 +132,16 @@ export class FastenApiService {
       );
   }
 
+  syncSource(sourceId: string): Observable<any> {
+    return this._httpClient.post<any>(`${this.getBasePath()}/api/secure/source/${sourceId}/sync`, {})
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("SOURCE RESPONSE", response)
+          return response.data
+        })
+      );
+  }
+
   getResources(sourceResourceType?: string, sourceID?: string): Observable<ResourceFhir[]> {
     let queryParams = {}
     if(sourceResourceType){
