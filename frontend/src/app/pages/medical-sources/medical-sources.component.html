@@ -24,12 +24,12 @@
       <h2 class="az-content-title mg-t-40">Medical Record Sources</h2>
 
       <div class="az-content-label mg-b-5">Manual Upload</div>
-      <p class="mg-b-20">Fasten also supports manually uploaded electronic medical records (EMR). Click below to upload.</p>
+      <p class="mg-b-20">Fasten also supports manually uploaded electronic medical records (EMR/EHR). Click below to upload.</p>
 
       <div class="row row-sm">
         <div class="col-lg">
-          <ngx-dropzone [multiple]="false" (change)="uploadSourceBundle($event)">
-            <ngx-dropzone-label>Select your EMR bundle</ngx-dropzone-label>
+          <ngx-dropzone [multiple]="false" (change)="uploadSourceBundle($event)" accept=".json">
+            <ngx-dropzone-label>Select your EMR/EHR bundle. Must be in JSON format</ngx-dropzone-label>
             <ngx-dropzone-preview *ngFor="let f of uploadedFile" [removable]="false">
               <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
             </ngx-dropzone-preview>
