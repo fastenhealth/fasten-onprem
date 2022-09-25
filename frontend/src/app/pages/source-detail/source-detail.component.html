@@ -1,5 +1,5 @@
 <div class="az-content">
-  <div class="container">
+  <div *ngIf="resourceTypeCounts" class="container">
     <div class="az-content-left">
       <ul class="list-group">
         <li *ngFor="let resourceGroup of resourceTypeCounts | keyvalue" (click)="selectResourceType(resourceGroup.key)" class="list-group-item d-flex justify-content-between align-items-center">
@@ -18,4 +18,15 @@
 
     </div><!-- az-content-body -->
   </div><!-- container -->
+
+  <div class="container">
+    <div class="az-error-wrapper">
+      <h1>{{selectedSource.source_type}}</h1>
+      <h2>No resources found for this Healthcare provider</h2>
+      <h6>You may need to re-authenticate to this source, or wait for the resources to sync.</h6>
+      <a routerLink="/sources" class="btn btn-outline-indigo">Sources</a>
+    </div>
+
+  </div>
+
 </div><!-- az-content -->
