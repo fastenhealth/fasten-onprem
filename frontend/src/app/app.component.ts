@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
   }
 
   modifyHeader(location) {
-    if(location.url.startsWith('/auth'))
+    if(location.url?.startsWith('/auth'))
     {
       this.showHeader = false;
     } else {

@@ -14,6 +14,8 @@ func GetMetadataSource(c *gin.Context) {
 		string(pkg.SourceTypeEpic):     {Display: "Epic (Sandbox)", SourceType: pkg.SourceTypeEpic, Category: []string{"Sandbox"}, Supported: true},
 		string(pkg.SourceTypeLogica):   {Display: "Logica (Sandbox)", SourceType: pkg.SourceTypeLogica, Category: []string{"Sandbox"}, Supported: true},
 		string(pkg.SourceTypeHealthIT): {Display: "HealthIT (Sandbox)", SourceType: pkg.SourceTypeHealthIT, Category: []string{"Sandbox"}, Supported: true},
+		//fails with CORS error when swapping token. Must be a confidential client.
+		string(pkg.SourceTypeCareEvolution): {Display: "CareEvolution (Sandbox)", SourceType: pkg.SourceTypeCareEvolution, Category: []string{"Sandbox"}, Supported: false},
 
 		// enabled
 		string(pkg.SourceTypeAetna):              {Display: "Aetna", SourceType: pkg.SourceTypeAetna, Category: []string{"Insurance"}, Supported: true},
@@ -22,9 +24,6 @@ func GetMetadataSource(c *gin.Context) {
 
 		//TODO: infinite pagination for Encounters??
 		string(pkg.SourceTypeCerner): {Display: "Cerner (Sandbox)", SourceType: pkg.SourceTypeCerner, Category: []string{"Sandbox"}, Supported: true},
-
-		//TODO: fails with CORS error when swapping token. Should be confidential client.
-		string(pkg.SourceTypeCareEvolution): {Display: "CareEvolution (Sandbox)", SourceType: pkg.SourceTypeCareEvolution, Category: []string{"Sandbox"}, Supported: false},
 
 		// pending
 		string(pkg.SourceTypeAnthem):           {Display: "Anthem", SourceType: pkg.SourceTypeAnthem, Category: []string{"Insurance"}},
