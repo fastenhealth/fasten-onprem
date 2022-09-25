@@ -160,13 +160,16 @@ export class MedicalSourcesComponent implements OnInit {
 
           await this.fastenApi.createSource(sourceCredential).subscribe(
             (respData) => {
-                console.log("source credential create response:", respData)
-              },
-            (err) => {console.log(err)},
-            () => {
               delete this.status[sourceType]
-              //reload the current page after finishing connection
               window.location.reload();
+
+              console.log("source credential create response:", respData)
+              },
+            (err) => {
+              delete this.status[sourceType]
+              window.location.reload();
+
+              console.log(err)
             }
           )
 
@@ -214,12 +217,18 @@ export class MedicalSourcesComponent implements OnInit {
   }
 
   syncSource(source: Source){
+    this.status[source.source_type] = "authorize"
     this.modalService.dismissAll()
     this.fastenApi.syncSource(source.id).subscribe(
       (respData) => {
+        delete this.status[source.source_type]
         console.log("source sync response:", respData)
       },
-      (err) => {console.log(err)},
+      (err) => {
+        delete this.status[source.source_type]
+
+        console.log(err)
+      }
     )
   }
 

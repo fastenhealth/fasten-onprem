@@ -22,5 +22,6 @@ FROM gcr.io/distroless/static-debian11
 
 COPY --from=frontend-build /usr/src/fastenhealth/dist /opt/fasten/dist
 COPY --from=backend-build /go/bin/fasten /opt/fasten/fasten
+COPY LICENSE.md /opt/fasten/LICENSE.md
 COPY config.yaml /opt/fasten/config.yaml
 CMD ["/opt/fasten/fasten"]
