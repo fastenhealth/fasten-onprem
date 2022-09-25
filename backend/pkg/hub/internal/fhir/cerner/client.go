@@ -2,7 +2,6 @@ package cerner
 
 import (
 	"context"
-	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/base"
@@ -50,25 +49,5 @@ func (c CernerClient) SyncAll(db database.DatabaseRepository) error {
 		"ServiceRequest",
 		"Slot",
 	}
-	for _, resourceType := range supportedResources {
-		bundle, err := c.GetResourceBundle(fmt.Sprintf("%s?patient=%s", resourceType, c.Source.PatientId))
-		if err != nil {
-			continue //TODO: skippping failures in the resource retrival
-		}
-		wrappedResourceModels, err := c.ProcessBundle(bundle)
-		if err != nil {
-			c.Logger.Infof("An error occurred while processing %s bundle %s", resourceType, c.Source.PatientId)
-			return err
-		}
-		//todo, create the resources in dependency order
-
-		for _, apiModel := range wrappedResourceModels {
-			err = db.UpsertResource(context.Background(), apiModel)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
+	return c.SyncAllByResourceName(db, supportedResources)
 }

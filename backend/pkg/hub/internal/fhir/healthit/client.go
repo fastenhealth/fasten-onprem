@@ -3,6 +3,7 @@ package healthit
 import (
 	"context"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/base"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/sirupsen/logrus"
@@ -20,4 +21,34 @@ func NewClient(ctx context.Context, appConfig config.Interface, globalLogger log
 	return HealthItClient{
 		baseClient,
 	}, updatedSource, err
+}
+
+func (c HealthItClient) SyncAll(db database.DatabaseRepository) error {
+
+	supportedResources := []string{
+		"AllergyIntolerance",
+		"CarePlan",
+		"CareTeam",
+		"Condition",
+		"Consent",
+		"Device",
+		"Encounter",
+		"FamilyMemberHistory",
+		"Goal",
+		"Immunization",
+		"InsurancePlan",
+		"MedicationRequest",
+		"NutritionOrder",
+		"Observation",
+		"Person",
+		"Procedure",
+		"Provenance",
+		"Questionnaire",
+		"QuestionnaireResponse",
+		"RelatedPerson",
+		"Schedule",
+		"ServiceRequest",
+		"Slot",
+	}
+	return c.SyncAllByResourceName(db, supportedResources)
 }

@@ -39,7 +39,7 @@ func (c AetnaClient) SyncAll(db database.DatabaseRepository) error {
 	//todo, create the resources in dependency order
 
 	for _, apiModel := range wrappedResourceModels {
-		err = db.UpsertResource(context.Background(), apiModel)
+		err = db.UpsertResource(context.Background(), &apiModel)
 		if err != nil {
 			c.Logger.Info("An error occurred while upserting resource")
 			return err

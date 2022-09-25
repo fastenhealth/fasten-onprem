@@ -85,7 +85,7 @@ func (m ManualClient) SyncAllBundle(db database.DatabaseRepository, bundleFile *
 	}
 	// we need to upsert all resources (and make sure they are associated with new Source)
 	for _, apiModel := range resourceFhirList {
-		err = db.UpsertResource(context.Background(), apiModel)
+		err = db.UpsertResource(context.Background(), &apiModel)
 		if err != nil {
 			return fmt.Errorf("an error occurred while upserting resources: %w", err)
 		}

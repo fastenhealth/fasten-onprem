@@ -3,6 +3,7 @@ package bluebutton
 import (
 	"context"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/base"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/sirupsen/logrus"
@@ -18,4 +19,13 @@ func NewClient(ctx context.Context, appConfig config.Interface, globalLogger log
 	return BlueButtonClient{
 		baseClient,
 	}, updatedSource, err
+}
+
+func (c BlueButtonClient) SyncAll(db database.DatabaseRepository) error {
+
+	supportedResources := []string{
+		"ExplanationOfBenefit",
+		"Coverage",
+	}
+	return c.SyncAllByResourceName(db, supportedResources)
 }

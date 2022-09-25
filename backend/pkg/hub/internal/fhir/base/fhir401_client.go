@@ -43,10 +43,66 @@ func (c *FHIR401Client) SyncAll(db database.DatabaseRepository) error {
 	//todo, create the resources in dependency order
 
 	for _, apiModel := range wrappedResourceModels {
-		err = db.UpsertResource(context.Background(), apiModel)
+		err = db.UpsertResource(context.Background(), &apiModel)
 		if err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+//TODO, find a way to sync references that cannot be searched by patient ID.
+func (c *FHIR401Client) SyncAllByResourceName(db database.DatabaseRepository, resourceNames []string) error {
+
+	//Store the Patient
+	patientResource, err := c.GetPatient(c.Source.PatientId)
+	if err != nil {
+		return err
+	}
+	patientJson, err := patientResource.MarshalJSON()
+	if err != nil {
+		return err
+	}
+
+	patientResourceType, patientResourceId := patientResource.ResourceRef()
+	patientResourceFhir := models.ResourceFhir{
+		OriginBase: models.OriginBase{
+			UserID:             c.Source.UserID,
+			SourceID:           c.Source.ID,
+			SourceResourceType: patientResourceType,
+			SourceResourceID:   *patientResourceId,
+		},
+		Payload: datatypes.JSON(patientJson),
+	}
+	db.UpsertResource(context.Background(), &patientResourceFhir)
+
+	//error map storage.
+	syncErrors := map[string]error{}
+
+	//Store all other resources.
+	for _, resourceType := range resourceNames {
+		bundle, err := c.GetResourceBundle(fmt.Sprintf("%s?patient=%s", resourceType, c.Source.PatientId))
+		if err != nil {
+			syncErrors[resourceType] = err
+			continue
+		}
+		wrappedResourceModels, err := c.ProcessBundle(bundle)
+		if err != nil {
+			c.Logger.Infof("An error occurred while processing %s bundle %s", resourceType, c.Source.PatientId)
+			syncErrors[resourceType] = err
+			continue
+		}
+		for _, apiModel := range wrappedResourceModels {
+			err = db.UpsertResource(context.Background(), &apiModel)
+			if err != nil {
+				syncErrors[resourceType] = err
+				continue
+			}
+		}
+	}
+
+	if len(syncErrors) > 0 {
+		return fmt.Errorf("%d error(s) occurred during sync: %v", len(syncErrors), syncErrors)
 	}
 	return nil
 }

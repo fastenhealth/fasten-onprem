@@ -11,11 +11,11 @@ type DatabaseRepository interface {
 
 	CreateUser(context.Context, *models.User) error
 	GetUserByEmail(context.Context, string) (*models.User, error)
-	GetCurrentUser(context.Context) models.User
+	GetCurrentUser(context.Context) *models.User
 
 	GetSummary(ctx context.Context) (*models.Summary, error)
 
-	UpsertResource(context.Context, models.ResourceFhir) error
+	UpsertResource(context.Context, *models.ResourceFhir) error
 	GetResource(context.Context, string) (*models.ResourceFhir, error)
 	GetResourceBySourceId(context.Context, string, string) (*models.ResourceFhir, error)
 	ListResources(context.Context, models.ListResourceQueryOptions) ([]models.ResourceFhir, error)

@@ -89,7 +89,7 @@ func (sr *sqliteRepository) CreateUser(ctx context.Context, user *models.User) e
 	if err := user.HashPassword(user.Password); err != nil {
 		return err
 	}
-	record := sr.gormClient.Create(&user)
+	record := sr.gormClient.Create(user)
 	if record.Error != nil {
 		return record.Error
 	}
@@ -97,16 +97,16 @@ func (sr *sqliteRepository) CreateUser(ctx context.Context, user *models.User) e
 }
 func (sr *sqliteRepository) GetUserByEmail(ctx context.Context, username string) (*models.User, error) {
 	var foundUser models.User
-	result := sr.gormClient.Model(models.User{}).Where(models.User{Username: username}).First(&foundUser)
+	result := sr.gormClient.Where(models.User{Username: username}).First(&foundUser)
 	return &foundUser, result.Error
 }
 
-func (sr *sqliteRepository) GetCurrentUser(ctx context.Context) models.User {
+func (sr *sqliteRepository) GetCurrentUser(ctx context.Context) *models.User {
 	ginCtx := ctx.(*gin.Context)
 	var currentUser models.User
-	sr.gormClient.Model(models.User{}).First(&currentUser, models.User{Username: ginCtx.MustGet("AUTH_USERNAME").(string)})
+	sr.gormClient.First(&currentUser, models.User{Username: ginCtx.MustGet("AUTH_USERNAME").(string)})
 
-	return currentUser
+	return &currentUser
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,17 +157,17 @@ func (sr *sqliteRepository) GetSummary(ctx context.Context) (*models.Summary, er
 // Resource
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (sr *sqliteRepository) UpsertResource(ctx context.Context, resourceModel models.ResourceFhir) error {
+func (sr *sqliteRepository) UpsertResource(ctx context.Context, resourceModel *models.ResourceFhir) error {
 	sr.logger.Infof("insert/update (%T) %v", resourceModel, resourceModel)
 
-	if sr.gormClient.Debug().WithContext(ctx).Model(&resourceModel).
+	if sr.gormClient.Debug().WithContext(ctx).
 		Where(models.OriginBase{
 			SourceID:           resourceModel.GetSourceID(),
 			SourceResourceID:   resourceModel.GetSourceResourceID(),
 			SourceResourceType: resourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-		}).Updates(&resourceModel).RowsAffected == 0 {
+		}).Updates(resourceModel).RowsAffected == 0 {
 		sr.logger.Infof("resource does not exist, creating: %s %s %s", resourceModel.GetSourceID(), resourceModel.GetSourceResourceID(), resourceModel.GetSourceResourceType())
-		return sr.gormClient.Debug().Model(&resourceModel).Create(&resourceModel).Error
+		return sr.gormClient.Debug().Create(resourceModel).Error
 	}
 	return nil
 }
@@ -274,12 +274,12 @@ func (sr *sqliteRepository) GetPatientForSources(ctx context.Context) ([]models.
 func (sr *sqliteRepository) CreateSource(ctx context.Context, sourceCreds *models.Source) error {
 	sourceCreds.UserID = sr.GetCurrentUser(ctx).ID
 
-	if sr.gormClient.WithContext(ctx).Model(&sourceCreds).
+	if sr.gormClient.WithContext(ctx).
 		Where(models.Source{
 			UserID:     sourceCreds.UserID,
 			SourceType: sourceCreds.SourceType,
-			PatientId:  sourceCreds.PatientId}).Updates(&sourceCreds).RowsAffected == 0 {
-		return sr.gormClient.WithContext(ctx).Create(&sourceCreds).Error
+			PatientId:  sourceCreds.PatientId}).Updates(sourceCreds).RowsAffected == 0 {
+		return sr.gormClient.WithContext(ctx).Create(sourceCreds).Error
 	}
 	return nil
 }
