@@ -1,4 +1,4 @@
-package bluebutton
+package epic
 
 import (
 	"context"
@@ -9,13 +9,15 @@ import (
 	"net/http"
 )
 
-type BlueButtonClient struct {
+type EpicClient struct {
 	*base.FHIR401Client
 }
 
 func NewClient(ctx context.Context, appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) (base.Client, *models.Source, error) {
 	baseClient, updatedSource, err := base.NewFHIR401Client(ctx, appConfig, globalLogger, source, testHttpClient...)
-	return BlueButtonClient{
+	baseClient.Headers["Accept"] = "application/json+fhir"
+
+	return EpicClient{
 		baseClient,
 	}, updatedSource, err
 }

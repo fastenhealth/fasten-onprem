@@ -21,10 +21,10 @@ func GetMetadataSource(c *gin.Context) {
 		//TODO: infinite pagination for Encounters??
 		string(pkg.SourceTypeCerner): {Display: "Cerner (Sandbox)", SourceType: pkg.SourceTypeCerner, Category: []string{"Sandbox"}, Supported: true},
 
-		//does not support PKCE/Public Clients
-		string(pkg.SourceTypeBlueButtonMedicare): {Display: "Medicare/VA Health (BlueButton)", SourceType: pkg.SourceTypeBlueButtonMedicare, Category: []string{"Hospital"}, Supported: false},
-		string(pkg.SourceTypeEpic):               {Display: "Epic (Sandbox)", SourceType: pkg.SourceTypeEpic, Category: []string{"Sandbox"}, Supported: false},
-		string(pkg.SourceTypeCareEvolution):      {Display: "CareEvolution (Sandbox)", SourceType: pkg.SourceTypeCareEvolution, Category: []string{"Sandbox"}, Supported: false},
+		//TODO: does not support $everything endpoint.
+		string(pkg.SourceTypeBlueButtonMedicare): {Display: "Medicare/VA Health (BlueButton)", SourceType: pkg.SourceTypeBlueButtonMedicare, Category: []string{"Hospital"}, Supported: true},
+		string(pkg.SourceTypeEpic):               {Display: "Epic (Sandbox)", SourceType: pkg.SourceTypeEpic, Category: []string{"Sandbox"}, Supported: true},
+		string(pkg.SourceTypeCareEvolution):      {Display: "CareEvolution (Sandbox)", SourceType: pkg.SourceTypeCareEvolution, Category: []string{"Sandbox"}, Supported: true},
 
 		// pending
 		string(pkg.SourceTypeAnthem):           {Display: "Anthem", SourceType: pkg.SourceTypeAnthem, Category: []string{"Insurance"}},

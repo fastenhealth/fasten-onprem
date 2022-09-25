@@ -17,6 +17,7 @@ type CernerClient struct {
 
 func NewClient(ctx context.Context, appConfig config.Interface, globalLogger logrus.FieldLogger, source models.Source, testHttpClient ...*http.Client) (base.Client, *models.Source, error) {
 	baseClient, updatedSource, err := base.NewFHIR401Client(ctx, appConfig, globalLogger, source, testHttpClient...)
+	baseClient.Headers["Accept"] = "application/json+fhir"
 	return CernerClient{
 		baseClient,
 	}, updatedSource, err

@@ -12,6 +12,8 @@ import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/bluebutton"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/cerner"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/cigna"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/epic"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/healthit"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/logica"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/hub/internal/fhir/manual"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
@@ -37,6 +39,10 @@ func NewClient(sourceType pkg.SourceType, ctx context.Context, appConfig config.
 		sourceClient, updatedSource, err = cerner.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
 	case pkg.SourceTypeCigna:
 		sourceClient, updatedSource, err = cigna.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
+	case pkg.SourceTypeEpic:
+		sourceClient, updatedSource, err = epic.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
+	case pkg.SourceTypeHealthIT:
+		sourceClient, updatedSource, err = healthit.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
 	case pkg.SourceTypeLogica:
 		sourceClient, updatedSource, err = logica.NewClient(ctx, appConfig, globalLogger, credentials, testHttpClient...)
 	case pkg.SourceTypeManual:

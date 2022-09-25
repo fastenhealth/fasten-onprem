@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/fastenhealth/gofhir-models/fhir401"
 	fhirutils "github.com/fastenhealth/gofhir-models/fhir401/utils"
@@ -22,6 +23,32 @@ func NewFHIR401Client(ctx context.Context, appConfig config.Interface, globalLog
 	return &FHIR401Client{
 		baseClient,
 	}, updatedSource, err
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Sync
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+func (c *FHIR401Client) SyncAll(db database.DatabaseRepository) error {
+
+	bundle, err := c.GetPatientBundle(c.Source.PatientId)
+	if err != nil {
+		return err
+	}
+
+	wrappedResourceModels, err := c.ProcessBundle(bundle)
+	if err != nil {
+		c.Logger.Infof("An error occurred while processing patient bundle %s", c.Source.PatientId)
+		return err
+	}
+	//todo, create the resources in dependency order
+
+	for _, apiModel := range wrappedResourceModels {
+		err = db.UpsertResource(context.Background(), apiModel)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
