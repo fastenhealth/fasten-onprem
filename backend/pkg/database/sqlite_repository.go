@@ -204,7 +204,7 @@ func (sr *sqliteRepository) ListResources(ctx context.Context, queryOptions mode
 	return wrappedResourceModels, results.Error
 }
 
-func (sr *sqliteRepository) GetResourceBySourceId(ctx context.Context, sourceResourceType string, sourceResourceId string) (*models.ResourceFhir, error) {
+func (sr *sqliteRepository) GetResourceBySourceType(ctx context.Context, sourceResourceType string, sourceResourceId string) (*models.ResourceFhir, error) {
 	queryParam := models.ResourceFhir{
 		OriginBase: models.OriginBase{
 			UserID:             sr.GetCurrentUser(ctx).ID,
@@ -221,18 +221,17 @@ func (sr *sqliteRepository) GetResourceBySourceId(ctx context.Context, sourceRes
 	return &wrappedResourceModel, results.Error
 }
 
-func (sr *sqliteRepository) GetResource(ctx context.Context, resourceId string) (*models.ResourceFhir, error) {
-	resourceUUID, err := uuid.Parse(resourceId)
+func (sr *sqliteRepository) GetResourceBySourceId(ctx context.Context, sourceId string, sourceResourceId string) (*models.ResourceFhir, error) {
+	sourceIdUUID, err := uuid.Parse(sourceId)
 	if err != nil {
 		return nil, err
 	}
 
 	queryParam := models.ResourceFhir{
 		OriginBase: models.OriginBase{
-			ModelBase: models.ModelBase{
-				ID: resourceUUID,
-			},
-			UserID: sr.GetCurrentUser(ctx).ID,
+			UserID:           sr.GetCurrentUser(ctx).ID,
+			SourceID:         sourceIdUUID,
+			SourceResourceID: sourceResourceId,
 		},
 	}
 

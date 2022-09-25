@@ -38,7 +38,8 @@ func GetResourceFhir(c *gin.Context) {
 	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
 
 	resourceId := strings.Trim(c.Param("resourceId"), "/")
-	wrappedResourceModel, err := databaseRepo.GetResource(c, resourceId)
+	sourceId := strings.Trim(c.Param("sourceId"), "/")
+	wrappedResourceModel, err := databaseRepo.GetResourceBySourceId(c, sourceId, resourceId)
 
 	if err != nil {
 		logger.Errorln("An error occurred while retrieving resource", err)

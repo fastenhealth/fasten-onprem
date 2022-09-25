@@ -160,6 +160,17 @@ export class FastenApiService {
       );
   }
 
+  getResourceBySourceId(sourceId: string, resourceId: string): Observable<ResourceFhir> {
+
+    return this._httpClient.get<any>(`${this.getBasePath()}/api/secure/resource/fhir/${sourceId}/${resourceId}`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("RESPONSE", response)
+          return response.data as ResourceFhir
+        })
+      );
+  }
+
   getMetadataSources(): Observable<{[name: string]: MetadataSource}> {
     return this._httpClient.get<any>(`${this.getBasePath()}/api/metadata/source`)
       .pipe(
