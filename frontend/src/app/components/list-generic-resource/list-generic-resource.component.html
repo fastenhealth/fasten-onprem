@@ -11,6 +11,9 @@
     rowHeight="auto"
     [limit]="10"
     [rows]="rows"
+    [selectionType]="SelectionType.single"
+    (select)="onSelect($event)"
+
   >
   </ngx-datatable>
 </div>

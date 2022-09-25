@@ -18,8 +18,11 @@ const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, canActivate: [ CanActivateAuthGuard] },
   { path: 'source/:source_id', component: SourceDetailComponent, canActivate: [ CanActivateAuthGuard] },
-  { path: 'source/:source_id:/resource/:resource_id', component: ResourceDetailComponent, canActivate: [ CanActivateAuthGuard] },
+  { path: 'source/:source_id/resource/:resource_id', component: ResourceDetailComponent, canActivate: [ CanActivateAuthGuard] },
   { path: 'sources', component: MedicalSourcesComponent, canActivate: [ CanActivateAuthGuard] },
+
+
+
   // { path: 'general-pages', loadChildren: () => import('./general-pages/general-pages.module').then(m => m.GeneralPagesModule) },
   // { path: 'ui-elements', loadChildren: () => import('./ui-elements/ui-elements.module').then(m => m.UiElementsModule) },
   // { path: 'form', loadChildren: () => import('./form/form.module').then(m => m.FormModule) },

@@ -1,9 +1,9 @@
 import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
-import {DatatableComponent, ColumnMode} from '@swimlane/ngx-datatable';
+import {DatatableComponent, ColumnMode, SelectionType} from '@swimlane/ngx-datatable';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {FORMATTERS, getPath, obsValue, attributeXTime} from './utils';
 import {observableToBeFn} from 'rxjs/internal/testing/TestScheduler';
-
+import {Router} from '@angular/router';
 
 //all Resource list components must implement this Interface
 export interface ResourceListComponentInterface {
@@ -39,8 +39,9 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
   rows = [];
   columns = []; //{ prop: 'name' }, { name: 'Company' }, { name: 'Gender' }
   ColumnMode = ColumnMode;
+  SelectionType = SelectionType;
 
-  constructor(public changeRef: ChangeDetectorRef) {}
+  constructor(public changeRef: ChangeDetectorRef, public router: Router) {}
 
   ngOnInit(): void {
     console.log("INIT GENERIC RESOURCE")
@@ -59,7 +60,11 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
     })
 
     this.rows = this.resourceList.map((resource) => {
-      let row = {}
+      let row = {
+        source_id: resource.source_id,
+        source_resource_type: resource.source_resource_type,
+        source_resource_id: resource.source_resource_id
+      }
 
       this.columnDefinitions.forEach((defn) => {
         try{
@@ -72,6 +77,11 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
       })
       return row
     })
+  }
+
+  onSelect({ selected }) {
+    console.log('Select Event', selected);
+    this.router.navigateByUrl(`/source/${selected.source_id}/resource/${selected.source_resource_id}`);
   }
 
 }
