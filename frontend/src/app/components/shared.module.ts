@@ -30,6 +30,7 @@ import {ListAppointmentComponent} from './list-generic-resource/list-appointment
 import {ListDeviceComponent} from './list-generic-resource/list-device.component';
 import {ListDiagnosticReportComponent} from './list-generic-resource/list-diagnostic-report.component';
 import {ListGoalComponent} from './list-generic-resource/list-goal.component';
+import { ListFallbackResourceComponent } from './list-fallback-resource/list-fallback-resource.component';
 
 @NgModule({
   imports: [
@@ -66,6 +67,7 @@ import {ListGoalComponent} from './list-generic-resource/list-goal.component';
     ListGoalComponent,
     ResourceListComponent,
     ResourceListOutletDirective,
+    ListFallbackResourceComponent,
   ],
   exports: [
     ComponentsSidebarComponent,

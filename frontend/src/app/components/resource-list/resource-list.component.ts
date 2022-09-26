@@ -29,6 +29,7 @@ import {ListAppointmentComponent} from '../list-generic-resource/list-appointmen
 import {ListDeviceComponent} from '../list-generic-resource/list-device.component';
 import {ListDiagnosticReportComponent} from '../list-generic-resource/list-diagnostic-report.component';
 import {ListGoalComponent} from '../list-generic-resource/list-goal.component';
+import {ListFallbackResourceComponent} from '../list-fallback-resource/list-fallback-resource.component';
 
 @Component({
   selector: 'source-resource-list',
@@ -90,6 +91,10 @@ export class ResourceListComponent implements OnInit, OnChanges {
   }
 
   typeLookup(resourceType: string): Type<any> {
+    if(!resourceType){
+      //dont try to render anything if the resourceType isnt set.
+      return null
+    }
     switch(resourceType) {
       case "Appointment": {
         return ListAppointmentComponent;
@@ -158,8 +163,8 @@ export class ResourceListComponent implements OnInit, OnChanges {
         return ListServiceRequestComponent;
       }
       default: {
-        console.error("UNKNOWN COMPONENT TYPE", resourceType)
-        return null
+        console.warn("Unknown component type, using fallback", resourceType)
+        return ListFallbackResourceComponent;
 
       }
     }

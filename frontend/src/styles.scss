@@ -15,6 +15,12 @@
   cursor: auto !important;
 }
 
+// if text is too long, we can truncate
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* You can add global styles to this file, and also import other style files */
 /*

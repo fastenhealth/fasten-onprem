@@ -1,0 +1,14 @@
+<div class="alert alert-warning" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">×</span>
+  </button>
+  <strong>Warning!</strong> Fasten does not know how to display this resource type (yet). Click an item in the list below to see the raw data
+</div>
+
+
+
+<ul class="list-group">
+  <li class="list-group-item" *ngFor="let resource of resourceList">
+    <a routerLink="/source/{{resource.source_id}}/resource/{{resource.source_resource_id}}">{{resource.source_resource_id}}</a>
+  </li>
+</ul>

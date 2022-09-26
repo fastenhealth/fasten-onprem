@@ -1,4 +1,5 @@
 import {Source} from './source';
+import {ResourceFhir} from './resource_fhir';
 
 export class ResourceTypeCounts {
   count: number
@@ -9,4 +10,5 @@ export class ResourceTypeCounts {
 export class SourceSummary {
   source: Source
   resource_type_counts: ResourceTypeCounts[]
+  patient?: ResourceFhir
 }
