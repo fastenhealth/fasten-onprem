@@ -95,7 +95,7 @@
   }
 }
 
-.az-content-body { 
+.az-content-body {
   flex: 1;
   width: 100%;
 }
@@ -124,10 +124,10 @@
     position: relative;
 
     + span::before {
-      content: '\f3d1';
-      font-family: 'Ionicons';
+      content: '\f054';
+      font-family: "Font Awesome 5 Free";
       font-size: 12px;
-      font-weight: 300;
+      font-weight: 900;
       display: inline;
       margin: 0 5px;
       color: $gray-400;
