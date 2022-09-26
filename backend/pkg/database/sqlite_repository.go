@@ -332,6 +332,21 @@ func (sr *sqliteRepository) GetSourceSummary(ctx context.Context, sourceId strin
 
 	sourceSummary.ResourceTypeCounts = resourceTypeCounts
 
+	//set patient
+	var wrappedPatientResourceModel models.ResourceFhir
+	results := sr.gormClient.WithContext(ctx).
+		Where(models.OriginBase{
+			UserID:             sr.GetCurrentUser(ctx).ID,
+			SourceResourceType: "Patient",
+			SourceID:           sourceUUID,
+		}).
+		First(&wrappedPatientResourceModel)
+
+	if results.Error != nil {
+		return nil, result.Error
+	}
+	sourceSummary.Patient = &wrappedPatientResourceModel
+
 	return sourceSummary, nil
 }
 
