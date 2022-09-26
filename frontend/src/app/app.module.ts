@@ -24,6 +24,7 @@ import {FastenApiService} from './services/fasten-api.service';
 import {Router} from '@angular/router';
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
 import {ResourceListComponent} from './components/resource-list/resource-list.component';
+import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import {ResourceListComponent} from './components/resource-list/resource-list.co
     HttpClientModule,
     NgbModule,
     ChartsModule,
-    NgxDropzoneModule
+    NgxDropzoneModule,
+    HighlightModule
   ],
   providers: [
     {
@@ -55,7 +57,17 @@ import {ResourceListComponent} from './components/resource-list/resource-list.co
       multi: true,
       deps: [FastenApiService, Router]
     },
-    CanActivateAuthGuard
+    CanActivateAuthGuard,
+    {
+      provide: HIGHLIGHT_OPTIONS,
+      useValue: {
+        coreLibraryLoader: () => import('highlight.js/lib/core'),
+        lineNumbersLoader: () => import('highlightjs-line-numbers.js'), // Optional, only if you want the line numbers
+        languages: {
+          json: () => import('highlight.js/lib/languages/json')
+        },
+      }
+    }
   ],
   bootstrap: [AppComponent]
 })

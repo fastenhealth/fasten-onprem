@@ -4037,6 +4037,16 @@ hdr-histogram-percentiles-obj@^3.0.0:
   resolved "https://registry.yarnpkg.com/hdr-histogram-percentiles-obj/-/hdr-histogram-percentiles-obj-3.0.0.tgz#9409f4de0c2dda78e61de2d9d78b1e9f3cba283c"
   integrity sha512-7kIufnBqdsBGcSZLPJwqHT3yhk1QTsSlFsVD3kx5ixH/AlgBs9yM1q6DPhXZ8f8gtdqgh7N7/5btRLpQsS2gHw==
 
+highlight.js@^11.5.1:
+  version "11.6.0"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-11.6.0.tgz#a50e9da05763f1bb0c1322c8f4f755242cff3f5a"
+  integrity sha512-ig1eqDzJaB0pqEvlPVIpSSyMaO92bH1N2rJpLMN/nX396wTpDA4Eq0uK+7I/2XG17pFaaKE0kjV/XPeGt7Evjw==
+
+highlightjs-line-numbers.js@^2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/highlightjs-line-numbers.js/-/highlightjs-line-numbers.js-2.8.0.tgz#479ea8cff0c31fadc1578a66fa03e38b801f9ca6"
+  integrity sha512-TEf1gw0c8mb8nan0QwliqS7obT4cpUd9hzsGzsZLweteNnWea/VIqy5/aQqsa5wnz9lnvmtAkS1ZtDTjB/goYQ==
+
 hosted-git-info@^5.0.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-5.1.0.tgz#9786123f92ef3627f24abc3f15c20d98ec4a6594"
@@ -5191,6 +5201,15 @@ ngx-dropzone@^3.1.0:
   resolved "https://registry.yarnpkg.com/ngx-dropzone/-/ngx-dropzone-3.1.0.tgz#f2045a9ca90903fa96304f1b2aa33a922f14b15a"
   integrity sha512-5RBaEl07QUcY6sv/BBPyIxN6nbWY/KqTGheEKgbuGS0N1QPFY7NJUo8+X3fYUwQgLS+wjJeqPiR37dd0YNDtWA==
   dependencies:
+    tslib "^2.0.0"
+
+ngx-highlightjs@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/ngx-highlightjs/-/ngx-highlightjs-7.0.1.tgz#52bef4e26a9707893cc2bbee20fbaff2a5f9a77a"
+  integrity sha512-ZmA6RUBRB0tqAlsGYR21kCna9ror51FZwpV7Y94yCuyVv24u5bhg9nfLnFPDBJJ1u1vfNKV1R1TNTXUm/SiRjw==
+  dependencies:
+    highlight.js "^11.5.1"
+    highlightjs-line-numbers.js "^2.8.0"
     tslib "^2.0.0"
 
 nice-napi@^1.0.2:

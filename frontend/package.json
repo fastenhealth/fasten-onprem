@@ -36,6 +36,7 @@
     "moment": "^2.29.4",
     "ng2-charts": "^2.3.0",
     "ngx-dropzone": "^3.1.0",
+    "ngx-highlightjs": "^7.0.1",
     "rxjs": "~6.5.4",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.8"

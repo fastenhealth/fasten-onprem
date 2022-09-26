@@ -1,6 +1,7 @@
 <div class="az-content az-content-app pd-b-0">
   <div class="container">
     <div class="az-content-body">
+      <pre *ngIf="resource"><code  [highlight]="resource.payload | json"></code></pre>
 
     </div><!-- az-content-body -->
   </div>

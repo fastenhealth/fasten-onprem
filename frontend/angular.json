@@ -23,14 +23,14 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "allowedCommonJsDependencies": ["chart.js"],
+            "allowedCommonJsDependencies": ["chart.js", "highlight.js"],
             "aot": true,
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss",
+              "src/styles.scss"
             ],
             "scripts": [
               "node_modules/@panva/oauth4webapi/build/index.js"
