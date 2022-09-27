@@ -1,5 +1,4 @@
-# goweb-template
-
+# Fasten - On Premise/Self-Hosted
 
 Find & replace the following
 

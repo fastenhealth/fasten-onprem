@@ -4,7 +4,7 @@ WORKDIR /usr/src/fastenhealth/frontend
 COPY frontend/package.json ./
 RUN yarn install --frozen-lockfile
 COPY frontend/ ./
-RUN yarn run build -- --output-path=../dist
+RUN yarn run build -- --configuration sandbox --output-path=../dist
 
 FROM golang:1.18 as backend-build
 WORKDIR /go/src/github.com/fastenhealth/fastenhealth-onprem
@@ -15,13 +15,20 @@ RUN go mod vendor \
     && go generate ./... \
     && go vet ./... \
     && go test ./...
-
 RUN CGO_ENABLED=0 go build -o /go/bin/fasten ./backend/cmd/fasten/
 
-FROM gcr.io/distroless/static-debian11
+# create folder structure
+RUN mkdir -p /opt/fasten/db \
+  mkdir -p /opt/fasten/web \
+  mkdir -p /opt/fasten/config
 
-COPY --from=frontend-build /usr/src/fastenhealth/dist /opt/fasten/dist
+
+
+FROM gcr.io/distroless/static-debian11
+WORKDIR /opt/fasten/
+COPY --from=backend-build  /opt/fasten/ /opt/fasten/
+COPY --from=frontend-build /usr/src/fastenhealth/dist /opt/fasten/web
 COPY --from=backend-build /go/bin/fasten /opt/fasten/fasten
 COPY LICENSE.md /opt/fasten/LICENSE.md
-COPY config.yaml /opt/fasten/config.yaml
-CMD ["/opt/fasten/fasten"]
+COPY config.yaml /opt/fasten/config/config.yaml
+CMD ["/opt/fasten/fasten", "start", "--config", "/opt/fasten/config/config.yaml"]

@@ -21,7 +21,7 @@ func TestLogicaClient_SyncAll(t *testing.T) {
 	defer mockCtrl.Finish()
 	fakeConfig := mock_config.NewMockInterface(mockCtrl)
 
-	testDatabase, err := ioutil.TempFile("testdata", "fasten.db")
+	testDatabase, err := ioutil.TempFile("", "fasten.db")
 	require.NoError(t, err)
 	defer os.Remove(testDatabase.Name())
 	fakeConfig.EXPECT().GetString("web.database.location").AnyTimes().Return(testDatabase.Name())
