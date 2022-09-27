@@ -4,7 +4,7 @@ WORKDIR /usr/src/fastenhealth/frontend
 COPY frontend/package.json ./
 #COPY frontend/yarn.lock ./
 RUN yarn config set registry "http://registry.npmjs.org" \
-    yarn install --frozen-lockfile --network-timeout 100000
+    && yarn install --frozen-lockfile --network-timeout 100000
 COPY frontend/ ./
 RUN yarn run build -- --configuration sandbox --output-path=../dist
 
