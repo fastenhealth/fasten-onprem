@@ -3,7 +3,7 @@ WORKDIR /usr/src/fastenhealth/frontend
 #COPY frontend/package.json frontend/yarn.lock ./
 COPY frontend/package.json ./
 COPY frontend/yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile --network-timeout 100000
 COPY frontend/ ./
 RUN yarn run build -- --configuration sandbox --output-path=../dist
 
