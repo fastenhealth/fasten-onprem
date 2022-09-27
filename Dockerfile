@@ -4,7 +4,7 @@ WORKDIR /usr/src/fastenhealth/frontend
 COPY frontend/package.json ./
 RUN yarn install --frozen-lockfile
 COPY frontend/ ./
-RUN yarn run build -- --output-path=../dist
+RUN yarn run build -- --configuration sandbox --output-path=../dist
 
 FROM golang:1.18 as backend-build
 WORKDIR /go/src/github.com/fastenhealth/fastenhealth-onprem
