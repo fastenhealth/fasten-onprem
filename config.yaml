@@ -10,7 +10,7 @@ web:
     # used to encrypt/validate JWT session key (used for authentication)
     encryptionkey: 'changethissupersecretkey'
   listen:
-    port: 9090
+    port: 8080
     host: 0.0.0.0
 
     # if you're using a reverse proxy like apache/nginx, you can override this value to serve fasten on a subpath.
@@ -21,8 +21,7 @@ web:
   src:
     # the location on the filesystem where webapp javascript + css is located
     frontend:
-#      path: /opt/fasten/web
-      path: ./dist
+      path: /opt/fasten/web
 
 log:
   file: '' #absolute or relative paths allowed, eg. web.log
