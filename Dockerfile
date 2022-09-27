@@ -2,6 +2,7 @@ FROM node:18.9.0 as frontend-build
 WORKDIR /usr/src/fastenhealth/frontend
 #COPY frontend/package.json frontend/yarn.lock ./
 COPY frontend/package.json ./
+COPY frontend/yarn.lock ./
 RUN yarn install --frozen-lockfile
 COPY frontend/ ./
 RUN yarn run build -- --configuration sandbox --output-path=../dist
