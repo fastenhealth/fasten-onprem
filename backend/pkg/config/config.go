@@ -25,7 +25,7 @@ func (c *configuration) Init() error {
 	c.SetDefault("web.listen.host", "0.0.0.0")
 	c.SetDefault("web.listen.basepath", "")
 	c.SetDefault("web.src.frontend.path", "/opt/fasten/web")
-	c.SetDefault("web.database.location", "fasten.db") //TODO: should be /opt/fasten/fasten.db
+	c.SetDefault("web.database.location", "/opt/fasten/db/fasten.db") //TODO: should be /opt/fasten/fasten.db
 
 	c.SetDefault("log.level", "INFO")
 	c.SetDefault("log.file", "")

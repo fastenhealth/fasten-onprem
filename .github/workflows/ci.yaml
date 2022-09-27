@@ -1,0 +1,68 @@
+name: CI
+# This workflow is triggered on pushes & pull requests
+on: [pull_request]
+
+jobs:
+  test-frontend:
+    name: Test Frontend
+    runs-on: ubuntu-latest
+    container: node:18.9.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test Frontend
+        run: |
+          cd frontend
+          yarn install --frozen-lockfile
+          yarn run build -- --output-path=../dist
+#      - name: Upload coverage
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: coverage
+#          path: ${{ github.workspace }}/frontend/coverage/lcov.info
+#          retention-days: 1
+  test-backend:
+    name: Test Backend
+    runs-on: ubuntu-latest
+    container: ghcr.io/packagrio/packagr:latest-golang
+    env:
+      STATIC: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test Backend
+        run: |
+          go mod vendor
+          go install github.com/golang/mock/mockgen@v1.6.0
+          go generate ./...
+          go vet ./...
+          go test ./...
+          CGO_ENABLED=0 go build ./backend/cmd/fasten/
+
+
+#      - name: Upload coverage
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: coverage
+#          path: ${{ github.workspace }}/coverage.txt
+#          retention-days: 1
+#  test-coverage:
+#    name: Test Coverage Upload
+#    needs:
+#      - test-backend
+#      - test-frontend
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#      - name: Download coverage reports
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: coverage
+#      - name: Upload coverage reports
+#        uses: codecov/codecov-action@v2
+#        with:
+#          files: ${{ github.workspace }}/coverage.txt,${{ github.workspace }}/lcov.info
+#          flags: unittests
+#          fail_ci_if_error: true
+#          verbose: true
