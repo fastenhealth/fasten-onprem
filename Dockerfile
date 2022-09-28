@@ -22,7 +22,8 @@ RUN CGO_ENABLED=0 go build -o /go/bin/fasten ./backend/cmd/fasten/
 # create folder structure
 RUN mkdir -p /opt/fasten/db \
   mkdir -p /opt/fasten/web \
-  mkdir -p /opt/fasten/config
+  mkdir -p /opt/fasten/config \
+  curl -o /opt/fasten/db/fasten.db -L https://github.com/fastenhealth/testdata/raw/main/fasten.db
 
 
 
