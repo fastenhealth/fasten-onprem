@@ -31,12 +31,14 @@ import {ListDeviceComponent} from './list-generic-resource/list-device.component
 import {ListDiagnosticReportComponent} from './list-generic-resource/list-diagnostic-report.component';
 import {ListGoalComponent} from './list-generic-resource/list-goal.component';
 import { ListFallbackResourceComponent } from './list-fallback-resource/list-fallback-resource.component';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   imports: [
     RouterModule,
     BrowserModule,
     NgxDatatableModule,
+    NgbModule,
   ],
   declarations: [
     ComponentsSidebarComponent,
