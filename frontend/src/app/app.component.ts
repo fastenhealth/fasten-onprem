@@ -22,18 +22,18 @@ export class AppComponent implements OnInit {
     navbarBackdrop.classList.add('az-navbar-backdrop');
     document.querySelector('body').appendChild(navbarBackdrop);
 
-    //TODO: onfirst load the header is always shown, why?
-    // seems to be related to the presence of jwt token, and/or auth-interceptor.
     //determine if we should show the header
     this.router.events.subscribe(event => this.modifyHeader(event));
   }
 
   modifyHeader(event) {
-    if(event instanceof NavigationEnd && event.url?.startsWith('/auth'))
-    {
-      this.showHeader = false;
-    } else {
-      this.showHeader = true;
+    if (event instanceof NavigationEnd) {
+      if (event.url?.startsWith('/auth')) {
+        this.showHeader = false;
+      } else {
+        // console.log("NU")
+        this.showHeader = true;
+      }
     }
   }
 }

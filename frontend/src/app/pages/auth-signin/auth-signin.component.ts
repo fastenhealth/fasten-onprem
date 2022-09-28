@@ -11,6 +11,7 @@ import {Router} from '@angular/router';
 export class AuthSigninComponent implements OnInit {
   submitted: boolean = false
   existingUser: User = new User()
+  errorMsg: string = ""
 
   constructor(private fastenApi: FastenApiService,  private router: Router) { }
 
@@ -22,8 +23,9 @@ export class AuthSigninComponent implements OnInit {
 
     this.fastenApi.signin(this.existingUser.username, this.existingUser.password).subscribe((tokenResp: any) => {
       console.log(tokenResp);
-
       this.router.navigateByUrl('/dashboard');
+    }, (err)=>{
+      this.errorMsg = err?.error?.error || "an unknown error occurred during sign-in"
     })
   }
 }

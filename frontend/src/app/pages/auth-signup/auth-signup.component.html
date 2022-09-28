@@ -64,6 +64,10 @@
           </div>
         </div><!-- form-group -->
         <button [disabled]="!userForm.form.valid" type="submit" class="btn btn-az-primary btn-block">Create Account</button>
+
+        <div *ngIf="errorMsg" class="alert alert-danger mt-3" role="alert">
+          <strong>Error</strong> {{errorMsg}}
+        </div>
       </form>
     </div><!-- az-signup-header -->
     <div class="az-signup-footer">

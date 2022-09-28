@@ -42,8 +42,13 @@ export class FastenApiService {
   signup(newUser: User): Observable<any> {
     return this._httpClient.post<any>(`${this.getBasePath()}/api/auth/signup`, newUser).pipe(
       map((res: any) => {
-        localStorage.setItem(this.AUTH_TOKEN_KEY, res.data);
-        return res.data
+        if(res.success){
+          localStorage.setItem(this.AUTH_TOKEN_KEY, res.data);
+          return res.data
+        } else {
+          throw new Error(res.error)
+        }
+
       }
     ));
   }
@@ -58,8 +63,12 @@ export class FastenApiService {
 
     return this._httpClient.post<any>(`${this.getBasePath()}/api/auth/signin`, data).pipe(
       map((res: any) => {
-        localStorage.setItem(this.AUTH_TOKEN_KEY, res.data);
-        return res.data
+        if(res.success){
+          localStorage.setItem(this.AUTH_TOKEN_KEY, res.data);
+          return res.data
+        } else {
+          throw new Error(res.error)
+        }
       }
     ));
   }
