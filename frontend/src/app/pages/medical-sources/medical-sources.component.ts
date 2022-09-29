@@ -7,14 +7,13 @@ import {AuthorizeClaim} from '../../models/lighthouse/authorize-claim';
 import {Source} from '../../models/fasten/source';
 import {getAccessTokenExpiration, jwtDecode} from 'fhirclient/lib/lib';
 import BrowserAdapter from 'fhirclient/lib/adapters/BrowserAdapter';
-import {Observable, of, throwError} from 'rxjs';
-import {concatMap, delay, retryWhen} from 'rxjs/operators';
+import {Observable, of, throwError, fromEvent } from 'rxjs';
+import {concatMap, delay, retryWhen, timeout, first, map, filter, catchError} from 'rxjs/operators';
 import * as FHIR from "fhirclient"
 import {MetadataSource} from '../../models/fasten/metadata-source';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 
-export const retryCount = 24; //wait 2 minutes (5 * 24 = 120)
-export const retryWaitMilliSeconds = 5000; //wait 5 seconds
+export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
 
 @Component({
   selector: 'app-medical-sources',
@@ -99,10 +98,11 @@ export class MedicalSourcesComponent implements OnInit {
 
         console.log('authorize url:', authorizationUrl.toString());
         // open new browser window
-        window.open(authorizationUrl.toString(), "_blank");
+        let openedWindow = window.open(authorizationUrl.toString(), "_blank");
 
         //wait for response
-        this.waitForClaimOrTimeout(sourceType, state).subscribe(async (claimData: AuthorizeClaim) => {
+        // TODO: throw an error if we timeout or an error occurs during authentication.
+        this.waitForClaimOrTimeout(openedWindow, sourceType, state).subscribe(async (claimData: AuthorizeClaim) => {
           console.log("claim response:", claimData)
           this.status[sourceType] = "token"
 
@@ -179,18 +179,6 @@ export class MedicalSourcesComponent implements OnInit {
       });
   }
 
-  @HostListener('window:message', ['$event'])
-  onPostMessage(event: MessageEvent) {
-    console.log("received a message from OAuth popup - "+ event.data, "sleeping 5 seconds")
-    // todo, process event, (retrieve code from passport api and swap for code)
-    setTimeout(() => {
-      console.log("responding to OAuth popup...")
-      event.source.postMessage(JSON.stringify({close:true}),
-        // @ts-ignore
-        event.origin);
-    }, 5000);
-  }
-
   uploadSourceBundle(event) {
     this.uploadedFile = [event.addedFiles[0]]
     this.fastenApi.createManualSource(event.addedFiles[0]).subscribe(
@@ -226,7 +214,6 @@ export class MedicalSourcesComponent implements OnInit {
       },
       (err) => {
         delete this.status[source.source_type]
-
         console.log(err)
       }
     )
@@ -242,20 +229,33 @@ export class MedicalSourcesComponent implements OnInit {
     }
   }
 
-  private waitForClaimOrTimeout(sourceType: string, state: string): Observable<AuthorizeClaim> {
-    return this.lighthouseApi.getSourceAuthorizeClaim(sourceType, state).pipe(
-      retryWhen(error =>
-        error.pipe(
-          concatMap((error, count) => {
-            if (count <= retryCount && error.status == 500) {
-              return of(error);
-            }
-            return throwError(error);
-          }),
-          delay(retryWaitMilliSeconds)
-        )
+  private waitForClaimOrTimeout(openedWindow: Window, sourceType: string, state: string): Observable<AuthorizeClaim> {
+    console.log(`waiting for postMessage notification from ${sourceType} window`)
+
+    //new code to listen to post message
+    return fromEvent(window, 'message')
+      .pipe(
+        //throw an error if we wait more than 2 minutes (this will close the window)
+        timeout(sourceConnectWindowTimeout),
+        //make sure we're only listening to events from the "opened" window.
+        filter((event: MessageEvent) => event.source == openedWindow),
+        //after filtering, we should only have one event to handle.
+        first(),
+        map((event) => {
+          console.log(`received postMessage notification from ${sourceType} window & sending acknowledgment`)
+          // @ts-ignore
+          event.source.postMessage(JSON.stringify({close:true}), event.origin);
+        }),
+        concatMap(() => {
+          console.log("requesting authorized claim")
+          return this.lighthouseApi.getSourceAuthorizeClaim(sourceType, state)
+        }),
+        catchError((err) => {
+          console.warn(`timed out waiting for notification from ${sourceType} (${sourceConnectWindowTimeout/1000}s), closing window`)
+          openedWindow.self.close()
+          return throwError(err)
+        })
       )
-    )
   }
 
   private uuidV4(){
