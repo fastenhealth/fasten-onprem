@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Observable} from 'rxjs';
 import { Router } from '@angular/router';
-import {LighthouseSource} from '../models/lighthouse/lighthouse-source';
-import {environment} from '../../environments/environment';
 import {map} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
 import {Source} from '../models/fasten/source';
@@ -42,8 +40,13 @@ export class FastenApiService {
   signup(newUser: User): Observable<any> {
     return this._httpClient.post<any>(`${this.getBasePath()}/api/auth/signup`, newUser).pipe(
       map((res: any) => {
-        localStorage.setItem(this.AUTH_TOKEN_KEY, res.data);
-        return res.data
+        if(res.success){
+          localStorage.setItem(this.AUTH_TOKEN_KEY, res.data);
+          return res.data
+        } else {
+          throw new Error(res.error)
+        }
+
       }
     ));
   }
@@ -58,8 +61,12 @@ export class FastenApiService {
 
     return this._httpClient.post<any>(`${this.getBasePath()}/api/auth/signin`, data).pipe(
       map((res: any) => {
-        localStorage.setItem(this.AUTH_TOKEN_KEY, res.data);
-        return res.data
+        if(res.success){
+          localStorage.setItem(this.AUTH_TOKEN_KEY, res.data);
+          return res.data
+        } else {
+          throw new Error(res.error)
+        }
       }
     ));
   }

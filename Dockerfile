@@ -2,7 +2,9 @@ FROM node:18.9.0 as frontend-build
 WORKDIR /usr/src/fastenhealth/frontend
 #COPY frontend/package.json frontend/yarn.lock ./
 COPY frontend/package.json ./
-RUN yarn install --frozen-lockfile
+#COPY frontend/yarn.lock ./
+RUN yarn config set registry "http://registry.npmjs.org" \
+    && yarn install --frozen-lockfile --network-timeout 100000
 COPY frontend/ ./
 RUN yarn run build -- --configuration sandbox --output-path=../dist
 
@@ -19,8 +21,9 @@ RUN CGO_ENABLED=0 go build -o /go/bin/fasten ./backend/cmd/fasten/
 
 # create folder structure
 RUN mkdir -p /opt/fasten/db \
-  mkdir -p /opt/fasten/web \
-  mkdir -p /opt/fasten/config
+  && mkdir -p /opt/fasten/web \
+  && mkdir -p /opt/fasten/config \
+  && curl -o /opt/fasten/db/fasten.db -L https://github.com/fastenhealth/testdata/raw/main/fasten.db
 
 
 

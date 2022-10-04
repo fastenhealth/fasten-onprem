@@ -37,10 +37,13 @@
         </div><!-- form-group -->
         <button [disabled]="!userForm.form.valid" type="submit" class="btn btn-az-primary btn-block">Sign In</button>
 
+        <div *ngIf="errorMsg" class="alert alert-danger mt-3" role="alert">
+          <strong>Error</strong> {{errorMsg}}
+        </div>
       </form>
     </div><!-- az-signin-header -->
     <div class="az-signin-footer">
-      <p><a href="">Forgot password?</a></p>
+      <p><a ngbTooltip="not yet implemented">Forgot password?</a></p>
       <p>Don't have an account? <a routerLink="/auth/signup">Create an Account</a></p>
     </div><!-- az-signin-footer -->
   </div><!-- az-card-signin -->
