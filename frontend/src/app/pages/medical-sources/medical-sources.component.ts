@@ -175,6 +175,10 @@ export class MedicalSourcesComponent implements OnInit {
             // window.location.reload();
 
             console.log("source credential create response:", respData)
+            //remove item from available sources list, add to connected sources.
+            this.availableSourceList.splice(this.availableSourceList.indexOf(this.metadataSources[sourceType]), 1);
+            this.connectedSourceList.push({source: respData, metadata: this.metadataSources[sourceType]})
+
           },
           (err) => {
             delete this.status[sourceType]

@@ -50,7 +50,7 @@ export class LighthouseService {
       const codeChallenge = await Oauth.calculatePKCECodeChallenge(codeVerifier);
       const codeChallengeMethod = lighthouseSource.code_challenge_methods_supported[0]; // 'S256'
 
-      localStorage.setItem(`${lighthouseSource}:code_verifier`, codeVerifier)
+      localStorage.setItem(`${sourceType}:code_verifier`, codeVerifier)
       localStorage.setItem(`${sourceType}:code_challenge`, codeChallenge)
       localStorage.setItem(`${sourceType}:code_challenge_method`, codeChallengeMethod)
 
