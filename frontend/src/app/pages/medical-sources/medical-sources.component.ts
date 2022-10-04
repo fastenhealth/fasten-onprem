@@ -1,7 +1,7 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {LighthouseService} from '../../services/lighthouse.service';
 import {FastenApiService} from '../../services/fasten-api.service';
-import {LighthouseSource} from '../../models/lighthouse/lighthouse-source';
+import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-source-metadata';
 import * as Oauth from '@panva/oauth4webapi';
 import {AuthorizeClaim} from '../../models/lighthouse/authorize-claim';
 import {Source} from '../../models/fasten/source';
@@ -12,6 +12,9 @@ import {concatMap, delay, retryWhen, timeout, first, map, filter, catchError} fr
 import * as FHIR from "fhirclient"
 import {MetadataSource} from '../../models/fasten/metadata-source';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Location} from '@angular/common';
+// If you dont import this angular will import the wrong "Location"
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
 
@@ -26,6 +29,9 @@ export class MedicalSourcesComponent implements OnInit {
     private lighthouseApi: LighthouseService,
     private fastenApi: FastenApiService,
     private modalService: NgbModal,
+    private route: ActivatedRoute,
+    private router: Router,
+    private location: Location,
   ) { }
   status: { [name: string]: string } = {}
 
@@ -42,6 +48,11 @@ export class MedicalSourcesComponent implements OnInit {
   ngOnInit(): void {
     this.fastenApi.getMetadataSources().subscribe((metadataSources: {[name:string]: MetadataSource}) => {
       this.metadataSources = metadataSources
+
+      const callbackSourceType = this.route.snapshot.paramMap.get('source_type')
+      if(callbackSourceType){
+        this.callback(callbackSourceType).then(console.log)
+      }
 
       this.fastenApi.getSources()
         .subscribe((sourceList: Source[]) => {
@@ -73,111 +84,112 @@ export class MedicalSourcesComponent implements OnInit {
     this.status[sourceType] = "authorize"
 
     this.lighthouseApi.getLighthouseSource(sourceType)
-      .subscribe(async (connectData: LighthouseSource) => {
-        console.log(connectData);
-
-        const state = this.uuidV4()
-
-        let authorizationUrl
-
-        //only set if this is not a "confidential" source.
-        let codeVerifier
-        let codeChallenge
-        let codeChallengeMethod
-
-        if(connectData.confidential){
-          authorizationUrl = this.lighthouseApi.generateConfidentialSourceAuthorizeUrl(state, connectData)
-        } else {
-          // https://github.com/panva/oauth4webapi/blob/8eba19eac408bdec5c1fe8abac2710c50bfadcc3/examples/public.ts
-          codeVerifier = Oauth.generateRandomCodeVerifier();
-          codeChallenge = await Oauth.calculatePKCECodeChallenge(codeVerifier);
-          codeChallengeMethod = 'S256';
-
-          authorizationUrl = this.lighthouseApi.generatePKCESourceAuthorizeUrl(codeVerifier, codeChallenge, codeChallengeMethod, state, connectData)
-        }
+      .subscribe(async (sourceMetadata: LighthouseSourceMetadata) => {
+        console.log(sourceMetadata);
+        let authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceType, sourceMetadata)
 
         console.log('authorize url:', authorizationUrl.toString());
-        // open new browser window
-        let openedWindow = window.open(authorizationUrl.toString(), "_blank");
-
-        //wait for response
-        // TODO: throw an error if we timeout or an error occurs during authentication.
-        this.waitForClaimOrTimeout(openedWindow, sourceType, state).subscribe(async (claimData: AuthorizeClaim) => {
-          console.log("claim response:", claimData)
-          this.status[sourceType] = "token"
-
-          let payload: any
-          if(connectData.confidential){
-
-            // we should have an access_token (and optionally a refresh_token) in the claim
-            payload = claimData
-
-            //patient may be returned as patient_id
-            payload.patient = payload.patient ? payload.patient : payload.patient_id
-
-          } else {
-            payload = await this.swapOauthPKCEToken(state, codeVerifier, authorizationUrl, connectData, claimData)
-          }
-
-
-
-          //If payload.patient is not set, make sure we extract the patient ID from the id_token or make an introspection req
-          if(!payload.patient && payload.id_token){
-            //
-            console.log("NO PATIENT ID present, decoding jwt to extract patient")
-            //const introspectionResp = await Oauth.introspectionRequest(as, client, payload.access_token)
-            //console.log(introspectionResp)
-            payload.patient = jwtDecode(payload.id_token, new BrowserAdapter())["profile"].replace(/^(Patient\/)/,'')
-          }
-
-
-
-          //Create FHIR Client
-
-          const sourceCredential: Source = {
-            source_type: sourceType,
-            oauth_authorization_endpoint: connectData.oauth_authorization_endpoint,
-            oauth_token_endpoint: connectData.oauth_token_endpoint,
-            oauth_registration_endpoint: connectData.oauth_registration_endpoint,
-            oauth_introspection_endpoint: connectData.oauth_introspection_endpoint,
-            oauth_userinfo_endpoint: connectData.oauth_userinfo_endpoint,
-            oauth_token_endpoint_auth_methods_supported: connectData.oauth_token_endpoint_auth_methods_supported,
-            api_endpoint_base_url:   connectData.api_endpoint_base_url,
-            client_id:             connectData.client_id,
-            redirect_uri:          connectData.redirect_uri,
-            scopes:               connectData.scopes ? connectData.scopes.join(' ') : undefined,
-            patient_id:            payload.patient,
-            access_token:          payload.access_token,
-            refresh_token:          payload.refresh_token,
-            id_token:              payload.id_token,
-            code_challenge:        codeChallenge,
-            code_verifier:         codeVerifier,
-
-            // @ts-ignore - in some cases the getAccessTokenExpiration is a string, which cases failures to store Source in db.
-            expires_at:            parseInt(getAccessTokenExpiration(payload, new BrowserAdapter())),
-            confidential: connectData.confidential
-          }
-
-          await this.fastenApi.createSource(sourceCredential).subscribe(
-            (respData) => {
-              delete this.status[sourceType]
-              window.location.reload();
-
-              console.log("source credential create response:", respData)
-              },
-            (err) => {
-              delete this.status[sourceType]
-              window.location.reload();
-
-              console.log(err)
-            }
-          )
-
-
-        })
+        // redirect to lighthouse with uri's
+        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceType)
 
       });
   }
+
+  async callback(sourceType: string) {
+
+    //get the source metadata again
+    await this.lighthouseApi.getLighthouseSource(sourceType)
+      .subscribe(async (sourceMetadata: LighthouseSourceMetadata) => {
+
+        //get required parameters from the URI and local storage
+        const callbackUrlParts = new URL(window.location.href)
+        const fragmentParams = new URLSearchParams(callbackUrlParts.hash.substring(1))
+        const callbackCode = callbackUrlParts.searchParams.get("code") || fragmentParams.get("code")
+        const callbackState = callbackUrlParts.searchParams.get("state") || fragmentParams.get("state")
+        const callbackError = callbackUrlParts.searchParams.get("error") || fragmentParams.get("error")
+        const callbackErrorDescription = callbackUrlParts.searchParams.get("error_description") || fragmentParams.get("error_description")
+
+        //reset the url, removing the params and fragment from the current url.
+        const urlTree = this.router.createUrlTree(["/sources"],{
+          relativeTo: this.route,
+        });
+        this.location.replaceState(urlTree.toString());
+
+        const expectedState = localStorage.getItem(`${sourceType}:state`)
+        localStorage.removeItem(`${sourceType}:state`)
+
+
+        if(callbackError && !callbackCode){
+          //TOOD: print this message in the UI
+          console.error("an error occurred while authenticating to this source. Please try again later", callbackErrorDescription)
+          return
+        }
+
+        console.log("callback code:", callbackCode)
+        this.status[sourceType] = "token"
+
+        let payload: any
+        payload = await this.lighthouseApi.swapOauthToken(sourceType, sourceMetadata,expectedState, callbackState, callbackCode)
+
+
+        //If payload.patient is not set, make sure we extract the patient ID from the id_token or make an introspection req
+        if(!payload.patient && payload.id_token){
+          //
+          console.log("NO PATIENT ID present, decoding jwt to extract patient")
+          //const introspectionResp = await Oauth.introspectionRequest(as, client, payload.access_token)
+          //console.log(introspectionResp)
+          payload.patient = jwtDecode(payload.id_token, new BrowserAdapter())["profile"].replace(/^(Patient\/)/,'')
+        }
+
+
+
+        //Create FHIR Client
+
+        const sourceCredential: Source = {
+          source_type: sourceType,
+          oauth_authorization_endpoint: sourceMetadata.authorization_endpoint,
+          oauth_token_endpoint: sourceMetadata.token_endpoint,
+          oauth_registration_endpoint: "",
+          oauth_introspection_endpoint: sourceMetadata.introspection_endpoint,
+          oauth_userinfo_endpoint: sourceMetadata.userinfo_endpoint,
+          oauth_token_endpoint_auth_methods_supported: "",
+          api_endpoint_base_url:   sourceMetadata.api_endpoint_base_url,
+          client_id:             sourceMetadata.client_id,
+          redirect_uri:          sourceMetadata.redirect_uri,
+          scopes:               sourceMetadata.scopes_supported ? sourceMetadata.scopes_supported.join(' ') : undefined,
+          patient_id:            payload.patient,
+          access_token:          payload.access_token,
+          refresh_token:          payload.refresh_token,
+          id_token:              payload.id_token,
+          code_challenge:        "",
+          code_verifier:         "",
+
+          // @ts-ignore - in some cases the getAccessTokenExpiration is a string, which cases failures to store Source in db.
+          expires_at:            parseInt(getAccessTokenExpiration(payload, new BrowserAdapter())),
+          confidential: sourceMetadata.confidential
+        }
+
+        await this.fastenApi.createSource(sourceCredential).subscribe(
+          (respData) => {
+            delete this.status[sourceType]
+            // window.location.reload();
+
+            console.log("source credential create response:", respData)
+            //remove item from available sources list, add to connected sources.
+            this.availableSourceList.splice(this.availableSourceList.indexOf(this.metadataSources[sourceType]), 1);
+            this.connectedSourceList.push({source: respData, metadata: this.metadataSources[sourceType]})
+
+          },
+          (err) => {
+            delete this.status[sourceType]
+            // window.location.reload();
+
+            console.log(err)
+          }
+        )
+      })
+  }
+
 
   uploadSourceBundle(event) {
     this.uploadedFile = [event.addedFiles[0]]
@@ -227,82 +239,6 @@ export class MedicalSourcesComponent implements OnInit {
     } else {
       return `with: ${reason}`;
     }
-  }
-
-  private waitForClaimOrTimeout(openedWindow: Window, sourceType: string, state: string): Observable<AuthorizeClaim> {
-    console.log(`waiting for postMessage notification from ${sourceType} window`)
-
-    //new code to listen to post message
-    return fromEvent(window, 'message')
-      .pipe(
-        //throw an error if we wait more than 2 minutes (this will close the window)
-        timeout(sourceConnectWindowTimeout),
-        //make sure we're only listening to events from the "opened" window.
-        filter((event: MessageEvent) => event.source == openedWindow),
-        //after filtering, we should only have one event to handle.
-        first(),
-        map((event) => {
-          console.log(`received postMessage notification from ${sourceType} window & sending acknowledgment`)
-          // @ts-ignore
-          event.source.postMessage(JSON.stringify({close:true}), event.origin);
-        }),
-        concatMap(() => {
-          console.log("requesting authorized claim")
-          return this.lighthouseApi.getSourceAuthorizeClaim(sourceType, state)
-        }),
-        catchError((err) => {
-          console.warn(`timed out waiting for notification from ${sourceType} (${sourceConnectWindowTimeout/1000}s), closing window`)
-          openedWindow.self.close()
-          return throwError(err)
-        })
-      )
-  }
-
-  private uuidV4(){
-    // @ts-ignore
-    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-    );
-  }
-
-  private async swapOauthPKCEToken(state: string, codeVerifier: any, authorizationUrl: URL, connectData: LighthouseSource, claimData: AuthorizeClaim){
-    // @ts-expect-error
-    const client: oauth.Client = {
-      client_id: connectData.client_id,
-      token_endpoint_auth_method: 'none',
-    }
-
-    //check if the oauth_token_endpoint_auth_methods_supported field is set
-    if(connectData.oauth_token_endpoint_auth_methods_supported){
-      let auth_methods = connectData.oauth_token_endpoint_auth_methods_supported.split(",")
-      client.token_endpoint_auth_method = auth_methods[0]
-    }
-
-    const as = {
-      issuer: `${authorizationUrl.protocol}//${authorizationUrl.host}`,
-      authorization_endpoint:	connectData.oauth_authorization_endpoint,
-      token_endpoint:	connectData.oauth_token_endpoint,
-      introspection_endpoint: connectData.oauth_introspection_endpoint,
-    }
-
-    console.log("STARTING--- Oauth.validateAuthResponse")
-    const params = Oauth.validateAuthResponse(as, client, new URLSearchParams(claimData as any), state)
-    if (Oauth.isOAuth2Error(params)) {
-      console.log('error', params)
-      throw new Error() // Handle OAuth 2.0 redirect error
-    }
-    console.log("ENDING--- Oauth.validateAuthResponse")
-    console.log("STARTING--- Oauth.authorizationCodeGrantRequest")
-    const response = await Oauth.authorizationCodeGrantRequest(
-      as,
-      client,
-      params,
-      connectData.redirect_uri,
-      codeVerifier,
-    )
-    let payload = await response.json()
-    console.log("ENDING--- Oauth.authorizationCodeGrantRequest", payload)
-    return payload
   }
 
 }

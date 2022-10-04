@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Observable} from 'rxjs';
 import { Router } from '@angular/router';
-import {LighthouseSource} from '../models/lighthouse/lighthouse-source';
-import {environment} from '../../environments/environment';
 import {map} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
 import {Source} from '../models/fasten/source';
