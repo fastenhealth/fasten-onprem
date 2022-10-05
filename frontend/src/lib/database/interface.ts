@@ -1,7 +1,7 @@
-import {Source} from '../../app/models/database/source';
+import {Source} from '../models/database/source';
 // import {SourceSummary} from '../../app/models/fasten/source-summary';
 
-export interface IDatabaseRecord {
+export interface IDatabaseDocument {
   populateId(): void
 }
 

@@ -1,5 +1,5 @@
-import {Source} from '../../app/models/database/source';
-import {IDatabasePaginatedResponse, IDatabaseRecord, IDatabaseRepository} from './interface';
+import {Source} from '../models/database/source';
+import {IDatabasePaginatedResponse, IDatabaseDocument, IDatabaseRepository} from './interface';
 import * as PouchDB from 'pouchdb/dist/pouchdb';
 // import * as PouchDB from 'pouchdb';
 import {DocType} from './constants';
@@ -8,7 +8,7 @@ export function NewRepositiory(databaseName: string = 'fasten'): IDatabaseReposi
   return new PouchdbRepository(databaseName)
 }
 
-class PouchdbRepository implements IDatabaseRepository {
+export class PouchdbRepository implements IDatabaseRepository {
 
   localPouchDb: PouchDB.Database
   constructor(public databaseName: string) {
@@ -19,29 +19,29 @@ class PouchdbRepository implements IDatabaseRepository {
   }
 
   public async CreateSource(source: Source): Promise<string> {
-    return this.createRecord(source);
+    return this.createDocument(source);
   }
 
   public async GetSource(source_id: string): Promise<Source> {
-    return this.getRecord(source_id)
-      .then((record) => {
-        return new Source(record)
+    return this.getDocument(source_id)
+      .then((doc) => {
+        return new Source(doc)
       })
   }
 
   public async GetSources(): Promise<IDatabasePaginatedResponse> {
-    return this.findRecordByDocType(DocType.Source)
-      .then((recordsWrapper) => {
+    return this.findDocumentByDocType(DocType.Source)
+      .then((docWrapper) => {
 
-        recordsWrapper.rows = recordsWrapper.rows.map((record) => {
-          return new Source(record.doc)
+        docWrapper.rows = docWrapper.rows.map((result) => {
+          return new Source(result.doc)
         })
-        return recordsWrapper
+        return docWrapper
       })
   }
 
   public async DeleteSource(source_id: string): Promise<boolean> {
-    return this.deleteRecord(source_id)
+    return this.deleteDocument(source_id)
   }
 
 
@@ -58,27 +58,27 @@ class PouchdbRepository implements IDatabaseRepository {
     return this.localPouchDb;
   }
 
-  // create a new record. Returns a promise of the generated id.
-  private createRecord(record: IDatabaseRecord) : Promise<string> {
-    // make sure we always "populate" the ID for every record before submitting
-    record.populateId()
+  // create a new document. Returns a promise of the generated id.
+  private createDocument(doc: IDatabaseDocument) : Promise<string> {
+    // make sure we always "populate" the ID for every document before submitting
+    doc.populateId()
 
     // NOTE: All friends are given the key-prefix of "friend:". This way, when we go
     // to query for friends, we can limit the scope to keys with in this key-space.
     return this.GetDB()
-      .put(record)
+      .put(doc)
       .then(( result ): string => {
           return( result.id );
         }
       );
   }
 
-  private getRecord(id: string): Promise<any> {
+  private getDocument(id: string): Promise<any> {
     return this.GetDB()
       .get(id)
   }
 
-  private findRecordByDocType(docType: DocType, includeDocs: boolean = true): Promise<IDatabasePaginatedResponse> {
+  private findDocumentByDocType(docType: DocType, includeDocs: boolean = true): Promise<IDatabasePaginatedResponse> {
     return this.GetDB()
       .allDocs({
         include_docs: includeDocs,
@@ -87,10 +87,10 @@ class PouchdbRepository implements IDatabaseRepository {
       })
   }
 
-  private async deleteRecord(id: string): Promise<boolean> {
-    const recordToDelete = await this.getRecord(id)
+  private async deleteDocument(id: string): Promise<boolean> {
+    const docToDelete = await this.getDocument(id)
     return this.GetDB()
-      .remove(recordToDelete)
+      .remove(docToDelete)
       .then((result) => {
         return result.ok
       })

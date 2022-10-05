@@ -10,9 +10,9 @@ export class Source extends LighthouseSourceMetadata{
 
   patient: string
   access_token:          string
-  refresh_token:         string
-  id_token:              string
-  expires_at:            number
+  refresh_token?:         string
+  id_token?:              string
+  expires_at:            number //seconds since epoch
 
   constructor(object: any) {
     super()
