@@ -21,6 +21,7 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { CanActivateAuthGuard } from './services/can-activate.auth-guard';
 import {FastenApiService} from './services/fasten-api.service';
+import {FastenDbService} from './services/fasten-db.service';
 import {Router} from '@angular/router';
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
 import {ResourceListComponent} from './components/resource-list/resource-list.component';
