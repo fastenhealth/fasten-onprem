@@ -56,10 +56,7 @@ export class FHIR401Client extends BaseClient implements IClient {
       try {
         let bundle = await this.GetResourceBundlePaginated(`${resourceType}?patient=${this.source.patient}`)
         let wrappedResourceModels = await this.ProcessBundle(bundle)
-
-        for(let apiModel of wrappedResourceModels){
-          await db.CreateResource(apiModel)
-        }
+        await db.CreateResources(wrappedResourceModels)
       }
       catch (e) {
         console.error(`An error occurred while processing ${resourceType} bundle ${this.source.patient}`)
@@ -132,17 +129,13 @@ export class FHIR401Client extends BaseClient implements IClient {
       })
   }
 
-  /////////////////////////////////////////////////////////////////////////////
-  // Private methods
-  /////////////////////////////////////////////////////////////////////////////
-
   /**
    * Retrieve a resource bundle. While "next" link is present in response, continue to request urls and append BundleEntries
    * @param relativeResourcePath
    * @constructor
    * @private
    */
-  private async GetResourceBundlePaginated(relativeResourcePath: string): Promise<IResourceBundleRaw> {
+  protected async GetResourceBundlePaginated(relativeResourcePath: string): Promise<IResourceBundleRaw> {
     // https://www.hl7.org/fhir/patient-operation-everything.html
 
     const bundle = await this.GetRequest(relativeResourcePath) as IResourceBundleRaw
@@ -181,4 +174,8 @@ export class FHIR401Client extends BaseClient implements IClient {
 
     return bundle
   }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Private methods
+  /////////////////////////////////////////////////////////////////////////////
 }
