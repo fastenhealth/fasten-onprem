@@ -1,10 +1,12 @@
 import {FHIR401Client} from './fhir401_r4_client';
 import {Source} from '../../../models/database/source';
-import * as FHIR401Client_ProcessBundle from './fixtures/FHIR401Client_ProcessBundle.json';
 import {IResourceBundleRaw} from '../../interface';
 import {ResourceFhir} from '../../../models/database/resource_fhir';
 import {NewRepositiory} from '../../../database/pouchdb_repository';
 import {Base64} from '../../../utils/base64';
+
+// @ts-ignore
+import * as FHIR401Client_ProcessBundle from './fixtures/FHIR401Client_ProcessBundle.json';
 
 class TestClient extends FHIR401Client {
   constructor(source: Source) {

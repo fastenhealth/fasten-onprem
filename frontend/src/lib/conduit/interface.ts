@@ -4,10 +4,19 @@ export interface IClient {
   fhirVersion: string
   GetRequest(resourceSubpath: string): Promise<any>
   GetFhirVersion(): Promise<any>
+
+  /**
+   * This function attempts to retrieve a Patient Bundle and sync all resources to the database
+   * @param db
+   * @constructor
+   */
   SyncAll(db: IDatabaseRepository): Promise<any>
 
+
+  SyncAllByResourceName(db: IDatabaseRepository, resourceNames: string[]): Promise<string[]>
+
   //Manual client ONLY functions
-  SyncAllBundle(db: IDatabaseRepository, bundleFile: any): Promise<any>
+  SyncAllFromBundleFile(db: IDatabaseRepository, bundleFile: any): Promise<any>
 }
 
 //This is the "raw" Fhir resource

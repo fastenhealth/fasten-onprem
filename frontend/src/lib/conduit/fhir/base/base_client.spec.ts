@@ -1,6 +1,9 @@
 import {BaseClient} from './base_client';
 import {Source} from '../../../models/database/source';
+
+// @ts-ignore
 import * as BaseClient_GetRequest from './fixtures/BaseClient_GetRequest.json';
+// @ts-ignore
 import * as BaseClient_GetFhirVersion from './fixtures/BaseClient_GetFhirVersion.json';
 
 

@@ -26,6 +26,11 @@ export abstract class BaseClient {
     }
   }
 
+  /**
+   * This function gets the FhirVersion as specified by the api CapabilityStatement endpoint (metadata)
+   * https://build.fhir.org/capabilitystatement.html
+   * @constructor
+   */
   public async GetFhirVersion(): Promise<any> {
     return this.GetRequest("metadata")
       .then((resp) => {
@@ -33,6 +38,12 @@ export abstract class BaseClient {
       })
   }
 
+  /**
+   * This function will make an authenticated request against an OAuth protected resource. If the AccessToken used has expired, it will attempt
+   * to use a refresh token (if present) to get a new AccessToken.
+   * @param resourceSubpathOrNext
+   * @constructor
+   */
   public async GetRequest(resourceSubpathOrNext: string): Promise<any> {
 
     //check if the url is absolute
@@ -63,13 +74,6 @@ export abstract class BaseClient {
   // Protected methods
   /////////////////////////////////////////////////////////////////////////////
 
-  protected GetPatientBundle(patientId: string): Promise<any> {
-    return this.GetRequest(`Patient/${patientId}/$everything`)
-  }
-
-  protected GetPatient(patientId: string): Promise<IResourceRaw> {
-    return this.GetRequest(`Patient/${patientId}`)
-  }
 
   /////////////////////////////////////////////////////////////////////////////
   // Private methods
