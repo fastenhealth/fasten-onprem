@@ -1,3 +1,4 @@
 export enum DocType {
-  Source= "source",
+  Source = "source",
+  ResourceFhir = "resource_fhir"
 }

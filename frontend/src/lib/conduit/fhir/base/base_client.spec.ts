@@ -1,6 +1,8 @@
-
 import {BaseClient} from './base_client';
 import {Source} from '../../../models/database/source';
+import * as BaseClient_GetRequest from './fixtures/BaseClient_GetRequest.json';
+import * as BaseClient_GetFhirVersion from './fixtures/BaseClient_GetFhirVersion.json';
+
 
 class TestClient extends BaseClient {
   constructor(source: Source) {
@@ -13,25 +15,19 @@ describe('BaseClient', () => {
 
   beforeEach(async () => {
     client = new TestClient(new Source({
-      "authorization_endpoint": "https://auth.logicahealth.org/authorize",
-      "token_endpoint": "https://auth.logicahealth.org/token",
-      "introspection_endpoint": "https://auth.logicahealth.org/introspect",
-      "userinfo_endpoint": "",
-      "scopes_supported": ["openid", "fhirUser", "patient/*.read", "offline_access"],
-      "issuer": "https://auth.logicahealth.org",
-      "grant_types_supported": ["authorization_code"],
-      "response_types_supported": ["code"],
-      "aud": "",
-      "code_challenge_methods_supported": ["S256"],
-      "api_endpoint_base_url": "https://api.logicahealth.org/fastenhealth/data",
-      "client_id": "12b14c49-a4da-42f7-9e6f-2f19db622962",
-      "redirect_uri": "https://lighthouse.fastenhealth.com/sandbox/callback/logica",
+      "authorization_endpoint": "https://fhirsandbox.healthit.gov/open/r4/authorize",
+      "token_endpoint": "https://fhirsandbox.healthit.gov/open/r4/token",
+      "introspection_endpoint": "",
+      "issuer": "https://fhirsandbox.healthit.go",
+      "api_endpoint_base_url": "https://fhirsandbox.healthit.gov/secure/r4/fhir",
+      "client_id": "9ad3ML0upIMiawLVdM5-DiPinGcv7M",
+      "redirect_uri": "https://lighthouse.fastenhealth.com/sandbox/callback/healthit",
       "confidential": false,
-      "source_type": "logica",
-      "patient": "smart-1288992",
-      "access_token": "xxx.xxx.xxx",
-      "refresh_token": "xxx.xxx.",
-      "expires_at": 1664949030,
+      "source_type": "healthit",
+      "patient": "placeholder",
+      "access_token": "2e1be8c72d4d5225aae264a1fb7e1d3e",
+      "refresh_token": "",
+      "expires_at": 16649837100, //aug 11, 2497 (for testing)
     }));
   });
 
@@ -41,14 +37,35 @@ describe('BaseClient', () => {
 
   describe('GetRequest', () => {
     it('should make an authorized request', async () => {
-      const resp = await client.GetRequest("Patient/smart-1288992")
 
-      expect(resp).toEqual({
-        resourceType: "Patient",
-        id: "source:aetna:patient"
-      });
+      //setup
+      let response = new Response(JSON.stringify(BaseClient_GetRequest));
+      Object.defineProperty(response, "url", { value: `${client.source.api_endpoint_base_url}/Patient/${client.source.patient}`});
+      spyOn(window, "fetch").and.returnValue(Promise.resolve(response));
+
+      //test
+      const resp = await client.GetRequest(`Patient/${client.source.patient}`)
+
+      //expect
+      expect(resp.resourceType).toEqual("Patient");
+      expect(resp.id).toEqual("123d41e1-0f71-4e9f-8eb2-d1b1330201a6");
     });
   })
+
+  describe('GetFhirVersion', () => {
+    it('should make an authorized request', async () => {
+      //setup
+      let response = new Response(JSON.stringify(BaseClient_GetFhirVersion));
+      Object.defineProperty(response, "url", { value: `${client.source.api_endpoint_base_url}/metadata`});
+      spyOn(window, "fetch").and.returnValue(Promise.resolve(response));
+
+      //test
+      const resp = await client.GetFhirVersion()
+
+      //expect
+      expect(resp).toEqual("4.0.1");
+    });
+  });
 
 
 })

@@ -3,6 +3,7 @@ import {IDatabasePaginatedResponse, IDatabaseDocument, IDatabaseRepository} from
 import * as PouchDB from 'pouchdb/dist/pouchdb';
 // import * as PouchDB from 'pouchdb';
 import {DocType} from './constants';
+import {ResourceFhir} from '../models/database/resource_fhir';
 
 export function NewRepositiory(databaseName: string = 'fasten'): IDatabaseRepository {
   return new PouchdbRepository(databaseName)
@@ -44,6 +45,32 @@ export class PouchdbRepository implements IDatabaseRepository {
     return this.deleteDocument(source_id)
   }
 
+  public async CreateResource(resource: ResourceFhir): Promise<string> {
+    return this.createDocument(resource);
+  }
+
+  public async CreateResources(resources: ResourceFhir[]): Promise<string[]> {
+    return this.createBulk(resources);
+  }
+
+  public async GetResource(resource_id: string): Promise<ResourceFhir> {
+    return this.getDocument(resource_id)
+      .then((doc) => {
+        return new ResourceFhir(doc)
+      })
+  }
+
+  public async GetResources(): Promise<IDatabasePaginatedResponse> {
+    return this.findDocumentByDocType(DocType.ResourceFhir)
+      .then((docWrapper) => {
+
+        docWrapper.rows = docWrapper.rows.map((result) => {
+          return new ResourceFhir(result.doc)
+        })
+        return docWrapper
+      })
+  }
+
 
   ///////////////////////////////////////////////////////////////////////////////////////
   // CRUD Operators
@@ -71,6 +98,15 @@ export class PouchdbRepository implements IDatabaseRepository {
           return( result.id );
         }
       );
+  }
+
+  // create multiple documents, returns a list of generated ids
+  private createBulk(docs: IDatabaseDocument[]): Promise<string[]> {
+    return this.GetDB()
+      .bulkDocs(docs.map((doc) => { doc.populateId(); return doc }))
+      .then((results): string[] => {
+        return results.map((result) => result.id)
+      })
   }
 
   private getDocument(id: string): Promise<any> {

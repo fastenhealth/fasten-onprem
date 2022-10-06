@@ -5,7 +5,7 @@ import {DocType} from '../../../lib/database/constants';
 export class Source extends LighthouseSourceMetadata{
   _id?: string
   _rev?: string
-  docType: string
+  doc_type: string
   source_type: SourceType
 
   patient: string
@@ -16,11 +16,11 @@ export class Source extends LighthouseSourceMetadata{
 
   constructor(object: any) {
     super()
-    object.docType = DocType.Source
+    object.doc_type = DocType.Source
     return Object.assign(this, object)
   }
 
   populateId(){
-    this._id = `source:${this.source_type}:${this.patient}`
+    this._id = `${this.doc_type}:${this.source_type}:${this.patient}`
   }
 }

@@ -43,7 +43,7 @@ describe('PouchdbRepository', () => {
 
       const createdSource = await repository.GetSource(createdId)
 
-      expect(createdSource.docType).toEqual(DocType.Source);
+      expect(createdSource.doc_type).toEqual(DocType.Source);
       expect(createdSource.patient).toEqual('patient');
       expect(createdSource.source_type).toEqual(SourceType.Aetna);
       expect(createdSource.access_token).toEqual('hello-world');

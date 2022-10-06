@@ -1,6 +1,6 @@
 import {Source} from '../../../models/database/source';
 import * as Oauth from '@panva/oauth4webapi';
-import {IResourceInterface} from '../../interface';
+import {IResourceRaw} from '../../interface';
 
 // BaseClient is an abstract/partial class, its intended to be used by FHIR clients, and generically handle OAuth requests.
 export abstract class BaseClient {
@@ -26,8 +26,14 @@ export abstract class BaseClient {
     }
   }
 
+  public async GetFhirVersion(): Promise<any> {
+    return this.GetRequest("metadata")
+      .then((resp) => {
+        return resp.fhirVersion
+      })
+  }
 
-  public async GetRequest(resourceSubpathOrNext: string): Promise<IResourceInterface> {
+  public async GetRequest(resourceSubpathOrNext: string): Promise<any> {
 
     //check if the url is absolute
     let resourceUrl: string
@@ -52,6 +58,22 @@ export abstract class BaseClient {
     // err = ParseBundle(resp.Body, decodeModelPtr)
     // return err
   }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Protected methods
+  /////////////////////////////////////////////////////////////////////////////
+
+  protected GetPatientBundle(patientId: string): Promise<any> {
+    return this.GetRequest(`Patient/${patientId}/$everything`)
+  }
+
+  protected GetPatient(patientId: string): Promise<IResourceRaw> {
+    return this.GetRequest(`Patient/${patientId}`)
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Private methods
+  /////////////////////////////////////////////////////////////////////////////
 
   private async refreshExpiredTokenIfRequired(source: Source): Promise<Source> {
     //check if token has expired, and a refreshtoken is available

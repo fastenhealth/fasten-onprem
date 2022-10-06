@@ -1,7 +1,11 @@
 import {Source} from '../models/database/source';
+import {ResourceFhir} from '../models/database/resource_fhir';
 // import {SourceSummary} from '../../app/models/fasten/source-summary';
 
 export interface IDatabaseDocument {
+  _id?: string
+  _rev?: string
+  doc_type: string
   populateId(): void
 }
 
@@ -31,4 +35,10 @@ export interface IDatabaseRepository {
   DeleteSource(source_id: string): Promise<boolean>
   // GetSourceSummary(source_id: string): Promise<SourceSummary>
   GetSources(): Promise<IDatabasePaginatedResponse>
+
+
+  CreateResource(resource: ResourceFhir): Promise<string>
+  CreateResources(resources: ResourceFhir[]): Promise<string[]>
+  GetResource(resource_id: string): Promise<ResourceFhir>
+  GetResources(): Promise<IDatabasePaginatedResponse>
 }
