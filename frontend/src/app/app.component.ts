@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 import {fromWorker} from 'observable-webworker';
 import {Observable, of} from 'rxjs';
+import {QueueService} from './workers/queue.service';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,7 @@ export class AppComponent implements OnInit {
   showHeader:boolean = false;
   showFooter:boolean = true;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private queueService: QueueService) {}
 
   ngOnInit() {
 
@@ -26,8 +27,6 @@ export class AppComponent implements OnInit {
 
     //determine if we should show the header
     this.router.events.subscribe(event => this.modifyHeader(event));
-
-    this.runWorker()
   }
 
   modifyHeader(event) {
@@ -40,23 +39,6 @@ export class AppComponent implements OnInit {
       }
     }
   }
-
-  runWorker() {
-    if (typeof Worker !== 'undefined') {
-      const input$: Observable<string> = of('hello');
-      fromWorker<string, string>(() => new Worker(new URL('./workers/background.worker', import.meta.url), {type: 'module'}), input$)
-        .subscribe(message => {
-          console.log(`Got message`, message);
-        });
-    }else {
-      // Web workers are not supported in this environment.
-      // You should add a fallback so that your program still executes correctly.
-      console.error("WORKERS ARE NOT SUPPORTED")
-    }
-
-  }
-
-
 }
 
 
