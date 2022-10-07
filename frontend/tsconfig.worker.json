@@ -2,15 +2,17 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    //customizations
+    "skipLibCheck": true, //without this the "dom" and the "webworker" libs conflict
+
     "outDir": "./out-tsc/worker",
     "lib": [
-      "es2019",
-      "es2018",
-      "webworker"
+      "es2020",
+      "webworker",
     ],
     "types": []
   },
   "include": [
     "src/**/*.worker.ts"
-  ]
+  ],
 }

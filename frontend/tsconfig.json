@@ -1,27 +1,38 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
+    //customizations
+    "allowSyntheticDefaultImports": true, // required for pouchdb/fhirclient or oauth2
+    "strictPropertyInitialization":false, // otherwise every class requires complex contrutor or defaults
+    "strict": false, //lots of failures
+    "noImplicitOverride": false, //requires override decorator everywhere
+    "noImplicitReturns": false, //lots of failures.
+    "typeRoots": ["node_modules/@types"],
+
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "module": "esnext",
     "moduleResolution": "node",
     "importHelpers": true,
-
-    "target": "esnext",
-    "typeRoots": ["node_modules/@types"],
+    "target": "es2020",
+    "module": "es2020",
     "lib": [
-      "es2019",
-      "es2018",
-      "dom"
+      "es2020",
+      "dom",
     ]
   },
   "angularCompilerOptions": {
-    "fullTemplateTypeCheck": true,
-    "strictInjectionParameters": true
+    //customizations
+    //    "strictTemplates": true
+
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
   }
 }

@@ -5,15 +5,15 @@ import {Base64} from '../../utils/base64';
 export class ResourceFhir {
   _id?: string
   _rev?: string
-  doc_type: string
+  doc_type: DocType = DocType.ResourceFhir
 
   created_at?: Date
   updated_at?: Date
-  source_id: string
-  source_resource_type: string
-  source_resource_id: string
+  source_id: string = ""
+  source_resource_type: string = ""
+  source_resource_id: string = ""
 
-  resource_raw: IResourceRaw
+  resource_raw?: IResourceRaw
 
   constructor(object?: any) {
     if(object){

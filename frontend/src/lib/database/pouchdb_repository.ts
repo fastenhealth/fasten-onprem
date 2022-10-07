@@ -1,13 +1,26 @@
 import {Source} from '../models/database/source';
 import {IDatabasePaginatedResponse, IDatabaseDocument, IDatabaseRepository} from './interface';
-import * as PouchDB from 'pouchdb/dist/pouchdb';
-// import * as PouchFind from 'pouchdb/dist/pouchdb.find';
-// import * as PouchDB from 'pouchdb';
 import {DocType} from './constants';
 import {ResourceFhir} from '../models/database/resource_fhir';
 import {ResourceTypeCounts, SourceSummary} from '../models/fasten/source-summary';
 import {Base64} from '../utils/base64';
 import {Summary} from '../models/fasten/summary';
+
+
+// PouchDB & plugins
+import * as PouchDB from 'pouchdb/dist/pouchdb';
+import * as PouchUpsert from 'pouchdb-upsert';
+import * as PouchCrypto from 'crypto-pouch';
+import find from 'pouchdb-find';
+
+// import * as PouchFind from 'pouchdb/dist/pouchdb.find';
+// import * as PouchDB from 'pouchdb';
+// import * as PouchDB from 'pouchdb-browser';
+// import PouchFind from 'pouchdb-find';
+// import PouchDB from 'pouchdb-browser';
+PouchDB.plugin(find);
+PouchDB.plugin(PouchUpsert);
+PouchDB.plugin(PouchCrypto);
 
 export function NewRepositiory(databaseName: string = 'fasten'): IDatabaseRepository {
   return new PouchdbRepository(databaseName)
@@ -18,20 +31,18 @@ export class PouchdbRepository implements IDatabaseRepository {
   localPouchDb: PouchDB.Database
   constructor(public databaseName: string) {
     //setup PouchDB Plugins
-    // PouchDB.plugin(PouchFind); //https://pouchdb.com/guides/mango-queries.html
+     //https://pouchdb.com/guides/mango-queries.html
 
     this.localPouchDb = new PouchDB(databaseName);
 
     //create any necessary indexes
     // this index allows us to group by source_resource_type
-    // this.localPouchDb.createIndex({
-    //   index: {fields: [
-    //     //global
-    //     'doc_type',
-    //     //only relevant for resource_fhir documents
-    //     'source_resource_type',
-    //     ]}
-    // }, (msg) => {console.log("DB createIndex complete", msg)});
+    this.localPouchDb.createIndex({
+      index: {fields: [
+        'doc_type',
+        'source_resource_type',
+        ]}
+    }, (msg) => {console.log("DB createIndex complete", msg)});
 
 
   }
@@ -48,13 +59,13 @@ export class PouchdbRepository implements IDatabaseRepository {
     summary.sources = await this.GetSources()
       .then((paginatedResp) => paginatedResp.rows)
 
-    summary.patients = []
-    // summary.patients = await this.GetDB().find({
-    //   selector: {
-    //     doc_type: DocType.ResourceFhir,
-    //     source_resource_type: "Patient",
-    //   }
-    // })
+    // summary.patients = []
+    summary.patients = await this.GetDB().find({
+      selector: {
+        doc_type: DocType.ResourceFhir,
+        source_resource_type: "Patient",
+      }
+    }).then((results) => results.docs)
 
     summary.resource_type_counts = await this.findDocumentByPrefix(`${DocType.ResourceFhir}`, false)
       .then((paginatedResp) => {
@@ -112,7 +123,7 @@ export class PouchdbRepository implements IDatabaseRepository {
     const sourceSummary = new SourceSummary()
     sourceSummary.source = await this.GetSource(source_id)
     sourceSummary.patient = await this.findDocumentByPrefix(`${DocType.ResourceFhir}:${Base64.Encode(source_id)}:Patient`, true)
-      .then((paginatedResp) => paginatedResp?.rows[0])
+      .then((paginatedResp) => new ResourceFhir(paginatedResp?.rows[0].doc))
 
     sourceSummary.resource_type_counts = await this.findDocumentByPrefix(`${DocType.ResourceFhir}:${Base64.Encode(source_id)}`, false)
       .then((paginatedResp) => {
@@ -175,6 +186,8 @@ export class PouchdbRepository implements IDatabaseRepository {
 
   ///////////////////////////////////////////////////////////////////////////////////////
   // CRUD Operators
+  // All functions below here will return the raw PouchDB responses, and may need to be wrapped in
+  // new ResourceFhir(result.doc)
   ///////////////////////////////////////////////////////////////////////////////////////
 
   // Get the active PouchDB instance. Throws an error if no PouchDB instance is
