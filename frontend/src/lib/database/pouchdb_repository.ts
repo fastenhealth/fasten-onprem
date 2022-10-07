@@ -183,6 +183,23 @@ export class PouchdbRepository implements IDatabaseRepository {
       })
   }
 
+  public async GetResourcesForSource(source_id: string, source_resource_type?: string): Promise<IDatabasePaginatedResponse> {
+    let prefix = `${DocType.ResourceFhir}:${Base64.Encode(source_id)}`
+    if(source_resource_type){
+      prefix += `:${source_resource_type}`
+    }
+
+    return this.findDocumentByPrefix(prefix, true)
+      .then((docWrapper) => {
+
+        docWrapper.rows = docWrapper.rows.map((result) => {
+          return new ResourceFhir(result.doc)
+        })
+        return docWrapper
+      })
+  }
+
+
 
   ///////////////////////////////////////////////////////////////////////////////////////
   // CRUD Operators

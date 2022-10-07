@@ -45,7 +45,7 @@ export class SourceDetailComponent implements OnInit {
   //functions to call on patient
   getPatientName(){
     // @ts-ignore
-    return `${getPath(this.selectedPatient?.payload, 'name.0.family')}, ${getPath(this.selectedPatient?.payload, 'name.0.given').join(' ')}`
+    return `${getPath(this.selectedPatient?.resource_raw, 'name.0.family')}, ${getPath(this.selectedPatient?.resource_raw, 'name.0.given').join(' ')}`
   }
   getPatientGender(){
     return getPath(this.selectedPatient?.resource_raw, 'gender')

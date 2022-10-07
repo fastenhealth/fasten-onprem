@@ -42,4 +42,5 @@ export interface IDatabaseRepository {
   CreateResources(resources: ResourceFhir[]): Promise<string[]>
   GetResource(resource_id: string): Promise<ResourceFhir>
   GetResources(): Promise<IDatabasePaginatedResponse>
+  GetResourcesForSource(source_id: string, source_resource_type?: string): Promise<IDatabasePaginatedResponse>
 }

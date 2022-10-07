@@ -18,7 +18,7 @@ const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, canActivate: [ CanActivateAuthGuard] },
   { path: 'source/:source_id', component: SourceDetailComponent, canActivate: [ CanActivateAuthGuard] },
-  { path: 'source/:source_id/resource/:resource_id', component: ResourceDetailComponent, canActivate: [ CanActivateAuthGuard] },
+  { path: 'resource/:resource_id', component: ResourceDetailComponent, canActivate: [ CanActivateAuthGuard] },
   { path: 'sources', component: MedicalSourcesComponent, canActivate: [ CanActivateAuthGuard] },
   { path: 'sources/callback/:source_type', component: MedicalSourcesComponent, canActivate: [ CanActivateAuthGuard] },
 

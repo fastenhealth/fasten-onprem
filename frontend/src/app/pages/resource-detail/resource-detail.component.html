@@ -3,11 +3,11 @@
     <div class="az-content-body">
       <div class="az-content-breadcrumb">
         <span>Resource</span>
-        <span>{{resource.source_resource_type}}</span>
-        <span>{{resource.source_resource_id}}</span>
+        <span>{{resource?.source_resource_type}}</span>
+        <span>{{resource?.source_resource_id}}</span>
       </div>
 
-      <pre *ngIf="resource"><code  [highlight]="resource.payload | json"></code></pre>
+      <pre *ngIf="resource"><code  [highlight]="resource.resource_raw | json"></code></pre>
 
     </div><!-- az-content-body -->
   </div>
