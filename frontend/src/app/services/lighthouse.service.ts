@@ -15,13 +15,13 @@ export class LighthouseService {
   constructor(private _httpClient: HttpClient) {
   }
 
-  getLighthouseSource(sourceType: string): Observable<LighthouseSourceMetadata> {
+  async getLighthouseSource(sourceType: string): Promise<LighthouseSourceMetadata> {
     return this._httpClient.get<any>(`${environment.lighthouse_api_endpoint_base}/connect/${sourceType}`)
       .pipe(
         map((response: ResponseWrapper) => {
           return response.data as LighthouseSourceMetadata
         })
-      );
+      ).toPromise();
   }
 
 
@@ -61,7 +61,7 @@ export class LighthouseService {
     return authorizationUrl
   }
 
-  redirectWithOriginAndDestination(destUrl: string, sourceType: string){
+  redirectWithOriginAndDestination(destUrl: string, sourceType: string): void {
     const originUrlParts = new URL(window.location.href)
     originUrlParts.hash = "" //reset hash in-case its present.
     originUrlParts.pathname = this.pathJoin([originUrlParts.pathname, `callback/${sourceType}`])
@@ -78,7 +78,7 @@ export class LighthouseService {
     window.location.href = redirectUrlParts.toString();
   }
 
-  async swapOauthToken(sourceType: string, sourceMetadata: LighthouseSourceMetadata, expectedState: string, state: string, code: string){
+  async swapOauthToken(sourceType: string, sourceMetadata: LighthouseSourceMetadata, expectedState: string, state: string, code: string): Promise<any>{
     // @ts-expect-error
     const client: oauth.Client = {
       client_id: sourceMetadata.client_id
