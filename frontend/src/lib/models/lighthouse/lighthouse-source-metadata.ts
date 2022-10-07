@@ -16,4 +16,5 @@ export class LighthouseSourceMetadata {
   redirect_uri: string
 
   confidential: boolean
+  cors_relay_required: boolean
 }

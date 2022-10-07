@@ -1,6 +1,6 @@
 import {IDatabaseRepository} from './interface';
 import {NewRepositiory} from './pouchdb_repository';
-import {SourceType} from '../models/database/types';
+import {SourceType} from '../models/database/source_types';
 import {Source} from '../models/database/source';
 import {DocType} from './constants';
 

@@ -1,6 +1,6 @@
 # lib
 
-This directory contains Typescript libraries/packages that are intended to be used in both Angular & WebWorkers.
+This directory contains Typescript libraries/packages that are intended to be used in both Angular & WebWorkers (and potentially NodeJS).
 That means they cannot contain any browser context/DOM specific code, as they will break in Web Workers. 
 
 ## conduit

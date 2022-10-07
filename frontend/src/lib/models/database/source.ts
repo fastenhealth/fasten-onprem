@@ -1,5 +1,5 @@
 import {LighthouseSourceMetadata} from '../lighthouse/lighthouse-source-metadata';
-import {SourceType} from './types';
+import {SourceType} from './source_types';
 import {DocType} from '../../../lib/database/constants';
 
 export class Source extends LighthouseSourceMetadata{

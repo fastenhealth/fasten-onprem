@@ -1,9 +1,13 @@
 import {Source} from '../models/database/source';
 import {IDatabasePaginatedResponse, IDatabaseDocument, IDatabaseRepository} from './interface';
 import * as PouchDB from 'pouchdb/dist/pouchdb';
+import PouchFind from 'pouchdb/dist/pouchdb.find';
 // import * as PouchDB from 'pouchdb';
 import {DocType} from './constants';
 import {ResourceFhir} from '../models/database/resource_fhir';
+import {ResourceTypeCounts, SourceSummary} from '../models/fasten/source-summary';
+import {Base64} from '../utils/base64';
+import {Summary} from '../models/fasten/summary';
 
 export function NewRepositiory(databaseName: string = 'fasten'): IDatabaseRepository {
   return new PouchdbRepository(databaseName)
@@ -13,11 +17,70 @@ export class PouchdbRepository implements IDatabaseRepository {
 
   localPouchDb: PouchDB.Database
   constructor(public databaseName: string) {
+    //setup PouchDB Plugins
+    PouchDB.plugin(PouchFind); //https://pouchdb.com/guides/mango-queries.html
+
     this.localPouchDb = new PouchDB(databaseName);
+
+    //create any necessary indexes
+    // this index allows us to group by source_resource_type
+    this.localPouchDb.createIndex({
+      index: {fields: [
+        //global
+        'doc_type',
+        //only relevant for resource_fhir documents
+        'source_resource_type',
+        ]}
+    }, (msg) => {console.log("DB createIndex complete", msg)});
+
+
   }
   public Close(): void {
     return
   }
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  // Summary
+
+  public async GetSummary(): Promise<Summary> {
+    const summary = new Summary()
+    summary.sources = await this.GetSources()
+      .then((paginatedResp) => paginatedResp.rows)
+
+    summary.patients = await this.GetDB().find({
+      selector: {
+        doc_type: DocType.ResourceFhir,
+        source_resource_type: "Patient",
+      }
+    })
+
+    summary.resource_type_counts = await this.findDocumentByPrefix(`${DocType.ResourceFhir}`, true)
+      .then((paginatedResp) => {
+        const lookup: {[name: string]: ResourceTypeCounts} = {}
+        paginatedResp?.rows.forEach((resource: ResourceFhir) => {
+          let currentResourceStats = lookup[resource.source_resource_type] || {
+            count: 0,
+            source_id: resource.source_id,
+            resource_type: resource.source_resource_type
+          }
+          currentResourceStats.count += 1
+          lookup[resource.source_resource_type] = currentResourceStats
+        })
+
+        const arr = []
+        for(let key in lookup){
+          arr.push(lookup[key])
+        }
+        return arr
+      })
+
+
+    return summary
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  // Source
 
   public async CreateSource(source: Source): Promise<string> {
     return this.createDocument(source);
@@ -41,9 +104,40 @@ export class PouchdbRepository implements IDatabaseRepository {
       })
   }
 
+  public async GetSourceSummary(source_id: string): Promise<SourceSummary> {
+    const sourceSummary = new SourceSummary()
+    sourceSummary.source = await this.GetSource(source_id)
+    sourceSummary.patient = await this.findDocumentByPrefix(`${DocType.ResourceFhir}:${Base64.Encode(source_id)}:Patient`, true)
+      .then((paginatedResp) => paginatedResp?.rows[0])
+
+    sourceSummary.resource_type_counts = await this.findDocumentByPrefix(`${DocType.ResourceFhir}:${Base64.Encode(source_id)}`, true)
+      .then((paginatedResp) => {
+        const lookup: {[name: string]: ResourceTypeCounts} = {}
+        paginatedResp?.rows.forEach((resource: ResourceFhir) => {
+          let currentResourceStats = lookup[resource.source_resource_type] || {
+            count: 0,
+            source_id: resource.source_id,
+            resource_type: resource.source_resource_type
+          }
+          currentResourceStats.count += 1
+          lookup[resource.source_resource_type] = currentResourceStats
+        })
+
+        const arr = []
+        for(let key in lookup){
+          arr.push(lookup[key])
+        }
+        return arr
+      })
+    return sourceSummary
+  }
+
   public async DeleteSource(source_id: string): Promise<boolean> {
     return this.deleteDocument(source_id)
   }
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  // Resource
 
   public async CreateResource(resource: ResourceFhir): Promise<string> {
     return this.createDocument(resource);
@@ -114,12 +208,16 @@ export class PouchdbRepository implements IDatabaseRepository {
       .get(id)
   }
 
+
   private findDocumentByDocType(docType: DocType, includeDocs: boolean = true): Promise<IDatabasePaginatedResponse> {
+    return this.findDocumentByPrefix(docType, includeDocs)
+  }
+  private findDocumentByPrefix(prefix: string, includeDocs: boolean = true): Promise<IDatabasePaginatedResponse> {
     return this.GetDB()
       .allDocs({
         include_docs: includeDocs,
-        startkey: `${docType}:`,
-        endkey: `${docType}:\uffff`
+        startkey: `${prefix}:`,
+        endkey: `${prefix}:\uffff`
       })
   }
 
