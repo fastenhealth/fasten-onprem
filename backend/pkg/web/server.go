@@ -47,7 +47,6 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 			{
 				secure.GET("/summary", handler.GetSummary)
 
-				secure.POST("/source", handler.CreateSource)
 				secure.POST("/source/manual", handler.CreateManualSource)
 				secure.GET("/source", handler.ListSource)
 				secure.GET("/source/:sourceId", handler.GetSource)
