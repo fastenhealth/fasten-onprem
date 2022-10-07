@@ -1,4 +1,4 @@
-import {SourceType} from '../models/database/types';
+import {SourceType} from '../models/database/source_types';
 import {Source} from '../models/database/source';
 import {IClient} from './interface';
 import {AetnaClient} from './fhir/aetna_client';

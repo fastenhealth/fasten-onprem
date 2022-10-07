@@ -8,10 +8,11 @@ export abstract class BaseClient {
   private oauthClient: Oauth.Client
   private oauthAuthorizationServer: Oauth.AuthorizationServer
   public source: Source
-  public headers: Headers = new Headers()
+  public headers: Headers
 
   protected constructor(source: Source) {
     this.source = source
+    this.headers = new Headers()
 
     //init Oauth client based on source configuration
     this.oauthClient = {

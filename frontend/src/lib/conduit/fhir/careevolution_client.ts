@@ -6,7 +6,7 @@ export class CareEvolutionClient  extends FHIR401Client implements IClient {
   constructor(source: Source) {
     super(source);
     //CareEvolution API requires the following Accept header for every request
-    this.headers["Accept"] = "application/json+fhir"
+    this.headers.set("Accept","application/json+fhir")
   }
 
 }
