@@ -1,5 +1,5 @@
-import {Source} from './source';
-import {ResourceFhir} from './resource_fhir';
+import {Source} from '../database/source';
+import {ResourceFhir} from '../database/resource_fhir';
 
 export class ResourceTypeCounts {
   count: number

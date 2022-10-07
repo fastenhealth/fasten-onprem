@@ -11,9 +11,11 @@
     "module": "esnext",
     "moduleResolution": "node",
     "importHelpers": true,
+
     "target": "esnext",
     "typeRoots": ["node_modules/@types"],
     "lib": [
+      "es2019",
       "es2018",
       "dom"
     ]

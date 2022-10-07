@@ -1,7 +1,7 @@
 import {Source} from '../models/database/source';
 import {IDatabasePaginatedResponse, IDatabaseDocument, IDatabaseRepository} from './interface';
 import * as PouchDB from 'pouchdb/dist/pouchdb';
-import PouchFind from 'pouchdb/dist/pouchdb.find';
+// import * as PouchFind from 'pouchdb/dist/pouchdb.find';
 // import * as PouchDB from 'pouchdb';
 import {DocType} from './constants';
 import {ResourceFhir} from '../models/database/resource_fhir';
@@ -18,20 +18,20 @@ export class PouchdbRepository implements IDatabaseRepository {
   localPouchDb: PouchDB.Database
   constructor(public databaseName: string) {
     //setup PouchDB Plugins
-    PouchDB.plugin(PouchFind); //https://pouchdb.com/guides/mango-queries.html
+    // PouchDB.plugin(PouchFind); //https://pouchdb.com/guides/mango-queries.html
 
     this.localPouchDb = new PouchDB(databaseName);
 
     //create any necessary indexes
     // this index allows us to group by source_resource_type
-    this.localPouchDb.createIndex({
-      index: {fields: [
-        //global
-        'doc_type',
-        //only relevant for resource_fhir documents
-        'source_resource_type',
-        ]}
-    }, (msg) => {console.log("DB createIndex complete", msg)});
+    // this.localPouchDb.createIndex({
+    //   index: {fields: [
+    //     //global
+    //     'doc_type',
+    //     //only relevant for resource_fhir documents
+    //     'source_resource_type',
+    //     ]}
+    // }, (msg) => {console.log("DB createIndex complete", msg)});
 
 
   }
@@ -48,24 +48,28 @@ export class PouchdbRepository implements IDatabaseRepository {
     summary.sources = await this.GetSources()
       .then((paginatedResp) => paginatedResp.rows)
 
-    summary.patients = await this.GetDB().find({
-      selector: {
-        doc_type: DocType.ResourceFhir,
-        source_resource_type: "Patient",
-      }
-    })
+    summary.patients = []
+    // summary.patients = await this.GetDB().find({
+    //   selector: {
+    //     doc_type: DocType.ResourceFhir,
+    //     source_resource_type: "Patient",
+    //   }
+    // })
 
-    summary.resource_type_counts = await this.findDocumentByPrefix(`${DocType.ResourceFhir}`, true)
+    summary.resource_type_counts = await this.findDocumentByPrefix(`${DocType.ResourceFhir}`, false)
       .then((paginatedResp) => {
         const lookup: {[name: string]: ResourceTypeCounts} = {}
-        paginatedResp?.rows.forEach((resource: ResourceFhir) => {
-          let currentResourceStats = lookup[resource.source_resource_type] || {
+        paginatedResp?.rows.forEach((resourceWrapper) => {
+          const resourceIdParts = resourceWrapper.id.split(':')
+          const resourceType = resourceIdParts[2]
+
+          let currentResourceStats = lookup[resourceType] || {
             count: 0,
-            source_id: resource.source_id,
-            resource_type: resource.source_resource_type
+            source_id: Base64.Decode(resourceIdParts[1]),
+            resource_type: resourceType
           }
           currentResourceStats.count += 1
-          lookup[resource.source_resource_type] = currentResourceStats
+          lookup[resourceType] = currentResourceStats
         })
 
         const arr = []
@@ -110,17 +114,20 @@ export class PouchdbRepository implements IDatabaseRepository {
     sourceSummary.patient = await this.findDocumentByPrefix(`${DocType.ResourceFhir}:${Base64.Encode(source_id)}:Patient`, true)
       .then((paginatedResp) => paginatedResp?.rows[0])
 
-    sourceSummary.resource_type_counts = await this.findDocumentByPrefix(`${DocType.ResourceFhir}:${Base64.Encode(source_id)}`, true)
+    sourceSummary.resource_type_counts = await this.findDocumentByPrefix(`${DocType.ResourceFhir}:${Base64.Encode(source_id)}`, false)
       .then((paginatedResp) => {
         const lookup: {[name: string]: ResourceTypeCounts} = {}
-        paginatedResp?.rows.forEach((resource: ResourceFhir) => {
-          let currentResourceStats = lookup[resource.source_resource_type] || {
+        paginatedResp?.rows.forEach((resourceWrapper) => {
+          const resourceIdParts = resourceWrapper.id.split(':')
+          const resourceType = resourceIdParts[2]
+
+          let currentResourceStats = lookup[resourceType] || {
             count: 0,
-            source_id: resource.source_id,
-            resource_type: resource.source_resource_type
+            source_id: Base64.Decode(resourceIdParts[1]),
+            resource_type: resourceType
           }
           currentResourceStats.count += 1
-          lookup[resource.source_resource_type] = currentResourceStats
+          lookup[resourceType] = currentResourceStats
         })
 
         const arr = []
