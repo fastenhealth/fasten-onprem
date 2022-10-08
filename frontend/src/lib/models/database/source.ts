@@ -1,6 +1,7 @@
 import {LighthouseSourceMetadata} from '../lighthouse/lighthouse-source-metadata';
 import {SourceType} from './source_types';
 import {DocType} from '../../../lib/database/constants';
+import {Base64} from '../../utils/base64';
 
 export class Source extends LighthouseSourceMetadata{
   _id?: string
@@ -22,5 +23,9 @@ export class Source extends LighthouseSourceMetadata{
 
   populateId(){
     this._id = `${this.doc_type}:${this.source_type}:${this.patient}`
+  }
+  base64Id(): string {
+    this.populateId()
+    return Base64.Encode(this._id)
   }
 }

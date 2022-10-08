@@ -9,6 +9,7 @@ export interface IDatabaseDocument {
   _rev?: string
   doc_type: string
   populateId(): void
+  base64Id(): string
 }
 
 export interface IDatabasePaginatedResponse {

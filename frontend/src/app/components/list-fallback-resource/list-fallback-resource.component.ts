@@ -23,9 +23,4 @@ export class ListFallbackResourceComponent  implements OnInit, ResourceListCompo
     this.changeRef.markForCheck()
   }
 
-  //TODO this should eb moved to a Pipe
-  getResourceIdEncoded(resource: ResourceFhir){
-    return Base64.Encode(resource._id)
-  }
-
 }

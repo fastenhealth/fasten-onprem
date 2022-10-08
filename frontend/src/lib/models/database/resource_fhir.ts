@@ -29,4 +29,8 @@ export class ResourceFhir {
     //TODO: source_id should be base64 encoded (otherwise we get nested : chars)
     this._id = `${this.doc_type}:${Base64.Encode(this.source_id)}:${this.source_resource_type}:${this.source_resource_id}`
   }
+  base64Id(): string {
+    this.populateId()
+    return Base64.Encode(this._id)
+  }
 }
