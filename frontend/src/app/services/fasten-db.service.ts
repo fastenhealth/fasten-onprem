@@ -27,10 +27,11 @@ export class FastenDbService extends PouchdbRepository {
 
   //TODO: move most of this functionality back into the lib as a separate file.
   replicationHandler: any
-  remotePouchEndpoint = "http://localhost:5984"
+  remotePouchEndpoint: string // "http://localhost:5984"
   constructor(private _httpClient: HttpClient) {
     const userIdentifier = localStorage.getItem("current_user")
     super(userIdentifier, "my-secret-encryption-key");
+    this.remotePouchEndpoint = `${window.location.protocol}//${window.location.host}${this.getBasePath()}/database`
     if(userIdentifier){
       this.enableSync(userIdentifier)
     }
