@@ -77,9 +77,5 @@ func (c *configuration) ReadConfig(configFilePath string) error {
 // This function ensures that required configuration keys (that must be manually set) are present
 func (c *configuration) ValidateConfig() error {
 
-	if !c.IsSet("web.jwt.encryptionkey") {
-		return errors.ConfigValidationError("`web.jwt.encryptionkey` configuration option must be set")
-	}
-
 	return nil
 }

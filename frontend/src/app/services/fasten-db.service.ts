@@ -86,9 +86,10 @@ export class FastenDbService extends PouchdbRepository {
       //if we have a local database, lets see if we have an active session to the remote database.
       const remotePouchDb = new PouchDB(this.getRemoteUserDb(localStorage.getItem("current_user")), {skip_setup: true});
       const session = await remotePouchDb.getSession()
-      console.warn("IsAuthenticated? getSession() ====> ", !!session)
+      const isAuth = !!session?.userCtx?.name
+      console.warn("IsAuthenticated? getSession() ====> ", isAuth)
 
-      return !!session
+      return isAuth
     } catch (e) {
       return false
     }
