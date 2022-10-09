@@ -53,7 +53,7 @@ export class FastenDbService extends PouchdbRepository {
       .then((loginResp)=>{
         return this.postLoginHook(loginResp.name, true)
       })
-      .catch((err) => console.error("an error occured during login/setup", err))
+      .catch((err) => console.error("an error occurred during login/setup", err))
   }
 
   /**
@@ -190,7 +190,17 @@ export class FastenDbService extends PouchdbRepository {
   }
   private enableSync(userIdentifier: string){
     console.log("DB sync init...", userIdentifier, this.getRemoteUserDb(userIdentifier))
-    this.replicationHandler = this.localPouchDb.sync(this.getRemoteUserDb(userIdentifier))
+    this.replicationHandler = this.localPouchDb.sync(this.getRemoteUserDb(userIdentifier), {live: true, retry: true})
+      .on('paused', function (info) {
+        // replication was paused, usually because of a lost connection
+        console.warn("replication was paused, usually because of a lost connection", info)
+      }).on('active', function (info) {
+        // replication was resumed
+        console.warn("replication was resumed", info)
+      }).on('error', function (err) {
+        // totally unhandled error (shouldn't happen)
+        console.error("replication unhandled error (shouldn't happen)", err)
+      });
     console.log("DB sync enabled")
   }
 
