@@ -31,6 +31,9 @@ export class FastenDbService extends PouchdbRepository {
   constructor(private _httpClient: HttpClient) {
     const userIdentifier = localStorage.getItem("current_user")
     super(userIdentifier);
+    if(userIdentifier){
+      this.enableSync(userIdentifier)
+    }
   }
 
 
@@ -173,13 +176,16 @@ export class FastenDbService extends PouchdbRepository {
     console.log("DB createIndex complete", createIndexMsg)
 
     if(sync){
-      console.log("DB sync init...", userIdentifier, this.getRemoteUserDb(userIdentifier))
-      this.replicationHandler = this.localPouchDb.sync(this.getRemoteUserDb(userIdentifier))
-      console.log("DB sync enabled")
+      this.enableSync(userIdentifier)
     }
 
     console.warn( "Configured PouchDB database for,", this.localPouchDb.name );
     return
+  }
+  private enableSync(userIdentifier: string){
+    console.log("DB sync init...", userIdentifier, this.getRemoteUserDb(userIdentifier))
+    this.replicationHandler = this.localPouchDb.sync(this.getRemoteUserDb(userIdentifier))
+    console.log("DB sync enabled")
   }
 
   private getRemoteUserDb(username: string){
