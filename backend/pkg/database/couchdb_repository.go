@@ -12,24 +12,13 @@ import (
 )
 
 func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) (DatabaseRepository, error) {
-	//backgroundContext := context.Background()
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Gorm/SQLite setup
+	// Couchdb setup
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	globalLogger.Infof("Trying to connect to sqlite db: %s\n", appConfig.GetString("web.database.location"))
-
-	// When a transaction cannot lock the database, because it is already locked by another one,
-	// SQLite by default throws an error: database is locked. This behavior is usually not appropriate when
-	// concurrent access is needed, typically when multiple processes write to the same database.
-	// PRAGMA busy_timeout lets you set a timeout or a handler for these events. When setting a timeout,
-	// SQLite will try the transaction multiple times within this timeout.
-	// fixes #341
-	// https://rsqlite.r-dbi.org/reference/sqlitesetbusyhandler
-	// retrying for 30000 milliseconds, 30seconds - this would be unreasonable for a distributed multi-tenant application,
-	// but should be fine for local usage.
-
 	couchdbUrl := fmt.Sprintf("%s://%s:%s", appConfig.GetString("web.couchdb.scheme"), appConfig.GetString("web.couchdb.host"), appConfig.GetString("web.couchdb.port"))
+
+	globalLogger.Infof("Trying to connect to couchdb: %s\n", couchdbUrl)
+
 	database, err := kivik.New("couch", couchdbUrl)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to connect to database! - %v", err)
@@ -44,7 +33,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	if err != nil {
 		return nil, fmt.Errorf("Failed to authenticate to database! - %v", err)
 	}
-	globalLogger.Infof("Successfully connected to coubdb: %s\n", couchdbUrl)
+	globalLogger.Infof("Successfully connected to couchdb: %s\n", couchdbUrl)
 
 	deviceRepo := couchdbRepository{
 		appConfig: appConfig,

@@ -32,6 +32,8 @@ func CouchDBProxy(c *gin.Context) {
 		req.URL.Host = remote.Host
 		log.Printf(c.Param("proxyPath"))
 		req.URL.Path = strings.TrimPrefix(c.Param("proxyPath"), "/database")
+
+		//todo: throw an error if not a user DB.
 	}
 
 	proxy.ServeHTTP(c.Writer, c.Request)
