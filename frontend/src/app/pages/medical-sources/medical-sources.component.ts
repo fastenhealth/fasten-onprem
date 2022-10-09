@@ -52,7 +52,7 @@ export class MedicalSourcesComponent implements OnInit {
   modalSelectedSourceListItem:SourceListItem = null;
 
   ngOnInit(): void {
-    this.fastenApi.getMetadataSources().subscribe((metadataSources: {[name:string]: MetadataSource}) => {
+    this.fastenApi.GetMetadataSources().subscribe((metadataSources: {[name:string]: MetadataSource}) => {
       this.metadataSources = metadataSources
 
       const callbackSourceType = this.route.snapshot.paramMap.get('source_type')
@@ -202,15 +202,16 @@ export class MedicalSourcesComponent implements OnInit {
    */
   public uploadSourceBundleHandler(event) {
     this.uploadedFile = [event.addedFiles[0]]
-    this.fastenApi.createManualSource(event.addedFiles[0]).subscribe(
-      (respData) => {
-        console.log("source manual source create response:", respData)
-      },
-      (err) => {console.log(err)},
-      () => {
-        this.uploadedFile = []
-      }
-    )
+    //TODO: handle manual bundles.
+    // this.fastenDb.CreateManualSource(event.addedFiles[0]).subscribe(
+    //   (respData) => {
+    //     console.log("source manual source create response:", respData)
+    //   },
+    //   (err) => {console.log(err)},
+    //   () => {
+    //     this.uploadedFile = []
+    //   }
+    // )
   }
 
   public openModal(contentModalRef, sourceListItem: SourceListItem) {

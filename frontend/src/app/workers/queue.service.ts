@@ -15,7 +15,7 @@ export class QueueService {
     if (typeof Worker !== 'undefined') {
       const sourceSync = new SourceSyncMessage()
       sourceSync.source = source
-      sourceSync.database_name = "fasten"
+      sourceSync.userIdentifier = localStorage.getItem("current_user")
       const input$: Observable<string> = of(JSON.stringify(sourceSync));
       return fromWorker<string, string>(() => new Worker(new URL('./source-sync.worker', import.meta.url), {type: 'module'}), input$)
         // .subscribe(message => {

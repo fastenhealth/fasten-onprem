@@ -57,3 +57,4 @@ fabric.properties
 vendor
 fasten.db
 test.go
+/.couchdb

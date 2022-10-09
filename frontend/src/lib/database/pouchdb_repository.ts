@@ -4,95 +4,61 @@ import {DocType} from './constants';
 import {ResourceFhir} from '../models/database/resource_fhir';
 import {ResourceTypeCounts, SourceSummary} from '../models/fasten/source-summary';
 import {Base64} from '../utils/base64';
-import {Summary} from '../models/fasten/summary';
-
 
 // PouchDB & plugins
 import * as PouchDB from 'pouchdb/dist/pouchdb';
-import * as PouchUpsert from 'pouchdb-upsert';
 import * as PouchCrypto from 'crypto-pouch';
-import find from 'pouchdb-find';
-
-// import * as PouchFind from 'pouchdb/dist/pouchdb.find';
-// import * as PouchDB from 'pouchdb';
-// import * as PouchDB from 'pouchdb-browser';
-// import PouchFind from 'pouchdb-find';
-// import PouchDB from 'pouchdb-browser';
-PouchDB.plugin(find);
-PouchDB.plugin(PouchUpsert);
 PouchDB.plugin(PouchCrypto);
 
-export function NewRepositiory(databaseName: string = 'fasten'): IDatabaseRepository {
-  return new PouchdbRepository(databaseName)
+// !!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!
+// most pouchdb plugins seem to fail when used in a webworker.
+// !!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!
+// import * as PouchUpsert from 'pouchdb-upsert';
+// PouchDB.plugin(PouchUpsert);
+// import find from 'pouchdb-find';
+// PouchDB.plugin(find);
+// PouchDB.debug.enable('pouchdb:find')
+
+
+// this is required, otherwise PouchFind fails when looking for the global PouchDB variable
+
+/**
+ * This method is used to initialize the repository from Workers.
+ * Eventually this method should dyanmically dtermine the version of the repo to return from the env.
+ * @constructor
+ */
+export function NewRepositiory(userIdentifier?: string): IDatabaseRepository {
+  return new PouchdbRepository(userIdentifier)
 }
 
 export class PouchdbRepository implements IDatabaseRepository {
 
+
+
   localPouchDb: PouchDB.Database
-  constructor(public databaseName: string) {
+  constructor(userIdentifier?: string) {
     //setup PouchDB Plugins
      //https://pouchdb.com/guides/mango-queries.html
-
-    this.localPouchDb = new PouchDB(databaseName);
-
-    //create any necessary indexes
-    // this index allows us to group by source_resource_type
-    this.localPouchDb.createIndex({
-      index: {fields: [
-        'doc_type',
-        'source_resource_type',
-        ]}
-    }, (msg) => {console.log("DB createIndex complete", msg)});
-
-
+    this.localPouchDb = null
+    if(userIdentifier){
+      this.localPouchDb = new PouchDB(userIdentifier);
+    }
   }
-  public Close(): void {
+
+
+  // Teardown / deconfigure the existing database instance (if there is one).
+  // --
+  // CAUTION: Subsequent calls to .GetDB() will fail until a new instance is configured
+  // with a call to .ConfigureForUser().
+  public async Close(): Promise<void> {
+    if (!this.localPouchDb) {
+      return;
+    }
+    this.localPouchDb.close();
+    this.localPouchDb = null;
     return
   }
 
-
-  ///////////////////////////////////////////////////////////////////////////////////////
-  // Summary
-
-  public async GetSummary(): Promise<Summary> {
-    const summary = new Summary()
-    summary.sources = await this.GetSources()
-      .then((paginatedResp) => paginatedResp.rows)
-
-    // summary.patients = []
-    summary.patients = await this.GetDB().find({
-      selector: {
-        doc_type: DocType.ResourceFhir,
-        source_resource_type: "Patient",
-      }
-    }).then((results) => results.docs)
-
-    summary.resource_type_counts = await this.findDocumentByPrefix(`${DocType.ResourceFhir}`, false)
-      .then((paginatedResp) => {
-        const lookup: {[name: string]: ResourceTypeCounts} = {}
-        paginatedResp?.rows.forEach((resourceWrapper) => {
-          const resourceIdParts = resourceWrapper.id.split(':')
-          const resourceType = resourceIdParts[2]
-
-          let currentResourceStats = lookup[resourceType] || {
-            count: 0,
-            source_id: Base64.Decode(resourceIdParts[1]),
-            resource_type: resourceType
-          }
-          currentResourceStats.count += 1
-          lookup[resourceType] = currentResourceStats
-        })
-
-        const arr = []
-        for(let key in lookup){
-          arr.push(lookup[key])
-        }
-        return arr
-      })
-
-
-    return summary
-  }
 
   ///////////////////////////////////////////////////////////////////////////////////////
   // Source
@@ -211,13 +177,13 @@ export class PouchdbRepository implements IDatabaseRepository {
   // available (ie, user has not yet been configured with call to .configureForUser()).
   public GetDB(): any {
     if(!this.localPouchDb) {
-      throw( new Error( "Database is not available - please configure an instance." ) );
+      throw(new Error( "Database is not available - please configure an instance." ));
     }
     return this.localPouchDb;
   }
 
   // create a new document. Returns a promise of the generated id.
-  private createDocument(doc: IDatabaseDocument) : Promise<string> {
+  protected createDocument(doc: IDatabaseDocument) : Promise<string> {
     // make sure we always "populate" the ID for every document before submitting
     doc.populateId()
 
@@ -232,7 +198,7 @@ export class PouchdbRepository implements IDatabaseRepository {
   }
 
   // create multiple documents, returns a list of generated ids
-  private createBulk(docs: IDatabaseDocument[]): Promise<string[]> {
+  protected createBulk(docs: IDatabaseDocument[]): Promise<string[]> {
     return this.GetDB()
       .bulkDocs(docs.map((doc) => { doc.populateId(); return doc }))
       .then((results): string[] => {
@@ -240,16 +206,16 @@ export class PouchdbRepository implements IDatabaseRepository {
       })
   }
 
-  private getDocument(id: string): Promise<any> {
+  protected getDocument(id: string): Promise<any> {
     return this.GetDB()
       .get(id)
   }
 
 
-  private findDocumentByDocType(docType: DocType, includeDocs: boolean = true): Promise<IDatabasePaginatedResponse> {
+  protected findDocumentByDocType(docType: DocType, includeDocs: boolean = true): Promise<IDatabasePaginatedResponse> {
     return this.findDocumentByPrefix(docType, includeDocs)
   }
-  private findDocumentByPrefix(prefix: string, includeDocs: boolean = true): Promise<IDatabasePaginatedResponse> {
+  protected findDocumentByPrefix(prefix: string, includeDocs: boolean = true): Promise<IDatabasePaginatedResponse> {
     return this.GetDB()
       .allDocs({
         include_docs: includeDocs,
@@ -258,7 +224,7 @@ export class PouchdbRepository implements IDatabaseRepository {
       })
   }
 
-  private async deleteDocument(id: string): Promise<boolean> {
+  protected async deleteDocument(id: string): Promise<boolean> {
     const docToDelete = await this.getDocument(id)
     return this.GetDB()
       .remove(docToDelete)

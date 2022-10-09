@@ -40,6 +40,7 @@
     "ngx-highlightjs": "^7.0.1",
     "observable-webworker": "^4.0.1",
     "pouchdb": "^7.3.0",
+    "pouchdb-authentication": "^1.1.3",
     "pouchdb-find": "^7.3.0",
     "pouchdb-upsert": "^2.2.0",
     "rxjs": "~6.5.4",

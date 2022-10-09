@@ -26,8 +26,6 @@ export interface IDatabaseRepository {
   // GetUserByEmail(context.Context, string) (*models.User, error)
   // GetCurrentUser(context.Context) *models.User
 
-  GetSummary(): Promise<Summary>
-
   CreateSource(source: Source): Promise<string>
   GetSource(source_id: string): Promise<Source>
   DeleteSource(source_id: string): Promise<boolean>
