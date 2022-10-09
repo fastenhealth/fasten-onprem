@@ -1,0 +1,4 @@
+#!/usr/bin/with-contenv bash
+
+echo "starting couchdb"
+/docker-entrypoint.sh /opt/couchdb/bin/couchdb

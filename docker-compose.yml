@@ -2,13 +2,15 @@ version: "3.9"
 services:
   couchdb:
     build:
-      context: ./docker/couchdb
+      context: .
       dockerfile: Dockerfile
 #    environment:
 #      - COUCHDB_USER=admin
 #      - COUCHDB_PASSWORD=password
     ports:
+      - "9090:8080"
       - "5984:5984"
     volumes:
       - ./.couchdb/data:/opt/couchdb/data
       - ./.couchdb/config:/opt/couchdb/etc/local.d
+#      - ./config.example.yaml:/opt/fasten/config/config.yaml
