@@ -27,21 +27,22 @@ PouchDB.plugin(PouchCrypto);
  * Eventually this method should dyanmically dtermine the version of the repo to return from the env.
  * @constructor
  */
-export function NewRepositiory(userIdentifier?: string): IDatabaseRepository {
-  return new PouchdbRepository(userIdentifier)
+export function NewRepositiory(userIdentifier?: string, encryptionKey?: string): IDatabaseRepository {
+  return new PouchdbRepository(userIdentifier, encryptionKey)
 }
 
 export class PouchdbRepository implements IDatabaseRepository {
 
 
-
+  encryptionKey: string
   localPouchDb: PouchDB.Database
-  constructor(userIdentifier?: string) {
+  constructor(userIdentifier?: string, encryptionKey?: string) {
     //setup PouchDB Plugins
      //https://pouchdb.com/guides/mango-queries.html
     this.localPouchDb = null
     if(userIdentifier){
       this.localPouchDb = new PouchDB(userIdentifier);
+      this.encryptionKey = encryptionKey
     }
   }
 
@@ -175,11 +176,22 @@ export class PouchdbRepository implements IDatabaseRepository {
 
   // Get the active PouchDB instance. Throws an error if no PouchDB instance is
   // available (ie, user has not yet been configured with call to .configureForUser()).
-  public GetDB(): any {
+  public async GetDB(): Promise<PouchDB.Database> {
     if(!this.localPouchDb) {
       throw(new Error( "Database is not available - please configure an instance." ));
     }
-    return this.localPouchDb;
+    // if(this.encryptionKey){
+    //   return this.localPouchDb.crypto(this.encryptionKey, {ignore:[
+    //     'doc_type',
+    //     'source_id',
+    //     'source_resource_type',
+    //     'source_resource_id',
+    //   ]}).then(() => {
+    //     return this.localPouchDb
+    //   })
+    // } else {
+      return this.localPouchDb;
+    // }
   }
 
   // create a new document. Returns a promise of the generated id.
@@ -189,8 +201,9 @@ export class PouchdbRepository implements IDatabaseRepository {
 
     // NOTE: All friends are given the key-prefix of "friend:". This way, when we go
     // to query for friends, we can limit the scope to keys with in this key-space.
+
     return this.GetDB()
-      .put(doc)
+      .then((db) => db.put(doc))
       .then(( result ): string => {
           return( result.id );
         }
@@ -200,7 +213,9 @@ export class PouchdbRepository implements IDatabaseRepository {
   // create multiple documents, returns a list of generated ids
   protected createBulk(docs: IDatabaseDocument[]): Promise<string[]> {
     return this.GetDB()
-      .bulkDocs(docs.map((doc) => { doc.populateId(); return doc }))
+      .then((db) => {
+        return db.bulkDocs(docs.map((doc) => { doc.populateId(); return doc }))
+      })
       .then((results): string[] => {
         return results.map((result) => result.id)
       })
@@ -208,7 +223,7 @@ export class PouchdbRepository implements IDatabaseRepository {
 
   protected getDocument(id: string): Promise<any> {
     return this.GetDB()
-      .get(id)
+      .then((db) => db.get(id))
   }
 
 
@@ -217,17 +232,20 @@ export class PouchdbRepository implements IDatabaseRepository {
   }
   protected findDocumentByPrefix(prefix: string, includeDocs: boolean = true): Promise<IDatabasePaginatedResponse> {
     return this.GetDB()
-      .allDocs({
-        include_docs: includeDocs,
-        startkey: `${prefix}:`,
-        endkey: `${prefix}:\uffff`
+      .then((db) => {
+        return db.allDocs({
+          include_docs: includeDocs,
+          startkey: `${prefix}:`,
+          endkey: `${prefix}:\uffff`
+        })
       })
+
   }
 
   protected async deleteDocument(id: string): Promise<boolean> {
     const docToDelete = await this.getDocument(id)
     return this.GetDB()
-      .remove(docToDelete)
+      .then((db) => db.remove(docToDelete))
       .then((result) => {
         return result.ok
       })

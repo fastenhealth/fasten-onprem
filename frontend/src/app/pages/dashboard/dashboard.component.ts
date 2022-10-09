@@ -54,7 +54,7 @@ export class DashboardComponent implements OnInit {
       let metadataSource = results[1] as { [name: string]: MetadataSource }
 
       //process
-      console.log(summary);
+      console.log("SUMMARY RESPONSE",summary);
       this.sources = summary.sources
       this.metadataSource = metadataSource
       this.metadataSource["manual"] = {

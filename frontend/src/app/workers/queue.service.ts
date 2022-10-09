@@ -16,6 +16,7 @@ export class QueueService {
       const sourceSync = new SourceSyncMessage()
       sourceSync.source = source
       sourceSync.userIdentifier = localStorage.getItem("current_user")
+      sourceSync.encryptionKey = "my-secret-encryption-key"
       const input$: Observable<string> = of(JSON.stringify(sourceSync));
       return fromWorker<string, string>(() => new Worker(new URL('./source-sync.worker', import.meta.url), {type: 'module'}), input$)
         // .subscribe(message => {

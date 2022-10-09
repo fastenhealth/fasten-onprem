@@ -30,7 +30,7 @@ export class FastenDbService extends PouchdbRepository {
   remotePouchEndpoint = "http://localhost:5984"
   constructor(private _httpClient: HttpClient) {
     const userIdentifier = localStorage.getItem("current_user")
-    super(userIdentifier);
+    super(userIdentifier, "my-secret-encryption-key");
     if(userIdentifier){
       this.enableSync(userIdentifier)
     }
@@ -110,12 +110,16 @@ export class FastenDbService extends PouchdbRepository {
       .then((paginatedResp) => paginatedResp.rows)
 
     // summary.patients = []
-    summary.patients = await this.GetDB().find({
-      selector: {
-        doc_type: DocType.ResourceFhir,
-        source_resource_type: "Patient",
-      }
-    }).then((results) => results.docs)
+    summary.patients = await this.GetDB()
+      .then((db) => {
+        return db.find({
+          selector: {
+            doc_type: DocType.ResourceFhir,
+            source_resource_type: "Patient",
+          }
+        })
+      })
+      .then((results) => results.docs)
 
     summary.resource_type_counts = await this.findDocumentByPrefix(`${DocType.ResourceFhir}`, false)
       .then((paginatedResp) => {

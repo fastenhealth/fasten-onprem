@@ -17,7 +17,7 @@ export class SourceSyncWorker implements DoWork<string, string> {
           console.log(msg); // outputs 'Hello from main thread'
           const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
 
-          const db = NewRepositiory(sourceSyncMessage.userIdentifier)
+          const db = NewRepositiory(sourceSyncMessage.userIdentifier, sourceSyncMessage.encryptionKey)
           const client = NewClient(sourceSyncMessage.source.source_type, sourceSyncMessage.source)
           console.log("!!!!!!!!!!!!!!STARTING WORKER SYNC!!!!!!!!!", sourceSyncMessage)
           return client.SyncAll(db)
