@@ -49,7 +49,7 @@ export class DashboardComponent implements OnInit {
     //     })
     //   })
 
-    forkJoin([this.fastenDb.GetSummary(), this.fastenApi.getMetadataSources()]).subscribe(results => {
+    forkJoin([this.fastenDb.GetSummary(), this.fastenApi.GetMetadataSources()]).subscribe(results => {
       let summary = results[0] as Summary
       let metadataSource = results[1] as { [name: string]: MetadataSource }
 

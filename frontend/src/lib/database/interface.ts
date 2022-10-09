@@ -2,6 +2,7 @@ import {Source} from '../models/database/source';
 import {ResourceFhir} from '../models/database/resource_fhir';
 import {SourceSummary} from '../models/fasten/source-summary';
 import {Summary} from '../models/fasten/summary';
+import {User} from '../models/fasten/user';
 // import {SourceSummary} from '../../app/models/fasten/source-summary';
 
 export interface IDatabaseDocument {

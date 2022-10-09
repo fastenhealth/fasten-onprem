@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {FastenApiService} from '../../services/fasten-api.service';
-import {User} from '../../models/fasten/user';
+import {FastenDbService} from '../../services/fasten-db.service';
+import {User} from '../../../lib/models/fasten/user';
 import {Router} from '@angular/router';
 
 @Component({
@@ -13,7 +13,11 @@ export class AuthSignupComponent implements OnInit {
   newUser: User = new User()
   errorMsg: string = ""
 
-  constructor(private fastenApi: FastenApiService, private router: Router) { }
+  constructor(
+    // private fastenApi: FastenApiService,
+    private fastenDb: FastenDbService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
   }
@@ -21,13 +25,21 @@ export class AuthSignupComponent implements OnInit {
   signupSubmit(){
     this.submitted = true;
 
-    this.fastenApi.signup(this.newUser).subscribe((tokenResp: any) => {
+    this.fastenDb.Signup(this.newUser).then((tokenResp: any) => {
         console.log(tokenResp);
-
         this.router.navigateByUrl('/dashboard');
       },
       (err)=>{
-      this.errorMsg = err?.error?.error || "an unknown error occurred during sign-up"
+        console.error("an error occured while signup",err)
+        if(err.name === 'conflict') {
+          // "batman" already exists, choose another username
+          this.errorMsg = "username already exists"
+        } else if (err.name === 'forbidden') {
+          // invalid username
+          this.errorMsg = "invalid username"
+        } else {
+          this.errorMsg = "an unknown error occurred during sign-up"
+        }
     })
   }
 
