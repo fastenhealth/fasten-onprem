@@ -3,28 +3,31 @@
 if [ -f "/opt/couchdb/data/.init_complete" ]; then
     echo "Couchdb initialization has already completed, skipping"
 else
-
+    cp /opt/couchdb/etc/setup.ini /opt/couchdb/etc/local.d/setup.ini
     # start couchdb as a background process (store PID)
     echo "Couchdb initialization: start couchdb in background mode"
-    /opt/couchdb/bin/couchdb &
+    # https://linux.die.net/man/1/couchdb
+    /opt/couchdb/bin/couchdb -b &
     COUCHDB_PID=$!
 
     # wait for couchdb to be ready
-    until $(curl --output /dev/null --silent --head --fail http://127.0.0.1:5984/_up); do echo "couchdb not ready" && sleep 5; done
+    until $(curl --output /dev/null --silent --head --fail http://127.0.0.1:5432/_up); do echo "couchdb not ready" && sleep 5; done
 
     # create couch_peruser required system databases manually on startup
     echo "couchdb ready, start creating system databases"
-    curl -X PUT http://127.0.0.1:5984/_users
-    curl -X PUT http://127.0.0.1:5984/_replicator
-    curl -X PUT http://127.0.0.1:5984/_global_changes
+    curl --fail -X PUT -u admin:mysetuppassword http://127.0.0.1:5432/_users
+    curl --fail -X PUT -u admin:mysetuppassword http://127.0.0.1:5432/_replicator
+    curl --fail -X PUT -u admin:mysetuppassword http://127.0.0.1:5432/_global_changes
     echo "system databases created successfully"
 
 
     # gracefully stop couchdb process
     echo "killing couchdb process"
-    kill -2 $COUCHDB_PID
+     /opt/couchdb/bin/couchdb -k
+    rm -f /opt/couchdb/etc/local.d/setup.ini
 
     # create the init complete flag
     echo "Couchdb initialization: complete"
     touch /opt/couchdb/data/.init_complete
+
 fi
