@@ -3,10 +3,11 @@
 if [ -f "/opt/couchdb/data/.init_complete" ]; then
     echo "Couchdb initialization has already completed, skipping"
 else
-    cp /opt/couchdb/etc/setup.ini /opt/couchdb/etc/local.d/setup.ini
     # start couchdb as a background process (store PID)
-    echo "Couchdb initialization: start couchdb in background mode"
+    echo "Couchdb initialization: start couchdb in background mode (non-standard port)"
     # https://linux.die.net/man/1/couchdb
+    sed -i -e 's/;port = 5984/port = 5432/g' /opt/couchdb/etc/local.ini
+    sed -i -e 's/bind_address = 0.0.0.0/bind_address = 127.0.0.1/g' /opt/couchdb/etc/local.ini
     /opt/couchdb/bin/couchdb -b &
     COUCHDB_PID=$!
 
@@ -15,16 +16,17 @@ else
 
     # create couch_peruser required system databases manually on startup
     echo "couchdb ready, start creating system databases"
-    curl --fail -X PUT -u admin:mysetuppassword http://127.0.0.1:5432/_users
-    curl --fail -X PUT -u admin:mysetuppassword http://127.0.0.1:5432/_replicator
-    curl --fail -X PUT -u admin:mysetuppassword http://127.0.0.1:5432/_global_changes
+    curl --fail -X PUT -u admin:mysecretpassword http://127.0.0.1:5432/_users
+    curl --fail -X PUT -u admin:mysecretpassword http://127.0.0.1:5432/_replicator
+    curl --fail -X PUT -u admin:mysecretpassword http://127.0.0.1:5432/_global_changes
     echo "system databases created successfully"
-
 
     # gracefully stop couchdb process
     echo "killing couchdb process"
      /opt/couchdb/bin/couchdb -k
-    rm -f /opt/couchdb/etc/local.d/setup.ini
+
+    sed -i -e 's/port = 5432/;port = 5984/g' /opt/couchdb/etc/local.ini
+    sed -i -e 's/bind_address = 127.0.0.1/bind_address = 0.0.0.0/g' /opt/couchdb/etc/local.ini
 
     # create the init complete flag
     echo "Couchdb initialization: complete"

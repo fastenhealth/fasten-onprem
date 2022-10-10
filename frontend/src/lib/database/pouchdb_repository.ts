@@ -19,6 +19,9 @@ PouchDB.plugin(PouchCrypto);
 // PouchDB.plugin(find);
 // PouchDB.debug.enable('pouchdb:find')
 
+// YOU MUST USE globalThis not window or self.
+// YOU MUST NOT USE console.* as its not available in a webworker context
+
 
 // this is required, otherwise PouchFind fails when looking for the global PouchDB variable
 
@@ -33,16 +36,28 @@ export function NewRepositiory(userIdentifier?: string, encryptionKey?: string):
 
 export class PouchdbRepository implements IDatabaseRepository {
 
-
+  replicationHandler: any
+  remotePouchEndpoint: string // "http://localhost:5984"
   encryptionKey: string
   localPouchDb: PouchDB.Database
+
+  /**
+   * This class can be initialized in 2 states
+   * - unauthenticated
+   * - authenticated - determined using cookie and localStorage.current_user
+   * @param userIdentifier
+   * @param encryptionKey
+   */
   constructor(userIdentifier?: string, encryptionKey?: string) {
+    this.remotePouchEndpoint = `${globalThis.location.protocol}//${globalThis.location.host}${this.getBasePath()}/database`
+
     //setup PouchDB Plugins
      //https://pouchdb.com/guides/mango-queries.html
     this.localPouchDb = null
     if(userIdentifier){
       this.localPouchDb = new PouchDB(userIdentifier);
       this.encryptionKey = encryptionKey
+      this.enableSync(userIdentifier)
     }
   }
 
@@ -55,6 +70,11 @@ export class PouchdbRepository implements IDatabaseRepository {
     if (!this.localPouchDb) {
       return;
     }
+    // Stop remote replication for existing database
+    if(this.replicationHandler){
+      this.replicationHandler.cancel()
+    }
+
     this.localPouchDb.close();
     this.localPouchDb = null;
     return
@@ -251,4 +271,31 @@ export class PouchdbRepository implements IDatabaseRepository {
       })
   }
 
+  ///////////////////////////////////////////////////////////////////////////////////////
+  // Sync private/protected methods
+  ///////////////////////////////////////////////////////////////////////////////////////
+  protected getRemoteUserDb(username: string){
+    return `${this.remotePouchEndpoint}/userdb-${this.toHex(username)}`
+  }
+  protected enableSync(userIdentifier: string){
+    return this.replicationHandler = this.localPouchDb.sync(this.getRemoteUserDb(userIdentifier), {live: true, retry: true})
+  }
+
+
+  private toHex(s: string) {
+    // utf8 to latin1
+    s = unescape(encodeURIComponent(s))
+    let h = ''
+    for (let i = 0; i < s.length; i++) {
+      h += s.charCodeAt(i).toString(16)
+    }
+    return h
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  // Helper methods
+  ///////////////////////////////////////////////////////////////////////////////////////
+  protected getBasePath(): string {
+    return globalThis.location.pathname.split('/web').slice(0, 1)[0];
+  }
 }

@@ -25,16 +25,11 @@ PouchDB.plugin(PouchAuth);
 })
 export class FastenDbService extends PouchdbRepository {
 
-  //TODO: move most of this functionality back into the lib as a separate file.
-  replicationHandler: any
-  remotePouchEndpoint: string // "http://localhost:5984"
+
   constructor(private _httpClient: HttpClient) {
     const userIdentifier = localStorage.getItem("current_user")
     super(userIdentifier, "my-secret-encryption-key");
-    this.remotePouchEndpoint = `${window.location.protocol}//${window.location.host}${this.getBasePath()}/database`
-    if(userIdentifier){
-      this.enableSync(userIdentifier)
-    }
+
   }
 
 
@@ -53,7 +48,10 @@ export class FastenDbService extends PouchdbRepository {
       .then((loginResp)=>{
         return this.postLoginHook(loginResp.name, true)
       })
-      .catch((err) => console.error("an error occurred during login/setup", err))
+      .catch((err) => {
+        console.error("an error occurred during login/setup", err)
+        throw err
+      })
   }
 
   /**
@@ -86,20 +84,20 @@ export class FastenDbService extends PouchdbRepository {
       //if we have a local database, lets see if we have an active session to the remote database.
       const remotePouchDb = new PouchDB(this.getRemoteUserDb(localStorage.getItem("current_user")), {skip_setup: true});
       const session = await remotePouchDb.getSession()
-      const isAuth = !!session?.userCtx?.name
+      const authUser = session?.userCtx?.name
+      const isAuth = !!authUser
       console.warn("IsAuthenticated? getSession() ====> ", isAuth)
-
-      return isAuth
+      if(!isAuth){
+        return false
+      }
+      //confirm that the logged in user matches the session user
+      return authUser == localStorage.getItem("current_user")
     } catch (e) {
       return false
     }
   }
 
   public Close(): Promise<void> {
-    // Stop remote replication for existing database
-    if(this.replicationHandler){
-      this.replicationHandler.cancel()
-    }
     return super.Close()
   }
 
@@ -182,42 +180,25 @@ export class FastenDbService extends PouchdbRepository {
     console.log("DB createIndex complete", createIndexMsg)
 
     if(sync){
+      console.log("DB sync init...", userIdentifier, this.getRemoteUserDb(userIdentifier))
+
       this.enableSync(userIdentifier)
+      //   .on('paused', function (info) {
+      //     // replication was paused, usually because of a lost connection
+      //     console.warn("replication was paused, usually because of a lost connection", info)
+      //   }).on('active', function (info) {
+      //   // replication was resumed
+      //   console.warn("replication was resumed", info)
+      // }).on('error', function (err) {
+      //   // totally unhandled error (shouldn't happen)
+      //   console.error("replication unhandled error (shouldn't happen)", err)
+      // });
+      console.log("DB sync enabled")
+
     }
 
     console.warn( "Configured PouchDB database for,", this.localPouchDb.name );
     return
   }
-  private enableSync(userIdentifier: string){
-    console.log("DB sync init...", userIdentifier, this.getRemoteUserDb(userIdentifier))
-    this.replicationHandler = this.localPouchDb.sync(this.getRemoteUserDb(userIdentifier), {live: true, retry: true})
-      .on('paused', function (info) {
-        // replication was paused, usually because of a lost connection
-        console.warn("replication was paused, usually because of a lost connection", info)
-      }).on('active', function (info) {
-        // replication was resumed
-        console.warn("replication was resumed", info)
-      }).on('error', function (err) {
-        // totally unhandled error (shouldn't happen)
-        console.error("replication unhandled error (shouldn't happen)", err)
-      });
-    console.log("DB sync enabled")
-  }
 
-  private getRemoteUserDb(username: string){
-    return `${this.remotePouchEndpoint}/userdb-${this.toHex(username)}`
-  }
-  private toHex(s: string) {
-    // utf8 to latin1
-    s = unescape(encodeURIComponent(s))
-    let h = ''
-    for (let i = 0; i < s.length; i++) {
-      h += s.charCodeAt(i).toString(16)
-    }
-    return h
-  }
-
-  private getBasePath(): string {
-    return window.location.pathname.split('/web').slice(0, 1)[0];
-  }
 }
