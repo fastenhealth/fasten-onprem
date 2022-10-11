@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {FastenDbService} from '../../services/fasten-db.service';
 import {User} from '../../../lib/models/fasten/user';
 import {Router} from '@angular/router';
+import {ToastNotification, ToastType} from '../../models/fasten/toast';
+import {ToastService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-auth-signup',
@@ -16,7 +18,8 @@ export class AuthSignupComponent implements OnInit {
   constructor(
     // private fastenApi: FastenApiService,
     private fastenDb: FastenDbService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -40,6 +43,11 @@ export class AuthSignupComponent implements OnInit {
         } else {
           this.errorMsg = "an unknown error occurred during sign-up"
         }
+
+        const toastNotificaiton = new ToastNotification()
+        toastNotificaiton.type = ToastType.Error
+        toastNotificaiton.message = this.errorMsg
+        this.toastService.show(toastNotificaiton)
     })
   }
 

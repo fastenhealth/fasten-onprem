@@ -32,6 +32,7 @@ import {ListDiagnosticReportComponent} from './list-generic-resource/list-diagno
 import {ListGoalComponent} from './list-generic-resource/list-goal.component';
 import { ListFallbackResourceComponent } from './list-fallback-resource/list-fallback-resource.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { ToastComponent } from './toast/toast.component';
 
 @NgModule({
   imports: [
@@ -70,6 +71,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     ResourceListComponent,
     ResourceListOutletDirective,
     ListFallbackResourceComponent,
+    ToastComponent,
   ],
   exports: [
     ComponentsSidebarComponent,
@@ -99,7 +101,8 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     ListDiagnosticReportComponent,
     ListGoalComponent,
     ResourceListComponent,
-    ResourceListOutletDirective
+    ResourceListOutletDirective,
+    ToastComponent,
   ]
 })
 

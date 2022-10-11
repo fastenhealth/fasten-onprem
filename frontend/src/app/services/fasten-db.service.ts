@@ -67,8 +67,11 @@ export class FastenDbService extends PouchdbRepository {
   }
 
   public async Logout(): Promise<any> {
-    localStorage.removeItem("current_user")
+
+    let remotePouchDb = new PouchDB(this.getRemoteUserDb(localStorage.getItem("current_user")), {skip_setup: true});
+    await remotePouchDb.logOut()
     await this.Close()
+    localStorage.removeItem("current_user")
   }
   public async IsAuthenticated(): Promise<boolean> {
     if(!this.localPouchDb){

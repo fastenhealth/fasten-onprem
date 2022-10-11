@@ -1,0 +1,17 @@
+<div class="pos-absolute t-10 r-10">
+  <ngb-toast
+    *ngFor="let toast of toastService.toasts"
+    [class]="toast.displayClass"
+    [autohide]="true"
+    [delay]="toast.delay || 5000"
+    (hidden)="toastService.remove(toast)"
+  >
+    <ng-template ngbToastHeader>
+      <h6 class="tx-inverse tx-14 mg-b-0 mg-r-auto">{{toast.title}}</h6>
+      <small>11 mins ago</small>
+    </ng-template>
+
+    {{ toast.message }}
+  </ngb-toast>
+</div>
+
