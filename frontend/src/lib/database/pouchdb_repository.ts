@@ -378,7 +378,8 @@ export class PouchdbRepository implements IDatabaseRepository {
     return `${this.remotePouchEndpoint}/userdb-${this.toHex(username)}`
   }
   protected enableSync(userIdentifier: string){
-    return this.replicationHandler = this.localPouchDb.sync(this.getRemoteUserDb(userIdentifier), {live: true, retry: true})
+    this.replicationHandler = this.localPouchDb.sync(this.getRemoteUserDb(userIdentifier), {live: true, retry: true})
+    return
   }
 
 
