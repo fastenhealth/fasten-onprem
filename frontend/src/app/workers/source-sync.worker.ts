@@ -19,6 +19,10 @@ export class SourceSyncWorker implements DoWork<string, string> {
 
           const db = NewRepositiory(sourceSyncMessage.userIdentifier, sourceSyncMessage.encryptionKey)
           const client = NewClient(sourceSyncMessage.source.source_type, sourceSyncMessage.source)
+          //TODO: validate the FHIR version from the datasource matches the client
+          // if the source token has been refreshed, we need to store it in the DB.
+          // await db.CreateSource()
+
           console.log("!!!!!!!!!!!!!!STARTING WORKER SYNC!!!!!!!!!", sourceSyncMessage)
           return client.SyncAll(db)
             .then((resp) => {

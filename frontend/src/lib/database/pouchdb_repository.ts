@@ -8,7 +8,10 @@ import {Base64} from '../utils/base64';
 // PouchDB & plugins
 import * as PouchDB from 'pouchdb/dist/pouchdb';
 import * as PouchCrypto from 'crypto-pouch';
+import {PouchdbUpsert} from './plugins/upsert';
 PouchDB.plugin(PouchCrypto);
+
+
 
 // !!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!
 // most pouchdb plugins seem to fail when used in a webworker.
@@ -18,6 +21,15 @@ PouchDB.plugin(PouchCrypto);
 // import find from 'pouchdb-find';
 // PouchDB.plugin(find);
 // PouchDB.debug.enable('pouchdb:find')
+
+// import * as rawUpsert from 'pouchdb-upsert';
+// const upsert: PouchDB.Plugin = (rawUpsert as any);
+// PouchDB.plugin(upsert);
+
+// import {PouchdbUpsert} from './plugins/upsert';
+// const upsert = new PouchdbUpsert()
+// console.log("typeof PouchdbUpsert",typeof upsert, upsert)
+// PouchDB.plugin(upsert.default)
 
 // YOU MUST USE globalThis not window or self.
 // YOU MUST NOT USE console.* as its not available in a webworker context
@@ -85,7 +97,7 @@ export class PouchdbRepository implements IDatabaseRepository {
   // Source
 
   public async CreateSource(source: Source): Promise<string> {
-    return this.createDocument(source);
+    return this.upsertDocument(source);
   }
 
   public async GetSource(source_id: string): Promise<Source> {
@@ -145,11 +157,11 @@ export class PouchdbRepository implements IDatabaseRepository {
   // Resource
 
   public async CreateResource(resource: ResourceFhir): Promise<string> {
-    return this.createDocument(resource);
+    return this.upsertDocument(resource);
   }
 
   public async CreateResources(resources: ResourceFhir[]): Promise<string[]> {
-    return this.createBulk(resources);
+    return this.upsertBulk(resources);
   }
 
   public async GetResource(resource_id: string): Promise<ResourceFhir> {
@@ -214,30 +226,80 @@ export class PouchdbRepository implements IDatabaseRepository {
     // }
   }
 
-  // create a new document. Returns a promise of the generated id.
-  protected createDocument(doc: IDatabaseDocument) : Promise<string> {
+
+  // update/insert a new document. Returns a promise of the generated id.
+  protected upsertDocument(newDoc: IDatabaseDocument) : Promise<string> {
     // make sure we always "populate" the ID for every document before submitting
-    doc.populateId()
+    newDoc.populateId()
 
     // NOTE: All friends are given the key-prefix of "friend:". This way, when we go
     // to query for friends, we can limit the scope to keys with in this key-space.
 
     return this.GetDB()
-      .then((db) => db.put(doc))
+      .then((db) => {
+        return PouchdbUpsert.upsert(db, newDoc._id, (existingDoc: IDatabaseDocument) => {
+          //diffFunc - function that takes the existing doc as input and returns an updated doc.
+          // If this diffFunc returns falsey, then the update won't be performed (as an optimization).
+          // If the document does not already exist, then {} will be the input to diffFunc.
+
+          const isExistingEmpty = Object.keys(existingDoc).length === 0
+          if(isExistingEmpty){
+            //always return new doc (and set update_at if not already set)
+            //if this is a ResourceFhir doc, see if theres a updatedDate already
+            if(newDoc.doc_type == DocType.ResourceFhir){
+              newDoc.updated_at = newDoc.updated_at || (newDoc as any).meta?.updated_at
+            }
+            newDoc.updated_at = newDoc.updated_at || (new Date().toISOString())
+            return newDoc
+          }
+
+          if(newDoc.doc_type == DocType.ResourceFhir){
+
+            //for resourceFhir docs, we only care about comparing the resource_raw content
+            const existingContent = JSON.stringify((existingDoc as ResourceFhir).resource_raw)
+            const newContent = JSON.stringify((newDoc as ResourceFhir).resource_raw)
+            if(existingContent == newContent){
+              return false //do not update
+            } else {
+              //theres a difference. Set the updated_at date if possible, otherwise use the current date
+              (newDoc as ResourceFhir).updated_at = (newDoc as any).meta?.updated_at || (new Date().toISOString())
+              return newDoc
+            }
+
+          } else if(newDoc.doc_type == DocType.Source){
+            delete existingDoc._rev
+            const existingContent = JSON.stringify(existingDoc)
+            const newContent = JSON.stringify(newDoc)
+            if(existingContent == newContent){
+              return false //do not update, content is the same for source object
+            } else {
+              //theres a difference. Set the updated_at date
+              (newDoc as Source).updated_at = (new Date().toISOString())
+              return { ...existingDoc, ...newDoc };
+            }
+
+
+          } else {
+            throw new Error("unknown doc_type, cannot diff for upsert: " + newDoc.doc_type)
+          }
+        })
+
+      })
       .then(( result ): string => {
           return( result.id );
         }
       );
   }
 
-  // create multiple documents, returns a list of generated ids
-  protected createBulk(docs: IDatabaseDocument[]): Promise<string[]> {
+  protected upsertBulk(docs: IDatabaseDocument[]): Promise<string[]> {
     return this.GetDB()
       .then((db) => {
-        return db.bulkDocs(docs.map((doc) => { doc.populateId(); return doc }))
-      })
-      .then((results): string[] => {
-        return results.map((result) => result.id)
+
+        return Promise.all(docs.map((doc) => {
+          doc.populateId();
+          return this.upsertDocument(doc)
+        }))
+
       })
   }
 
@@ -269,6 +331,44 @@ export class PouchdbRepository implements IDatabaseRepository {
       .then((result) => {
         return result.ok
       })
+  }
+
+  //DEPRECATED
+  /**
+   * create multiple documents, returns a list of generated ids
+   * @deprecated
+   * @param docs
+   * @protected
+   */
+  protected createBulk(docs: IDatabaseDocument[]): Promise<string[]> {
+    return this.GetDB()
+      .then((db) => {
+        return db.bulkDocs(docs.map((doc) => { doc.populateId(); return doc }))
+      })
+      .then((results): string[] => {
+        return results.map((result) => result.id)
+      })
+  }
+
+  /**
+   * create a new document. Returns a promise of the generated id.
+   * @deprecated
+   * @param doc
+   * @protected
+   */
+  protected createDocument(doc: IDatabaseDocument) : Promise<string> {
+    // make sure we always "populate" the ID for every document before submitting
+    doc.populateId()
+
+    // NOTE: All friends are given the key-prefix of "friend:". This way, when we go
+    // to query for friends, we can limit the scope to keys with in this key-space.
+
+    return this.GetDB()
+      .then((db) => db.put(doc))
+      .then(( result ): string => {
+          return( result.id );
+        }
+      );
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////

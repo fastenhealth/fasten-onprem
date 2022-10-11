@@ -9,6 +9,8 @@ export interface IDatabaseDocument {
   _id?: string
   _rev?: string
   doc_type: string
+  updated_at?: string
+
   populateId(): void
   base64Id(): string
 }

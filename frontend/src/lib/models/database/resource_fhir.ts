@@ -6,9 +6,8 @@ export class ResourceFhir {
   _id?: string
   _rev?: string
   doc_type: DocType = DocType.ResourceFhir
+  updated_at?: string
 
-  created_at?: Date
-  updated_at?: Date
   source_id: string = ""
   source_resource_type: string = ""
   source_resource_id: string = ""

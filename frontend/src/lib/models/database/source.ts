@@ -7,8 +7,9 @@ export class Source extends LighthouseSourceMetadata{
   _id?: string
   _rev?: string
   doc_type: string
-  source_type: SourceType
+  updated_at?: string
 
+  source_type: SourceType
   patient: string
   access_token:          string
   refresh_token?:         string
