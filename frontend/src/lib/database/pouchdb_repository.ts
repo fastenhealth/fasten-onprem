@@ -48,10 +48,10 @@ export function NewRepositiory(userIdentifier?: string, encryptionKey?: string):
 
 export class PouchdbRepository implements IDatabaseRepository {
 
-  replicationHandler: any
+  // replicationHandler: any
   remotePouchEndpoint: string // "http://localhost:5984"
   encryptionKey: string
-  localPouchDb: PouchDB.Database
+  pouchDb: PouchDB.Database
 
   /**
    * This class can be initialized in 2 states
@@ -65,11 +65,11 @@ export class PouchdbRepository implements IDatabaseRepository {
 
     //setup PouchDB Plugins
      //https://pouchdb.com/guides/mango-queries.html
-    this.localPouchDb = null
+    this.pouchDb = null
     if(userIdentifier){
-      this.localPouchDb = new PouchDB(userIdentifier);
+      this.pouchDb = new PouchDB(this.getRemoteUserDb(userIdentifier));
       this.encryptionKey = encryptionKey
-      this.enableSync(userIdentifier)
+      // this.enableSync(userIdentifier)
     }
   }
 
@@ -79,16 +79,16 @@ export class PouchdbRepository implements IDatabaseRepository {
   // CAUTION: Subsequent calls to .GetDB() will fail until a new instance is configured
   // with a call to .ConfigureForUser().
   public async Close(): Promise<void> {
-    if (!this.localPouchDb) {
+    if (!this.pouchDb) {
       return;
     }
     // Stop remote replication for existing database
-    if(this.replicationHandler){
-      this.replicationHandler.cancel()
-    }
+    // if(this.replicationHandler){
+    //   this.replicationHandler.cancel()
+    // }
 
-    this.localPouchDb.close();
-    this.localPouchDb = null;
+    this.pouchDb.close();
+    this.pouchDb = null;
     return
   }
 
@@ -209,20 +209,20 @@ export class PouchdbRepository implements IDatabaseRepository {
   // Get the active PouchDB instance. Throws an error if no PouchDB instance is
   // available (ie, user has not yet been configured with call to .configureForUser()).
   public async GetDB(): Promise<PouchDB.Database> {
-    if(!this.localPouchDb) {
+    if(!this.pouchDb) {
       throw(new Error( "Database is not available - please configure an instance." ));
     }
     // if(this.encryptionKey){
-    //   return this.localPouchDb.crypto(this.encryptionKey, {ignore:[
+    //   return this.pouchDb.crypto(this.encryptionKey, {ignore:[
     //     'doc_type',
     //     'source_id',
     //     'source_resource_type',
     //     'source_resource_id',
     //   ]}).then(() => {
-    //     return this.localPouchDb
+    //     return this.pouchDb
     //   })
     // } else {
-      return this.localPouchDb;
+      return this.pouchDb;
     // }
   }
 
@@ -377,10 +377,10 @@ export class PouchdbRepository implements IDatabaseRepository {
   protected getRemoteUserDb(username: string){
     return `${this.remotePouchEndpoint}/userdb-${this.toHex(username)}`
   }
-  protected enableSync(userIdentifier: string){
-    this.replicationHandler = this.localPouchDb.sync(this.getRemoteUserDb(userIdentifier), {live: true, retry: true})
-    return
-  }
+  // protected enableSync(userIdentifier: string){
+  //   this.replicationHandler = this.localPouchDb.sync(this.getRemoteUserDb(userIdentifier), {live: true, retry: true})
+  //   return
+  // }
 
 
   private toHex(s: string) {

@@ -46,7 +46,7 @@ export class FastenDbService extends PouchdbRepository {
     let remotePouchDb = new PouchDB(this.getRemoteUserDb(username), {skip_setup: true});
     return await remotePouchDb.logIn(username, pass)
       .then((loginResp)=>{
-        return this.postLoginHook(loginResp.name, true)
+        return this.postLoginHook(loginResp.name, remotePouchDb)
       })
       .catch((err) => {
         console.error("an error occurred during login/setup", err)
@@ -68,13 +68,17 @@ export class FastenDbService extends PouchdbRepository {
 
   public async Logout(): Promise<any> {
 
-    let remotePouchDb = new PouchDB(this.getRemoteUserDb(localStorage.getItem("current_user")), {skip_setup: true});
-    await remotePouchDb.logOut()
+    // let remotePouchDb = new PouchDB(this.getRemoteUserDb(localStorage.getItem("current_user")), {skip_setup: true});
+    if(this.pouchDb){
+      await this.pouchDb.logOut()
+    }
     await this.Close()
     localStorage.removeItem("current_user")
   }
+
+  //TODO: now that we've moved to remote-first database, we can refactor and simplify this function significantly.
   public async IsAuthenticated(): Promise<boolean> {
-    if(!this.localPouchDb){
+    if(!this.pouchDb){
       console.warn("IsAuthenticated? ====> logout, no local database present")
       //if no local database available, we're always "unauthenticated".
       return false
@@ -85,8 +89,8 @@ export class FastenDbService extends PouchdbRepository {
     }
     try{
       //if we have a local database, lets see if we have an active session to the remote database.
-      const remotePouchDb = new PouchDB(this.getRemoteUserDb(localStorage.getItem("current_user")), {skip_setup: true});
-      const session = await remotePouchDb.getSession()
+      // const remotePouchDb = new PouchDB(this.getRemoteUserDb(localStorage.getItem("current_user")), {skip_setup: true});
+      const session = await this.pouchDb.getSession()
       const authUser = session?.userCtx?.name
       const isAuth = !!authUser
       console.warn("IsAuthenticated? getSession() ====> ", isAuth)
@@ -165,16 +169,18 @@ export class FastenDbService extends PouchdbRepository {
    * @param userIdentifier
    * @constructor
    */
-  private async postLoginHook(userIdentifier: string, sync: boolean = false): Promise<void> {
+  private async postLoginHook(userIdentifier: string, pouchDb: PouchDB.Database): Promise<void> {
     localStorage.setItem("current_user", userIdentifier)
 
     await this.Close();
-    this.localPouchDb = new PouchDB(userIdentifier);
+    this.pouchDb = pouchDb;
 
     //create any necessary indexes
     // this index allows us to group by source_resource_type
     console.log("DB createIndex started...")
-    const createIndexMsg = await this.localPouchDb.createIndex({
+    //todo, we may need to wait a couple of moments before starting this index, as the database may not exist yet (even after user creation)
+    await (new Promise((resolve) => setTimeout(resolve, 500))) //sleep for 0.5s.
+    const createIndexMsg = await this.pouchDb.createIndex({
       index: {fields: [
           'doc_type',
           'source_resource_type',
@@ -182,25 +188,25 @@ export class FastenDbService extends PouchdbRepository {
     });
     console.log("DB createIndex complete", createIndexMsg)
 
-    if(sync){
-      console.log("DB sync init...", userIdentifier, this.getRemoteUserDb(userIdentifier))
+    // if(sync){
+    //   console.log("DB sync init...", userIdentifier, this.getRemoteUserDb(userIdentifier))
+    //
+    //   // this.enableSync(userIdentifier)
+    //   //   .on('paused', function (info) {
+    //   //     // replication was paused, usually because of a lost connection
+    //   //     console.warn("replication was paused, usually because of a lost connection", info)
+    //   //   }).on('active', function (info) {
+    //   //   // replication was resumed
+    //   //   console.warn("replication was resumed", info)
+    //   // }).on('error', function (err) {
+    //   //   // totally unhandled error (shouldn't happen)
+    //   //   console.error("replication unhandled error (shouldn't happen)", err)
+    //   // });
+    //   console.log("DB sync enabled")
+    //
+    // }
 
-      this.enableSync(userIdentifier)
-      //   .on('paused', function (info) {
-      //     // replication was paused, usually because of a lost connection
-      //     console.warn("replication was paused, usually because of a lost connection", info)
-      //   }).on('active', function (info) {
-      //   // replication was resumed
-      //   console.warn("replication was resumed", info)
-      // }).on('error', function (err) {
-      //   // totally unhandled error (shouldn't happen)
-      //   console.error("replication unhandled error (shouldn't happen)", err)
-      // });
-      console.log("DB sync enabled")
-
-    }
-
-    console.warn( "Configured PouchDB database for,", this.localPouchDb.name );
+    console.warn( "Configured PouchDB database for,", this.pouchDb.name );
     return
   }
 
