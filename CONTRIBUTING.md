@@ -6,7 +6,7 @@ go mod vendor
 go run backend/cmd/fasten/fasten.go start --config ./config.example.yaml --debug
 
 docker build -t fasten-couchdb -f docker/couchdb/Dockerfile .
-docker run --rm -it -p 5984:5984 -v `pwd`/.couchdb/data:/opt/couchdb/data fasten-couchdb
+docker run --rm -it -p 5984:5984 -v `pwd`/.couchdb/data:/opt/couchdb/data -v `pwd`/.couchdb/config:/opt/couchdb/etc/local.d fasten-couchdb
 ```
 
 # Docker 

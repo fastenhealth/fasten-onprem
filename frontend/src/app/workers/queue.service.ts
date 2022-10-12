@@ -3,13 +3,15 @@ import {Observable, of} from 'rxjs';
 import {fromWorker} from 'observable-webworker';
 import {Source} from '../../lib/models/database/source';
 import {SourceSyncMessage} from '../models/queue/source-sync-message';
+import {ToastService} from '../services/toast.service';
+import {ToastNotification, ToastType} from '../models/fasten/toast';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QueueService {
 
-  constructor() { }
+  constructor(private toastService: ToastService) { }
 
   runSourceSyncWorker(source: Source):Observable<string> {
     if (typeof Worker !== 'undefined') {
@@ -26,6 +28,12 @@ export class QueueService {
       // Web workers are not supported in this environment.
       // You should add a fallback so that your program still executes correctly.
       console.error("WORKERS ARE NOT SUPPORTED")
+
+      const toastNotificaiton = new ToastNotification()
+      toastNotificaiton.type = ToastType.Error
+      toastNotificaiton.message = "Your browser does not support web-workers. Cannot continue."
+      toastNotificaiton.autohide = false
+      this.toastService.show(toastNotificaiton)
     }
 
   }

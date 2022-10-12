@@ -12,6 +12,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Location} from '@angular/common';
 import {SourceType} from '../../../lib/models/database/source_types';
 import {QueueService} from '../../workers/queue.service';
+import {ToastService} from '../../services/toast.service';
+import {ToastNotification, ToastType} from '../../models/fasten/toast';
 // If you dont import this angular will import the wrong "Location"
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
@@ -38,6 +40,7 @@ export class MedicalSourcesComponent implements OnInit {
     private router: Router,
     private location: Location,
     private queueService: QueueService,
+    private toastService: ToastService
   ) { }
   status: { [name: string]: string } = {}
 
@@ -250,11 +253,21 @@ export class MedicalSourcesComponent implements OnInit {
           //remove item from available sources list, add to connected sources.
           this.availableSourceList.splice(this.availableSourceList.findIndex((item) => item.metadata.source_type == sourceType), 1);
           this.connectedSourceList.push({source: sourceSyncMessage.source, metadata: this.metadataSources[sourceType]})
+
+          const toastNotificaiton = new ToastNotification()
+          toastNotificaiton.type = ToastType.Success
+          toastNotificaiton.message = `Successfully connected ${sourceType}`
+          this.toastService.show(toastNotificaiton)
         },
         (err) => {
           delete this.status[sourceType]
           // window.location.reload();
 
+          const toastNotificaiton = new ToastNotification()
+          toastNotificaiton.type = ToastType.Error
+          toastNotificaiton.message = `An error occurred while accessing ${sourceType}: ${err}`
+          toastNotificaiton.autohide = false
+          this.toastService.show(toastNotificaiton)
           console.error(err)
         });
   }

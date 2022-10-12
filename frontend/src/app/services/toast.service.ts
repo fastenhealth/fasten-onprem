@@ -11,11 +11,19 @@ export class ToastService {
 
   show(toastNotification: ToastNotification) {
     if(!toastNotification.title){
-      toastNotification.title = toastNotification.type == ToastType.Error ? "Error" : "Notification"
+      if(toastNotification.type == ToastType.Error){
+        toastNotification.title = "Error"
+      }else if(toastNotification.type == ToastType.Success){
+        toastNotification.title = "Success"
+      }else{
+        toastNotification.title = "Notification"
+      }
     }
 
     if(toastNotification.type == ToastType.Error){
       toastNotification.displayClass += ' bg-danger text-light'
+    } else if(toastNotification.type == ToastType.Success){
+      toastNotification.displayClass += ' bg-indigo text-light'
     }
 
     this.toasts.push(toastNotification);

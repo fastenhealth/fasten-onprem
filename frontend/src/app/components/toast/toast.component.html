@@ -1,8 +1,8 @@
-<div class="pos-absolute t-10 r-10">
+<div class="toast-container">
   <ngb-toast
     *ngFor="let toast of toastService.toasts"
     [class]="toast.displayClass"
-    [autohide]="true"
+    [autohide]="toast.autohide"
     [delay]="toast.delay || 5000"
     (hidden)="toastService.remove(toast)"
   >
