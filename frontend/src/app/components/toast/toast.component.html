@@ -8,7 +8,7 @@
   >
     <ng-template ngbToastHeader>
       <h6 class="tx-inverse tx-14 mg-b-0 mg-r-auto">{{toast.title}}</h6>
-      <small>11 mins ago</small>
+      <small>{{toast.event_date | amTimeAgo}}</small>
     </ng-template>
 
     {{ toast.message }}

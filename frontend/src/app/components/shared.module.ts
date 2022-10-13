@@ -33,6 +33,7 @@ import {ListGoalComponent} from './list-generic-resource/list-goal.component';
 import { ListFallbackResourceComponent } from './list-fallback-resource/list-fallback-resource.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { ToastComponent } from './toast/toast.component';
+import { MomentModule } from 'ngx-moment';
 
 @NgModule({
   imports: [
@@ -40,6 +41,7 @@ import { ToastComponent } from './toast/toast.component';
     BrowserModule,
     NgxDatatableModule,
     NgbModule,
+    MomentModule,
   ],
   declarations: [
     ComponentsSidebarComponent,

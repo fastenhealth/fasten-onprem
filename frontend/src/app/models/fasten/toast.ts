@@ -5,6 +5,7 @@ export enum ToastType {
 }
 
 export class ToastNotification {
+  event_date: Date = new Date()
   title?: string
   message: string
   type: ToastType = ToastType.Info
