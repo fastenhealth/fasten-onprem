@@ -1,7 +1,8 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {ResourceFhir} from '../../models/fasten/resource_fhir';
+import {ResourceFhir} from '../../../lib/models/database/resource_fhir';
 import {ResourceListComponentInterface} from '../list-generic-resource/list-generic-resource.component';
 import {Router} from '@angular/router';
+import {Base64} from '../../../lib/utils/base64';
 
 @Component({
   selector: 'app-list-fallback-resource',
@@ -21,4 +22,5 @@ export class ListFallbackResourceComponent  implements OnInit, ResourceListCompo
   markForCheck(){
     this.changeRef.markForCheck()
   }
+
 }

@@ -1,0 +1,31 @@
+
+
+export enum SourceType {
+  Manual = "manual",
+
+  Aetna              = "aetna",
+  Athena             = "athena",
+  Anthem             = "anthem",
+  CareEvolution      = "careevolution",
+  CedarSinai         = "cedarssinai",
+  Cerner             = "cerner",
+  Cigna              = "cigna",
+  CommonSpirit       = "commonspirit",
+  DeltaDental        = "deltadental",
+  DignityHealth      = "dignityhealth",
+  Epic               = "epic",
+  HealthIT           = "healthit",
+  HCAHealthcare      = "hcahealthcare",
+  Humana             = "humana",
+  Kaiser             = "kaiser",
+  Logica             = "logica",
+  Metlife            = "metlife",
+  Providence         = "providence",
+  Stanford           = "stanford",
+  Sutter             = "sutter",
+  Trinity            = "trinity",
+  UCSF               = "ucsf",
+  UnitedHealthcare   = "unitedhealthcare",
+  BlueButtonMedicare = "bluebutton",
+  Verity             = "verity",
+}

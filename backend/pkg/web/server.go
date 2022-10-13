@@ -41,31 +41,11 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 			})
 
 			api.POST("/auth/signup", handler.AuthSignup)
-			api.POST("/auth/signin", handler.AuthSignin)
-
-			secure := api.Group("/secure").Use(middleware.RequireAuth())
-			{
-				secure.GET("/summary", handler.GetSummary)
-
-				secure.POST("/source", handler.CreateSource)
-				secure.POST("/source/manual", handler.CreateManualSource)
-				secure.GET("/source", handler.ListSource)
-				secure.GET("/source/:sourceId", handler.GetSource)
-				secure.POST("/source/:sourceId/sync", handler.SourceSync)
-				secure.GET("/source/:sourceId/summary", handler.GetSourceSummary)
-				secure.GET("/resource/fhir", handler.ListResourceFhir) //
-				secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
-			}
-
 			api.GET("/metadata/source", handler.GetMetadataSource)
 
-			if ae.Config.GetString("log.level") == "DEBUG" {
-				//in debug mode, this endpoint lets us request data directly from the source api
-				ae.Logger.Warningf("***INSECURE*** ***INSECURE*** DEBUG mode enables developer functionality, including unauthenticated raw api requests")
-
-				//http://localhost:9090/api/raw/test@test.com/436d7277-ad56-41ce-9823-44e353d1b3f6/Patient/smart-1288992
-				api.GET("/raw/:username/:sourceId/*path", handler.RawRequestSource)
-			}
+			r.Any("/database/*proxyPath", handler.CouchDBProxy)
+			r.GET("/cors/*proxyPath", handler.CORSProxy)
+			r.OPTIONS("/cors/*proxyPath", handler.CORSProxy)
 		}
 	}
 

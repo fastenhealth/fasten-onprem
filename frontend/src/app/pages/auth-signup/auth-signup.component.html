@@ -19,33 +19,17 @@
       <h4>Create an account, and get started.</h4>
 
       <form (ngSubmit)="signupSubmit()" #userForm="ngForm">
-        <div class="form-group">
-          <label>Firstname &amp; Lastname</label>
-          <input [(ngModel)]="newUser.name" name="name" #name="ngModel" required minlength="2" type="text" class="form-control" placeholder="Enter your firstname and lastname">
 
-          <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-danger">
-            <div *ngIf="name.errors?.['required']">
-              Name is required.
-            </div>
-            <div *ngIf="name.errors?.['minlength']">
-              Name must be at least 4 characters long.
-            </div>
-          </div>
-
-        </div><!-- form-group -->
         <div class="form-group">
-          <label>Email</label>
-          <input [(ngModel)]="newUser.username" name="username" #username="ngModel" required email="true" minlength="5" type="text" class="form-control" placeholder="Enter your email">
+          <label>Username</label>
+          <input [(ngModel)]="newUser.username" name="username" #username="ngModel" required minlength="5" type="text" class="form-control" placeholder="Enter your username">
 
           <div *ngIf="username.invalid && (username.dirty || username.touched)" class="alert alert-danger">
             <div *ngIf="username.errors?.['required']">
-              Email is required.
+              Username is required.
             </div>
             <div *ngIf="username.errors?.['minlength']">
-              Email must be at least 4 characters long.
-            </div>
-            <div *ngIf="username.errors?.['email']">
-              Email is not a valid email address.
+              Username must be at least 4 characters long.
             </div>
           </div>
 

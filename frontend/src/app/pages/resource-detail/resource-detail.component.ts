@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {FastenApiService} from '../../services/fasten-api.service';
+import {FastenDbService} from '../../services/fasten-db.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Source} from '../../models/fasten/source';
-import {ResourceFhir} from '../../models/fasten/resource_fhir';
+import {ResourceFhir} from '../../../lib/models/database/resource_fhir';
+import {Base64} from '../../../lib/utils/base64';
 
 @Component({
   selector: 'app-resource-detail',
@@ -13,14 +13,15 @@ export class ResourceDetailComponent implements OnInit {
 
   resource: ResourceFhir = null
 
-  constructor(private fastenApi: FastenApiService, private router: Router, private route: ActivatedRoute) {
+  constructor(private fastenDb: FastenDbService, private router: Router, private route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
     //always request the resource by id
-    this.fastenApi.getResourceBySourceId(this.route.snapshot.paramMap.get('source_id'), this.route.snapshot.paramMap.get('resource_id')).subscribe((resourceFhir) => {
-      this.resource = resourceFhir;
-    });
+    this.fastenDb.GetResource(Base64.Decode(this.route.snapshot.paramMap.get('resource_id')))
+      .then((resourceFhir) => {
+        this.resource = resourceFhir;
+      });
   }
 
 }

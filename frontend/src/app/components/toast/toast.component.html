@@ -1,0 +1,17 @@
+<div class="toast-container">
+  <ngb-toast
+    *ngFor="let toast of toastService.toasts"
+    [class]="toast.displayClass"
+    [autohide]="toast.autohide"
+    [delay]="toast.delay || 5000"
+    (hidden)="toastService.remove(toast)"
+  >
+    <ng-template ngbToastHeader>
+      <h6 class="tx-inverse tx-14 mg-b-0 mg-r-auto">{{toast.title}}</h6>
+      <small>{{toast.event_date | amTimeAgo}}</small>
+    </ng-template>
+
+    {{ toast.message }}
+  </ngb-toast>
+</div>
+

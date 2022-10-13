@@ -148,15 +148,15 @@
                     <div class="media-body">
                       <h5>{{metadataSource[source.source_type]?.display}}</h5>
                       <p>
-                        {{getPatientSummary(patientForSource[source.id]?.payload)}}
+                        {{getPatientSummary(patientForSource[source._id]?.resource_raw)}}
                       </p>
 
                     </div>
                   </div>
                 </td>
                 <td class="align-middle"><p><small class="tx-gray-600">status:</small><br/> {{isActive(source)}}</p></td>
-                <td class="align-middle"><p><small class="tx-gray-600">last updated:</small><br/> {{source.updated_at | date}}</p></td>
-                <td class="align-middle"><p><small class="tx-gray-600">expires:</small><br/> {{source.expires_at}}</p></td>
+                <td class="align-middle"><p><small class="tx-gray-600">last updated:</small><br/> <span [ngbTooltip]="source.updated_at | date">{{source.updated_at | amTimeAgo}}</span></p></td>
+                <td class="align-middle"><p><small class="tx-gray-600">expires:</small><br/> <span [ngbTooltip]="source.expires_at | amFromUnix | date">{{source.expires_at | amFromUnix | amTimeAgo}}</span></p></td>
                 <td class="align-middle"><p><i class="fas fa-chevron-right"></i></td>
               </tr>
 

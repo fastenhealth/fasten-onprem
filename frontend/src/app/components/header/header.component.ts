@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FastenApiService} from '../../services/fasten-api.service';
+import {FastenDbService} from '../../services/fasten-db.service';
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-header',
@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor(private fastenApi: FastenApiService, private router: Router) { }
+  constructor(private fastenDb: FastenDbService, private router: Router) { }
 
   ngOnInit() {
   }
@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit {
   }
 
   signOut(e) {
-    this.fastenApi.logout()
-    this.router.navigate(['auth/signin']);
+    this.fastenDb.Logout()
+      .then(() => this.router.navigate(['auth/signin']))
   }
 }

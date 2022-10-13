@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {map, tap} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
-import {LighthouseSourceMetadata} from '../models/lighthouse/lighthouse-source-metadata';
+import {LighthouseSourceMetadata} from '../../lib/models/lighthouse/lighthouse-source-metadata';
 import * as Oauth from '@panva/oauth4webapi';
 
 @Injectable({
@@ -15,13 +15,13 @@ export class LighthouseService {
   constructor(private _httpClient: HttpClient) {
   }
 
-  getLighthouseSource(sourceType: string): Observable<LighthouseSourceMetadata> {
+  async getLighthouseSource(sourceType: string): Promise<LighthouseSourceMetadata> {
     return this._httpClient.get<any>(`${environment.lighthouse_api_endpoint_base}/connect/${sourceType}`)
       .pipe(
         map((response: ResponseWrapper) => {
           return response.data as LighthouseSourceMetadata
         })
-      );
+      ).toPromise();
   }
 
 
@@ -61,7 +61,7 @@ export class LighthouseService {
     return authorizationUrl
   }
 
-  redirectWithOriginAndDestination(destUrl: string, sourceType: string){
+  redirectWithOriginAndDestination(destUrl: string, sourceType: string): void {
     const originUrlParts = new URL(window.location.href)
     originUrlParts.hash = "" //reset hash in-case its present.
     originUrlParts.pathname = this.pathJoin([originUrlParts.pathname, `callback/${sourceType}`])
@@ -78,7 +78,7 @@ export class LighthouseService {
     window.location.href = redirectUrlParts.toString();
   }
 
-  async swapOauthToken(sourceType: string, sourceMetadata: LighthouseSourceMetadata, expectedState: string, state: string, code: string){
+  async swapOauthToken(sourceType: string, sourceMetadata: LighthouseSourceMetadata, expectedState: string, state: string, code: string): Promise<any>{
     // @ts-expect-error
     const client: oauth.Client = {
       client_id: sourceMetadata.client_id

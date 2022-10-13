@@ -9,6 +9,6 @@
 
 <ul class="list-group">
   <li class="list-group-item" *ngFor="let resource of resourceList">
-    <a routerLink="/source/{{resource.source_id}}/resource/{{resource.source_resource_id}}">{{resource.source_resource_id}}</a>
+    <a routerLink="/resource/{{resource.base64Id()}}">{{resource.source_resource_id}}</a>
   </li>
 </ul>

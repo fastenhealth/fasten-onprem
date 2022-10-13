@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
+import {fromWorker} from 'observable-webworker';
+import {Observable, of} from 'rxjs';
+import {QueueService} from './workers/queue.service';
+import {ToastService} from './services/toast.service';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +17,7 @@ export class AppComponent implements OnInit {
   showHeader:boolean = false;
   showFooter:boolean = true;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private queueService: QueueService, private toastService: ToastService) {}
 
   ngOnInit() {
 

@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import {User} from '../../models/fasten/user';
-import {FastenApiService} from '../../services/fasten-api.service';
+import {Component, OnInit} from '@angular/core';
+import {User} from '../../../lib/models/fasten/user';
+import {FastenDbService} from '../../services/fasten-db.service';
 import {Router} from '@angular/router';
+import {ToastService} from '../../services/toast.service';
+import {ToastNotification, ToastType} from '../../models/fasten/toast';
 
 @Component({
   selector: 'app-auth-signin',
@@ -13,7 +15,7 @@ export class AuthSigninComponent implements OnInit {
   existingUser: User = new User()
   errorMsg: string = ""
 
-  constructor(private fastenApi: FastenApiService,  private router: Router) { }
+  constructor(private fastenDb: FastenDbService,  private router: Router, private toastService: ToastService) { }
 
   ngOnInit(): void {
   }
@@ -21,11 +23,19 @@ export class AuthSigninComponent implements OnInit {
   signinSubmit(){
     this.submitted = true;
 
-    this.fastenApi.signin(this.existingUser.username, this.existingUser.password).subscribe((tokenResp: any) => {
-      console.log(tokenResp);
-      this.router.navigateByUrl('/dashboard');
-    }, (err)=>{
-      this.errorMsg = err?.error?.error || "an unknown error occurred during sign-in"
-    })
+    this.fastenDb.Signin(this.existingUser.username, this.existingUser.password)
+      .then(() => this.router.navigateByUrl('/dashboard'))
+      .catch((err)=>{
+        if(err?.name){
+          this.errorMsg = "username or password is incorrect"
+        } else{
+          this.errorMsg = "an unknown error occurred during sign-in"
+        }
+        const toastNotificaiton = new ToastNotification()
+        toastNotificaiton.type = ToastType.Error
+        toastNotificaiton.message = this.errorMsg
+        this.toastService.show(toastNotificaiton)
+      })
+
   }
 }

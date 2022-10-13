@@ -1,9 +1,9 @@
-import {ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {DatatableComponent, ColumnMode, SelectionType} from '@swimlane/ngx-datatable';
-import {ResourceFhir} from '../../models/fasten/resource_fhir';
+import {ResourceFhir} from '../../../lib/models/database/resource_fhir';
 import {FORMATTERS, getPath, obsValue, attributeXTime} from './utils';
-import {observableToBeFn} from 'rxjs/internal/testing/TestScheduler';
 import {Router} from '@angular/router';
+import {Base64} from '../../../lib/utils/base64';
 
 //all Resource list components must implement this Interface
 export interface ResourceListComponentInterface {
@@ -61,6 +61,7 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
 
     this.rows = this.resourceList.map((resource) => {
       let row = {
+        _id: resource._id,
         source_id: resource.source_id,
         source_resource_type: resource.source_resource_type,
         source_resource_id: resource.source_resource_id
@@ -68,7 +69,7 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
 
       this.columnDefinitions.forEach((defn) => {
         try{
-          let resourceProp = defn.getter(resource.payload)
+          let resourceProp = defn.getter(resource.resource_raw)
           let resourceFormatted = defn.format ? FORMATTERS[defn.format](resourceProp) : resourceProp
           row[defn.title.replace(/[^A-Z0-9]/ig, "_")] = resourceFormatted
         }catch (e){
@@ -79,9 +80,14 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
     })
   }
 
+  /**
+   * The selected object is NOT a ResourceFHIR, its actually a dynamically created row object
+   * created in renderList()
+   * @param selected
+   */
   onSelect({ selected }) {
     console.log('Select Event', selected);
-    this.router.navigateByUrl(`/source/${selected[0].source_id}/resource/${selected[0].source_resource_id}`);
+    this.router.navigateByUrl(`/resource/${Base64.Encode(selected[0]._id)}`);
   }
 
 }

@@ -23,9 +23,9 @@
         <div *ngFor="let sourceInfo of connectedSourceList" class="col-sm-3 mg-b-20 px-3">
           <div class="card h-100 d-flex align-items-center justify-content-center p-3 rounded-0 cursor-pointer">
             <div (click)="openModal(contentModalRef, sourceInfo)" class="card-body">
-              <img [src]="'assets/sources/'+sourceInfo.metadata['source_type']+'.png'" alt="client" class="img-fluid">
-              <div *ngIf="status[sourceInfo.source['source_type']]" class="progress">
-                <div [style.width]="status[sourceInfo.source['source_type']] == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
+              <img [src]="'assets/sources/'+sourceInfo?.metadata['source_type']+'.png'" alt="client" class="img-fluid">
+              <div *ngIf="status[sourceInfo.source?.source_type]" class="progress">
+                <div [style.width]="status[sourceInfo?.source?.source_type] == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
               </div>
             </div>
           </div>
@@ -39,7 +39,7 @@
 
       <div class="row row-sm">
         <div class="col-lg">
-          <ngx-dropzone [multiple]="false" (change)="uploadSourceBundle($event)" accept=".json">
+          <ngx-dropzone [multiple]="false" (change)="uploadSourceBundleHandler($event)" accept=".json">
             <ngx-dropzone-label>Select your EMR/EHR bundle. Must be in JSON format</ngx-dropzone-label>
             <ngx-dropzone-preview *ngFor="let f of uploadedFile" [removable]="false">
               <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
@@ -57,13 +57,13 @@
       <div class="row row-sm">
 
 
-        <div *ngFor="let sourceData of availableSourceList" (click)="connect($event, sourceData['source_type'])" class="col-sm-3 mg-b-20 px-3">
-          <div class="card h-100 d-flex align-items-center justify-content-center p-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': !sourceData.enabled}">
+        <div *ngFor="let sourceData of availableSourceList" (click)="connectHandler($event, sourceData.metadata.source_type)" class="col-sm-3 mg-b-20 px-3">
+          <div class="card h-100 d-flex align-items-center justify-content-center p-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': !sourceData.metadata.enabled}">
             <div class="card-body">
-              <img [src]="'assets/sources/'+sourceData['source_type']+'.png'" [alt]="metadataSources[sourceData['source_type']].display" class="img-fluid">
+              <img [src]="'assets/sources/'+sourceData.metadata.source_type+'.png'" [alt]="metadataSources[sourceData.metadata.source_type].display" class="img-fluid">
 
-              <div *ngIf="status[sourceData['source_type']]" class="progress">
-                <div [style.width]="status[sourceData['source_type']] == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
+              <div *ngIf="status[sourceData.metadata.source_type]" class="progress">
+                <div [style.width]="status[sourceData.metadata.source_type] == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
               </div>
             </div>
           </div>
@@ -79,7 +79,7 @@
 
 <ng-template #contentModalRef let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">{{modalSourceInfo.metadata["display"]}}</h4>
+    <h4 class="modal-title" id="modal-basic-title">{{modalSelectedSourceListItem?.metadata["display"]}}</h4>
     <button type="button" class="btn btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">×</span>
     </button>
@@ -96,8 +96,8 @@
   </div>
 
   <div class="modal-footer">
-    <button (click)="syncSource(modalSourceInfo.source)" type="button" class="btn btn-indigo">Sync</button>
-    <button (click)="connect($event, modalSourceInfo.source['source_type'])" type="button" class="btn btn-outline-light">Reconnect</button>
+    <button (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>
+    <button (click)="connectHandler($event, modalSelectedSourceListItem.source['source_type'])" type="button" class="btn btn-outline-light">Reconnect</button>
     <button type="button" class="btn btn-outline-danger">Delete</button>
     <button (click)="modal.dismiss('Close click')" type="button" class="btn btn-outline-light">Close</button>
   </div>

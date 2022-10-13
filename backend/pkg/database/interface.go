@@ -10,21 +10,4 @@ type DatabaseRepository interface {
 	Close() error
 
 	CreateUser(context.Context, *models.User) error
-	GetUserByEmail(context.Context, string) (*models.User, error)
-	GetCurrentUser(context.Context) *models.User
-
-	GetSummary(ctx context.Context) (*models.Summary, error)
-
-	UpsertResource(context.Context, *models.ResourceFhir) error
-	GetResourceBySourceType(context.Context, string, string) (*models.ResourceFhir, error)
-	GetResourceBySourceId(context.Context, string, string) (*models.ResourceFhir, error)
-	ListResources(context.Context, models.ListResourceQueryOptions) ([]models.ResourceFhir, error)
-	GetPatientForSources(ctx context.Context) ([]models.ResourceFhir, error)
-	//UpsertProfile(context.Context, *models.Profile) error
-	//UpsertOrganziation(context.Context, *models.Organization) error
-
-	CreateSource(context.Context, *models.Source) error
-	GetSource(context.Context, string) (*models.Source, error)
-	GetSourceSummary(context.Context, string) (*models.SourceSummary, error)
-	GetSources(context.Context) ([]models.Source, error)
 }

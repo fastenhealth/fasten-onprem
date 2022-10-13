@@ -18,13 +18,13 @@ import { AuthSignupComponent } from './pages/auth-signup/auth-signup.component';
 import { AuthSigninComponent } from './pages/auth-signin/auth-signin.component';
 import { FormsModule } from '@angular/forms';
 import { NgxDropzoneModule } from 'ngx-dropzone';
-import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { CanActivateAuthGuard } from './services/can-activate.auth-guard';
-import {FastenApiService} from './services/fasten-api.service';
+import {FastenDbService} from './services/fasten-db.service';
 import {Router} from '@angular/router';
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
-import {ResourceListComponent} from './components/resource-list/resource-list.component';
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
+import {AuthInterceptorService} from './services/auth-interceptor.service';
+import { MomentModule } from 'ngx-moment';
 
 @NgModule({
   declarations: [
@@ -48,14 +48,15 @@ import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
     NgbModule,
     ChartsModule,
     NgxDropzoneModule,
-    HighlightModule
+    HighlightModule,
+    MomentModule
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptorService,
       multi: true,
-      deps: [FastenApiService, Router]
+      deps: [FastenDbService, Router]
     },
     CanActivateAuthGuard,
     {

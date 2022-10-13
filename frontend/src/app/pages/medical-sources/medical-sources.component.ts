@@ -1,22 +1,30 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {LighthouseService} from '../../services/lighthouse.service';
 import {FastenApiService} from '../../services/fasten-api.service';
-import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-source-metadata';
-import * as Oauth from '@panva/oauth4webapi';
-import {AuthorizeClaim} from '../../models/lighthouse/authorize-claim';
-import {Source} from '../../models/fasten/source';
+import {FastenDbService} from '../../services/fasten-db.service';
+import {LighthouseSourceMetadata} from '../../../lib/models/lighthouse/lighthouse-source-metadata';
+import {Source} from '../../../lib/models/database/source';
 import {getAccessTokenExpiration, jwtDecode} from 'fhirclient/lib/lib';
 import BrowserAdapter from 'fhirclient/lib/adapters/BrowserAdapter';
-import {Observable, of, throwError, fromEvent } from 'rxjs';
-import {concatMap, delay, retryWhen, timeout, first, map, filter, catchError} from 'rxjs/operators';
-import * as FHIR from "fhirclient"
 import {MetadataSource} from '../../models/fasten/metadata-source';
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Location} from '@angular/common';
+import {SourceType} from '../../../lib/models/database/source_types';
+import {QueueService} from '../../workers/queue.service';
+import {ToastService} from '../../services/toast.service';
+import {ToastNotification, ToastType} from '../../models/fasten/toast';
+import {SourceSyncMessage} from '../../models/queue/source-sync-message';
+import {UpsertSummary} from '../../../lib/models/fasten/upsert-summary';
 // If you dont import this angular will import the wrong "Location"
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
+
+export class SourceListItem {
+  source?: Source
+  metadata: MetadataSource
+}
+
 
 @Component({
   selector: 'app-medical-sources',
@@ -28,25 +36,28 @@ export class MedicalSourcesComponent implements OnInit {
   constructor(
     private lighthouseApi: LighthouseService,
     private fastenApi: FastenApiService,
+    private fastenDb: FastenDbService,
     private modalService: NgbModal,
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
+    private queueService: QueueService,
+    private toastService: ToastService
   ) { }
   status: { [name: string]: string } = {}
 
   metadataSources: {[name:string]: MetadataSource} = {}
 
-  connectedSourceList:any[] = []
-  availableSourceList:MetadataSource[] = []
+  connectedSourceList: SourceListItem[] = [] //source's are populated for this list
+  availableSourceList: SourceListItem[] = []
 
   uploadedFile: File[] = []
 
   closeResult = '';
-  modalSourceInfo:any = null;
+  modalSelectedSourceListItem:SourceListItem = null;
 
   ngOnInit(): void {
-    this.fastenApi.getMetadataSources().subscribe((metadataSources: {[name:string]: MetadataSource}) => {
+    this.fastenApi.GetMetadataSources().subscribe((metadataSources: {[name:string]: MetadataSource}) => {
       this.metadataSources = metadataSources
 
       const callbackSourceType = this.route.snapshot.paramMap.get('source_type')
@@ -54,8 +65,9 @@ export class MedicalSourcesComponent implements OnInit {
         this.callback(callbackSourceType).then(console.log)
       }
 
-      this.fastenApi.getSources()
-        .subscribe((sourceList: Source[]) => {
+      this.fastenDb.GetSources()
+        .then((paginatedList) => {
+          const sourceList = paginatedList.rows as Source[]
 
           for (const sourceType in this.metadataSources) {
             let isConnected = false
@@ -69,7 +81,7 @@ export class MedicalSourcesComponent implements OnInit {
 
             if(!isConnected){
               //this source has not been found in the connected list, lets add it to the available list.
-              this.availableSourceList.push(this.metadataSources[sourceType])
+              this.availableSourceList.push({metadata: this.metadataSources[sourceType]})
             }
           }
 
@@ -79,12 +91,17 @@ export class MedicalSourcesComponent implements OnInit {
 
   }
 
-  connect($event: MouseEvent, sourceType: string) {
+  /**
+   * after pressing the logo (connectHandler button), this function will generate an authorize url for this source, and redirec the user.
+   * @param $event
+   * @param sourceType
+   */
+  public connectHandler($event: MouseEvent, sourceType: string):void {
     ($event.currentTarget as HTMLButtonElement).disabled = true;
     this.status[sourceType] = "authorize"
 
     this.lighthouseApi.getLighthouseSource(sourceType)
-      .subscribe(async (sourceMetadata: LighthouseSourceMetadata) => {
+      .then(async (sourceMetadata: LighthouseSourceMetadata) => {
         console.log(sourceMetadata);
         let authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceType, sourceMetadata)
 
@@ -95,11 +112,15 @@ export class MedicalSourcesComponent implements OnInit {
       });
   }
 
-  async callback(sourceType: string) {
+  /**
+   * if the user is redirected to this page from the lighthouse, we'll need to process the "code" to retrieve the access token & refresh token.
+   * @param sourceType
+   */
+  public async callback(sourceType: string) {
 
     //get the source metadata again
     await this.lighthouseApi.getLighthouseSource(sourceType)
-      .subscribe(async (sourceMetadata: LighthouseSourceMetadata) => {
+      .then(async (sourceMetadata: LighthouseSourceMetadata) => {
 
         //get required parameters from the URI and local storage
         const callbackUrlParts = new URL(window.location.href)
@@ -145,90 +166,123 @@ export class MedicalSourcesComponent implements OnInit {
 
         //Create FHIR Client
 
-        const sourceCredential: Source = {
-          source_type: sourceType,
-          oauth_authorization_endpoint: sourceMetadata.authorization_endpoint,
-          oauth_token_endpoint: sourceMetadata.token_endpoint,
-          oauth_registration_endpoint: "",
-          oauth_introspection_endpoint: sourceMetadata.introspection_endpoint,
-          oauth_userinfo_endpoint: sourceMetadata.userinfo_endpoint,
-          oauth_token_endpoint_auth_methods_supported: "",
+        const dbSourceCredential = new Source({
+          source_type: sourceType as SourceType,
+
+          authorization_endpoint: sourceMetadata.authorization_endpoint,
+          token_endpoint: sourceMetadata.token_endpoint,
+          introspection_endpoint: sourceMetadata.introspection_endpoint,
+          userinfo_endpoint: sourceMetadata.userinfo_endpoint,
           api_endpoint_base_url:   sourceMetadata.api_endpoint_base_url,
           client_id:             sourceMetadata.client_id,
           redirect_uri:          sourceMetadata.redirect_uri,
-          scopes:               sourceMetadata.scopes_supported ? sourceMetadata.scopes_supported.join(' ') : undefined,
-          patient_id:            payload.patient,
+          scopes_supported:      sourceMetadata.scopes_supported,
+          issuer: sourceMetadata.issuer,
+          grant_types_supported: sourceMetadata.grant_types_supported,
+          response_types_supported: sourceMetadata.response_types_supported,
+          aud: sourceMetadata.aud,
+          code_challenge_methods_supported: sourceMetadata.code_challenge_methods_supported,
+          confidential: sourceMetadata.confidential,
+          cors_relay_required: sourceMetadata.cors_relay_required,
+
+          patient:            payload.patient,
           access_token:          payload.access_token,
           refresh_token:          payload.refresh_token,
           id_token:              payload.id_token,
-          code_challenge:        "",
-          code_verifier:         "",
 
           // @ts-ignore - in some cases the getAccessTokenExpiration is a string, which cases failures to store Source in db.
           expires_at:            parseInt(getAccessTokenExpiration(payload, new BrowserAdapter())),
-          confidential: sourceMetadata.confidential
-        }
+        })
 
-        await this.fastenApi.createSource(sourceCredential).subscribe(
-          (respData) => {
-            delete this.status[sourceType]
-            // window.location.reload();
+        await this.fastenDb.UpsertSource(dbSourceCredential).then(console.log)
+        this.queueSourceSyncWorker(sourceType as SourceType, dbSourceCredential)
 
-            console.log("source credential create response:", respData)
-            //remove item from available sources list, add to connected sources.
-            this.availableSourceList.splice(this.availableSourceList.indexOf(this.metadataSources[sourceType]), 1);
-            this.connectedSourceList.push({source: respData, metadata: this.metadataSources[sourceType]})
-
-          },
-          (err) => {
-            delete this.status[sourceType]
-            // window.location.reload();
-
-            console.log(err)
-          }
-        )
       })
   }
 
 
-  uploadSourceBundle(event) {
+  /**
+   * this function is used to process manually "uploaded" FHIR bundle files, adding them to the database.
+   * @param event
+   */
+  public uploadSourceBundleHandler(event) {
     this.uploadedFile = [event.addedFiles[0]]
-    this.fastenApi.createManualSource(event.addedFiles[0]).subscribe(
-      (respData) => {
-        console.log("source manual source create response:", respData)
-      },
-      (err) => {console.log(err)},
-      () => {
-        this.uploadedFile = []
-      }
-    )
+    //TODO: handle manual bundles.
+    // this.fastenDb.CreateManualSource(event.addedFiles[0]).subscribe(
+    //   (respData) => {
+    //     console.log("source manual source create response:", respData)
+    //   },
+    //   (err) => {console.log(err)},
+    //   () => {
+    //     this.uploadedFile = []
+    //   }
+    // )
   }
 
-  openModal(contentModalRef, sourceInfo: any) {
-    this.modalSourceInfo = sourceInfo
-    let modalSourceInfo = this.modalSourceInfo
+  public openModal(contentModalRef, sourceListItem: SourceListItem) {
+    this.modalSelectedSourceListItem = sourceListItem
     this.modalService.open(contentModalRef, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      modalSourceInfo = null
+      this.modalSelectedSourceListItem = null
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
-      modalSourceInfo = null
+      this.modalSelectedSourceListItem = null
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
   }
 
-  syncSource(source: Source){
+  public sourceSyncHandler(source: Source){
     this.status[source.source_type] = "authorize"
     this.modalService.dismissAll()
-    this.fastenApi.syncSource(source.id).subscribe(
-      (respData) => {
-        delete this.status[source.source_type]
-        console.log("source sync response:", respData)
-      },
-      (err) => {
-        delete this.status[source.source_type]
-        console.log(err)
-      }
-    )
+
+    this.queueSourceSyncWorker(source.source_type as SourceType, source)
+  }
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  // Private
+  ///////////////////////////////////////////////////////////////////////////////////////
+  private queueSourceSyncWorker(sourceType: SourceType, source: Source){
+    //this work is pushed to the Sync Worker.
+    //TODO: if the user closes the browser the data update may not complete. we should set a status flag when "starting" sync, and then remove it when compelte
+    // so that we can show incompelte statuses
+    this.queueService.runSourceSyncWorker(source)
+      .subscribe((msg) => {
+          const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
+          delete this.status[sourceType]
+          // window.location.reload();
+
+          console.log("source sync-all response:", sourceSyncMessage)
+          //remove item from available sources list, add to connected sources.
+          this.availableSourceList.splice(this.availableSourceList.findIndex((item) => item.metadata.source_type == sourceType), 1);
+          if(this.connectedSourceList.findIndex((item) => item.metadata.source_type == sourceType) == -1){
+            //only add this as a connected source if its "new"
+            this.connectedSourceList.push({source: sourceSyncMessage.source, metadata: this.metadataSources[sourceType]})
+          }
+
+          const toastNotification = new ToastNotification()
+          toastNotification.type = ToastType.Success
+          toastNotification.message = `Successfully connected ${sourceType}`
+
+          const upsertSummary = sourceSyncMessage.response as UpsertSummary
+          if(upsertSummary && upsertSummary.totalResources != upsertSummary.updatedResources.length){
+            toastNotification.message += `\n (total: ${upsertSummary.totalResources}, updated: ${upsertSummary.updatedResources.length})`
+          } else if(upsertSummary){
+            toastNotification.message += `\n (total: ${upsertSummary.totalResources})`
+          }
+
+          this.toastService.show(toastNotification)
+        },
+        (err) => {
+          delete this.status[sourceType]
+          // window.location.reload();
+
+          const toastNotification = new ToastNotification()
+          toastNotification.type = ToastType.Error
+          toastNotification.message = `An error occurred while accessing ${sourceType}: ${err}`
+          toastNotification.autohide = false
+          this.toastService.show(toastNotification)
+          console.error(err)
+        });
   }
 
   private getDismissReason(reason: any): string {

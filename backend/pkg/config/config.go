@@ -25,7 +25,12 @@ func (c *configuration) Init() error {
 	c.SetDefault("web.listen.host", "0.0.0.0")
 	c.SetDefault("web.listen.basepath", "")
 	c.SetDefault("web.src.frontend.path", "/opt/fasten/web")
-	c.SetDefault("web.database.location", "/opt/fasten/db/fasten.db") //TODO: should be /opt/fasten/fasten.db
+
+	c.SetDefault("web.couchdb.scheme", "http")
+	c.SetDefault("web.couchdb.host", "localhost")
+	c.SetDefault("web.couchdb.port", "5984")
+	c.SetDefault("web.couchdb.admin_username", "admin")
+	c.SetDefault("web.couchdb.admin_password", "mysecretpassword")
 
 	c.SetDefault("log.level", "INFO")
 	c.SetDefault("log.file", "")
@@ -71,10 +76,6 @@ func (c *configuration) ReadConfig(configFilePath string) error {
 
 // This function ensures that required configuration keys (that must be manually set) are present
 func (c *configuration) ValidateConfig() error {
-
-	if !c.IsSet("web.jwt.encryptionkey") {
-		return errors.ConfigValidationError("`web.jwt.encryptionkey` configuration option must be set")
-	}
 
 	return nil
 }

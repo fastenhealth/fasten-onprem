@@ -61,3 +61,9 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+//required for PouchDB
+(window as any).global = window;
+
+// required for toast
+import '@angular/localize/init';
