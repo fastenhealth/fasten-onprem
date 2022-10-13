@@ -1,10 +1,13 @@
 import {IDatabaseRepository} from '../database/interface';
 import {UpsertSummary} from '../models/fasten/upsert-summary';
+import {Source} from '../models/database/source';
 
 export interface IClient {
   fhirVersion: string
+  source: Source
   GetRequest(resourceSubpath: string): Promise<any>
   GetFhirVersion(): Promise<any>
+  RefreshSourceToken(): Promise<boolean>
 
   /**
    * This function attempts to retrieve a Patient Bundle and sync all resources to the database

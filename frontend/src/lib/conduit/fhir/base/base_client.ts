@@ -2,6 +2,12 @@ import {Source} from '../../../models/database/source';
 import * as Oauth from '@panva/oauth4webapi';
 import {IResourceRaw} from '../../interface';
 
+
+class SourceUpdateStatus {
+  is_updated: boolean = false
+  source: Source
+}
+
 // BaseClient is an abstract/partial class, its intended to be used by FHIR clients, and generically handle OAuth requests.
 export abstract class BaseClient {
 
@@ -64,7 +70,7 @@ export abstract class BaseClient {
 
 
     //refresh the source if required
-    this.source = await this.refreshExpiredTokenIfRequired(this.source)
+    await this.RefreshSourceToken()
 
     //make a request to the protected resource
     const resp = await Oauth.protectedResourceRequest(this.source.access_token, 'GET', new URL(resourceUrl), this.headers, null)
@@ -78,6 +84,14 @@ export abstract class BaseClient {
     // return err
   }
 
+  public async RefreshSourceToken(): Promise<boolean>{
+
+    let sourceUpdateStatus = await this.refreshExpiredTokenIfRequired(this.source)
+    this.source = sourceUpdateStatus.source
+    return sourceUpdateStatus.is_updated
+  }
+
+
   /////////////////////////////////////////////////////////////////////////////
   // Protected methods
   /////////////////////////////////////////////////////////////////////////////
@@ -87,17 +101,13 @@ export abstract class BaseClient {
   // Private methods
   /////////////////////////////////////////////////////////////////////////////
 
-  private getCORSProxyPath(): string {
-    const basePath = globalThis.location.pathname.split('/web').slice(0, 1)[0];
-
-    return `${globalThis.location.origin}${basePath || '/'}cors/`
-  }
-
-  private async refreshExpiredTokenIfRequired(source: Source): Promise<Source> {
+  private async refreshExpiredTokenIfRequired(source: Source): Promise<SourceUpdateStatus> {
+    const sourceUpdateStatus = new SourceUpdateStatus()
     //check if token has expired, and a refreshtoken is available
     // Note: source.expires_at is in seconds, Date.now() is in milliseconds.
     if(source.expires_at > Math.floor(Date.now() / 1000)) { //not expired  return
-      return Promise.resolve(source)
+      sourceUpdateStatus.source = source
+      return Promise.resolve(sourceUpdateStatus)
     }
     if(!source.refresh_token){
       return Promise.reject(new Error("access token is expired, but no refresh token available"))
@@ -109,7 +119,9 @@ export abstract class BaseClient {
         return Oauth.processRefreshTokenResponse(this.oauthAuthorizationServer, this.oauthClient, refreshTokenResp)
       })
       .then((newToken) => {
+
         if(newToken.access_token != source.access_token){
+          sourceUpdateStatus.is_updated = true
           // {
           //   access_token: 'token',
           //   token_type: 'bearer',
@@ -128,7 +140,14 @@ export abstract class BaseClient {
             source.refresh_token = newToken.refresh_token as string
           }
         }
-        return source
+        sourceUpdateStatus.source = source
+        return sourceUpdateStatus
       })
+  }
+
+  private getCORSProxyPath(): string {
+    const basePath = globalThis.location.pathname.split('/web').slice(0, 1)[0];
+
+    return `${globalThis.location.origin}${basePath || '/'}cors/`
   }
 }
