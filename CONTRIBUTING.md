@@ -1,3 +1,7 @@
+> This doc is a WIP and will be expanded shortly.
+> 
+> In the meantime, please consider looking at the extensive docs in the [Fasten Docs Repository](https://github.com/fastenhealth/docs/tree/main/technical)
+
 
 ```
 cd frontend 
