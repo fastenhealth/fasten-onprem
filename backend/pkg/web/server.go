@@ -44,6 +44,8 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 			api.GET("/metadata/source", handler.GetMetadataSource)
 
 			r.Any("/database/*proxyPath", handler.CouchDBProxy)
+			r.GET("/cors/*proxyPath", handler.CORSProxy)
+			r.OPTIONS("/cors/*proxyPath", handler.CORSProxy)
 		}
 	}
 

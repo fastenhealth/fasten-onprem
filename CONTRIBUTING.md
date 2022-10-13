@@ -23,3 +23,9 @@ docker run --rm -it -p 5984:5984 -v `pwd`/.couchdb/data:/opt/couchdb/data -v `pw
 - WebUI: 
   - username: `testuser`
   - password: `testuser`
+
+
+# Running tests
+
+- ng test --include='**/base_client.spec.ts'    
+- ng test --include='lib/**/*.spec.ts'     

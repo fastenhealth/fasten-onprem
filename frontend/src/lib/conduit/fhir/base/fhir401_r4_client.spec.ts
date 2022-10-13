@@ -4,9 +4,11 @@ import {IResourceBundleRaw} from '../../interface';
 import {ResourceFhir} from '../../../models/database/resource_fhir';
 import {NewRepositiory} from '../../../database/pouchdb_repository';
 import {Base64} from '../../../utils/base64';
+import * as PouchDB from 'pouchdb/dist/pouchdb';
 
 // @ts-ignore
 import * as FHIR401Client_ProcessBundle from './fixtures/FHIR401Client_ProcessBundle.json';
+import {IDatabaseRepository} from '../../../database/interface';
 
 class TestClient extends FHIR401Client {
   constructor(source: Source) {
@@ -59,22 +61,35 @@ describe('FHIR401Client', () => {
   })
 
   describe('SyncAll', () => {
+    let repository: IDatabaseRepository;
+
+    beforeEach(async () => {
+      repository = NewRepositiory(null, null, new PouchDB("FHIR401Client-testing"));
+    });
+
+    afterEach(async () => {
+      if(repository){
+        const db = await repository.GetDB()
+        db.destroy() //wipe the db.
+      }
+    })
     it('should correctly add resources to the database', async () => {
       //setup
       let response = new Response(JSON.stringify(FHIR401Client_ProcessBundle));
       Object.defineProperty(response, "url", { value: `${client.source.api_endpoint_base_url}/Patient/${client.source.patient}/$everything`});
       spyOn(window, "fetch").and.returnValue(Promise.resolve(response));
-      const db = NewRepositiory("fastentest")
 
       //test
-      const resp = await client.SyncAll(db)
+      const resp = await client.SyncAll(repository)
       const firstResourceFhir = resp[0]
       const resourceIdParts = firstResourceFhir.split(":")
 
       //expect
-      expect(resp.length).toEqual(206);
+      expect(resp.totalResources).toEqual(206);
+      expect(resp.updatedResources).toEqual([]);
       expect(firstResourceFhir).toEqual('resource_fhir:c291cmNlOmFldG5hOjEyMzQ1:Patient:c088b7af-fc41-43cc-ab80-4a9ab8d47cd9');
       expect(Base64.Decode(resourceIdParts[1])).toEqual("source:aetna:12345");
+
 
     });
   })

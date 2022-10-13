@@ -3,6 +3,7 @@ import {BaseClient} from './base_client';
 import {Source} from '../../../models/database/source';
 import {IDatabaseRepository} from '../../../database/interface';
 import {ResourceFhir} from '../../../models/database/resource_fhir';
+import {UpsertSummary} from '../../../models/fasten/upsert-summary';
 
 export class FHIR401Client extends BaseClient implements IClient {
 
@@ -18,13 +19,13 @@ export class FHIR401Client extends BaseClient implements IClient {
    * @param db
    * @constructor
    */
-  public async SyncAll(db: IDatabaseRepository): Promise<string[]> {
+  public async SyncAll(db: IDatabaseRepository): Promise<UpsertSummary> {
     const bundle = await this.GetPatientBundle(this.source.patient)
 
     const wrappedResourceModels = await this.ProcessBundle(bundle)
     //todo, create the resources in dependency order
 
-    return db.CreateResources(wrappedResourceModels)
+    return db.UpsertResources(wrappedResourceModels)
 
   }
 
@@ -35,7 +36,7 @@ export class FHIR401Client extends BaseClient implements IClient {
    * @param resourceNames
    * @constructor
    */
-  public async SyncAllByResourceName(db: IDatabaseRepository, resourceNames: string[]): Promise<string[]>{
+  public async SyncAllByResourceName(db: IDatabaseRepository, resourceNames: string[]): Promise<UpsertSummary>{
     //Store the Patient
     const patientResource = await this.GetPatient(this.source.patient)
 
@@ -45,7 +46,7 @@ export class FHIR401Client extends BaseClient implements IClient {
     patientResourceFhir.source_resource_id = patientResource.id
     patientResourceFhir.resource_raw = patientResource
 
-    await db.CreateResource(patientResourceFhir)
+    const upsertSummary = await db.UpsertResource(patientResourceFhir)
 
     //error map storage.
     let syncErrors = {}
@@ -56,7 +57,9 @@ export class FHIR401Client extends BaseClient implements IClient {
       try {
         let bundle = await this.GetResourceBundlePaginated(`${resourceType}?patient=${this.source.patient}`)
         let wrappedResourceModels = await this.ProcessBundle(bundle)
-        await db.CreateResources(wrappedResourceModels)
+        let resourceUpsertSummary = await db.UpsertResources(wrappedResourceModels)
+        upsertSummary.updatedResources = upsertSummary.updatedResources.concat(resourceUpsertSummary.updatedResources)
+        upsertSummary.totalResources += resourceUpsertSummary.totalResources
       }
       catch (e) {
         console.error(`An error occurred while processing ${resourceType} bundle ${this.source.patient}`)
@@ -66,7 +69,7 @@ export class FHIR401Client extends BaseClient implements IClient {
     }
 
     //TODO: correctly return newly inserted documents
-    return []
+    return upsertSummary
   }
 
   /**
@@ -75,7 +78,7 @@ export class FHIR401Client extends BaseClient implements IClient {
    * @param bundleFile
    * @constructor
    */
-  public async SyncAllFromBundleFile(db: IDatabaseRepository, bundleFile: any): Promise<any> {
+  public async SyncAllFromBundleFile(db: IDatabaseRepository, bundleFile: any): Promise<UpsertSummary> {
     return Promise.reject(new Error("not implemented"));
   }
 

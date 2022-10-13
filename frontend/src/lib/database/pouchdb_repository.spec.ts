@@ -3,17 +3,19 @@ import {NewRepositiory} from './pouchdb_repository';
 import {SourceType} from '../models/database/source_types';
 import {Source} from '../models/database/source';
 import {DocType} from './constants';
+import * as PouchDB from 'pouchdb/dist/pouchdb';
 
 describe('PouchdbRepository', () => {
   let repository: IDatabaseRepository;
 
   beforeEach(async () => {
-    repository = NewRepositiory();
+    repository = NewRepositiory(null, null, new PouchDB("PouchdbRepository-testing"));
   });
 
   afterEach(async () => {
     if(repository){
-      await repository.GetDB().destroy() //wipe the db.
+      const db = await repository.GetDB()
+      db.destroy() //wipe the db.
     }
   })
 
@@ -24,24 +26,25 @@ describe('PouchdbRepository', () => {
 
   describe('CreateSource', () => {
     it('should return an id', async () => {
-      const createdId = await repository.CreateSource(new Source({
+      const createdId = await repository.UpsertSource(new Source({
         patient: 'patient',
         source_type: SourceType.Aetna,
       }))
 
-      expect(createdId).toEqual("source:aetna:patient");
+      expect(createdId.totalResources).toEqual(1);
+      expect(createdId.updatedResources[0]).toEqual("source:aetna:patient");
     });
   })
 
   describe('GetSource', () => {
     it('should return an source', async () => {
-      const createdId = await repository.CreateSource(new Source({
+      const createdResource = await repository.UpsertSource(new Source({
         patient: 'patient',
         source_type: SourceType.Aetna,
         access_token: 'hello-world',
       }))
 
-      const createdSource = await repository.GetSource(createdId)
+      const createdSource = await repository.GetSource(createdResource.updatedResources[0])
 
       expect(createdSource.doc_type).toEqual(DocType.Source);
       expect(createdSource.patient).toEqual('patient');
@@ -52,13 +55,13 @@ describe('PouchdbRepository', () => {
 
   describe('DeleteSource', () => {
     it('should delete a source', async () => {
-      const createdId = await repository.CreateSource(new Source({
+      const createdResource = await repository.UpsertSource(new Source({
         patient: 'patient-to-delete',
         source_type: SourceType.Aetna,
         access_token: 'hello-world',
       }))
-      console.log(createdId)
-      const deletedSource = await repository.DeleteSource(createdId)
+      console.log(createdResource)
+      const deletedSource = await repository.DeleteSource(createdResource.updatedResources[0])
 
       expect(deletedSource).toBeTruthy();
     });
@@ -66,19 +69,19 @@ describe('PouchdbRepository', () => {
 
   describe('GetSources', () => {
     it('should return a list of sources', async () => {
-      await repository.CreateSource(new Source({
+      await repository.UpsertSource(new Source({
         patient: 'patient1',
         source_type: SourceType.Aetna,
         access_token: 'hello-world1',
       }))
 
-      await repository.CreateSource(new Source({
+      await repository.UpsertSource(new Source({
         patient: 'patient2',
         source_type: SourceType.Aetna,
         access_token: 'hello-world2',
       }))
 
-      await repository.CreateSource(new Source({
+      await repository.UpsertSource(new Source({
         patient: 'patient3',
         source_type: SourceType.Aetna,
         access_token: 'hello-world3',

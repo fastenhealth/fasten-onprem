@@ -3,6 +3,7 @@ import {ResourceFhir} from '../models/database/resource_fhir';
 import {SourceSummary} from '../models/fasten/source-summary';
 import {Summary} from '../models/fasten/summary';
 import {User} from '../models/fasten/user';
+import {UpsertSummary} from '../models/fasten/upsert-summary';
 // import {SourceSummary} from '../../app/models/fasten/source-summary';
 
 export interface IDatabaseDocument {
@@ -28,7 +29,7 @@ export interface IDatabaseRepository {
   // GetUserByEmail(context.Context, string) (*models.User, error)
   // GetCurrentUser(context.Context) *models.User
 
-  CreateSource(source: Source): Promise<string>
+  UpsertSource(source: Source): Promise<UpsertSummary>
   GetSource(source_id: string): Promise<Source>
   DeleteSource(source_id: string): Promise<boolean>
   GetSourceSummary(source_id: string): Promise<SourceSummary>
@@ -40,8 +41,8 @@ export interface IDatabaseRepository {
   // GetResourceBySourceId(context.Context, string, string) (*models.ResourceFhir, error)
   // ListResources(context.Context, models.ListResourceQueryOptions) ([]models.ResourceFhir, error)
   // GetPatientForSources(ctx context.Context) ([]models.ResourceFhir, error)
-  CreateResource(resource: ResourceFhir): Promise<string>
-  CreateResources(resources: ResourceFhir[]): Promise<string[]>
+  UpsertResource(resource: ResourceFhir): Promise<UpsertSummary>
+  UpsertResources(resources: ResourceFhir[]): Promise<UpsertSummary>
   GetResource(resource_id: string): Promise<ResourceFhir>
   GetResources(): Promise<IDatabasePaginatedResponse>
   GetResourcesForSource(source_id: string, source_resource_type?: string): Promise<IDatabasePaginatedResponse>

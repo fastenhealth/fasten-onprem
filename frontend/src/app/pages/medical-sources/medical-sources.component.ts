@@ -14,6 +14,8 @@ import {SourceType} from '../../../lib/models/database/source_types';
 import {QueueService} from '../../workers/queue.service';
 import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
+import {SourceSyncMessage} from '../../models/queue/source-sync-message';
+import {UpsertSummary} from '../../../lib/models/fasten/upsert-summary';
 // If you dont import this angular will import the wrong "Location"
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
@@ -192,7 +194,7 @@ export class MedicalSourcesComponent implements OnInit {
           expires_at:            parseInt(getAccessTokenExpiration(payload, new BrowserAdapter())),
         })
 
-        await this.fastenDb.CreateSource(dbSourceCredential).then(console.log)
+        await this.fastenDb.UpsertSource(dbSourceCredential).then(console.log)
         this.queueSourceSyncWorker(sourceType as SourceType, dbSourceCredential)
 
       })
@@ -245,29 +247,40 @@ export class MedicalSourcesComponent implements OnInit {
     // so that we can show incompelte statuses
     this.queueService.runSourceSyncWorker(source)
       .subscribe((msg) => {
-          const sourceSyncMessage = JSON.parse(msg)
+          const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
           delete this.status[sourceType]
           // window.location.reload();
 
           console.log("source sync-all response:", sourceSyncMessage)
           //remove item from available sources list, add to connected sources.
           this.availableSourceList.splice(this.availableSourceList.findIndex((item) => item.metadata.source_type == sourceType), 1);
-          this.connectedSourceList.push({source: sourceSyncMessage.source, metadata: this.metadataSources[sourceType]})
+          if(this.connectedSourceList.findIndex((item) => item.metadata.source_type == sourceType) == -1){
+            //only add this as a connected source if its "new"
+            this.connectedSourceList.push({source: sourceSyncMessage.source, metadata: this.metadataSources[sourceType]})
+          }
 
-          const toastNotificaiton = new ToastNotification()
-          toastNotificaiton.type = ToastType.Success
-          toastNotificaiton.message = `Successfully connected ${sourceType}`
-          this.toastService.show(toastNotificaiton)
+          const toastNotification = new ToastNotification()
+          toastNotification.type = ToastType.Success
+          toastNotification.message = `Successfully connected ${sourceType}`
+
+          const upsertSummary = sourceSyncMessage.response as UpsertSummary
+          if(upsertSummary && upsertSummary.totalResources != upsertSummary.updatedResources.length){
+            toastNotification.message += `\n (total: ${upsertSummary.totalResources}, updated: ${upsertSummary.updatedResources.length})`
+          } else if(upsertSummary){
+            toastNotification.message += `\n (total: ${upsertSummary.totalResources})`
+          }
+
+          this.toastService.show(toastNotification)
         },
         (err) => {
           delete this.status[sourceType]
           // window.location.reload();
 
-          const toastNotificaiton = new ToastNotification()
-          toastNotificaiton.type = ToastType.Error
-          toastNotificaiton.message = `An error occurred while accessing ${sourceType}: ${err}`
-          toastNotificaiton.autohide = false
-          this.toastService.show(toastNotificaiton)
+          const toastNotification = new ToastNotification()
+          toastNotification.type = ToastType.Error
+          toastNotification.message = `An error occurred while accessing ${sourceType}: ${err}`
+          toastNotification.autohide = false
+          this.toastService.show(toastNotification)
           console.error(err)
         });
   }

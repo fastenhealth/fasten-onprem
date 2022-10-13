@@ -55,6 +55,13 @@ export abstract class BaseClient {
     } else {
       resourceUrl = resourceSubpathOrNext
     }
+    if(this.source.cors_relay_required){
+      //this endpoint requires a CORS relay
+      //get the path to the Fasten server, and append `cors/` and then append the request url
+      let resourceParts = new URL(resourceUrl)
+      resourceUrl = this.getCORSProxyPath() + `${resourceParts.hostname}${resourceParts.pathname}${resourceParts.search}`
+    }
+
 
     //refresh the source if required
     this.source = await this.refreshExpiredTokenIfRequired(this.source)
@@ -79,6 +86,12 @@ export abstract class BaseClient {
   /////////////////////////////////////////////////////////////////////////////
   // Private methods
   /////////////////////////////////////////////////////////////////////////////
+
+  private getCORSProxyPath(): string {
+    const basePath = globalThis.location.pathname.split('/web').slice(0, 1)[0];
+
+    return `${globalThis.location.origin}${basePath || '/'}cors/`
+  }
 
   private async refreshExpiredTokenIfRequired(source: Source): Promise<Source> {
     //check if token has expired, and a refreshtoken is available

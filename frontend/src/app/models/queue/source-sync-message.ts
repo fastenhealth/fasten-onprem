@@ -4,4 +4,6 @@ export class SourceSyncMessage {
   source: Source
   userIdentifier: string
   encryptionKey?: string
+
+  response?: any
 }

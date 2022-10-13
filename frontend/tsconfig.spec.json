@@ -1,11 +1,12 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "skipLibCheck": true, //without this the "dom" and the "webworker" libs conflict
+
     "resolveJsonModule": true,
     "outDir": "./out-tsc/spec",
     "types": [
       "jasmine",
-      "node"
     ]
   },
   "files": [

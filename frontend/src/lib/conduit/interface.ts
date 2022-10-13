@@ -1,4 +1,5 @@
 import {IDatabaseRepository} from '../database/interface';
+import {UpsertSummary} from '../models/fasten/upsert-summary';
 
 export interface IClient {
   fhirVersion: string
@@ -10,13 +11,13 @@ export interface IClient {
    * @param db
    * @constructor
    */
-  SyncAll(db: IDatabaseRepository): Promise<any>
+  SyncAll(db: IDatabaseRepository): Promise<UpsertSummary>
 
 
-  SyncAllByResourceName(db: IDatabaseRepository, resourceNames: string[]): Promise<string[]>
+  SyncAllByResourceName(db: IDatabaseRepository, resourceNames: string[]): Promise<UpsertSummary>
 
   //Manual client ONLY functions
-  SyncAllFromBundleFile(db: IDatabaseRepository, bundleFile: any): Promise<any>
+  SyncAllFromBundleFile(db: IDatabaseRepository, bundleFile: any): Promise<UpsertSummary>
 }
 
 //This is the "raw" Fhir resource

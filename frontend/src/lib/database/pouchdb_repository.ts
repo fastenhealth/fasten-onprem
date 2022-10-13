@@ -9,6 +9,7 @@ import {Base64} from '../utils/base64';
 import * as PouchDB from 'pouchdb/dist/pouchdb';
 import * as PouchCrypto from 'crypto-pouch';
 import {PouchdbUpsert} from './plugins/upsert';
+import {UpsertSummary} from '../models/fasten/upsert-summary';
 PouchDB.plugin(PouchCrypto);
 
 
@@ -42,8 +43,8 @@ PouchDB.plugin(PouchCrypto);
  * Eventually this method should dyanmically dtermine the version of the repo to return from the env.
  * @constructor
  */
-export function NewRepositiory(userIdentifier?: string, encryptionKey?: string): IDatabaseRepository {
-  return new PouchdbRepository(userIdentifier, encryptionKey)
+export function NewRepositiory(userIdentifier?: string, encryptionKey?: string, localPouchDb?: PouchDB.Database): IDatabaseRepository {
+  return new PouchdbRepository(userIdentifier, encryptionKey, localPouchDb)
 }
 
 export class PouchdbRepository implements IDatabaseRepository {
@@ -60,7 +61,7 @@ export class PouchdbRepository implements IDatabaseRepository {
    * @param userIdentifier
    * @param encryptionKey
    */
-  constructor(userIdentifier?: string, encryptionKey?: string) {
+  constructor(userIdentifier?: string, encryptionKey?: string, localPouchDb?: PouchDB.Database) {
     this.remotePouchEndpoint = `${globalThis.location.protocol}//${globalThis.location.host}${this.getBasePath()}/database`
 
     //setup PouchDB Plugins
@@ -70,6 +71,10 @@ export class PouchdbRepository implements IDatabaseRepository {
       this.pouchDb = new PouchDB(this.getRemoteUserDb(userIdentifier));
       this.encryptionKey = encryptionKey
       // this.enableSync(userIdentifier)
+    }
+    if(localPouchDb){
+      console.warn("using local pouchdb, this should only be used for testing")
+      this.pouchDb = localPouchDb
     }
   }
 
@@ -96,7 +101,7 @@ export class PouchdbRepository implements IDatabaseRepository {
   ///////////////////////////////////////////////////////////////////////////////////////
   // Source
 
-  public async CreateSource(source: Source): Promise<string> {
+  public async UpsertSource(source: Source): Promise<UpsertSummary> {
     return this.upsertDocument(source);
   }
 
@@ -156,11 +161,11 @@ export class PouchdbRepository implements IDatabaseRepository {
   ///////////////////////////////////////////////////////////////////////////////////////
   // Resource
 
-  public async CreateResource(resource: ResourceFhir): Promise<string> {
+  public async UpsertResource(resource: ResourceFhir): Promise<UpsertSummary> {
     return this.upsertDocument(resource);
   }
 
-  public async CreateResources(resources: ResourceFhir[]): Promise<string[]> {
+  public async UpsertResources(resources: ResourceFhir[]): Promise<UpsertSummary> {
     return this.upsertBulk(resources);
   }
 
@@ -228,7 +233,7 @@ export class PouchdbRepository implements IDatabaseRepository {
 
 
   // update/insert a new document. Returns a promise of the generated id.
-  protected upsertDocument(newDoc: IDatabaseDocument) : Promise<string> {
+  protected upsertDocument(newDoc: IDatabaseDocument) : Promise<UpsertSummary> {
     // make sure we always "populate" the ID for every document before submitting
     newDoc.populateId()
 
@@ -285,22 +290,29 @@ export class PouchdbRepository implements IDatabaseRepository {
         })
 
       })
-      .then(( result ): string => {
-          return( result.id );
+      .then(( result ): UpsertSummary => {
+        // // success, res is {rev: '1-xxx', updated: true, id: 'myDocId'}
+        const updateSummary = new UpsertSummary()
+        updateSummary.totalResources = 1
+
+        if(result.updated){
+            updateSummary.updatedResources = [result.id]
         }
-      );
+        return updateSummary;
+      });
   }
 
-  protected upsertBulk(docs: IDatabaseDocument[]): Promise<string[]> {
-    return this.GetDB()
-      .then((db) => {
-
-        return Promise.all(docs.map((doc) => {
-          doc.populateId();
-          return this.upsertDocument(doc)
-        }))
-
-      })
+  protected upsertBulk(docs: IDatabaseDocument[]): Promise<UpsertSummary> {
+    return Promise.all(docs.map((doc) => {
+      doc.populateId();
+      return this.upsertDocument(doc)
+    })).then((results) => {
+      return results.reduce((prev, current ) => {
+        prev.totalResources += current.totalResources
+        prev.updatedResources = prev.updatedResources.concat(current.updatedResources)
+        return prev
+      }, new UpsertSummary())
+    })
   }
 
   protected getDocument(id: string): Promise<any> {
@@ -331,44 +343,6 @@ export class PouchdbRepository implements IDatabaseRepository {
       .then((result) => {
         return result.ok
       })
-  }
-
-  //DEPRECATED
-  /**
-   * create multiple documents, returns a list of generated ids
-   * @deprecated
-   * @param docs
-   * @protected
-   */
-  protected createBulk(docs: IDatabaseDocument[]): Promise<string[]> {
-    return this.GetDB()
-      .then((db) => {
-        return db.bulkDocs(docs.map((doc) => { doc.populateId(); return doc }))
-      })
-      .then((results): string[] => {
-        return results.map((result) => result.id)
-      })
-  }
-
-  /**
-   * create a new document. Returns a promise of the generated id.
-   * @deprecated
-   * @param doc
-   * @protected
-   */
-  protected createDocument(doc: IDatabaseDocument) : Promise<string> {
-    // make sure we always "populate" the ID for every document before submitting
-    doc.populateId()
-
-    // NOTE: All friends are given the key-prefix of "friend:". This way, when we go
-    // to query for friends, we can limit the scope to keys with in this key-space.
-
-    return this.GetDB()
-      .then((db) => db.put(doc))
-      .then(( result ): string => {
-          return( result.id );
-        }
-      );
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////
