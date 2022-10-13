@@ -38,6 +38,7 @@
     "ng2-charts": "^2.3.0",
     "ngx-dropzone": "^3.1.0",
     "ngx-highlightjs": "^7.0.1",
+    "ngx-moment": "^6.0.2",
     "observable-webworker": "^4.0.1",
     "pouchdb": "^7.3.0",
     "pouchdb-authentication": "^1.1.3",

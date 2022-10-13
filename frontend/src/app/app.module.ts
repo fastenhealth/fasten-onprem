@@ -24,6 +24,7 @@ import {Router} from '@angular/router';
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import {AuthInterceptorService} from './services/auth-interceptor.service';
+import { MomentModule } from 'ngx-moment';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import {AuthInterceptorService} from './services/auth-interceptor.service';
     NgbModule,
     ChartsModule,
     NgxDropzoneModule,
-    HighlightModule
+    HighlightModule,
+    MomentModule
   ],
   providers: [
     {
