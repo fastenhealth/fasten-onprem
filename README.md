@@ -6,8 +6,8 @@
 
 # Fasten - On Premise/Self-Hosted
 
-[![CI](https://github.com/fastenhealth/fasten-onprem/workflows/ci/badge.svg?branch=main)](https://github.com/fastenhealth/fasten-onprem/actions?query=workflow%3Aci)
-[![GitHub license](https://img.shields.io/github/license/fastenhealth/fasten-onprem.svg?style=flat-square)](https://github.com/fastenhealth/fasten-onprem/blob/master/LICENSE)
+[![CI](https://github.com/fastenhealth/fasten-onprem/workflows/CI/badge.svg?branch=main)](https://github.com/fastenhealth/fasten-onprem/actions?query=workflow%3ACI)
+[![GitHub license](https://img.shields.io/github/license/fastenhealth/fasten-onprem.svg?style=flat-square)](https://github.com/fastenhealth/fasten-onprem/blob/main/LICENSE)
 
 **Fasten securely connects your healthcare providers together, creating a personal health record that never leaves your hands**
 
