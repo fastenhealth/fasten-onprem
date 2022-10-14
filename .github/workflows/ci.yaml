@@ -1,7 +1,13 @@
 name: CI
 # This workflow is triggered on pushes & pull requests
-on: [pull_request]
-
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches: [ main, beta ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
 jobs:
   test-frontend:
     name: Test Frontend
