@@ -83,17 +83,17 @@ describe('FHIR401Client', () => {
 
       //test
       const resp = await client.SyncAll(repository)
-      const firstResourceFhir = resp[0]
+      const firstResourceFhir = resp.updatedResources[0]
       const resourceIdParts = firstResourceFhir.split(":")
 
       //expect
       expect(resp.totalResources).toEqual(206);
-      expect(resp.updatedResources).toEqual([]);
-      expect(firstResourceFhir).toEqual('resource_fhir:c291cmNlOmFldG5hOjEyMzQ1:Patient:c088b7af-fc41-43cc-ab80-4a9ab8d47cd9');
+      expect(resp.updatedResources.length).toEqual(206);
+      expect(firstResourceFhir).toEqual('resource_fhir:b64.c291cmNlOmFldG5hOjEyMzQ1:Patient:c088b7af-fc41-43cc-ab80-4a9ab8d47cd9');
       expect(Base64.Decode(resourceIdParts[1])).toEqual("source:aetna:12345");
 
 
-    });
+    }, 10000);
   })
 
 })
