@@ -16,7 +16,7 @@ describe('ResourceDetailComponent', () => {
       providers: [
         {
           provide: ActivatedRoute,
-          useValue: {snapshot: {paramMap: convertToParamMap( { 'resource_id': '1234' } )}}
+          useValue: {snapshot: {paramMap: convertToParamMap( { 'resource_id': 'b64.cmVzb3VyY2VfZmhpcjpiNjQuYzI5MWNtTmxPbUZsZEc1aE9qRXlNelExTmpjNE9UQXhNak0wTlRZM01ETT06UGF0aWVudDoxMjM0NTY3ODkwMTIzNDU2NzAz' } )}}
         }
       ]
     })

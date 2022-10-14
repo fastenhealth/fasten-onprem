@@ -16,7 +16,7 @@ describe('SourceDetailComponent', () => {
       providers: [
         {
           provide: ActivatedRoute,
-          useValue: {snapshot: {paramMap: convertToParamMap( { 'source_id': '1234' } )}}
+          useValue: {snapshot: {paramMap: convertToParamMap( { 'source_id': 'b64.c291cmNlOmF0aGVuYTphLTgwMDAwLkUtMTQ1NDU' } )}}
         }
       ]
     })
