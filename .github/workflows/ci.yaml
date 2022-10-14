@@ -12,10 +12,13 @@ jobs:
   test-frontend:
     name: Test Frontend
     runs-on: ubuntu-latest
-    container: node:18.9.0
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      ‐ name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
       - name: Test Frontend
         run: |
           make frontend-test-coverage
