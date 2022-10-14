@@ -33,7 +33,14 @@ So, I built it
 
 Here's a couple of screenshots that'll give you an idea of what it looks like:
 
-[Fasten Screenshots](https://imgur.com/a/vfgojBD)
+
+<p align="center">
+  <a href="https://imgur.com/a/vfgojBD">
+  <img alt="fasten_view" src="https://i.imgur.com/UaZyEbN.png">
+  </a>
+  <br/>
+  <a href="https://imgur.com/a/vfgojBD">See more Fasten screenshots</a>
+</p>
 
 # Features
 
