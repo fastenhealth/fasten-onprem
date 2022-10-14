@@ -22,7 +22,7 @@ export class SourceDetailComponent implements OnInit {
 
   constructor(private fastenDb: FastenDbService, private router: Router, private route: ActivatedRoute) {
     //check if the current Source was sent over using the router state storage:
-    if(this.router.getCurrentNavigation().extras.state){
+    if(this.router.getCurrentNavigation()?.extras?.state){
       this.selectedSource = this.router.getCurrentNavigation().extras.state as Source
     }
   }

@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SourceDetailComponent } from './source-detail.component';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+import {ActivatedRoute, convertToParamMap, RouterModule} from '@angular/router';
 
 describe('SourceDetailComponent', () => {
   let component: SourceDetailComponent;
@@ -8,7 +11,14 @@ describe('SourceDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SourceDetailComponent ]
+      imports: [HttpClientTestingModule, RouterTestingModule, RouterModule],
+      declarations: [ SourceDetailComponent ],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {snapshot: {paramMap: convertToParamMap( { 'source_id': '1234' } )}}
+        }
+      ]
     })
     .compileComponents();
 
