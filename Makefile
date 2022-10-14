@@ -40,9 +40,9 @@ frontend-dep:
 .PHONY: frontend-test
 # reduce logging, disable angular-cli analytics for ci environment
 frontend-test: frontend-dep
-	cd frontend && ng test --watch=false
+	cd frontend && npx ng test --watch=false
 
 .PHONY: frontend-test-coverage
 # reduce logging, disable angular-cli analytics for ci environment
 frontend-test-coverage: frontend-dep
-	cd frontend && ng test --watch=false --code-coverage
+	cd frontend && npx ng test --watch=false --code-coverage
