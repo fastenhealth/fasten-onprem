@@ -4,12 +4,13 @@ import {SourceType} from '../models/database/source_types';
 import {Source} from '../models/database/source';
 import {DocType} from './constants';
 import * as PouchDB from 'pouchdb/dist/pouchdb';
+import { v4 as uuidv4 } from 'uuid';
 
 describe('PouchdbRepository', () => {
   let repository: IDatabaseRepository;
 
   beforeEach(async () => {
-    repository = NewRepositiory(null, null, new PouchDB("PouchdbRepository-testing"));
+    repository = NewRepositiory(null, null, new PouchDB("PouchdbRepository" + uuidv4()));
   });
 
   afterEach(async () => {
