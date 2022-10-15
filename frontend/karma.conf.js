@@ -30,14 +30,14 @@ module.exports = function(config) {
         { type: 'text-summary' },
         { type: 'lcovonly' }
       ],
-      check: {
-        global: {
-          statements: 80,
-          branches: 80,
-          functions: 80,
-          lines: 80
-        }
-      }
+      // check: {
+      //   global: {
+      //     statements: 80,
+      //     branches: 80,
+      //     functions: 80,
+      //     lines: 80
+      //   }
+      // }
     },
 
     // coverage reporter generates the coverage
