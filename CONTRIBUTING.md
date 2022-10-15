@@ -121,7 +121,7 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   │   ├── app.component.spec.ts
 │   │   │   ├── app.component.ts
 │   │   │   ├── app.module.ts
-│   │   │   ├── components                          # contains shared/partial components reused on multiple pages.
+│   │   │   ├── components                        # contains shared/partial components reused on multiple pages.
 │   │   │   │   ├── components-sidebar
 │   │   │   │   ├── footer
 │   │   │   │   ├── header
@@ -131,7 +131,7 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   │   │   ├── resource-list                 # Thin shim which populates template depending on FHIR resource type
 │   │   │   │   ├── toast                         # Toast/notification component
 │   │   │   │   └── utilities-sidebar
-│   │   │   ├── models                              # contains classes for communicating with API's and transfering data between pages. 
+│   │   │   ├── models                            # contains classes for communicating with API's and transfering data between pages. 
 │   │   │   ├── pages
 │   │   │   │   ├── auth-signin                   # Login/Signin page
 │   │   │   │   ├── auth-signup                   # Signup page
@@ -151,11 +151,11 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   │       ├── queue.service.spec.ts
 │   │   │       ├── queue.service.ts                # queue service, used to coordinate background work
 │   │   │       └── source-sync.worker.ts           # background job (web-worker) that syncs all FHIR resources from healthcare provider
-│   │   ├── lib                                       # root directory for libraries
+│   │   ├── lib                                     # root directory for libraries
 │   │   │   ├── README.md
-│   │   │   ├── conduit                             # Conduit Library - HealthCare provider communication layer (FHIR protocol)
+│   │   │   ├── conduit                           # Conduit Library - HealthCare provider communication layer (FHIR protocol)
 │   │   │   │   ├── fhir                          # contains healthcare provider specific FHIR clients
-│   │   │   ├── database                            # Database Library - PouchDB/CouchDB client, compatible with web-worker and browser env
+│   │   │   ├── database                          # Database Library - PouchDB/CouchDB client, compatible with web-worker and browser env
 │   │   │   │   ├── plugins
 │   │   │   │   └── pouchdb_repository.ts          
 │   │   │   ├── models
@@ -163,7 +163,7 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   │   │   ├── fasten                        
 │   │   │   │   └── lighthouse                    # Classes used to communicate with Lighthouse API
 │   │   │   └── utils
-│   │   ├── styles.scss                               # Main sylesheet
+│   │   ├── styles.scss                           # Main sylesheet
 ```
 
 ## Backend
