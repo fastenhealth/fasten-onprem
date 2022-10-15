@@ -190,14 +190,14 @@ a CDN or minimal Nginx deployment.
 ## Distribution/Docker
 
 ```
-├── docker-compose.yml                          # docker-compose file which can be used to compile and run "all-in-one" image
-├── Dockerfile                                  # dockerfile for "all-in-one" image, containing frontend, backend & database
+├── docker-compose.yml                  # docker-compose file which can be used to compile and run "all-in-one" image
+├── Dockerfile                          # dockerfile for "all-in-one" image, containing frontend, backend & database
 ├── docker
 │   ├── README.md 
 │   ├── couchdb                               
 │   │   ├── Dockerfile                  # dockerfile for "couchdb" only image, used for development
 │   │   └── local.ini
-│   └── rootfs                              # filesystem configs, used in Dockerfiles to setup s6-overlay service manager
+│   └── rootfs                          # filesystem configs, used in Dockerfiles to setup s6-overlay service manager
 │       └── etc
 │           ├── cont-init.d
 │           │   ├── 01-timezone
