@@ -111,7 +111,7 @@ The Fasten source code is organized into a handful of important folders, which w
 
 ## Frontend
 
-```tree
+```
 ├── frontend
 │   ├── src
 │   │   ├── app
@@ -121,7 +121,7 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   │   ├── app.component.spec.ts
 │   │   │   ├── app.component.ts
 │   │   │   ├── app.module.ts
-│   │   │   ├── components                              # contains shared/partial components reused on multiple pages.
+│   │   │   ├── components                          # contains shared/partial components reused on multiple pages.
 │   │   │   │   ├── components-sidebar
 │   │   │   │   ├── footer
 │   │   │   │   ├── header
@@ -131,7 +131,7 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   │   │   ├── resource-list                 # Thin shim which populates template depending on FHIR resource type
 │   │   │   │   ├── toast                         # Toast/notification component
 │   │   │   │   └── utilities-sidebar
-│   │   │   ├── models                                  # contains classes for communicating with API's and transfering data between pages. 
+│   │   │   ├── models                              # contains classes for communicating with API's and transfering data between pages. 
 │   │   │   ├── pages
 │   │   │   │   ├── auth-signin                   # Login/Signin page
 │   │   │   │   ├── auth-signup                   # Signup page
@@ -149,13 +149,13 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   │   │   └── toast.service.ts              # notifications service, used to send notifications
 │   │   │   └── workers
 │   │   │       ├── queue.service.spec.ts
-│   │   │       ├── queue.service.ts                    # queue service, used to coordinate background work
-│   │   │       └── source-sync.worker.ts               # background job (web-worker) that syncs all FHIR resources from healthcare provider
-│   │   ├── lib                                               # root directory for libraries
+│   │   │       ├── queue.service.ts                # queue service, used to coordinate background work
+│   │   │       └── source-sync.worker.ts           # background job (web-worker) that syncs all FHIR resources from healthcare provider
+│   │   ├── lib                                       # root directory for libraries
 │   │   │   ├── README.md
-│   │   │   ├── conduit                                 # Conduit Library - HealthCare provider communication layer (FHIR protocol)
+│   │   │   ├── conduit                             # Conduit Library - HealthCare provider communication layer (FHIR protocol)
 │   │   │   │   ├── fhir                          # contains healthcare provider specific FHIR clients
-│   │   │   ├── database                                # Database Library - PouchDB/CouchDB client, compatible with web-worker and browser env
+│   │   │   ├── database                            # Database Library - PouchDB/CouchDB client, compatible with web-worker and browser env
 │   │   │   │   ├── plugins
 │   │   │   │   └── pouchdb_repository.ts          
 │   │   │   ├── models
@@ -163,7 +163,7 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   │   │   ├── fasten                        
 │   │   │   │   └── lighthouse                    # Classes used to communicate with Lighthouse API
 │   │   │   └── utils
-│   │   ├── styles.scss                                       # Main sylesheet
+│   │   ├── styles.scss                               # Main sylesheet
 ```
 
 ## Backend
@@ -171,16 +171,16 @@ The Fasten source code is organized into a handful of important folders, which w
 The backend is incredibly simple (by design). The hope is to remove it completely if possible, allowing Fasten to be served by 
 a CDN or minimal Nginx deployment. 
 
-```
+```tree
 ├── backend
 │   ├── cmd
 │   └── pkg
 │       ├── config
-│       ├── database                        # contains CouchDB client, allowing creation of new Users (and associated databases)
+│       ├── database                  # contains CouchDB client, allowing creation of new Users (and associated databases)
 │       ├── errors
 │       ├── models
 │       └── web
-│           ├── handler                     # contains code for API endpoints
+│           ├── handler               # contains code for API endpoints
 │           │   ├── auth.go           # authentication endpoints (create new user)
 │           │   ├── cors_proxy.go     # CORS proxy/relay for communicating with healthcare providers who do not support CORS
 │           │   ├── couchdb_proxy.go  # reverse proxy for CouchDB api, allowing for database API to be exposed (with limitations)
@@ -189,7 +189,7 @@ a CDN or minimal Nginx deployment.
 
 ## Distribution/Docker
 
-```
+```tree
 ├── docker-compose.yml                  # docker-compose file which can be used to compile and run "all-in-one" image
 ├── Dockerfile                          # dockerfile for "all-in-one" image, containing frontend, backend & database
 ├── docker
