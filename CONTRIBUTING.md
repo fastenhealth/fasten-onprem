@@ -149,9 +149,9 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   │   │   └── toast.service.ts              # notifications service, used to send notifications
 │   │   │   └── workers
 │   │   │       ├── queue.service.spec.ts
-│   │   │       ├── queue.service.ts                # queue service, used to coordinate background work
-│   │   │       └── source-sync.worker.ts           # background job (web-worker) that syncs all FHIR resources from healthcare provider
-│   │   ├── lib                                     # root directory for libraries
+│   │   │       ├── queue.service.ts              # queue service, used to coordinate background work
+│   │   │       └── source-sync.worker.ts         # background job (web-worker) that syncs all FHIR resources from healthcare provider
+│   │   ├── lib                                   # root directory for libraries
 │   │   │   ├── README.md
 │   │   │   ├── conduit                           # Conduit Library - HealthCare provider communication layer (FHIR protocol)
 │   │   │   │   ├── fhir                          # contains healthcare provider specific FHIR clients
