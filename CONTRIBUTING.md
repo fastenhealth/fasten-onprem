@@ -143,13 +143,9 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   │   ├── services
 │   │   │   │   ├── auth-interceptor.service.ts   # service that looks for 401/403 API responses and triggers Logout
 │   │   │   │   ├── can-activate.auth-guard.ts    # service that checks if user is logged in
-│   │   │   │   ├── fasten-api.service.spec.ts    
 │   │   │   │   ├── fasten-api.service.ts         # api service, used to commnunicate with Go backend (WILL BE REMOVED)
-│   │   │   │   ├── fasten-db.service.spec.ts     
 │   │   │   │   ├── fasten-db.service.ts          # db service, used to communicate with CouchDB database
-│   │   │   │   ├── lighthouse.service.spec.ts
 │   │   │   │   ├── lighthouse.service.ts         # api service, used to communicate with auth-gateway (Lighthouse)
-│   │   │   │   ├── toast.service.spec.ts
 │   │   │   │   └── toast.service.ts              # notifications service, used to send notifications
 │   │   │   └── workers
 │   │   │       ├── queue.service.spec.ts
@@ -158,38 +154,63 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   ├── lib                                               # root directory for libraries
 │   │   │   ├── README.md
 │   │   │   ├── conduit                                 # Conduit Library - HealthCare provider communication layer (FHIR protocol)
-│   │   │   │   ├── factory.ts
-│   │   │   │   ├── fhir
-│   │   │   │   └── interface.ts
-│   │   │   ├── database
-│   │   │   │   ├── constants.ts
-│   │   │   │   ├── interface.ts
+│   │   │   │   ├── fhir                          # contains healthcare provider specific FHIR clients
+│   │   │   ├── database                                # Database Library - PouchDB/CouchDB client, compatible with web-worker and browser env
 │   │   │   │   ├── plugins
-│   │   │   │   ├── pouchdb_repository.spec.ts
-│   │   │   │   └── pouchdb_repository.ts
+│   │   │   │   └── pouchdb_repository.ts          
 │   │   │   ├── models
-│   │   │   │   ├── database
-│   │   │   │   ├── fasten
-│   │   │   │   └── lighthouse
+│   │   │   │   ├── database                      # Classes used to store data in CouchDB
+│   │   │   │   ├── fasten                        
+│   │   │   │   └── lighthouse                    # Classes used to communicate with Lighthouse API
 │   │   │   └── utils
-│   │   │       └── base64.ts
-│   │   ├── main.ts
-│   │   ├── polyfills.ts
-│   │   ├── styles.scss
-│   │   └── test.ts
-│   └── yarn.lock
-
-
+│   │   ├── styles.scss                                       # Main sylesheet
 ```
 
 ## Backend
 
+The backend is incredibly simple (by design). The hope is to remove it completely if possible, allowing Fasten to be served by 
+a CDN or minimal Nginx deployment. 
+
+```
+├── backend
+│   ├── cmd
+│   └── pkg
+│       ├── config
+│       ├── database                        # contains CouchDB client, allowing creation of new Users (and associated databases)
+│       ├── errors
+│       ├── models
+│       └── web
+│           ├── handler                     # contains code for API endpoints
+│           │   ├── auth.go           # authentication endpoints (create new user)
+│           │   ├── cors_proxy.go     # CORS proxy/relay for communicating with healthcare providers who do not support CORS
+│           │   ├── couchdb_proxy.go  # reverse proxy for CouchDB api, allowing for database API to be exposed (with limitations)
+│           │   └── metadata.go       # API endpoint returning metadata for healthcare providers
+```
 
 ## Distribution/Docker
 
+```
+├── docker-compose.yml                              # docker-compose file which can be used to compile and run "all-in-one" image
+├── Dockerfile                                      # dockerfile for "all-in-one" image, containing frontend, backend & database
+├── docker
+│   ├── README.md 
+│   ├── couchdb                               
+│   │   ├── Dockerfile                  # dockerfile for "couchdb" only image, used for development
+│   │   └── local.ini
+│   └── rootfs                                # filesystem configs, used in Dockerfiles to setup s6-overlay service manager
+│       └── etc
+│           ├── cont-init.d
+│           │   ├── 01-timezone
+│           │   └── 50-couchdb-init
+│           └── services.d
+│               ├── couchdb
+│               └── fasten
 
+```
 
-# Running tests
+# FAQ
+
+### How do I run individual frontend tests?
 
 - ng test --include='**/base_client.spec.ts'    
 - ng test --include='lib/**/*.spec.ts'     
