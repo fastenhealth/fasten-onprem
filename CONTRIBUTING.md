@@ -2,31 +2,191 @@
 > 
 > In the meantime, please consider looking at the extensive docs in the [Fasten Docs Repository](https://github.com/fastenhealth/docs/tree/main/technical)
 
+# Tech Stack
 
+Fasten is made up of a handful of different components. Here's a summary of the technologies & languages used in Fasten:
+
+**Frontend**
+- NodeJS `v18.9.0`
+- Yarn `1.22.19`
+- Angular `v14.1.3`
+
+**Backend**
+- Go `v1.18.3`
+- CouchDB `v3.2`
+
+**Misc**
+- Docker `v20.10.17`
+
+## Setup
+
+If you're on a Mac, you can run the following commands to install the necessary software to get setup:
+
+```bash
+brew install node
+npm install -g @angular/cli@14.1.3
+
+brew install go
+
+brew install docker
 ```
+
+# Running Tests
+
+Before making changes to Fasten, you'll want to run the test suites to ensure that your environment is setup correctly:
+
+```bash
+make test
+
+# if you only want to run the frontend tests (Angular), you can run:
+make frontend-test
+
+# alternatively, if you only care about backend (Go) tests, you can run:
+make backend-test
+```
+
+# Start Development Environment
+
+To run Fasten from source, you'll need to create 3 separate processes:
+
+- Angular Frontend
+- Go Backend
+- CouchDB Database
+
+First we'll create a development config file (`config.dev.yaml`)
+
+```yaml
+version: 1
+web:
+  listen:
+    port: 9090
+    host: 0.0.0.0
+    basepath: ''
+  src:
+    frontend:
+      path: ./dist
+log:
+  file: '' #absolute or relative paths allowed, eg. web.log
+  level: INFO
+```
+
+Next we'll start the processes described above:
+
+```bash
+
+# In terminal #1, run the following
 cd frontend 
 npm run dist
-go mod vendor
-go run backend/cmd/fasten/fasten.go start --config ./config.example.yaml --debug
 
+# In terminal #2, run the following
+go mod vendor
+go run backend/cmd/fasten/fasten.go start --config ./config.dev.yaml --debug
+
+# In terminal #3, run the following
 docker build -t fasten-couchdb -f docker/couchdb/Dockerfile .
 docker run --rm -it -p 5984:5984 -v `pwd`/.couchdb/data:/opt/couchdb/data -v `pwd`/.couchdb/config:/opt/couchdb/etc/local.d fasten-couchdb
 ```
 
-# Docker 
-``
+Now you can open a browser to `http://localhost:9090` to see the Fasten UI. 
+
+## Important URL's 
+
+The following URL's and credentials may be helpful as you're developing
 
 - http://localhost:9090/web/dashboard - WebUI
-- http://localhost:9090/database - CouchDB proxy
+- http://localhost:9090/database - CouchDB API proxy
 - http://localhost:5984/_utils/ - CouchDB admin UI
 
-# Credentials
+### Credentials
 - Couchdb:
   - username: `admin`
   - password: `mysecretpassword`
 - WebUI: 
   - username: `testuser`
   - password: `testuser`
+
+# Source Code Folder Structure
+
+The Fasten source code is organized into a handful of important folders, which we'll describe below:
+
+## Frontend
+
+```tree
+├── frontend
+│   ├── src
+│   │   ├── app
+│   │   │   ├── app-routing.module.ts
+│   │   │   ├── app.component.html
+│   │   │   ├── app.component.scss
+│   │   │   ├── app.component.spec.ts
+│   │   │   ├── app.component.ts
+│   │   │   ├── app.module.ts
+│   │   │   ├── components                              # contains shared/partial components reused on multiple pages.
+│   │   │   │   ├── components-sidebar
+│   │   │   │   ├── footer
+│   │   │   │   ├── header
+│   │   │   │   ├── list-fallback-resource
+│   │   │   │   ├── list-generic-resource         # A component containing a table view for every FHIR resource
+│   │   │   │   ├── list-patient
+│   │   │   │   ├── resource-list                 # Thin shim which populates template depending on FHIR resource type
+│   │   │   │   ├── toast                         # Toast/notification component
+│   │   │   │   └── utilities-sidebar
+│   │   │   ├── models                                  # contains classes for communicating with API's and transfering data between pages. 
+│   │   │   ├── pages
+│   │   │   │   ├── auth-signin                   # Login/Signin page
+│   │   │   │   ├── auth-signup                   # Signup page
+│   │   │   │   ├── dashboard                     # Dashboard, visible after logging in
+│   │   │   │   ├── medical-sources               # Medical Provider connection page
+│   │   │   │   ├── patient
+│   │   │   │   ├── resource-detail               # Page displaying detailed information about FHIR resource
+│   │   │   │   └── source-detail                 # 2 column page displaying FHIR counts, and table listing FHIR resources for selected type
+│   │   │   ├── services
+│   │   │   │   ├── auth-interceptor.service.ts   # service that looks for 401/403 API responses and triggers Logout
+│   │   │   │   ├── can-activate.auth-guard.ts    # service that checks if user is logged in
+│   │   │   │   ├── fasten-api.service.spec.ts    
+│   │   │   │   ├── fasten-api.service.ts         # api service, used to commnunicate with Go backend (WILL BE REMOVED)
+│   │   │   │   ├── fasten-db.service.spec.ts     
+│   │   │   │   ├── fasten-db.service.ts          # db service, used to communicate with CouchDB database
+│   │   │   │   ├── lighthouse.service.spec.ts
+│   │   │   │   ├── lighthouse.service.ts         # api service, used to communicate with auth-gateway (Lighthouse)
+│   │   │   │   ├── toast.service.spec.ts
+│   │   │   │   └── toast.service.ts              # notifications service, used to send notifications
+│   │   │   └── workers
+│   │   │       ├── queue.service.spec.ts
+│   │   │       ├── queue.service.ts                    # queue service, used to coordinate background work
+│   │   │       └── source-sync.worker.ts               # background job (web-worker) that syncs all FHIR resources from healthcare provider
+│   │   ├── lib                                               # root directory for libraries
+│   │   │   ├── README.md
+│   │   │   ├── conduit                                 # Conduit Library - HealthCare provider communication layer (FHIR protocol)
+│   │   │   │   ├── factory.ts
+│   │   │   │   ├── fhir
+│   │   │   │   └── interface.ts
+│   │   │   ├── database
+│   │   │   │   ├── constants.ts
+│   │   │   │   ├── interface.ts
+│   │   │   │   ├── plugins
+│   │   │   │   ├── pouchdb_repository.spec.ts
+│   │   │   │   └── pouchdb_repository.ts
+│   │   │   ├── models
+│   │   │   │   ├── database
+│   │   │   │   ├── fasten
+│   │   │   │   └── lighthouse
+│   │   │   └── utils
+│   │   │       └── base64.ts
+│   │   ├── main.ts
+│   │   ├── polyfills.ts
+│   │   ├── styles.scss
+│   │   └── test.ts
+│   └── yarn.lock
+
+
+```
+
+## Backend
+
+
+## Distribution/Docker
+
 
 
 # Running tests
