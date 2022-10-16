@@ -7,12 +7,17 @@ import {Base64} from '../utils/base64';
 
 // PouchDB & plugins
 import * as PouchDB from 'pouchdb/dist/pouchdb';
-import * as PouchCrypto from 'crypto-pouch';
+
+// import * as PouchCrypto from 'crypto-pouch';
+// PouchDB.plugin(PouchCrypto);
+
+import * as PouchTransform from 'transform-pouch';
+PouchDB.plugin(PouchTransform);
+
 import {PouchdbUpsert} from './plugins/upsert';
 import {UpsertSummary} from '../models/fasten/upsert-summary';
-PouchDB.plugin(PouchCrypto);
 
-
+import {PouchdbCrypto, PouchdbCryptoOptions} from './plugins/crypto';
 
 // !!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!
 // most pouchdb plugins seem to fail when used in a webworker.
@@ -52,6 +57,7 @@ export class PouchdbRepository implements IDatabaseRepository {
   // replicationHandler: any
   remotePouchEndpoint: string // "http://localhost:5984"
   encryptionKey: string
+  encryptionInitComplete: boolean = false
   pouchDb: PouchDB.Database
 
   /**
@@ -217,18 +223,21 @@ export class PouchdbRepository implements IDatabaseRepository {
     if(!this.pouchDb) {
       throw(new Error( "Database is not available - please configure an instance." ));
     }
-    // if(this.encryptionKey){
-    //   return this.pouchDb.crypto(this.encryptionKey, {ignore:[
-    //     'doc_type',
-    //     'source_id',
-    //     'source_resource_type',
-    //     'source_resource_id',
-    //   ]}).then(() => {
-    //     return this.pouchDb
-    //   })
-    // } else {
+    if(this.encryptionKey && !this.encryptionInitComplete){
+      return PouchdbCrypto.crypto(this.pouchDb, this.encryptionKey, {ignore:[
+          'doc_type',
+          'source_id',
+          'source_resource_type',
+          'source_resource_id',
+        ]})
+        .then((encryptedPouchDb) => {
+          this.pouchDb = encryptedPouchDb
+          this.encryptionInitComplete = true
+          return this.pouchDb
+        })
+    } else {
       return this.pouchDb;
-    // }
+    }
   }
 
 
