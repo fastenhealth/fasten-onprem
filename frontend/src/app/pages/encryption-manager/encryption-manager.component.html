@@ -1,0 +1,104 @@
+<div class="az-content az-content-profile">
+  <div class="container">
+    <div class="row w-100">
+      <div class="col-sm-12">
+        <h2 class="az-content-title mg-t-40">Security Manager</h2>
+        <p class="mb-5">
+          Before you use Fasten you'll need to import or generate a new encryption key.
+          <br/>
+          <br/>
+          Fasten uses <a href="https://en.wikipedia.org/wiki/Zero-knowledge_service" target="_blank">zero-knowledge encryption</a> to secure your medical data.
+          This means that your medical records are encrypted on your device, before they are stored in the Fasten database.
+          The encrypted data stored in the database is worthless without your encryption key.
+          <br/>
+          <br/>
+          You must safely store your encryption key as you would a username & password,
+          as it's the only thing that will allow you to access your records.</p>
+
+        <div *ngIf="cryptoPanel == CryptoPanelType.Generate" class="wizard clearfix">
+          <div class="steps clearfix">
+            <ul role="tablist">
+              <li role="tab" class="first current" aria-disabled="false" aria-selected="true">
+                <a aria-controls="wizard1-p-0">
+                  <span class="current-info audible">current step: </span>
+                  <span class="number">1</span>
+                  <span class="title">Download</span></a>
+              </li>
+              <li role="tab" class="disabled last" aria-disabled="true">
+                <a  aria-controls="wizard1-p-2">
+                  <span class="number">2</span>
+                  <span class="title">Validate</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="content clearfix">
+            <h3 tabindex="-1" class="title current">Generate an encryption key</h3>
+            <section role="tabpanel" aria-labelledby="wizard1-h-0" class="body current" aria-hidden="false">
+              <p class="mg-b-0">
+                Fasten has generated an encryption key for you. You can use this encryption key to decode your medical records on this browser, and other devices.
+                <br/>
+
+                This is the only time the encryption key will be available to view, copy or download. We recommend downloading this key and storing the file in a secure location.
+                <br/>
+                You can reset your encryption key at any time, however any previously encrypted data will no longer be accessible.
+              </p>
+
+              <pre><code [highlight]="currentCryptoConfig | json"></code></pre>
+
+              <div class="row row-xs wd-xl-80p">
+                <div class="col-sm-6 col-md-3">
+                  <a [href]="generateCryptoConfigUrl" [download]="generateCryptoConfigFilename" class="btn btn-indigo btn-rounded btn-block">Download Encryption Key</a>
+                </div>
+              </div>
+            </section>
+          </div>
+
+        </div>
+
+
+        <div *ngIf="cryptoPanel == CryptoPanelType.Import" class="wizard clearfix">
+          <div class="steps clearfix">
+            <ul role="tablist">
+              <li role="tab" class="first current" aria-disabled="false" aria-selected="true">
+                <a aria-controls="wizard1-p-0">
+                  <span class="current-info audible">current step: </span>
+                  <span class="number">1</span>
+                  <span class="title">Import</span></a>
+              </li>
+              <li role="tab" class="disabled last" aria-disabled="true">
+                <a aria-controls="wizard1-p-2">
+                  <span class="number">2</span>
+                  <span class="title">Validate</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="content clearfix">
+            <h3 tabindex="-1" class="title current">Import existing encryption key</h3>
+            <section role="tabpanel" aria-labelledby="wizard1-h-0" class="body current" aria-hidden="false">
+              <p class="mg-b-0">
+              <p class="mg-b-10">
+                Fasten was unable to find your encryption key on this device, and has detected encrypted data in your database.
+                <br/>
+                You will need to provide your encryption key to access your health records.
+              </p>
+
+              <div class="row">
+                <div class="col-4">
+                  <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile" (change)="openFileHandler($event.target.files)" accept="application/json">
+                    <label class="custom-file-label" for="customFile">Choose file</label>
+                  </div>
+                </div>
+              </div>
+
+            </section>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

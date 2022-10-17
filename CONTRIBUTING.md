@@ -142,7 +142,7 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   │   │   └── source-detail                 # 2 column page displaying FHIR counts, and table listing FHIR resources for selected type
 │   │   │   ├── services
 │   │   │   │   ├── auth-interceptor.service.ts   # service that looks for 401/403 API responses and triggers Logout
-│   │   │   │   ├── can-activate.auth-guard.ts    # service that checks if user is logged in
+│   │   │   │   ├── is-authenticated-auth-guard.ts    # service that checks if user is logged in
 │   │   │   │   ├── fasten-api.service.ts         # api service, used to commnunicate with Go backend (WILL BE REMOVED)
 │   │   │   │   ├── fasten-db.service.ts          # db service, used to communicate with CouchDB database
 │   │   │   │   ├── lighthouse.service.ts         # api service, used to communicate with auth-gateway (Lighthouse)
