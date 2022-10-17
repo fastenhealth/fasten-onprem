@@ -7,10 +7,11 @@ import { Router } from '@angular/router';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-
+  current_user: string
   constructor(private fastenDb: FastenDbService, private router: Router) { }
 
   ngOnInit() {
+    this.current_user = this.fastenDb.current_user
   }
 
   closeMenu(e) {
