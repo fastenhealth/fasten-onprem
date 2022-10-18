@@ -4,6 +4,8 @@ import {PouchdbCryptConfig, PouchdbCrypto} from '../../../lib/database/plugins/c
 import {FastenDbService} from '../../services/fasten-db.service';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import {Router} from '@angular/router';
+import {ToastService} from '../../services/toast.service';
+import {ToastNotification, ToastType} from '../../models/fasten/toast';
 
 export enum CryptoPanelType {
   Loading,
@@ -24,7 +26,15 @@ export class EncryptionManagerComponent implements OnInit {
 
   generateCryptoConfigUrl: SafeResourceUrl = ""
   generateCryptoConfigFilename: string = ""
-  constructor(private fastenDbService: FastenDbService, private sanitizer: DomSanitizer, private router: Router) { }
+  generateCustomFileError: string = ""
+
+  importCustomFileError: string = ""
+
+  currentStep: number
+  lastStep: number
+
+
+  constructor(private fastenDbService: FastenDbService, private sanitizer: DomSanitizer, private router: Router, private toastService: ToastService) { }
 
   ngOnInit(): void {
 
@@ -39,8 +49,22 @@ export class EncryptionManagerComponent implements OnInit {
 
   }
 
+  nextHandler() {
+    this.currentStep += 1
+    // if (!this.stepsService.isLastStep()) {
+    //   this.stepsService.moveToNextStep();
+    // } else {
+    //   this.onSubmit();
+    // }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Generate Wizard Methods
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   async showGenerateCryptoConfig(): Promise<PouchdbCryptConfig> {
     this.cryptoPanel = CryptoPanelType.Generate
+    this.currentStep = 1
+    this.lastStep = 2
     if(!this.currentCryptoConfig){
       this.currentCryptoConfig = await PouchdbCrypto.CryptConfig(uuidv4(), this.fastenDbService.current_user)
       await PouchdbCrypto.StoreCryptConfig(this.currentCryptoConfig) //store in indexdb
@@ -50,17 +74,56 @@ export class EncryptionManagerComponent implements OnInit {
       let currentCryptoConfigBlob = new Blob([JSON.stringify(this.currentCryptoConfig)], { type: 'application/json' });
       this.generateCryptoConfigUrl = this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(currentCryptoConfigBlob));
       this.generateCryptoConfigFilename = `fasten-${this.fastenDbService.current_user}.key.json`
-
     }
 
     return this.currentCryptoConfig
   }
 
-  async showImportCryptoConfig(): Promise<any> {
-    this.cryptoPanel = CryptoPanelType.Import
+  generateOpenFileHandler(fileList: FileList) {
+    this.generateCustomFileError = ""
+    let file = fileList[0];
+    this.readFileContent(file)
+      .then((content) => {
+        let parsedCryptoConfig = JSON.parse(content) as PouchdbCryptConfig
+
+        //check if the parsed encryption key matches the currently set encryption key
+
+        if(parsedCryptoConfig.key == this.currentCryptoConfig.key &&
+          parsedCryptoConfig.username == this.currentCryptoConfig.username &&
+          parsedCryptoConfig.config == this.currentCryptoConfig.config){
+          return true
+        } else {
+          //throw an error & notify user
+          this.generateCustomFileError = "Crypto configuration file does not match"
+          throw new Error(this.generateCustomFileError)
+        }
+      })
+      .then(() => {
+
+        const toastNotification = new ToastNotification()
+        toastNotification.type = ToastType.Success
+        toastNotification.message = "Successfully validated & stored encryption key."
+        toastNotification.autohide = true
+        this.toastService.show(toastNotification)
+
+        //redirect user to dashboard
+        return this.router.navigate(['/dashboard']);
+      })
+      .catch(console.error)
   }
 
-  openFileHandler(fileList: FileList) {
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Import Wizard Methods
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  async showImportCryptoConfig(): Promise<any> {
+    this.cryptoPanel = CryptoPanelType.Import
+    this.currentStep = 1
+    this.lastStep = 2
+  }
+
+  importOpenFileHandler(fileList: FileList) {
+    this.importCustomFileError = ""
     let file = fileList[0];
     this.readFileContent(file)
       .then((content) => {
@@ -70,12 +133,36 @@ export class EncryptionManagerComponent implements OnInit {
           return PouchdbCrypto.StoreCryptConfig(cryptoConfig)
         } else {
           //throw an error & notify user
-          console.error("Invalid crypto configuration file")
+          this.importCustomFileError = "Invalid crypto configuration file"
+          throw new Error(this.importCustomFileError)
         }
       })
       .then(() => {
-        //redirect user to dashboard
+        //go to step 2
+        this.currentStep = 2
+        //attempt to initialize pouchdb with specified crypto
+        this.fastenDbService.ResetDB()
+        return this.fastenDbService.GetSources()
+
+      })
+      .then(() => {
+        const toastNotification = new ToastNotification()
+        toastNotification.type = ToastType.Success
+        toastNotification.message = "Successfully validated & imported encryption key."
+        toastNotification.autohide = true
+        this.toastService.show(toastNotification)
+
         return this.router.navigate(['/dashboard']);
+      })
+      .catch((err) => {
+        console.error(err)
+        //an error occurred while importing credential
+        const toastNotification = new ToastNotification()
+        toastNotification.type = ToastType.Error
+        toastNotification.message = "Provided encryption key does not match. Please try a different key"
+        toastNotification.autohide = false
+        this.toastService.show(toastNotification)
+        this.currentStep = 1
       })
   }
 

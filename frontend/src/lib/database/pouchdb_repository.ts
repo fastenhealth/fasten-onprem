@@ -241,7 +241,10 @@ export class PouchdbRepository implements IDatabaseRepository {
   // All functions below here will return the raw PouchDB responses, and may need to be wrapped in
   // new ResourceFhir(result.doc)
   ///////////////////////////////////////////////////////////////////////////////////////
-
+  public ResetDB(){
+    this.pouchDb = null
+    this.encryptionInitComplete = false
+  }
   // Get the active PouchDB instance. Throws an error if no PouchDB instance is
   // available (ie, user has not yet been configured with call to .configureForUser()).
   public async GetDB(skipEncryption: boolean = false): Promise<PouchDB.Database> {
