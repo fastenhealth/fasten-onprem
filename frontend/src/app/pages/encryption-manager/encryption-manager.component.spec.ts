@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EncryptionManagerComponent } from './encryption-manager.component';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('EncryptionManagerComponent', () => {
   let component: EncryptionManagerComponent;
@@ -8,7 +9,9 @@ describe('EncryptionManagerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EncryptionManagerComponent ]
+      declarations: [ EncryptionManagerComponent ],
+      imports: [HttpClientTestingModule],
+
     })
     .compileComponents();
 

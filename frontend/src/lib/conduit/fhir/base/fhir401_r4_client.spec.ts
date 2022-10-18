@@ -2,7 +2,7 @@ import {FHIR401Client} from './fhir401_r4_client';
 import {Source} from '../../../models/database/source';
 import {IResourceBundleRaw} from '../../interface';
 import {ResourceFhir} from '../../../models/database/resource_fhir';
-import {NewRepositiory} from '../../../database/pouchdb_repository';
+import {NewPouchdbRepositoryWebWorker} from '../../../database/pouchdb_repository';
 import {Base64} from '../../../utils/base64';
 import * as PouchDB from 'pouchdb/dist/pouchdb';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 // @ts-ignore
 import * as FHIR401Client_ProcessBundle from './fixtures/FHIR401Client_ProcessBundle.json';
 import {IDatabaseRepository} from '../../../database/interface';
+import {PouchdbCrypto} from '../../../database/plugins/crypto';
 
 
 class TestClient extends FHIR401Client {
@@ -66,7 +67,10 @@ describe('FHIR401Client', () => {
     let repository: IDatabaseRepository;
 
     beforeEach(async () => {
-      repository = NewRepositiory(null, null, new PouchDB("FHIR401Client-"+ uuidv4()));
+      let current_user = uuidv4()
+      let cryptoConfig = await PouchdbCrypto.CryptConfig(current_user, current_user)
+      await PouchdbCrypto.StoreCryptConfig(cryptoConfig)
+      repository = NewPouchdbRepositoryWebWorker(current_user, new PouchDB("FHIR401Client-"+ current_user));
     });
 
     afterEach(async () => {

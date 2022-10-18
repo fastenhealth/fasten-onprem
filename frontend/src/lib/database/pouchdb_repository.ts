@@ -49,8 +49,8 @@ import {PouchdbCryptConfig, PouchdbCrypto, PouchdbCryptoOptions} from './plugins
  * @constructor
  */
 
-export function NewPouchdbRepositoryWebWorker(current_user: string): PouchdbRepository {
-  let pouchdbRepository = new PouchdbRepository()
+export function NewPouchdbRepositoryWebWorker(current_user: string, localPouchDb?: PouchDB.Database): PouchdbRepository {
+  let pouchdbRepository = new PouchdbRepository(localPouchDb)
   pouchdbRepository.current_user = current_user
   return pouchdbRepository
 }
