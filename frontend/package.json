@@ -33,7 +33,9 @@
     "chart.js": "2.9.4",
     "crypto-pouch": "^4.0.1",
     "fhirclient": "^2.5.1",
+    "garbados-crypt": "^3.0.0-beta",
     "humanize-duration": "^3.27.3",
+    "idb": "^7.1.0",
     "moment": "^2.29.4",
     "ng2-charts": "^2.3.0",
     "ngx-dropzone": "^3.1.0",
@@ -45,6 +47,7 @@
     "pouchdb-find": "^7.3.0",
     "pouchdb-upsert": "^2.2.0",
     "rxjs": "~6.5.4",
+    "transform-pouch": "^2.0.0",
     "tslib": "^2.0.0",
     "uuid": "^9.0.0",
     "zone.js": "~0.11.8"

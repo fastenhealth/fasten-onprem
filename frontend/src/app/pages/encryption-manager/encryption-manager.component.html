@@ -1,0 +1,151 @@
+<div class="az-content az-content-profile">
+  <div class="container">
+    <div class="row w-100">
+      <div class="col-sm-12">
+        <h2 class="az-content-title mg-t-20">Security Manager</h2>
+        <p class="mb-5">
+          Before you use Fasten you'll need to import or generate a new encryption key.
+          <br/>
+          <br/>
+          Fasten uses <a href="https://en.wikipedia.org/wiki/Zero-knowledge_service" target="_blank">zero-knowledge encryption</a> to secure your medical data.
+          This means that your medical records are encrypted on your device, before they are stored in the Fasten database.
+          The encrypted data stored in the database is worthless without your encryption key.
+          <br/>
+          <br/>
+          You must safely store your encryption key as you would a username & password,
+          as it's the only thing that will allow you to access your records.</p>
+
+        <div *ngIf="cryptoPanel == CryptoPanelType.Generate" class="wizard clearfix">
+          <div class="steps clearfix">
+            <ul role="tablist">
+              <li role="tab" class="first" [ngClass]="{'current': currentStep == 1, 'disabled': currentStep != 1}">
+                <a aria-controls="wizard1-p-0">
+                  <span class="number">1</span>
+                  <span class="title">Download</span></a>
+              </li>
+              <li role="tab" class="last" [ngClass]="{'current': currentStep == 2, 'disabled': currentStep != 2}">
+                <a aria-controls="wizard1-p-2">
+                  <span class="number">2</span>
+                  <span class="title">Validate</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="content clearfix">
+            <ng-container [ngSwitch]="currentStep">
+              <ng-container *ngSwitchCase="1">
+                <h3 tabindex="-1" class="title current">Generate an encryption key</h3>
+                <section role="tabpanel" aria-labelledby="wizard1-h-0" class="body current" aria-hidden="false">
+                  <p class="mg-b-0">
+                    Fasten has generated an encryption key for you. You can use this encryption key to decode your medical records on this browser, and other devices.
+                    <br/>
+
+                    This is the only time the encryption key will be available to view, copy or download. We recommend downloading this key and storing the file in a secure location.
+                    <br/>
+                    You can reset your encryption key at any time, however any previously encrypted data will no longer be accessible.
+                  </p>
+
+                  <pre><code [highlight]="currentCryptoConfig | json"></code></pre>
+
+                  <div class="row row-xs wd-xl-80p">
+                    <div class="col-sm-6 col-md-3">
+                      <a [href]="generateCryptoConfigUrl" [download]="generateCryptoConfigFilename" class="btn btn-warning btn-rounded btn-block">Download Encryption Key</a>
+                    </div>
+                  </div>
+                </section>
+              </ng-container>
+              <ng-container *ngSwitchCase="2">
+                <h3 tabindex="-1" class="title current">Validate your encryption key</h3>
+                <section role="tabpanel" aria-labelledby="wizard1-h-0" class="body current" aria-hidden="false">
+                  <p class="mg-b-10">
+                    Please select your encryption key (which you generated in the previous step) using the file input below.
+                    <br/>
+                    It'll be validated against your browser's encryption key to ensure fidelity.
+                  </p>
+
+                  <div class="row">
+                    <div class="col-4">
+                      <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="generateCustomFile" (change)="generateOpenFileHandler($event.target.files)" accept="application/json">
+                        <label class="custom-file-label" for="generateCustomFile">Choose file</label>
+                        <div *ngIf="generateCustomFileError" class="alert alert-danger">
+                          {{generateCustomFileError}}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </ng-container>
+
+            </ng-container>
+          </div>
+          <div *ngIf="currentStep != lastStep" class="actions clearfix">
+            <ul role="menu" aria-label="Pagination">
+              <li class="disabled" aria-disabled="true"></li>
+              <li aria-disabled="false"><button class="btn btn-az-primary btn-block" (click)="nextHandler()" role="menuitem">Next</button></li>
+            </ul>
+          </div>
+        </div>
+
+
+        <div *ngIf="cryptoPanel == CryptoPanelType.Import" class="wizard clearfix">
+          <div class="steps clearfix">
+            <ul role="tablist">
+              <li role="tab" class="first" [ngClass]="{'current': currentStep == 1, 'disabled': currentStep != 1}">
+                <a aria-controls="wizard1-p-0">
+                  <span class="number">1</span>
+                  <span class="title">Import</span></a>
+              </li>
+              <li role="tab" class="last" [ngClass]="{'current': currentStep == 2, 'disabled': currentStep != 2}">
+                <a aria-controls="wizard1-p-2">
+                  <span class="number">2</span>
+                  <span class="title">Validate</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="content clearfix">
+            <ng-container [ngSwitch]="currentStep">
+              <ng-container *ngSwitchCase="1">
+                <h3 tabindex="-1" class="title current">Import existing encryption key</h3>
+                <section role="tabpanel" aria-labelledby="wizard1-h-0" class="body current" aria-hidden="false">
+                  <p class="mg-b-10">
+                    Fasten was unable to find your encryption key on this device, and has detected encrypted data in your database.
+                    <br/>
+                    You will need to provide your encryption key to access your health records.
+                  </p>
+
+                  <div class="row">
+                    <div class="col-4">
+                      <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="importCustomFile" (change)="importOpenFileHandler($event.target.files)" accept="application/json">
+                        <label class="custom-file-label" for="importCustomFile">Choose file</label>
+                        <div *ngIf="importCustomFileError" class="alert alert-danger">
+                          {{importCustomFileError}}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </section>
+              </ng-container>
+              <ng-container *ngSwitchCase="2">
+                <h3 tabindex="-1" class="title current">Validate encryption key</h3>
+                <section role="tabpanel" aria-labelledby="wizard1-h-0" class="body current" aria-hidden="false">
+                  <p class="mg-b-10">
+                    Thank you for providing your encryption key. Fasten will attempt to decrypt your secured records with this key.
+                  </p>
+                  <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                </section>
+              </ng-container>
+            </ng-container>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

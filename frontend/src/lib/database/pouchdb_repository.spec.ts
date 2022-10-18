@@ -1,16 +1,20 @@
 import {IDatabaseRepository} from './interface';
-import {NewRepositiory} from './pouchdb_repository';
+import {NewPouchdbRepositoryWebWorker} from './pouchdb_repository';
 import {SourceType} from '../models/database/source_types';
 import {Source} from '../models/database/source';
 import {DocType} from './constants';
 import * as PouchDB from 'pouchdb/dist/pouchdb';
 import { v4 as uuidv4 } from 'uuid';
+import {PouchdbCrypto} from './plugins/crypto';
 
 describe('PouchdbRepository', () => {
   let repository: IDatabaseRepository;
 
   beforeEach(async () => {
-    repository = NewRepositiory(null, null, new PouchDB("PouchdbRepository" + uuidv4()));
+    let current_user = uuidv4()
+    let cryptoConfig = await PouchdbCrypto.CryptConfig(current_user, current_user)
+    await PouchdbCrypto.StoreCryptConfig(cryptoConfig)
+    repository = NewPouchdbRepositoryWebWorker(current_user, new PouchDB("PouchdbRepository" + current_user));
   });
 
   afterEach(async () => {

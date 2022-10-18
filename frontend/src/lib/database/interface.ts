@@ -22,7 +22,7 @@ export interface IDatabasePaginatedResponse {
   rows: any[]
 }
 export interface IDatabaseRepository {
-  GetDB(): any
+  GetDB(skipEncryption?: boolean): any
   Close(): void
 
   // CreateUser(*models.User) error
@@ -34,7 +34,7 @@ export interface IDatabaseRepository {
   DeleteSource(source_id: string): Promise<boolean>
   GetSourceSummary(source_id: string): Promise<SourceSummary>
   GetSources(): Promise<IDatabasePaginatedResponse>
-
+  IsDatabasePopulated(): Promise<boolean>
 
   // UpsertResource(context.Context, *models.ResourceFhir) error
   // GetResourceBySourceType(context.Context, string, string) (*models.ResourceFhir, error)

@@ -5,20 +5,20 @@ import {Source} from '../../lib/models/database/source';
 import {SourceSyncMessage} from '../models/queue/source-sync-message';
 import {ToastService} from '../services/toast.service';
 import {ToastNotification, ToastType} from '../models/fasten/toast';
+import {FastenDbService} from '../services/fasten-db.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QueueService {
 
-  constructor(private toastService: ToastService) { }
+  constructor(private toastService: ToastService, private fastenDbService: FastenDbService) { }
 
   runSourceSyncWorker(source: Source):Observable<string> {
     if (typeof Worker !== 'undefined') {
       const sourceSync = new SourceSyncMessage()
       sourceSync.source = source
-      sourceSync.userIdentifier = localStorage.getItem("current_user")
-      sourceSync.encryptionKey = "my-secret-encryption-key"
+      sourceSync.current_user = this.fastenDbService.current_user
       const input$: Observable<string> = of(JSON.stringify(sourceSync));
       return fromWorker<string, string>(() => new Worker(new URL('./source-sync.worker', import.meta.url), {type: 'module'}), input$)
         // .subscribe(message => {

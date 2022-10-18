@@ -7,12 +7,17 @@ import {Base64} from '../utils/base64';
 
 // PouchDB & plugins
 import * as PouchDB from 'pouchdb/dist/pouchdb';
-import * as PouchCrypto from 'crypto-pouch';
+
+// import * as PouchCrypto from 'crypto-pouch';
+// PouchDB.plugin(PouchCrypto);
+
+import * as PouchTransform from 'transform-pouch';
+PouchDB.plugin(PouchTransform);
+
 import {PouchdbUpsert} from './plugins/upsert';
 import {UpsertSummary} from '../models/fasten/upsert-summary';
-PouchDB.plugin(PouchCrypto);
 
-
+import {PouchdbCryptConfig, PouchdbCrypto, PouchdbCryptoOptions} from './plugins/crypto';
 
 // !!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!
 // most pouchdb plugins seem to fail when used in a webworker.
@@ -43,16 +48,22 @@ PouchDB.plugin(PouchCrypto);
  * Eventually this method should dyanmically dtermine the version of the repo to return from the env.
  * @constructor
  */
-export function NewRepositiory(userIdentifier?: string, encryptionKey?: string, localPouchDb?: PouchDB.Database): IDatabaseRepository {
-  return new PouchdbRepository(userIdentifier, encryptionKey, localPouchDb)
-}
 
+export function NewPouchdbRepositoryWebWorker(current_user: string, localPouchDb?: PouchDB.Database): PouchdbRepository {
+  let pouchdbRepository = new PouchdbRepository(localPouchDb)
+  pouchdbRepository.current_user = current_user
+  return pouchdbRepository
+}
 export class PouchdbRepository implements IDatabaseRepository {
 
   // replicationHandler: any
   remotePouchEndpoint: string // "http://localhost:5984"
-  encryptionKey: string
   pouchDb: PouchDB.Database
+  current_user: string
+
+  //encryption configuration
+  cryptConfig: PouchdbCryptConfig = null
+  encryptionInitComplete: boolean = false
 
   /**
    * This class can be initialized in 2 states
@@ -61,17 +72,13 @@ export class PouchdbRepository implements IDatabaseRepository {
    * @param userIdentifier
    * @param encryptionKey
    */
-  constructor(userIdentifier?: string, encryptionKey?: string, localPouchDb?: PouchDB.Database) {
+  constructor(localPouchDb?: PouchDB.Database) {
     this.remotePouchEndpoint = `${globalThis.location.protocol}//${globalThis.location.host}${this.getBasePath()}/database`
 
     //setup PouchDB Plugins
      //https://pouchdb.com/guides/mango-queries.html
     this.pouchDb = null
-    if(userIdentifier){
-      this.pouchDb = new PouchDB(this.getRemoteUserDb(userIdentifier));
-      this.encryptionKey = encryptionKey
-      // this.enableSync(userIdentifier)
-    }
+
     if(localPouchDb){
       console.warn("using local pouchdb, this should only be used for testing")
       this.pouchDb = localPouchDb
@@ -203,6 +210,30 @@ export class PouchdbRepository implements IDatabaseRepository {
       })
   }
 
+  /**
+   * given an raw connection to a database, determine how many records/resources are stored within
+   * @constructor
+   */
+  public async IsDatabasePopulated(): Promise<boolean> {
+    let resourceFhirCount = await this.findDocumentByPrefix(DocType.ResourceFhir, false, true)
+      .then((resp) => {
+        console.log("RESPONSE COUNT INFO", resp)
+        return resp.rows.length
+      })
+
+    if(resourceFhirCount > 0) {return true}
+
+
+    let sourceCount = await this.findDocumentByPrefix(DocType.Source, false, true)
+      .then((resp) => {
+        console.log("SOURCE COUNT INFO", resp)
+
+        return resp.rows.length
+      })
+    if(sourceCount > 0) {return true}
+
+    return false
+  }
 
 
   ///////////////////////////////////////////////////////////////////////////////////////
@@ -210,25 +241,48 @@ export class PouchdbRepository implements IDatabaseRepository {
   // All functions below here will return the raw PouchDB responses, and may need to be wrapped in
   // new ResourceFhir(result.doc)
   ///////////////////////////////////////////////////////////////////////////////////////
-
+  public ResetDB(){
+    this.pouchDb = null
+    this.encryptionInitComplete = false
+  }
   // Get the active PouchDB instance. Throws an error if no PouchDB instance is
   // available (ie, user has not yet been configured with call to .configureForUser()).
-  public async GetDB(): Promise<PouchDB.Database> {
+  public async GetDB(skipEncryption: boolean = false): Promise<PouchDB.Database> {
+    await this.GetSessionDB()
+
     if(!this.pouchDb) {
       throw(new Error( "Database is not available - please configure an instance." ));
     }
-    // if(this.encryptionKey){
-    //   return this.pouchDb.crypto(this.encryptionKey, {ignore:[
-    //     'doc_type',
-    //     'source_id',
-    //     'source_resource_type',
-    //     'source_resource_id',
-    //   ]}).then(() => {
-    //     return this.pouchDb
-    //   })
-    // } else {
+
+    if(skipEncryption){
+      //this allows the database to be queried, even when encryption has not been configured correctly
+      //this will only be used to take a count of documents in the database, so we can prompt the user for a encryption key, or generate a new one (for an empty db)
+      return this.pouchDb
+    }
+
+
+    //try to determine the crypto configuration using the currently logged in user.
+    this.cryptConfig = await PouchdbCrypto.RetrieveCryptConfig(this.current_user)
+
+    if(!this.cryptConfig){
+      throw new Error("crypto configuration not set.")
+    }
+
+    if(!this.encryptionInitComplete){
+      return PouchdbCrypto.crypto(this.pouchDb, this.cryptConfig, {ignore:[
+          'doc_type',
+          'source_id',
+          'source_resource_type',
+          'source_resource_id',
+        ]})
+        .then((encryptedPouchDb) => {
+          this.pouchDb = encryptedPouchDb
+          this.encryptionInitComplete = true
+          return this.pouchDb
+        })
+    } else {
       return this.pouchDb;
-    // }
+    }
   }
 
 
@@ -324,8 +378,8 @@ export class PouchdbRepository implements IDatabaseRepository {
   protected findDocumentByDocType(docType: DocType, includeDocs: boolean = true): Promise<IDatabasePaginatedResponse> {
     return this.findDocumentByPrefix(docType, includeDocs)
   }
-  protected findDocumentByPrefix(prefix: string, includeDocs: boolean = true): Promise<IDatabasePaginatedResponse> {
-    return this.GetDB()
+  protected findDocumentByPrefix(prefix: string, includeDocs: boolean = true, skipEncryption: boolean = false): Promise<IDatabasePaginatedResponse> {
+    return this.GetDB(skipEncryption)
       .then((db) => {
         return db.allDocs({
           include_docs: includeDocs,
@@ -348,6 +402,24 @@ export class PouchdbRepository implements IDatabaseRepository {
   ///////////////////////////////////////////////////////////////////////////////////////
   // Sync private/protected methods
   ///////////////////////////////////////////////////////////////////////////////////////
+  /**
+   * Try to get PouchDB database using session information
+   * This method is overridden in PouchDB Service, as session information is inaccessible in web-worker
+   * @constructor
+   */
+  public async GetSessionDB(): Promise<PouchDB.Database>  {
+    if(this.pouchDb){
+      console.log("Session DB already exists..")
+      return this.pouchDb
+    }
+
+    if(!this.current_user){
+      throw new Error("current user is required when initializing pouchdb within web-worker")
+    }
+    this.pouchDb = new PouchDB(this.getRemoteUserDb(this.current_user))
+    return this.pouchDb
+  }
+
   protected getRemoteUserDb(username: string){
     return `${this.remotePouchEndpoint}/userdb-${this.toHex(username)}`
   }

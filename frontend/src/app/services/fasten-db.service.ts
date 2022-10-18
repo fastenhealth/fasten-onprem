@@ -18,6 +18,7 @@ PouchDB.plugin(PouchUpsert);
 import * as PouchCrypto from 'crypto-pouch';
 PouchDB.plugin(PouchCrypto);
 import PouchAuth from 'pouchdb-authentication'
+import {PouchdbCrypto} from '../../lib/database/plugins/crypto';
 PouchDB.plugin(PouchAuth);
 
 @Injectable({
@@ -25,11 +26,8 @@ PouchDB.plugin(PouchAuth);
 })
 export class FastenDbService extends PouchdbRepository {
 
-
   constructor(private _httpClient: HttpClient) {
-    const userIdentifier = localStorage.getItem("current_user")
-    super(userIdentifier, "my-secret-encryption-key");
-
+    super();
   }
 
 
@@ -46,6 +44,7 @@ export class FastenDbService extends PouchdbRepository {
     let remotePouchDb = new PouchDB(this.getRemoteUserDb(username), {skip_setup: true});
     return await remotePouchDb.logIn(username, pass)
       .then((loginResp)=>{
+        this.current_user = loginResp.name
         return this.postLoginHook(loginResp.name, remotePouchDb)
       })
       .catch((err) => {
@@ -73,36 +72,67 @@ export class FastenDbService extends PouchdbRepository {
       await this.pouchDb.logOut()
     }
     await this.Close()
-    localStorage.removeItem("current_user")
+  }
+
+  /**
+   * Try to get PouchDB database using session information
+   * @constructor
+   */
+  public override async GetSessionDB(): Promise<PouchDB.Database>  {
+    if(this.pouchDb){
+      console.log("Session DB already exists..")
+      return this.pouchDb
+    }
+
+    //Since we dont have a pre-configured pouchDB already, see if we have an active session to the remote database.
+    let sessionDb = new PouchDB(this.getRemoteUserDb("placeholder"))
+    const session = await sessionDb.getSession()
+    console.log("Session found...", session)
+
+    const authUser = session?.userCtx?.name
+    if(authUser){
+      this.pouchDb = new PouchDB(this.getRemoteUserDb(authUser))
+      this.current_user = authUser
+    }
+    return this.pouchDb
   }
 
   //TODO: now that we've moved to remote-first database, we can refactor and simplify this function significantly.
   public async IsAuthenticated(): Promise<boolean> {
-    if(!this.pouchDb){
-      console.warn("IsAuthenticated? ====> logout, no local database present")
-      //if no local database available, we're always "unauthenticated".
-      return false
-    }
-    if(!localStorage.getItem("current_user")){
-      console.warn("IsAuthenticated? ====> logout, no current_user set")
-      return false
-    }
+
     try{
-      //if we have a local database, lets see if we have an active session to the remote database.
-      // const remotePouchDb = new PouchDB(this.getRemoteUserDb(localStorage.getItem("current_user")), {skip_setup: true});
-      const session = await this.pouchDb.getSession()
-      const authUser = session?.userCtx?.name
-      const isAuth = !!authUser
-      console.warn("IsAuthenticated? getSession() ====> ", isAuth)
-      if(!isAuth){
+      //lets see if we have an active session to the remote database.
+      await this.GetSessionDB()
+      if(!this.pouchDb){
+        console.warn("could not determine database from session info, logging out")
         return false
       }
-      //confirm that the logged in user matches the session user
-      return authUser == localStorage.getItem("current_user")
+
+      let session = await this.pouchDb.getSession()
+      let authUser = session?.userCtx?.name
+      let isAuth = !!authUser
+      console.warn("IsAuthenticated? getSession() ====> ", isAuth)
+      return isAuth;
+
     } catch (e) {
       return false
     }
   }
+
+  /**
+   * Is the crypto configuration for the authenticated user already available in the browser? Or do we need to import/generate new config.
+   */
+  public async isCryptConfigAvailable(): Promise<boolean>{
+    try {
+      await this.GetSessionDB()
+      let cryptConfig = await PouchdbCrypto.RetrieveCryptConfig(this.current_user)
+
+      return !!cryptConfig
+    }catch(e){
+      return false
+    }
+  }
+
 
   public Close(): Promise<void> {
     return super.Close()
@@ -170,7 +200,6 @@ export class FastenDbService extends PouchdbRepository {
    * @constructor
    */
   private async postLoginHook(userIdentifier: string, pouchDb: PouchDB.Database): Promise<void> {
-    localStorage.setItem("current_user", userIdentifier)
 
     await this.Close();
     this.pouchDb = pouchDb;

@@ -1,12 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 
 import { QueueService } from './queue.service';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('QueueService', () => {
   let service: QueueService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+    });
     service = TestBed.inject(QueueService);
   });
 
