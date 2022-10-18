@@ -69,6 +69,10 @@ export class PouchdbCrypto {
     }
     return JSON.parse(cryptConfigStr) as PouchdbCryptConfig
   }
+  public static async DeleteCryptConfig(currentUser: string): Promise<void>{
+    const localDb = await PouchdbCrypto.localIdb()
+    return await localDb.delete('crypto',`encryption_data_${currentUser}`)
+  }
 
 
   public static async crypto(db, cryptConfig: PouchdbCryptConfig, options: PouchdbCryptoOptions = {}) {

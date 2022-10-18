@@ -129,13 +129,12 @@ export class EncryptionManagerComponent implements OnInit {
       .then((content) => {
         let cryptoConfig = JSON.parse(content) as PouchdbCryptConfig
 
-        if(cryptoConfig.key && cryptoConfig.config){
-          return PouchdbCrypto.StoreCryptConfig(cryptoConfig)
-        } else {
-          //throw an error & notify user
+        if(!cryptoConfig.key || !cryptoConfig.config){
           this.importCustomFileError = "Invalid crypto configuration file"
           throw new Error(this.importCustomFileError)
         }
+
+        return PouchdbCrypto.StoreCryptConfig(cryptoConfig)
       })
       .then(() => {
         //go to step 2
@@ -156,13 +155,17 @@ export class EncryptionManagerComponent implements OnInit {
       })
       .catch((err) => {
         console.error(err)
-        //an error occurred while importing credential
-        const toastNotification = new ToastNotification()
-        toastNotification.type = ToastType.Error
-        toastNotification.message = "Provided encryption key does not match. Please try a different key"
-        toastNotification.autohide = false
-        this.toastService.show(toastNotification)
+        // delete invalid encryption key
         this.currentStep = 1
+        return PouchdbCrypto.DeleteCryptConfig(this.fastenDbService.current_user)
+          .then(() => {
+            //an error occurred while importing credential
+            const toastNotification = new ToastNotification()
+            toastNotification.type = ToastType.Error
+            toastNotification.message = "Provided encryption key does not match. Please try a different key"
+            toastNotification.autohide = false
+            this.toastService.show(toastNotification)
+          })
       })
   }
 
