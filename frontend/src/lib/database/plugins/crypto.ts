@@ -136,19 +136,23 @@ export class PouchdbCrypto {
         return encrypted
       },
       outgoing: async (doc) => {
-        // if no crypt, ex: after .removeCrypto(), just return the doc
-        if (!db._crypt) { return doc }
-        let decryptedString = await db._crypt.decrypt(doc.payload)
-        let decrypted = JSON.parse(decryptedString)
-        for (let key of db._ignore) {
-          // patch decrypted doc with ignored fields
-          if (key in doc) decrypted[key] = doc[key]
-        }
-        return decrypted
+        return await this.decryptDocument(db, doc)
       }
     })
     return db
   }
+  public static async decryptDocument(db, doc):Promise<any>{
+    // if no crypt, ex: after .removeCrypto(), just return the doc
+    if (!db._crypt) { return doc }
+    let decryptedString = await db._crypt.decrypt(doc.payload)
+    let decrypted = JSON.parse(decryptedString)
+    for (let key of db._ignore) {
+      // patch decrypted doc with ignored fields
+      if (key in doc) decrypted[key] = doc[key]
+    }
+    return decrypted
+  }
+
   public static removeCrypto(db) {
     delete db._crypt
   }

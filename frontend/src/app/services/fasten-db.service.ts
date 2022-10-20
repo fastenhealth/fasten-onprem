@@ -149,14 +149,17 @@ export class FastenDbService extends PouchdbRepository {
     // summary.patients = []
     summary.patients = await this.GetDB()
       .then((db) => {
+
         return db.find({
           selector: {
             doc_type: DocType.ResourceFhir,
             source_resource_type: "Patient",
           }
-        })
+        }).then((results) => {
+            return Promise.all((results.docs || []).map((doc) => PouchdbCrypto.decryptDocument(db, doc)))
+          })
       })
-      .then((results) => results.docs)
+
 
     summary.resource_type_counts = await this.findDocumentByPrefix(`${DocType.ResourceFhir}`, false)
       .then((paginatedResp) => {

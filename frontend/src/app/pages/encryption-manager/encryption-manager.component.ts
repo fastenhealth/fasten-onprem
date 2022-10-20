@@ -109,7 +109,19 @@ export class EncryptionManagerComponent implements OnInit {
         //redirect user to dashboard
         return this.router.navigate(['/dashboard']);
       })
-      .catch(console.error)
+      .catch((err) => {
+        // delete invalid encryption key
+        this.currentStep = 1
+        return PouchdbCrypto.DeleteCryptConfig(this.fastenDbService.current_user)
+          .then(() => {
+            //an error occurred while importing credential
+            const toastNotification = new ToastNotification()
+            toastNotification.type = ToastType.Error
+            toastNotification.message = "Provided encryption key does not match. Generating new encryption key, please store it and try again."
+            toastNotification.autohide = false
+            this.toastService.show(toastNotification)
+          })
+      })
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
