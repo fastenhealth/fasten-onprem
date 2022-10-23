@@ -136,9 +136,8 @@ export class MedicalSourcesComponent implements OnInit {
         });
         this.location.replaceState(urlTree.toString());
 
-        const expectedState = localStorage.getItem(`${sourceType}:state`)
-        localStorage.removeItem(`${sourceType}:state`)
-
+        const expectedSourceStateInfo = JSON.parse(localStorage.getItem(callbackState))
+        localStorage.removeItem(callbackState)
 
         if(callbackError && !callbackCode){
           //TOOD: print this message in the UI
@@ -150,7 +149,7 @@ export class MedicalSourcesComponent implements OnInit {
         this.status[sourceType] = "token"
 
         let payload: any
-        payload = await this.lighthouseApi.swapOauthToken(sourceType, sourceMetadata,expectedState, callbackState, callbackCode)
+        payload = await this.lighthouseApi.swapOauthToken(sourceType, sourceMetadata,expectedSourceStateInfo, callbackCode)
 
 
         //If payload.patient is not set, make sure we extract the patient ID from the id_token or make an introspection req

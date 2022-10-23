@@ -6,6 +6,7 @@ import {map, tap} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
 import {LighthouseSourceMetadata} from '../../lib/models/lighthouse/lighthouse-source-metadata';
 import * as Oauth from '@panva/oauth4webapi';
+import {SourceState} from '../models/fasten/source-state';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,9 @@ export class LighthouseService {
 
   async generateSourceAuthorizeUrl(sourceType: string, lighthouseSource: LighthouseSourceMetadata): Promise<URL> {
     const state = this.uuidV4()
-    localStorage.setItem(`${sourceType}:state`, state)
+    let sourceStateInfo = new SourceState()
+    sourceStateInfo.state = state
+    sourceStateInfo.source_type = sourceType
 
     // generate the authorization url
     const authorizationUrl = new URL(lighthouseSource.authorization_endpoint);
@@ -50,13 +53,15 @@ export class LighthouseService {
       const codeChallenge = await Oauth.calculatePKCECodeChallenge(codeVerifier);
       const codeChallengeMethod = lighthouseSource.code_challenge_methods_supported[0]; // 'S256'
 
-      localStorage.setItem(`${sourceType}:code_verifier`, codeVerifier)
-      localStorage.setItem(`${sourceType}:code_challenge`, codeChallenge)
-      localStorage.setItem(`${sourceType}:code_challenge_method`, codeChallengeMethod)
+      sourceStateInfo.code_verifier = codeVerifier
+      sourceStateInfo.code_challenge = codeChallenge
+      sourceStateInfo.code_challenge_method = codeChallengeMethod
 
       authorizationUrl.searchParams.set('code_challenge', codeChallenge);
       authorizationUrl.searchParams.set('code_challenge_method', codeChallengeMethod);
     }
+
+    localStorage.setItem(state, JSON.stringify(sourceStateInfo))
 
     return authorizationUrl
   }
@@ -78,7 +83,7 @@ export class LighthouseService {
     window.location.href = redirectUrlParts.toString();
   }
 
-  async swapOauthToken(sourceType: string, sourceMetadata: LighthouseSourceMetadata, expectedState: string, state: string, code: string): Promise<any>{
+  async swapOauthToken(sourceType: string, sourceMetadata: LighthouseSourceMetadata, expectedSourceStateInfo: SourceState, code: string): Promise<any>{
     // @ts-expect-error
     const client: oauth.Client = {
       client_id: sourceMetadata.client_id
@@ -87,11 +92,8 @@ export class LighthouseService {
     let codeVerifier = undefined
     if(!sourceMetadata.confidential){
       client.token_endpoint_auth_method = 'none'
-      codeVerifier = localStorage.getItem(`${sourceType}:code_verifier`)
+      codeVerifier = expectedSourceStateInfo.code_verifier
 
-      localStorage.removeItem(`${sourceType}:code_verifier`)
-      localStorage.removeItem(`${sourceType}:code_challenge`)
-      localStorage.removeItem(`${sourceType}:code_challenge_method`)
     } else {
       console.log("This is a confidential client, using lighthouse token endpoint.")
       //if this is a confidential client, we need to "override" token endpoint, and use the Fasten Lighthouse to complete the swap
@@ -110,7 +112,7 @@ export class LighthouseService {
     }
 
     console.log("STARTING--- Oauth.validateAuthResponse")
-    const params = Oauth.validateAuthResponse(as, client, new URLSearchParams({"code": code, "state": state}), expectedState)
+    const params = Oauth.validateAuthResponse(as, client, new URLSearchParams({"code": code, "state": expectedSourceStateInfo.state}), expectedSourceStateInfo.state)
     if (Oauth.isOAuth2Error(params)) {
       console.log('error', params)
       throw new Error() // Handle OAuth 2.0 redirect error
