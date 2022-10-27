@@ -35,19 +35,14 @@ jobs:
 
       - name: Copy files to the test website with the AWS CLI
         run: |
-          aws s3 sync dist s3://fasten-sandbox-app-frontend-bucket/web --acl public-read
-          
+          aws s3 sync dist s3://app-sandbox.fastenhealth.com/web --acl public-read
 
-#        env:
-#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#      - uses: chrnorm/deployment-action@v2
-#        name: Create GitHub deployment
-#        id: deployment
-#        with:
-#          token: '${{ github.token }}'
-#          environment-url: https://lighthouse.fastenhealth.com/sandbox/
-#          environment: sandbox
-#          initial-status: success
-        # more steps below where you run your deployment scripts inside the same action
+      - uses: chrnorm/deployment-action@v2
+        name: Create GitHub deployment
+        id: deployment
+        with:
+          token: '${{ github.token }}'
+          environment-url: https://lighthouse.fastenhealth.com/sandbox/
+          environment: sandbox
+          initial-status: success
 
