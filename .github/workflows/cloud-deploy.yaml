@@ -35,7 +35,7 @@ jobs:
 
       - name: Copy files to the test website with the AWS CLI
         run: |
-          aws s3 sync dist s3://fasten-sandbox-app-frontend-bucket/web
+          aws s3 sync dist s3://fasten-sandbox-app-frontend-bucket/web --acl public-read
           
 
 #        env:
