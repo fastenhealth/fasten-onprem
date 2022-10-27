@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {LighthouseService} from '../../services/lighthouse.service';
-import {FastenApiService} from '../../services/fasten-api.service';
 import {FastenDbService} from '../../services/fasten-db.service';
 import {LighthouseSourceMetadata} from '../../../lib/models/lighthouse/lighthouse-source-metadata';
 import {Source} from '../../../lib/models/database/source';
@@ -35,7 +34,6 @@ export class MedicalSourcesComponent implements OnInit {
 
   constructor(
     private lighthouseApi: LighthouseService,
-    private fastenApi: FastenApiService,
     private fastenDb: FastenDbService,
     private modalService: NgbModal,
     private route: ActivatedRoute,
@@ -57,7 +55,7 @@ export class MedicalSourcesComponent implements OnInit {
   modalSelectedSourceListItem:SourceListItem = null;
 
   ngOnInit(): void {
-    this.fastenApi.GetMetadataSources().subscribe((metadataSources: {[name:string]: MetadataSource}) => {
+    this.lighthouseApi.getLighthouseSourceMetadataMap().subscribe((metadataSources: {[name:string]: MetadataSource}) => {
       this.metadataSources = metadataSources
 
       const callbackSourceType = this.route.snapshot.paramMap.get('source_type')

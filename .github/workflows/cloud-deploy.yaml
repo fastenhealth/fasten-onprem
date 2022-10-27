@@ -20,7 +20,7 @@ jobs:
           go-version: '1.18.3'
       - run: go version
       - run: |
-          make frontend-test
+          make frontend-dep
           cd frontend
           yarn run build -- --configuration sandbox --output-path=../dist
 #        env:

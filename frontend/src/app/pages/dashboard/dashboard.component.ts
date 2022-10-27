@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {FastenApiService} from '../../services/fasten-api.service';
 import {Source} from '../../../lib/models/database/source';
 import {Router} from '@angular/router';
 import {ResourceFhir} from '../../../lib/models/database/resource_fhir';
@@ -8,6 +7,7 @@ import {MetadataSource} from '../../models/fasten/metadata-source';
 import {FastenDbService} from '../../services/fasten-db.service';
 import {Summary} from '../../../lib/models/fasten/summary';
 import {Base64} from '../../../lib/utils/base64';
+import {LighthouseService} from '../../services/lighthouse.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,7 +24,7 @@ export class DashboardComponent implements OnInit {
   metadataSource: { [name: string]: MetadataSource }
 
   constructor(
-    private fastenApi: FastenApiService,
+    private lighthouseApi: LighthouseService,
     private fastenDb: FastenDbService,
     private router: Router
   ) { }
@@ -49,7 +49,7 @@ export class DashboardComponent implements OnInit {
     //     })
     //   })
 
-    forkJoin([this.fastenDb.GetSummary(), this.fastenApi.GetMetadataSources()]).subscribe(results => {
+    forkJoin([this.fastenDb.GetSummary(), this.lighthouseApi.getLighthouseSourceMetadataMap()]).subscribe(results => {
       let summary = results[0] as Summary
       let metadataSource = results[1] as { [name: string]: MetadataSource }
 

@@ -16,7 +16,6 @@ export class AuthSignupComponent implements OnInit {
   errorMsg: string = ""
 
   constructor(
-    // private fastenApi: FastenApiService,
     private fastenDb: FastenDbService,
     private router: Router,
     private toastService: ToastService

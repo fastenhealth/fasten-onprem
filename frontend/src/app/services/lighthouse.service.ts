@@ -7,6 +7,7 @@ import {ResponseWrapper} from '../models/response-wrapper';
 import {LighthouseSourceMetadata} from '../../lib/models/lighthouse/lighthouse-source-metadata';
 import * as Oauth from '@panva/oauth4webapi';
 import {SourceState} from '../models/fasten/source-state';
+import {MetadataSource} from '../models/fasten/metadata-source';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,16 @@ import {SourceState} from '../models/fasten/source-state';
 export class LighthouseService {
 
   constructor(private _httpClient: HttpClient) {
+  }
+
+  public getLighthouseSourceMetadataMap(): Observable<{[name: string]: MetadataSource}> {
+    return this._httpClient.get<ResponseWrapper>(`${environment.lighthouse_api_endpoint_base}/list`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("Metadata RESPONSE", response)
+          return response.data as {[name: string]: MetadataSource}
+        })
+      );
   }
 
   async getLighthouseSource(sourceType: string): Promise<LighthouseSourceMetadata> {
