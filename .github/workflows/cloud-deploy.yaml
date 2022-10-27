@@ -13,6 +13,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      deployments: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -42,7 +43,7 @@ jobs:
         id: deployment
         with:
           token: '${{ github.token }}'
-          environment-url: https://lighthouse.fastenhealth.com/sandbox/
+          environment-url: https://app-sandbox.fastenhealth.com/web/
           environment: sandbox
           initial-status: success
 
