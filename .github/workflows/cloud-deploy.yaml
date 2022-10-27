@@ -10,6 +10,9 @@ jobs:
   deploy:
     name: deploy
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -23,6 +26,18 @@ jobs:
           make frontend-dep
           cd frontend
           yarn run build -- --configuration sandbox --output-path=../dist
+
+      - name: Configure AWS credentials using delegated access
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::410145376638:role/fasten-sandbox-app-gh-frontend-deploy-role
+          aws-region: us-east-1
+
+      - name: Copy files to the test website with the AWS CLI
+        run: |
+          aws s3 sync dist s3://fasten-sandbox-app-frontend-bucket/web
+          
+
 #        env:
 #          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
 #          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
