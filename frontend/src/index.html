@@ -23,10 +23,7 @@
     rel="stylesheet"
   />
   <script>
-    var baseHref = "/"
-    if((window.location.hostname !== "sandbox.fastenhealth.com") && (window.location.hostname !== "app.fastenhealth.com")){
-      baseHref = window.location.pathname.split('/web').slice(0, 1)[0] + '/web/'
-    }
+    var baseHref = window.location.pathname.split('/web').slice(0, 1)[0] + '/web/'
     document.write(`<base href="${baseHref}"/>`);  </script>
 </head>
 <body>
