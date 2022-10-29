@@ -26,11 +26,11 @@ func (c *configuration) Init() error {
 	c.SetDefault("web.listen.basepath", "")
 	c.SetDefault("web.src.frontend.path", "/opt/fasten/web")
 
-	c.SetDefault("web.couchdb.scheme", "http")
-	c.SetDefault("web.couchdb.host", "localhost")
-	c.SetDefault("web.couchdb.port", "5984")
-	c.SetDefault("web.couchdb.admin_username", "admin")
-	c.SetDefault("web.couchdb.admin_password", "mysecretpassword")
+	c.SetDefault("couchdb.scheme", "http")
+	c.SetDefault("couchdb.host", "localhost")
+	c.SetDefault("couchdb.port", "5984")
+	c.SetDefault("couchdb.admin.username", "admin")
+	c.SetDefault("couchdb.admin.password", "mysecretpassword")
 
 	c.SetDefault("log.level", "INFO")
 	c.SetDefault("log.file", "")

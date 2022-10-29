@@ -19,6 +19,7 @@ import * as PouchCrypto from 'crypto-pouch';
 PouchDB.plugin(PouchCrypto);
 import PouchAuth from 'pouchdb-authentication'
 import {PouchdbCrypto} from '../../lib/database/plugins/crypto';
+import {environment} from '../../environments/environment';
 PouchDB.plugin(PouchAuth);
 
 @Injectable({
@@ -27,7 +28,7 @@ PouchDB.plugin(PouchAuth);
 export class FastenDbService extends PouchdbRepository {
 
   constructor(private _httpClient: HttpClient) {
-    super();
+    super(environment.couchdb_endpoint_base);
   }
 
 
@@ -60,7 +61,16 @@ export class FastenDbService extends PouchdbRepository {
    */
   public async Signup(newUser?: User): Promise<any> {
     console.log("STARTING SIGNUP")
-    let resp = await this._httpClient.post<ResponseWrapper>(`${this.getBasePath()}/api/auth/signup`, newUser).toPromise()
+
+    let fastenApiEndpointBase = environment.fasten_api_endpoint_base
+    if (!(fastenApiEndpointBase.indexOf('http://') === 0 || fastenApiEndpointBase.indexOf('https://') === 0)){
+
+      //relative, we need to retrieve the absolutePath from base
+      fastenApiEndpointBase = this.GetEndpointAbsolutePath(globalThis.location,fastenApiEndpointBase)
+    }
+
+
+    let resp = await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/signup`, newUser).toPromise()
     console.log(resp)
     return this.Signin(newUser.username, newUser.password);
   }

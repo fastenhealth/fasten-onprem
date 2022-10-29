@@ -70,7 +70,7 @@ describe('FHIR401Client', () => {
       let current_user = uuidv4()
       let cryptoConfig = await PouchdbCrypto.CryptConfig(current_user, current_user)
       await PouchdbCrypto.StoreCryptConfig(cryptoConfig)
-      repository = NewPouchdbRepositoryWebWorker(current_user, new PouchDB("FHIR401Client-"+ current_user));
+      repository = NewPouchdbRepositoryWebWorker(current_user, '/database', new PouchDB("FHIR401Client-"+ current_user));
     });
 
     afterEach(async () => {

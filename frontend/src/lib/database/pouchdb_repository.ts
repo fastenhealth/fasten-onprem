@@ -49,8 +49,8 @@ import {PouchdbCryptConfig, PouchdbCrypto, PouchdbCryptoOptions} from './plugins
  * @constructor
  */
 
-export function NewPouchdbRepositoryWebWorker(current_user: string, localPouchDb?: PouchDB.Database): PouchdbRepository {
-  let pouchdbRepository = new PouchdbRepository(localPouchDb)
+export function NewPouchdbRepositoryWebWorker(current_user: string, couchDbEndpointBase: string, localPouchDb?: PouchDB.Database): PouchdbRepository {
+  let pouchdbRepository = new PouchdbRepository(couchDbEndpointBase, localPouchDb)
   pouchdbRepository.current_user = current_user
   return pouchdbRepository
 }
@@ -72,8 +72,16 @@ export class PouchdbRepository implements IDatabaseRepository {
    * @param userIdentifier
    * @param encryptionKey
    */
-  constructor(localPouchDb?: PouchDB.Database) {
-    this.remotePouchEndpoint = `${globalThis.location.protocol}//${globalThis.location.host}${this.getBasePath()}/database`
+  constructor(couchDbEndpointBase: string, localPouchDb?: PouchDB.Database) {
+    // couchDbEndpointBase could be a relative or absolute path.
+    //if its absolute, we should pass it in, as-is
+    if (couchDbEndpointBase.indexOf('http://') === 0 || couchDbEndpointBase.indexOf('https://') === 0){
+      //absolute
+      this.remotePouchEndpoint = couchDbEndpointBase
+    } else {
+      //relative, we need to retrive the absolutePath from base
+      this.remotePouchEndpoint = this.GetEndpointAbsolutePath(globalThis.location, couchDbEndpointBase)
+    }
 
     //setup PouchDB Plugins
      //https://pouchdb.com/guides/mango-queries.html
@@ -442,7 +450,21 @@ export class PouchdbRepository implements IDatabaseRepository {
   ///////////////////////////////////////////////////////////////////////////////////////
   // Helper methods
   ///////////////////////////////////////////////////////////////////////////////////////
-  protected getBasePath(): string {
-    return globalThis.location.pathname.split('/web').slice(0, 1)[0];
+
+  //Fasten may be served behind a reverse proxy with a subpath, so lets try to find that component if it exists.
+  // if no subpath is found, just use the current url information to generate a path
+  public GetEndpointAbsolutePath(currentUrl: {pathname: string, protocol: string, host: string}, relativePath: string): string {
+    //no `/web` path to strip out, lets just use the relative path
+    let absolutePath = relativePath
+
+    if(currentUrl.pathname.includes('/web')){
+      // probably running locally, and *may* include a subpath
+      let subPath = currentUrl.pathname.split('/web').slice(0, 1)[0]
+      if(subPath != "/"){
+        //subpath, so we need to update the absolutePath with the subpath before adding the relative path to the end
+        absolutePath = subPath + relativePath
+      }
+    }
+    return `${currentUrl.protocol}//${currentUrl.host}${absolutePath}`
   }
 }

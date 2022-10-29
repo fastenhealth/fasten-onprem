@@ -26,7 +26,7 @@ jobs:
       - run: |
           make frontend-dep
           cd frontend
-          yarn run build -- --configuration sandbox --output-path=../dist
+          yarn run build -- --configuration cloud_sandbox --output-path=../dist
 
       - name: Configure AWS credentials using delegated access
         uses: aws-actions/configure-aws-credentials@v1

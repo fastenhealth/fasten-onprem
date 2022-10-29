@@ -14,7 +14,7 @@ import (
 func CouchDBProxy(c *gin.Context) {
 	appConfig := c.MustGet("CONFIG").(config.Interface)
 
-	couchdbUrl := fmt.Sprintf("%s://%s:%s", appConfig.GetString("web.couchdb.scheme"), appConfig.GetString("web.couchdb.host"), appConfig.GetString("web.couchdb.port"))
+	couchdbUrl := fmt.Sprintf("%s://%s:%s", appConfig.GetString("couchdb.scheme"), appConfig.GetString("couchdb.host"), appConfig.GetString("couchdb.port"))
 	remote, err := url.Parse(couchdbUrl)
 	if err != nil {
 		panic(err)

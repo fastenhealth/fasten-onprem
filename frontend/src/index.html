@@ -23,7 +23,19 @@
     rel="stylesheet"
   />
   <script>
-    var baseHref = window.location.pathname.split('/web').slice(0, 1)[0] + '/web/'
+    var baseHref = "/"
+
+    // if the pathname includes /web, everthing before `/web` (and including web) should be set as the base path.
+    if(window.location.pathname.includes('/web')){
+      baseHref = "/web/"
+      // probably running locally, and *may* include a subpath
+      var subPath = window.location.pathname.split('/web').slice(0, 1)[0]
+      if(subPath != "/"){
+        //subpath, so we need to update the absolutePath with the subpath before adding the relative path to the end
+        baseHref = subPath + '/web/'
+      }
+    }
+
     document.write(`<base href="${baseHref}"/>`);  </script>
 </head>
 <body>

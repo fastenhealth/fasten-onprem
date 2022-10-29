@@ -18,7 +18,7 @@ export class SourceSyncWorker implements DoWork<string, string> {
           console.log(msg); // outputs 'Hello from main thread'
           const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
 
-          const db = NewPouchdbRepositoryWebWorker(sourceSyncMessage.current_user)
+          const db = NewPouchdbRepositoryWebWorker(sourceSyncMessage.current_user, sourceSyncMessage.couchdb_endpoint_base)
           const client = NewClient(sourceSyncMessage.source.source_type, new Source(sourceSyncMessage.source))
           //TODO: validate the FHIR version from the datasource matches the client
           // if the source token has been refreshed, we need to store it in the DB.

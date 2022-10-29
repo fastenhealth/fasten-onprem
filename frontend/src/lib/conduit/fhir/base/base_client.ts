@@ -146,6 +146,7 @@ export abstract class BaseClient {
   }
 
   private getCORSProxyPath(): string {
+    //TODO: this path should be passed in as a variable
     const basePath = globalThis.location.pathname.split('/web').slice(0, 1)[0];
 
     return `${globalThis.location.origin}${basePath || '/'}cors/`

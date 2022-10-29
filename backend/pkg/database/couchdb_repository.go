@@ -15,7 +15,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Couchdb setup
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	couchdbUrl := fmt.Sprintf("%s://%s:%s", appConfig.GetString("web.couchdb.scheme"), appConfig.GetString("web.couchdb.host"), appConfig.GetString("web.couchdb.port"))
+	couchdbUrl := fmt.Sprintf("%s://%s:%s", appConfig.GetString("couchdb.scheme"), appConfig.GetString("couchdb.host"), appConfig.GetString("couchdb.port"))
 
 	globalLogger.Infof("Trying to connect to couchdb: %s\n", couchdbUrl)
 
@@ -26,8 +26,8 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 
 	err = database.Authenticate(context.Background(),
 		couchdb.BasicAuth(
-			appConfig.GetString("web.couchdb.admin_username"),
-			appConfig.GetString("web.couchdb.admin_password")),
+			appConfig.GetString("couchdb.admin.username"),
+			appConfig.GetString("couchdb.admin.password")),
 	)
 
 	if err != nil {

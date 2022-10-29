@@ -6,6 +6,7 @@ import {SourceSyncMessage} from '../models/queue/source-sync-message';
 import {ToastService} from '../services/toast.service';
 import {ToastNotification, ToastType} from '../models/fasten/toast';
 import {FastenDbService} from '../services/fasten-db.service';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class QueueService {
       const sourceSync = new SourceSyncMessage()
       sourceSync.source = source
       sourceSync.current_user = this.fastenDbService.current_user
+      sourceSync.couchdb_endpoint_base = environment.couchdb_endpoint_base
       const input$: Observable<string> = of(JSON.stringify(sourceSync));
       return fromWorker<string, string>(() => new Worker(new URL('./source-sync.worker', import.meta.url), {type: 'module'}), input$)
         // .subscribe(message => {
