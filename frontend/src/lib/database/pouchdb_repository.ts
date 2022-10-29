@@ -77,13 +77,8 @@ export class PouchdbRepository implements IDatabaseRepository {
   constructor(couchDbEndpointBase: string, localPouchDb?: PouchDB.Database) {
     // couchDbEndpointBase could be a relative or absolute path.
     //if its absolute, we should pass it in, as-is
-    if (couchDbEndpointBase.indexOf('http://') === 0 || couchDbEndpointBase.indexOf('https://') === 0){
-      //absolute
-      this.remotePouchEndpoint = couchDbEndpointBase
-    } else {
-      //relative, we need to retrive the absolutePath from base
-      this.remotePouchEndpoint = GetEndpointAbsolutePath(globalThis.location, couchDbEndpointBase)
-    }
+    this.remotePouchEndpoint = GetEndpointAbsolutePath(globalThis.location, couchDbEndpointBase)
+
 
     //setup PouchDB Plugins
      //https://pouchdb.com/guides/mango-queries.html
