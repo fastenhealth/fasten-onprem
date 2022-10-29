@@ -11,11 +11,12 @@ import { v4 as uuidv4 } from 'uuid';
 import * as FHIR401Client_ProcessBundle from './fixtures/FHIR401Client_ProcessBundle.json';
 import {IDatabaseRepository} from '../../../database/interface';
 import {PouchdbCrypto} from '../../../database/plugins/crypto';
+import {ClientConfig} from '../../../models/client/client-config';
 
 
 class TestClient extends FHIR401Client {
   constructor(source: Source) {
-    super(source);
+    super(source, new ClientConfig());
   }
 
   public async ProcessBundle(bundle: IResourceBundleRaw): Promise<ResourceFhir[]> {

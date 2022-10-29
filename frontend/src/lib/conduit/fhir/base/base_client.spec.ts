@@ -5,11 +5,12 @@ import {Source} from '../../../models/database/source';
 import * as BaseClient_GetRequest from './fixtures/BaseClient_GetRequest.json';
 // @ts-ignore
 import * as BaseClient_GetFhirVersion from './fixtures/BaseClient_GetFhirVersion.json';
+import {ClientConfig} from '../../../models/client/client-config';
 
 
 class TestClient extends BaseClient {
   constructor(source: Source) {
-    super(source);
+    super(source, new ClientConfig());
   }
 }
 
