@@ -20,6 +20,7 @@ PouchDB.plugin(PouchCrypto);
 import PouchAuth from 'pouchdb-authentication'
 import {PouchdbCrypto} from '../../lib/database/plugins/crypto';
 import {environment} from '../../environments/environment';
+import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
 PouchDB.plugin(PouchAuth);
 
 @Injectable({
@@ -66,7 +67,7 @@ export class FastenDbService extends PouchdbRepository {
     if (!(fastenApiEndpointBase.indexOf('http://') === 0 || fastenApiEndpointBase.indexOf('https://') === 0)){
 
       //relative, we need to retrieve the absolutePath from base
-      fastenApiEndpointBase = this.GetEndpointAbsolutePath(globalThis.location,fastenApiEndpointBase)
+      fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location,fastenApiEndpointBase)
     }
 
 
