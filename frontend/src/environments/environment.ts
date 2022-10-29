@@ -9,12 +9,12 @@ export const environment = {
   lighthouse_api_endpoint_base: 'https://lighthouse.fastenhealth.com/sandbox',
 
   //used to specify the couchdb server that we're going to use (can be relative or absolute). Must not have trailing slash
-  couchdb_endpoint_base: 'https://couchdb.sandbox.fastenhealth.com',
+  // couchdb_endpoint_base: 'https://couchdb.sandbox.fastenhealth.com',
   // if relative, must start with /
-  // couchdb_endpoint_base: '/database'
+  couchdb_endpoint_base: '/database',
 
   //used to specify the api server that we're going to use (can be relative or absolute). Must not have trailing slash
-  fasten_api_endpoint_base: 'https://api.sandbox.fastenhealth.com/v1',
+  // fasten_api_endpoint_base: 'https://api.sandbox.fastenhealth.com/v1',
   // if relative, must start with /
-  // fasten_api_endpoint_base: '/api'
+  fasten_api_endpoint_base: '/api',
 };

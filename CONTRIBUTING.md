@@ -76,7 +76,7 @@ Next we'll start the processes described above:
 
 # In terminal #1, run the following
 cd frontend 
-npm run dist
+npm run dist -- -c sandbox
 
 # In terminal #2, run the following
 go mod vendor
