@@ -424,7 +424,7 @@ export class PouchdbRepository implements IDatabaseRepository {
     if(!this.current_user){
       throw new Error("current user is required when initializing pouchdb within web-worker")
     }
-    this.pouchDb = new PouchDB(this.getRemoteUserDb(this.current_user))
+    this.pouchDb = new PouchDB(this.getRemoteUserDb(this.current_user), {skip_setup: true})
     return this.pouchDb
   }
 
