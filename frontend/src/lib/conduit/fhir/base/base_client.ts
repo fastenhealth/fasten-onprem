@@ -70,7 +70,7 @@ export abstract class BaseClient {
       //this endpoint requires a CORS relay
       //get the path to the Fasten server, and append `cors/` and then append the request url
       let resourceParts = new URL(resourceUrl)
-      resourceUrl = GetEndpointAbsolutePath(globalThis.location, this.clientConfig.fasten_api_endpoint_base) + `/${resourceParts.hostname}${resourceParts.pathname}${resourceParts.search}`
+      resourceUrl = GetEndpointAbsolutePath(globalThis.location, this.clientConfig.fasten_api_endpoint_base) + `/cors/${resourceParts.hostname}${resourceParts.pathname}${resourceParts.search}`
     }
 
 
