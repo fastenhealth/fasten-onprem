@@ -4,6 +4,7 @@ import {DocType} from './constants';
 import {ResourceFhir} from '../models/database/resource_fhir';
 import {ResourceTypeCounts, SourceSummary} from '../models/fasten/source-summary';
 import {Base64} from '../utils/base64';
+import {GetEndpointAbsolutePath} from '../utils/endpoint_absolute_path';
 
 // PouchDB & plugins
 import * as PouchDB from 'pouchdb/dist/pouchdb';
@@ -18,6 +19,7 @@ import {PouchdbUpsert} from './plugins/upsert';
 import {UpsertSummary} from '../models/fasten/upsert-summary';
 
 import {PouchdbCryptConfig, PouchdbCrypto, PouchdbCryptoOptions} from './plugins/crypto';
+import {utils} from 'protractor';
 
 // !!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!
 // most pouchdb plugins seem to fail when used in a webworker.
@@ -80,7 +82,7 @@ export class PouchdbRepository implements IDatabaseRepository {
       this.remotePouchEndpoint = couchDbEndpointBase
     } else {
       //relative, we need to retrive the absolutePath from base
-      this.remotePouchEndpoint = this.GetEndpointAbsolutePath(globalThis.location, couchDbEndpointBase)
+      this.remotePouchEndpoint = GetEndpointAbsolutePath(globalThis.location, couchDbEndpointBase)
     }
 
     //setup PouchDB Plugins
@@ -445,26 +447,5 @@ export class PouchdbRepository implements IDatabaseRepository {
       h += s.charCodeAt(i).toString(16)
     }
     return h
-  }
-
-  ///////////////////////////////////////////////////////////////////////////////////////
-  // Helper methods
-  ///////////////////////////////////////////////////////////////////////////////////////
-
-  //Fasten may be served behind a reverse proxy with a subpath, so lets try to find that component if it exists.
-  // if no subpath is found, just use the current url information to generate a path
-  public GetEndpointAbsolutePath(currentUrl: {pathname: string, protocol: string, host: string}, relativePath: string): string {
-    //no `/web` path to strip out, lets just use the relative path
-    let absolutePath = relativePath
-
-    if(currentUrl.pathname.includes('/web')){
-      // probably running locally, and *may* include a subpath
-      let subPath = currentUrl.pathname.split('/web').slice(0, 1)[0]
-      if(subPath != "/"){
-        //subpath, so we need to update the absolutePath with the subpath before adding the relative path to the end
-        absolutePath = subPath + relativePath
-      }
-    }
-    return `${currentUrl.protocol}//${currentUrl.host}${absolutePath}`
   }
 }

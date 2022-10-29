@@ -4,14 +4,15 @@ import {Source} from '../../../models/database/source';
 import {IDatabaseRepository} from '../../../database/interface';
 import {ResourceFhir} from '../../../models/database/resource_fhir';
 import {UpsertSummary} from '../../../models/fasten/upsert-summary';
+import {ClientConfig} from '../../../models/client/client-config';
 
 export class FHIR401Client extends BaseClient implements IClient {
 
   //clients extending this class must validate fhirVersion matches using conformance/metadata url.
   fhirVersion = "4.0.1"
 
-  constructor(source: Source) {
-    super(source);
+  constructor(source: Source, clientConfig: ClientConfig) {
+    super(source, clientConfig);
   }
 
   /**

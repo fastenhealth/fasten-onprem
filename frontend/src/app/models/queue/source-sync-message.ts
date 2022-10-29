@@ -4,6 +4,6 @@ export class SourceSyncMessage {
   source: Source
   current_user: string
   couchdb_endpoint_base: string
-
+  fasten_api_endpoint_base: string
   response?: any
 }

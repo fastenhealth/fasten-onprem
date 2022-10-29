@@ -21,6 +21,7 @@ export class QueueService {
       sourceSync.source = source
       sourceSync.current_user = this.fastenDbService.current_user
       sourceSync.couchdb_endpoint_base = environment.couchdb_endpoint_base
+      sourceSync.fasten_api_endpoint_base = environment.fasten_api_endpoint_base
       const input$: Observable<string> = of(JSON.stringify(sourceSync));
       return fromWorker<string, string>(() => new Worker(new URL('./source-sync.worker', import.meta.url), {type: 'module'}), input$)
         // .subscribe(message => {

@@ -1,6 +1,8 @@
 import {Source} from '../../../models/database/source';
 import * as Oauth from '@panva/oauth4webapi';
 import {IResourceRaw} from '../../interface';
+import {GetEndpointAbsolutePath} from '../../../utils/endpoint_absolute_path';
+import {ClientConfig} from '../../../models/client/client-config';
 
 
 class SourceUpdateStatus {
@@ -11,13 +13,16 @@ class SourceUpdateStatus {
 // BaseClient is an abstract/partial class, its intended to be used by FHIR clients, and generically handle OAuth requests.
 export abstract class BaseClient {
 
+  private clientConfig: ClientConfig
   private oauthClient: Oauth.Client
   private oauthAuthorizationServer: Oauth.AuthorizationServer
   public source: Source
   public headers: Headers
 
-  protected constructor(source: Source) {
+
+  protected constructor(source: Source, clientConfig: ClientConfig) {
     this.source = source
+    this.clientConfig = clientConfig
     this.headers = new Headers()
 
     //init Oauth client based on source configuration
@@ -65,7 +70,7 @@ export abstract class BaseClient {
       //this endpoint requires a CORS relay
       //get the path to the Fasten server, and append `cors/` and then append the request url
       let resourceParts = new URL(resourceUrl)
-      resourceUrl = this.getCORSProxyPath() + `${resourceParts.hostname}${resourceParts.pathname}${resourceParts.search}`
+      resourceUrl = GetEndpointAbsolutePath(globalThis.location, this.clientConfig.fasten_api_endpoint_base) + `/${resourceParts.hostname}${resourceParts.pathname}${resourceParts.search}`
     }
 
 
@@ -143,12 +148,5 @@ export abstract class BaseClient {
         sourceUpdateStatus.source = source
         return sourceUpdateStatus
       })
-  }
-
-  private getCORSProxyPath(): string {
-    //TODO: this path should be passed in as a variable
-    const basePath = globalThis.location.pathname.split('/web').slice(0, 1)[0];
-
-    return `${globalThis.location.origin}${basePath || '/'}cors/`
   }
 }

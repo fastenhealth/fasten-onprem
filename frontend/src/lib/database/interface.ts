@@ -46,6 +46,4 @@ export interface IDatabaseRepository {
   GetResource(resource_id: string): Promise<ResourceFhir>
   GetResources(): Promise<IDatabasePaginatedResponse>
   GetResourcesForSource(source_id: string, source_resource_type?: string): Promise<IDatabasePaginatedResponse>
-
-  GetEndpointAbsolutePath(currentUrl: {pathname: string, protocol: string, host: string}, relativePath: string): string
 }

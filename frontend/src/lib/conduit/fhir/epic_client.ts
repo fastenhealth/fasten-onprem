@@ -3,10 +3,11 @@ import {FHIR401Client} from './base/fhir401_r4_client';
 import {Source} from '../../models/database/source';
 import {IDatabaseRepository} from '../../database/interface';
 import {UpsertSummary} from '../../models/fasten/upsert-summary';
+import {ClientConfig} from '../../models/client/client-config';
 
 export class EpicClient  extends FHIR401Client implements IClient {
-  constructor(source: Source) {
-    super(source);
+  constructor(source: Source, clientConfig: ClientConfig) {
+    super(source, clientConfig);
     //Epic API requires the following Accept header for every request
     this.headers.set("Accept","application/json+fhir")
   }

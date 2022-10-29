@@ -7,6 +7,8 @@ import {SourceSyncMessage} from '../models/queue/source-sync-message';
 import {NewPouchdbRepositoryWebWorker, PouchdbRepository} from '../../lib/database/pouchdb_repository';
 import {NewClient} from '../../lib/conduit/factory';
 import {Source} from '../../lib/models/database/source';
+import {ClientConfig} from '../../lib/models/client/client-config';
+import {client} from 'fhirclient';
 
 export class SourceSyncWorker implements DoWork<string, string> {
   public work(input$: Observable<string>): Observable<string> {
@@ -19,7 +21,10 @@ export class SourceSyncWorker implements DoWork<string, string> {
           const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
 
           const db = NewPouchdbRepositoryWebWorker(sourceSyncMessage.current_user, sourceSyncMessage.couchdb_endpoint_base)
-          const client = NewClient(sourceSyncMessage.source.source_type, new Source(sourceSyncMessage.source))
+
+          let clientConfig = new ClientConfig()
+          clientConfig.fasten_api_endpoint_base = sourceSyncMessage.fasten_api_endpoint_base
+          const client = NewClient(sourceSyncMessage.source.source_type, new Source(sourceSyncMessage.source), clientConfig)
           //TODO: validate the FHIR version from the datasource matches the client
           // if the source token has been refreshed, we need to store it in the DB.
           // await db.UpsertSource()
