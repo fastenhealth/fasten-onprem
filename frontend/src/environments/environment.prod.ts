@@ -1,5 +1,7 @@
 export const environment = {
   production: true,
+  is_cloud: false,
+
   lighthouse_api_endpoint_base: 'https://lighthouse.fastenhealth.com/v1',
 
   //used to specify the couchdb server that we're going to use (can be relative or absolute). Must not have trailing slash

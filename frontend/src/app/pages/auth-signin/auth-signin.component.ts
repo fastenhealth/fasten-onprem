@@ -4,6 +4,8 @@ import {FastenDbService} from '../../services/fasten-db.service';
 import {Router} from '@angular/router';
 import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
+import {environment} from '../../../environments/environment';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-auth-signin',
@@ -14,8 +16,9 @@ export class AuthSigninComponent implements OnInit {
   submitted: boolean = false
   existingUser: User = new User()
   errorMsg: string = ""
+  showExternalIdP: boolean = environment.is_cloud
 
-  constructor(private fastenDb: FastenDbService,  private router: Router, private toastService: ToastService) { }
+  constructor(private fastenDb: FastenDbService, private authService: AuthService,  private router: Router, private toastService: ToastService) { }
 
   ngOnInit(): void {
   }
@@ -36,6 +39,10 @@ export class AuthSigninComponent implements OnInit {
         toastNotificaiton.message = this.errorMsg
         this.toastService.show(toastNotificaiton)
       })
+  }
 
+  idpConnectHello($event){
+    this.authService.Connect('hello')
+      .then(console.log)
   }
 }

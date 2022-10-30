@@ -93,6 +93,7 @@
               ]
             },
             "cloud_sandbox": {
+              "index": "src/index-cloud.html",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

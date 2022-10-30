@@ -36,6 +36,8 @@ jobs:
 
       - name: Copy files to the test website with the AWS CLI
         run: |
+          rm -rf dist/index.html
+          mv dist/index-cloud.html dist/index.html
           aws s3 sync dist s3://app-sandbox.fastenhealth.com --acl public-read
 
       - uses: chrnorm/deployment-action@v2
