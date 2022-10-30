@@ -29,7 +29,7 @@ export class AuthService {
     console.log(resp)
 
     const authorizeUrl = new URL(resp.data)
-    authorizeUrl.searchParams.append('redirect_uri', window.location.href);
+    authorizeUrl.searchParams.append('redirect_uri', window.location.href); //only auth/signup and /auth/signin urls are allowed
     window.location.href = authorizeUrl.toString();
   }
 }
