@@ -39,7 +39,7 @@
         </div>
       </form>
 
-      <div class="pt-4 pb-3">
+      <div *ngIf="showExternalIdP" class="pt-4 pb-3">
         <div class="hello-container">
           <button (click)="idpConnectHello($event)" class="hello-btn"></button>
           <button class="hello-about"></button>
