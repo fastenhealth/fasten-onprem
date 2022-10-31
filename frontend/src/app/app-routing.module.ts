@@ -15,7 +15,9 @@ import {EncryptionManagerComponent} from './pages/encryption-manager/encryption-
 const routes: Routes = [
 
   { path: 'auth/signin', component: AuthSigninComponent },
+  { path: 'auth/signin/callback/:idp_type', component: AuthSigninComponent },
   { path: 'auth/signup', component: AuthSignupComponent },
+  { path: 'auth/signup/callback/:idp_type', component: AuthSignupComponent },
 
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, canActivate: [ IsAuthenticatedAuthGuard, EncryptionEnabledAuthGuard] },

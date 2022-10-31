@@ -15,21 +15,29 @@ export class AuthService {
   }
 
 
-  /**
-   * Signup  (and Signin) both require an "online" user.
-   * @param newUser
-   * @constructor
-   */
-  public async Connect(idpType: string) {
+  public async IdpConnect(idp_type: string) {
     console.log("Connecting to external Idp")
 
     let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location,environment.fasten_api_endpoint_base)
 
-    let resp = await this._httpClient.get<ResponseWrapper>(`${fastenApiEndpointBase}/auth/connect/${idpType}`).toPromise()
+    let resp = await this._httpClient.get<ResponseWrapper>(`${fastenApiEndpointBase}/auth/connect/${idp_type}`).toPromise()
     console.log(resp)
 
     const authorizeUrl = new URL(resp.data)
-    authorizeUrl.searchParams.append('redirect_uri', window.location.href); //only auth/signup and /auth/signin urls are allowed
+    authorizeUrl.searchParams.append('redirect_uri', window.location.href + '/callback/'+ idp_type ); //only auth/signup and /auth/signin urls are allowed
     window.location.href = authorizeUrl.toString();
+  }
+
+  public async IdpCallback(idp_type: string, id_token: string) {
+
+    var payload = {
+      id_token: id_token
+    }
+
+    let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location,environment.fasten_api_endpoint_base)
+
+    let resp = await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/callback/${idp_type}`, payload).toPromise()
+    console.log(resp)
+
   }
 }
