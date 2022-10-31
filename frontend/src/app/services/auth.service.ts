@@ -28,10 +28,11 @@ export class AuthService {
     window.location.href = authorizeUrl.toString();
   }
 
-  public async IdpCallback(idp_type: string, code: string) {
+  public async IdpCallback(idp_type: string, code: string, redirect_uri: string) {
 
     var payload = {
-      code: code
+      code: code,
+      redirect_uri: redirect_uri
     }
 
     let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location,environment.fasten_api_endpoint_base)

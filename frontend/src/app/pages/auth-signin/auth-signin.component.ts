@@ -30,12 +30,14 @@ export class AuthSigninComponent implements OnInit {
 
   ngOnInit(): void {
 
-    const idpType = this.route.snapshot.paramMap.get('idp_type')
+    let idpType = this.route.snapshot.paramMap.get('idp_type')
     if(idpType){
-      const params = new URLSearchParams(window.location.hash.substring(1))
-      const code = params.get('code') // eyJhbGciOiJSUzI1...rest_of_ID_Token
+      let params = new URLSearchParams(window.location.hash.substring(1))
+      let code = params.get('code') // eyJhbGciOiJSUzI1...rest_of_ID_Token
+      let redirect_uri = `${window.location.origin}${window.location.pathname}`
+
       this.resetUrlOnCallback()
-      this.authService.IdpCallback(idpType, code).then(console.log)
+      this.authService.IdpCallback(idpType, code, redirect_uri).then(console.log)
     }
 
   }
