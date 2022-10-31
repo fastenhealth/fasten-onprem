@@ -34,10 +34,10 @@ export class AuthSigninComponent implements OnInit {
     if(idpType){
       let params = new URLSearchParams(window.location.hash.substring(1))
       let code = params.get('code') // eyJhbGciOiJSUzI1...rest_of_ID_Token
-      let redirect_uri = `${window.location.origin}${window.location.pathname}`
+      let state = params.get('state') // eyJhbGciOiJSUzI1...rest_of_ID_Token
 
       this.resetUrlOnCallback()
-      this.authService.IdpCallback(idpType, code, redirect_uri).then(console.log)
+      this.authService.IdpCallback(idpType, state, code).then(console.log)
     }
 
   }

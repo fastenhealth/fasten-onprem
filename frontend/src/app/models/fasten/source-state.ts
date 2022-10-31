@@ -6,4 +6,5 @@ export class SourceState {
   code_challenge_method?: string
   code_challenge?: string
   enabled: boolean
+  redirect_uri?: string
 }

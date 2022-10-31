@@ -5,6 +5,8 @@ import {User} from '../../lib/models/fasten/user';
 import {environment} from '../../environments/environment';
 import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
 import {ResponseWrapper} from '../models/response-wrapper';
+import * as Oauth from '@panva/oauth4webapi';
+import {SourceState} from '../models/fasten/source-state';
 
 @Injectable({
   providedIn: 'root'
@@ -16,29 +18,89 @@ export class AuthService {
 
 
   public async IdpConnect(idp_type: string) {
-    console.log("Connecting to external Idp")
 
-    let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location,environment.fasten_api_endpoint_base)
+    const state = this.uuidV4()
+    let sourceStateInfo = new SourceState()
+    sourceStateInfo.state = state
+    sourceStateInfo.source_type = idp_type
+    sourceStateInfo.redirect_uri = `${window.location.href}/callback/hello`
 
-    let resp = await this._httpClient.get<ResponseWrapper>(`${fastenApiEndpointBase}/auth/connect/${idp_type}`).toPromise()
-    console.log(resp)
+    // generate the authorization url
+    const authorizationUrl = new URL("https://wallet.hello.coop/authorize");
+    authorizationUrl.searchParams.set('redirect_uri',  sourceStateInfo.redirect_uri);
+    authorizationUrl.searchParams.set('response_type', "code");
+    authorizationUrl.searchParams.set('response_mode', 'fragment');
+    authorizationUrl.searchParams.set('state', state);
+    authorizationUrl.searchParams.set('client_id', 'f5d8284d-c205-4d06-9fa4-c9fd809f30fc');
+    authorizationUrl.searchParams.set('scope', 'name email openid');
 
-    const authorizeUrl = new URL(resp.data)
-    authorizeUrl.searchParams.append('redirect_uri', window.location.href + '/callback/'+ idp_type ); //only auth/signup and /auth/signin urls are allowed
-    window.location.href = authorizeUrl.toString();
+    const codeVerifier = Oauth.generateRandomCodeVerifier();
+    const codeChallenge = await Oauth.calculatePKCECodeChallenge(codeVerifier);
+    const codeChallengeMethod = 'S256'
+
+    sourceStateInfo.code_verifier = codeVerifier
+    sourceStateInfo.code_challenge = codeChallenge
+    sourceStateInfo.code_challenge_method = codeChallengeMethod
+
+    authorizationUrl.searchParams.set('code_challenge', codeChallenge);
+    authorizationUrl.searchParams.set('code_challenge_method', codeChallengeMethod);
+
+    localStorage.setItem(state, JSON.stringify(sourceStateInfo))
+
+    window.location.href = authorizationUrl.toString();
   }
 
-  public async IdpCallback(idp_type: string, code: string, redirect_uri: string) {
+  public async IdpCallback(idp_type: string, state: string, code: string) {
 
-    var payload = {
-      code: code,
-      redirect_uri: redirect_uri
+    const expectedSourceStateInfo = JSON.parse(localStorage.getItem(state))
+    localStorage.removeItem(state)
+
+    // @ts-expect-error
+    const client: oauth.Client = {
+      client_id: 'f5d8284d-c205-4d06-9fa4-c9fd809f30fc',
+      token_endpoint_auth_method: 'none'
+    }
+    let codeVerifier = expectedSourceStateInfo.code_verifier
+
+    const as = {
+      issuer: "https://issuer.hello.coop",
+      authorization_endpoint:	"https://wallet.hello.coop/authorize",
+      token_endpoint:	"https://wallet.hello.coop/oauth/token",
+      introspection_endpoint: "https://wallet.hello.coop/oauth/introspect"
     }
 
+    console.log("STARTING--- Oauth.validateAuthResponse")
+    const params = Oauth.validateAuthResponse(as, client, new URLSearchParams({"code": code, "state": expectedSourceStateInfo.state}), expectedSourceStateInfo.state)
+    if (Oauth.isOAuth2Error(params)) {
+      console.log('error', params)
+      throw new Error() // Handle OAuth 2.0 redirect error
+    }
+    console.log("ENDING--- Oauth.validateAuthResponse")
+    console.log("STARTING--- Oauth.authorizationCodeGrantRequest")
+    const response = await Oauth.authorizationCodeGrantRequest(
+      as,
+      client,
+      params,
+      expectedSourceStateInfo.redirect_uri,
+      codeVerifier,
+    )
+    let payload = await response.json()
+    console.log("ENDING--- Oauth.authorizationCodeGrantRequest", payload)
+
+
+    //trade Hello Idtoken for Fasten DB token.
     let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location,environment.fasten_api_endpoint_base)
-
     let resp = await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/callback/${idp_type}`, payload).toPromise()
-    console.log(resp)
 
+
+
+    return resp
+  }
+
+  private uuidV4(){
+    // @ts-ignore
+    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
   }
 }
