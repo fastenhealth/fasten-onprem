@@ -16,9 +16,9 @@ else
 
     # create couch_peruser required system databases manually on startup
     echo "couchdb ready, start creating system databases"
-    curl --fail -X PUT -u admin:mysecretpassword http://127.0.0.1:5432/_users
-    curl --fail -X PUT -u admin:mysecretpassword http://127.0.0.1:5432/_replicator
-    curl --fail -X PUT -u admin:mysecretpassword http://127.0.0.1:5432/_global_changes
+    curl --fail -X PUT -u ${FASTEN_COUCHDB_ADMIN_USERNAME}:${FASTEN_COUCHDB_ADMIN_PASSWORD} http://127.0.0.1:5432/_users
+    curl --fail -X PUT -u ${FASTEN_COUCHDB_ADMIN_USERNAME}:${FASTEN_COUCHDB_ADMIN_PASSWORD} http://127.0.0.1:5432/_replicator
+    curl --fail -X PUT -u ${FASTEN_COUCHDB_ADMIN_USERNAME}:${FASTEN_COUCHDB_ADMIN_PASSWORD} http://127.0.0.1:5432/_global_changes
     echo "system databases created successfully"
 
     # gracefully stop couchdb process
