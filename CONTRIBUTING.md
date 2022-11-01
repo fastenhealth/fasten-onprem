@@ -214,3 +214,9 @@ a CDN or minimal Nginx deployment.
 
 - ng test --include='**/base_client.spec.ts'    
 - ng test --include='lib/**/*.spec.ts'     
+
+
+### How do I change the default encryption key and admin credentials
+- FASTEN_ISSUER_JWT_KEY
+- FASTEN_COUCHDB_ADMIN_USERNAME
+- FASTEN_COUCHDB_ADMIN_PASSWORD

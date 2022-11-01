@@ -15,6 +15,10 @@ RUN yarn run build -- --configuration sandbox --output-path=../dist
 # Backend Build
 #########################################################################################################
 FROM golang:1.18 as backend-build
+ENV FASTEN_COUCHDB_ADMIN_USERNAME=admin
+ENV FASTEN_COUCHDB_ADMIN_PASSWORD=mysecretpassword
+ENV FASTEN_ISSUER_JWT_KEY=mysessionpassword
+
 WORKDIR /go/src/github.com/fastenhealth/fastenhealth-onprem
 COPY . .
 

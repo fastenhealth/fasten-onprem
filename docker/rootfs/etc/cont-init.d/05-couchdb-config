@@ -1,0 +1,32 @@
+#!/usr/bin/with-contenv bash
+
+if [ -f "/opt/couchdb/data/.config_complete" ]; then
+    echo "Couchdb config has already completed, skipping"
+else
+
+  FASTEN_ISSUER_JWT_KEY_BASE64=$(echo "${FASTEN_ISSUER_JWT_KEY}" | base64)
+
+
+cat << EOF >> /opt/couchdb/etc/local.ini
+
+; ------------------------------------------ GENERATED MODIFICATIONS
+; ------------------------------------------ GENERATED MODIFICATIONS
+; ------------------------------------------ GENERATED MODIFICATIONS
+;
+[jwt_auth]
+required_claims = exp, {iss, "docker-fastenhealth"}
+
+[jwt_keys]
+hmac:_default = ${FASTEN_ISSUER_JWT_KEY_BASE64}
+
+
+; users should change this default password
+[admins]
+${FASTEN_COUCHDB_ADMIN_USERNAME} = ${FASTEN_COUCHDB_ADMIN_PASSWORD}
+EOF
+
+    # create the config complete flag
+    echo "Couchdb config: complete"
+    touch /opt/couchdb/data/.config_complete
+
+fi
