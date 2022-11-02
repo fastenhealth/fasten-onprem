@@ -1,11 +1,21 @@
 <div class="az-signin-wrapper">
-  <div class="az-card-signin">
+  <div class="az-card-signin" [ngStyle]="{'height': showExternalIdP ? 'unset' : '560px' }">
     <h1 class="az-logo">fasten</h1>
     <div class="az-signin-header">
-      <h2>Welcome back!</h2>
+      <h2>{{showExternalIdP ? "Welcome!" : "Welcome back!"}}</h2>
       <h4>Please sign in to continue</h4>
 
-      <form (ngSubmit)="signinSubmit()" #userForm="ngForm">
+      <form *ngIf="showExternalIdP">
+        <div class="pt-4 pb-3">
+          <p class="pb-3">You can use the button below to create an account or signin to your existing Fasten account.</p>
+          <div class="hello-container">
+            <button (click)="idpConnectHello($event)" class="hello-btn"></button>
+            <button class="hello-about"></button>
+          </div>
+        </div>
+      </form>
+
+      <form  *ngIf="!showExternalIdP" (ngSubmit)="signinSubmit()" #userForm="ngForm">
         <div class="form-group">
           <label>Username</label>
           <input [(ngModel)]="existingUser.username" name="username" #username="ngModel" required minlength="2" type="text" class="form-control" placeholder="Enter your username">
@@ -39,17 +49,8 @@
         </div>
       </form>
 
-      <div *ngIf="showExternalIdP" class="pt-4 pb-3">
-        <div class="hello-container">
-          <button (click)="idpConnectHello($event)" class="hello-btn"></button>
-          <button class="hello-about"></button>
-        </div>
-      </div>
-
-
-
     </div><!-- az-signin-header -->
-    <div class="az-signin-footer">
+    <div *ngIf="!showExternalIdP" class="az-signin-footer">
       <p><a ngbTooltip="not yet implemented">Forgot password?</a></p>
       <p>Don't have an account? <a routerLink="/auth/signup">Create an Account</a></p>
     </div><!-- az-signin-footer -->
