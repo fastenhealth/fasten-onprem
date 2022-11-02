@@ -3,11 +3,11 @@
 if [ -f "/opt/couchdb/data/.config_complete" ]; then
     echo "Couchdb config has already completed, skipping"
 else
+  #echo -n means we dont pass newline to base64 (ugh). eg. hello = aGVsbG8K vs aGVsbG8=
+  FASTEN_JWT_ISSUER_KEY_BASE64=$(echo -n "${FASTEN_JWT_ISSUER_KEY}" | base64)
 
-  FASTEN_ISSUER_JWT_KEY_BASE64=$(echo "${FASTEN_ISSUER_JWT_KEY}" | base64)
 
-
-cat << EOF >> /opt/couchdb/etc/local.ini
+cat << EOF >> /opt/couchdb/etc/local.d/generated.ini
 
 ; ------------------------------------------ GENERATED MODIFICATIONS
 ; ------------------------------------------ GENERATED MODIFICATIONS
@@ -17,12 +17,13 @@ cat << EOF >> /opt/couchdb/etc/local.ini
 required_claims = exp, {iss, "docker-fastenhealth"}
 
 [jwt_keys]
-hmac:_default = ${FASTEN_ISSUER_JWT_KEY_BASE64}
+hmac:_default = ${FASTEN_JWT_ISSUER_KEY_BASE64}
 
 
 ; users should change this default password
 [admins]
 ${FASTEN_COUCHDB_ADMIN_USERNAME} = ${FASTEN_COUCHDB_ADMIN_PASSWORD}
+
 EOF
 
     # create the config complete flag

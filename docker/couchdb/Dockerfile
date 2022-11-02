@@ -6,7 +6,7 @@ FROM couchdb:3.2
 
 ENV FASTEN_COUCHDB_ADMIN_USERNAME=admin
 ENV FASTEN_COUCHDB_ADMIN_PASSWORD=mysecretpassword
-ENV FASTEN_ISSUER_JWT_KEY=mysessionpassword
+ENV FASTEN_JWT_ISSUER_KEY=thisismysupersecuressessionsecretlength
 
 ARG S6_ARCH=amd64
 RUN curl https://github.com/just-containers/s6-overlay/releases/download/v1.21.8.0/s6-overlay-${S6_ARCH}.tar.gz -L -s --output /tmp/s6-overlay-${S6_ARCH}.tar.gz \

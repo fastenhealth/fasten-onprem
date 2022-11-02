@@ -41,6 +41,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 			})
 
 			api.POST("/auth/signup", handler.AuthSignup)
+			api.POST("/auth/signin", handler.AuthSignin)
 
 			r.Any("/database/*proxyPath", handler.CouchDBProxy)
 			r.GET("/cors/*proxyPath", handler.CORSProxy)
