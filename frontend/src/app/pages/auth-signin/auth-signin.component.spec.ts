@@ -13,7 +13,7 @@ describe('AuthSigninComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ AuthSigninComponent ],
-      imports: [HttpClientTestingModule, FormsModule],
+      imports: [HttpClientTestingModule, FormsModule, RouterTestingModule],
     })
     .compileComponents();
 
