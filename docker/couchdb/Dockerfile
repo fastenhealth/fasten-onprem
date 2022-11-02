@@ -15,6 +15,6 @@ RUN curl https://github.com/just-containers/s6-overlay/releases/download/v1.21.8
 
 COPY /docker/couchdb/fasten.ini /opt/couchdb/etc/local.ini
 COPY /docker/rootfs /
-RUN rm -rf /etc/services.d/fasten #delete the fasten app from the couchdbase container.
+RUN rm -rf /etc/services.d/fasten #delete the fasten app from the couchdb-only container.
 
 ENTRYPOINT ["/init"]
