@@ -12,7 +12,12 @@ export class HeaderComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
-    this.current_user = this.authService.GetCurrentUser()
+    try {
+      this.current_user = this.authService.GetCurrentUser()
+    } catch(e){
+      this.current_user = "unknown"
+    }
+
   }
 
   closeMenu(e) {
