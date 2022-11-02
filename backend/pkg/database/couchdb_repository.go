@@ -9,6 +9,7 @@ import (
 	_ "github.com/go-kivik/couchdb/v3" // The CouchDB driver
 	"github.com/go-kivik/kivik/v3"
 	"github.com/sirupsen/logrus"
+	"log"
 )
 
 func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) (DatabaseRepository, error) {
@@ -69,7 +70,34 @@ func (cr *couchdbRepository) CreateUser(ctx context.Context, user *models.User) 
 	}
 	db := cr.client.DB(ctx, "_users")
 	_, err := db.Put(ctx, newUser.ID, newUser)
+	if err != nil {
+		return err
+	}
+
+	//TODO: we should create an index for this database now
+	//db.CreateIndex(ctx, )
 	return err
+}
+
+func (cr *couchdbRepository) VerifyUser(ctx context.Context, user *models.User) error {
+
+	couchdbUrl := fmt.Sprintf("%s://%s:%s", cr.appConfig.GetString("couchdb.scheme"), cr.appConfig.GetString("couchdb.host"), cr.appConfig.GetString("couchdb.port"))
+
+	userDatabase, err := kivik.New("couch", couchdbUrl)
+	if err != nil {
+		return fmt.Errorf("Failed to connect to database! - %v", err)
+	}
+
+	err = userDatabase.Authenticate(context.Background(),
+		couchdb.BasicAuth(user.Username, user.Password),
+	)
+	session, err := userDatabase.Session(context.Background())
+	if err != nil {
+		return err
+	}
+	log.Printf("SESSION INFO: %v", session)
+	//TODO: return session info
+	return nil
 }
 
 func (cr *couchdbRepository) Close() error {

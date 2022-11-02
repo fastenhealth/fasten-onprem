@@ -51,9 +51,10 @@ import {utils} from 'protractor';
  * @constructor
  */
 
-export function NewPouchdbRepositoryWebWorker(current_user: string, couchDbEndpointBase: string, localPouchDb?: PouchDB.Database): PouchdbRepository {
+export function NewPouchdbRepositoryWebWorker(auth: {current_user: string, auth_token: string}, couchDbEndpointBase: string, localPouchDb?: PouchDB.Database): PouchdbRepository {
   let pouchdbRepository = new PouchdbRepository(couchDbEndpointBase, localPouchDb)
-  pouchdbRepository.current_user = current_user
+  pouchdbRepository.current_user = auth.current_user
+  pouchdbRepository._auth_token = auth.auth_token
   return pouchdbRepository
 }
 export class PouchdbRepository implements IDatabaseRepository {
@@ -62,18 +63,20 @@ export class PouchdbRepository implements IDatabaseRepository {
   remotePouchEndpoint: string // "http://localhost:5984"
   pouchDb: PouchDB.Database
   current_user: string
+  _auth_token: string
 
   //encryption configuration
   cryptConfig: PouchdbCryptConfig = null
   encryptionInitComplete: boolean = false
 
-  /**
-   * This class can be initialized in 2 states
-   * - unauthenticated
-   * - authenticated - determined using cookie and localStorage.current_user
-   * @param userIdentifier
-   * @param encryptionKey
-   */
+  // There are 3 different ways to initialize the Database
+  // - explicitly after signin/signup (not supported by this class, see FastenDbService)
+  // - explicitly during web-worker init
+  // - implicitly after Lighthouse redirect (not supported by this class, see FastenDbService)
+  // Three peices of information are required during intialization
+  // - couchdb endpoint (constant, see environment.couchdb_endpoint_base)
+  // - username
+  // - JWT token
   constructor(couchDbEndpointBase: string, localPouchDb?: PouchDB.Database) {
     // couchDbEndpointBase could be a relative or absolute path.
     //if its absolute, we should pass it in, as-is
@@ -421,7 +424,20 @@ export class PouchdbRepository implements IDatabaseRepository {
     if(!this.current_user){
       throw new Error("current user is required when initializing pouchdb within web-worker")
     }
-    this.pouchDb = new PouchDB(this.getRemoteUserDb(this.current_user), {skip_setup: true})
+    if(!this._auth_token){
+      throw new Error("auth token is required when initializing pouchdb within web-worker")
+    }
+    let auth_token = this._auth_token
+
+    // add JWT bearer token header to all requests
+    // https://stackoverflow.com/questions/62129654/how-to-handle-jwt-authentication-with-rxdb
+    this.pouchDb = new PouchDB(this.getRemoteUserDb(this.current_user), {
+      skip_setup: true,
+      fetch: function (url, opts) {
+        opts.headers.set('Authorization', `Bearer ${auth_token}`)
+        return PouchDB.fetch(url, opts);
+      }
+    })
     return this.pouchDb
   }
 

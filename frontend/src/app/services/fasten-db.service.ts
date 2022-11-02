@@ -7,7 +7,7 @@ import {Summary} from '../../lib/models/fasten/summary';
 import {DocType} from '../../lib/database/constants';
 import {ResourceTypeCounts} from '../../lib/models/fasten/source-summary';
 import {Base64} from '../../lib/utils/base64';
-
+import * as jose from 'jose'
 
 // PouchDB & plugins (must be similar to the plugins specified in pouchdb repository)
 import * as PouchDB from 'pouchdb/dist/pouchdb';
@@ -21,6 +21,7 @@ import PouchAuth from 'pouchdb-authentication'
 import {PouchdbCrypto} from '../../lib/database/plugins/crypto';
 import {environment} from '../../environments/environment';
 import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
+import {AuthService} from './auth.service';
 PouchDB.plugin(PouchAuth);
 
 @Injectable({
@@ -28,65 +29,25 @@ PouchDB.plugin(PouchAuth);
 })
 export class FastenDbService extends PouchdbRepository {
 
-  constructor(private _httpClient: HttpClient) {
+
+  // There are 3 different ways to initialize the Database
+  // - explicitly after signin/signup
+  // - explicitly during web-worker init (not supported by this class, see PouchdbRepository.NewPouchdbRepositoryWebWorker)
+  // - implicitly after Lighthouse redirect (when user is directed back to the app)
+  // Three peices of information are required during intialization
+  // - couchdb endpoint (constant, see environment.couchdb_endpoint_base)
+  // - username
+  // - JWT token
+  constructor(private _httpClient: HttpClient, private authService: AuthService) {
     super(environment.couchdb_endpoint_base);
   }
 
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  // Auth methods
   /**
-   * Signin (and Signup) both require an "online" user.
-   * @param username
-   * @param pass
-   * @constructor
-   */
-  public async Signin(username: string, pass: string): Promise<any> {
-
-    let remotePouchDb = new PouchDB(this.getRemoteUserDb(username), {skip_setup: true});
-    return await remotePouchDb.logIn(username, pass)
-      .then((loginResp)=>{
-        this.current_user = loginResp.name
-        return this.postLoginHook(loginResp.name, remotePouchDb)
-      })
-      .catch((err) => {
-        console.error("an error occurred during login/setup", err)
-        throw err
-      })
-  }
-
-  /**
-   * Signup  (and Signin) both require an "online" user.
-   * @param newUser
-   * @constructor
-   */
-  public async Signup(newUser?: User): Promise<any> {
-    console.log("STARTING SIGNUP")
-
-    let fastenApiEndpointBase = environment.fasten_api_endpoint_base
-    if (!(fastenApiEndpointBase.indexOf('http://') === 0 || fastenApiEndpointBase.indexOf('https://') === 0)){
-
-      //relative, we need to retrieve the absolutePath from base
-      fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location,fastenApiEndpointBase)
-    }
-
-
-    let resp = await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/signup`, newUser).toPromise()
-    console.log(resp)
-    return this.Signin(newUser.username, newUser.password);
-  }
-
-  public async Logout(): Promise<any> {
-
-    // let remotePouchDb = new PouchDB(this.getRemoteUserDb(localStorage.getItem("current_user")), {skip_setup: true});
-    if(this.pouchDb){
-      await this.pouchDb.logOut()
-    }
-    await this.Close()
-  }
-
-  /**
-   * Try to get PouchDB database using session information
+   * Try to get PouchDB database using token auth information
+   * This method must handle 2 types of authentication
+   * - pouchdb init after signin/signup
+   * - implicit init after lighthouse redirect
    * @constructor
    */
   public override async GetSessionDB(): Promise<PouchDB.Database>  {
@@ -95,39 +56,24 @@ export class FastenDbService extends PouchdbRepository {
       return this.pouchDb
     }
 
-    //Since we dont have a pre-configured pouchDB already, see if we have an active session to the remote database.
-    let sessionDb = new PouchDB(this.getRemoteUserDb("placeholder"))
-    const session = await sessionDb.getSession()
-    console.log("Session found...", session)
-
-    const authUser = session?.userCtx?.name
-    if(authUser){
-      this.pouchDb = new PouchDB(this.getRemoteUserDb(authUser))
-      this.current_user = authUser
+    //check if we have a JWT token (we should, otherwise the auth-guard would have redirected to login page)
+    let authToken = this.authService.GetAuthToken()
+    if(!authToken){
+      throw new Error("no auth token found")
     }
-    return this.pouchDb
-  }
 
-  //TODO: now that we've moved to remote-first database, we can refactor and simplify this function significantly.
-  public async IsAuthenticated(): Promise<boolean> {
+    //parse the authToken to get user information
+    this.current_user = this.authService.GetCurrentUser()
 
-    try{
-      //lets see if we have an active session to the remote database.
-      await this.GetSessionDB()
-      if(!this.pouchDb){
-        console.warn("could not determine database from session info, logging out")
-        return false
+    // add JWT bearer token header to all requests
+    // https://stackoverflow.com/questions/62129654/how-to-handle-jwt-authentication-with-rxdb
+    this.pouchDb = new PouchDB(this.getRemoteUserDb(this.current_user), {
+      fetch: function (url, opts) {
+        opts.headers.set('Authorization', `Bearer ${authToken}`)
+        return PouchDB.fetch(url, opts);
       }
-
-      let session = await this.pouchDb.getSession()
-      let authUser = session?.userCtx?.name
-      let isAuth = !!authUser
-      console.warn("IsAuthenticated? getSession() ====> ", isAuth)
-      return isAuth;
-
-    } catch (e) {
-      return false
-    }
+    })
+    return this.pouchDb
   }
 
   /**
@@ -198,59 +144,4 @@ export class FastenDbService extends PouchdbRepository {
 
     return summary
   }
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  //Private Methods
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * After user login:
-   * - set the current_user in localStorage
-   * - create a (new/existing) local database,
-   * - enable indexes
-   * - enable sync
-   * - (TODO) enable encryption
-   * @param userIdentifier
-   * @constructor
-   */
-  private async postLoginHook(userIdentifier: string, pouchDb: PouchDB.Database): Promise<void> {
-
-    await this.Close();
-    this.pouchDb = pouchDb;
-
-    //create any necessary indexes
-    // this index allows us to group by source_resource_type
-    console.log("DB createIndex started...")
-    //todo, we may need to wait a couple of moments before starting this index, as the database may not exist yet (even after user creation)
-    await (new Promise((resolve) => setTimeout(resolve, 500))) //sleep for 0.5s.
-    const createIndexMsg = await this.pouchDb.createIndex({
-      index: {fields: [
-          'doc_type',
-          'source_resource_type',
-        ]}
-    });
-    console.log("DB createIndex complete", createIndexMsg)
-
-    // if(sync){
-    //   console.log("DB sync init...", userIdentifier, this.getRemoteUserDb(userIdentifier))
-    //
-    //   // this.enableSync(userIdentifier)
-    //   //   .on('paused', function (info) {
-    //   //     // replication was paused, usually because of a lost connection
-    //   //     console.warn("replication was paused, usually because of a lost connection", info)
-    //   //   }).on('active', function (info) {
-    //   //   // replication was resumed
-    //   //   console.warn("replication was resumed", info)
-    //   // }).on('error', function (err) {
-    //   //   // totally unhandled error (shouldn't happen)
-    //   //   console.error("replication unhandled error (shouldn't happen)", err)
-    //   // });
-    //   console.log("DB sync enabled")
-    //
-    // }
-
-    console.warn( "Configured PouchDB database for,", this.pouchDb.name );
-    return
-  }
-
 }

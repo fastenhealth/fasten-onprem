@@ -27,6 +27,7 @@ import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import {AuthInterceptorService} from './services/auth-interceptor.service';
 import { MomentModule } from 'ngx-moment';
 import { EncryptionManagerComponent } from './pages/encryption-manager/encryption-manager.component';
+import {AuthService} from './services/auth.service';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,7 @@ import { EncryptionManagerComponent } from './pages/encryption-manager/encryptio
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptorService,
       multi: true,
-      deps: [FastenDbService, Router]
+      deps: [AuthService, Router]
     },
     IsAuthenticatedAuthGuard,
     EncryptionEnabledAuthGuard,

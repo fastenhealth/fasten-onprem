@@ -10,4 +10,5 @@ type DatabaseRepository interface {
 	Close() error
 
 	CreateUser(context.Context, *models.User) error
+	VerifyUser(context.Context, *models.User) error
 }

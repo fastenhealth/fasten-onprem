@@ -37,7 +37,14 @@ export class AuthSigninComponent implements OnInit {
       let state = params.get('state') // eyJhbGciOiJSUzI1...rest_of_ID_Token
 
       this.resetUrlOnCallback()
-      this.authService.IdpCallback(idpType, state, code).then(console.log)
+      this.authService.IdpCallback(idpType, state, code)
+        .then(() => this.router.navigateByUrl('/dashboard'))
+        .catch((err)=>{
+          const toastNotification = new ToastNotification()
+          toastNotification.type = ToastType.Error
+          toastNotification.message = "an error occurred while signing in"
+          this.toastService.show(toastNotification)
+        })
     }
 
   }
@@ -45,7 +52,7 @@ export class AuthSigninComponent implements OnInit {
   signinSubmit(){
     this.submitted = true;
 
-    this.fastenDb.Signin(this.existingUser.username, this.existingUser.password)
+    this.authService.Signin(this.existingUser.username, this.existingUser.password)
       .then(() => this.router.navigateByUrl('/dashboard'))
       .catch((err)=>{
         if(err?.name){

@@ -7,6 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-kivik/couchdb/v3 v3.3.0
 	github.com/go-kivik/kivik/v3 v3.2.3
+	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/golang/mock v1.4.4
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.12.0

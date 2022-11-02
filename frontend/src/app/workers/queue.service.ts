@@ -7,19 +7,21 @@ import {ToastService} from '../services/toast.service';
 import {ToastNotification, ToastType} from '../models/fasten/toast';
 import {FastenDbService} from '../services/fasten-db.service';
 import {environment} from '../../environments/environment';
+import {AuthService} from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QueueService {
 
-  constructor(private toastService: ToastService, private fastenDbService: FastenDbService) { }
+  constructor(private toastService: ToastService, private authService: AuthService) { }
 
   runSourceSyncWorker(source: Source):Observable<string> {
     if (typeof Worker !== 'undefined') {
       const sourceSync = new SourceSyncMessage()
       sourceSync.source = source
-      sourceSync.current_user = this.fastenDbService.current_user
+      sourceSync.current_user = this.authService.GetCurrentUser()
+      sourceSync.auth_token = this.authService.GetAuthToken()
       sourceSync.couchdb_endpoint_base = environment.couchdb_endpoint_base
       sourceSync.fasten_api_endpoint_base = environment.fasten_api_endpoint_base
       const input$: Observable<string> = of(JSON.stringify(sourceSync));

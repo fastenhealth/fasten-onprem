@@ -32,6 +32,8 @@ func (c *configuration) Init() error {
 	c.SetDefault("couchdb.admin.username", "admin")
 	c.SetDefault("couchdb.admin.password", "mysecretpassword")
 
+	c.SetDefault("jwt.issuer.key", "thisismysupersecuressessionsecretlength")
+
 	c.SetDefault("log.level", "INFO")
 	c.SetDefault("log.file", "")
 

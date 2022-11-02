@@ -20,7 +20,7 @@ export class SourceSyncWorker implements DoWork<string, string> {
           console.log(msg); // outputs 'Hello from main thread'
           const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
 
-          const db = NewPouchdbRepositoryWebWorker(sourceSyncMessage.current_user, sourceSyncMessage.couchdb_endpoint_base)
+          const db = NewPouchdbRepositoryWebWorker({current_user: sourceSyncMessage.current_user, auth_token: sourceSyncMessage.auth_token}, sourceSyncMessage.couchdb_endpoint_base)
 
           let clientConfig = new ClientConfig()
           clientConfig.fasten_api_endpoint_base = sourceSyncMessage.fasten_api_endpoint_base

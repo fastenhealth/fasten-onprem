@@ -220,3 +220,15 @@ a CDN or minimal Nginx deployment.
 - FASTEN_ISSUER_JWT_KEY
 - FASTEN_COUCHDB_ADMIN_USERNAME
 - FASTEN_COUCHDB_ADMIN_PASSWORD
+
+
+### Generate JWT for local use
+```bash
+curl -X POST http://localhost:9090/api/auth/signup -H 'Content-Type: application/json' -d '{"username":"user1","password":"user1"}'
+
+curl -X POST http://localhost:9090/api/auth/signin -H 'Content-Type: application/json' -d '{"username":"user1","password":"user1"}'
+
+
+curl -H "Authorization: Bearer ${JWT_TOKEN_HERE}" http://localhost:5984/_session
+
+```

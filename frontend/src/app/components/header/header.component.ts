@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FastenDbService} from '../../services/fasten-db.service';
 import { Router } from '@angular/router';
+import {AuthService} from '../../services/auth.service';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -8,10 +9,10 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
   current_user: string
-  constructor(private fastenDb: FastenDbService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
-    this.current_user = this.fastenDb.current_user
+    this.current_user = this.authService.GetCurrentUser()
   }
 
   closeMenu(e) {
@@ -25,7 +26,7 @@ export class HeaderComponent implements OnInit {
   }
 
   signOut(e) {
-    this.fastenDb.Logout()
+    this.authService.Logout()
       .then(() => this.router.navigate(['auth/signin']))
   }
 }
