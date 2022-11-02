@@ -45,7 +45,7 @@ export class AuthSigninComponent implements OnInit {
   signinSubmit(){
     this.submitted = true;
 
-    this.fastenDb.Signin(this.existingUser.username, this.existingUser.password)
+    this.authService.Signin(this.existingUser.username, this.existingUser.password)
       .then(() => this.router.navigateByUrl('/dashboard'))
       .catch((err)=>{
         if(err?.name){

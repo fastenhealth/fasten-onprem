@@ -4,6 +4,7 @@ import {User} from '../../../lib/models/fasten/user';
 import {Router} from '@angular/router';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {ToastService} from '../../services/toast.service';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-auth-signup',
@@ -16,7 +17,7 @@ export class AuthSignupComponent implements OnInit {
   errorMsg: string = ""
 
   constructor(
-    private fastenDb: FastenDbService,
+    private authService: AuthService,
     private router: Router,
     private toastService: ToastService
   ) { }
@@ -27,7 +28,7 @@ export class AuthSignupComponent implements OnInit {
   signupSubmit(){
     this.submitted = true;
 
-    this.fastenDb.Signup(this.newUser).then((tokenResp: any) => {
+    this.authService.Signup(this.newUser).then((tokenResp: any) => {
         console.log(tokenResp);
         this.router.navigateByUrl('/dashboard');
       },

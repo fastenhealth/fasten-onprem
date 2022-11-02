@@ -55,13 +55,13 @@ func jwtGenerateFastenTokenFromUser(user models.User, issuerSigningKey string) (
 		// In JWT, the expiry time is expressed as unix milliseconds
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
-		Issuer:    "docker.fastenhealth.com",
+		Issuer:    "docker-fastenhealth",
 		Subject:   user.Username,
 	}
 
 	//FASTEN_JWT_ISSUER_KEY
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, userClaims)
-	token.Header["kid"] = "docker"
+	//token.Header["kid"] = "docker"
 	tokenString, err := token.SignedString([]byte(issuerSigningKey))
 
 	if err != nil {

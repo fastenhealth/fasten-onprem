@@ -70,6 +70,12 @@ func (cr *couchdbRepository) CreateUser(ctx context.Context, user *models.User) 
 	}
 	db := cr.client.DB(ctx, "_users")
 	_, err := db.Put(ctx, newUser.ID, newUser)
+	if err != nil {
+		return err
+	}
+
+	//TODO: we should create an index for this database now
+	//db.CreateIndex(ctx, )
 	return err
 }
 

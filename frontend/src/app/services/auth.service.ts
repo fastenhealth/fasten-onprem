@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {FastenDbService} from './fasten-db.service';
 import {User} from '../../lib/models/fasten/user';
 import {environment} from '../../environments/environment';
@@ -7,16 +7,20 @@ import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
 import {ResponseWrapper} from '../models/response-wrapper';
 import * as Oauth from '@panva/oauth4webapi';
 import {SourceState} from '../models/fasten/source-state';
+import {Session} from '../models/database/session';
+import * as jose from 'jose';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
+  FASTEN_JWT_LOCALSTORAGE_KEY = 'token';
+
   constructor(private _httpClient: HttpClient) {
   }
 
-
+  //Third-party JWT auth, used by Fasten Cloud
   public async IdpConnect(idp_type: string) {
 
     const state = this.uuidV4()
@@ -92,9 +96,97 @@ export class AuthService {
     let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location,environment.fasten_api_endpoint_base)
     let resp = await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/callback/${idp_type}`, payload).toPromise()
 
-
+    this.setAuthToken(resp.data)
 
     return resp
+  }
+
+
+  //Primary auth used by self-hosted Fasten
+  /**
+   * Signup  (and Signin) both require an "online" user.
+   * @param newUser
+   * @constructor
+   */
+  public async Signup(newUser?: User): Promise<any> {
+    let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)
+    let resp = await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/signup`, newUser).toPromise()
+    console.log(resp)
+
+    this.setAuthToken(resp.data)
+
+  }
+
+  public async Signin(username: string, pass: string): Promise<any> {
+    let currentUser = new User()
+    currentUser.username = username
+    currentUser.password = pass
+
+    let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)
+    let resp = await this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/auth/signin`, currentUser).toPromise()
+
+    this.setAuthToken(resp.data)
+  }
+
+
+  //TODO: now that we've moved to remote-first database, we can refactor and simplify this function significantly.
+  public async IsAuthenticated(): Promise<boolean> {
+    let authToken = this.GetAuthToken()
+    let hasAuthToken = !!authToken
+    if(!hasAuthToken){
+      return false
+    }
+    //check if the authToken works
+    let databaseEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.couchdb_endpoint_base)
+    try {
+      let resp = await this._httpClient.get<any>(`${databaseEndpointBase}/_session`, {
+        headers: new HttpHeaders({
+          'Content-Type':  'application/json',
+          Authorization: `Bearer ${authToken}`
+        })
+      }).toPromise()
+      console.log(resp)
+      //TODO: add logic to check if user is logged in here.
+      let session = resp as Session
+      if(!session.ok || session?.info?.authenticated != "jwt" || !session.userCtx?.name){
+        //invalid session, not jwt auth, or username is empty
+        return false
+      }
+      return true
+    } catch (e) {
+      return false
+    }
+  }
+
+  public GetAuthToken(): string {
+    return localStorage.getItem(this.FASTEN_JWT_LOCALSTORAGE_KEY);
+  }
+
+  public GetCurrentUser(): string {
+    let authToken = this.GetAuthToken()
+    if(!authToken){
+      throw new Error("no auth token found")
+    }
+
+    //parse the authToken to get user information
+    let jwtClaims = jose.decodeJwt(authToken)
+    return jwtClaims.sub
+  }
+
+  public async Logout(): Promise<any> {
+    return localStorage.removeItem(this.FASTEN_JWT_LOCALSTORAGE_KEY)
+    // // let remotePouchDb = new PouchDB(this.getRemoteUserDb(localStorage.getItem("current_user")), {skip_setup: true});
+    // if(this.pouchDb){
+    //   await this.pouchDb.logOut()
+    // }
+    // await this.Close()
+  }
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //Private Methods
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  private setAuthToken(token: string) {
+    localStorage.setItem(this.FASTEN_JWT_LOCALSTORAGE_KEY, token)
   }
 
   private uuidV4(){
