@@ -428,6 +428,9 @@ export class PouchdbRepository implements IDatabaseRepository {
       throw new Error("auth token is required when initializing pouchdb within web-worker")
     }
     let auth_token = this._auth_token
+
+    // add JWT bearer token header to all requests
+    // https://stackoverflow.com/questions/62129654/how-to-handle-jwt-authentication-with-rxdb
     this.pouchDb = new PouchDB(this.getRemoteUserDb(this.current_user), {
       skip_setup: true,
       fetch: function (url, opts) {

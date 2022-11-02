@@ -145,8 +145,7 @@ export class AuthService {
           Authorization: `Bearer ${authToken}`
         })
       }).toPromise()
-      console.log(resp)
-      //TODO: add logic to check if user is logged in here.
+      //  logic to check if user is logged in here.
       let session = resp as Session
       if(!session.ok || session?.info?.authenticated != "jwt" || !session.userCtx?.name){
         //invalid session, not jwt auth, or username is empty
