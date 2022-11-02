@@ -45,7 +45,7 @@ jobs:
         id: deployment
         with:
           token: '${{ github.token }}'
-          environment-url: https://app-sandbox.fastenhealth.com/web/
+          environment-url: https://app-sandbox.fastenhealth.com/
           environment: sandbox
           initial-status: success
 
