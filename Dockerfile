@@ -46,7 +46,7 @@ RUN curl https://github.com/just-containers/s6-overlay/releases/download/v1.21.8
     && tar xzf /tmp/s6-overlay-${S6_ARCH}.tar.gz -C / \
     && rm -rf /tmp/s6-overlay-${S6_ARCH}.tar.gz
 
-COPY /docker/couchdb/local.ini /opt/couchdb/etc/
+COPY /docker/couchdb/fasten.ini /opt/couchdb/etc/local.ini
 COPY /docker/rootfs /
 
 WORKDIR /opt/fasten/
