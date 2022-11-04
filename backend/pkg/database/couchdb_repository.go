@@ -57,6 +57,8 @@ type couchDbUser struct {
 	Type     string   `json:"type"`
 	Roles    []string `json:"roles"`
 	Password string   `json:"password"`
+
+	FullName string `json:"full_name"`
 }
 
 func (cr *couchdbRepository) CreateUser(ctx context.Context, user *models.User) error {
@@ -67,6 +69,8 @@ func (cr *couchdbRepository) CreateUser(ctx context.Context, user *models.User) 
 		Type:     "user",
 		Roles:    []string{},
 		Password: user.Password,
+
+		FullName: user.FullName,
 	}
 	db := cr.client.DB(ctx, "_users")
 	_, err := db.Put(ctx, newUser.ID, newUser)
@@ -97,6 +101,19 @@ func (cr *couchdbRepository) VerifyUser(ctx context.Context, user *models.User) 
 	}
 	log.Printf("SESSION INFO: %v", session)
 	//TODO: return session info
+
+	//lookup the user in the user database using admin creds
+	adminDb := cr.client.DB(ctx, "_users")
+	userRow := adminDb.Get(ctx, kivik.UserPrefix+session.Name)
+	userDoc := map[string]interface{}{}
+	err = userRow.ScanDoc(&userDoc)
+	if err != nil {
+		return err
+	}
+
+	if userFullName, hasUserFullName := userDoc["full_name"]; hasUserFullName {
+		user.FullName = userFullName.(string)
+	}
 	return nil
 }
 

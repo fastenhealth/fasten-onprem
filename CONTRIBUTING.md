@@ -79,12 +79,13 @@ cd frontend
 npm run dist -- -c sandbox
 
 # In terminal #2, run the following
+docker build -t fasten-couchdb -f docker/couchdb/Dockerfile .
+docker run --rm -it -p 5984:5984 -v `pwd`/.couchdb/data:/opt/couchdb/data -v `pwd`/.couchdb/config:/opt/couchdb/etc/local.d fasten-couchdb
+
+# In terminal #3, run the following
 go mod vendor
 go run backend/cmd/fasten/fasten.go start --config ./config.dev.yaml --debug
 
-# In terminal #3, run the following
-docker build -t fasten-couchdb -f docker/couchdb/Dockerfile .
-docker run --rm -it -p 5984:5984 -v `pwd`/.couchdb/data:/opt/couchdb/data -v `pwd`/.couchdb/config:/opt/couchdb/etc/local.d fasten-couchdb
 ```
 
 Now you can open a browser to `http://localhost:9090` to see the Fasten UI. 

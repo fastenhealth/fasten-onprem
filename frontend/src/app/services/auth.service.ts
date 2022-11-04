@@ -9,6 +9,7 @@ import * as Oauth from '@panva/oauth4webapi';
 import {SourceState} from '../models/fasten/source-state';
 import {Session} from '../models/database/session';
 import * as jose from 'jose';
+import {UserRegisteredClaims} from '../models/fasten/user-registered-claims';
 
 @Injectable({
   providedIn: 'root'
@@ -161,7 +162,7 @@ export class AuthService {
     return localStorage.getItem(this.FASTEN_JWT_LOCALSTORAGE_KEY);
   }
 
-  public GetCurrentUser(): string {
+  public GetCurrentUser(): UserRegisteredClaims {
     let authToken = this.GetAuthToken()
     if(!authToken){
       throw new Error("no auth token found")
@@ -169,7 +170,8 @@ export class AuthService {
 
     //parse the authToken to get user information
     let jwtClaims = jose.decodeJwt(authToken)
-    return jwtClaims.sub
+    // @ts-ignore
+    return jwtClaims as UserRegisteredClaims
   }
 
   public async Logout(): Promise<any> {

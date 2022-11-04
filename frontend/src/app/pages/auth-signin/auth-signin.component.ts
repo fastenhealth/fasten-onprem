@@ -40,6 +40,7 @@ export class AuthSigninComponent implements OnInit {
       this.authService.IdpCallback(idpType, state, code)
         .then(() => this.router.navigateByUrl('/dashboard'))
         .catch((err)=>{
+          console.error("idpCallback error:", err)
           const toastNotification = new ToastNotification()
           toastNotification.type = ToastType.Error
           toastNotification.message = "an error occurred while signing in"

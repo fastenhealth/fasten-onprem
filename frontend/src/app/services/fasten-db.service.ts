@@ -63,7 +63,7 @@ export class FastenDbService extends PouchdbRepository {
     }
 
     //parse the authToken to get user information
-    this.current_user = this.authService.GetCurrentUser()
+    this.current_user = this.authService.GetCurrentUser().sub
 
     // add JWT bearer token header to all requests
     // https://stackoverflow.com/questions/62129654/how-to-handle-jwt-authentication-with-rxdb

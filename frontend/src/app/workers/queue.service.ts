@@ -20,7 +20,7 @@ export class QueueService {
     if (typeof Worker !== 'undefined') {
       const sourceSync = new SourceSyncMessage()
       sourceSync.source = source
-      sourceSync.current_user = this.authService.GetCurrentUser()
+      sourceSync.current_user = this.authService.GetCurrentUser().sub
       sourceSync.auth_token = this.authService.GetAuthToken()
       sourceSync.couchdb_endpoint_base = environment.couchdb_endpoint_base
       sourceSync.fasten_api_endpoint_base = environment.fasten_api_endpoint_base
