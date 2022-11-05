@@ -135,7 +135,7 @@
           </div>
         </div>
         <div class="card-body">
-          <div class="table-responsive">
+          <div *ngIf="!sources else emptyDashboard" class="table-responsive">
             <table class="table mg-b-0">
               <tbody>
               <tr *ngFor="let source of sources" (click)="selectSource(source)" class="alert cursor-pointer" role="alert">
@@ -159,14 +159,25 @@
                 <td class="align-middle"><p><small class="tx-gray-600">expires:</small><br/> <span [ngbTooltip]="source.expires_at | amFromUnix | date">{{source.expires_at | amFromUnix | amTimeAgo}}</span></p></td>
                 <td class="align-middle"><p><i class="fas fa-chevron-right"></i></td>
               </tr>
-
               </tbody>
             </table>
-
-
-
-
           </div><!-- table-responsive -->
+
+          <ng-template #emptyDashboard>
+            <div class="modal-body tx-center pd-y-20 pd-x-20">
+              <h4 class="tx-purple mg-b-20">No Sources Connected!</h4>
+              <p class="mg-b-20 mg-x-20">
+                Fasten securely connects your healthcare providers together, creating a single location to access your entire medical history.
+              </p>
+              <p class="mg-b-20 mg-x-20">
+                Click below to add a new healthcare provider to Fasten.
+              </p>
+              <button [routerLink]="'/sources'" type="button" class="btn btn-purple pd-x-25">Add Source</button>
+            </div><!-- modal-body -->
+          </ng-template>
+
+
+
         </div>
       </div>
     </div><!-- az-content-body -->

@@ -19,6 +19,8 @@ export class AuthSigninComponent implements OnInit {
   errorMsg: string = ""
   showExternalIdP: boolean = environment.is_cloud
 
+  loading: boolean = false
+
   constructor(
     private fastenDb: FastenDbService,
     private authService: AuthService,
@@ -32,6 +34,7 @@ export class AuthSigninComponent implements OnInit {
 
     let idpType = this.route.snapshot.paramMap.get('idp_type')
     if(idpType){
+      this.loading = true
       let params = new URLSearchParams(window.location.hash.substring(1))
       let code = params.get('code') // eyJhbGciOiJSUzI1...rest_of_ID_Token
       let state = params.get('state') // eyJhbGciOiJSUzI1...rest_of_ID_Token
