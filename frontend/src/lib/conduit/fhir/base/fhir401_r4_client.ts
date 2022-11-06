@@ -11,6 +11,35 @@ export class FHIR401Client extends BaseClient implements IClient {
   //clients extending this class must validate fhirVersion matches using conformance/metadata url.
   fhirVersion = "4.0.1"
 
+  // https://build.fhir.org/ig/HL7/US-Core/
+  usCoreResources: string[] = [
+    "AllergyIntolerance",
+    //"Binary",
+    "CarePlan",
+    "CareTeam",
+    "Condition",
+    //"Coverage",
+    "Device",
+    "DiagnosticReport",
+    "DocumentReference",
+    "Encounter",
+    "Goal",
+    "Immunization",
+    //"Location",
+    //"Medication",
+    //"MedicationRequest",
+    "Observation",
+    //"Organization",
+    //"Patient",
+    //"Practitioner",
+    //"PractitionerRole",
+    "Procedure",
+    //"Provenance",
+    //"RelatedPerson",
+    // "ServiceRequest",
+    // "Specimen",
+  ]
+
   constructor(source: Source, clientConfig: ClientConfig) {
     super(source, clientConfig);
   }
@@ -71,6 +100,348 @@ export class FHIR401Client extends BaseClient implements IClient {
 
     //TODO: correctly return newly inserted documents
     return upsertSummary
+  }
+
+  /**
+   * Given a raw resource payload, this function will determine if there are references to other resources, and extract them if so
+   * This is useful because search (by patient id) is disabled for certain resource types.
+   * @param sourceResourceType
+   * @param resourceRaw
+   * @constructor
+   */
+  public async ExtractResourceReference(sourceResourceType: string, resourceRaw): Promise<string[]> {
+    let resourceRefs = []
+
+    switch (sourceResourceType) {
+      case "CarePlan":
+        // encounter can contain
+        //- Encounter
+        resourceRefs.push(resourceRaw.encounter?.reference)
+
+        //author can contain
+        //- Practitioner
+        //- Organization
+        //- Patient
+        //- PractitionerRole
+        //- CareTeam
+        //- RelatedPerson
+        resourceRefs.push(resourceRaw.author?.reference)
+
+
+        //contributor can contain
+        //- Practitioner
+        //- Organization
+        //- Patient
+        //- PractitionerRole
+        //- CareTeam
+        //- RelatedPerson
+        resourceRefs.push(resourceRaw.contributor?.reference)
+
+        //careTeam can contain
+        //- CareTeam
+        resourceRefs.push(resourceRaw.careTeam?.reference)
+
+        break;
+      case "CareTeam":
+        // encounter can contain
+        //- Encounter
+        resourceRefs.push(resourceRaw.encounter?.reference)
+
+        //participant[x].member can contain
+        //- Practitioner
+        //- Organization
+        //- Patient
+        //- PractitionerRole
+        //- CareTeam
+        //- RelatedPerson
+        //participant[x].onBehalfOf can contain
+        //- Organization
+        resourceRaw.participant?.map((participant) => {
+          resourceRefs.push(participant.member?.reference)
+          resourceRefs.push(participant.onBehalfOf?.reference)
+        })
+
+        //managingOrganization
+        //- Organization
+        resourceRaw.managingOrganization?.map((managingOrganization) => {
+          resourceRefs.push(managingOrganization.reference)
+        })
+        break;
+      case "Condition":
+        // recorder can contain
+        //- Practitioner
+        //- PractitionerRole
+        //- Patient
+        //- RelatedPerson
+        resourceRefs.push(resourceRaw.recorder?.reference)
+
+        // asserter can contain
+        //- Practitioner
+        //- PractitionerRole
+        //- Patient
+        //- RelatedPerson
+        resourceRefs.push(resourceRaw.asserter?.reference)
+
+        break;
+      case "DiagnosticReport":
+        //basedOn[x] can contain
+        //- CarePlan
+        //- ImmunizationRecommendation
+        //- MedicationRequest
+        //- NutritionOrder
+        //- ServiceRequest
+        resourceRaw.basedOn?.map((basedOn) => {
+          resourceRefs.push(basedOn.reference)
+        })
+
+        // performer[x] can contain
+        //- Practitioner
+        //- PractitionerRole
+        //- Organization
+        //- CareTeam
+        resourceRaw.performer?.map((performer) => {
+          resourceRefs.push(performer.reference)
+        })
+        break;
+      case "DocumentReference":
+        //author[x] can contain
+        //- Practitioner
+        //- Organization
+        //- Patient
+        //- PractitionerRole
+        //- CareTeam
+        //- Device
+        resourceRaw.author?.map((author) => {
+          resourceRefs.push(author.reference)
+        })
+
+        //authenticator can contain
+        //- Practitioner
+        //- Organization
+        //- PractitionerRole
+        resourceRefs.push(resourceRaw.authenticator?.reference)
+
+        // custodian can contain
+        //- Organization
+        resourceRefs.push(resourceRaw.custodian?.reference)
+
+        // relatesTo.target
+        //- DocumentReference
+        resourceRaw.relatesTo?.map((relatesTo) => {
+          resourceRefs.push(relatesTo.target?.reference)
+        })
+
+        //content.attachment can contain
+        //- Attachment
+        break
+      case "Encounter":
+        // basedOn[x] can contain
+        //- ServiceRequest
+        resourceRaw.basedOn?.map((basedOn) => {
+          resourceRefs.push(basedOn.reference)
+        })
+
+        //participant[x].individual can contain
+        //- Practitioner
+        //- PractitionerRole
+        //- RelatedPerson
+        resourceRaw.participant?.map((participant) => {
+          resourceRefs.push(participant.individual?.reference)
+        })
+
+        //reasonReference[x] can contain
+        //- Condition
+        //- Procedure
+        //- Observation
+        //- ImmunizationRecommendation
+        resourceRaw.reasonReference?.map((reasonReference) => {
+          resourceRefs.push(reasonReference.reference)
+        })
+
+        //hospitalization[x].origin can contain
+        //- Location
+        //- Organization
+        //hospitalization[x].destination can contain
+        //- Location
+        //- Organization
+        resourceRaw.hospitalization?.map((hospitalization) => {
+          resourceRefs.push(hospitalization.origin?.reference)
+          resourceRefs.push(hospitalization.destination?.reference)
+        })
+
+        //location[x].location can contain
+        //- Location
+        resourceRaw.location?.map((location) => {
+          resourceRefs.push(location.location?.reference)
+        })
+
+        //serviceProvider can contain
+        //- Organization
+        resourceRefs.push(resourceRaw.serviceProvider?.reference)
+
+        break
+      case "Immunization":
+        // location can contain
+        //- Location
+        resourceRefs.push(resourceRaw.location?.reference)
+
+        // manufacturer can contain
+        //- Organization
+        resourceRefs.push(resourceRaw.manufacturer?.reference)
+
+        //performer[x].actor can contain
+        //- Practitioner | PractitionerRole | Organization
+        resourceRaw.performer?.map((performer) => {
+          resourceRefs.push(performer.actor?.reference)
+        })
+
+        //reasonReference[x] can contain
+        //- Condition | Observation | DiagnosticReport
+        resourceRaw.reasonReference?.map((reasonReference) => {
+          resourceRefs.push(reasonReference.reference)
+        })
+
+        //protocolApplied[x].authority can contain
+        //- Organization
+        resourceRaw.protocolApplied?.map((protocolApplied) => {
+          resourceRefs.push(protocolApplied.authority?.reference)
+        })
+        break
+      case "Location":
+        // managingOrganization can contain
+        //- Organization
+        resourceRefs.push(resourceRaw.managingOrganization?.reference)
+
+        // partOf can contain
+        //- Location
+        resourceRefs.push(resourceRaw.partOf?.reference)
+
+        break
+      case "MedicationRequest":
+        // reported.reportedReference can contain
+        //- Practitioner
+        //- Organization
+        //- Patient
+        //- PractitionerRole
+        //- RelatedPerson
+        resourceRefs.push(resourceRaw.reported?.reportedReference?.reference)
+
+        // medication[x] can contain
+        //- Medication
+        resourceRefs.push(resourceRaw.reported?.reportedReference?.reference)
+
+        // requester can contain
+        //- Practitioner
+        //- Organization
+        //- Patient
+        //- PractitionerRole
+        //- RelatedPerson
+        //- Device
+        resourceRefs.push(resourceRaw.requester?.reference)
+
+        // performer can contain
+        //- Practitioner | PractitionerRole | Organization | Patient | Device | RelatedPerson | CareTeam
+        resourceRefs.push(resourceRaw.performer?.reference)
+        // recorder can contain
+        //- Practitioner | PractitionerRole
+        resourceRefs.push(resourceRaw.recorder?.reference)
+
+        //TODO: reasonReference
+        //TODO: basedOn
+        //TODO: insurance
+
+        // dispenseRequest.performer can contain
+        //- Organization
+        resourceRefs.push(resourceRaw.dispenseRequest?.performer?.reference)
+        break
+      case "Observation":
+        //basedOn[x] can contain
+        //- CarePlan | DeviceRequest | ImmunizationRecommendation | MedicationRequest | NutritionOrder | ServiceRequest
+        resourceRaw.basedOn?.map((basedOn) => {
+          resourceRefs.push(basedOn.reference)
+        })
+
+        // partOf[x] can contain
+        //- MedicationAdministration | MedicationDispense | MedicationStatement | Procedure | Immunization | ImagingStudy
+        resourceRaw.partOf?.map((partOf) => {
+          resourceRefs.push(partOf.reference)
+        })
+        // performer[x] can contain
+        //- Practitioner | PractitionerRole | Organization | CareTeam | Patient | RelatedPerson
+        resourceRaw.performer?.map((performer) => {
+          resourceRefs.push(performer.reference)
+        })
+        // device can contain
+        //- Device | DeviceMetric
+        resourceRefs.push(resourceRaw.device?.reference)
+
+        break
+      case "PractitionerRole":
+        // practitioner can contain
+        //- Practitioner
+        resourceRefs.push(resourceRaw.practitioner?.reference)
+
+        //organization can contain
+        //- Organization
+        resourceRefs.push(resourceRaw.organization?.reference)
+
+        //location can contain
+        //- Location
+        resourceRefs.push(resourceRaw.location?.reference)
+
+        //TODO: healthcareService
+        //TODO: endpoint
+        break
+      case "ServiceRequest":
+        // basedOn[x] can contain
+        //- CarePlan | ServiceRequest | MedicationRequest
+        resourceRaw.basedOn?.map((basedOn) => {
+          resourceRefs.push(basedOn.reference)
+        })
+
+        //requester can contain
+        //- Practitioner
+        //- Organization
+        //- Patient
+        //- PractitionerRole
+        //- RelatedPerson
+        //- Device
+        resourceRefs.push(resourceRaw.requester?.reference)
+
+        //performer[x] can contain
+        //- Practitioner | PractitionerRole | Organization | CareTeam | HealthcareService | Patient | Device | RelatedPerson
+        resourceRaw.performer?.map((performer) => {
+          resourceRefs.push(performer.reference)
+        })
+
+        //locationReference[x] an contain
+        //-Location
+        resourceRaw.locationReference?.map((locationReference) => {
+          resourceRefs.push(locationReference.reference)
+        })
+
+        //reasonReference[x] can contain
+        //-Condition
+        //-Observation
+        //-DiagnosticReport
+        //-DocumentReference
+        resourceRaw.reasonReference?.map((reasonReference) => {
+          resourceRefs.push(reasonReference.reference)
+        })
+
+        //insurance[x] can contain
+        //- Coverage | ClaimResponse
+        resourceRaw.insurance?.map((insurance) => {
+          resourceRefs.push(insurance.reference)
+        })
+        break
+    }
+
+    // remove all null values, remove all duplicates
+    let cleanResourceRefs = resourceRefs.filter(i => !(typeof i === 'undefined' || i === null));
+    cleanResourceRefs = [...new Set(cleanResourceRefs)]
+
+    return cleanResourceRefs
   }
 
   /**
