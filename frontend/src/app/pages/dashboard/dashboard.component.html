@@ -135,7 +135,7 @@
           </div>
         </div>
         <div class="card-body">
-          <div *ngIf="!sources; else emptyDashboard" class="table-responsive">
+          <div *ngIf="sources.length; else emptyDashboard" class="table-responsive">
             <table class="table mg-b-0">
               <tbody>
               <tr *ngFor="let source of sources" (click)="selectSource(source)" class="alert cursor-pointer" role="alert">
