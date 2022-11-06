@@ -10,7 +10,8 @@ import {Base64} from '../../../lib/utils/base64';
   styleUrls: ['./resource-detail.component.scss']
 })
 export class ResourceDetailComponent implements OnInit {
-
+  sourceId: string = ""
+  sourceName: string = ""
   resource: ResourceFhir = null
 
   constructor(private fastenDb: FastenDbService, private router: Router, private route: ActivatedRoute) {
@@ -18,10 +19,18 @@ export class ResourceDetailComponent implements OnInit {
 
   ngOnInit(): void {
     //always request the resource by id
-    this.fastenDb.GetResource(Base64.Decode(this.route.snapshot.paramMap.get('resource_id')))
-      .then((resourceFhir) => {
-        this.resource = resourceFhir;
-      });
+    let resourceId = Base64.Decode(this.route.snapshot.paramMap.get('resource_id'))
+    if (resourceId){
+      this.fastenDb.GetResource(resourceId)
+        .then((resourceFhir) => {
+          this.resource = resourceFhir;
+        });
+      this.sourceId = resourceId.split(":")[1]
+      this.sourceName = Base64.Decode(this.sourceId).split(":")[1]
+    } else {
+      console.log("invalid or missing resource id")
+    }
+
   }
 
 }
