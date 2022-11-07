@@ -7,6 +7,7 @@ import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {environment} from '../../../environments/environment';
 import {AuthService} from '../../services/auth.service';
 import {Location} from '@angular/common';
+import {PouchdbCrypto} from '../../../lib/database/plugins/crypto';
 
 @Component({
   selector: 'app-auth-signin',
@@ -41,6 +42,15 @@ export class AuthSigninComponent implements OnInit {
 
       this.resetUrlOnCallback()
       this.authService.IdpCallback(idpType, state, code)
+        .then(() => {
+          //for cloud users ONLY, skip the encryption manager.
+          //TODO: replace Pouchdb.
+          let userId = this.authService.GetCurrentUser().sub
+          return PouchdbCrypto.CryptConfig(userId, userId)
+        })
+        .then((cryptoConfig) => {
+          PouchdbCrypto.StoreCryptConfig(cryptoConfig)
+        })
         .then(() => this.router.navigateByUrl('/dashboard'))
         .catch((err)=>{
           console.error("idpCallback error:", err)

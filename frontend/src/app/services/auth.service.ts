@@ -55,7 +55,7 @@ export class AuthService {
     window.location.href = authorizationUrl.toString();
   }
 
-  public async IdpCallback(idp_type: string, state: string, code: string) {
+  public async IdpCallback(idp_type: string, state: string, code: string): Promise<string> {
 
     const expectedSourceStateInfo = JSON.parse(localStorage.getItem(state))
     localStorage.removeItem(state)
@@ -99,7 +99,7 @@ export class AuthService {
 
     this.setAuthToken(resp.data)
 
-    return resp
+    return resp.data
   }
 
 
