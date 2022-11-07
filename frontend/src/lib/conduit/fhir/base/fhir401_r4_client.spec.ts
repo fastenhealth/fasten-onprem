@@ -9,6 +9,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 // @ts-ignore
 import * as FHIR401Client_ProcessBundle from './fixtures/FHIR401Client_ProcessBundle.json';
+// @ts-ignore
+import * as FHIR401Client_ExtractResourceReference from './fixtures/FHIR401Client_ExtractResourceReference.json';
 import {IDatabaseRepository} from '../../../database/interface';
 import {PouchdbCrypto} from '../../../database/plugins/crypto';
 import {ClientConfig} from '../../../models/client/client-config';
@@ -99,6 +101,19 @@ describe('FHIR401Client', () => {
 
 
     }, 10000);
+  })
+
+  describe('ExtractResourceReference', () => {
+    it('should correctly extract resource identifier from raw resources', async () => {
+
+      //setup
+
+      //test
+      const resp = await client.ExtractResourceReference("CarePlan", FHIR401Client_ExtractResourceReference)
+      //expect
+      expect(resp.length).toEqual(2);
+      expect(resp).toEqual(['Encounter/97961321', 'Practitioner/12763770']);
+    });
   })
 
 })

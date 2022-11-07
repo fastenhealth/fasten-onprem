@@ -1,4 +1,4 @@
-import {IClient, IResourceBundleRaw, IResourceRaw} from '../../interface';
+import {IClient, IResourceBundleEntryRaw, IResourceBundleRaw, IResourceRaw} from '../../interface';
 import {BaseClient} from './base_client';
 import {Source} from '../../../models/database/source';
 import {IDatabaseRepository} from '../../../database/interface';
@@ -88,8 +88,29 @@ export class FHIR401Client extends BaseClient implements IClient {
         let bundle = await this.GetResourceBundlePaginated(`${resourceType}?patient=${this.source.patient}`)
         let wrappedResourceModels = await this.ProcessBundle(bundle)
         let resourceUpsertSummary = await db.UpsertResources(wrappedResourceModels)
+
         upsertSummary.updatedResources = upsertSummary.updatedResources.concat(resourceUpsertSummary.updatedResources)
         upsertSummary.totalResources += resourceUpsertSummary.totalResources
+
+
+        // check if theres any "extracted" resource references that we should sync as well
+        let extractedResourceReferences = []
+        extractedResourceReferences = wrappedResourceModels.reduce((previousVal, wrappedResource) => {
+          return previousVal.concat(this.ExtractResourceReference(wrappedResource.source_resource_type, wrappedResource.resource_raw))
+        }, extractedResourceReferences)
+
+
+        if(extractedResourceReferences.length > 0 ){
+          console.log("Extracted Resource References", extractedResourceReferences)
+
+          let extractedResourceBundle = await this.GenerateResourceBundleFromResourceIds(extractedResourceReferences)
+          let wrappedExtractedResourceBundle = await this.ProcessBundle(extractedResourceBundle)
+          let extractedResourceUpsertSummary = await db.UpsertResources(wrappedExtractedResourceBundle)
+
+          upsertSummary.updatedResources = upsertSummary.updatedResources.concat(extractedResourceUpsertSummary.updatedResources)
+          upsertSummary.totalResources += extractedResourceUpsertSummary.totalResources
+        }
+
       }
       catch (e) {
         console.error(`An error occurred while processing ${resourceType} bundle ${this.source.patient}`)
@@ -109,7 +130,7 @@ export class FHIR401Client extends BaseClient implements IClient {
    * @param resourceRaw
    * @constructor
    */
-  public async ExtractResourceReference(sourceResourceType: string, resourceRaw): Promise<string[]> {
+  public ExtractResourceReference(sourceResourceType: string, resourceRaw): string[] {
     let resourceRefs = []
 
     switch (sourceResourceType) {
@@ -258,16 +279,15 @@ export class FHIR401Client extends BaseClient implements IClient {
           resourceRefs.push(reasonReference.reference)
         })
 
-        //hospitalization[x].origin can contain
+        //hospitalization.origin can contain
         //- Location
         //- Organization
-        //hospitalization[x].destination can contain
+        resourceRefs.push(resourceRaw.hospitalization?.origin?.reference)
+
+        //hospitalization.destination can contain
         //- Location
         //- Organization
-        resourceRaw.hospitalization?.map((hospitalization) => {
-          resourceRefs.push(hospitalization.origin?.reference)
-          resourceRefs.push(hospitalization.destination?.reference)
-        })
+        resourceRefs.push(resourceRaw.hospitalization?.destination?.reference)
 
         //location[x].location can contain
         //- Location
@@ -440,7 +460,6 @@ export class FHIR401Client extends BaseClient implements IClient {
     // remove all null values, remove all duplicates
     let cleanResourceRefs = resourceRefs.filter(i => !(typeof i === 'undefined' || i === null));
     cleanResourceRefs = [...new Set(cleanResourceRefs)]
-
     return cleanResourceRefs
   }
 
@@ -502,6 +521,24 @@ export class FHIR401Client extends BaseClient implements IClient {
         // wrappedResourceModel.updated_at = bundleEntry.resource.meta?.lastUpdated
         return wrappedResourceModel
       })
+  }
+
+  /**
+   * Given a list of resource ids (Patient/xxx, Observation/yyyy), request these resources and generate a pseudo-bundle file
+   * @param resourceIds
+   * @constructor
+   * @protected
+   */
+  protected async GenerateResourceBundleFromResourceIds(resourceIds: string[]): Promise<IResourceBundleRaw>{
+
+    resourceIds = [...new Set(resourceIds)] //make sure they are unique references.
+    let rawResourceRefs = await Promise.all(resourceIds.map(async (extractedResourceRef) => {
+      return {
+        resource: await this.GetRequest(extractedResourceRef) as IResourceRaw
+      } as IResourceBundleEntryRaw
+    }))
+
+    return {resourceType: "Bundle", entry: rawResourceRefs}
   }
 
   /**

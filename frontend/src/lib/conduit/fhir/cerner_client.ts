@@ -18,23 +18,15 @@ export class CernerClient  extends FHIR401Client implements IClient {
    * @constructor
    */
   async SyncAll(db: IDatabaseRepository): Promise<UpsertSummary> {
-    const supportedResources: string[] = [
-      "AllergyIntolerance",
-      "CarePlan",
-      "CareTeam",
-      "Condition",
+    const supportedResources: string[] = this.usCoreResources.concat([
+      "Account",
+      "Appointment",
       "Consent",
-      "Device",
-      "Encounter",
       "FamilyMemberHistory",
-      "Goal",
-      "Immunization",
       "InsurancePlan",
       "MedicationRequest",
       "NutritionOrder",
-      "Observation",
       "Person",
-      "Procedure",
       "Provenance",
       "Questionnaire",
       "QuestionnaireResponse",
@@ -42,7 +34,7 @@ export class CernerClient  extends FHIR401Client implements IClient {
       "Schedule",
       "ServiceRequest",
       "Slot",
-    ]
+    ])
 
     return this.SyncAllByResourceName(db, supportedResources)
   }
