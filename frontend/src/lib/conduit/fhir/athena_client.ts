@@ -16,28 +16,7 @@ export class AthenaClient  extends FHIR401Client implements IClient {
    * @constructor
    */
   async SyncAll(db: IDatabaseRepository): Promise<UpsertSummary> {
-    const supportedResources: string[] = [
-      "AllergyIntolerance",
-      //"Binary",
-      "CarePlan",
-      "CareTeam",
-      "Condition",
-      "Device",
-      "DiagnosticReport",
-      "DocumentReference",
-      "Encounter",
-      "Goal",
-      "Immunization",
-      //"Location",
-      //"Medication",
-      //"MedicationRequest",
-      "Observation",
-      //"Organization",
-      //"Patient",
-      //"Practitioner",
-      "Procedure",
-      //"Provenance",
-    ]
+    const supportedResources: string[] = this.usCoreResources
 
     return this.SyncAllByResourceName(db, supportedResources)
   }

@@ -18,23 +18,13 @@ export class EpicClient  extends FHIR401Client implements IClient {
    * @constructor
    */
   async SyncAll(db: IDatabaseRepository): Promise<UpsertSummary> {
-    const supportedResources: string[] = [
-      "AllergyIntolerance",
-      "CarePlan",
-      "CareTeam",
-      "Condition",
+    const supportedResources: string[] = this.usCoreResources.concat([
       "Consent",
-      "Device",
-      "Encounter",
       "FamilyMemberHistory",
-      "Goal",
-      "Immunization",
       "InsurancePlan",
       "MedicationRequest",
       "NutritionOrder",
-      "Observation",
       "Person",
-      "Procedure",
       "Provenance",
       "Questionnaire",
       "QuestionnaireResponse",
@@ -42,7 +32,7 @@ export class EpicClient  extends FHIR401Client implements IClient {
       "Schedule",
       "ServiceRequest",
       "Slot",
-    ]
+    ])
 
     return this.SyncAllByResourceName(db, supportedResources)
   }
