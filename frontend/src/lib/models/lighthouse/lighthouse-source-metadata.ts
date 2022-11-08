@@ -8,6 +8,7 @@ export class LighthouseSourceMetadata {
   issuer: string
   grant_types_supported: string[]
   response_types_supported: string[]
+  response_modes_supported: string[]
   aud: string
   code_challenge_methods_supported: string[]
 

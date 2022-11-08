@@ -47,7 +47,7 @@ export class LighthouseService {
     const authorizationUrl = new URL(lighthouseSource.authorization_endpoint);
     authorizationUrl.searchParams.set('redirect_uri', lighthouseSource.redirect_uri);
     authorizationUrl.searchParams.set('response_type', lighthouseSource.response_types_supported[0]);
-    authorizationUrl.searchParams.set('response_mode', 'fragment');
+    authorizationUrl.searchParams.set('response_mode', lighthouseSource.response_modes_supported[0]);
     authorizationUrl.searchParams.set('state', state);
     authorizationUrl.searchParams.set('client_id', lighthouseSource.client_id);
     if(lighthouseSource.scopes_supported && lighthouseSource.scopes_supported.length){
