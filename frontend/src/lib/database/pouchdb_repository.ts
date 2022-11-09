@@ -317,6 +317,7 @@ export class PouchdbRepository implements IDatabaseRepository {
               newDoc.updated_at = newDoc.updated_at || (newDoc as any).meta?.updated_at
             }
             newDoc.updated_at = newDoc.updated_at || (new Date().toISOString())
+            // console.log("merge, empty")
             return newDoc
           }
 
@@ -347,10 +348,11 @@ export class PouchdbRepository implements IDatabaseRepository {
 
 
           } else {
-            throw new Error("unknown doc_type, cannot diff for upsert: " + newDoc.doc_type)
+            let errMsg = "unknown doc_type, cannot diff for upsert: " + newDoc.doc_type
+            console.error(errMsg)
+            throw new Error(errMsg)
           }
         })
-
       })
       .then(( result ): UpsertSummary => {
         // // success, res is {rev: '1-xxx', updated: true, id: 'myDocId'}
@@ -364,17 +366,18 @@ export class PouchdbRepository implements IDatabaseRepository {
       });
   }
 
-  protected upsertBulk(docs: IDatabaseDocument[]): Promise<UpsertSummary> {
-    return Promise.all(docs.map((doc) => {
+  protected async upsertBulk(docs: IDatabaseDocument[]): Promise<UpsertSummary> {
+    //insert sequentially (not in parallel)
+    let finalUpsertSummary = new UpsertSummary()
+
+    for (let doc of docs){
       doc.populateId();
-      return this.upsertDocument(doc)
-    })).then((results) => {
-      return results.reduce((prev, current ) => {
-        prev.totalResources += current.totalResources
-        prev.updatedResources = prev.updatedResources.concat(current.updatedResources)
-        return prev
-      }, new UpsertSummary())
-    })
+      let upsertSummary = await this.upsertDocument(doc)
+      finalUpsertSummary.totalResources += upsertSummary.totalResources
+      finalUpsertSummary.updatedResources = finalUpsertSummary.updatedResources.concat(upsertSummary.updatedResources)
+    }
+
+    return finalUpsertSummary
   }
 
   protected getDocument(id: string): Promise<any> {

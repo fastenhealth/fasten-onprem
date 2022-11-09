@@ -33,7 +33,7 @@ export class SourceSyncWorker implements DoWork<string, string> {
           //lets refresh the source information if required.
           console.log("!!!!!!!!!!!!!!STARTING WORKER SYNC!!!!!!!!!", sourceSyncMessage)
           return client.RefreshSourceToken()
-            .then((wasSourceRefreshed)=>{
+            .then((wasSourceRefreshed) => {
               if(wasSourceRefreshed){
                 //the source was updated, we need to save the updated source information
                 return db.UpsertSource(client.source)
@@ -43,7 +43,7 @@ export class SourceSyncWorker implements DoWork<string, string> {
               }
               return client
             })
-            .then((client)=> {
+            .then((client) => {
               return client.SyncAll(db)
             })
             .then((resp) => {
