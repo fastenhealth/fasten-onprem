@@ -46,7 +46,8 @@ export class AuthSigninComponent implements OnInit {
           //for cloud users ONLY, skip the encryption manager.
           //TODO: replace Pouchdb.
           let userId = this.authService.GetCurrentUser().sub
-          return PouchdbCrypto.CryptConfig(userId, userId)
+          //TODO: static IV, must be removed/replaced.
+          return {username: userId, key: userId, config: "WyI3NUhJcEhZTXBNVXRtMHlJcnBMckhRPT0iLHsic2FsdExlbmd0aCI6MTYsIm1lbW9yeVNpemUiOjQwOTYsIml0ZXJhdGlvbnMiOjEwMCwicGFyYWxsZWxpc20iOjF9XQ=="}
         })
         .then((cryptoConfig) => {
           PouchdbCrypto.StoreCryptConfig(cryptoConfig)
