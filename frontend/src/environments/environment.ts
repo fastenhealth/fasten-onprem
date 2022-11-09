@@ -3,6 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  //javascript environment, not Fasten env.
   production: false,
 
   // is the application running in the cloud? (enables 3rd party IdP's and token based couchdb authentication)

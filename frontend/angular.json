@@ -38,7 +38,7 @@
             "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {
-            "production": {
+            "prod": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -129,8 +129,8 @@
             "browserTarget": "fastenhealth:build"
           },
           "configurations": {
-            "production": {
-              "browserTarget": "fastenhealth:build:production"
+            "prod": {
+              "browserTarget": "fastenhealth:build:prod"
             },
             "sandbox": {
               "browserTarget": "fastenhealth:build:sandbox"
@@ -185,8 +185,8 @@
             "devServerTarget": "fastenhealth:serve"
           },
           "configurations": {
-            "production": {
-              "devServerTarget": "fastenhealth:serve:production"
+            "prod": {
+              "devServerTarget": "fastenhealth:serve:prod"
             }
           }
         }
