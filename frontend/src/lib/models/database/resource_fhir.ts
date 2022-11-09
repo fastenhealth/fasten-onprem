@@ -8,6 +8,7 @@ export class ResourceFhir {
   doc_type: DocType = DocType.ResourceFhir
   updated_at?: string
 
+  fhir_version: string = ""
   source_id: string = ""
   source_resource_type: string = ""
   source_resource_id: string = ""

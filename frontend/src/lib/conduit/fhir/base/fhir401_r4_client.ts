@@ -513,6 +513,7 @@ export class FHIR401Client extends BaseClient implements IClient {
       })
       .map((bundleEntry) => {
         const wrappedResourceModel = new ResourceFhir()
+        wrappedResourceModel.fhir_version = this.fhirVersion
         wrappedResourceModel.source_id = this.source._id
         wrappedResourceModel.source_resource_id = bundleEntry.resource.id
         wrappedResourceModel.source_resource_type = bundleEntry.resource.resourceType

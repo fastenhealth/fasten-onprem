@@ -18,6 +18,7 @@ export abstract class BaseClient {
   private oauthAuthorizationServer: Oauth.AuthorizationServer
   public source: Source
   public headers: Headers
+  public fhirVersion: string
 
 
   protected constructor(source: Source, clientConfig: ClientConfig) {
