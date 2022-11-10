@@ -105,7 +105,7 @@ export class MedicalSourcesComponent implements OnInit {
 
         console.log('authorize url:', authorizationUrl.toString());
         // redirect to lighthouse with uri's
-        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceType)
+        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceType, sourceMetadata.redirect_uri)
 
       });
   }

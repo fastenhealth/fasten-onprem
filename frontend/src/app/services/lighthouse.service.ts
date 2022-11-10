@@ -77,13 +77,32 @@ export class LighthouseService {
     return authorizationUrl
   }
 
-  redirectWithOriginAndDestination(destUrl: string, sourceType: string): void {
+  /**
+   * once the user is redirected back to the lighthouse server, we need to get them back to the Fasten server
+   * which may not be publically accessible (localhost:8080, 127.0.0.1:8080, 10.0.1.1:8080, etc)
+   * to handle this, we "register" an origin_url, which will be used by the lighthouse when the callback url is visited
+   * we'll also set a dest_url parameter, which the lighthouse /redirect url will forward the user to once the registration is complete.
+   *
+   * note: some sources (such as anthem & epic) share a callback url on the provider side (multiple "providers" redirect back to the
+   * same callback url -- lighthouse.fastenhealth.com/sandbox/epic).
+   *
+   * Scenario 1: No reuse of callback url
+   * origin_url - localhost:8080/sources/callback/aetna
+   * dest_url -  https://.aetna.com/.../oauth2/authorize?redirect_uri=https://lighthouse.fastenhealth.com/callback/aetna
+   * redirect_url - lighthouse.fastenhealth.com/sandbox/redirect/aetna?origin_url=...&dest_url=...
+   *
+   * Scenario 2: Reused callback url
+   * origin_url - localhost:8080/sources/callback/healthybluela
+   * dest_url -  https://patient360la.anthem.com/.../connect/authorize?redirect_uri=https://lighthouse.fastenhealth.com/callback/anthem
+   * redirect_url - lighthouse.fastenhealth.com/sandbox/redirect/anthem?origin_url=...&dest_url=...
+   */
+  redirectWithOriginAndDestination(destUrl: string, sourceType: string, callbackUri: string): void {
     const originUrlParts = new URL(window.location.href)
     originUrlParts.hash = "" //reset hash in-case its present.
     originUrlParts.pathname = this.pathJoin([originUrlParts.pathname, `callback/${sourceType}`])
 
 
-    const redirectUrlParts = new URL(`${environment.lighthouse_api_endpoint_base}/redirect/${sourceType}`);
+    const redirectUrlParts = new URL(callbackUri.replace("/callback/", "/redirect/"));
     const redirectParams = new URLSearchParams()
     redirectParams.set("origin_url", originUrlParts.toString())
     redirectParams.set("dest_url", destUrl)
@@ -108,7 +127,7 @@ export class LighthouseService {
     } else {
       console.log("This is a confidential client, using lighthouse token endpoint.")
       //if this is a confidential client, we need to "override" token endpoint, and use the Fasten Lighthouse to complete the swap
-      sourceMetadata.token_endpoint = sourceMetadata.redirect_uri.replace("callback", "token")
+      sourceMetadata.token_endpoint = sourceMetadata.redirect_uri.replace("/callback/", "/token/")
       //use a placeholder client_secret (the actual secret is stored in Lighthouse)
       client.client_secret = "placeholder"
       client.token_endpoint_auth_method = "client_secret_basic"
