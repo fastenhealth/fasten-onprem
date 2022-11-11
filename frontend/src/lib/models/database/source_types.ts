@@ -40,6 +40,7 @@ export enum SourceType {
   SimplyHealthcareMedicaid           = "simplyhealthcaremedicaid",
   SimplyHealthcareMedicare           = "simplyhealthcaremedicare",
   SummitCommunityCare                = "summitcommunitycare",
+  UCSF                               = "ucsf-health",
   Unicare                            = "unicare",
   UnicareMA                          = "unicarema",
   UnicareMedicaid                    = "unicaremedicaid",

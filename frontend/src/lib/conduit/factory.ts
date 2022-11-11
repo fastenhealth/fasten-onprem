@@ -68,6 +68,9 @@ export function NewClient(sourceType: SourceType, source: Source, clientConfig: 
     case SourceType.UnicareMedicaid:
       return new CareEvolutionClient(source, clientConfig)
 
+    case SourceType.UCSF:
+      return new EpicClient(source, clientConfig)
+
     case SourceType.Cigna:
       return new CignaClient(source, clientConfig)
     case SourceType.BlueButton:
