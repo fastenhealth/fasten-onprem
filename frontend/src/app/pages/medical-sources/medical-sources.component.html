@@ -14,6 +14,13 @@
         Some sources may require frequent re-connection, as background refresh has not been implemented yet.
         <br/>
         If you have feedback regarding healthcare sources, please <a href="https://github.com/fastenhealth/docs/issues">file a ticket <i class="fab fa-github"></i></a>
+
+        <span *ngIf="environment_name == 'sandbox'">
+          <br/>
+          <br/>
+        In <strong>Sandbox mode</strong> Fasten Health cannot access real patient information. You must use Sandbox credentials when authenticating to healthcare sources.
+          <a href="https://github.com/fastenhealth/docs/blob/main/BETA.md#connecting-a-new-source">These credentials are available on Github</a>
+        </span>
       </div>
 
 

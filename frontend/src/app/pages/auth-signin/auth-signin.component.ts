@@ -18,7 +18,7 @@ export class AuthSigninComponent implements OnInit {
   submitted: boolean = false
   existingUser: User = new User()
   errorMsg: string = ""
-  showExternalIdP: boolean = environment.is_cloud
+  showExternalIdP: boolean = environment.environment_cloud
 
   loading: boolean = false
 

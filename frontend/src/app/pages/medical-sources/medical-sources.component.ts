@@ -15,6 +15,7 @@ import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {SourceSyncMessage} from '../../models/queue/source-sync-message';
 import {UpsertSummary} from '../../../lib/models/fasten/upsert-summary';
+import {environment} from '../../../environments/environment';
 // If you dont import this angular will import the wrong "Location"
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
@@ -42,6 +43,8 @@ export class MedicalSourcesComponent implements OnInit {
     private queueService: QueueService,
     private toastService: ToastService
   ) { }
+
+  environment_name = environment.environment_name
   status: { [name: string]: string } = {}
 
   metadataSources: {[name:string]: MetadataSource} = {}

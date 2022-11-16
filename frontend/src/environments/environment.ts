@@ -7,7 +7,10 @@ export const environment = {
   production: false,
 
   // is the application running in the cloud? (enables 3rd party IdP's and token based couchdb authentication)
-  is_cloud: false,
+  environment_cloud: false,
+
+  // the environment name, `sandbox`, `prod`, `beta`
+  environment_name: "sandbox",
 
   //specify the lighthouse server that we're going to use to authenticate against all our source/providers. Must not have trailing slash
   lighthouse_api_endpoint_base: 'https://lighthouse.fastenhealth.com/sandbox',

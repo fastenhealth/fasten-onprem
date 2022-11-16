@@ -4,7 +4,8 @@
 
 export const environment = {
   production: true,
-  is_cloud: false,
+  environment_cloud: false,
+  environment_name: "sandbox",
 
   lighthouse_api_endpoint_base: 'https://lighthouse.fastenhealth.com/sandbox',
 
