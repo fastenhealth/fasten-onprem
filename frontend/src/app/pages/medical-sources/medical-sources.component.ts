@@ -1,20 +1,17 @@
 import {Component, OnInit} from '@angular/core';
 import {LighthouseService} from '../../services/lighthouse.service';
-import {FastenDbService} from '../../services/fasten-db.service';
-import {LighthouseSourceMetadata} from '../../../lib/models/lighthouse/lighthouse-source-metadata';
-import {Source} from '../../../lib/models/database/source';
+import {FastenApiService} from '../../services/fasten-api.service';
+import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-source-metadata';
+import {Source} from '../../models/fasten/source';
 import {getAccessTokenExpiration, jwtDecode} from 'fhirclient/lib/lib';
 import BrowserAdapter from 'fhirclient/lib/adapters/BrowserAdapter';
 import {MetadataSource} from '../../models/fasten/metadata-source';
 import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Location} from '@angular/common';
-import {SourceType} from '../../../lib/models/database/source_types';
-import {QueueService} from '../../workers/queue.service';
 import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {SourceSyncMessage} from '../../models/queue/source-sync-message';
-import {UpsertSummary} from '../../../lib/models/fasten/upsert-summary';
 import {environment} from '../../../environments/environment';
 // If you dont import this angular will import the wrong "Location"
 
@@ -35,14 +32,14 @@ export class MedicalSourcesComponent implements OnInit {
 
   constructor(
     private lighthouseApi: LighthouseService,
-    private fastenDb: FastenDbService,
+    private fastenApi: FastenApiService,
     private modalService: NgbModal,
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
-    private queueService: QueueService,
     private toastService: ToastService
   ) { }
+
 
   environment_name = environment.environment_name
   status: { [name: string]: string } = {}
@@ -66,9 +63,9 @@ export class MedicalSourcesComponent implements OnInit {
         this.callback(callbackSourceType).then(console.log)
       }
 
-      this.fastenDb.GetSources()
-        .then((paginatedList) => {
-          const sourceList = paginatedList.rows as Source[]
+      this.fastenApi.getSources()
+        .subscribe((paginatedList: Source[]) => {
+          const sourceList = paginatedList as Source[]
 
           for (const sourceType in this.metadataSources) {
             let isConnected = false
@@ -167,7 +164,7 @@ export class MedicalSourcesComponent implements OnInit {
         //Create FHIR Client
 
         const dbSourceCredential = new Source({
-          source_type: sourceType as SourceType,
+          source_type: sourceType,
 
           authorization_endpoint: sourceMetadata.authorization_endpoint,
           token_endpoint: sourceMetadata.token_endpoint,
@@ -194,8 +191,8 @@ export class MedicalSourcesComponent implements OnInit {
           expires_at:            parseInt(getAccessTokenExpiration(payload, new BrowserAdapter())),
         })
 
-        await this.fastenDb.UpsertSource(dbSourceCredential).then(console.log)
-        this.queueSourceSyncWorker(sourceType as SourceType, dbSourceCredential)
+        this.fastenApi.createSource(dbSourceCredential).subscribe((data) => console.log)
+        // this.queueSourceSyncWorker(sourceType as SourceType, dbSourceCredential)
 
       })
   }
@@ -234,56 +231,56 @@ export class MedicalSourcesComponent implements OnInit {
     this.status[source.source_type] = "authorize"
     this.modalService.dismissAll()
 
-    this.queueSourceSyncWorker(source.source_type as SourceType, source)
+    // this.queueSourceSyncWorker(source.source_type as SourceType, source)
   }
 
 
   ///////////////////////////////////////////////////////////////////////////////////////
   // Private
   ///////////////////////////////////////////////////////////////////////////////////////
-  private queueSourceSyncWorker(sourceType: SourceType, source: Source){
-    //this work is pushed to the Sync Worker.
-    //TODO: if the user closes the browser the data update may not complete. we should set a status flag when "starting" sync, and then remove it when compelte
-    // so that we can show incompelte statuses
-    this.queueService.runSourceSyncWorker(source)
-      .subscribe((msg) => {
-          const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
-          delete this.status[sourceType]
-          // window.location.reload();
-
-          console.log("source sync-all response:", sourceSyncMessage)
-          //remove item from available sources list, add to connected sources.
-          this.availableSourceList.splice(this.availableSourceList.findIndex((item) => item.metadata.source_type == sourceType), 1);
-          if(this.connectedSourceList.findIndex((item) => item.metadata.source_type == sourceType) == -1){
-            //only add this as a connected source if its "new"
-            this.connectedSourceList.push({source: sourceSyncMessage.source, metadata: this.metadataSources[sourceType]})
-          }
-
-          const toastNotification = new ToastNotification()
-          toastNotification.type = ToastType.Success
-          toastNotification.message = `Successfully connected ${sourceType}`
-
-          const upsertSummary = sourceSyncMessage.response as UpsertSummary
-          if(upsertSummary && upsertSummary.totalResources != upsertSummary.updatedResources.length){
-            toastNotification.message += `\n (total: ${upsertSummary.totalResources}, updated: ${upsertSummary.updatedResources.length})`
-          } else if(upsertSummary){
-            toastNotification.message += `\n (total: ${upsertSummary.totalResources})`
-          }
-
-          this.toastService.show(toastNotification)
-        },
-        (err) => {
-          delete this.status[sourceType]
-          // window.location.reload();
-
-          const toastNotification = new ToastNotification()
-          toastNotification.type = ToastType.Error
-          toastNotification.message = `An error occurred while accessing ${sourceType}: ${err}`
-          toastNotification.autohide = false
-          this.toastService.show(toastNotification)
-          console.error(err)
-        });
-  }
+  // private queueSourceSyncWorker(sourceType: SourceType, source: Source){
+  //   //this work is pushed to the Sync Worker.
+  //   //TODO: if the user closes the browser the data update may not complete. we should set a status flag when "starting" sync, and then remove it when compelte
+  //   // so that we can show incompelte statuses
+  //   this.queueService.runSourceSyncWorker(source)
+  //     .subscribe((msg) => {
+  //         const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
+  //         delete this.status[sourceType]
+  //         // window.location.reload();
+  //
+  //         console.log("source sync-all response:", sourceSyncMessage)
+  //         //remove item from available sources list, add to connected sources.
+  //         this.availableSourceList.splice(this.availableSourceList.findIndex((item) => item.metadata.source_type == sourceType), 1);
+  //         if(this.connectedSourceList.findIndex((item) => item.metadata.source_type == sourceType) == -1){
+  //           //only add this as a connected source if its "new"
+  //           this.connectedSourceList.push({source: sourceSyncMessage.source, metadata: this.metadataSources[sourceType]})
+  //         }
+  //
+  //         const toastNotification = new ToastNotification()
+  //         toastNotification.type = ToastType.Success
+  //         toastNotification.message = `Successfully connected ${sourceType}`
+  //
+  //         const upsertSummary = sourceSyncMessage.response as UpsertSummary
+  //         if(upsertSummary && upsertSummary.totalResources != upsertSummary.updatedResources.length){
+  //           toastNotification.message += `\n (total: ${upsertSummary.totalResources}, updated: ${upsertSummary.updatedResources.length})`
+  //         } else if(upsertSummary){
+  //           toastNotification.message += `\n (total: ${upsertSummary.totalResources})`
+  //         }
+  //
+  //         this.toastService.show(toastNotification)
+  //       },
+  //       (err) => {
+  //         delete this.status[sourceType]
+  //         // window.location.reload();
+  //
+  //         const toastNotification = new ToastNotification()
+  //         toastNotification.type = ToastType.Error
+  //         toastNotification.message = `An error occurred while accessing ${sourceType}: ${err}`
+  //         toastNotification.autohide = false
+  //         this.toastService.show(toastNotification)
+  //         console.error(err)
+  //       });
+  // }
 
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {

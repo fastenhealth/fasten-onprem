@@ -78,11 +78,6 @@ type sqliteRepository struct {
 	gormClient *gorm.DB
 }
 
-func (sr *sqliteRepository) VerifyUser(ctx context.Context, user *models.User) error {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (sr *sqliteRepository) Close() error {
 	return nil
 }
@@ -150,6 +145,9 @@ func (sr *sqliteRepository) GetSummary(ctx context.Context) (*models.Summary, er
 		return nil, err
 	}
 
+	if resourceCountResults == nil {
+		resourceCountResults = []map[string]interface{}{}
+	}
 	summary := &models.Summary{
 		Sources:            sources,
 		ResourceTypeCounts: resourceCountResults,

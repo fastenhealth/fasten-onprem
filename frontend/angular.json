@@ -34,8 +34,7 @@
             ],
             "scripts": [
               "node_modules/@panva/oauth4webapi/build/index.js"
-            ],
-            "webWorkerTsConfig": "tsconfig.worker.json"
+            ]
           },
           "configurations": {
             "prod": {
@@ -161,8 +160,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [],
-            "webWorkerTsConfig": "tsconfig.worker.json"
+            "scripts": []
           }
         },
         "lint": {

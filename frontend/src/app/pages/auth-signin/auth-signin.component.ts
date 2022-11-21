@@ -1,13 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {User} from '../../../lib/models/fasten/user';
-import {FastenDbService} from '../../services/fasten-db.service';
+import {User} from '../../models/fasten/user';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {environment} from '../../../environments/environment';
 import {AuthService} from '../../services/auth.service';
 import {Location} from '@angular/common';
-import {PouchdbCrypto} from '../../../lib/database/plugins/crypto';
 
 @Component({
   selector: 'app-auth-signin',
@@ -23,7 +21,6 @@ export class AuthSigninComponent implements OnInit {
   loading: boolean = false
 
   constructor(
-    private fastenDb: FastenDbService,
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
@@ -47,10 +44,7 @@ export class AuthSigninComponent implements OnInit {
           //TODO: replace Pouchdb.
           let userId = this.authService.GetCurrentUser().sub
           //TODO: static IV, must be removed/replaced.
-          return {username: userId, key: userId, config: "WyI3NUhJcEhZTXBNVXRtMHlJcnBMckhRPT0iLHsic2FsdExlbmd0aCI6MTYsIm1lbW9yeVNpemUiOjQwOTYsIml0ZXJhdGlvbnMiOjEwMCwicGFyYWxsZWxpc20iOjF9XQ=="}
-        })
-        .then((cryptoConfig) => {
-          PouchdbCrypto.StoreCryptConfig(cryptoConfig)
+          return {username: userId, key: userId}
         })
         .then(() => this.router.navigateByUrl('/dashboard'))
         .catch((err)=>{

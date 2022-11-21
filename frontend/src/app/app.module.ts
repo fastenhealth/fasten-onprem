@@ -19,14 +19,12 @@ import { AuthSigninComponent } from './pages/auth-signin/auth-signin.component';
 import { FormsModule } from '@angular/forms';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { IsAuthenticatedAuthGuard } from './auth-guards/is-authenticated-auth-guard';
-import { EncryptionEnabledAuthGuard } from './auth-guards/encryption-enabled.auth-guard';
-import {FastenDbService} from './services/fasten-db.service';
+import {FastenApiService} from './services/fasten-api.service';
 import {Router} from '@angular/router';
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import {AuthInterceptorService} from './services/auth-interceptor.service';
 import { MomentModule } from 'ngx-moment';
-import { EncryptionManagerComponent } from './pages/encryption-manager/encryption-manager.component';
 import {AuthService} from './services/auth.service';
 
 @NgModule({
@@ -40,7 +38,6 @@ import {AuthService} from './services/auth.service';
     AuthSignupComponent,
     AuthSigninComponent,
     SourceDetailComponent,
-    EncryptionManagerComponent,
   ],
   imports: [
     FormsModule,
@@ -63,7 +60,6 @@ import {AuthService} from './services/auth.service';
       deps: [AuthService, Router]
     },
     IsAuthenticatedAuthGuard,
-    EncryptionEnabledAuthGuard,
     {
       provide: HIGHLIGHT_OPTIONS,
       useValue: {

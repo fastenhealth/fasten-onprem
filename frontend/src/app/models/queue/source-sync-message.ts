@@ -1,4 +1,4 @@
-import {Source} from '../../../lib/models/database/source';
+import {Source} from '../../models/fasten/source';
 
 export class SourceSyncMessage {
   source: Source

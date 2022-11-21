@@ -12,7 +12,7 @@ type SourceCredential struct {
 	User       User           `json:"user,omitempty"`
 	UserID     uuid.UUID      `json:"user_id" gorm:"uniqueIndex:idx_user_source_patient"`
 	SourceType pkg.SourceType `json:"source_type" gorm:"uniqueIndex:idx_user_source_patient"`
-	PatientId  string         `json:"patient_id" gorm:"uniqueIndex:idx_user_source_patient"`
+	PatientId  string         `json:"patient" gorm:"uniqueIndex:idx_user_source_patient"`
 
 	//oauth endpoints
 	AuthorizationEndpoint string `json:"authorization_endpoint"`

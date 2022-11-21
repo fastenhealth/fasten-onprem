@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {FastenDbService} from './fasten-db.service';
-import {User} from '../../lib/models/fasten/user';
+import {User} from '../models/fasten/user';
 import {environment} from '../../environments/environment';
 import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
 import {ResponseWrapper} from '../models/response-wrapper';
 import * as Oauth from '@panva/oauth4webapi';
 import {SourceState} from '../models/fasten/source-state';
-import {Session} from '../models/database/session';
 import * as jose from 'jose';
 import {UserRegisteredClaims} from '../models/fasten/user-registered-claims';
 
@@ -137,25 +135,29 @@ export class AuthService {
     if(!hasAuthToken){
       return false
     }
-    //check if the authToken works
-    let databaseEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.couchdb_endpoint_base)
-    try {
-      let resp = await this._httpClient.get<any>(`${databaseEndpointBase}/_session`, {
-        headers: new HttpHeaders({
-          'Content-Type':  'application/json',
-          Authorization: `Bearer ${authToken}`
-        })
-      }).toPromise()
-      //  logic to check if user is logged in here.
-      let session = resp as Session
-      if(!session.ok || session?.info?.authenticated != "jwt" || !session.userCtx?.name){
-        //invalid session, not jwt auth, or username is empty
-        return false
-      }
-      return true
-    } catch (e) {
-      return false
-    }
+
+    //todo: check if the authToken has expired
+    return true
+
+    // //check if the authToken has expired.
+    // let databaseEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.couchdb_endpoint_base)
+    // try {
+    //   let resp = await this._httpClient.get<any>(`${databaseEndpointBase}/_session`, {
+    //     headers: new HttpHeaders({
+    //       'Content-Type':  'application/json',
+    //       Authorization: `Bearer ${authToken}`
+    //     })
+    //   }).toPromise()
+    //   //  logic to check if user is logged in here.
+    //   let session = resp as Session
+    //   if(!session.ok || session?.info?.authenticated != "jwt" || !session.userCtx?.name){
+    //     //invalid session, not jwt auth, or username is empty
+    //     return false
+    //   }
+    //   return true
+    // } catch (e) {
+    //   return false
+    // }
   }
 
   public GetAuthToken(): string {

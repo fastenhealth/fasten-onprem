@@ -1,8 +1,8 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Source} from '../../../lib/models/database/source';
-import {FastenDbService} from '../../services/fasten-db.service';
-import {ResourceFhir} from '../../../lib/models/database/resource_fhir';
+import {Source} from '../../models/fasten/source';
+import {FastenApiService} from '../../services/fasten-api.service';
+import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {getPath} from '../../components/list-generic-resource/utils';
 import {Base64} from '../../../lib/utils/base64';
 
@@ -20,7 +20,7 @@ export class SourceDetailComponent implements OnInit {
 
   resourceTypeCounts: { [name: string]: number } = {}
 
-  constructor(private fastenDb: FastenDbService, private router: Router, private route: ActivatedRoute) {
+  constructor(private fastenApi: FastenApiService, private router: Router, private route: ActivatedRoute) {
     //check if the current Source was sent over using the router state storage:
     if(this.router.getCurrentNavigation()?.extras?.state){
       this.selectedSource = this.router.getCurrentNavigation().extras.state as Source
@@ -29,7 +29,7 @@ export class SourceDetailComponent implements OnInit {
 
   ngOnInit(): void {
     //always request the source summary
-    this.fastenDb.GetSourceSummary(Base64.Decode(this.route.snapshot.paramMap.get('source_id'))).then((sourceSummary) => {
+    this.fastenApi.getSourceSummary(this.route.snapshot.paramMap.get('source_id')).subscribe((sourceSummary) => {
       this.selectedSource = sourceSummary.source;
       this.selectedPatient = sourceSummary.patient;
       for(let resourceTypeCount of sourceSummary.resource_type_counts){

@@ -30,7 +30,7 @@ func RequireAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		claim, err := auth.ValidateToken(appConfig.GetString("jwt.issuer.key"), tokenString)
+		claim, err := auth.JwtValidateFastenToken(appConfig.GetString("jwt.issuer.key"), tokenString)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": err.Error()})
 			c.Abort()
@@ -39,7 +39,7 @@ func RequireAuth() gin.HandlerFunc {
 
 		//todo, is this shared between all sessions??
 		c.Set("AUTH_TOKEN", tokenString)
-		c.Set("AUTH_USERNAME", claim.Username)
+		c.Set("AUTH_USERNAME", claim.Subject)
 		c.Set("AUTH_USERID", claim.UserId)
 
 		c.Next()

@@ -11,7 +11,6 @@ type DatabaseRepository interface {
 	Close() error
 
 	CreateUser(context.Context, *models.User) error
-	VerifyUser(context.Context, *models.User) error
 
 	GetUserByEmail(context.Context, string) (*models.User, error)
 	GetCurrentUser(context.Context) *models.User
