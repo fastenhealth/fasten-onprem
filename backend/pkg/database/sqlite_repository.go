@@ -14,6 +14,7 @@ import (
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"net/url"
+	"strings"
 )
 
 func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) (DatabaseRepository, error) {
@@ -162,7 +163,7 @@ func (sr *sqliteRepository) GetSummary(ctx context.Context) (*models.Summary, er
 // Resource
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (sr *sqliteRepository) UpsertRawResource(ctx context.Context, sourceCredential sourceModel.SourceCredential, rawResource sourceModel.RawResourceFhir) error {
+func (sr *sqliteRepository) UpsertRawResource(ctx context.Context, sourceCredential sourceModel.SourceCredential, rawResource sourceModel.RawResourceFhir) (bool, error) {
 
 	source := sourceCredential.(models.SourceCredential)
 
@@ -179,16 +180,48 @@ func (sr *sqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 
 	sr.logger.Infof("insert/update (%v) %v", rawResource.SourceResourceType, rawResource.SourceResourceID)
 
-	if sr.gormClient.Debug().WithContext(ctx).
-		Where(models.OriginBase{
-			SourceID:           wrappedResourceModel.GetSourceID(),
-			SourceResourceID:   wrappedResourceModel.GetSourceResourceID(),
-			SourceResourceType: wrappedResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-		}).Updates(wrappedResourceModel).RowsAffected == 0 {
-		sr.logger.Infof("resource does not exist, creating: %s %s %s", wrappedResourceModel.GetSourceID(), wrappedResourceModel.GetSourceResourceID(), wrappedResourceModel.GetSourceResourceType())
-		return sr.gormClient.Debug().Create(wrappedResourceModel).Error
+	gormClient := sr.gormClient.WithContext(ctx)
+	if strings.ToUpper(sr.appConfig.GetString("log.level")) == "DEBUG" {
+		gormClient = gormClient.Debug()
 	}
-	return nil
+
+	createResult := gormClient.Where(models.OriginBase{
+		SourceID:           wrappedResourceModel.GetSourceID(),
+		SourceResourceID:   wrappedResourceModel.GetSourceResourceID(),
+		SourceResourceType: wrappedResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
+	}).FirstOrCreate(wrappedResourceModel)
+
+	if createResult.Error != nil {
+		return false, createResult.Error
+	} else if createResult.RowsAffected == 0 {
+		//existing resource, lets see if we need to update it.
+		var existingResource []models.ResourceFhir
+		createResult.Model(models.ResourceFhir{}).Scan(&existingResource) //todo, this causes another select query.
+
+		if existingResource[0].ResourceRaw.String() != wrappedResourceModel.ResourceRaw.String() {
+			updateResult := createResult.Updates(wrappedResourceModel)
+			return updateResult.RowsAffected > 0, updateResult.Error
+		} else {
+			return false, nil
+		}
+
+	} else {
+		//resource was created
+		return createResult.RowsAffected > 0, createResult.Error
+	}
+
+	//return results.RowsAffected > 0, results.Error
+
+	//if sr.gormClient.Debug().WithContext(ctx).
+	//	Where(models.OriginBase{
+	//		SourceID:           wrappedResourceModel.GetSourceID(),
+	//		SourceResourceID:   wrappedResourceModel.GetSourceResourceID(),
+	//		SourceResourceType: wrappedResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
+	//	}).Updates(wrappedResourceModel).RowsAffected == 0 {
+	//	sr.logger.Infof("resource does not exist, creating: %s %s %s", wrappedResourceModel.GetSourceID(), wrappedResourceModel.GetSourceResourceID(), wrappedResourceModel.GetSourceResourceType())
+	//	return sr.gormClient.Debug().Create(wrappedResourceModel).Error
+	//}
+	//return nil
 }
 
 func (sr *sqliteRepository) UpsertResource(ctx context.Context, resourceModel *models.ResourceFhir) error {

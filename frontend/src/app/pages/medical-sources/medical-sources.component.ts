@@ -240,15 +240,15 @@ export class MedicalSourcesComponent implements OnInit {
   public uploadSourceBundleHandler(event) {
     this.uploadedFile = [event.addedFiles[0]]
     //TODO: handle manual bundles.
-    // this.fastenDb.CreateManualSource(event.addedFiles[0]).subscribe(
-    //   (respData) => {
-    //     console.log("source manual source create response:", respData)
-    //   },
-    //   (err) => {console.log(err)},
-    //   () => {
-    //     this.uploadedFile = []
-    //   }
-    // )
+    this.fastenApi.createManualSource(event.addedFiles[0]).subscribe(
+      (respData) => {
+        console.log("source manual source create response:", respData)
+      },
+      (err) => {console.log(err)},
+      () => {
+        this.uploadedFile = []
+      }
+    )
   }
 
   public openModal(contentModalRef, sourceListItem: SourceListItem) {

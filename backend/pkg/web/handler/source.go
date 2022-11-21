@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"github.com/fastenhealth/fasten-sources/clients/factory"
+	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
@@ -35,13 +36,13 @@ func CreateSource(c *gin.Context) {
 	}
 
 	// after creating the source, we should do a bulk import
-	err = syncSourceResources(c, logger, databaseRepo, sourceCred)
+	summary, err := syncSourceResources(c, logger, databaseRepo, sourceCred)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceCred})
+	c.JSON(http.StatusOK, gin.H{"success": true, "source": sourceCred, "data": summary})
 }
 
 func SourceSync(c *gin.Context) {
@@ -58,12 +59,12 @@ func SourceSync(c *gin.Context) {
 	}
 
 	// after creating the source, we should do a bulk import
-	err = syncSourceResources(c, logger, databaseRepo, *sourceCred)
+	summary, err := syncSourceResources(c, logger, databaseRepo, *sourceCred)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceCred})
+	c.JSON(http.StatusOK, gin.H{"success": true, "source": sourceCred, "data": summary})
 }
 
 func CreateManualSource(c *gin.Context) {
@@ -102,14 +103,14 @@ func CreateManualSource(c *gin.Context) {
 		return
 	}
 
-	err = manualSourceClient.SyncAllBundle(databaseRepo, bundleFile)
+	summary, err := manualSourceClient.SyncAllBundle(databaseRepo, bundleFile)
 	if err != nil {
 		logger.Errorln("An error occurred while processing bundle", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"success": true, "data": fmt.Sprintf("'%s' uploaded!", file.Filename)})
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": summary})
 }
 
 func GetSource(c *gin.Context) {
@@ -210,12 +211,12 @@ func RawRequestSource(c *gin.Context) {
 }
 
 ////// private functions
-func syncSourceResources(c *gin.Context, logger *logrus.Entry, databaseRepo database.DatabaseRepository, sourceCred models.SourceCredential) error {
+func syncSourceResources(c *gin.Context, logger *logrus.Entry, databaseRepo database.DatabaseRepository, sourceCred models.SourceCredential) (sourceModels.UpsertSummary, error) {
 	// after creating the source, we should do a bulk import
 	sourceClient, updatedSource, err := factory.GetSourceClient(sourcePkg.GetFastenEnv(), sourceCred.SourceType, c, logger, sourceCred)
 	if err != nil {
 		logger.Errorln("An error occurred while initializing hub client using source credential", err)
-		return err
+		return sourceModels.UpsertSummary{}, err
 	}
 	//TODO: update source
 	if updatedSource != nil {
@@ -227,10 +228,10 @@ func syncSourceResources(c *gin.Context, logger *logrus.Entry, databaseRepo data
 		//}
 	}
 
-	err = sourceClient.SyncAll(databaseRepo)
+	summary, err := sourceClient.SyncAll(databaseRepo)
 	if err != nil {
 		logger.Errorln("An error occurred while bulk import of resources from source", err)
-		return err
+		return summary, err
 	}
-	return nil
+	return summary, nil
 }

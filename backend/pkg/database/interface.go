@@ -17,7 +17,6 @@ type DatabaseRepository interface {
 
 	GetSummary(ctx context.Context) (*models.Summary, error)
 
-	UpsertRawResource(ctx context.Context, sourceCredentials sourcePkg.SourceCredential, rawResource sourcePkg.RawResourceFhir) error
 	GetResourceBySourceType(context.Context, string, string) (*models.ResourceFhir, error)
 	GetResourceBySourceId(context.Context, string, string) (*models.ResourceFhir, error)
 	ListResources(context.Context, models.ListResourceQueryOptions) ([]models.ResourceFhir, error)
@@ -29,4 +28,7 @@ type DatabaseRepository interface {
 	GetSource(context.Context, string) (*models.SourceCredential, error)
 	GetSourceSummary(context.Context, string) (*models.SourceSummary, error)
 	GetSources(context.Context) ([]models.SourceCredential, error)
+
+	//used by Client
+	UpsertRawResource(ctx context.Context, sourceCredentials sourcePkg.SourceCredential, rawResource sourcePkg.RawResourceFhir) (bool, error)
 }
