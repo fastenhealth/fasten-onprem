@@ -19,6 +19,7 @@ export class ResourceDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.fastenApi.getResourceBySourceId(this.route.snapshot.paramMap.get('source_id'), this.route.snapshot.paramMap.get('resource_id')).subscribe((resourceFhir) => {
+      console.log("RESOURECE FHIR", resourceFhir)
       this.resource = resourceFhir;
       this.sourceId = this.route.snapshot.paramMap.get('source_id')
       this.sourceName = "unknown" //TODO popualte this

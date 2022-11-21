@@ -174,7 +174,7 @@ func (sr *sqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 			SourceResourceID:   rawResource.SourceResourceID,
 			SourceResourceType: rawResource.SourceResourceType,
 		},
-		RawResource: datatypes.JSON(rawResource.RawResource),
+		ResourceRaw: datatypes.JSON(rawResource.ResourceRaw),
 	}
 
 	sr.logger.Infof("insert/update (%v) %v", rawResource.SourceResourceType, rawResource.SourceResourceID)
