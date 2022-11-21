@@ -191,9 +191,44 @@ export class MedicalSourcesComponent implements OnInit {
           expires_at:            parseInt(getAccessTokenExpiration(payload, new BrowserAdapter())),
         })
 
-        this.fastenApi.createSource(dbSourceCredential).subscribe((data) => console.log)
-        // this.queueSourceSyncWorker(sourceType as SourceType, dbSourceCredential)
+        this.fastenApi.createSource(dbSourceCredential)
+          .subscribe((msg) => {
+            // const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
+            delete this.status[sourceType]
+            // window.location.reload();
 
+            console.log("source sync-all response:", msg)
+            //remove item from available sources list, add to connected sources.
+            this.availableSourceList.splice(this.availableSourceList.findIndex((item) => item.metadata.source_type == sourceType), 1);
+            if(this.connectedSourceList.findIndex((item) => item.metadata.source_type == sourceType) == -1){
+              //only add this as a connected source if its "new"
+              this.connectedSourceList.push({source: msg, metadata: this.metadataSources[sourceType]})
+            }
+
+            const toastNotification = new ToastNotification()
+            toastNotification.type = ToastType.Success
+            toastNotification.message = `Successfully connected ${sourceType}`
+
+            // const upsertSummary = sourceSyncMessage.response as UpsertSummary
+            // if(upsertSummary && upsertSummary.totalResources != upsertSummary.updatedResources.length){
+            //   toastNotification.message += `\n (total: ${upsertSummary.totalResources}, updated: ${upsertSummary.updatedResources.length})`
+            // } else if(upsertSummary){
+            //   toastNotification.message += `\n (total: ${upsertSummary.totalResources})`
+            // }
+
+            this.toastService.show(toastNotification)
+          },
+          (err) => {
+            delete this.status[sourceType]
+            // window.location.reload();
+
+            const toastNotification = new ToastNotification()
+            toastNotification.type = ToastType.Error
+            toastNotification.message = `An error occurred while accessing ${sourceType}: ${err}`
+            toastNotification.autohide = false
+            this.toastService.show(toastNotification)
+            console.error(err)
+          });
       })
   }
 
@@ -231,56 +266,22 @@ export class MedicalSourcesComponent implements OnInit {
     this.status[source.source_type] = "authorize"
     this.modalService.dismissAll()
 
-    // this.queueSourceSyncWorker(source.source_type as SourceType, source)
+    this.fastenApi.syncSource(source.id).subscribe(
+      (respData) => {
+        delete this.status[source.source_type]
+        console.log("source sync response:", respData)
+      },
+      (err) => {
+        delete this.status[source.source_type]
+        console.log(err)
+      }
+    )
   }
 
 
   ///////////////////////////////////////////////////////////////////////////////////////
   // Private
   ///////////////////////////////////////////////////////////////////////////////////////
-  // private queueSourceSyncWorker(sourceType: SourceType, source: Source){
-  //   //this work is pushed to the Sync Worker.
-  //   //TODO: if the user closes the browser the data update may not complete. we should set a status flag when "starting" sync, and then remove it when compelte
-  //   // so that we can show incompelte statuses
-  //   this.queueService.runSourceSyncWorker(source)
-  //     .subscribe((msg) => {
-  //         const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
-  //         delete this.status[sourceType]
-  //         // window.location.reload();
-  //
-  //         console.log("source sync-all response:", sourceSyncMessage)
-  //         //remove item from available sources list, add to connected sources.
-  //         this.availableSourceList.splice(this.availableSourceList.findIndex((item) => item.metadata.source_type == sourceType), 1);
-  //         if(this.connectedSourceList.findIndex((item) => item.metadata.source_type == sourceType) == -1){
-  //           //only add this as a connected source if its "new"
-  //           this.connectedSourceList.push({source: sourceSyncMessage.source, metadata: this.metadataSources[sourceType]})
-  //         }
-  //
-  //         const toastNotification = new ToastNotification()
-  //         toastNotification.type = ToastType.Success
-  //         toastNotification.message = `Successfully connected ${sourceType}`
-  //
-  //         const upsertSummary = sourceSyncMessage.response as UpsertSummary
-  //         if(upsertSummary && upsertSummary.totalResources != upsertSummary.updatedResources.length){
-  //           toastNotification.message += `\n (total: ${upsertSummary.totalResources}, updated: ${upsertSummary.updatedResources.length})`
-  //         } else if(upsertSummary){
-  //           toastNotification.message += `\n (total: ${upsertSummary.totalResources})`
-  //         }
-  //
-  //         this.toastService.show(toastNotification)
-  //       },
-  //       (err) => {
-  //         delete this.status[sourceType]
-  //         // window.location.reload();
-  //
-  //         const toastNotification = new ToastNotification()
-  //         toastNotification.type = ToastType.Error
-  //         toastNotification.message = `An error occurred while accessing ${sourceType}: ${err}`
-  //         toastNotification.autohide = false
-  //         this.toastService.show(toastNotification)
-  //         console.error(err)
-  //       });
-  // }
 
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
