@@ -11,6 +11,7 @@ import (
 	"github.com/glebarez/sqlite"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"net/url"
 )
@@ -161,9 +162,33 @@ func (sr *sqliteRepository) GetSummary(ctx context.Context) (*models.Summary, er
 // Resource
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (sr *sqliteRepository) UpsertRawResource(ctx context.Context, sourceCredentials sourceModel.SourceCredential, rawResource sourceModel.ResourceInterface) error {
-	//TODO implement me
-	panic("implement me")
+func (sr *sqliteRepository) UpsertRawResource(ctx context.Context, sourceCredential sourceModel.SourceCredential, rawResource sourceModel.RawResourceFhir) error {
+
+	source := sourceCredential.(models.SourceCredential)
+
+	wrappedResourceModel := &models.ResourceFhir{
+		OriginBase: models.OriginBase{
+			ModelBase:          models.ModelBase{},
+			UserID:             source.UserID,
+			SourceID:           source.ID,
+			SourceResourceID:   rawResource.SourceResourceID,
+			SourceResourceType: rawResource.SourceResourceType,
+		},
+		RawResource: datatypes.JSON(rawResource.RawResource),
+	}
+
+	sr.logger.Infof("insert/update (%v) %v", rawResource.SourceResourceType, rawResource.SourceResourceID)
+
+	if sr.gormClient.Debug().WithContext(ctx).
+		Where(models.OriginBase{
+			SourceID:           wrappedResourceModel.GetSourceID(),
+			SourceResourceID:   wrappedResourceModel.GetSourceResourceID(),
+			SourceResourceType: wrappedResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
+		}).Updates(wrappedResourceModel).RowsAffected == 0 {
+		sr.logger.Infof("resource does not exist, creating: %s %s %s", wrappedResourceModel.GetSourceID(), wrappedResourceModel.GetSourceResourceID(), wrappedResourceModel.GetSourceResourceType())
+		return sr.gormClient.Debug().Create(wrappedResourceModel).Error
+	}
+	return nil
 }
 
 func (sr *sqliteRepository) UpsertResource(ctx context.Context, resourceModel *models.ResourceFhir) error {
@@ -286,7 +311,7 @@ func (sr *sqliteRepository) CreateSource(ctx context.Context, sourceCreds *model
 		Where(models.SourceCredential{
 			UserID:     sourceCreds.UserID,
 			SourceType: sourceCreds.SourceType,
-			PatientId:  sourceCreds.PatientId}).Updates(sourceCreds).RowsAffected == 0 {
+			Patient:    sourceCreds.Patient}).Updates(sourceCreds).RowsAffected == 0 {
 		return sr.gormClient.WithContext(ctx).Create(sourceCreds).Error
 	}
 	return nil

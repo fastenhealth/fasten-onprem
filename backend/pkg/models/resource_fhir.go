@@ -8,7 +8,7 @@ type ResourceFhir struct {
 	OriginBase
 
 	//embedded data
-	Payload datatypes.JSON `json:"payload" gorm:"payload"`
+	RawResource datatypes.JSON `json:"raw_resource" gorm:"raw_resource"`
 }
 
 type ListResourceQueryOptions struct {

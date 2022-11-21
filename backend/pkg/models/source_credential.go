@@ -12,20 +12,20 @@ type SourceCredential struct {
 	User       User           `json:"user,omitempty"`
 	UserID     uuid.UUID      `json:"user_id" gorm:"uniqueIndex:idx_user_source_patient"`
 	SourceType pkg.SourceType `json:"source_type" gorm:"uniqueIndex:idx_user_source_patient"`
-	PatientId  string         `json:"patient" gorm:"uniqueIndex:idx_user_source_patient"`
+	Patient    string         `json:"patient" gorm:"uniqueIndex:idx_user_source_patient"`
 
 	//oauth endpoints
 	AuthorizationEndpoint string `json:"authorization_endpoint"`
 	TokenEndpoint         string `json:"token_endpoint"`
 	IntrospectionEndpoint string `json:"introspection_endpoint"`
 
-	Scopes                        []string `json:"scopes_supported" gorm:"type:json"`
+	Scopes                        []string `json:"scopes_supported" gorm:"type:text;serializer:json"`
 	Issuer                        string   `json:"issuer"`
-	GrantTypesSupported           []string `json:"grant_types_supported" gorm:"type:json"`
-	ResponseType                  []string `json:"response_types_supported" gorm:"type:json"`
-	ResponseModesSupported        []string `json:"response_modes_supported" gorm:"type:json"`
+	GrantTypesSupported           []string `json:"grant_types_supported" gorm:"type:text;serializer:json"`
+	ResponseType                  []string `json:"response_types_supported" gorm:"type:text;serializer:json"`
+	ResponseModesSupported        []string `json:"response_modes_supported" gorm:"type:text;serializer:json"`
 	Audience                      string   `json:"aud"` //optional - required for some providers
-	CodeChallengeMethodsSupported []string `json:"code_challenge_methods_supported" gorm:"type:json"`
+	CodeChallengeMethodsSupported []string `json:"code_challenge_methods_supported" gorm:"type:text;serializer:json"`
 
 	//Fasten custom configuration
 	UserInfoEndpoint   string `json:"userinfo_endpoint"`     //optional - supported by some providers, not others.
@@ -33,8 +33,8 @@ type SourceCredential struct {
 	ClientId           string `json:"client_id"`
 	RedirectUri        string `json:"redirect_uri"` //lighthouse url the provider will redirect to (registered with App)
 
-	Confidential bool `json:"confidential"` //if enabled, requires client_secret to authenticate with provider (PKCE)
-	//CORSRelayRequired bool   `json:"cors_relay_required"` //if true, requires CORS proxy/relay, as provider does not return proper response to CORS preflight
+	Confidential      bool `json:"confidential"`        //if enabled, requires client_secret to authenticate with provider (PKCE)
+	CORSRelayRequired bool `json:"cors_relay_required"` //if true, requires CORS proxy/relay, as provider does not return proper response to CORS preflight
 	//SecretKeyPrefix   string `json:"-"`                   //the secret key prefix to use, if empty (default) will use the sourceType value
 
 	// auth/credential data
@@ -55,7 +55,7 @@ func (s SourceCredential) GetClientId() string {
 }
 
 func (s SourceCredential) GetPatientId() string {
-	return s.PatientId
+	return s.Patient
 }
 
 func (s SourceCredential) GetOauthAuthorizationEndpoint() string {
