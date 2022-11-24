@@ -6,7 +6,6 @@ import {forkJoin} from 'rxjs';
 import {MetadataSource} from '../../models/fasten/metadata-source';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {Summary} from '../../models/fasten/summary';
-import {Base64} from '../../../lib/utils/base64';
 import {LighthouseService} from '../../services/lighthouse.service';
 
 @Component({

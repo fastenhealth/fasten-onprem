@@ -3,7 +3,6 @@ import {DatatableComponent, ColumnMode, SelectionType} from '@swimlane/ngx-datat
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {FORMATTERS, getPath, obsValue, attributeXTime} from './utils';
 import {Router} from '@angular/router';
-import {Base64} from '../../../lib/utils/base64';
 
 //all Resource list components must implement this Interface
 export interface ResourceListComponentInterface {

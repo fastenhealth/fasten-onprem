@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
-import {Base64} from '../../../lib/utils/base64';
 
 @Component({
   selector: 'app-resource-detail',

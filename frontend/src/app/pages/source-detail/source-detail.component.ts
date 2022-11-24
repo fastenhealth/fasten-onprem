@@ -4,8 +4,6 @@ import {Source} from '../../models/fasten/source';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {getPath} from '../../components/list-generic-resource/utils';
-import {Base64} from '../../../lib/utils/base64';
-
 
 @Component({
   selector: 'app-source-detail',
