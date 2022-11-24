@@ -1,6 +1,5 @@
 
-- pagination
-- sync summary
-- references/links
-- medicare sync is broken
-- manual sync
+- [x] pagination
+- [x] references/links
+- [x] manual sync
+- fix sources where refresh token is missing (panics)

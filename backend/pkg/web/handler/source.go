@@ -96,14 +96,40 @@ func CreateManualSource(c *gin.Context) {
 	// We cannot save the "SourceCredential" object yet, as we do not know the patientID
 
 	// create a "manual" client, which we can use to parse the
-	manualSourceClient, _, err := factory.GetSourceClient(sourcePkg.GetFastenEnv(), sourcePkg.SourceTypeManual, c, logger, models.SourceCredential{})
+	manualSourceCredential := models.SourceCredential{
+		SourceType: sourcePkg.SourceTypeManual,
+	}
+	tempSourceClient, _, err := factory.GetSourceClient(sourcePkg.GetFastenEnv(), sourcePkg.SourceTypeManual, c, logger, manualSourceCredential)
 	if err != nil {
 		logger.Errorln("An error occurred while initializing hub client using manual source without credentials", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
 
-	summary, err := manualSourceClient.SyncAllBundle(databaseRepo, bundleFile)
+	patientId, bundleType, err := tempSourceClient.ExtractPatientId(bundleFile)
+	if err != nil {
+		logger.Errorln("An error occurred while extracting patient id", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+	manualSourceCredential.Patient = patientId
+
+	//store the manualSourceCredential
+	err = databaseRepo.CreateSource(c, &manualSourceCredential)
+	if err != nil {
+		logger.Errorln("An error occurred while creating manual source", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
+	manualSourceClient, _, err := factory.GetSourceClient(sourcePkg.GetFastenEnv(), sourcePkg.SourceTypeManual, c, logger, manualSourceCredential)
+	if err != nil {
+		logger.Errorln("An error occurred while initializing hub client using manual source with credential", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+
+	summary, err := manualSourceClient.SyncAllBundle(databaseRepo, bundleFile, bundleType)
 	if err != nil {
 		logger.Errorln("An error occurred while processing bundle", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})

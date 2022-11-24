@@ -43,6 +43,11 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 		//Logger: logger
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
+
+	if strings.ToUpper(appConfig.GetString("log.level")) == "DEBUG" {
+		database = database.Debug() //set debug globally
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf("Failed to connect to database! - %v", err)
 	}
@@ -180,12 +185,7 @@ func (sr *sqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 
 	sr.logger.Infof("insert/update (%v) %v", rawResource.SourceResourceType, rawResource.SourceResourceID)
 
-	gormClient := sr.gormClient.WithContext(ctx)
-	if strings.ToUpper(sr.appConfig.GetString("log.level")) == "DEBUG" {
-		gormClient = gormClient.Debug()
-	}
-
-	createResult := gormClient.Where(models.OriginBase{
+	createResult := sr.gormClient.WithContext(ctx).Where(models.OriginBase{
 		SourceID:           wrappedResourceModel.GetSourceID(),
 		SourceResourceID:   wrappedResourceModel.GetSourceResourceID(),
 		SourceResourceType: wrappedResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
@@ -194,11 +194,9 @@ func (sr *sqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 	if createResult.Error != nil {
 		return false, createResult.Error
 	} else if createResult.RowsAffected == 0 {
-		//existing resource, lets see if we need to update it.
-		var existingResource []models.ResourceFhir
-		createResult.Model(models.ResourceFhir{}).Scan(&existingResource) //todo, this causes another select query.
-
-		if existingResource[0].ResourceRaw.String() != wrappedResourceModel.ResourceRaw.String() {
+		//at this point, wrappedResourceModel contains the data found in the database.
+		// check if the database resource matches the new resource.
+		if wrappedResourceModel.ResourceRaw.String() != string(rawResource.ResourceRaw) {
 			updateResult := createResult.Updates(wrappedResourceModel)
 			return updateResult.RowsAffected > 0, updateResult.Error
 		} else {
@@ -227,14 +225,14 @@ func (sr *sqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 func (sr *sqliteRepository) UpsertResource(ctx context.Context, resourceModel *models.ResourceFhir) error {
 	sr.logger.Infof("insert/update (%T) %v", resourceModel, resourceModel)
 
-	if sr.gormClient.Debug().WithContext(ctx).
+	if sr.gormClient.WithContext(ctx).
 		Where(models.OriginBase{
 			SourceID:           resourceModel.GetSourceID(),
 			SourceResourceID:   resourceModel.GetSourceResourceID(),
 			SourceResourceType: resourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
 		}).Updates(resourceModel).RowsAffected == 0 {
 		sr.logger.Infof("resource does not exist, creating: %s %s %s", resourceModel.GetSourceID(), resourceModel.GetSourceResourceID(), resourceModel.GetSourceResourceType())
-		return sr.gormClient.Debug().Create(resourceModel).Error
+		return sr.gormClient.Create(resourceModel).Error
 	}
 	return nil
 }
@@ -340,14 +338,13 @@ func (sr *sqliteRepository) GetPatientForSources(ctx context.Context) ([]models.
 func (sr *sqliteRepository) CreateSource(ctx context.Context, sourceCreds *models.SourceCredential) error {
 	sourceCreds.UserID = sr.GetCurrentUser(ctx).ID
 
-	if sr.gormClient.WithContext(ctx).
+	//Assign will **always** update the source credential in the DB with data passed into this function.
+	return sr.gormClient.WithContext(ctx).
 		Where(models.SourceCredential{
 			UserID:     sourceCreds.UserID,
 			SourceType: sourceCreds.SourceType,
-			Patient:    sourceCreds.Patient}).Updates(sourceCreds).RowsAffected == 0 {
-		return sr.gormClient.WithContext(ctx).Create(sourceCreds).Error
-	}
-	return nil
+			Patient:    sourceCreds.Patient}).
+		Assign(*sourceCreds).FirstOrCreate(sourceCreds).Error
 }
 
 func (sr *sqliteRepository) GetSource(ctx context.Context, sourceId string) (*models.SourceCredential, error) {
