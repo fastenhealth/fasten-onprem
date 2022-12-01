@@ -9,6 +9,8 @@ import {AuthSigninComponent} from './pages/auth-signin/auth-signin.component';
 import {AuthSignupComponent} from './pages/auth-signup/auth-signup.component';
 import {IsAuthenticatedAuthGuard} from './auth-guards/is-authenticated-auth-guard';
 import {SourceDetailComponent} from './pages/source-detail/source-detail.component';
+import {PatientProfileComponent} from './pages/patient-profile/patient-profile.component';
+import {MedicalHistoryComponent} from './pages/medical-history/medical-history.component';
 
 const routes: Routes = [
 
@@ -23,6 +25,10 @@ const routes: Routes = [
   { path: 'source/:source_id/resource/:resource_id', component: ResourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'sources', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'sources/callback/:source_type', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+
+
+  { path: 'patient-profile', component: PatientProfileComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+  { path: 'medical-history', component: MedicalHistoryComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
   // { path: 'general-pages', loadChildren: () => import('./general-pages/general-pages.module').then(m => m.GeneralPagesModule) },
   // { path: 'ui-elements', loadChildren: () => import('./ui-elements/ui-elements.module').then(m => m.UiElementsModule) },

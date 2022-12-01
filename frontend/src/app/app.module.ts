@@ -26,6 +26,8 @@ import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
 import {AuthInterceptorService} from './services/auth-interceptor.service';
 import { MomentModule } from 'ngx-moment';
 import {AuthService} from './services/auth.service';
+import { PatientProfileComponent } from './pages/patient-profile/patient-profile.component';
+import { MedicalHistoryComponent } from './pages/medical-history/medical-history.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +40,8 @@ import {AuthService} from './services/auth.service';
     AuthSignupComponent,
     AuthSigninComponent,
     SourceDetailComponent,
+    PatientProfileComponent,
+    MedicalHistoryComponent,
   ],
   imports: [
     FormsModule,
