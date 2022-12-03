@@ -13,7 +13,6 @@ Fasten is made up of a handful of different components. Here's a summary of the 
 
 **Backend**
 - Go `v1.18.3`
-- CouchDB `v3.2`
 
 **Misc**
 - Docker `v20.10.17`
@@ -65,6 +64,8 @@ web:
   src:
     frontend:
       path: ./dist
+database:
+  location: 'fasten.db'
 log:
   file: '' #absolute or relative paths allowed, eg. web.log
   level: INFO
@@ -79,10 +80,6 @@ cd frontend
 npm run dist -- -c sandbox
 
 # In terminal #2, run the following
-docker build -t fasten-couchdb -f docker/couchdb/Dockerfile .
-docker run --rm -it -p 5984:5984 -v `pwd`/.couchdb/data:/opt/couchdb/data -v `pwd`/.couchdb/config:/opt/couchdb/etc/local.d fasten-couchdb
-
-# In terminal #3, run the following
 go mod vendor
 go run backend/cmd/fasten/fasten.go start --config ./config.dev.yaml --debug
 
@@ -95,13 +92,8 @@ Now you can open a browser to `http://localhost:9090` to see the Fasten UI.
 The following URL's and credentials may be helpful as you're developing
 
 - http://localhost:9090/web/dashboard - WebUI
-- http://localhost:9090/database - CouchDB API proxy
-- http://localhost:5984/_utils/ - CouchDB admin UI
 
 ### Credentials
-- Couchdb:
-  - username: `admin`
-  - password: `mysecretpassword`
 - WebUI: 
   - username: `testuser`
   - password: `testuser`

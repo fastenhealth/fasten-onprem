@@ -1,14 +1,13 @@
 package handler
 
 import (
+	"fmt"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/auth"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
-	jwt "github.com/golang-jwt/jwt/v4"
-	"log"
 	"net/http"
-	"time"
 )
 
 func AuthSignup(c *gin.Context) {
@@ -27,7 +26,7 @@ func AuthSignup(c *gin.Context) {
 	}
 
 	//TODO: we can derive the encryption key and the hash'ed user from the responseData sub. For now the Sub will be the user id prepended with hello.
-	userFastenToken, err := jwtGenerateFastenTokenFromUser(user, appConfig.GetString("jwt.issuer.key"))
+	userFastenToken, err := auth.JwtGenerateFastenTokenFromUser(user, appConfig.GetString("jwt.issuer.key"))
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": userFastenToken})
 }
@@ -41,43 +40,21 @@ func AuthSignin(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
-	err := databaseRepo.VerifyUser(c, &user)
+
+	foundUser, err := databaseRepo.GetUserByEmail(c, user.Username)
+	if err != nil || foundUser == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": fmt.Sprintf("could not find user: %s", user.Username)})
+		return
+	}
+
+	err = foundUser.CheckPassword(user.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": fmt.Sprintf("username or password does not match: %s", user.Username)})
 		return
 	}
 
 	//TODO: we can derive the encryption key and the hash'ed user from the responseData sub. For now the Sub will be the user id prepended with hello.
-	userFastenToken, err := jwtGenerateFastenTokenFromUser(user, appConfig.GetString("jwt.issuer.key"))
+	userFastenToken, err := auth.JwtGenerateFastenTokenFromUser(user, appConfig.GetString("jwt.issuer.key"))
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": userFastenToken})
-}
-
-type UserRegisteredClaims struct {
-	FullName string `json:"full_name"`
-	jwt.RegisteredClaims
-}
-
-func jwtGenerateFastenTokenFromUser(user models.User, issuerSigningKey string) (string, error) {
-	log.Printf("ISSUER KEY: " + issuerSigningKey)
-	userClaims := UserRegisteredClaims{
-		FullName: user.FullName,
-		RegisteredClaims: jwt.RegisteredClaims{
-			// In JWT, the expiry time is expressed as unix milliseconds
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			Issuer:    "docker-fastenhealth",
-			Subject:   user.Username,
-		},
-	}
-
-	//FASTEN_JWT_ISSUER_KEY
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, userClaims)
-	//token.Header["kid"] = "docker"
-	tokenString, err := token.SignedString([]byte(issuerSigningKey))
-
-	if err != nil {
-		return "", err
-	}
-	return tokenString, nil
 }

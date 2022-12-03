@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FastenDbService} from '../../services/fasten-db.service';
-import {User} from '../../../lib/models/fasten/user';
+import {User} from '../../models/fasten/user';
 import {Router} from '@angular/router';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {ToastService} from '../../services/toast.service';

@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {Source} from '../../../lib/models/database/source';
+import {Source} from '../../models/fasten/source';
 import {Router} from '@angular/router';
-import {ResourceFhir} from '../../../lib/models/database/resource_fhir';
+import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {forkJoin} from 'rxjs';
 import {MetadataSource} from '../../models/fasten/metadata-source';
-import {FastenDbService} from '../../services/fasten-db.service';
-import {Summary} from '../../../lib/models/fasten/summary';
-import {Base64} from '../../../lib/utils/base64';
+import {FastenApiService} from '../../services/fasten-api.service';
+import {Summary} from '../../models/fasten/summary';
 import {LighthouseService} from '../../services/lighthouse.service';
 
 @Component({
@@ -25,7 +24,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private lighthouseApi: LighthouseService,
-    private fastenDb: FastenDbService,
+    private fastenApi: FastenApiService,
     private router: Router
   ) { }
 
@@ -49,7 +48,7 @@ export class DashboardComponent implements OnInit {
     //     })
     //   })
 
-    forkJoin([this.fastenDb.GetSummary(), this.lighthouseApi.getLighthouseSourceMetadataMap()]).subscribe(results => {
+    forkJoin([this.fastenApi.getSummary(), this.lighthouseApi.getLighthouseSourceMetadataMap()]).subscribe(results => {
       let summary = results[0] as Summary
       let metadataSource = results[1] as { [name: string]: MetadataSource }
 
@@ -81,7 +80,7 @@ export class DashboardComponent implements OnInit {
   }
 
   selectSource(selectedSource: Source){
-    this.router.navigateByUrl(`/source/${Base64.Encode(selectedSource._id)}`, {
+    this.router.navigateByUrl(`/source/${selectedSource.id}`, {
       state: selectedSource
     });
   }

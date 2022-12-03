@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges, Type, ViewChild} from '@angular/core';
-import {FastenDbService} from '../../services/fasten-db.service';
-import {Source} from '../../../lib/models/database/source';
+import {FastenApiService} from '../../services/fasten-api.service';
+import {Source} from '../../models/fasten/source';
 import {Observable, of} from 'rxjs';
-import {ResourceFhir} from '../../../lib/models/database/resource_fhir';
+import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {ListAdverseEventComponent} from '../list-generic-resource/list-adverse-event.component';
 import {ListCommunicationComponent} from '../list-generic-resource/list-communication.component';
 import {ListConditionComponent} from '../list-generic-resource/list-condition.component';
@@ -49,7 +49,7 @@ export class ResourceListComponent implements OnInit, OnChanges {
   @ViewChild(ResourceListOutletDirective, {static: true}) resourceListOutlet!: ResourceListOutletDirective;
 
 
-  constructor(private fastenDb: FastenDbService) { }
+  constructor(private fastenApi: FastenApiService) { }
 
   ngOnInit(): void {
     this.loadComponent()
@@ -63,7 +63,7 @@ export class ResourceListComponent implements OnInit, OnChanges {
     const viewContainerRef = this.resourceListOutlet.viewContainerRef;
     viewContainerRef.clear();
 
-    this.getResources().then((resourceList) => {
+    this.getResources().subscribe((resourceList) => {
       let componentType = this.typeLookup(this.resourceListType)
       if(componentType != null){
         console.log("Attempting to create component", this.resourceListType, componentType)
@@ -75,19 +75,18 @@ export class ResourceListComponent implements OnInit, OnChanges {
     })
   }
 
-  getResources(): Promise<ResourceFhir[]>{
+  getResources(): Observable<ResourceFhir[]>{
 
     if(this.resourceListType && !this.resourceListCache[this.resourceListType]){
       // this resource type list has not been downloaded yet, do so now
-      return this.fastenDb.GetResourcesForSource(this.source._id, this.resourceListType)
-        .then((paginatedResponse) => {
-          let resourceList = paginatedResponse.rows as ResourceFhir[]
+      return this.fastenApi.getResources(this.resourceListType, this.source.id)
+        .pipe(map((resourceList: ResourceFhir[]) => {
           //cache this response so we can skip the request next time
           this.resourceListCache[this.resourceListType] = resourceList
           return resourceList
-        })
+        }))
     } else {
-      return Promise.resolve(this.resourceListCache[this.resourceListType] || [])
+      return of(this.resourceListCache[this.resourceListType] || [])
     }
   }
 

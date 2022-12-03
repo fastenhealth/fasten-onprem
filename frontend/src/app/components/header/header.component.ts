@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {FastenDbService} from '../../services/fasten-db.service';
 import { Router } from '@angular/router';
 import {AuthService} from '../../services/auth.service';
 import {UserRegisteredClaims} from '../../models/fasten/user-registered-claims';

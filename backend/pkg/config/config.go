@@ -26,11 +26,7 @@ func (c *configuration) Init() error {
 	c.SetDefault("web.listen.basepath", "")
 	c.SetDefault("web.src.frontend.path", "/opt/fasten/web")
 
-	c.SetDefault("couchdb.scheme", "http")
-	c.SetDefault("couchdb.host", "localhost")
-	c.SetDefault("couchdb.port", "5984")
-	c.SetDefault("couchdb.admin.username", "admin")
-	c.SetDefault("couchdb.admin.password", "mysecretpassword")
+	c.SetDefault("database.location", "/opt/fasten/db/fasten.db") //TODO: should be /opt/fasten/fasten.db
 
 	c.SetDefault("jwt.issuer.key", "thisismysupersecuressessionsecretlength")
 

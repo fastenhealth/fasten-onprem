@@ -22,4 +22,4 @@ web:
 
 log:
   file: '' #absolute or relative paths allowed, eg. web.log
-  level: INFO
+  level: DEBUG

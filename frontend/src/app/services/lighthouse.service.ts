@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {map, tap} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
-import {LighthouseSourceMetadata} from '../../lib/models/lighthouse/lighthouse-source-metadata';
+import {LighthouseSourceMetadata} from '../models/lighthouse/lighthouse-source-metadata';
 import * as Oauth from '@panva/oauth4webapi';
 import {SourceState} from '../models/fasten/source-state';
 import {MetadataSource} from '../models/fasten/metadata-source';
