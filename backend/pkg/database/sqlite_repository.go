@@ -70,7 +70,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 		return nil, fmt.Errorf("Failed to create admin user! - %v", err)
 	}
 
-	deviceRepo := sqliteRepository{
+	deviceRepo := SqliteRepository{
 		appConfig:  appConfig,
 		logger:     globalLogger,
 		gormClient: database,
@@ -78,14 +78,14 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	return &deviceRepo, nil
 }
 
-type sqliteRepository struct {
+type SqliteRepository struct {
 	appConfig config.Interface
 	logger    logrus.FieldLogger
 
 	gormClient *gorm.DB
 }
 
-func (sr *sqliteRepository) Close() error {
+func (sr *SqliteRepository) Close() error {
 	return nil
 }
 
@@ -93,7 +93,7 @@ func (sr *sqliteRepository) Close() error {
 // User
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (sr *sqliteRepository) CreateUser(ctx context.Context, user *models.User) error {
+func (sr *SqliteRepository) CreateUser(ctx context.Context, user *models.User) error {
 	if err := user.HashPassword(user.Password); err != nil {
 		return err
 	}
@@ -103,13 +103,13 @@ func (sr *sqliteRepository) CreateUser(ctx context.Context, user *models.User) e
 	}
 	return nil
 }
-func (sr *sqliteRepository) GetUserByEmail(ctx context.Context, username string) (*models.User, error) {
+func (sr *SqliteRepository) GetUserByEmail(ctx context.Context, username string) (*models.User, error) {
 	var foundUser models.User
 	result := sr.gormClient.Where(models.User{Username: username}).First(&foundUser)
 	return &foundUser, result.Error
 }
 
-func (sr *sqliteRepository) GetCurrentUser(ctx context.Context) *models.User {
+func (sr *SqliteRepository) GetCurrentUser(ctx context.Context) *models.User {
 	ginCtx := ctx.(*gin.Context)
 	var currentUser models.User
 	sr.gormClient.First(&currentUser, models.User{Username: ginCtx.MustGet("AUTH_USERNAME").(string)})
@@ -121,7 +121,7 @@ func (sr *sqliteRepository) GetCurrentUser(ctx context.Context) *models.User {
 // User
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (sr *sqliteRepository) GetSummary(ctx context.Context) (*models.Summary, error) {
+func (sr *SqliteRepository) GetSummary(ctx context.Context) (*models.Summary, error) {
 
 	// we want a count of all resources for this user by type
 	var resourceCountResults []map[string]interface{}
@@ -168,7 +168,7 @@ func (sr *sqliteRepository) GetSummary(ctx context.Context) (*models.Summary, er
 // Resource
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (sr *sqliteRepository) UpsertRawResource(ctx context.Context, sourceCredential sourceModel.SourceCredential, rawResource sourceModel.RawResourceFhir) (bool, error) {
+func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredential sourceModel.SourceCredential, rawResource sourceModel.RawResourceFhir) (bool, error) {
 
 	source := sourceCredential.(models.SourceCredential)
 
@@ -222,7 +222,7 @@ func (sr *sqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 	//return nil
 }
 
-func (sr *sqliteRepository) UpsertResource(ctx context.Context, resourceModel *models.ResourceFhir) error {
+func (sr *SqliteRepository) UpsertResource(ctx context.Context, resourceModel *models.ResourceFhir) error {
 	sr.logger.Infof("insert/update (%T) %v", resourceModel, resourceModel)
 
 	if sr.gormClient.WithContext(ctx).
@@ -237,7 +237,7 @@ func (sr *sqliteRepository) UpsertResource(ctx context.Context, resourceModel *m
 	return nil
 }
 
-func (sr *sqliteRepository) ListResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceFhir, error) {
+func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceFhir, error) {
 
 	queryParam := models.ResourceFhir{
 		OriginBase: models.OriginBase{
@@ -269,7 +269,7 @@ func (sr *sqliteRepository) ListResources(ctx context.Context, queryOptions mode
 	return wrappedResourceModels, results.Error
 }
 
-func (sr *sqliteRepository) GetResourceBySourceType(ctx context.Context, sourceResourceType string, sourceResourceId string) (*models.ResourceFhir, error) {
+func (sr *SqliteRepository) GetResourceBySourceType(ctx context.Context, sourceResourceType string, sourceResourceId string) (*models.ResourceFhir, error) {
 	queryParam := models.ResourceFhir{
 		OriginBase: models.OriginBase{
 			UserID:             sr.GetCurrentUser(ctx).ID,
@@ -286,7 +286,7 @@ func (sr *sqliteRepository) GetResourceBySourceType(ctx context.Context, sourceR
 	return &wrappedResourceModel, results.Error
 }
 
-func (sr *sqliteRepository) GetResourceBySourceId(ctx context.Context, sourceId string, sourceResourceId string) (*models.ResourceFhir, error) {
+func (sr *SqliteRepository) GetResourceBySourceId(ctx context.Context, sourceId string, sourceResourceId string) (*models.ResourceFhir, error) {
 	sourceIdUUID, err := uuid.Parse(sourceId)
 	if err != nil {
 		return nil, err
@@ -309,7 +309,7 @@ func (sr *sqliteRepository) GetResourceBySourceId(ctx context.Context, sourceId 
 }
 
 // Get the patient for each source (for the current user)
-func (sr *sqliteRepository) GetPatientForSources(ctx context.Context) ([]models.ResourceFhir, error) {
+func (sr *SqliteRepository) GetPatientForSources(ctx context.Context) ([]models.ResourceFhir, error) {
 
 	//SELECT * FROM resource_fhirs WHERE user_id = "" and source_resource_type = "Patient" GROUP BY source_id
 
@@ -335,7 +335,7 @@ func (sr *sqliteRepository) GetPatientForSources(ctx context.Context) ([]models.
 // SourceCredential
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (sr *sqliteRepository) CreateSource(ctx context.Context, sourceCreds *models.SourceCredential) error {
+func (sr *SqliteRepository) CreateSource(ctx context.Context, sourceCreds *models.SourceCredential) error {
 	sourceCreds.UserID = sr.GetCurrentUser(ctx).ID
 
 	//Assign will **always** update the source credential in the DB with data passed into this function.
@@ -347,7 +347,7 @@ func (sr *sqliteRepository) CreateSource(ctx context.Context, sourceCreds *model
 		Assign(*sourceCreds).FirstOrCreate(sourceCreds).Error
 }
 
-func (sr *sqliteRepository) GetSource(ctx context.Context, sourceId string) (*models.SourceCredential, error) {
+func (sr *SqliteRepository) GetSource(ctx context.Context, sourceId string) (*models.SourceCredential, error) {
 	sourceUUID, err := uuid.Parse(sourceId)
 	if err != nil {
 		return nil, err
@@ -361,7 +361,7 @@ func (sr *sqliteRepository) GetSource(ctx context.Context, sourceId string) (*mo
 	return &sourceCred, results.Error
 }
 
-func (sr *sqliteRepository) GetSourceSummary(ctx context.Context, sourceId string) (*models.SourceSummary, error) {
+func (sr *SqliteRepository) GetSourceSummary(ctx context.Context, sourceId string) (*models.SourceSummary, error) {
 	sourceUUID, err := uuid.Parse(sourceId)
 	if err != nil {
 		return nil, err
@@ -414,7 +414,7 @@ func (sr *sqliteRepository) GetSourceSummary(ctx context.Context, sourceId strin
 	return sourceSummary, nil
 }
 
-func (sr *sqliteRepository) GetSources(ctx context.Context) ([]models.SourceCredential, error) {
+func (sr *SqliteRepository) GetSources(ctx context.Context) ([]models.SourceCredential, error) {
 
 	var sourceCreds []models.SourceCredential
 	results := sr.gormClient.WithContext(ctx).
