@@ -41,7 +41,7 @@ func AuthSignin(c *gin.Context) {
 		return
 	}
 
-	foundUser, err := databaseRepo.GetUserByEmail(c, user.Username)
+	foundUser, err := databaseRepo.GetUserByUsername(c, user.Username)
 	if err != nil || foundUser == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": fmt.Sprintf("could not find user: %s", user.Username)})
 		return

@@ -40,7 +40,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	})
 	database, err := gorm.Open(sqlite.Open(appConfig.GetString("database.location")+pragmaStr), &gorm.Config{
 		//TODO: figure out how to log database queries again.
-		//Logger: logger
+		//Logger: Logger
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 
@@ -53,14 +53,16 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	}
 	globalLogger.Infof("Successfully connected to fasten sqlite db: %s\n", appConfig.GetString("database.location"))
 
+	deviceRepo := SqliteRepository{
+		AppConfig:  appConfig,
+		Logger:     globalLogger,
+		GormClient: database,
+	}
+
 	//TODO: automigrate for now
-	err = database.AutoMigrate(
-		&models.User{},
-		&models.SourceCredential{},
-		&models.ResourceFhir{},
-	)
+	err = deviceRepo.Migrate()
 	if err != nil {
-		return nil, fmt.Errorf("Failed to automigrate! - %v", err)
+		return nil, err
 	}
 
 	// create/update admin user
@@ -70,19 +72,26 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 		return nil, fmt.Errorf("Failed to create admin user! - %v", err)
 	}
 
-	deviceRepo := SqliteRepository{
-		appConfig:  appConfig,
-		logger:     globalLogger,
-		gormClient: database,
-	}
 	return &deviceRepo, nil
 }
 
 type SqliteRepository struct {
-	appConfig config.Interface
-	logger    logrus.FieldLogger
+	AppConfig config.Interface
+	Logger    logrus.FieldLogger
 
-	gormClient *gorm.DB
+	GormClient *gorm.DB
+}
+
+func (sr *SqliteRepository) Migrate() error {
+	err := sr.GormClient.AutoMigrate(
+		&models.User{},
+		&models.SourceCredential{},
+		&models.ResourceFhir{},
+	)
+	if err != nil {
+		return fmt.Errorf("Failed to automigrate! - %v", err)
+	}
+	return nil
 }
 
 func (sr *SqliteRepository) Close() error {
@@ -97,22 +106,22 @@ func (sr *SqliteRepository) CreateUser(ctx context.Context, user *models.User) e
 	if err := user.HashPassword(user.Password); err != nil {
 		return err
 	}
-	record := sr.gormClient.Create(user)
+	record := sr.GormClient.Create(user)
 	if record.Error != nil {
 		return record.Error
 	}
 	return nil
 }
-func (sr *SqliteRepository) GetUserByEmail(ctx context.Context, username string) (*models.User, error) {
+func (sr *SqliteRepository) GetUserByUsername(ctx context.Context, username string) (*models.User, error) {
 	var foundUser models.User
-	result := sr.gormClient.Where(models.User{Username: username}).First(&foundUser)
+	result := sr.GormClient.Where(models.User{Username: username}).First(&foundUser)
 	return &foundUser, result.Error
 }
 
 func (sr *SqliteRepository) GetCurrentUser(ctx context.Context) *models.User {
 	ginCtx := ctx.(*gin.Context)
 	var currentUser models.User
-	sr.gormClient.First(&currentUser, models.User{Username: ginCtx.MustGet("AUTH_USERNAME").(string)})
+	sr.GormClient.First(&currentUser, models.User{Username: ginCtx.MustGet("AUTH_USERNAME").(string)})
 
 	return &currentUser
 }
@@ -128,7 +137,7 @@ func (sr *SqliteRepository) GetSummary(ctx context.Context) (*models.Summary, er
 
 	//group by resource type and return counts
 	// SELECT source_resource_type as resource_type, COUNT(*) as count FROM resource_fhirs WHERE source_id = "53c1e930-63af-46c9-b760-8e83cbc1abd9" GROUP BY source_resource_type;
-	result := sr.gormClient.WithContext(ctx).
+	result := sr.GormClient.WithContext(ctx).
 		Model(models.ResourceFhir{}).
 		Select("source_id, source_resource_type as resource_type, count(*) as count").
 		Group("source_resource_type").
@@ -183,9 +192,9 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 		ResourceRaw: datatypes.JSON(rawResource.ResourceRaw),
 	}
 
-	sr.logger.Infof("insert/update (%v) %v", rawResource.SourceResourceType, rawResource.SourceResourceID)
+	sr.Logger.Infof("insert/update (%v) %v", rawResource.SourceResourceType, rawResource.SourceResourceID)
 
-	createResult := sr.gormClient.WithContext(ctx).Where(models.OriginBase{
+	createResult := sr.GormClient.WithContext(ctx).Where(models.OriginBase{
 		SourceID:           wrappedResourceModel.GetSourceID(),
 		SourceResourceID:   wrappedResourceModel.GetSourceResourceID(),
 		SourceResourceType: wrappedResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
@@ -210,29 +219,29 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 
 	//return results.RowsAffected > 0, results.Error
 
-	//if sr.gormClient.Debug().WithContext(ctx).
+	//if sr.GormClient.Debug().WithContext(ctx).
 	//	Where(models.OriginBase{
 	//		SourceID:           wrappedResourceModel.GetSourceID(),
 	//		SourceResourceID:   wrappedResourceModel.GetSourceResourceID(),
 	//		SourceResourceType: wrappedResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
 	//	}).Updates(wrappedResourceModel).RowsAffected == 0 {
-	//	sr.logger.Infof("resource does not exist, creating: %s %s %s", wrappedResourceModel.GetSourceID(), wrappedResourceModel.GetSourceResourceID(), wrappedResourceModel.GetSourceResourceType())
-	//	return sr.gormClient.Debug().Create(wrappedResourceModel).Error
+	//	sr.Logger.Infof("resource does not exist, creating: %s %s %s", wrappedResourceModel.GetSourceID(), wrappedResourceModel.GetSourceResourceID(), wrappedResourceModel.GetSourceResourceType())
+	//	return sr.GormClient.Debug().Create(wrappedResourceModel).Error
 	//}
 	//return nil
 }
 
 func (sr *SqliteRepository) UpsertResource(ctx context.Context, resourceModel *models.ResourceFhir) error {
-	sr.logger.Infof("insert/update (%T) %v", resourceModel, resourceModel)
+	sr.Logger.Infof("insert/update (%T) %v", resourceModel, resourceModel)
 
-	if sr.gormClient.WithContext(ctx).
+	if sr.GormClient.WithContext(ctx).
 		Where(models.OriginBase{
 			SourceID:           resourceModel.GetSourceID(),
 			SourceResourceID:   resourceModel.GetSourceResourceID(),
 			SourceResourceType: resourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
 		}).Updates(resourceModel).RowsAffected == 0 {
-		sr.logger.Infof("resource does not exist, creating: %s %s %s", resourceModel.GetSourceID(), resourceModel.GetSourceResourceID(), resourceModel.GetSourceResourceType())
-		return sr.gormClient.Create(resourceModel).Error
+		sr.Logger.Infof("resource does not exist, creating: %s %s %s", resourceModel.GetSourceID(), resourceModel.GetSourceResourceID(), resourceModel.GetSourceResourceType())
+		return sr.GormClient.Create(resourceModel).Error
 	}
 	return nil
 }
@@ -259,10 +268,10 @@ func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions mode
 	}
 
 	manifestJson, _ := json.MarshalIndent(queryParam, "", "  ")
-	sr.logger.Infof("THE QUERY OBJECT===========> %v", string(manifestJson))
+	sr.Logger.Infof("THE QUERY OBJECT===========> %v", string(manifestJson))
 
 	var wrappedResourceModels []models.ResourceFhir
-	results := sr.gormClient.WithContext(ctx).
+	results := sr.GormClient.WithContext(ctx).
 		Where(queryParam).
 		Find(&wrappedResourceModels)
 
@@ -279,7 +288,7 @@ func (sr *SqliteRepository) GetResourceBySourceType(ctx context.Context, sourceR
 	}
 
 	var wrappedResourceModel models.ResourceFhir
-	results := sr.gormClient.WithContext(ctx).
+	results := sr.GormClient.WithContext(ctx).
 		Where(queryParam).
 		First(&wrappedResourceModel)
 
@@ -301,7 +310,7 @@ func (sr *SqliteRepository) GetResourceBySourceId(ctx context.Context, sourceId 
 	}
 
 	var wrappedResourceModel models.ResourceFhir
-	results := sr.gormClient.WithContext(ctx).
+	results := sr.GormClient.WithContext(ctx).
 		Where(queryParam).
 		First(&wrappedResourceModel)
 
@@ -314,12 +323,12 @@ func (sr *SqliteRepository) GetPatientForSources(ctx context.Context) ([]models.
 	//SELECT * FROM resource_fhirs WHERE user_id = "" and source_resource_type = "Patient" GROUP BY source_id
 
 	//var sourceCred models.SourceCredential
-	//results := sr.gormClient.WithContext(ctx).
+	//results := sr.GormClient.WithContext(ctx).
 	//	Where(models.SourceCredential{UserID: sr.GetCurrentUser(ctx).ID, ModelBase: models.ModelBase{ID: sourceUUID}}).
 	//	First(&sourceCred)
 
 	var wrappedResourceModels []models.ResourceFhir
-	results := sr.gormClient.WithContext(ctx).
+	results := sr.GormClient.WithContext(ctx).
 		Model(models.ResourceFhir{}).
 		Group("source_id").
 		Where(models.OriginBase{
@@ -339,7 +348,7 @@ func (sr *SqliteRepository) CreateSource(ctx context.Context, sourceCreds *model
 	sourceCreds.UserID = sr.GetCurrentUser(ctx).ID
 
 	//Assign will **always** update the source credential in the DB with data passed into this function.
-	return sr.gormClient.WithContext(ctx).
+	return sr.GormClient.WithContext(ctx).
 		Where(models.SourceCredential{
 			UserID:     sourceCreds.UserID,
 			SourceType: sourceCreds.SourceType,
@@ -354,7 +363,7 @@ func (sr *SqliteRepository) GetSource(ctx context.Context, sourceId string) (*mo
 	}
 
 	var sourceCred models.SourceCredential
-	results := sr.gormClient.WithContext(ctx).
+	results := sr.GormClient.WithContext(ctx).
 		Where(models.SourceCredential{UserID: sr.GetCurrentUser(ctx).ID, ModelBase: models.ModelBase{ID: sourceUUID}}).
 		First(&sourceCred)
 
@@ -380,7 +389,7 @@ func (sr *SqliteRepository) GetSourceSummary(ctx context.Context, sourceId strin
 
 	var resourceTypeCounts []map[string]interface{}
 
-	result := sr.gormClient.WithContext(ctx).
+	result := sr.GormClient.WithContext(ctx).
 		Model(models.ResourceFhir{}).
 		Select("source_id, source_resource_type as resource_type, count(*) as count").
 		Group("source_resource_type").
@@ -398,7 +407,7 @@ func (sr *SqliteRepository) GetSourceSummary(ctx context.Context, sourceId strin
 
 	//set patient
 	var wrappedPatientResourceModel models.ResourceFhir
-	results := sr.gormClient.WithContext(ctx).
+	results := sr.GormClient.WithContext(ctx).
 		Where(models.OriginBase{
 			UserID:             sr.GetCurrentUser(ctx).ID,
 			SourceResourceType: "Patient",
@@ -417,7 +426,7 @@ func (sr *SqliteRepository) GetSourceSummary(ctx context.Context, sourceId strin
 func (sr *SqliteRepository) GetSources(ctx context.Context) ([]models.SourceCredential, error) {
 
 	var sourceCreds []models.SourceCredential
-	results := sr.gormClient.WithContext(ctx).
+	results := sr.GormClient.WithContext(ctx).
 		Where(models.SourceCredential{UserID: sr.GetCurrentUser(ctx).ID}).
 		Find(&sourceCreds)
 

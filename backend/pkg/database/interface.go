@@ -9,10 +9,11 @@ import (
 //go:generate mockgen -source=interface.go -destination=mock/mock_database.go
 type DatabaseRepository interface {
 	Close() error
+	Migrate() error
 
 	CreateUser(context.Context, *models.User) error
 
-	GetUserByEmail(context.Context, string) (*models.User, error)
+	GetUserByUsername(context.Context, string) (*models.User, error)
 	GetCurrentUser(context.Context) *models.User
 
 	GetSummary(ctx context.Context) (*models.Summary, error)

@@ -1,12 +1,19 @@
 package models
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"golang.org/x/crypto/bcrypt"
+)
 
 type User struct {
 	ModelBase
 	FullName string `json:"full_name"`
 	Username string `json:"username" gorm:"unique"`
 	Password string `json:"password"`
+
+	//additional optional metadata that Fasten stores with users
+	Picture string `json:"picture"`
+	Email   string `json:"email"`
+	//Roles   datatypes.JSON `json:"roles"`
 }
 
 func (user *User) HashPassword(password string) error {
