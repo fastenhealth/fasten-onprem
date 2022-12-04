@@ -119,9 +119,14 @@ func (sr *SqliteRepository) GetUserByUsername(ctx context.Context, username stri
 }
 
 func (sr *SqliteRepository) GetCurrentUser(ctx context.Context) *models.User {
-	ginCtx := ctx.(*gin.Context)
+	username := ctx.Value("AUTH_USERNAME")
+	if username == nil {
+		ginCtx := ctx.(*gin.Context)
+		username = ginCtx.MustGet("AUTH_USERNAME")
+	}
+
 	var currentUser models.User
-	sr.GormClient.First(&currentUser, models.User{Username: ginCtx.MustGet("AUTH_USERNAME").(string)})
+	sr.GormClient.First(&currentUser, models.User{Username: username.(string)})
 
 	return &currentUser
 }
@@ -139,7 +144,7 @@ func (sr *SqliteRepository) GetSummary(ctx context.Context) (*models.Summary, er
 	// SELECT source_resource_type as resource_type, COUNT(*) as count FROM resource_fhirs WHERE source_id = "53c1e930-63af-46c9-b760-8e83cbc1abd9" GROUP BY source_resource_type;
 	result := sr.GormClient.WithContext(ctx).
 		Model(models.ResourceFhir{}).
-		Select("source_id, source_resource_type as resource_type, count(*) as count").
+		Select("source_resource_type as resource_type, count(*) as count").
 		Group("source_resource_type").
 		Where(models.OriginBase{
 			UserID: sr.GetCurrentUser(ctx).ID,
@@ -330,7 +335,7 @@ func (sr *SqliteRepository) GetPatientForSources(ctx context.Context) ([]models.
 	var wrappedResourceModels []models.ResourceFhir
 	results := sr.GormClient.WithContext(ctx).
 		Model(models.ResourceFhir{}).
-		Group("source_id").
+		//Group("source_id"). //broken in Postgres.
 		Where(models.OriginBase{
 			UserID:             sr.GetCurrentUser(ctx).ID,
 			SourceResourceType: "Patient",
