@@ -2,23 +2,29 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/golang-jwt/jwt/v4"
 	"log"
 	"time"
 )
 
+// JwtGenerateFastenTokenFromUser Note: these functions are duplicated, in Fasten Cloud
+//Any changes here must be replicated in that repo
 func JwtGenerateFastenTokenFromUser(user models.User, issuerSigningKey string) (string, error) {
 	log.Printf("ISSUER KEY: " + issuerSigningKey)
 	userClaims := UserRegisteredClaims{
-		FullName: user.FullName,
-		UserId:   user.ID.String(),
 		RegisteredClaims: jwt.RegisteredClaims{
 			// In JWT, the expiry time is expressed as unix milliseconds
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			Issuer:    "docker-fastenhealth",
 			Subject:   user.Username,
+		},
+		UserMetadata: UserMetadata{
+			FullName: user.FullName,
+			Picture:  "",
+			Email:    user.ID.String(),
 		},
 	}
 
@@ -39,7 +45,7 @@ func JwtValidateFastenToken(encryptionKey string, signedToken string) (*UserRegi
 		&UserRegisteredClaims{},
 		func(token *jwt.Token) (interface{}, error) {
 			if jwt.SigningMethodHS256 != token.Method {
-				return nil, errors.New("Invalid signing algorithm")
+				return nil, fmt.Errorf("invalid signing algorithm: %s", token.Method)
 			}
 			return []byte(encryptionKey), nil
 		},

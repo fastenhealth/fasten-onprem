@@ -40,7 +40,6 @@ func RequireAuth() gin.HandlerFunc {
 		//todo, is this shared between all sessions??
 		c.Set("AUTH_TOKEN", tokenString)
 		c.Set("AUTH_USERNAME", claim.Subject)
-		c.Set("AUTH_USERID", claim.UserId)
 
 		c.Next()
 	}
