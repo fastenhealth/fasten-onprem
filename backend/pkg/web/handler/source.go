@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"github.com/fastenhealth/fasten-sources/clients/factory"
 	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
@@ -36,7 +37,7 @@ func CreateSource(c *gin.Context) {
 	}
 
 	// after creating the source, we should do a bulk import
-	summary, err := syncSourceResources(c, logger, databaseRepo, sourceCred)
+	summary, err := SyncSourceResources(c, logger, databaseRepo, sourceCred)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
@@ -59,7 +60,7 @@ func SourceSync(c *gin.Context) {
 	}
 
 	// after creating the source, we should do a bulk import
-	summary, err := syncSourceResources(c, logger, databaseRepo, *sourceCred)
+	summary, err := SyncSourceResources(c, logger, databaseRepo, *sourceCred)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
@@ -236,8 +237,7 @@ func RawRequestSource(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": resp})
 }
 
-////// private functions
-func syncSourceResources(c *gin.Context, logger *logrus.Entry, databaseRepo database.DatabaseRepository, sourceCred models.SourceCredential) (sourceModels.UpsertSummary, error) {
+func SyncSourceResources(c context.Context, logger *logrus.Entry, databaseRepo database.DatabaseRepository, sourceCred models.SourceCredential) (sourceModels.UpsertSummary, error) {
 	// after creating the source, we should do a bulk import
 	sourceClient, updatedSource, err := factory.GetSourceClient(sourcePkg.GetFastenEnv(), sourceCred.SourceType, c, logger, sourceCred)
 	if err != nil {
