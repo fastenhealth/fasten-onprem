@@ -9,11 +9,11 @@
         </div>
         <div class="col-3 mt-2 mb-2 tx-12">
           <p class="mb-0">
-            <strong>Patient:</strong> Caldwell, Ruben<br/>
-            <strong>Address:</strong> 123 B Street<br/>Gainsville, FL, 94153<br/>
-            <strong>Date of Birth:</strong> June 20, 1929<br/>
-            <strong>Phone:</strong> 415-343-2342<br/>
-            <strong>Email:</strong> myemail@gmail.com
+            <strong>Patient:</strong> {{patient | fhirPath: "Patient.name.family.first()"}}, {{patient | fhirPath: "Patient.name.given.first()"}}<br/>
+            <strong>Address:</strong> {{patient | fhirPath: "Patient.address.line.first()"}}<br/>{{patient | fhirPath: "Patient.address.city.first()"}}, {{patient | fhirPath: "Patient.address.state.first()"}}, {{patient | fhirPath: "Patient.address.postalCode.first()"}}<br/>
+            <strong>Date of Birth:</strong> {{patient | fhirPath: "Patient.birthDate" | date }}<br/>
+            <strong>Phone:</strong> {{patient | fhirPath: "Patient.telecom.where(system='phone').value.first()"}}<br/>
+            <strong>Email:</strong> {{patient | fhirPath: "Patient.telecom.where(system='email').value.first()"}}
           </p>
         </div>
         <div class="col-3 tx-indigo mt-2 mb-2 tx-12">
@@ -37,86 +37,86 @@
       </div>
 
       <!-- Condition List -->
-
-      <div class="row bg-indigo tx-white pt-1 pb-1">
-        <!-- Condition Header -->
-        <div class="col-6 d-flex align-items-center">
-          <h3 class="mb-0">Gout</h3>
-        </div>
-        <div class="col-6 d-flex align-items-center">
-          <h3 class="mb-0">Nov 16, 2002 - Present</h3>
-        </div>
-      </div>
-
-
-      <div class="row">
-        <!-- Condition Details -->
-
-        <div class="col-6 mb-2">
-
-          <div class="row  pl-3">
-            <div class="col-12 mt-3 mb-2 tx-indigo">
-              <h5>Involved in Care</h5>
-            </div>
-
-            <div class="col-6">
-              <strong>James Bishop</strong>, ANRP
-            </div>
-            <div class="col-6">
-              Primary Care
-            </div>
-
-            <div class="col-6">
-              <strong>Matthew Leonard</strong>, MD
-            </div>
-            <div class="col-6">
-              Diagnosing Physician
-            </div>
-
-            <div class="col-6">
-              <strong>Stephanie Wrenn</strong>, MD
-            </div>
-            <div class="col-6">
-              Dietitian
-            </div>
-
-
-            <div class="col-12  mt-3 mb-2 tx-indigo">
-              <h5>Initial Presentation</h5>
-            </div>
-            <div class="col-12">
-              Acute right knee pain and tenderness around the joint line - this was likely caused by acute renal failure.
-            </div>
+      <ng-container *ngFor="let condition of conditions; let i = index">
+        <div class="row bg-indigo tx-white pt-1 pb-1">
+          <!-- Condition Header -->
+          <div class="col-6 d-flex align-items-center">
+            <h3 class="mb-0">{{condition | fhirPath: "Condition.code.text.first()"}}</h3>
           </div>
-
-
-
-        </div>
-        <div class="col-6 mb-2 bg-gray-100">
-          <div class="row">
-            <div class="col-12 mt-3 mb-2 tx-indigo">
-              <h5>Nov 19, 2012</h5>
-            </div>
-            <div class="col-12 mt-2 mb-2">
-              <strong>Medications:</strong> Colchicine, as needed for gout attacks
-            </div>
-
-
-            <div class="col-12 mt-3 mb-2 tx-indigo">
-              <h5>Nov 16, 2012</h5>
-            </div>
-            <div class="col-12 mt-2 mb-2">
-              <strong>Procedures:</strong> The fluid in your right knee was drained.
-            </div>
-            <div class="col-12 mt-2 mb-2">
-              <strong>Tests and Examinations:</strong> The fluid tested prositive for gout crystals
-            </div>
-            <div class="col-12 mt-2 mb-2">
-              <strong>Medications:</strong> You were given a steroid injection to reduce inflammation and as short course prednistone to reduce pain and inflammation
-            </div>
+          <div class="col-6 d-flex align-items-center">
+            <h3 class="mb-0">{{condition | fhirPath: "Condition.onsetPeriod.start" | date }} - {{condition | fhirPath: "Condition.onsetPeriod.end" | date}}</h3>
           </div>
         </div>
-      </div>
+
+        <div class="row">
+          <!-- Condition Details -->
+
+          <div class="col-6 mb-2">
+
+            <div class="row  pl-3">
+              <div class="col-12 mt-3 mb-2 tx-indigo">
+                <h5>Involved in Care</h5>
+              </div>
+
+              <div class="col-6">
+                <strong>James Bishop</strong>, ANRP
+              </div>
+              <div class="col-6">
+                Primary Care
+              </div>
+
+              <div class="col-6">
+                <strong>Matthew Leonard</strong>, MD
+              </div>
+              <div class="col-6">
+                Diagnosing Physician
+              </div>
+
+              <div class="col-6">
+                <strong>Stephanie Wrenn</strong>, MD
+              </div>
+              <div class="col-6">
+                Dietitian
+              </div>
+
+
+              <div class="col-12  mt-3 mb-2 tx-indigo">
+                <h5>Initial Presentation</h5>
+              </div>
+              <div class="col-12">
+                Acute right knee pain and tenderness around the joint line - this was likely caused by acute renal failure.
+              </div>
+            </div>
+
+
+
+          </div>
+          <div class="col-6 mb-2 bg-gray-100">
+            <div class="row">
+              <div class="col-12 mt-3 mb-2 tx-indigo">
+                <h5>Nov 19, 2012</h5>
+              </div>
+              <div class="col-12 mt-2 mb-2">
+                <strong>Medications:</strong> Colchicine, as needed for gout attacks
+              </div>
+
+
+              <div class="col-12 mt-3 mb-2 tx-indigo">
+                <h5>Nov 16, 2012</h5>
+              </div>
+              <div class="col-12 mt-2 mb-2">
+                <strong>Procedures:</strong> The fluid in your right knee was drained.
+              </div>
+              <div class="col-12 mt-2 mb-2">
+                <strong>Tests and Examinations:</strong> The fluid tested prositive for gout crystals
+              </div>
+              <div class="col-12 mt-2 mb-2">
+                <strong>Medications:</strong> You were given a steroid injection to reduce inflammation and as short course prednistone to reduce pain and inflammation
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
 
 
     </div>

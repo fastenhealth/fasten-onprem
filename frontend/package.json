@@ -34,6 +34,7 @@
     "chart.js": "2.9.4",
     "crypto-pouch": "^4.0.1",
     "fhirclient": "^2.5.1",
+    "fhirpath": "^3.3.0",
     "garbados-crypt": "^3.0.0-beta",
     "humanize-duration": "^3.27.3",
     "idb": "^7.1.0",
