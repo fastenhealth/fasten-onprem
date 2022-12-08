@@ -28,7 +28,7 @@ import { MomentModule } from 'ngx-moment';
 import {AuthService} from './services/auth.service';
 import { PatientProfileComponent } from './pages/patient-profile/patient-profile.component';
 import { MedicalHistoryComponent } from './pages/medical-history/medical-history.component';
-import { FhirPathPipe } from './pipes/fhir-path.pipe';
+
 
 @NgModule({
   declarations: [
@@ -43,7 +43,6 @@ import { FhirPathPipe } from './pipes/fhir-path.pipe';
     SourceDetailComponent,
     PatientProfileComponent,
     MedicalHistoryComponent,
-    FhirPathPipe,
   ],
   imports: [
     FormsModule,

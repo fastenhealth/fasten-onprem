@@ -271,6 +271,9 @@ func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions mode
 
 		queryParam.OriginBase.SourceID = sourceUUID
 	}
+	if len(queryOptions.SourceResourceID) > 0 {
+		queryParam.OriginBase.SourceResourceID = queryOptions.SourceResourceID
+	}
 
 	manifestJson, _ := json.MarshalIndent(queryParam, "", "  ")
 	sr.Logger.Infof("THE QUERY OBJECT===========> %v", string(manifestJson))

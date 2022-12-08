@@ -100,13 +100,17 @@ export class FastenApiService {
       );
   }
 
-  getResources(sourceResourceType?: string, sourceID?: string): Observable<ResourceFhir[]> {
+  getResources(sourceResourceType?: string, sourceID?: string, sourceResourceID?: string): Observable<ResourceFhir[]> {
     let queryParams = {}
     if(sourceResourceType){
       queryParams["sourceResourceType"] = sourceResourceType
     }
     if(sourceID){
       queryParams["sourceID"] = sourceID
+    }
+
+    if(sourceResourceID){
+      queryParams["sourceResourceID"] = sourceResourceID
     }
 
     return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/fhir`, {params: queryParams})

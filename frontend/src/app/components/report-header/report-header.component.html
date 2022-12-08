@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col-6 bg-indigo tx-white d-flex align-items-center">
+    <h1>{{reportHeaderTitle}}</h1>
+  </div>
+  <div class="col-3 mt-2 mb-2 tx-12">
+    <p class="mb-0">
+      <strong>Patient:</strong> {{patient | fhirPath: "Patient.name.family.first()"}}, {{patient | fhirPath: "Patient.name.given.first()"}}<br/>
+      <strong>Address:</strong> {{patient | fhirPath: "Patient.address.line.first()"}}<br/>{{patient | fhirPath: "Patient.address.city.first()"}}, {{patient | fhirPath: "Patient.address.state.first()"}}, {{patient | fhirPath: "Patient.address.postalCode.first()"}}<br/>
+      <strong>Date of Birth:</strong> {{patient | fhirPath: "Patient.birthDate" | date }}<br/>
+      <strong>Phone:</strong> {{patient | fhirPath: "Patient.telecom.where(system='phone').value.first()"}}<br/>
+      <strong>Email:</strong> {{patient | fhirPath: "Patient.telecom.where(system='email').value.first()"}}
+    </p>
+  </div>
+  <div class="col-3 tx-indigo mt-2 mb-2 tx-12">
+    <p *ngIf="primaryCare" class="mb-0">
+      <strong>Primary Care:</strong> {{primaryCare | fhirPath: "Practitioner.name.family.first()"}}, {{primaryCare | fhirPath: "Practitioner.name.given.first()"}}<br/>
+      <strong>Address:</strong> {{primaryCare | fhirPath: "Practitioner.address.line.first()"}}<br/>{{primaryCare | fhirPath: "Practitioner.address.city.first()"}}, {{primaryCare | fhirPath: "Practitioner.address.state.first()"}}, {{primaryCare | fhirPath: "Practitioner.address.postalCode.first()"}}<br/>
+      <strong>Phone:</strong> {{primaryCare | fhirPath: "Practitioner.telecom.where(system='phone').value.first()"}}<br/>
+      <strong>Email:</strong> {{primaryCare | fhirPath: "Practitioner.telecom.where(system='email').value.first()"}}<br/>
+    </p>
+  </div>
+</div>

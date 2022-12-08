@@ -3,28 +3,7 @@
     <div class="az-content-body">
 
       <!-- Header Row -->
-      <div class="row">
-        <div class="col-6 bg-indigo tx-white d-flex align-items-center">
-          <h1>Medical History</h1>
-        </div>
-        <div class="col-3 mt-2 mb-2 tx-12">
-          <p class="mb-0">
-            <strong>Patient:</strong> {{patient | fhirPath: "Patient.name.family.first()"}}, {{patient | fhirPath: "Patient.name.given.first()"}}<br/>
-            <strong>Address:</strong> {{patient | fhirPath: "Patient.address.line.first()"}}<br/>{{patient | fhirPath: "Patient.address.city.first()"}}, {{patient | fhirPath: "Patient.address.state.first()"}}, {{patient | fhirPath: "Patient.address.postalCode.first()"}}<br/>
-            <strong>Date of Birth:</strong> {{patient | fhirPath: "Patient.birthDate" | date }}<br/>
-            <strong>Phone:</strong> {{patient | fhirPath: "Patient.telecom.where(system='phone').value.first()"}}<br/>
-            <strong>Email:</strong> {{patient | fhirPath: "Patient.telecom.where(system='email').value.first()"}}
-          </p>
-        </div>
-        <div class="col-3 tx-indigo mt-2 mb-2 tx-12">
-          <p class="mb-0">
-            <strong>Primary Care:</strong> Bishop, J. ANRP<br/>
-            <strong>Address:</strong> Malcom Randall VA <br/>Medical Center Gainsville FL<br/>
-            <strong>Phone:</strong> 123-321-5532<br/>
-            <strong>Email:</strong> myemail@va.com<br/>
-          </p>
-        </div>
-      </div>
+      <report-header [reportHeaderTitle]="'Medical History'"></report-header>
 
       <!-- Conditions Title -->
       <div class="row mt-5 mb-3">
