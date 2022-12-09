@@ -186,6 +186,23 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 
 	source := sourceCredential.(models.SourceCredential)
 
+	relatedResources := []*models.ResourceFhir{}
+
+	if rawResource.ReferencedResources != nil {
+		for _, referencedResource := range rawResource.ReferencedResources {
+			parts := strings.Split(referencedResource, "/")
+			if len(parts) == 2 {
+				relatedResources = append(relatedResources, &models.ResourceFhir{
+					OriginBase: models.OriginBase{
+						SourceID:           source.ID,
+						SourceResourceType: parts[0],
+						SourceResourceID:   parts[1],
+					},
+				})
+			}
+		}
+	}
+
 	wrappedResourceModel := &models.ResourceFhir{
 		OriginBase: models.OriginBase{
 			ModelBase:          models.ModelBase{},
@@ -194,7 +211,8 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 			SourceResourceID:   rawResource.SourceResourceID,
 			SourceResourceType: rawResource.SourceResourceType,
 		},
-		ResourceRaw: datatypes.JSON(rawResource.ResourceRaw),
+		ResourceRaw:         datatypes.JSON(rawResource.ResourceRaw),
+		RelatedResourceFhir: relatedResources,
 	}
 
 	sr.Logger.Infof("insert/update (%v) %v", rawResource.SourceResourceType, rawResource.SourceResourceID)
@@ -203,7 +221,7 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 		SourceID:           wrappedResourceModel.GetSourceID(),
 		SourceResourceID:   wrappedResourceModel.GetSourceResourceID(),
 		SourceResourceType: wrappedResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-	}).FirstOrCreate(wrappedResourceModel)
+	}).Omit("RelatedResourceFhir.*").FirstOrCreate(wrappedResourceModel)
 
 	if createResult.Error != nil {
 		return false, createResult.Error
@@ -211,7 +229,7 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 		//at this point, wrappedResourceModel contains the data found in the database.
 		// check if the database resource matches the new resource.
 		if wrappedResourceModel.ResourceRaw.String() != string(rawResource.ResourceRaw) {
-			updateResult := createResult.Updates(wrappedResourceModel)
+			updateResult := createResult.Omit("RelatedResourceFhir.*").Updates(wrappedResourceModel)
 			return updateResult.RowsAffected > 0, updateResult.Error
 		} else {
 			return false, nil
@@ -279,8 +297,12 @@ func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions mode
 	sr.Logger.Infof("THE QUERY OBJECT===========> %v", string(manifestJson))
 
 	var wrappedResourceModels []models.ResourceFhir
-	results := sr.GormClient.WithContext(ctx).
-		Where(queryParam).
+	queryBuilder := sr.GormClient.WithContext(ctx)
+	if queryOptions.PreloadRelated {
+		//enable preload functionality in query
+		queryBuilder = queryBuilder.Preload("RelatedResourceFhir")
+	}
+	results := queryBuilder.Where(queryParam).
 		Find(&wrappedResourceModels)
 
 	return wrappedResourceModels, results.Error

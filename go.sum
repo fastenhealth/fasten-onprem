@@ -72,8 +72,8 @@ github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1m
 github.com/envoyproxy/go-control-plane v0.9.7/go.mod h1:cwu0lG7PUMfa9snN8LXBig5ynNVH9qI8YYLbd1fK2po=
 github.com/envoyproxy/go-control-plane v0.9.9-0.20201210154907-fd9021fe5dad/go.mod h1:cXg6YxExXjJnVBQHBLXeUAgxn2UodCpnH306RInaBQk=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
-github.com/fastenhealth/fasten-sources v0.0.3 h1:g07Lk59hiOWO2PhJoaP7eC0OIeIsxE50e6wH6sW96J4=
-github.com/fastenhealth/fasten-sources v0.0.3/go.mod h1:f6N8wLHEPXbz1QvI+JDQzIz9u1xu0Lp/j0LxYFHkpBM=
+github.com/fastenhealth/fasten-sources v0.0.4 h1:yIauhnrczFheH/DIRabmlUhmahiRGUFsNJ0z/0XsLNQ=
+github.com/fastenhealth/fasten-sources v0.0.4/go.mod h1:f6N8wLHEPXbz1QvI+JDQzIz9u1xu0Lp/j0LxYFHkpBM=
 github.com/fastenhealth/gofhir-models v0.0.4 h1:Q//StwNXGfK+WAS2DckGBHAP1R4cHMRZEF/sLGgmR04=
 github.com/fastenhealth/gofhir-models v0.0.4/go.mod h1:xB8ikGxu3bUq2b1JYV+CZpHqBaLXpOizFR0eFBCunis=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=

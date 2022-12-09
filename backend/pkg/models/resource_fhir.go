@@ -11,11 +11,13 @@ type ResourceFhir struct {
 	ResourceRaw datatypes.JSON `json:"resource_raw" gorm:"resource_raw"`
 
 	//relationships
-	RelatedResourceFhir []*ResourceFhir `gorm:"many2many:related_resources"`
+	RelatedResourceFhir []*ResourceFhir `gorm:"many2many:related_resources;ForeignKey:source_id,source_resource_type,source_resource_id;references:source_id,source_resource_type,source_resource_id;"`
 }
 
 type ListResourceQueryOptions struct {
 	SourceID           string
 	SourceResourceType string
 	SourceResourceID   string
+
+	PreloadRelated bool
 }
