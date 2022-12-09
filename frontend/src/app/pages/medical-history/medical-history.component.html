@@ -20,10 +20,10 @@
         <div class="row bg-indigo tx-white pt-1 pb-1">
           <!-- Condition Header -->
           <div class="col-6 d-flex align-items-center">
-            <h3 class="mb-0">{{condition | fhirPath: "Condition.code.text.first()"}}</h3>
+            <h3 class="mb-0">{{condition | fhirPath: "Condition.code.text.first()":"Condition.code.coding.display.first()"}}</h3>
           </div>
           <div class="col-6 d-flex align-items-center">
-            <h3 class="mb-0">{{condition | fhirPath: "Condition.onsetPeriod.start" | date }} - {{condition | fhirPath: "Condition.onsetPeriod.end" | date}}</h3>
+            <h3 class="mb-0">{{condition | fhirPath: "Condition.onsetPeriod.start":"Condition.onsetDateTime" | date }} - {{condition | fhirPath: "Condition.onsetPeriod.end" | date}}</h3>
           </div>
         </div>
 

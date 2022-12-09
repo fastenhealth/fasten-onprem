@@ -22,7 +22,7 @@ export class ReportHeaderComponent implements OnInit {
       console.log(results)
       this.patient = results[0]
 
-      let primaryCareId = fhirpath.evaluate(this.patient.resource_raw, "Patient.generalPractitioner.where(type='Practitioner').reference.first()")
+      let primaryCareId = fhirpath.evaluate(this.patient.resource_raw, "Patient.generalPractitioner.reference.first()")
       console.log("GP:", primaryCareId)
       if(primaryCareId){
         let primaryCareIdStr = primaryCareId.join("")

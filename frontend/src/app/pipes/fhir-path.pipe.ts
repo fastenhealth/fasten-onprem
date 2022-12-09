@@ -7,8 +7,16 @@ import { evaluate } from 'fhirpath'
 })
 export class FhirPathPipe implements PipeTransform {
 
-  transform(resourceFhir: ResourceFhir, query: string): string {
-    return evaluate(resourceFhir.resource_raw, query).join(", ");
+  transform(resourceFhir: ResourceFhir, ...pathQueryWithFallback: string[]): string {
+
+    for(let pathQuery of pathQueryWithFallback){
+      let result = evaluate(resourceFhir.resource_raw, pathQuery).join(", ")
+      if(result){
+        return result
+      }
+    }
+
+    return null
   }
 
 }
