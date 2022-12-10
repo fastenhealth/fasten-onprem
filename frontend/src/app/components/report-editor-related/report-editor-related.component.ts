@@ -1,11 +1,13 @@
 import {Component, Input, OnInit} from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
+import {FastenApiService} from '../../services/fasten-api.service';
 
 class RelatedNode {
-  id: string
   name: string
   resourceType: string
+  resourceId: string
+  sourceId: string
   draggable: boolean
   children: RelatedNode[]
 }
@@ -51,14 +53,39 @@ export class ReportEditorRelatedComponent implements OnInit {
     allowDrop: (element, { parent, index }) => {
       // return true / false based on element, to.parent, to.index. e.g.
       return parent.data.resourceType == "Condition";
-    }
+    },
+
   }
 
-  constructor(public activeModal: NgbActiveModal) { }
+  constructor(
+    public activeModal: NgbActiveModal,
+    private fastenApi: FastenApiService,
+  ) { }
 
   ngOnInit(): void {
     this.nodes = this.generateNodes(this.conditions)
   }
+
+
+  onResourceMoved($event) {
+
+    this.fastenApi.replaceResourceAssociation({
+
+      source_id: $event.to.parent.sourceId,
+      source_resource_type: $event.to.parent.resourceType,
+      source_resource_id: $event.to.parent.resourceId,
+
+      new_related_source_id: $event.node.sourceId,
+      new_related_source_resource_type: $event.node.resourceType,
+      new_related_source_resource_id: $event.node.resourceId,
+
+
+    }).subscribe(results => {
+      console.log(results)
+    })
+  }
+
+
 
   generateNodes(resouceFhirList: ResourceFhir[]): RelatedNode[] {
     let relatedNodes = resouceFhirList.map((resourceFhir) => { return this.recGenerateNode(resourceFhir) })
@@ -66,9 +93,10 @@ export class ReportEditorRelatedComponent implements OnInit {
     //create an unassigned encounters "condition"
     if(this.encounters.length > 0){
       let unassignedCondition = {
-        id: "UNASSIGNED",
         name: "[Unassigned Encounters]",
         resourceType: "Condition",
+        resourceId: "UNASSIGNED",
+        sourceId: "UNASSIGNED",
         draggable: false,
         children: []
       }
@@ -93,13 +121,15 @@ export class ReportEditorRelatedComponent implements OnInit {
 
   recGenerateNode(resourceFhir: ResourceFhir): RelatedNode {
     let relatedNode = {
-      id: `${resourceFhir.source_id}/${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}`,
+      sourceId: resourceFhir.source_id,
+      resourceId: resourceFhir.source_resource_id,
+      resourceType: resourceFhir.source_resource_type,
+
       name: `${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}`, //todo, replace with extracted name
       draggable: resourceFhir.source_resource_type == "Encounter" || resourceFhir.source_resource_type == "Condition",
-      resourceType: resourceFhir.source_resource_type,
       children: [],
     }
-    this.assignedEncounters[relatedNode.id] = resourceFhir
+    this.assignedEncounters[`${resourceFhir.source_id}/${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}`] = resourceFhir
 
     if(!resourceFhir.related_resources){
       return relatedNode

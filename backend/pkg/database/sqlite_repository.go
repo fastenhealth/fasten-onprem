@@ -223,14 +223,7 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 				//if the related resource is an Encounter or Condition, make sure we create a reciprocal association as well, just incase
 				if parts[0] == "Condition" || parts[0] == "Encounter" {
 					//manually create association (we've tried to create using Association.Append, and it doesnt work for some reason.
-					err := sr.GormClient.Table("related_resources").Create(map[string]interface{}{
-						"resource_fhir_source_id":                    source.ID,
-						"resource_fhir_source_resource_type":         parts[0],
-						"resource_fhir_source_resource_id":           parts[1],
-						"related_resource_fhir_source_id":            wrappedResourceModel.SourceID,
-						"related_resource_fhir_source_resource_type": wrappedResourceModel.SourceResourceType,
-						"related_resource_fhir_source_resource_id":   wrappedResourceModel.SourceResourceID,
-					}).Error
+					err := sr.AddResourceAssociation(ctx, &source, parts[0], parts[1], &source, wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID)
 					if err != nil {
 						sr.Logger.Errorf("Error when creating a reciprocal association for %s: %v", referencedResource, err)
 					}
@@ -397,6 +390,48 @@ func (sr *SqliteRepository) GetPatientForSources(ctx context.Context) ([]models.
 		Find(&wrappedResourceModels)
 
 	return wrappedResourceModels, results.Error
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Resource Associations
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (sr *SqliteRepository) AddResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error {
+	//ensure that the sources are "owned" by the same user
+
+	if source.UserID != relatedSource.UserID {
+		return fmt.Errorf("user id's must match when adding associations")
+	} else if source.UserID != sr.GetCurrentUser(ctx).ID {
+		return fmt.Errorf("user id's must match current user")
+	}
+
+	//manually create association (we've tried to create using Association.Append, and it doesnt work for some reason.
+	return sr.GormClient.WithContext(ctx).Table("related_resources").Create(map[string]interface{}{
+		"resource_fhir_source_id":                    source.ID,
+		"resource_fhir_source_resource_type":         resourceType,
+		"resource_fhir_source_resource_id":           resourceId,
+		"related_resource_fhir_source_id":            relatedSource.ID,
+		"related_resource_fhir_source_resource_type": relatedResourceType,
+		"related_resource_fhir_source_resource_id":   relatedResourceId,
+	}).Error
+}
+
+func (sr *SqliteRepository) RemoveResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error {
+	if source.UserID != relatedSource.UserID {
+		return fmt.Errorf("user id's must match when adding associations")
+	} else if source.UserID != sr.GetCurrentUser(ctx).ID {
+		return fmt.Errorf("user id's must match current user")
+	}
+
+	//manually create association (we've tried to create using Association.Append, and it doesnt work for some reason.
+	return sr.GormClient.WithContext(ctx).Table("related_resources").Delete(map[string]interface{}{
+		"resource_fhir_source_id":                    source.ID,
+		"resource_fhir_source_resource_type":         resourceType,
+		"resource_fhir_source_resource_id":           resourceId,
+		"related_resource_fhir_source_id":            relatedSource.ID,
+		"related_resource_fhir_source_resource_type": relatedResourceType,
+		"related_resource_fhir_source_resource_id":   relatedResourceId,
+	}).Error
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
   <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body">
-  <tree-root [nodes]="nodes" [options]="options"></tree-root>
+  <tree-root [nodes]="nodes" [options]="options" (moveNode)="onResourceMoved($event)"></tree-root>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
