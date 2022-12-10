@@ -38,6 +38,7 @@ import { ReportHeaderComponent } from './report-header/report-header.component';
 import { FhirPathPipe } from '../pipes/fhir-path.pipe';
 import { ReportEditorRelatedComponent } from './report-editor-related/report-editor-related.component';
 import { TreeModule } from '@circlon/angular-tree-component';
+import {FilterPipe} from '../pipes/filter.pipe';
 
 @NgModule({
   imports: [
@@ -82,6 +83,7 @@ import { TreeModule } from '@circlon/angular-tree-component';
     ReportHeaderComponent,
     FhirPathPipe,
     ReportEditorRelatedComponent,
+    FilterPipe,
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -116,6 +118,8 @@ import { TreeModule } from '@circlon/angular-tree-component';
         ReportHeaderComponent,
       ReportEditorRelatedComponent,
       FhirPathPipe,
+      FilterPipe,
+
     ]
 })
 

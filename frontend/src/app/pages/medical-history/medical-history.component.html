@@ -24,7 +24,7 @@
       </div>
 
       <!-- Condition List -->
-      <ng-container *ngFor="let condition of conditions; let i = index">
+      <div *ngFor="let condition of conditions; let i = index">
         <div class="row bg-indigo tx-white pt-1 pb-1">
           <!-- Condition Header -->
           <div class="col-6 d-flex align-items-center">
@@ -45,27 +45,25 @@
                 <h5>Involved in Care</h5>
               </div>
 
-              <div class="col-6">
-                <strong>James Bishop</strong>, ANRP
-              </div>
-              <div class="col-6">
-                Primary Care
-              </div>
+              <ng-container *ngFor="let careTeam of condition.related_resources | filter:'source_resource_type':'CareTeam'">
+                <div class="col-6">
+                  <strong>{{careTeam | fhirPath: "CareTeam.participant.member.display"}}</strong>
+                </div>
+                <div class="col-6">
+                  {{careTeam | fhirPath: "CareTeam.participant.role.text"}}
+                </div>
+              </ng-container>
 
-              <div class="col-6">
-                <strong>Matthew Leonard</strong>, MD
-              </div>
-              <div class="col-6">
-                Diagnosing Physician
-              </div>
-
-              <div class="col-6">
-                <strong>Stephanie Wrenn</strong>, MD
-              </div>
-              <div class="col-6">
-                Dietitian
-              </div>
-
+              <ng-container *ngFor="let encounter of condition.related_resources | filter:'source_resource_type':'Encounter'">
+                <ng-container *ngFor="let careTeam of encounter.related_resources | filter:'source_resource_type':'CareTeam'">
+                  <div class="col-6">
+                    <strong>{{careTeam | fhirPath: "CareTeam.participant.member.display"}}</strong>
+                  </div>
+                  <div class="col-6">
+                    {{careTeam | fhirPath: "CareTeam.participant.role.text"}}
+                  </div>
+                </ng-container>
+              </ng-container>
 
               <div class="col-12  mt-3 mb-2 tx-indigo">
                 <h5>Initial Presentation</h5>
@@ -80,32 +78,35 @@
           </div>
           <div class="col-6 mb-2 bg-gray-100">
             <div class="row">
-              <div class="col-12 mt-3 mb-2 tx-indigo">
-                <h5>Nov 19, 2012</h5>
-              </div>
-              <div class="col-12 mt-2 mb-2">
-                <strong>Medications:</strong> Colchicine, as needed for gout attacks
-              </div>
+              <ng-container *ngFor="let encounter of condition.related_resources | filter:'source_resource_type':'Encounter'">
+                <div class="col-6 mt-3 mb-2 tx-indigo">
+                  <h5>{{encounter | fhirPath: "Encounter.period.start" | date}}</h5>
+                </div>
+                <div class="col-6 mt-3 mb-2">
+                  <small>{{encounter | fhirPath: "Encounter.location.first().location.display"}}</small>
+                </div>
 
 
-              <div class="col-12 mt-3 mb-2 tx-indigo">
-                <h5>Nov 16, 2012</h5>
-              </div>
-              <div class="col-12 mt-2 mb-2">
-                <strong>Procedures:</strong> The fluid in your right knee was drained.
-              </div>
-              <div class="col-12 mt-2 mb-2">
-                <strong>Tests and Examinations:</strong> The fluid tested prositive for gout crystals
-              </div>
-              <div class="col-12 mt-2 mb-2">
-                <strong>Medications:</strong> You were given a steroid injection to reduce inflammation and as short course prednistone to reduce pain and inflammation
-              </div>
+                <div class="col-12 mt-2 mb-2" *ngFor="let medications of encounter.related_resources | filter:'source_resource_type':'MedicationRequest'">
+                  <strong>Medications:</strong> {{medications | fhirPath: "MedicationRequest.medicationReference.display"}} <br/>
+                </div>
+
+                <div class="col-12 mt-2 mb-2" *ngFor="let procedure of encounter.related_resources | filter:'source_resource_type':'Procedure'">
+                  <strong>Procedures:</strong> {{procedure | fhirPath: "Procedure.code.text"}} <br/>
+                </div>
+
+                <div class="col-12 mt-2 mb-2" *ngFor="let diagnosticReport of encounter.related_resources | filter:'source_resource_type':'DiagnosticReport'">
+                  <strong>Tests and Examinations:</strong> {{diagnosticReport | fhirPath: "DiagnosticReport.code.text"}} <br/>
+                </div>
+
+                <div class="col-12 mt-2 mb-2" *ngFor="let device of encounter.related_resources | filter:'source_resource_type':'Device'">
+                  <strong>Device:</strong> {{device | fhirPath: "Device.code.text"}} <br/>
+                </div>
+              </ng-container>
             </div>
           </div>
         </div>
-      </ng-container>
-
-
+      </div>
     </div>
   </div>
 </div>

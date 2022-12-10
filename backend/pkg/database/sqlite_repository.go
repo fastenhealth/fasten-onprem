@@ -322,7 +322,7 @@ func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions mode
 	queryBuilder := sr.GormClient.WithContext(ctx)
 	if queryOptions.PreloadRelated {
 		//enable preload functionality in query
-		queryBuilder = queryBuilder.Preload("RelatedResourceFhir")
+		queryBuilder = queryBuilder.Preload("RelatedResourceFhir").Preload("RelatedResourceFhir.RelatedResourceFhir")
 	}
 	results := queryBuilder.Where(queryParam).
 		Find(&wrappedResourceModels)
