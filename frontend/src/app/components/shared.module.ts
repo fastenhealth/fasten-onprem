@@ -36,6 +36,8 @@ import { ToastComponent } from './toast/toast.component';
 import { MomentModule } from 'ngx-moment';
 import { ReportHeaderComponent } from './report-header/report-header.component';
 import { FhirPathPipe } from '../pipes/fhir-path.pipe';
+import { ReportEditorRelatedComponent } from './report-editor-related/report-editor-related.component';
+import { TreeModule } from '@circlon/angular-tree-component';
 
 @NgModule({
   imports: [
@@ -44,6 +46,7 @@ import { FhirPathPipe } from '../pipes/fhir-path.pipe';
     NgxDatatableModule,
     NgbModule,
     MomentModule,
+    TreeModule,
   ],
   declarations: [
     ComponentsSidebarComponent,
@@ -78,6 +81,7 @@ import { FhirPathPipe } from '../pipes/fhir-path.pipe';
     ToastComponent,
     ReportHeaderComponent,
     FhirPathPipe,
+    ReportEditorRelatedComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -110,6 +114,7 @@ import { FhirPathPipe } from '../pipes/fhir-path.pipe';
         ResourceListOutletDirective,
         ToastComponent,
         ReportHeaderComponent,
+      ReportEditorRelatedComponent,
       FhirPathPipe,
     ]
 })

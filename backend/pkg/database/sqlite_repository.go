@@ -186,23 +186,6 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 
 	source := sourceCredential.(models.SourceCredential)
 
-	relatedResources := []*models.ResourceFhir{}
-
-	if rawResource.ReferencedResources != nil {
-		for _, referencedResource := range rawResource.ReferencedResources {
-			parts := strings.Split(referencedResource, "/")
-			if len(parts) == 2 {
-				relatedResources = append(relatedResources, &models.ResourceFhir{
-					OriginBase: models.OriginBase{
-						SourceID:           source.ID,
-						SourceResourceType: parts[0],
-						SourceResourceID:   parts[1],
-					},
-				})
-			}
-		}
-	}
-
 	wrappedResourceModel := &models.ResourceFhir{
 		OriginBase: models.OriginBase{
 			ModelBase:          models.ModelBase{},
@@ -212,7 +195,53 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 			SourceResourceType: rawResource.SourceResourceType,
 		},
 		ResourceRaw:         datatypes.JSON(rawResource.ResourceRaw),
-		RelatedResourceFhir: relatedResources,
+		RelatedResourceFhir: nil,
+	}
+
+	//create associations
+	//note: we create the association in the related_resources table **before** the model actually exists.
+
+	if rawResource.ReferencedResources != nil {
+		//these are resources that are referenced by the current resource
+		relatedResources := []*models.ResourceFhir{}
+
+		//reciprocalRelatedResources := []*models.ResourceFhir{}
+		for _, referencedResource := range rawResource.ReferencedResources {
+			parts := strings.Split(referencedResource, "/")
+			if len(parts) == 2 {
+
+				relatedResource := &models.ResourceFhir{
+					OriginBase: models.OriginBase{
+						SourceID:           source.ID,
+						SourceResourceType: parts[0],
+						SourceResourceID:   parts[1],
+					},
+					RelatedResourceFhir: nil,
+				}
+				relatedResources = append(relatedResources, relatedResource)
+
+				//if the related resource is an Encounter or Condition, make sure we create a reciprocal association as well, just incase
+				if parts[0] == "Condition" || parts[0] == "Encounter" {
+					//manually create association (we've tried to create using Association.Append, and it doesnt work for some reason.
+					err := sr.GormClient.Table("related_resources").Create(map[string]interface{}{
+						"resource_fhir_source_id":                    source.ID,
+						"resource_fhir_source_resource_type":         parts[0],
+						"resource_fhir_source_resource_id":           parts[1],
+						"related_resource_fhir_source_id":            wrappedResourceModel.SourceID,
+						"related_resource_fhir_source_resource_type": wrappedResourceModel.SourceResourceType,
+						"related_resource_fhir_source_resource_id":   wrappedResourceModel.SourceResourceID,
+					}).Error
+					if err != nil {
+						sr.Logger.Errorf("Error when creating a reciprocal association for %s: %v", referencedResource, err)
+					}
+				}
+
+			}
+		}
+
+		//ignore errors when creating associations (we always get a 'WHERE conditions required' error, )
+		sr.GormClient.WithContext(ctx).Model(wrappedResourceModel).Association("RelatedResourceFhir").Append(relatedResources)
+
 	}
 
 	sr.Logger.Infof("insert/update (%v) %v", rawResource.SourceResourceType, rawResource.SourceResourceID)

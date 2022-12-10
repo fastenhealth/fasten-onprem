@@ -15,6 +15,14 @@
         </div>
       </div>
 
+      <!-- Editor Button -->
+      <div class="row">
+        <div class="col-6 d-flex align-items-center">
+
+          <button class="btn btn-lg btn-primary" (click)="openEditorRelated()">Launch Editor</button>
+        </div>
+      </div>
+
       <!-- Condition List -->
       <ng-container *ngFor="let condition of conditions; let i = index">
         <div class="row bg-indigo tx-white pt-1 pb-1">

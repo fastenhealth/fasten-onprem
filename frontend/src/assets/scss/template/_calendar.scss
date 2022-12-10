@@ -129,7 +129,7 @@ ng-fullcalendar {
       @include media-breakpoint-up(sm) { font-size: 22px; }
     }
 
-    .fc-left { 
+    .fc-left {
       display: flex;
      }
     .fc-right { order: 3; }
@@ -449,7 +449,7 @@ ng-fullcalendar {
       .fc-list-item {
         flex: 0 0 calc(80% - 5px);
         max-width: calc(80% - 5px);
-        dispLay: flex;
+        display: flex;
         flex-direction: column;
         border-left: 4px solid transparent;
         background-color: #fff;

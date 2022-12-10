@@ -6,6 +6,7 @@ export class ResourceFhir {
 
   fhir_version: string = ""
   resource_raw: IResourceRaw
+  related_resources?: ResourceFhir[] = []
 
   constructor(object?: any) {
     return Object.assign(this, object)
