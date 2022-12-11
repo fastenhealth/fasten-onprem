@@ -39,6 +39,7 @@ import { FhirPathPipe } from '../pipes/fhir-path.pipe';
 import { ReportEditorRelatedComponent } from './report-editor-related/report-editor-related.component';
 import { TreeModule } from '@circlon/angular-tree-component';
 import {FilterPipe} from '../pipes/filter.pipe';
+import { MedicalHistoryConditionComponent } from './medical-history-condition/medical-history-condition.component';
 
 @NgModule({
   imports: [
@@ -84,6 +85,7 @@ import {FilterPipe} from '../pipes/filter.pipe';
     FhirPathPipe,
     ReportEditorRelatedComponent,
     FilterPipe,
+    MedicalHistoryConditionComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -119,6 +121,7 @@ import {FilterPipe} from '../pipes/filter.pipe';
       ReportEditorRelatedComponent,
       FhirPathPipe,
       FilterPipe,
+      MedicalHistoryConditionComponent
 
     ]
 })
