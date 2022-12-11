@@ -2,11 +2,11 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 
 @Component({
-  selector: 'app-medical-history-condition',
-  templateUrl: './medical-history-condition.component.html',
-  styleUrls: ['./medical-history-condition.component.scss']
+  selector: 'app-report-medical-history-condition',
+  templateUrl: './report-medical-history-condition.component.html',
+  styleUrls: ['./report-medical-history-condition.component.scss']
 })
-export class MedicalHistoryConditionComponent implements OnInit {
+export class ReportMedicalHistoryConditionComponent implements OnInit {
 
 
   @Input() condition: ResourceFhir

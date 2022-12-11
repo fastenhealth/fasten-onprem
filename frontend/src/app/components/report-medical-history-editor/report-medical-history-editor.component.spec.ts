@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ReportEditorRelatedComponent } from './report-editor-related.component';
+import { ReportMedicalHistoryEditorComponent } from './report-medical-history-editor.component';
 
 describe('ReportEditorRelatedComponent', () => {
-  let component: ReportEditorRelatedComponent;
-  let fixture: ComponentFixture<ReportEditorRelatedComponent>;
+  let component: ReportMedicalHistoryEditorComponent;
+  let fixture: ComponentFixture<ReportMedicalHistoryEditorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ReportEditorRelatedComponent ]
+      declarations: [ ReportMedicalHistoryEditorComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ReportEditorRelatedComponent);
+    fixture = TestBed.createComponent(ReportMedicalHistoryEditorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

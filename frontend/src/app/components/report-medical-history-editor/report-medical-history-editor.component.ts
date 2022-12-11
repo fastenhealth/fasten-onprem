@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {FastenApiService} from '../../services/fasten-api.service';
+import * as fhirpath from 'fhirpath';
 
 class RelatedNode {
   name: string
@@ -13,11 +14,11 @@ class RelatedNode {
 }
 
 @Component({
-  selector: 'app-report-editor-related',
-  templateUrl: './report-editor-related.component.html',
-  styleUrls: ['./report-editor-related.component.scss']
+  selector: 'app-report-medical-history-editor',
+  templateUrl: './report-medical-history-editor.component.html',
+  styleUrls: ['./report-medical-history-editor.component.scss']
 })
-export class ReportEditorRelatedComponent implements OnInit {
+export class ReportMedicalHistoryEditorComponent implements OnInit {
 
   @Input() conditions: ResourceFhir[] = []
   @Input() encounters: ResourceFhir[] = []
@@ -122,13 +123,40 @@ export class ReportEditorRelatedComponent implements OnInit {
   recGenerateNode(resourceFhir: ResourceFhir): RelatedNode {
     let relatedNode = {
       sourceId: resourceFhir.source_id,
+      name: `[${resourceFhir.source_resource_type}]`,
       resourceId: resourceFhir.source_resource_id,
       resourceType: resourceFhir.source_resource_type,
-
-      name: `${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}`, //todo, replace with extracted name
       draggable: resourceFhir.source_resource_type == "Encounter" || resourceFhir.source_resource_type == "Condition",
       children: [],
     }
+
+    switch (resourceFhir.source_resource_type) {
+      case "Condition":
+        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Condition.onsetPeriod.start")} ${fhirpath.evaluate(resourceFhir.resource_raw, "Condition.code.text.first()")}`
+      break
+      case "Encounter":
+        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Encounter.period.start")} ${fhirpath.evaluate(resourceFhir.resource_raw, "Encounter.location.first().location.display")}`
+        break
+      case "CareTeam":
+        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "CareTeam.participant.member.display")}`
+        break
+      case "Location":
+        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Location.name")}`
+        break
+      case "Organization":
+        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Organization.name")}`
+        break
+      case "Practitioner":
+        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Practitioner.name.family")}`
+        break
+      case "MedicationRequest":
+        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "MedicationRequest.medicationReference.display")}`
+        break
+      default:
+        relatedNode.name += ` ${resourceFhir.source_resource_id}`
+
+    }
+
     this.assignedEncounters[`${resourceFhir.source_id}/${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}`] = resourceFhir
 
     if(!resourceFhir.related_resources){

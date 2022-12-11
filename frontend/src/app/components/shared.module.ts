@@ -36,10 +36,10 @@ import { ToastComponent } from './toast/toast.component';
 import { MomentModule } from 'ngx-moment';
 import { ReportHeaderComponent } from './report-header/report-header.component';
 import { FhirPathPipe } from '../pipes/fhir-path.pipe';
-import { ReportEditorRelatedComponent } from './report-editor-related/report-editor-related.component';
+import { ReportMedicalHistoryEditorComponent } from './report-medical-history-editor/report-medical-history-editor.component';
 import { TreeModule } from '@circlon/angular-tree-component';
 import {FilterPipe} from '../pipes/filter.pipe';
-import { MedicalHistoryConditionComponent } from './medical-history-condition/medical-history-condition.component';
+import { ReportMedicalHistoryConditionComponent } from './report-medical-history-condition/report-medical-history-condition.component';
 
 @NgModule({
   imports: [
@@ -83,9 +83,9 @@ import { MedicalHistoryConditionComponent } from './medical-history-condition/me
     ToastComponent,
     ReportHeaderComponent,
     FhirPathPipe,
-    ReportEditorRelatedComponent,
+    ReportMedicalHistoryEditorComponent,
     FilterPipe,
-    MedicalHistoryConditionComponent,
+    ReportMedicalHistoryConditionComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -118,10 +118,10 @@ import { MedicalHistoryConditionComponent } from './medical-history-condition/me
         ResourceListOutletDirective,
         ToastComponent,
         ReportHeaderComponent,
-      ReportEditorRelatedComponent,
+      ReportMedicalHistoryEditorComponent,
       FhirPathPipe,
       FilterPipe,
-      MedicalHistoryConditionComponent
+      ReportMedicalHistoryConditionComponent
 
     ]
 })
