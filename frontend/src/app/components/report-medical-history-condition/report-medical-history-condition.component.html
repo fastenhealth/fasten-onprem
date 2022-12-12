@@ -1,6 +1,6 @@
 <div class="card card-dashboard-seven mb-3">
   <div class="card-header tx-medium">
-    <div class="row">
+    <div class="row" routerLink="/source/{{condition?.source_id}}/resource/{{condition?.source_resource_id}}">
       <!-- Condition Header -->
       <div class="col-6">
         {{condition | fhirPath: "Condition.code.text.first()":"Condition.code.coding.display.first()"}}
@@ -55,17 +55,17 @@
         <div class="row">
           <ng-container *ngFor="let encounter of condition.related_resources | filter:'source_resource_type':'Encounter'">
 
-            <div class="col-6 mt-3 mb-2 tx-indigo">
+            <div routerLink="/source/{{encounter?.source_id}}/resource/{{encounter?.source_resource_id}}" class="col-6 mt-3 mb-2 tx-indigo">
               <strong>{{encounter | fhirPath: "Encounter.period.start" | date}}</strong>
             </div>
-            <div class="col-6 mt-3 mb-2 tx-indigo">
+            <div routerLink="/source/{{encounter?.source_id}}/resource/{{encounter?.source_resource_id}}" class="col-6 mt-3 mb-2 tx-indigo">
               <small>{{encounter | fhirPath: "Encounter.location.first().location.display"}}</small>
             </div>
 
             <div *ngIf="encounter.related_resources | filter:'source_resource_type':'MedicationRequest' as medications" class="col-12 mt-2 mb-2">
               <strong>Medications:</strong>
               <ul>
-                <li *ngFor="let medication of medications">
+                <li routerLink="/source/{{medication?.source_id}}/resource/{{medication?.source_resource_id}}" *ngFor="let medication of medications">
                   {{medication | fhirPath: "MedicationRequest.medicationReference.display":"MedicationRequest.medicationCodeableConcept.text"}}
                 </li>
               </ul>
@@ -75,7 +75,7 @@
             <div *ngIf="encounter.related_resources | filter:'source_resource_type':'Procedure' as procedures" class="col-12 mt-2 mb-2">
               <strong>Procedures:</strong>
               <ul>
-                <li *ngFor="let procedure of procedures">
+                <li routerLink="/source/{{procedure?.source_id}}/resource/{{procedure?.source_resource_id}}" *ngFor="let procedure of procedures">
                   {{procedure | fhirPath: "Procedure.code.text"}}
                 </li>
               </ul>
@@ -85,7 +85,7 @@
             <div *ngIf="encounter.related_resources | filter:'source_resource_type':'DiagnosticReport' as diagnosticReports" class="col-12 mt-2 mb-2">
               <strong>Tests and Examinations:</strong>
               <ul>
-                <li *ngFor="let diagnosticReport of diagnosticReports">
+                <li routerLink="/source/{{diagnosticReport?.source_id}}/resource/{{diagnosticReport?.source_resource_id}}" *ngFor="let diagnosticReport of diagnosticReports">
                   {{diagnosticReport | fhirPath: "DiagnosticReport.code.text":"DiagnosticReport.code.coding.display"}}
                 </li>
               </ul>
@@ -95,7 +95,7 @@
             <div *ngIf="encounter.related_resources | filter:'source_resource_type':'Device' as devices" class="col-12 mt-2 mb-2">
               <strong>Device:</strong>
               <ul>
-                <li *ngFor="let device of devices">
+                <li routerLink="/source/{{device?.source_id}}/resource/{{device?.source_resource_id}}" *ngFor="let device of devices">
                   {{device | fhirPath: "Device.code.text"}}
                 </li>
               </ul>
