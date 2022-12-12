@@ -123,7 +123,7 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
   recGenerateNode(resourceFhir: ResourceFhir): RelatedNode {
     let relatedNode = {
       sourceId: resourceFhir.source_id,
-      name: `[${resourceFhir.source_resource_type}]`,
+      name: `[${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}]`,
       resourceId: resourceFhir.source_resource_id,
       resourceType: resourceFhir.source_resource_type,
       draggable: resourceFhir.source_resource_type == "Encounter" || resourceFhir.source_resource_type == "Condition",
@@ -152,9 +152,6 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
       case "MedicationRequest":
         relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "MedicationRequest.medicationReference.display")}`
         break
-      default:
-        relatedNode.name += ` ${resourceFhir.source_resource_id}`
-
     }
 
     this.assignedEncounters[`${resourceFhir.source_id}/${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}`] = resourceFhir

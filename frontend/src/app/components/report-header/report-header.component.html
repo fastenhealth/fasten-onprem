@@ -1,22 +1,39 @@
-<div class="row">
-  <div class="col-6 bg-indigo tx-white d-flex align-items-center">
-    <h1>{{reportHeaderTitle}}</h1>
+<div class="az-dashboard-one-title">
+  <div>
+    <h2 class="az-dashboard-title">{{reportHeaderTitle}}</h2>
+    <p class="az-dashboard-text">{{reportHeaderSubTitle}}</p>
   </div>
-  <div class="col-3 mt-2 mb-2 tx-12">
-    <p class="mb-0">
-      <strong>Patient:</strong> {{patient | fhirPath: "Patient.name.family.first()"}}, {{patient | fhirPath: "Patient.name.given.first()"}}<br/>
-      <strong>Address:</strong> {{patient | fhirPath: "Patient.address.line.first()"}}<br/>{{patient | fhirPath: "Patient.address.city.first()"}}, {{patient | fhirPath: "Patient.address.state.first()"}}, {{patient | fhirPath: "Patient.address.postalCode.first()"}}<br/>
-      <strong>Date of Birth:</strong> {{patient | fhirPath: "Patient.birthDate" | date }}<br/>
-      <strong>Phone:</strong> {{patient | fhirPath: "Patient.telecom.where(system='phone').value.first()"}}<br/>
-      <strong>Email:</strong> {{patient | fhirPath: "Patient.telecom.where(system='email').value.first()"}}
-    </p>
+  <div class="az-content-header-right">
+    <div class="media">
+      <div class="media-body">
+        <label>Last Updated</label>
+        <h6>Oct 10, 2018</h6>
+      </div><!-- media-body -->
+    </div><!-- media -->
+    <div *ngIf="primaryCare" class="media">
+      <div class="media-body">
+        <label>Primary Care</label>
+        <h6>{{primaryCare | fhirPath: "Practitioner.name.family.first()"}}, {{primaryCare | fhirPath: "Practitioner.name.given.first()"}}</h6>
+      </div><!-- media-body -->
+    </div><!-- media -->
+    <div class="media">
+      <div class="media-body">
+        <label>Selected Sources</label>
+        <h6>All Sources</h6>
+      </div><!-- media-body -->
+    </div><!-- media -->
+    <a [routerLink]="'/sources'" class="btn btn-purple">Add Source</a>
   </div>
-  <div class="col-3 tx-indigo mt-2 mb-2 tx-12">
-    <p *ngIf="primaryCare" class="mb-0">
-      <strong>Primary Care:</strong> {{primaryCare | fhirPath: "Practitioner.name.family.first()"}}, {{primaryCare | fhirPath: "Practitioner.name.given.first()"}}<br/>
-      <strong>Address:</strong> {{primaryCare | fhirPath: "Practitioner.address.line.first()"}}<br/>{{primaryCare | fhirPath: "Practitioner.address.city.first()"}}, {{primaryCare | fhirPath: "Practitioner.address.state.first()"}}, {{primaryCare | fhirPath: "Practitioner.address.postalCode.first()"}}<br/>
-      <strong>Phone:</strong> {{primaryCare | fhirPath: "Practitioner.telecom.where(system='phone').value.first()"}}<br/>
-      <strong>Email:</strong> {{primaryCare | fhirPath: "Practitioner.telecom.where(system='email').value.first()"}}<br/>
-    </p>
-  </div>
+</div><!-- az-dashboard-one-title -->
+
+<div class="az-dashboard-nav">
+  <nav class="nav">
+  </nav>
+
+  <nav class="nav">
+    <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-save"></i> Save Report</a>
+    <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-file-pdf"></i> Export to PDF</a>
+    <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-envelope"></i>Send to Email</a>
+    <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="fas fa-ellipsis-h"></i></a>
+  </nav>
 </div>

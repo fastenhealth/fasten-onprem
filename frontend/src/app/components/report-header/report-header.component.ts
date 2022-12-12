@@ -12,6 +12,7 @@ export class ReportHeaderComponent implements OnInit {
   patient: ResourceFhir = null
   primaryCare: ResourceFhir = null
   @Input() reportHeaderTitle: string = ""
+  @Input() reportHeaderSubTitle: string = "Organized by condition and encounters"
 
   constructor(
     private fastenApi: FastenApiService,

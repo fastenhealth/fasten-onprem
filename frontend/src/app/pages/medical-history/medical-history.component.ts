@@ -38,6 +38,7 @@ export class MedicalHistoryComponent implements OnInit {
       console.log("Populated resource lookup:", this.resourceLookup);
 
         //find unassigned encounters
+      console.log("all encounters:", results[1].length, results[1]);
       (results[1] || []).map((encounter) => {
         if(!this.resourceLookup[`${encounter.source_id}/${encounter.source_resource_type}/${encounter.source_resource_id}`]){
           this.unassigned_encounters.push(encounter)
@@ -45,7 +46,8 @@ export class MedicalHistoryComponent implements OnInit {
       })
 
       if(this.unassigned_encounters.length > 0){
-        console.log("Found unassigned encounters:", this.unassigned_encounters.length)
+        console.log("Found mapping:", this.resourceLookup)
+        console.log("Found unassigned encounters:", this.unassigned_encounters.length, this.unassigned_encounters)
         this.conditions.push({
           fhir_version: '',
           resource_raw: {
@@ -84,7 +86,7 @@ export class MedicalHistoryComponent implements OnInit {
     } else {
 
       for(let relatedResourceFhir of resourceFhir.related_resources){
-        return this.recPopulateResourceLookup(relatedResourceFhir)
+        this.recPopulateResourceLookup(relatedResourceFhir)
       }
 
       return
