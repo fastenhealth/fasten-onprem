@@ -194,7 +194,47 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 			SourceResourceID:   rawResource.SourceResourceID,
 			SourceResourceType: rawResource.SourceResourceType,
 		},
-		ResourceRaw: datatypes.JSON(rawResource.ResourceRaw),
+		ResourceRaw:         datatypes.JSON(rawResource.ResourceRaw),
+		RelatedResourceFhir: nil,
+	}
+
+	//create associations
+	//note: we create the association in the related_resources table **before** the model actually exists.
+
+	if rawResource.ReferencedResources != nil {
+		//these are resources that are referenced by the current resource
+		relatedResources := []*models.ResourceFhir{}
+
+		//reciprocalRelatedResources := []*models.ResourceFhir{}
+		for _, referencedResource := range rawResource.ReferencedResources {
+			parts := strings.Split(referencedResource, "/")
+			if len(parts) == 2 {
+
+				relatedResource := &models.ResourceFhir{
+					OriginBase: models.OriginBase{
+						SourceID:           source.ID,
+						SourceResourceType: parts[0],
+						SourceResourceID:   parts[1],
+					},
+					RelatedResourceFhir: nil,
+				}
+				relatedResources = append(relatedResources, relatedResource)
+
+				//if the related resource is an Encounter or Condition, make sure we create a reciprocal association as well, just incase
+				if parts[0] == "Condition" || parts[0] == "Encounter" {
+					//manually create association (we've tried to create using Association.Append, and it doesnt work for some reason.
+					err := sr.AddResourceAssociation(ctx, &source, parts[0], parts[1], &source, wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID)
+					if err != nil {
+						sr.Logger.Errorf("Error when creating a reciprocal association for %s: %v", referencedResource, err)
+					}
+				}
+
+			}
+		}
+
+		//ignore errors when creating associations (we always get a 'WHERE conditions required' error, )
+		sr.GormClient.WithContext(ctx).Model(wrappedResourceModel).Association("RelatedResourceFhir").Append(relatedResources)
+
 	}
 
 	sr.Logger.Infof("insert/update (%v) %v", rawResource.SourceResourceType, rawResource.SourceResourceID)
@@ -203,7 +243,7 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 		SourceID:           wrappedResourceModel.GetSourceID(),
 		SourceResourceID:   wrappedResourceModel.GetSourceResourceID(),
 		SourceResourceType: wrappedResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-	}).FirstOrCreate(wrappedResourceModel)
+	}).Omit("RelatedResourceFhir.*").FirstOrCreate(wrappedResourceModel)
 
 	if createResult.Error != nil {
 		return false, createResult.Error
@@ -211,7 +251,7 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 		//at this point, wrappedResourceModel contains the data found in the database.
 		// check if the database resource matches the new resource.
 		if wrappedResourceModel.ResourceRaw.String() != string(rawResource.ResourceRaw) {
-			updateResult := createResult.Updates(wrappedResourceModel)
+			updateResult := createResult.Omit("RelatedResourceFhir.*").Updates(wrappedResourceModel)
 			return updateResult.RowsAffected > 0, updateResult.Error
 		} else {
 			return false, nil
@@ -271,13 +311,20 @@ func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions mode
 
 		queryParam.OriginBase.SourceID = sourceUUID
 	}
+	if len(queryOptions.SourceResourceID) > 0 {
+		queryParam.OriginBase.SourceResourceID = queryOptions.SourceResourceID
+	}
 
 	manifestJson, _ := json.MarshalIndent(queryParam, "", "  ")
 	sr.Logger.Infof("THE QUERY OBJECT===========> %v", string(manifestJson))
 
 	var wrappedResourceModels []models.ResourceFhir
-	results := sr.GormClient.WithContext(ctx).
-		Where(queryParam).
+	queryBuilder := sr.GormClient.WithContext(ctx)
+	if queryOptions.PreloadRelated {
+		//enable preload functionality in query
+		queryBuilder = queryBuilder.Preload("RelatedResourceFhir").Preload("RelatedResourceFhir.RelatedResourceFhir")
+	}
+	results := queryBuilder.Where(queryParam).
 		Find(&wrappedResourceModels)
 
 	return wrappedResourceModels, results.Error
@@ -343,6 +390,48 @@ func (sr *SqliteRepository) GetPatientForSources(ctx context.Context) ([]models.
 		Find(&wrappedResourceModels)
 
 	return wrappedResourceModels, results.Error
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Resource Associations
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (sr *SqliteRepository) AddResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error {
+	//ensure that the sources are "owned" by the same user
+
+	if source.UserID != relatedSource.UserID {
+		return fmt.Errorf("user id's must match when adding associations")
+	} else if source.UserID != sr.GetCurrentUser(ctx).ID {
+		return fmt.Errorf("user id's must match current user")
+	}
+
+	//manually create association (we've tried to create using Association.Append, and it doesnt work for some reason.
+	return sr.GormClient.WithContext(ctx).Table("related_resources").Create(map[string]interface{}{
+		"resource_fhir_source_id":                    source.ID,
+		"resource_fhir_source_resource_type":         resourceType,
+		"resource_fhir_source_resource_id":           resourceId,
+		"related_resource_fhir_source_id":            relatedSource.ID,
+		"related_resource_fhir_source_resource_type": relatedResourceType,
+		"related_resource_fhir_source_resource_id":   relatedResourceId,
+	}).Error
+}
+
+func (sr *SqliteRepository) RemoveResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error {
+	if source.UserID != relatedSource.UserID {
+		return fmt.Errorf("user id's must match when adding associations")
+	} else if source.UserID != sr.GetCurrentUser(ctx).ID {
+		return fmt.Errorf("user id's must match current user")
+	}
+
+	//manually create association (we've tried to create using Association.Append, and it doesnt work for some reason.
+	return sr.GormClient.WithContext(ctx).Table("related_resources").Delete(map[string]interface{}{
+		"resource_fhir_source_id":                    source.ID,
+		"resource_fhir_source_resource_type":         resourceType,
+		"resource_fhir_source_resource_id":           resourceId,
+		"related_resource_fhir_source_id":            relatedSource.ID,
+		"related_resource_fhir_source_resource_type": relatedResourceType,
+		"related_resource_fhir_source_resource_id":   relatedResourceId,
+	}).Error
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

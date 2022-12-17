@@ -59,6 +59,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 				secure.GET("/source/:sourceId/summary", handler.GetSourceSummary)
 				secure.GET("/resource/fhir", handler.ListResourceFhir) //
 				secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
+				secure.POST("/resource/association", handler.ReplaceResourceAssociation)
 			}
 
 			if ae.Config.GetString("log.level") == "DEBUG" {

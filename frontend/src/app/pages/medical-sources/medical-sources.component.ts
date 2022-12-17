@@ -11,7 +11,6 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Location} from '@angular/common';
 import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
-import {SourceSyncMessage} from '../../models/queue/source-sync-message';
 import {environment} from '../../../environments/environment';
 // If you dont import this angular will import the wrong "Location"
 

@@ -1,0 +1,110 @@
+<div class="card card-dashboard-seven mb-3">
+  <div class="card-header tx-medium">
+    <div class="row" routerLink="/source/{{condition?.source_id}}/resource/{{condition?.source_resource_id}}">
+      <!-- Condition Header -->
+      <div class="col-6">
+        {{condition | fhirPath: "Condition.code.text.first()":"Condition.code.coding.display.first()"}}
+      </div>
+      <div class="col-6">
+        {{condition | fhirPath: "Condition.onsetPeriod.start":"Condition.onsetDateTime" | date }} - {{condition | fhirPath: "Condition.onsetPeriod.end" | date}}
+      </div>
+    </div>
+  </div><!-- card-header -->
+  <div class="card-body">
+
+    <div class="row">
+      <!-- Condition Details -->
+
+      <div class="col-6 mb-2">
+
+        <div class="row  pl-3">
+          <div class="col-12 mt-3 mb-2 tx-indigo">
+            <p>Involved in Care</p>
+          </div>
+          <ng-container *ngFor="let careTeamEntry of careTeams | keyvalue">
+            <div class="col-6">
+              <strong>{{careTeamEntry.value | fhirPath: "CareTeam.participant.member.display"}}</strong>
+            </div>
+            <div class="col-6">
+              {{careTeamEntry.value | fhirPath: "CareTeam.participant.role.text"}}
+            </div>
+          </ng-container>
+
+          <ng-container *ngFor="let practitionerEntry of practitioners | keyvalue">
+            <div class="col-6">
+              <strong>{{practitionerEntry.value | fhirPath: "Practitioner.name.family"}}, {{practitionerEntry.value | fhirPath: "Practitioner.name.given"}}</strong>
+            </div>
+            <div class="col-6">
+              {{practitionerEntry.value | fhirPath: "Practitioner.name.prefix"}}
+            </div>
+          </ng-container>
+
+
+          <!--              <div class="col-12  mt-3 mb-2 tx-indigo">-->
+          <!--                <h5>Initial Presentation</h5>-->
+          <!--              </div>-->
+          <!--              <div class="col-12">-->
+          <!--                Acute right knee pain and tenderness around the joint line - this was likely caused by acute renal failure.-->
+          <!--              </div>-->
+        </div>
+
+
+
+      </div>
+      <div class="col-6 bg-gray-100">
+        <div class="row">
+          <ng-container *ngFor="let encounter of condition.related_resources | filter:'source_resource_type':'Encounter'">
+
+            <div routerLink="/source/{{encounter?.source_id}}/resource/{{encounter?.source_resource_id}}" class="col-6 mt-3 mb-2 tx-indigo">
+              <strong>{{encounter | fhirPath: "Encounter.period.start" | date}}</strong>
+            </div>
+            <div routerLink="/source/{{encounter?.source_id}}/resource/{{encounter?.source_resource_id}}" class="col-6 mt-3 mb-2 tx-indigo">
+              <small>{{encounter | fhirPath: "Encounter.location.first().location.display"}}</small>
+            </div>
+
+            <div *ngIf="encounter.related_resources | filter:'source_resource_type':'MedicationRequest' as medications" class="col-12 mt-2 mb-2">
+              <strong>Medications:</strong>
+              <ul>
+                <li routerLink="/source/{{medication?.source_id}}/resource/{{medication?.source_resource_id}}" *ngFor="let medication of medications">
+                  {{medication | fhirPath: "MedicationRequest.medicationReference.display":"MedicationRequest.medicationCodeableConcept.text"}}
+                </li>
+              </ul>
+            </div>
+
+
+            <div *ngIf="encounter.related_resources | filter:'source_resource_type':'Procedure' as procedures" class="col-12 mt-2 mb-2">
+              <strong>Procedures:</strong>
+              <ul>
+                <li routerLink="/source/{{procedure?.source_id}}/resource/{{procedure?.source_resource_id}}" *ngFor="let procedure of procedures">
+                  {{procedure | fhirPath: "Procedure.code.text"}}
+                </li>
+              </ul>
+            </div>
+
+
+            <div *ngIf="encounter.related_resources | filter:'source_resource_type':'DiagnosticReport' as diagnosticReports" class="col-12 mt-2 mb-2">
+              <strong>Tests and Examinations:</strong>
+              <ul>
+                <li routerLink="/source/{{diagnosticReport?.source_id}}/resource/{{diagnosticReport?.source_resource_id}}" *ngFor="let diagnosticReport of diagnosticReports">
+                  {{diagnosticReport | fhirPath: "DiagnosticReport.code.text":"DiagnosticReport.code.coding.display"}}
+                </li>
+              </ul>
+            </div>
+
+
+            <div *ngIf="encounter.related_resources | filter:'source_resource_type':'Device' as devices" class="col-12 mt-2 mb-2">
+              <strong>Device:</strong>
+              <ul>
+                <li routerLink="/source/{{device?.source_id}}/resource/{{device?.source_resource_id}}" *ngFor="let device of devices">
+                  {{device | fhirPath: "Device.code.text"}}
+                </li>
+              </ul>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+
+  </div><!-- card-body -->
+</div>

@@ -20,6 +20,12 @@ func ListResourceFhir(c *gin.Context) {
 	if len(c.Query("sourceID")) > 0 {
 		listResourceQueryOptions.SourceID = c.Query("sourceID")
 	}
+	if len(c.Query("sourceResourceID")) > 0 {
+		listResourceQueryOptions.SourceResourceID = c.Query("sourceResourceID")
+	}
+	if len(c.Query("preloadRelated")) > 0 {
+		listResourceQueryOptions.PreloadRelated = true
+	}
 
 	wrappedResourceModels, err := databaseRepo.ListResources(c, listResourceQueryOptions)
 
@@ -48,4 +54,56 @@ func GetResourceFhir(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": wrappedResourceModel})
+}
+
+func ReplaceResourceAssociation(c *gin.Context) {
+
+	logger := c.MustGet("LOGGER").(*logrus.Entry)
+	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+
+	resourceAssociation := models.ResourceAssociation{}
+	if err := c.ShouldBindJSON(&resourceAssociation); err != nil {
+		logger.Errorln("An error occurred while parsing posted resource association data", err)
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
+	}
+
+	sourceCred, err := databaseRepo.GetSource(c, resourceAssociation.SourceID)
+	if err != nil {
+		logger.Errorln("An error occurred while retrieving source", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+
+	if len(resourceAssociation.OldRelatedSourceID) > 0 {
+		oldRelatedSourceCred, err := databaseRepo.GetSource(c, resourceAssociation.OldRelatedSourceID)
+		if err != nil {
+			logger.Errorln("An error occurred while retrieving old related source", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+			return
+		}
+
+		err = databaseRepo.RemoveResourceAssociation(c, sourceCred, resourceAssociation.SourceResourceType, resourceAssociation.SourceResourceID, oldRelatedSourceCred, resourceAssociation.OldRelatedSourceResourceType, resourceAssociation.OldRelatedSourceResourceID)
+		if err != nil {
+			logger.Errorln("An error occurred while deleting resource association", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+			return
+		}
+	}
+
+	newRelatedSourceCred, err := databaseRepo.GetSource(c, resourceAssociation.NewRelatedSourceID)
+	if err != nil {
+		logger.Errorln("An error occurred while retrieving new related source", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+
+	err = databaseRepo.AddResourceAssociation(c, sourceCred, resourceAssociation.SourceResourceType, resourceAssociation.SourceResourceID, newRelatedSourceCred, resourceAssociation.NewRelatedSourceResourceType, resourceAssociation.NewRelatedSourceResourceID)
+	if err != nil {
+		logger.Errorln("An error occurred while associating resource", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true})
 }

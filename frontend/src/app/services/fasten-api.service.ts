@@ -13,6 +13,7 @@ import {MetadataSource} from '../models/fasten/metadata-source';
 import {AuthService} from './auth.service';
 import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
 import {environment} from '../../environments/environment';
+import {ResourceAssociation} from '../models/fasten/resource_association';
 
 @Injectable({
   providedIn: 'root'
@@ -100,13 +101,20 @@ export class FastenApiService {
       );
   }
 
-  getResources(sourceResourceType?: string, sourceID?: string): Observable<ResourceFhir[]> {
+  getResources(sourceResourceType?: string, sourceID?: string, sourceResourceID?: string, preloadRelated?: boolean): Observable<ResourceFhir[]> {
     let queryParams = {}
     if(sourceResourceType){
       queryParams["sourceResourceType"] = sourceResourceType
     }
     if(sourceID){
       queryParams["sourceID"] = sourceID
+    }
+
+    if(sourceResourceID){
+      queryParams["sourceResourceID"] = sourceResourceID
+    }
+    if(preloadRelated){
+      queryParams["preloadRelated"] = "true"
     }
 
     return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/fhir`, {params: queryParams})
@@ -125,6 +133,16 @@ export class FastenApiService {
         map((response: ResponseWrapper) => {
           console.log("RESPONSE", response)
           return response.data as ResourceFhir
+        })
+      );
+  }
+
+  replaceResourceAssociation(resourceAssociation: ResourceAssociation): Observable<any> {
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/association`, resourceAssociation)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("RESPONSE", response)
+          return response.data
         })
       );
   }

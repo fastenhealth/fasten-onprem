@@ -1,0 +1,39 @@
+<div class="az-dashboard-one-title">
+  <div>
+    <h2 class="az-dashboard-title">{{reportHeaderTitle}}</h2>
+    <p class="az-dashboard-text">{{reportHeaderSubTitle}}</p>
+  </div>
+  <div class="az-content-header-right">
+    <div class="media">
+      <div class="media-body">
+        <label>Last Updated</label>
+        <h6>Oct 10, 2018</h6>
+      </div><!-- media-body -->
+    </div><!-- media -->
+    <div *ngIf="primaryCare" class="media">
+      <div class="media-body">
+        <label>Primary Care</label>
+        <h6>{{primaryCare | fhirPath: "Practitioner.name.family.first()"}}, {{primaryCare | fhirPath: "Practitioner.name.given.first()"}}</h6>
+      </div><!-- media-body -->
+    </div><!-- media -->
+    <div class="media">
+      <div class="media-body">
+        <label>Selected Sources</label>
+        <h6>All Sources</h6>
+      </div><!-- media-body -->
+    </div><!-- media -->
+    <a [routerLink]="'/sources'" class="btn btn-purple">Add Source</a>
+  </div>
+</div><!-- az-dashboard-one-title -->
+
+<div class="az-dashboard-nav">
+  <nav class="nav">
+  </nav>
+
+  <nav class="nav">
+    <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-save"></i> Save Report</a>
+    <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-file-pdf"></i> Export to PDF</a>
+    <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-envelope"></i>Send to Email</a>
+    <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="fas fa-ellipsis-h"></i></a>
+  </nav>
+</div>

@@ -3,34 +3,13 @@
     <div class="az-content-body">
 
       <!-- Header Row -->
-      <div class="row">
-        <div class="col-6 bg-indigo tx-white d-flex align-items-center">
-          <h1>Patient Profile</h1>
-        </div>
-        <div class="col-3 mt-2 mb-2 tx-12">
-          <p class="mb-0">
-            <strong>Patient:</strong> Caldwell, Ruben<br/>
-            <strong>Address:</strong> 123 B Street<br/>Gainsville, FL, 94153<br/>
-            <strong>Date of Birth:</strong> June 20, 1929<br/>
-            <strong>Phone:</strong> 415-343-2342<br/>
-            <strong>Email:</strong> myemail@gmail.com
-          </p>
-        </div>
-        <div class="col-3 tx-indigo mt-2 mb-2 tx-12">
-          <p class="mb-0">
-            <strong>Primary Care:</strong> Bishop, J. ANRP<br/>
-            <strong>Address:</strong> Malcom Randall VA <br/>Medical Center Gainsville FL<br/>
-            <strong>Phone:</strong> 123-321-5532<br/>
-            <strong>Email:</strong> myemail@va.com<br/>
-          </p>
-        </div>
-      </div>
+      <report-header [reportHeaderTitle]="'Patient Profile'"></report-header>
 
       <div class="pl-3 pr-3">
         <!-- Patient Name Row -->
         <div class="row mt-5 mb-3">
           <div class="col-6">
-            <h1>Caldwell, Ruben</h1>
+            <h1>{{patient | fhirPath: "Patient.name.family.first()"}}, {{patient | fhirPath: "Patient.name.given.first()"}}</h1>
           </div>
         </div>
 
@@ -44,28 +23,28 @@
                 <strong class="tx-indigo">First Name:</strong>
               </div>
               <div class="col-6">
-                Ruben
+                {{patient | fhirPath: "Patient.name.given.first()"}}
               </div>
 
               <div class="col-6">
                 <strong class="tx-indigo">Last Name:</strong>
               </div>
               <div class="col-6">
-                Caldwell
+                {{patient | fhirPath: "Patient.name.family.first()"}}
               </div>
 
               <div class="col-6">
                 <strong class="tx-indigo">Gender:</strong>
               </div>
               <div class="col-6">
-                M
+                {{patient | fhirPath: "Patient.gender" | titlecase}}
               </div>
 
               <div class="col-6">
                 <strong class="tx-indigo">Martial Status:</strong>
               </div>
               <div class="col-6">
-                Married
+                {{patient | fhirPath: "Patient.maritalStatus.text" | titlecase}}
               </div>
 
               <div class="col-6">
@@ -86,35 +65,35 @@
                 <strong class="tx-indigo">Language:</strong>
               </div>
               <div class="col-6">
-                English
+                {{patient | fhirPath: "Patient.communication.language.text" | titlecase}}
               </div>
 
               <div class="col-6">
                 <strong class="tx-indigo">Address:</strong>
               </div>
               <div class="col-6">
-                123 B Street<br/>Gainsville, FL, 94153<br/>
+                {{patient | fhirPath: "Patient.address.line.first()"}}<br/>{{patient | fhirPath: "Patient.address.city.first()"}}, {{patient | fhirPath: "Patient.address.state.first()"}}, {{patient | fhirPath: "Patient.address.postalCode.first()"}}
               </div>
 
               <div class="col-6">
                 <strong class="tx-indigo">Date of Birth:</strong>
               </div>
               <div class="col-6">
-                June 20, 1929
+                {{patient | fhirPath: "Patient.birthDate" | date }}
               </div>
 
               <div class="col-6">
                 <strong class="tx-indigo">Phone:</strong>
               </div>
               <div class="col-6">
-                415-343-2342
+                {{patient | fhirPath: "Patient.telecom.where(system='phone').value.first()"}}
               </div>
 
               <div class="col-6">
                 <strong class="tx-indigo">Email:</strong>
               </div>
               <div class="col-6">
-                myemail@gmail.com
+                {{patient | fhirPath: "Patient.telecom.where(system='email').value.first()"}}
               </div>
 
             </div>
@@ -163,14 +142,12 @@
             <h2 class="tx-indigo">Immunizations</h2>
 
             <p>
-              <strong class="tx-indigo">Phenumovax</strong><br/>
-              07/09/2022<br/>
-              <br/>
-              <strong class="tx-indigo">Hepatitis B Series [complete]</strong><br/>
-              01/12/2005<br/>
-              <br/>
-              <strong class="tx-indigo">Tetanus Toxoid [complete]</strong><br/>
-              02/02/2010<br/>
+              <ng-container *ngFor="let immunization of immunizations; let i = index">
+                <strong class="tx-indigo">{{immunization | fhirPath: "Immunization.vaccineCode.text" }}</strong><br/>
+                {{immunization | fhirPath: "Immunization.occurrenceDateTime" | date }}<br/>
+                {{immunization | fhirPath: "Immunization.location.display" }}<br/>
+                <br/>
+              </ng-container>
             </p>
 
           </div>
@@ -178,6 +155,12 @@
             <h2 class="tx-indigo">Allergies</h2>
 
             <p>
+              <ng-container *ngFor="let allergy of allergyIntolerances; let i = index">
+                <strong class="tx-indigo">{{allergy | fhirPath: "AllergyIntolerance.code.text" }}</strong><br/>
+                {{allergy | fhirPath: "AllergyIntolerance.occurrenceDateTime" | date }}<br/>
+                <br/>
+              </ng-container>
+
               <strong class="tx-indigo">Latex</strong><br/>
               (AV/Historical) with rash and agitation<br/>
               <br/>

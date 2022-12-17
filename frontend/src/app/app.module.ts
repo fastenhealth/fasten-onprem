@@ -29,6 +29,7 @@ import {AuthService} from './services/auth.service';
 import { PatientProfileComponent } from './pages/patient-profile/patient-profile.component';
 import { MedicalHistoryComponent } from './pages/medical-history/medical-history.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,

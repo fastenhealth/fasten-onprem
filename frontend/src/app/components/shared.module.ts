@@ -34,6 +34,12 @@ import { ListFallbackResourceComponent } from './list-fallback-resource/list-fal
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { ToastComponent } from './toast/toast.component';
 import { MomentModule } from 'ngx-moment';
+import { ReportHeaderComponent } from './report-header/report-header.component';
+import { FhirPathPipe } from '../pipes/fhir-path.pipe';
+import { ReportMedicalHistoryEditorComponent } from './report-medical-history-editor/report-medical-history-editor.component';
+import { TreeModule } from '@circlon/angular-tree-component';
+import {FilterPipe} from '../pipes/filter.pipe';
+import { ReportMedicalHistoryConditionComponent } from './report-medical-history-condition/report-medical-history-condition.component';
 
 @NgModule({
   imports: [
@@ -42,6 +48,7 @@ import { MomentModule } from 'ngx-moment';
     NgxDatatableModule,
     NgbModule,
     MomentModule,
+    TreeModule,
   ],
   declarations: [
     ComponentsSidebarComponent,
@@ -74,38 +81,49 @@ import { MomentModule } from 'ngx-moment';
     ResourceListOutletDirective,
     ListFallbackResourceComponent,
     ToastComponent,
+    ReportHeaderComponent,
+    FhirPathPipe,
+    ReportMedicalHistoryEditorComponent,
+    FilterPipe,
+    ReportMedicalHistoryConditionComponent,
   ],
-  exports: [
-    ComponentsSidebarComponent,
-    ListAllergyIntoleranceComponent,
-    ListAdverseEventComponent,
-    ListCarePlanComponent,
-    ListCommunicationComponent,
-    ListConditionComponent,
-    ListEncounterComponent,
-    ListAppointmentComponent,
-    ListGenericResourceComponent,
-    ListImmunizationComponent,
-    ListMedicationAdministrationComponent,
-    ListMedicationComponent,
-    ListMedicationDispenseComponent,
-    ListMedicationRequestComponent,
-    ListNutritionOrderComponent,
-    ListObservationComponent,
-    ListPatientComponent,
-    ListProcedureComponent,
-    ListDeviceRequestComponent,
-    UtilitiesSidebarComponent,
-    ListCoverageComponent,
-    ListServiceRequestComponent,
-    ListDocumentReferenceComponent,
-    ListDeviceComponent,
-    ListDiagnosticReportComponent,
-    ListGoalComponent,
-    ResourceListComponent,
-    ResourceListOutletDirective,
-    ToastComponent,
-  ]
+    exports: [
+        ComponentsSidebarComponent,
+        ListAllergyIntoleranceComponent,
+        ListAdverseEventComponent,
+        ListCarePlanComponent,
+        ListCommunicationComponent,
+        ListConditionComponent,
+        ListEncounterComponent,
+        ListAppointmentComponent,
+        ListGenericResourceComponent,
+        ListImmunizationComponent,
+        ListMedicationAdministrationComponent,
+        ListMedicationComponent,
+        ListMedicationDispenseComponent,
+        ListMedicationRequestComponent,
+        ListNutritionOrderComponent,
+        ListObservationComponent,
+        ListPatientComponent,
+        ListProcedureComponent,
+        ListDeviceRequestComponent,
+        UtilitiesSidebarComponent,
+        ListCoverageComponent,
+        ListServiceRequestComponent,
+        ListDocumentReferenceComponent,
+        ListDeviceComponent,
+        ListDiagnosticReportComponent,
+        ListGoalComponent,
+        ResourceListComponent,
+        ResourceListOutletDirective,
+        ToastComponent,
+        ReportHeaderComponent,
+      ReportMedicalHistoryEditorComponent,
+      FhirPathPipe,
+      FilterPipe,
+      ReportMedicalHistoryConditionComponent
+
+    ]
 })
 
 export class SharedModule { }
