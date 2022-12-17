@@ -36,6 +36,7 @@
     "crypto-pouch": "^4.0.1",
     "fhirclient": "^2.5.1",
     "fhirpath": "^3.3.0",
+    "fuse.js": "^6.6.2",
     "garbados-crypt": "^3.0.0-beta",
     "humanize-duration": "^3.27.3",
     "idb": "^7.1.0",

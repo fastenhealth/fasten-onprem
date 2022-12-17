@@ -1,7 +1,0 @@
-#!/usr/bin/with-contenv bash
-
-# wait for couchdb to be ready
-until $(curl --output /dev/null --silent --head --fail http://127.0.0.1:5984/_up); do echo "couchdb not ready" && sleep 5; done
-
-echo "starting fasten"
-/opt/fasten/fasten start --config /opt/fasten/config/config.yaml

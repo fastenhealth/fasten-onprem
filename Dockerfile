@@ -2,6 +2,7 @@
 # Frontend Build
 #########################################################################################################
 FROM node:18.9.0 as frontend-build
+ARG FASTEN_ENV=sandbox
 WORKDIR /usr/src/fastenhealth/frontend
 #COPY frontend/package.json frontend/yarn.lock ./
 COPY frontend/package.json ./
@@ -9,7 +10,7 @@ COPY frontend/package.json ./
 RUN yarn config set registry "http://registry.npmjs.org" \
     && yarn install --frozen-lockfile --network-timeout 100000
 COPY frontend/ ./
-RUN yarn run build -- --configuration sandbox --output-path=../dist
+RUN yarn run build -- --configuration ${FASTEN_ENV} --output-path=../dist
 
 #########################################################################################################
 # Backend Build
@@ -29,26 +30,13 @@ RUN CGO_ENABLED=0 go build -o /go/bin/fasten ./backend/cmd/fasten/
 # create folder structure
 RUN mkdir -p /opt/fasten/db \
   && mkdir -p /opt/fasten/web \
-  && mkdir -p /opt/fasten/config \
-  && curl -o /opt/fasten/db/fasten.db -L https://github.com/fastenhealth/testdata/raw/main/fasten.db
-
+  && mkdir -p /opt/fasten/config
 
 #########################################################################################################
 # Distribution Build
 #########################################################################################################
-FROM couchdb:3.2
+FROM gcr.io/distroless/static-debian11
 
-ENV FASTEN_COUCHDB_ADMIN_USERNAME=admin
-ENV FASTEN_COUCHDB_ADMIN_PASSWORD=mysecretpassword
-ENV FASTEN_JWT_ISSUER_KEY=thisismysupersecuressessionsecretlength
-
-ARG S6_ARCH=amd64
-RUN curl https://github.com/just-containers/s6-overlay/releases/download/v1.21.8.0/s6-overlay-${S6_ARCH}.tar.gz -L -s --output /tmp/s6-overlay-${S6_ARCH}.tar.gz \
-    && tar xzf /tmp/s6-overlay-${S6_ARCH}.tar.gz -C / \
-    && rm -rf /tmp/s6-overlay-${S6_ARCH}.tar.gz
-
-COPY /docker/couchdb/fasten.ini /opt/couchdb/etc/local.ini
-COPY /docker/rootfs /
 
 WORKDIR /opt/fasten/
 COPY --from=backend-build  /opt/fasten/ /opt/fasten/
@@ -57,7 +45,7 @@ COPY --from=backend-build /go/bin/fasten /opt/fasten/fasten
 COPY LICENSE.md /opt/fasten/LICENSE.md
 COPY config.yaml /opt/fasten/config/config.yaml
 
-ENTRYPOINT ["/init"]
+CMD ["/opt/fasten/fasten", "start", "--config", "/opt/fasten/config/config.yaml"]
 
 
 
