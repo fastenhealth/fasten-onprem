@@ -1,0 +1,534 @@
+<!DOCTYPE html PUBLIC >
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!--
+==========================================
+ This site is powered by Z9 Commerce.
+==========================================
+ For more info:
+      Visit : https://www.z9digital.com
+       Call : 586-693-2599
+      Email : info@z9digital.com
+==========================================
+-->
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<title>FAQs</title>
+
+	<link rel='icon' type="image/png" href="https://brandstore.centura.org/images/favicon.png" />
+
+	<link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+	<link href="/css/fonts.css" rel="stylesheet" type="text/css" />
+	<link href="/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+	<link href="/css/animate.css" rel="stylesheet" type="text/css" />
+	<link href="/css/stylesheet.css?ver=20191108" rel="stylesheet" type="text/css" />
+	<link href="/css/slick.css" rel="stylesheet" type="text/css" />
+	<link href="/css/all.min.css" rel="stylesheet" type="text/css" />
+	<link href="/css/style2.css?ver=20200128" rel="stylesheet" type="text/css" />
+	<link href="/css/custom.css?ver=20200130`" rel="stylesheet" type="text/css" />
+
+	<script type="text/javascript" src="/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/js/popper.min.js"></script>
+	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+	<script> var $j = jQuery.noConflict(); </script>
+	<script type="text/javascript" src="/js/prefixfree.min.js"></script>
+
+	<script type="text/javascript" src="/js/jquery.validate.js"></script>
+	<script>var site_http_url = "https://brandstore.centura.org/store";
+var site_https_url = "https://brandstore.centura.org/store";
+var site_skin_images = "cart/views/images";
+var skin_images = "cart/views/images";
+var CartDeleteItemUrl = 'https://brandstore.centura.org/store/index.php?oa=RemoveItem';
+var CartEmptyUrl = 'https://brandstore.centura.org/store/index.php?oa=ClearItems';
+var StartNewOrderUrl = 'https://brandstore.centura.org/store/index.php?oa=ClearItems&new=1';
+var urlLogout = "https://brandstore.centura.org/store/index.php?ua=user_logout&oa=RemoveCart";
+var msg_product_quantity_less = 'Product quantity is less as';
+var msg_enter_min_valid_quantity = '(min order quantity).\nPlease enter valid product quantity!';
+var msg_product_quantity_bigger = 'Product quantity is bigger as';
+var msg_enter_valid_max_quantity = '(max order quantity).\nPlease enter valid product quantity!';
+var msg_numeric_product_quantity = 'Please enter valid product quantity!\nIt must be a numeric value.';
+var msg_enter_valid_email = 'Please enter valid email address';
+var msg_choose_min_1checkbox = 'Please choose at least one check box';
+var msg_want_cancel_subscription = 'Do you really want to cancel your subscription?';
+var msg_your_username = 'your email address';
+var msg_your_password = 'your password';
+var msg_first_name = 'first name';
+var msg_last_name = 'last name';
+var msg_company_name = 'company name';
+var msg_address_line1 = 'address line 1';
+var msg_address_line2 = 'address line 2';
+var msg_city_name = 'city name';
+var msg_country = 'country';
+var msg_select_usa_state = 'Please select USA state';
+var msg_select_canada_province = 'Please select Canadian province';
+var msg_custom_province_state = 'custom province/state';
+var msg_zip_postal_code = 'zip/postal code';
+var msg_phone_number = 'phone number';
+var msg_email_address = 'email address';
+var msg_username = 'username';
+var msg_password = 'password';
+var msg_password_confirmation = 'password confirmation';
+var msg_read_terms_before_registration = 'Before registration please read our terms and conditions';
+var msg_name = 'name';
+var msg_different_password_and_comfirmation = 'Password and confirmation are different!';
+var msg_your_name = 'your name';
+var msg_your_email_address = 'your email address';
+var msg_your_friend_name = 'your friend\'s name';
+var msg_your_friend_email_address = 'your friend\'s email address';
+var msg_please_enter = 'Please enter';
+var msg_confirm_delete_item = 'Do you really want to delete the selected item?';
+var msg_confirm_empty_cart = 'Do you really want to empty the cart?';
+var msg_number_of_items_exceeded_min = 'The number of items ordered is less than the minimum allowed. Please adjust the quantity of this order.';
+var msg_number_of_items_exceeded_max = 'The number of items ordered is greater than the maximum allowed. Please adjust the quantity of this order.';
+var msg_number_of_items_exceed_inventory = 'We sorry but this order will exceed our current inventory for this product. Please adjust the quantity of this order.';
+var msg_incorrect_shipping_address = 'We do not ship to the country you have entered as your shipping address. Please select a different country.';
+var msg_confirm_delete_shipping_address = 'Do you really want to delete select address?';
+</script>
+	<script type="text/javascript" src="/js/cart/common.js?ver=20221130"></script>
+	<script type="text/javascript" src="/js/main.js"></script>
+
+</head>
+<!-- one_column.tpl.php -->
+<body>
+
+
+
+<script type="text/javascript">
+
+	// http://stackoverflow.com/questions/14441456/how-to-detect-which-device-view-youre-on-using-twitter-bootstrap-api
+	function findBootstrapEnvironment() {
+		var envs = ['xs', 'sm', 'md', 'lg', 'xl'];
+
+		var $el = jQuery('<div>');
+		$el.appendTo(jQuery('body'));
+
+		for (var i = envs.length - 1; i >= 0; i--) {
+			var env = envs[i];
+
+			$el.addClass('hidden-'+env);
+			if ($el.is(':hidden')) {
+				$el.remove();
+				return env;
+			}
+		}
+	}
+
+	function show_shop_by_facility()
+	{
+		bootstrap_env = findBootstrapEnvironment();
+
+		var shop_by_facility_link = 'popup';
+		if (bootstrap_env == 'xs' || bootstrap_env == 'sm')
+		{
+			shop_by_facility_link = '/shop_by_facility.htm';
+		}
+
+		if (shop_by_facility_link == 'popup')
+		{
+			jQuery("#open_shop_by_facility").click();
+		}
+		else
+		{
+			window.open('/shop_by_facility.htm', '_self' );
+		}
+	}
+
+</script>
+
+
+
+<script>
+	function get_cart_count()
+	{
+		var name = 'cart_count';
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for (var i=0;i < ca.length;i++)
+		{
+			var c = ca[i];
+			while (c.charAt(0)==' ')
+			{
+				c = c.substring(1,c.length);
+			}
+			if (c.indexOf(nameEQ) == 0)
+			{
+				var return_value = c.substring(nameEQ.length,c.length);
+				console.log(return_value);
+				return_value = parseInt(return_value); // only allow return of integer
+				console.log(return_value);
+				return return_value;
+			}
+		}
+		return 0;
+	}
+
+	cart_count = get_cart_count();
+	console.log('cart_count='+cart_count);
+
+</script>
+
+<script type="text/javascript">
+	function check_auth_token()
+	{
+		var name = 'cms_user_login';
+		//console.log('name='+name);
+
+		var nameEQ = name + "=";
+		//console.log(document.cookie.indexOf(nameEQ));
+
+		if (document.cookie.indexOf(nameEQ) != -1)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	auth_token = check_auth_token();
+	console.log('auth_token='+auth_token);
+
+</script>
+
+<header class="" >
+	<div class="header-inner">
+		<div class="container">
+		<div class="row">
+			<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
+									
+<!-- facility_color.tpl.php -->
+	<a href="https://brandstore.centura.org">
+		<img src="https://brandstore.centura.org/images/logo-new.png" class="logo" alt="Centura">
+	</a>
+				
+				<div class="navbar-header pull-right">
+					<div class="navbar-toggle-outer">
+						<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+				<ul class="header-actions">
+					<li>
+													<a class="header-login-link logout_link" style="display: none;" onclick="ConfirmLogout()" href="#">LOGOUT</a>
+													<a class="header-login-link login_link" style="display: none;" href="https://brandstore.centura.org/store/index.php?p=login">LOGIN</a>
+											</li>
+					<li>
+						<div class="header-cart">
+							<a href="https://brandstore.centura.org/store/index.php?p=cart&referer=%2Ffaqs.htm">
+								<i class="fas fa-shopping-cart"></i>
+								<span>
+																		0								</span>
+							</a>
+						</div>
+					</li>
+					<li >
+						<div class="header-search">
+							<form method="get" action="//brandstore.centura.org/store/index.php">
+								<input type="hidden" value="catalog" name="p">
+								<input type="hidden" value="search" name="mode">
+								<input type="hidden" value="all" name="search_in">
+								<input type="hidden" value="" name="cid_root">
+
+								<input name="search_str" type="text" onblur="set_search_text(this);"
+									onFocus="clear_search_text(this);" class="search-control" placeholder="Search by item# or Keyword" name="">
+								<button type="submit">
+									<i class="fas fa-search"></i>
+								</button>
+							</form>
+						</div>
+
+					</li>
+				</ul>
+				<nav class="collapse navbar-collapse bs-navbar-collapse pull-right-lg" role="navigation">
+					<ul class="nav navbar-nav">
+						<li class="nav-item active mobile-menu-item">
+							<a class="nav-link" href="https://brandstore.centura.org/store/index.php?p=cart&referer=%2Ffaqs.htm">Checkout &nbsp; <i class="fas fa-shopping-cart" style="color:#00a82d;"></i>
+								<span>
+																		0								</span>
+							</a>
+						</li>
+						<li class="nav-item active mobile-menu-item">
+															<a class="nav-link logout_link" style="display: none;" onclick="ConfirmLogout()" href="#">LOGOUT</a>
+															<a class="nav-link login_link" style="display: none;" href="https://brandstore.centura.org/store/index.php?p=login">LOGIN</a>
+													</li>
+
+						
+						<li class="nav-item dropdown menu-large mega-menu">
+							<a href=""
+								onclick="window.open('/shop_by_facility.htm', '_self' );"
+								class="nav-link dropdown-toggle hidden-md hidden-lg" data-toggle="dropdown">
+								Shop by Facility<span class="caret-ic"><i class="caret"></i></span>
+							</a>
+							<a id="open_shop_by_facility" href="#"
+								class="nav-link dropdown-toggle hidden-sm hidden-xs" data-toggle="dropdown">
+								Shop by Facility<span class="caret-ic"><i class="caret"></i></span>
+							</a>
+							<div class="dropdown-menu megamenu row hidden-sm hidden-xs" style="width: auto;">
+								<!-- shop_by_facility.tpl.php -->
+<div class="col-sm-12">
+	<div class="countries fw-pg-items">
+		<div class="row">
+			<div class="container column-count-2">
+
+				<div class="c-group">
+																		<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/Centura-4167-.html">Centura</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/Avista_Adventist_Hospital-4161-.html">Avista Adventist Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/Bob_Wilson_Memorial_Hospital-4165-.html">Bob Wilson Memorial Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/Castle_Rock_Adventist_Hospital-4168-.html">Castle Rock Adventist Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/Littleton_Adventist_Hospital-4170-.html">Littleton Adventist Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/Longmont_United_Hospital-4171-.html">Longmont United Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/Mercy_Hospital-4173-.html">Mercy Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/Parker_Adventist_Hospital-4174-.html">Parker Adventist Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/Penrose_Hospital-4176-.html">Penrose Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/Porter_Adventist_Hospital-4175-.html">Porter Adventist Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/St_Anthony_Hospital-4164-.html">St. Anthony Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/St_Anthony_North_Hospital-4162-.html">St. Anthony North Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/St_Anthony_Summit_Hospital-4163-.html">St. Anthony Summit Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/St_Catherine_Hospital_Dodge_City-4650-.html">St. Catherine Hospital Dodge City</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/St_Catherine_Hospital_Garden_City-4166-.html">St. Catherine Hospital Garden City</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/St_Elizabeth_Hospital-4651-.html">St. Elizabeth Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/St_Francis_Hospital-4169-.html">St. Francis Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/St_Mary_Corwin_Hospital-4172-.html">St. Mary-Corwin Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/St_Thomas_More_Hospital-4177-.html">St. Thomas More Hospital</a></p>
+													<p class="c-place"><a href="https://brandstore.centura.org/store/catalog/OrthoColorado-4604-.html">OrthoColorado</a></p>
+															</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+							</div>
+
+						</li>
+
+						<li class="nav-item">
+							<a class="nav-link" href="https://brandstore.centura.org/more-product-options">More Product Options</a>
+
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="https://brandstore.centura.org/faqs.htm">Faqs</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="https://brandstore.centura.org/return-policy.htm">Return Policy</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="https://brandstore.centura.org/contact_us.htm">Contact Us</a>
+						</li>
+					</ul>
+					<ul class="menu-actions">
+						<li>
+							<div class="header-search">
+								<form method="get" action="//brandstore.centura.org/store/index.php">
+									<input type="hidden" value="catalog" name="p">
+									<input type="hidden" value="search" name="mode">
+									<input type="hidden" value="all" name="search_in">
+									<input type="hidden" value="" name="cid_root">
+
+									<input name="search_str" type="text" onblur="set_search_text(this);"
+										onFocus="clear_search_text(this);" class="search-control" placeholder="Search by item# or Keyword" name="">
+									<button type="submit">
+										<i class="fas fa-search"></i>
+									</button>
+								</form>
+							</div>
+						</li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</div>
+	</div>
+</header>
+
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		if (auth_token == true)
+		{
+			jQuery('.login_link').hide();
+			jQuery('.logout_link').show();
+		}
+		else
+		{
+			jQuery('.logout_link').hide();
+			jQuery('.login_link').show();
+		}
+	});
+</script>
+
+<script type="text/javascript">
+	var cart_count = 0;
+
+	function ConfirmLogout() {
+					if (cart_count > 0)
+			{
+				var urlLogout = 'https://brandstore.centura.org/store/index.php?ua=user_logout&oa=RemoveCart';
+				if (confirm("You have items in your cart. Logging out will empty your cart\nAre you sure want to continue?"))
+				{
+					//alert(urlLogout);
+					window.location = urlLogout;
+				}
+			}
+			else
+			{
+				var urlLogout = 'https://brandstore.centura.org/store/index.php?ua=user_logout&oa=RemoveCart';
+				if (confirm("Do you really want to logout?"))
+				{
+					//alert(urlLogout);
+					window.location = urlLogout;
+				}
+			}
+			}
+</script>
+<div class="container">
+	
+</div>
+
+<section class="main">
+	<div class="container" style="padding-bottom: 55px; min-height: 450px">
+		<div class="col-xs-12">
+			<h2> FAQs </h2>
+			<div id="one-column" >
+				<div class="content"><p><strong>How do I get my order approved?</strong></p>
+
+<p><b>Promotional product orders invoicing a cost center will require prior approval from the following contacts before your order can be processed.</b></p>
+
+<p><b>Hospitals&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Hospital CEO or CEO Executive Assistant</b></p>
+
+<p><b>Enterprise&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Ethan Shumway</b><b>&nbsp;</b><b><a contenteditable="false" href="mailto:EthanShumway@Centura.Org" target="_blank" title="mailto:EthanShumway@Centura.Org">EthanShumway@Centura.Org</a></b><b>&nbsp;</b><b>or Rosa Mayberry</b><b>&nbsp;</b><b><a contenteditable="false" href="mailto:RosaMayberry@centura.org" target="_blank" title="mailto:RosaMayberry@centura.org">RosaMayberry@centura.org</a></b></p>
+
+<p><b>Ambulatory&nbsp; &nbsp; &nbsp; Deb Carpenter</b></p>
+
+<p><b>CHPG&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Jason Tacha</b></p>
+
+<p><b>&nbsp;</b></p>
+
+<p><b>Orders placed using a personal credit card with the intention of seeking reimbursement are subject to the same approvals. Apparel order quantities over 51 need to be placed directly with an eLead account manager via email or phone. Orders less than 51 can be processed online. Approval delays may impact in-hand dates and final shipping costs.&nbsp;</b></p>
+
+<p>&nbsp;</p>
+
+<p><strong>To ensure your apparel order ships ahead of the holidays, it must be placed by December 1<sup>st</sup>.</strong></p>
+
+<p><strong>Please <a href="https://brandstore.centura.org/contact_us.htm">contact us</a> with any questions.</strong></p>
+
+<p>&nbsp;</p>
+
+<p><strong>What if the item I purchased is out of stock?</strong></p>
+
+<p>If your selection is out of stock or discontinued, we will cancel the order and will refund you. We will reach out via email to alert you of which item(s) are not available. We will also refund any related tax and shipping.</p>
+
+<p>&nbsp;</p>
+
+<p><strong>I don&rsquo;t see the logo I would like to use for my products.&nbsp;</strong></p>
+
+<p>The only logos offered on the site at this time are master brand and hospital logos. Other logos will be added to the site when the new brand architecture is finalized. Please reach out to your marketing contact for additional questions.</p>
+
+<p>&nbsp;</p>
+
+<p><strong>What do the Centura Health colors and logo represent?</strong></p>
+
+<p>The colors are inspired by the local landscape of the vibrant communities that Centura Health serves. The deep blue of midnight skies, green of spruce forests, and yellow of great plains all work together to represent joy, harmony, and hope. Within the symbol, you&rsquo;ll notice a soaring dove, which represents the grace, dignity, confidence, and determination of Centura Health&rsquo;s incredible people.</p>
+
+<p>&nbsp;</p>
+
+<p><b>Will I receive a virtual proof?</b></p>
+
+<p>Pre-paid orders made via a p-card or personal credit card will not receive a virtual proof. The image on the site represents the accuracy of the product. Items placed outside the online store will follow the standard proofing process.</p>
+
+<p>&nbsp;</p>
+
+<p><strong>How long will my order take?</strong>&nbsp;</p>
+
+<p>Typically, orders take 2-3 weeks to be produced and delivered. Rush options are available. We advise that you&nbsp;<a href="https://cen.elead.mycompanybrandstore.com/contact_us.htm"><strong>contact us</strong></a>&nbsp;to confirm any additional costs and timelines.</p>
+
+<p>&nbsp;</p>
+
+<p><strong>Is payroll deduction available?</strong></p>
+
+<p>Payroll deduction is not currently available. Orders must be pre-paid with a credit card or with a cost center.</p>
+
+<p>&nbsp;</p>
+
+<p><strong>Do employees get an additional discount?</strong></p>
+
+<p>Your company store is priced for employee use, there are no additional discounts. However, you can apply gift cards or AppreciteU codes when applicable.&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><strong>How many pieces of apparel do I need to order to get lower pricing?</strong></p>
+
+<p>Generally, a minimum order of 51 pieces will have a lower price. The pieces can vary in size and style, but the logo must remain the same. If you are interested in purchasing 51 pieces or more of apparel, please&nbsp;<a href="https://cen.elead.mycompanybrandstore.com/contact_us.htm"><strong>contact us</strong></a>&nbsp;for a quote.</p>
+
+<p>&nbsp;</p>
+
+<p><strong>Can I purchase single quantities of items like bottles and journals?</strong></p>
+
+<p>Single pieces are limited to apparel and select hats and bags. We are able to embroider per order, however hard goods like bottles and journals have higher minimums. We are happy to assist with bulk orders of hard goods.</p>
+
+<p>&nbsp;&nbsp;</p>
+
+<p><strong>How do I use my gift code?</strong></p>
+
+<p>Gift codes are typically used to purchase items with no minimums including apparel, select hats and bags. Gift codes can be applied at the final payment page of an order, by entering the code and clicking &ldquo;apply&rdquo;. The gift code amount can cover product, shipping or tax. Your code will not expire, and any remaining balance can be used for a future purchase. If your code does not cover the full cost of your order, you will need to enter credit card information to pay for the remaining amount due. You can apply multiple codes to an order.</p>
+
+<p>&nbsp;</p>
+</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- footer.tpl.php -->
+<!-- style="background-color: #939494;" -->
+<footer>
+	<div class="container">
+		<div class="row no-gutters">
+			<div class="col-sm-6">
+				<p>&copy; 2022 Centura Health® Operated by eLead Promo, Inc.</p>
+			</div>
+			<div class="col-sm-6">
+				<ul class="footer-links">
+					<li>
+						<a href="https://brandstore.centura.org/about-us.htm">About the Store</a>
+					</li>
+					<li>
+						<a href="https://brandstore.centura.org/privacy-policy.htm">Privacy Policy</a>
+					</li>
+					<li>
+						<a href="https://brandstore.centura.org/terms-of-use.htm">Terms of Use</a>
+					</li>
+					<li>
+						<a href="https://brandstore.centura.org/store/index.php?p=site_map">Site Map</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</footer>
+
+
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/605258c9f7ce182709312ebb/1f10qlkrh';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>
+
+
+
