@@ -66,6 +66,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            FASTEN_ENV=${{ github.ref_name == 'main' && 'prod' || 'sandbox' }}
+            FASTEN_ENV=${{ github.ref_name == 'sandbox' && 'sandbox' || 'prod' }}
 #          cache-from: type=gha
 #          cache-to: type=gha,mode=max
