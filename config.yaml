@@ -19,7 +19,8 @@ web:
     # the location on the filesystem where webapp javascript + css is located
     frontend:
       path: /opt/fasten/web
-
+database:
+  location: 'fasten.db'
 log:
   file: '' #absolute or relative paths allowed, eg. web.log
   level: INFO
