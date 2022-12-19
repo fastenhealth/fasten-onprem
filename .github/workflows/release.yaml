@@ -1,0 +1,59 @@
+name: Release
+# This workflow is triggered manually
+on:
+  workflow_dispatch:
+    inputs:
+      version_bump_type:
+        description: 'Version Bump Type (major, minor, patch)'
+        required: true
+        default: 'patch'
+      version_metadata_path:
+        description: 'Path to file containing Version string'
+        required: true
+        default: 'backend/pkg/version/version.go'
+
+
+jobs:
+  release:
+    name: Create Release Commit
+    runs-on: ubuntu-latest
+    container: ghcr.io/packagrio/packagr:latest-golang
+    env:
+      STATIC: true
+    steps:
+      - name: Git
+        run: |
+          apt-get update && apt-get install -y software-properties-common
+          add-apt-repository ppa:git-core/ppa && apt-get update && apt-get install -y git
+          git --version
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Bump version
+        id: bump_version
+        uses: packagrio/action-bumpr-go@master
+        with:
+          version_bump_type: ${{ github.event.inputs.version_bump_type }}
+          version_metadata_path: ${{ github.event.inputs.version_metadata_path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test
+        run: |
+          make test
+      - name: Commit Changes Locally
+        id: commit
+        uses: packagrio/action-releasr-go@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
+        with:
+          version_metadata_path: ${{ github.event.inputs.version_metadata_path }}
+      - name: Publish Release & Assets
+        id: publish
+        uses: packagrio/action-publishr-go@master
+        env:
+          # This is necessary in order to push a commit to the repo
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
+        with:
+          version_metadata_path: ${{ github.event.inputs.version_metadata_path }}
+
