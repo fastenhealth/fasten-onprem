@@ -60,10 +60,15 @@ export class AuthSigninComponent implements OnInit {
 
   signinSubmit(){
     this.submitted = true;
+    this.loading = true
 
     this.authService.Signin(this.existingUser.username, this.existingUser.password)
-      .then(() => this.router.navigateByUrl('/dashboard'))
+      .then(() => {
+        this.loading = false
+        this.router.navigateByUrl('/dashboard')
+      })
       .catch((err)=>{
+        this.loading = false
         if(err?.name){
           this.errorMsg = "username or password is incorrect"
         } else{

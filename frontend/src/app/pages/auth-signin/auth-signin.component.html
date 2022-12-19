@@ -50,7 +50,7 @@
             </div>
           </div>
         </div><!-- form-group -->
-        <button [disabled]="!userForm.form.valid" type="submit" class="btn btn-az-primary btn-block">Sign In</button>
+        <button [disabled]="!userForm.form.valid || loading" type="submit" class="btn btn-az-primary btn-block">Sign In</button>
 
         <div *ngIf="errorMsg" class="alert alert-danger mt-3" role="alert">
           <strong>Error</strong> {{errorMsg}}

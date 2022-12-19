@@ -14,6 +14,7 @@ export class AuthSignupComponent implements OnInit {
   submitted: boolean = false
   newUser: User = new User()
   errorMsg: string = ""
+  loading: boolean = false
 
   constructor(
     private authService: AuthService,
@@ -25,13 +26,16 @@ export class AuthSignupComponent implements OnInit {
   }
 
   signupSubmit(){
+    this.loading = true
     this.submitted = true;
 
     this.authService.Signup(this.newUser).then((tokenResp: any) => {
+        this.loading = false
         console.log(tokenResp);
         this.router.navigateByUrl('/dashboard');
       },
       (err)=>{
+        this.loading = false
         console.error("an error occured while signup",err)
         if(err.name === 'conflict') {
           // "batman" already exists, choose another username
