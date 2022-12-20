@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/analogj/go-util v0.0.0-20210417161720-39b497cca03b
-	github.com/fastenhealth/fasten-sources v0.0.4
+	github.com/fastenhealth/fasten-sources v0.0.7
 	github.com/gin-gonic/gin v1.8.1
 	github.com/glebarez/sqlite v1.5.0
 	github.com/golang-jwt/jwt/v4 v4.4.2
