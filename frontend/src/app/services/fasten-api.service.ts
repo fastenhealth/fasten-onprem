@@ -126,6 +126,16 @@ export class FastenApiService {
       );
   }
 
+  getResourceGraph(): Observable<{[resourceType: string]: ResourceFhir[]}> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/graph`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("RESPONSE", response)
+          return response.data as {[name: string]: ResourceFhir[]}
+        })
+      );
+  }
+
   getResourceBySourceId(sourceId: string, resourceId: string): Observable<ResourceFhir> {
 
     return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/fhir/${sourceId}/${resourceId}`)

@@ -28,6 +28,7 @@ import { MomentModule } from 'ngx-moment';
 import {AuthService} from './services/auth.service';
 import { PatientProfileComponent } from './pages/patient-profile/patient-profile.component';
 import { MedicalHistoryComponent } from './pages/medical-history/medical-history.component';
+import { ReportLabsComponent } from './pages/report-labs/report-labs.component';
 
 
 @NgModule({
@@ -43,6 +44,7 @@ import { MedicalHistoryComponent } from './pages/medical-history/medical-history
     SourceDetailComponent,
     PatientProfileComponent,
     MedicalHistoryComponent,
+    ReportLabsComponent,
   ],
   imports: [
     FormsModule,

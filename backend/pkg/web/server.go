@@ -57,17 +57,31 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 				secure.GET("/source/:sourceId", handler.GetSource)
 				secure.POST("/source/:sourceId/sync", handler.SourceSync)
 				secure.GET("/source/:sourceId/summary", handler.GetSourceSummary)
-				secure.GET("/resource/fhir", handler.ListResourceFhir) //
+				secure.GET("/resource/fhir", handler.ListResourceFhir)
+				secure.GET("/resource/graph", handler.GetResourceFhirGraph)
 				secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
 				secure.POST("/resource/association", handler.ReplaceResourceAssociation)
 			}
 
-			if ae.Config.GetString("log.level") == "DEBUG" {
-				//in debug mode, this endpoint lets us request data directly from the source api
-				ae.Logger.Warningf("***INSECURE*** ***INSECURE*** DEBUG mode enables developer functionality, including unauthenticated raw api requests")
+			if ae.Config.GetBool("web.allow_unsafe_endpoints") {
+				//this endpoint lets us request data directly from the source api
+				ae.Logger.Warningln("***UNSAFE***")
+				ae.Logger.Warningln("***UNSAFE***")
+				ae.Logger.Warningln("***UNSAFE***")
+				ae.Logger.Warningln("***UNSAFE***")
+				ae.Logger.Warningln("***UNSAFE***")
+				ae.Logger.Warningf("\"web.allow_unsafe_endpoints\" mode enabled!! This enables developer functionality, including unauthenticated raw api requests")
+				ae.Logger.Warningln("***UNSAFE***")
+				ae.Logger.Warningln("***UNSAFE***")
+				ae.Logger.Warningln("***UNSAFE***")
+				ae.Logger.Warningln("***UNSAFE***")
+				ae.Logger.Warningln("***UNSAFE***")
+				unsafe := api.Group("/unsafe")
+				{
+					//http://localhost:9090/api/raw/test@test.com/436d7277-ad56-41ce-9823-44e353d1b3f6/Patient/smart-1288992
+					unsafe.GET("/:username/:sourceId/*path", handler.UnsafeRequestSource)
 
-				//http://localhost:9090/api/raw/test@test.com/436d7277-ad56-41ce-9823-44e353d1b3f6/Patient/smart-1288992
-				api.GET("/raw/:username/:sourceId/*path", handler.RawRequestSource)
+				}
 			}
 		}
 	}

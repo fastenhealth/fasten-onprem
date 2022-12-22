@@ -1,0 +1,26 @@
+<div class="az-content">
+  <div class="container">
+    <div class="az-content-body">
+
+      <!-- Header Row -->
+      <report-header [reportHeaderTitle]="'Labs'"></report-header>
+
+
+
+      <!-- Observations Title -->
+      <div class="row mt-5 mb-3">
+        <div class="col-6">
+          <h1 class="az-dashboard-title">Observations</h1>
+        </div>
+      </div>
+
+      <!-- Observations List -->
+      <app-report-labs-observation *ngFor="let observationGroup of observationGroups |  keyvalue"
+                                   [observations]="observationGroup.value"
+                                   [observationCode]="observationGroup.key"
+                                   [observationTitle]="observationGroupTitles[observationGroup.key]"
+      ></app-report-labs-observation>
+
+    </div>
+  </div>
+</div>

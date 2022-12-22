@@ -1,5 +1,6 @@
 package models
 
+//this model is used by the Webserver (see RelatedResource for db model)
 type ResourceAssociation struct {
 	SourceID           string `json:"source_id"`
 	SourceResourceType string `json:"source_resource_type"`

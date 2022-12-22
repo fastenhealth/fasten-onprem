@@ -1,0 +1,56 @@
+<div class="card card-dashboard-seven mb-3">
+  <div class="card-header tx-medium">
+    <div class="row" >
+      <!-- Condition Header -->
+      <div class="col-6">
+        {{observationTitle}}
+      </div>
+      <div class="col-6">
+        {{observations[0] | fhirPath: "Observation.effectiveDateTime": "Observation.issued" |  date}}
+      </div>
+    </div>
+  </div><!-- card-header -->
+  <div class="card-body">
+
+    <div class="row">
+      <!-- Condition Details -->
+
+      <div class="col-6 mb-2">
+
+        <div class="row  pl-3">
+          <div class="col-12 mt-3 mb-2">
+            <p>
+              <strong>Test Code (loinc):</strong> {{observationCode}} <br/>
+              <strong>Latest Test Date:</strong> {{observations[0] | fhirPath: "Observation.effectiveDateTime": "Observation.issued" |  date}} <br/>
+              <strong>Ordered By:</strong> {{observations[0] | fhirPath: "Observation.encounter.display"}} <br/>
+              <strong>Notes:</strong>
+            </p>
+
+
+          </div>
+        </div>
+
+      </div>
+      <div class="col-6 bg-gray-100">
+        <div class="row">
+          <p>
+            <small>
+              Troponin I is a part of the troponin complex. It binds to actin in thin myofilaments to hold the actin-tropomyosin complex in place. Because of it myosin cannot bind actin in relaxed muscle. When calcium binds to the Troponin C it causes conformational changes which lead to dislocation of troponin I and finally tropomyosin leaves the binding site for myosin on actin leading to contraction of muscle. The letter I is given due to its inhibitory character.
+            </small>
+          </p>
+
+
+          <ng-container *ngFor="let observation of observations">
+
+            <div routerLink="/source/{{observation?.source_id}}/resource/{{observation?.source_resource_id}}" class="col-6 mt-3 mb-2 tx-indigo">
+              <strong>{{observation | fhirPath: "Observation.valueQuantity.value" }}</strong>
+            </div>
+
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+
+  </div><!-- card-body -->
+</div>

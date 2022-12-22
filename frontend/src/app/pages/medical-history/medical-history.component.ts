@@ -25,25 +25,15 @@ export class MedicalHistoryComponent implements OnInit {
 
 
   ngOnInit(): void {
-    forkJoin([
-      this.fastenApi.getResources("Condition", null, null, true),
-      this.fastenApi.getResources("Encounter", null, null, true)
-    ]).subscribe(results => {
-      this.conditions = results[0]
+    this.fastenApi.getResourceGraph().subscribe(results => {
+      this.conditions = results["Condition"]
+      this.unassigned_encounters = results["Encounter"]
+
       //populate a lookup table with all resources
       for(let condition of this.conditions){
         this.recPopulateResourceLookup(condition)
       }
 
-      console.log("Populated resource lookup:", this.resourceLookup);
-
-        //find unassigned encounters
-      console.log("all encounters:", results[1].length, results[1]);
-      (results[1] || []).map((encounter) => {
-        if(!this.resourceLookup[`${encounter.source_id}/${encounter.source_resource_type}/${encounter.source_resource_id}`]){
-          this.unassigned_encounters.push(encounter)
-        }
-      })
 
       if(this.unassigned_encounters.length > 0){
         console.log("Found mapping:", this.resourceLookup)

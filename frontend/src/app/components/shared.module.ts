@@ -40,6 +40,7 @@ import { ReportMedicalHistoryEditorComponent } from './report-medical-history-ed
 import { TreeModule } from '@circlon/angular-tree-component';
 import {FilterPipe} from '../pipes/filter.pipe';
 import { ReportMedicalHistoryConditionComponent } from './report-medical-history-condition/report-medical-history-condition.component';
+import { ReportLabsObservationComponent } from './report-labs-observation/report-labs-observation.component';
 
 @NgModule({
   imports: [
@@ -86,6 +87,7 @@ import { ReportMedicalHistoryConditionComponent } from './report-medical-history
     ReportMedicalHistoryEditorComponent,
     FilterPipe,
     ReportMedicalHistoryConditionComponent,
+    ReportLabsObservationComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -118,10 +120,11 @@ import { ReportMedicalHistoryConditionComponent } from './report-medical-history
         ResourceListOutletDirective,
         ToastComponent,
         ReportHeaderComponent,
-      ReportMedicalHistoryEditorComponent,
-      FhirPathPipe,
-      FilterPipe,
-      ReportMedicalHistoryConditionComponent
+        ReportMedicalHistoryEditorComponent,
+        FhirPathPipe,
+        FilterPipe,
+        ReportMedicalHistoryConditionComponent,
+        ReportLabsObservationComponent
 
     ]
 })

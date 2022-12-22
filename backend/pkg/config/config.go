@@ -24,6 +24,8 @@ func (c *configuration) Init() error {
 	c.SetDefault("web.listen.port", "8080")
 	c.SetDefault("web.listen.host", "0.0.0.0")
 	c.SetDefault("web.listen.basepath", "")
+	c.SetDefault("web.allow_unsafe_endpoints", false)
+
 	c.SetDefault("web.src.frontend.path", "/opt/fasten/web")
 
 	c.SetDefault("database.location", "/opt/fasten/db/fasten.db") //TODO: should be /opt/fasten/fasten.db

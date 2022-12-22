@@ -107,3 +107,25 @@ func ReplaceResourceAssociation(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"success": true})
 }
+
+// GetResourceFhirGraph
+// Retrieve a list of all fhir resources (vertex), and a list of all associations (edge)
+// Generate a graph
+// find the PredecessorMap
+// - filter to only vertices that are "Condition" or "Encounter" and are "root" nodes (have no edges directed to this node)
+func GetResourceFhirGraph(c *gin.Context) {
+	logger := c.MustGet("LOGGER").(*logrus.Entry)
+	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+
+	conditionResourceList, encounterResourceList, err := databaseRepo.GetFlattenedResourceGraph(c)
+	if err != nil {
+		logger.Errorln("An error occurred while retrieving list of resources", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": map[string][]*models.ResourceFhir{
+		"Condition": conditionResourceList,
+		"Encounter": encounterResourceList,
+	}})
+}

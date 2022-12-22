@@ -11,6 +11,7 @@ import {IsAuthenticatedAuthGuard} from './auth-guards/is-authenticated-auth-guar
 import {SourceDetailComponent} from './pages/source-detail/source-detail.component';
 import {PatientProfileComponent} from './pages/patient-profile/patient-profile.component';
 import {MedicalHistoryComponent} from './pages/medical-history/medical-history.component';
+import {ReportLabsComponent} from './pages/report-labs/report-labs.component';
 
 const routes: Routes = [
 
@@ -29,6 +30,7 @@ const routes: Routes = [
 
   { path: 'patient-profile', component: PatientProfileComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'medical-history', component: MedicalHistoryComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+  { path: 'labs', component: ReportLabsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
   // { path: 'general-pages', loadChildren: () => import('./general-pages/general-pages.module').then(m => m.GeneralPagesModule) },
   // { path: 'ui-elements', loadChildren: () => import('./ui-elements/ui-elements.module').then(m => m.UiElementsModule) },
