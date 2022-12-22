@@ -39,6 +39,8 @@
             </small>
           </p>
 
+          <canvas baseChart [chartType]="'horizontalBar'" [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [colors]="barChartColors"></canvas>
+
 
           <ng-container *ngFor="let observation of observations">
 
