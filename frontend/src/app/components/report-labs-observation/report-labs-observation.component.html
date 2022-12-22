@@ -35,13 +35,19 @@
       </div>
       <div class="col-6 bg-gray-100">
         <div class="row">
-          <p>
-            <small>
-              Troponin I is a part of the troponin complex. It binds to actin in thin myofilaments to hold the actin-tropomyosin complex in place. Because of it myosin cannot bind actin in relaxed muscle. When calcium binds to the Troponin C it causes conformational changes which lead to dislocation of troponin I and finally tropomyosin leaves the binding site for myosin on actin leading to contraction of muscle. The letter I is given due to its inhibitory character.
-            </small>
-          </p>
+          <div class="col-12 mt-3">
+            <p>
+              <small>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              </small>
+            </p>
+          </div>
 
-          <canvas baseChart [height]="chartHeight" [chartType]="'horizontalBar'" [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"></canvas>
+          <div class="col-12">
+            <canvas baseChart [height]="chartHeight" [chartType]="'horizontalBar'" [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"></canvas>
+          </div>
+
+
 
         </div>
       </div>
