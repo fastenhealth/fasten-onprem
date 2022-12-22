@@ -3,7 +3,7 @@
     <div class="row" >
       <!-- Condition Header -->
       <div class="col-6">
-        {{observationTitle}}
+        <span routerLink="/source/{{observations[0]?.source_id}}/resource/{{observations[0]?.source_resource_id}}">{{observationTitle}}</span>
       </div>
       <div class="col-6">
         {{observations[0] | fhirPath: "Observation.effectiveDateTime": "Observation.issued" |  date}}
@@ -20,12 +20,14 @@
         <div class="row  pl-3">
           <div class="col-12 mt-3 mb-2">
             <p>
-              <strong>Test Code (loinc):</strong> {{observationCode}} <br/>
+              <strong>Short Name:</strong> {{observations[0] | fhirPath: "Observation.code.text"}} <br/>
+              <strong>Result:</strong> {{observations[0] | fhirPath: "Observation.valueQuantity.value"}} {{observations[0] | fhirPath: "Observation.valueQuantity.unit"}} <br/>
+              <br/>
               <strong>Latest Test Date:</strong> {{observations[0] | fhirPath: "Observation.effectiveDateTime": "Observation.issued" |  date}} <br/>
               <strong>Ordered By:</strong> {{observations[0] | fhirPath: "Observation.encounter.display"}} <br/>
-              <strong>Notes:</strong>
+              <strong>LOINC Code:</strong> {{observationCode}} <br/>
+              <strong>Notes:</strong> {{observations[0] | fhirPath: "Observation.note.text"}}
             </p>
-
 
           </div>
         </div>
@@ -41,14 +43,6 @@
 
           <canvas baseChart [height]="chartHeight" [chartType]="'horizontalBar'" [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"></canvas>
 
-
-          <ng-container *ngFor="let observation of observations">
-
-            <div routerLink="/source/{{observation?.source_id}}/resource/{{observation?.source_resource_id}}" class="col-6 mt-3 mb-2 tx-indigo">
-              <strong>{{observation | fhirPath: "Observation.valueQuantity.value" }}</strong>
-            </div>
-
-          </ng-container>
         </div>
       </div>
     </div>

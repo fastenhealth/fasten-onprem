@@ -4,6 +4,7 @@ import {ChartOptions} from 'chart.js';
 // import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 // import { BaseChartDirective } from 'ng2-charts';
 import * as fhirpath from 'fhirpath';
+import {formatDate} from '@angular/common';
 
 
 @Component({
@@ -17,7 +18,11 @@ export class ReportLabsObservationComponent implements OnInit {
   @Input() observationCode: string
   @Input() observationTitle: string
 
-  chartHeight = 40
+  // based on https://stackoverflow.com/questions/38889716/chartjs-2-stacked-bar-with-marker-on-top
+  // https://stackoverflow.com/questions/62711919/chart-js-horizontal-lines-per-bar
+
+
+  chartHeight = 45
 
   barChartData =[
     // {
@@ -89,18 +94,23 @@ export class ReportLabsObservationComponent implements OnInit {
           fontSize: 10,
           min: 0,
           // max: 80
-        }
+        },
       }],
       xAxes: [{
+        scaleLabel:{
+          display: false,
+          labelString: "xaxis",
+          padding: 4,
+        },
         // stacked: true,
         ticks: {
           beginAtZero: true,
           fontSize: 10,
           min: 0,
           // max: 80
-        }
-      }],
+        },
 
+      }],
     }
     //   xAxes: [{
     //     id: "x-axis-current",
@@ -152,10 +162,20 @@ export class ReportLabsObservationComponent implements OnInit {
 
     for(let observation of this.observations){
       //get label
-      this.barChartLabels.push(fhirpath.evaluate(observation.resource_raw, "Observation.effectiveDateTime")[0])
+      this.barChartLabels.push(
+        formatDate(fhirpath.evaluate(observation.resource_raw, "Observation.effectiveDateTime")[0], "mediumDate", "en-US", undefined)
+      )
 
       //get current value
       currentValues.push(fhirpath.evaluate(observation.resource_raw, "Observation.valueQuantity.value")[0])
+
+      //set chart x-axis label
+      let units = fhirpath.evaluate(observation.resource_raw, "Observation.valueQuantity.unit")[0]
+      if(units){
+        this.barChartOptions.scales.xAxes[0].scaleLabel.display = true
+        this.barChartOptions.scales.xAxes[0].scaleLabel.labelString = units
+      }
+
 
       //add low/high ref value blocks
       referenceRanges.push([
