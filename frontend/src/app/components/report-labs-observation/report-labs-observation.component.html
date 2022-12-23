@@ -27,7 +27,20 @@
               <strong>Ordered By:</strong> {{observations[0] | fhirPath: "Observation.encounter.display"}} <br/>
               <strong>LOINC Code:</strong> {{observationCode}} <br/>
               <strong>Notes:</strong> {{observations[0] | fhirPath: "Observation.note.text"}}
+
+              <br/>
+              <br/>
+              <a class="cursor-pointer tx-indigo" (click)="collapse.toggle()">show all</a>
             </p>
+
+            <div #collapse="ngbCollapse" [ngbCollapse]="true">
+
+              <ul>
+                <li class="cursor-pointer tx-indigo" *ngFor="let observation of observations" routerLink="/source/{{observation?.source_id}}/resource/{{observation?.source_resource_id}}">Observation: {{observation | fhirPath: "Observation.effectiveDateTime": "Observation.issued" | date}}</li>
+              </ul>
+            </div>
+
+
 
           </div>
         </div>
