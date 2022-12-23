@@ -41,6 +41,7 @@ import { TreeModule } from '@circlon/angular-tree-component';
 import {FilterPipe} from '../pipes/filter.pipe';
 import { ReportMedicalHistoryConditionComponent } from './report-medical-history-condition/report-medical-history-condition.component';
 import { ReportLabsObservationComponent } from './report-labs-observation/report-labs-observation.component';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   imports: [
@@ -50,6 +51,7 @@ import { ReportLabsObservationComponent } from './report-labs-observation/report
     NgbModule,
     MomentModule,
     TreeModule,
+    ChartsModule
   ],
   declarations: [
     ComponentsSidebarComponent,

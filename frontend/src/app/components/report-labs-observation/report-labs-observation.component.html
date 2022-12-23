@@ -3,7 +3,7 @@
     <div class="row" >
       <!-- Condition Header -->
       <div class="col-6">
-        {{observationTitle}}
+        <span routerLink="/source/{{observations[0]?.source_id}}/resource/{{observations[0]?.source_resource_id}}">{{observationTitle}}</span>
       </div>
       <div class="col-6">
         {{observations[0] | fhirPath: "Observation.effectiveDateTime": "Observation.issued" |  date}}
@@ -20,11 +20,26 @@
         <div class="row  pl-3">
           <div class="col-12 mt-3 mb-2">
             <p>
-              <strong>Test Code (loinc):</strong> {{observationCode}} <br/>
+              <strong>Short Name:</strong> {{observations[0] | fhirPath: "Observation.code.text"}} <br/>
+              <strong>Result:</strong> {{observations[0] | fhirPath: "Observation.valueQuantity.value"}} {{observations[0] | fhirPath: "Observation.valueQuantity.unit"}} <br/>
+              <br/>
               <strong>Latest Test Date:</strong> {{observations[0] | fhirPath: "Observation.effectiveDateTime": "Observation.issued" |  date}} <br/>
               <strong>Ordered By:</strong> {{observations[0] | fhirPath: "Observation.encounter.display"}} <br/>
-              <strong>Notes:</strong>
+              <strong>LOINC Code:</strong> {{observationCode}} <br/>
+              <strong>Notes:</strong> {{observations[0] | fhirPath: "Observation.note.text"}}
+
+              <br/>
+              <br/>
+              <a class="cursor-pointer tx-indigo" (click)="collapse.toggle()">show all</a>
             </p>
+
+            <div #collapse="ngbCollapse" [ngbCollapse]="true">
+
+              <ul>
+                <li class="cursor-pointer tx-indigo" *ngFor="let observation of observations" routerLink="/source/{{observation?.source_id}}/resource/{{observation?.source_resource_id}}">Observation: {{observation | fhirPath: "Observation.effectiveDateTime": "Observation.issued" | date}}</li>
+              </ul>
+            </div>
+
 
 
           </div>
@@ -33,20 +48,20 @@
       </div>
       <div class="col-6 bg-gray-100">
         <div class="row">
-          <p>
-            <small>
-              Troponin I is a part of the troponin complex. It binds to actin in thin myofilaments to hold the actin-tropomyosin complex in place. Because of it myosin cannot bind actin in relaxed muscle. When calcium binds to the Troponin C it causes conformational changes which lead to dislocation of troponin I and finally tropomyosin leaves the binding site for myosin on actin leading to contraction of muscle. The letter I is given due to its inhibitory character.
-            </small>
-          </p>
+          <div class="col-12 mt-3">
+            <p>
+              <small>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              </small>
+            </p>
+          </div>
+
+          <div class="col-12">
+            <canvas baseChart [height]="chartHeight" [chartType]="'horizontalBar'" [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"></canvas>
+          </div>
 
 
-          <ng-container *ngFor="let observation of observations">
 
-            <div routerLink="/source/{{observation?.source_id}}/resource/{{observation?.source_resource_id}}" class="col-6 mt-3 mb-2 tx-indigo">
-              <strong>{{observation | fhirPath: "Observation.valueQuantity.value" }}</strong>
-            </div>
-
-          </ng-container>
         </div>
       </div>
     </div>

@@ -17,6 +17,9 @@
         <li class="nav-item" ngbDropdown [ngClass]="{ 'active': medicalHistory.isActive }">
           <a routerLink="/medical-history" routerLinkActive="active" #medicalHistory="routerLinkActive" class="nav-link"><fa-icon [icon]="['fas', 'book-medical']"></fa-icon>&nbsp; Medical History</a>
         </li>
+        <li class="nav-item" ngbDropdown [ngClass]="{ 'active': labs.isActive }">
+          <a routerLink="/labs" routerLinkActive="active" #labs="routerLinkActive" class="nav-link"><fa-icon [icon]="['fas', 'heart-pulse']"></fa-icon>&nbsp; Labs</a>
+        </li>
         <li class="nav-item" ngbDropdown [ngClass]="{ 'active': sources.isActive }">
           <a routerLink="/sources" routerLinkActive="active" #sources="routerLinkActive" class="nav-link"><fa-icon [icon]="['fas', 'hospital']"></fa-icon>&nbsp; Sources</a>
         </li>

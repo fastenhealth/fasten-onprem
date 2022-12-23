@@ -3,23 +3,42 @@
     <div class="az-content-body">
 
       <!-- Header Row -->
-      <report-header [reportHeaderTitle]="'Labs'"></report-header>
+      <report-header [reportHeaderTitle]="'Labs'" [reportHeaderSubTitle]="'The Lab report turns data into meaningful information'" ></report-header>
 
 
-
-      <!-- Observations Title -->
-      <div class="row mt-5 mb-3">
-        <div class="col-6">
-          <h1 class="az-dashboard-title">Observations</h1>
+      <ng-container *ngIf="!isEmptyReport; else emptyReport">
+        <!-- Observations Title -->
+        <div class="row mt-5 mb-3">
+          <div class="col-6">
+            <h1 class="az-dashboard-title">Observations</h1>
+          </div>
         </div>
-      </div>
 
-      <!-- Observations List -->
-      <app-report-labs-observation *ngFor="let observationGroup of observationGroups |  keyvalue"
-                                   [observations]="observationGroup.value"
-                                   [observationCode]="observationGroup.key"
-                                   [observationTitle]="observationGroupTitles[observationGroup.key]"
-      ></app-report-labs-observation>
+        <!-- Observations List -->
+        <app-report-labs-observation *ngFor="let observationGroup of observationGroups |  keyvalue"
+                                     [observations]="observationGroup.value"
+                                     [observationCode]="observationGroup.key"
+                                     [observationTitle]="observationGroupTitles[observationGroup.key]"
+        ></app-report-labs-observation>
+      </ng-container>
+
+
+
+
+      <ng-template #emptyReport>
+        <div class="d-flex align-items-center" style="height:100%">
+          <div class="modal-body tx-center pd-y-20 pd-x-20">
+            <h4 class="tx-purple mg-b-20">No Lab Data Found!</h4>
+            <p class="mg-b-20 mg-x-20">
+              Fasten was unable to find any lab data from your connected sources. You may need to connect another source to import your Lab data.
+            </p>
+            <p class="mg-b-20 mg-x-20">
+              Click below to add a new healthcare provider to Fasten.
+            </p>
+            <button [routerLink]="'/sources'" type="button" class="btn btn-purple pd-x-25">Add Source</button>
+          </div><!-- modal-body -->
+        </div>
+      </ng-template>
 
     </div>
   </div>

@@ -1,6 +1,6 @@
 <div class="card card-dashboard-seven mb-3">
   <div class="card-header tx-medium">
-    <div class="row" routerLink="/source/{{condition?.source_id}}/resource/{{condition?.source_resource_id}}">
+    <div class="row cursor-pointer" routerLink="/source/{{condition?.source_id}}/resource/{{condition?.source_resource_id}}">
       <!-- Condition Header -->
       <div class="col-6">
         {{condition | fhirPath: "Condition.code.text.first()":"Condition.code.coding.display.first()"}}
@@ -48,6 +48,15 @@
           <!--              </div>-->
         </div>
 
+        <ng-container *ngIf="condition.related_resources.length > 0">
+          <a class="cursor-pointer tx-indigo" (click)="collapse.toggle()">show all</a>
+          <div #collapse="ngbCollapse" [ngbCollapse]="true">
+
+            <ul>
+              <li class="cursor-pointer tx-indigo" *ngFor="let resource of condition.related_resources" routerLink="/source/{{resource?.source_id}}/resource/{{resource?.source_resource_id}}">Resource: {{resource.source_resource_type}}/{{resource.source_resource_id}}</li>
+            </ul>
+          </div>
+        </ng-container>
 
 
       </div>
