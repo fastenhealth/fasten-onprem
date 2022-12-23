@@ -5,29 +5,47 @@
       <!-- Header Row -->
       <report-header [reportHeaderTitle]="'Medical History'" [reportHeaderSubTitle]="'Organized by conditions, describes the scope and breadth of medical care'"></report-header>
 
+      <ng-container *ngIf="conditions.length || unassigned_encounters.length; else emptyReport">
+        <!-- Editor Button -->
+        <div class="row mt-5 mb-3">
+          <div class="col-12">
 
-      <!-- Editor Button -->
-      <div class="row mt-5 mb-3">
-        <div class="col-12">
-
-          <div class="alert alert-warning" role="alert">
-            <strong>Warning!</strong> Fasten has detected medical Encounters that are not associated with a Condition.
-            They are grouped under the "Unassigned" section below.
-            <br/>
-            You can re-organize your conditions & encounters by using the <a class="alert-link cursor-pointer" (click)="openEditorRelated()">report editor</a>
+            <div class="alert alert-warning" role="alert">
+              <strong>Warning!</strong> Fasten has detected medical Encounters that are not associated with a Condition.
+              They are grouped under the "Unassigned" section below.
+              <br/>
+              You can re-organize your conditions & encounters by using the <a class="alert-link cursor-pointer" (click)="openEditorRelated()">report editor</a>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Conditions Title -->
-      <div class="row mt-5 mb-3">
-        <div class="col-6">
-          <h1 class="az-dashboard-title">Condition</h1>
+        <!-- Conditions Title -->
+        <div class="row mt-5 mb-3">
+          <div class="col-6">
+            <h1 class="az-dashboard-title">Condition</h1>
+          </div>
         </div>
-      </div>
 
-      <!-- Condition List -->
-      <app-report-medical-history-condition *ngFor="let condition of conditions; let i = index" [condition]="condition"></app-report-medical-history-condition>
+        <!-- Condition List -->
+        <app-report-medical-history-condition *ngFor="let condition of conditions; let i = index" [condition]="condition"></app-report-medical-history-condition>
+      </ng-container>
+
+      <ng-template #emptyReport>
+        <div class="d-flex align-items-center" style="height:100%">
+          <div class="modal-body tx-center pd-y-20 pd-x-20">
+            <h4 class="tx-purple mg-b-20">No Medical History Found!</h4>
+            <p class="mg-b-20 mg-x-20">
+              Fasten was unable determine your medical history using your connected sources. You may need to connect another source to import your medical history.
+            </p>
+            <p class="mg-b-20 mg-x-20">
+              Click below to add a new healthcare provider to Fasten.
+            </p>
+            <button [routerLink]="'/sources'" type="button" class="btn btn-purple pd-x-25">Add Source</button>
+          </div><!-- modal-body -->
+        </div>
+      </ng-template>
+
+
     </div>
   </div>
 </div>
