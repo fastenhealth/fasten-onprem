@@ -60,6 +60,10 @@ It's pretty basic right now, but it's designed with a easily extensible core aro
 
 # Getting Started
 
+There are 2 flavors of Fasten:
+- `ghcr.io/fastenhealth/fasten-onprem:sandbox` - This version only allows you to connect to a handful of Healthcare providers, using Sandbox accounts that are meant for testing, and contain synthetic(fake) data to give you an idea what Fasten will look like, without requiring personal medical information.
+- `ghcr.io/fastenhealth/fasten-onprem:main` - This version allows you to connect to 650+ different Healthcare providers, using your existing accounts. It will allow you to connect and retrieve your personal electronic medical record and store it within Fasten. **Be careful, this is YOUR health data**
+
 ## Instructions
 
 Run the following commands to download and start the Fasten docker container.
@@ -83,6 +87,8 @@ It can be as simple as
 
 ## Usage
 
+If you're using the `sandbox` version of Fasten, you'll only be able to connect to Sources using test credentials
+https://github.com/fastenhealth/docs/blob/main/BETA.md#connecting-a-new-source
 
 # FAQ's
 
