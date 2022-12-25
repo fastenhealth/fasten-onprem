@@ -24,6 +24,7 @@ If you're on a Mac, you can run the following commands to install the necessary 
 ```bash
 brew install node
 npm install -g @angular/cli@14.1.3
+npm install -g yarn
 
 brew install go
 
@@ -77,13 +78,15 @@ Next we'll start the processes described above:
 
 # In terminal #1, run the following
 cd frontend 
-npm run dist -- -c sandbox
+yarn dist -- -c [sandbox|prod]
 
 # In terminal #2, run the following
 go mod vendor
 go run backend/cmd/fasten/fasten.go start --config ./config.dev.yaml --debug
 
 ```
+
+_Note_: Fasten can run in 2 modes: sandbox or production (prod). In sandbox mode, it can only communicate with test servers (full of synthetic health data).
 
 Now you can open a browser to `http://localhost:9090` to see the Fasten UI. 
 
