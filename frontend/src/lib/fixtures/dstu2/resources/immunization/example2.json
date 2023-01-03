@@ -1,0 +1,51 @@
+{
+  "reported": true,
+  "identifier": [
+    {
+      "value": "TfHwRVsICbE33tGGsW1GWvgB",
+      "system": "https:open-ic.epic.com"
+    }
+  ],
+  "route": {
+    "coding": [
+      {
+        "system": "urn:oid:1.2.840.114350.1.13.0.1.7.10.768076.4030",
+        "code": "6",
+        "display": "Intravenous"
+      }
+    ],
+    "text": "Intravenous"
+  },
+  "meta": {
+    "lastUpdated": "2019-12-02T08:52:19.135Z",
+    "versionId": "9000000000000"
+  },
+  "status": "completed",
+  "site": {
+    "coding": [
+      {
+        "system": "urn:oid:1.2.840.114350.1.13.0.1.7.10.768076.4040",
+        "code": "14",
+        "display": "Left arm"
+      }
+    ],
+    "text": "Left arm"
+  },
+  "vaccineCode": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/sid/cvx",
+        "code": "26",
+        "display": "CHOLERA"
+      }
+    ],
+    "text": "Cholera"
+  },
+  "patient": {
+    "reference": "Patient/f8fedcd9e6e5"
+  },
+  "date": "2016-03-02T00:00:00.000Z",
+  "resourceType": "Immunization",
+  "wasNotGiven": false,
+  "id": "f8fedcd9e6e541bd06ffcc42256b7be5c9cdf5249d27f0ed"
+}

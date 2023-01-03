@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20.389" height="26.344" viewBox="0 0 20.389 26.344">
+  <g id="Group_34" data-name="Group 34" transform="matrix(0.819, 0.574, -0.574, 0.819, -1.32, -42.366)">
+    <rect id="Rectangle_15" data-name="Rectangle 15" width="9.6" height="1.028" rx="0.514" transform="translate(35.642 26.763)" fill="rgba(2,110,222,0.53)"/>
+    <rect id="Rectangle_16" data-name="Rectangle 16" width="4.8" height="3.598" transform="translate(38.047 27.799)" fill="rgba(2,110,222,0.53)"/>
+    <rect id="Rectangle_17" data-name="Rectangle 17" width="12" height="1.088" rx="0.544" transform="translate(34.47 32.134)" fill="#026ede"/>
+    <path id="Subtraction_2" data-name="Subtraction 2" d="M5.8,14.97H2a2,2,0,0,1-2-2V0H7.8V12.97A2,2,0,0,1,5.8,14.97ZM.036,8.615V9.684H1.9a.535.535,0,1,0,0-1.069ZM.024,5.882V6.951H1.89a.535.535,0,1,0,0-1.069ZM.014,3.147V4.217H1.878a.535.535,0,0,0,0-1.069Z" transform="translate(36.871 32.355)" fill="#026ede"/>
+    <path id="Rectangle_20" data-name="Rectangle 20" d="M0,0H1.626a0,0,0,0,1,0,0V5.829a.813.813,0,0,1-.813.813h0A.813.813,0,0,1,0,5.829V0A0,0,0,0,1,0,0Z" transform="translate(39.957 48.121)" fill="#7ab3ee"/>
+    <path id="Rectangle_19" data-name="Rectangle 19" d="M0,0H4.251a0,0,0,0,1,0,0V1.614a1,1,0,0,1-1,1H1a1,1,0,0,1-1-1V0A0,0,0,0,1,0,0Z" transform="translate(38.645 46.262)" fill="#026ede"/>
+  </g>
+</svg>

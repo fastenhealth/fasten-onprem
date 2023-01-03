@@ -1,0 +1,56 @@
+{
+  "resourceType": "MedicationAdministration",
+  "id": "medadminexample02",
+  "text": {
+    "status": "generated",
+    "div": "<div><p><b>Generated Narrative with Details</b></p><p><b>id</b>: medadminexample02</p><p><b>status</b>: completed</p><p><b>patient</b>: <a>Patient/example</a></p><p><b>practitioner</b>: <a>Practitioner/example</a></p><p><b>prescription</b>: <a>MedicationOrder/medrx008</a></p><p><b>effectiveTime</b>: 15/01/2015 2:30:00 PM --&gt; 15/01/2015 2:30:00 PM</p><p><b>medication</b>: <a>Medication/medicationexample17</a></p><h3>Dosages</h3><table><tr><td>-</td><td><b>Route</b></td><td><b>Quantity</b></td><td><b>Rate[x]</b></td></tr><tr><td>*</td><td>Intravenous route <span>(Details : {SNOMED CT code '47625008' = '47625008', given as 'Intravenous route'})</span></td><td>80 mg<span> (Details: http://unitsofmeasure.org code mg = '??')</span></td><td>80 mg<span> (Details: http://unitsofmeasure.org code mg = '??')</span>/60 minutes<span> (Details: SNOMED CT code 258702006 = '258702006')</span></td></tr></table></div>"
+  },
+  "status": "completed",
+  "patient": {
+    "reference": "Patient/example"
+  },
+  "practitioner": {
+    "reference": "Practitioner/example"
+  },
+  "prescription": {
+    "reference": "MedicationOrder/medrx008"
+  },
+  "effectiveTimePeriod": {
+    "start": "2015-01-15T14:30:00+01:00",
+    "end": "2015-01-15T14:30:00+01:00"
+  },
+  "medicationReference": {
+    "reference": "Medication/medicationexample17"
+  },
+  "dosage": {
+    "route": {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "47625008",
+          "display": "Intravenous route"
+        }
+      ]
+    },
+    "quantity": {
+      "value": 80,
+      "unit": "mg",
+      "system": "http://unitsofmeasure.org",
+      "code": "mg"
+    },
+    "rateRatio": {
+      "numerator": {
+        "value": 80,
+        "unit": "mg",
+        "system": "http://unitsofmeasure.org",
+        "code": "mg"
+      },
+      "denominator": {
+        "value": 60,
+        "unit": "minutes",
+        "system": "http://snomed.info/sct",
+        "code": "258702006"
+      }
+    }
+  }
+}

@@ -1,0 +1,430 @@
+{
+  "resourceType": "ExplanationOfBenefit",
+  "id": "e6c4234b-19a8-4e5c-35cb-5d05a97d5788",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/us/carin-bb/StructureDefinition/C4BB-ExplanationOfBenefit-Inpatient-Institutional"
+    ]
+  },
+  "related": [
+    {
+      "reference": {
+        "value": "Q19137E17126"
+      },
+      "claim": {
+        "reference": "ExplanationOfBenefit/EqUVAXt5WrNnlJPdB7swbxJXaYxxnvBxWwGPxUx1up"
+      },
+      "relationship": {
+        "coding": [
+          {
+            "code": "prior",
+            "system": "http://terminology.hl7.org/CodeSystem/ex-relatedclaimrelationship"
+          }
+        ]
+      }
+    },
+    {
+      "reference": {
+        "value": "Q19137E17126"
+      },
+      "claim": {
+        "reference": "ExplanationOfBenefit/ABCDEXg2WrYnlJrdr7sabxZZaYffnvBxWwGPx99999"
+      },
+      "relationship": {
+        "coding": [
+          {
+            "code": "replacedby",
+            "system": "http://terminology.hl7.org/CodeSystem/ex-relatedclaimrelationship"
+          }
+        ]
+      }
+    }
+  ],
+  "payee": {
+    "type": {
+      "coding": [
+        {
+          "code": "provider",
+          "system": "http://terminology.hl7.org/CodeSystem/payeetype"
+        }
+      ]
+    },
+    "party": {
+      "reference": "Organization/iAxXvHiphwGGAL48m3B7XXtKlLZg6yXnC1ch84x1up"
+    }
+  },
+  "contained": [
+    {
+      "resourceType": "ServiceRequest",
+      "id": "referral",
+      "status": "completed",
+      "intent": "order",
+      "subject": {
+        "reference": "Patient/f56391c2-dd54-b378-46ef-87c1643a2ba0"
+      },
+      "requester": {
+        "reference": "Practitioner/820ee8ba-855a-3aaf-9eeb-6603cfdaee25"
+      },
+      "performer": [
+        {
+          "reference": "Practitioner/820ee8ba-855a-3aaf-9eeb-6603cfdaee25"
+        }
+      ]
+    }
+  ],
+  "identifier": [
+    {
+      "system": "https://bluebutton.cms.gov/resources/variables/clm_id",
+      "value": "c145d3fe-d56e-dc26-75e9-01e90672f506"
+    },
+    {
+      "system": "https://bluebutton.cms.gov/resources/identifier/claim-group",
+      "value": "99999999999"
+    }
+  ],
+  "status": "active",
+  "type": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+        "code": "institutional"
+      }
+    ]
+  },
+  "subType": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBInstitutionalClaimSubType",
+        "code": "inpatient"
+      }
+    ]
+  },
+  "use": "claim",
+  "patient": {
+    "reference": "Patient/f56391c2-dd54-b378-46ef-87c1643a2ba0"
+  },
+  "billablePeriod": {
+    "start": "2017-01-05T21:41:04+01:00",
+    "end": "2018-01-05T21:41:04+01:00"
+  },
+  "created": "2017-01-05T21:41:04+01:00",
+  "insurer": {
+    "display": "Medicaid"
+  },
+  "provider": {
+    "reference": "Practitioner/820ee8ba-855a-3aaf-9eeb-6603cfdaee25"
+  },
+  "referral": {
+    "reference": "#referral"
+  },
+  "facility": {
+    "reference": "Location/e111a884-fc5e-3766-9077-c44100ba56e2",
+    "display": "NEWTON-WELLESLEY HOSPITAL"
+  },
+  "claim": {
+    "reference": "Claim/c145d3fe-d56e-dc26-75e9-01e90672f506"
+  },
+  "outcome": "complete",
+  "careTeam": [
+    {
+      "sequence": 1,
+      "provider": {
+        "reference": "Practitioner/820ee8ba-855a-3aaf-9eeb-6603cfdaee25"
+      },
+      "role": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/claimcareteamrole",
+            "code": "primary",
+            "display": "Primary Care Practitioner"
+          }
+        ]
+      }
+    }
+  ],
+  "supportingInfo": [
+    {
+      "sequence": 1,
+      "category": {
+        "coding": [
+          {
+            "code": "clmrecvddate",
+            "system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBSupportingInfoType",
+            "display": "Claim Received Date"
+          }
+        ]
+      },
+      "timingDate": "2017-01-05"
+    },
+    {
+      "sequence": 2,
+      "category": {
+          "coding": [
+              {
+                  "code": "dayssupply",
+                  "system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBSupportingInfoType",
+                  "display": "Days Supply"
+              }
+          ]
+      },
+      "valueQuantity": {
+          "value": 30
+      }
+  }
+  ],
+  "diagnosis": [
+    {
+      "sequence": 1,
+      "diagnosisReference": {
+        "reference": "Condition/88bd5ac6-175b-5906-a4ee-6eedd667b0cc"
+      },
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/ex-diagnosistype",
+              "code": "principal"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "insurance": [
+    {
+      "focal": true,
+      "coverage": {
+        "display": "Medicaid"
+      }
+    }
+  ],
+  "item": [
+    {
+      "sequence": 1,
+      "category": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/variables/line_cms_type_srvc_cd",
+            "code": "1",
+            "display": "Medical care"
+          }
+        ]
+      },
+      "productOrService": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }
+        ],
+        "text": "Encounter for symptom"
+      },
+      "servicedPeriod": {
+        "start": "2017-01-05T21:26:04+01:00",
+        "end": "2017-01-05T21:41:04+01:00"
+      },
+      "locationCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/ex-serviceplace",
+            "code": "21",
+            "display": "Inpatient Hospital"
+          }
+        ]
+      },
+      "encounter": [
+        {
+          "reference": "Encounter/97e2c68b-c5e6-02f3-867b-f9f207badd64"
+        }
+      ]
+    },
+    {
+      "sequence": 2,
+      "diagnosisSequence": [1],
+      "category": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/variables/line_cms_type_srvc_cd",
+            "code": "1",
+            "display": "Medical care"
+          }
+        ]
+      },
+      "productOrService": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "10509002",
+            "display": "Acute bronchitis (disorder)"
+          }
+        ],
+        "text": "Acute bronchitis (disorder)"
+      },
+      "servicedPeriod": {
+        "start": "2017-01-05T21:26:04+01:00",
+        "end": "2017-01-05T21:41:04+01:00"
+      },
+      "locationCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/ex-serviceplace",
+            "code": "21",
+            "display": "Inpatient Hospital"
+          }
+        ]
+      }
+    },
+    {
+      "sequence": 3,
+      "category": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/variables/line_cms_type_srvc_cd",
+            "code": "1",
+            "display": "Medical care"
+          }
+        ]
+      },
+      "productOrService": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "23426006",
+            "display": "Measurement of respiratory function (procedure)"
+          }
+        ],
+        "text": "Measurement of respiratory function (procedure)"
+      },
+      "servicedPeriod": {
+        "start": "2017-01-05T21:26:04+01:00",
+        "end": "2017-01-05T21:41:04+01:00"
+      },
+      "locationCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/ex-serviceplace",
+            "code": "21",
+            "display": "Inpatient Hospital"
+          }
+        ]
+      },
+      "net": {
+        "value": 146.42,
+        "currency": "USD"
+      },
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/line_coinsrnc_amt",
+                "display": "Line Beneficiary Coinsurance Amount"
+              }
+            ]
+          },
+          "amount": {
+            "value": 29.284,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/line_prvdr_pmt_amt",
+                "display": "Line Provider Payment Amount"
+              }
+            ]
+          },
+          "amount": {
+            "value": 117.136,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/line_sbmtd_chrg_amt",
+                "display": "Line Submitted Charge Amount"
+              }
+            ]
+          },
+          "amount": {
+            "value": 146.42,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/line_alowd_chrg_amt",
+                "display": "Line Allowed Charge Amount"
+              }
+            ]
+          },
+          "amount": {
+            "value": 146.42,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/line_bene_ptb_ddctbl_amt",
+                "display": "Line Beneficiary Part B Deductible Amount"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/line_prcsg_ind_cd",
+                "display": "Line Processing Indicator Code"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "total": [
+    {
+      "category": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/adjudication",
+            "code": "submitted",
+            "display": "Submitted Amount"
+          }
+        ],
+        "text": "Submitted Amount"
+      },
+      "amount": {
+        "value": 77.49,
+        "currency": "USD"
+      }
+    }
+  ],
+  "payment": {
+    "amount": {
+      "value": 117.136,
+      "currency": "USD"
+    }
+  }
+}

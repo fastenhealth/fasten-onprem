@@ -1,0 +1,17 @@
+{
+  "status": "in-progress",
+  "resourceType": "Encounter",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Encounter with patient @example</div>"
+  },
+  "class": {
+    "code": "IMP",
+    "system": "http://hl7.org/fhir/v3/ActCode",
+    "display": "inpatient encounter"
+  },
+  "id": "example",
+  "subject": {
+    "reference": "Patient/example"
+  }
+}

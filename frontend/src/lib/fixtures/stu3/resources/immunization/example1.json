@@ -1,0 +1,157 @@
+{
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: example</p><p><b>identifier</b>: urn:oid:1.3.6.1.4.1.21367.2005.3.7.1234</p><p><b>status</b>: completed</p><p><b>notGiven</b>: false</p><p><b>vaccineCode</b>: Fluvax (Influenza) <span>(Details : {urn:oid:1.2.36.1.2001.1005.17 code 'FLUVAX' = 'Fluvax)</span></p><p><b>patient</b>: <a>Patient/example</a></p><p><b>encounter</b>: <a>Encounter/example</a></p><p><b>date</b>: 10/01/2013</p><p><b>primarySource</b>: true</p><p><b>location</b>: <a>Location/1</a></p><p><b>manufacturer</b>: <a>Organization/hl7</a></p><p><b>lotNumber</b>: AAJN11K</p><p><b>expirationDate</b>: 15/02/2015</p><p><b>site</b>: left arm <span>(Details : {http://hl7.org/fhir/v3/ActSite code 'LA' = 'left arm', given as 'left arm'})</span></p><p><b>route</b>: Injection, intramuscular <span>(Details : {http://hl7.org/fhir/v3/RouteOfAdministration code 'IM' = 'Injection, intramuscular', given as 'Injection, intramuscular'})</span></p><p><b>doseQuantity</b>: 5 mg<span> (Details: UCUM code mg = 'mg')</span></p><blockquote><p><b>practitioner</b></p><p><b>role</b>: Ordering Provider <span>(Details : {http://hl7.org/fhir/v2/0443 code 'OP' = 'Ordering Provider)</span></p><p><b>actor</b>: <a>Practitioner/example</a></p></blockquote><blockquote><p><b>practitioner</b></p><p><b>role</b>: Administering Provider <span>(Details : {http://hl7.org/fhir/v2/0443 code 'AP' = 'Administering Provider)</span></p><p><b>actor</b>: <a>Practitioner/example</a></p></blockquote><p><b>note</b>: Notes on adminstration of vaccine</p><h3>Explanations</h3><table><tr><td>-</td><td><b>Reason</b></td></tr><tr><td>*</td><td>Procedure to meet occupational requirement <span>(Details : {SNOMED CT code '429060002' = 'Procedure to meet occupational requirement)</span></td></tr></table><h3>Reactions</h3><table><tr><td>-</td><td><b>Date</b></td><td><b>Detail</b></td><td><b>Reported</b></td></tr><tr><td>*</td><td>10/01/2013</td><td><a>Observation/example</a></td><td>true</td></tr></table><h3>VaccinationProtocols</h3><table><tr><td>-</td><td><b>DoseSequence</b></td><td><b>Description</b></td><td><b>Authority</b></td><td><b>Series</b></td><td><b>SeriesDoses</b></td><td><b>TargetDisease</b></td><td><b>DoseStatus</b></td><td><b>DoseStatusReason</b></td></tr><tr><td>*</td><td>1</td><td>Vaccination Protocol Sequence 1</td><td><a>Organization/hl7</a></td><td>Vaccination Series 1</td><td>2</td><td>Gestational rubella syndrome <span>(Details : {SNOMED CT code '1857005' = 'Gestational rubella syndrome)</span></td><td>Counts <span>(Details : {http://hl7.org/fhir/vaccination-protocol-dose-status code 'count' = 'Counts', given as 'Counts'})</span></td><td>Cold chain break <span>(Details : {http://hl7.org/fhir/vaccination-protocol-dose-status-reason code 'coldchbrk' = 'Cold chain break', given as 'Cold chain break'})</span></td></tr></table></div>"
+  },
+  "site": {
+    "coding": [
+      {
+        "code": "LA",
+        "system": "http://hl7.org/fhir/v3/ActSite",
+        "display": "left arm"
+      }
+    ]
+  },
+  "expirationDate": "2015-02-15",
+  "practitioner": [
+    {
+      "role": {
+        "coding": [
+          {
+            "code": "OP",
+            "system": "http://hl7.org/fhir/v2/0443"
+          }
+        ]
+      },
+      "actor": {
+        "reference": "Practitioner/example"
+      }
+    },
+    {
+      "role": {
+        "coding": [
+          {
+            "code": "AP",
+            "system": "http://hl7.org/fhir/v2/0443"
+          }
+        ]
+      },
+      "actor": {
+        "reference": "Practitioner/example"
+      }
+    }
+  ],
+  "id": "example",
+  "note": [
+    {
+      "text": "Notes on adminstration of vaccine"
+    }
+  ],
+  "location": {
+    "reference": "Location/1"
+  },
+  "status": "completed",
+  "patient": {
+    "reference": "Patient/example"
+  },
+  "explanation": {
+    "reason": [
+      {
+        "coding": [
+          {
+            "code": "429060002",
+            "system": "http://snomed.info/sct"
+          }
+        ]
+      }
+    ]
+  },
+  "doseQuantity": {
+    "code": "mg",
+    "system": "http://unitsofmeasure.org",
+    "value": 5
+  },
+  "lotNumber": "AAJN11K",
+  "date": "2013-01-10",
+  "primarySource": true,
+  "encounter": {
+    "reference": "Encounter/example"
+  },
+  "manufacturer": {
+    "reference": "Organization/hl7"
+  },
+  "reaction": [
+    {
+      "date": "2013-01-10",
+      "reported": true,
+      "detail": {
+        "reference": "Observation/example"
+      }
+    }
+  ],
+  "notGiven": false,
+  "resourceType": "Immunization",
+  "route": {
+    "coding": [
+      {
+        "code": "IM",
+        "system": "http://hl7.org/fhir/v3/RouteOfAdministration",
+        "display": "Injection, intramuscular"
+      }
+    ]
+  },
+  "vaccineCode": {
+    "text": "Fluvax (Influenza)",
+    "coding": [
+      {
+        "code": "FLUVAX",
+        "system": "urn:oid:1.2.36.1.2001.1005.17"
+      }
+    ]
+  },
+  "vaccinationProtocol": [
+    {
+      "seriesDoses": 2,
+      "description": "Vaccination Protocol Sequence 1",
+      "series": "Vaccination Series 1",
+      "doseStatusReason": {
+        "coding": [
+          {
+            "code": "coldchbrk",
+            "system": "http://hl7.org/fhir/vaccination-protocol-dose-status-reason",
+            "display": "Cold chain break"
+          }
+        ]
+      },
+      "authority": {
+        "reference": "Organization/hl7"
+      },
+      "doseSequence": 1,
+      "doseStatus": {
+        "coding": [
+          {
+            "code": "count",
+            "system": "http://hl7.org/fhir/vaccination-protocol-dose-status",
+            "display": "Counts"
+          }
+        ]
+      },
+      "targetDisease": [
+        {
+          "coding": [
+            {
+              "code": "1857005",
+              "system": "http://snomed.info/sct"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "identifier": [
+    {
+      "system": "urn:ietf:rfc:3986",
+      "value": "urn:oid:1.3.6.1.4.1.21367.2005.3.7.1234"
+    }
+  ]
+}

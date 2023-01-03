@@ -1,0 +1,116 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "id": "gcs",
+  "text": {
+    "status": "generated",
+    "div": "<div><p><b>Generated Narrative with Details</b></p><p><b>id</b>: gcs</p><p><b>questionnaire</b>: <a>Questionnaire/gcs</a></p><p><b>status</b>: completed</p><p><b>subject</b>: <a>Peter James Chalmers</a></p><p><b>authored</b>: 11/12/2014 3:44:16 PM</p><p><b>source</b>: <a>Practitioner/f007</a></p><blockquote><p><b>group</b></p><p><b>linkId</b>: 1</p><p><b>title</b>: Glasgow Coma Score</p><blockquote><p><b>question</b></p><p><b>linkId</b>: 1.1</p><h3>Answers</h3><table><tr><td>-</td><td><b>Value[x]</b></td></tr><tr><td>*</td><td>Confused (Details: LOINC code LA6560-2 = 'Confused', stated as 'Confused')</td></tr></table></blockquote><blockquote><p><b>question</b></p><p><b>linkId</b>: 1.2</p><h3>Answers</h3><table><tr><td>-</td><td><b>Value[x]</b></td></tr><tr><td>*</td><td>Localizing pain (Details: LOINC code LA6566-9 = 'Localizing pain', stated as 'Localizing pain')</td></tr></table></blockquote><blockquote><p><b>question</b></p><p><b>linkId</b>: 1.3</p><h3>Answers</h3><table><tr><td>-</td><td><b>Value[x]</b></td></tr><tr><td>*</td><td>Eyes open spontaneously (Details: LOINC code LA6556-0 = 'Eyes open spontaneously', stated as 'Eyes open spontaneously')</td></tr></table></blockquote></blockquote></div>"
+  },
+  "questionnaire": {
+    "reference": "Questionnaire/gcs"
+  },
+  "status": "completed",
+  "subject": {
+    "reference": "Patient/example",
+    "display": "Peter James Chalmers"
+  },
+  "authored": "2014-12-11T04:44:16.000Z",
+  "source": {
+    "reference": "Practitioner/f007"
+  },
+  "group": {
+    "linkId": "1",
+    "title": "Glasgow Coma Score",
+    "_title": {
+      "fhir_comments": [
+        "     Only section of the form,  3 standard GCS questions : vebal ,eye, motor     "
+      ]
+    },
+    "question": [
+      {
+        "linkId": "1.1",
+        "answer": [
+          {
+            "valueCoding": {
+              "extension": [
+                {
+                  "fhir_comments": [
+                    "     This example has the extension which maps a numeric score to the code this may already be known and unecessary in the Observation resource    ",
+                    "    0..1 Value of extension    "
+                  ],
+                  "url": "http://hl7.org/fhir/StructureDefinition/iso21090-CO-value",
+                  "valueDecimal": 4,
+                  "_valueDecimal": {
+                    "fhir_comments": "[Array(1)]"
+                  }
+                }
+              ],
+              "system": "http://loinc.org",
+              "code": "LA6560-2",
+              "_code": {
+                "fhir_comments": [
+                  "   technicallly the code is '5' and the LA is the identifier to do hav e both  would require an extention   "
+                ]
+              },
+              "display": "Confused"
+            }
+          }
+        ]
+      },
+      {
+        "linkId": "1.2",
+        "answer": [
+          {
+            "valueCoding": {
+              "extension": [
+                {
+                  "fhir_comments": [
+                    "     This example has the extension which maps a numeric score to the code this may already be known and unecessary in the Observation resource    ",
+                    "    0..1 Value of extension    "
+                  ],
+                  "url": "http://hl7.org/fhir/StructureDefinition/iso21090-CO-value",
+                  "valueDecimal": 5,
+                  "_valueDecimal": {
+                    "fhir_comments": "[Array(1)]"
+                  }
+                }
+              ],
+              "system": "http://loinc.org",
+              "code": "LA6566-9",
+              "display": "Localizing pain"
+            }
+          }
+        ]
+      },
+      {
+        "linkId": "1.3",
+        "answer": [
+          {
+            "valueCoding": {
+              "extension": [
+                {
+                  "fhir_comments": [
+                    "     This example has the extension which maps a numeric score to the code this may already be known and unecessary in the Observation resource    ",
+                    "    0..1 Value of extension    "
+                  ],
+                  "url": "http://hl7.org/fhir/StructureDefinition/iso21090-CO-value",
+                  "valueDecimal": 4,
+                  "_valueDecimal": {
+                    "fhir_comments": "[Array(1)]"
+                  }
+                }
+              ],
+              "system": "http://loinc.org",
+              "code": "LA6556-0",
+              "_code": {
+                "fhir_comments": [
+                  "   technicallly the code is '4' and the LA is the identifier to do hav e both  would require an extention   "
+                ]
+              },
+              "display": "Eyes open spontaneously"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

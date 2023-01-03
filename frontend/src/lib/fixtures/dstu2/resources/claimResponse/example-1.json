@@ -1,0 +1,101 @@
+{
+  "resourceType": "ClaimResponse",
+  "id": "R3500",
+  "text": {
+    "status": "generated",
+    "div": "<div>A human-readable rendering of the ClaimResponse</div>"
+  },
+  "identifier": [
+    {
+      "system": "http://www.BenefitsInc.com/fhir/remittance",
+      "value": "R3500"
+    }
+  ],
+  "request": {
+    "reference": "http://www.BenefitsInc.com/fhir/oralhealthclaim/15476332402"
+  },
+  "created": "2014-08-16",
+  "organization": {
+    "reference": "Organization/2"
+  },
+  "requestOrganization": {
+    "reference": "Organization/1"
+  },
+  "outcome": "complete",
+  "disposition": "Claim settled as per contract.",
+  "payeeType": {
+    "system": "http://hl7.org/fhir/payeetype",
+    "code": "provider"
+  },
+  "item": [
+    {
+      "fhir_comments": [
+        "  Adjudication details  "
+      ],
+      "sequenceLinkId": 1,
+      "adjudication": [
+        {
+          "code": {
+            "code": "eligible"
+          },
+          "amount": {
+            "value": 135.57,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "code": {
+            "code": "copay"
+          },
+          "amount": {
+            "value": 10.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "code": {
+            "code": "eligpercent"
+          },
+          "value": 80.00
+        },
+        {
+          "code": {
+            "code": "benefit"
+          },
+          "amount": {
+            "value": 100.47,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        }
+      ]
+    }
+  ],
+  "totalCost": {
+    "value": 135.57,
+    "system": "urn:iso:std:iso:4217",
+    "code": "USD"
+  },
+  "totalBenefit": {
+    "value": 100.47,
+    "system": "urn:iso:std:iso:4217",
+    "code": "USD"
+  },
+  "paymentDate": "2014-08-31",
+  "_paymentDate": {
+    "fhir_comments": [
+      "  Payment details  "
+    ]
+  },
+  "paymentAmount": {
+    "value": 100.47,
+    "system": "urn:iso:std:iso:4217",
+    "code": "USD"
+  },
+  "paymentRef": {
+    "system": "http://www.BenefitsInc.com/fhir/paymentRef",
+    "value": "201408-2-1569478"
+  }
+}

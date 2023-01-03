@@ -1,0 +1,30 @@
+{
+  "resourceType": "Organization",
+  "id": "1832473e-2fe0-452d-abe9-3cdb9879522f",
+  "text": {
+    "status": "generated",
+    "div": "<div>\n      \n      <p>Clinical Laboratory @ Acme Hospital. ph: +1 555 234 1234, email: \n        <a href=\"mailto:contact@labs.acme.org\">contact@labs.acme.org</a>\n      </p>\n    \n    </div>"
+  },
+  "identifier": [
+    {
+      "fhir_comments": [
+        "   Clinical Lab at Acme Hospital   "
+      ],
+      "system": "http://www.acme.org.au/units",
+      "value": "ClinLab"
+    }
+  ],
+  "name": "Clinical Lab",
+  "telecom": [
+    {
+      "system": "phone",
+      "value": "+1 555 234 1234",
+      "use": "work"
+    },
+    {
+      "system": "email",
+      "value": "contact@labs.acme.org",
+      "use": "work"
+    }
+  ]
+}

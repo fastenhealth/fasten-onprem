@@ -1,0 +1,68 @@
+{
+  "clinicalStatus": "active",
+  "identifier": [
+    {
+      "value": "ToXGIl7BNrvoF6BVybVSoawB",
+      "system": "https:open-ic.epic.com"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-02T08:52:19.913Z",
+    "versionId": "9000000000000"
+  },
+  "onsetDateTime": "2015-08-24",
+  "asserter": {
+    "reference": "Practitioner/f8fedcd9e6e565a21f457909",
+    "display": "MOORE, NICK"
+  },
+  "patient": {
+    "reference": "Patient/f8fedcd9e6e5"
+  },
+  "code": {
+    "coding": [
+      {
+        "system": "urn:oid:2.16.840.1.113883.6.90",
+        "code": "R05",
+        "display": "Chronic cough"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "68154008",
+        "display": "Chronic cough (finding)"
+      }
+    ],
+    "text": "Chronic cough"
+  },
+  "dateRecorded": "2015-08-24",
+  "resourceType": "Condition",
+  "category": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "29308-4",
+        "display": "Diagnosis"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "439401001",
+        "display": "Diagnosis"
+      },
+      {
+        "system": "http://hl7.org/fhir/condition-category",
+        "code": "diagnosis",
+        "display": "Diagnosis"
+      },
+      {
+        "system": "http://argonautwiki.hl7.org/extension-codes",
+        "code": "problem",
+        "display": "Problem"
+      }
+    ],
+    "text": "Diagnosis"
+  },
+  "verificationStatus": "confirmed",
+  "id": "f8fedcd9e6e51b76b16b7a84dac69e1fdffd7637b77f3ae8",
+  "severity": {
+    "text": "Medium"
+  }
+}

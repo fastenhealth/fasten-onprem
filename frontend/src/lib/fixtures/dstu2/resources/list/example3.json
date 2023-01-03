@@ -1,0 +1,380 @@
+{
+  "resourceType": "List",
+  "id": "genetic",
+  "text": {
+    "status": "generated",
+    "div": "<div>To do</div>"
+  },
+  "contained": [
+    {
+      "resourceType": "FamilyMemberHistory",
+      "id": "1",
+      "extension": [
+        {
+          "extension": [
+            {
+              "url": "parent.type",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/v3/RoleCode",
+                    "code": "FTH",
+                    "display": "father"
+                  }
+                ]
+              }
+            },
+            {
+              "url": "parent.identifier",
+              "valueUri": "#2"
+            }
+          ],
+          "url": "http://hl7.org/fhir/StructureDefinition/family-member-history-genetics-parent"
+        }
+      ],
+      "patient": {
+        "reference": "Patient/example",
+        "display": "Peter Patient"
+      },
+      "status": "completed",
+      "name": "Dave",
+      "relationship": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v3/RoleCode",
+            "code": "FTH",
+            "display": "father"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "FamilyMemberHistory",
+      "id": "2",
+      "patient": {
+        "reference": "Patient/example",
+        "display": "Peter Patient"
+      },
+      "status": "completed",
+      "relationship": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v3/RoleCode",
+            "code": "GRFTH",
+            "display": "grandfather"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "FamilyMemberHistory",
+      "id": "3",
+      "extension": [
+        {
+          "extension": [
+            {
+              "url": "parent.type",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/v3/RoleCode",
+                    "code": "FTH",
+                    "display": "father"
+                  }
+                ]
+              }
+            },
+            {
+              "url": "parent.identifier",
+              "valueUri": "#2"
+            }
+          ],
+          "url": "http://hl7.org/fhir/StructureDefinition/family-member-history-genetics-parent"
+        }
+      ],
+      "patient": {
+        "reference": "Patient/example",
+        "display": "Peter Patient"
+      },
+      "status": "completed",
+      "relationship": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v3/RoleCode",
+            "code": "PUNCLE",
+            "display": "paternal uncle"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "FamilyMemberHistory",
+      "id": "4",
+      "extension": [
+        {
+          "extension": [
+            {
+              "url": "parent.type",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/v3/RoleCode",
+                    "code": "FTH",
+                    "display": "father"
+                  }
+                ]
+              }
+            },
+            {
+              "url": "parent.identifier",
+              "valueUri": "#2"
+            }
+          ],
+          "url": "http://hl7.org/fhir/StructureDefinition/family-member-history-genetics-parent"
+        }
+      ],
+      "patient": {
+        "reference": "Patient/example",
+        "display": "Peter Patient"
+      },
+      "status": "completed",
+      "relationship": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v3/RoleCode",
+            "code": "PUNCLE",
+            "display": "paternal uncle"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "FamilyMemberHistory",
+      "id": "5",
+      "extension": [
+        {
+          "extension": [
+            {
+              "url": "parent.type",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/v3/RoleCode",
+                    "code": "FTH",
+                    "display": "father"
+                  }
+                ]
+              }
+            },
+            {
+              "url": "parent.identifier",
+              "valueUri": "#2"
+            }
+          ],
+          "url": "http://hl7.org/fhir/StructureDefinition/family-member-history-genetics-parent"
+        }
+      ],
+      "patient": {
+        "reference": "Patient/example",
+        "display": "Peter Patient"
+      },
+      "status": "completed",
+      "name": "Eve",
+      "relationship": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v3/RoleCode",
+            "code": "PAUNT",
+            "display": "paternal aunt"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "FamilyMemberHistory",
+      "id": "6",
+      "extension": [
+        {
+          "extension": [
+            {
+              "url": "parent.type",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/v3/RoleCode",
+                    "code": "FTH",
+                    "display": "father"
+                  }
+                ]
+              }
+            },
+            {
+              "url": "parent.identifier",
+              "valueUri": "#2"
+            }
+          ],
+          "url": "http://hl7.org/fhir/StructureDefinition/family-member-history-genetics-parent"
+        }
+      ],
+      "patient": {
+        "reference": "Patient/example",
+        "display": "Peter Patient"
+      },
+      "status": "completed",
+      "relationship": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v3/RoleCode",
+            "code": "PAUNT",
+            "display": "paternal aunt"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "FamilyMemberHistory",
+      "id": "7",
+      "extension": [
+        {
+          "extension": [
+            {
+              "url": "parent.type",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/v3/RoleCode",
+                    "code": "FTH",
+                    "display": "father"
+                  }
+                ]
+              }
+            },
+            {
+              "url": "parent.identifier",
+              "valueUri": "#2"
+            }
+          ],
+          "url": "http://hl7.org/fhir/StructureDefinition/family-member-history-genetics-parent"
+        }
+      ],
+      "patient": {
+        "reference": "Patient/example",
+        "display": "Peter Patient"
+      },
+      "status": "completed",
+      "relationship": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v3/RoleCode",
+            "code": "PAUNT",
+            "display": "paternal aunt"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "FamilyMemberHistory",
+      "id": "8",
+      "extension": [
+        {
+          "extension": [
+            {
+              "url": "parent.type",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/v3/RoleCode",
+                    "code": "MTH",
+                    "display": "mother"
+                  }
+                ]
+              }
+            },
+            {
+              "url": "parent.identifier",
+              "valueUri": "#5"
+            }
+          ],
+          "url": "http://hl7.org/fhir/StructureDefinition/family-member-history-genetics-parent"
+        }
+      ],
+      "patient": {
+        "reference": "Patient/example",
+        "display": "Peter Patient"
+      },
+      "status": "completed",
+      "name": "Alice",
+      "relationship": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v3/RoleCode",
+            "code": "PCOUSN",
+            "display": "paternal cousin"
+          }
+        ]
+      }
+    }
+  ],
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "8670-2",
+        "display": "History of family member diseases"
+      }
+    ]
+  },
+  "subject": {
+    "reference": "Patient/example",
+    "display": "Peter Patient",
+    "_display": {
+      "fhir_comments": [
+        "  Should be 'Bob', but didn't make sense to define a new patient  "
+      ]
+    }
+  },
+  "status": "current",
+  "mode": "snapshot",
+  "entry": [
+    {
+      "item": {
+        "reference": "#1"
+      }
+    },
+    {
+      "item": {
+        "reference": "#2"
+      }
+    },
+    {
+      "item": {
+        "reference": "#3"
+      }
+    },
+    {
+      "item": {
+        "reference": "#4"
+      }
+    },
+    {
+      "item": {
+        "reference": "#5"
+      }
+    },
+    {
+      "item": {
+        "reference": "#6"
+      }
+    },
+    {
+      "item": {
+        "reference": "#7"
+      }
+    },
+    {
+      "item": {
+        "reference": "#8"
+      }
+    }
+  ]
+}

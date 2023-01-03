@@ -1,0 +1,85 @@
+{
+  "status": "on-hold",
+  "category": [
+    {
+      "coding": [
+        {
+          "code": "dietary",
+          "system": "http://hl7.org/fhir/goal-category"
+        }
+      ]
+    }
+  ],
+  "outcomeReference": [
+    {
+      "display": "Body Weight Measured",
+      "reference": "Observation/example"
+    }
+  ],
+  "addresses": [
+    {
+      "display": "obesity condition"
+    }
+  ],
+  "description": {
+    "text": "Target weight is 160 to 180 lbs."
+  },
+  "startDate": "2015-04-05",
+  "resourceType": "Goal",
+  "text": {
+    "status": "additional",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t<p> A simple care goal for a patient to lose weight due to obesity.</p>\n\t\t</div>"
+  },
+  "expressedBy": {
+    "display": "Peter James Chalmers",
+    "reference": "Patient/example"
+  },
+  "statusReason": "Patient wants to defer weight loss until after honeymoon.",
+  "priority": {
+    "text": "high",
+    "coding": [
+      {
+        "code": "high-priority",
+        "system": "http://hl7.org/fhir/goal-priority",
+        "display": "High Priority"
+      }
+    ]
+  },
+  "target": {
+    "detailRange": {
+      "high": {
+        "code": "[lb_av]",
+        "unit": "lbs",
+        "value": 180,
+        "system": "http://unitsofmeasure.org"
+      },
+      "low": {
+        "code": "[lb_av]",
+        "unit": "lbs",
+        "value": 160,
+        "system": "http://unitsofmeasure.org"
+      }
+    },
+    "dueDate": "2016-04-05",
+    "measure": {
+      "coding": [
+        {
+          "code": "3141-9",
+          "system": "http://loinc.org",
+          "display": "Weight Measured"
+        }
+      ]
+    }
+  },
+  "statusDate": "2016-02-14",
+  "identifier": [
+    {
+      "value": "123"
+    }
+  ],
+  "id": "example",
+  "subject": {
+    "display": "Peter James Chalmers",
+    "reference": "Patient/example"
+  }
+}

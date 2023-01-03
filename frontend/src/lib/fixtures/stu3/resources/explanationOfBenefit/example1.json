@@ -1,0 +1,170 @@
+{
+  "claim": {
+    "reference": "Claim/100150"
+  },
+  "facility": {
+    "reference": "Location/1"
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">A human-readable rendering of the ExplanationOfBenefit</div>"
+  },
+  "claimResponse": {
+    "reference": "ClaimResponse/R3500"
+  },
+  "insurance": {
+    "coverage": {
+      "reference": "Coverage/9876B1"
+    }
+  },
+  "totalCost": {
+    "code": "USD",
+    "system": "urn:iso:std:iso:4217",
+    "value": 135.57
+  },
+  "item": [
+    {
+      "service": {
+        "coding": [
+          {
+            "code": "1200",
+            "system": "http://hl7.org/fhir/service-uscls"
+          }
+        ]
+      },
+      "sequence": 1,
+      "servicedDate": "2014-08-16",
+      "careTeamLinkId": [
+        1
+      ],
+      "net": {
+        "code": "USD",
+        "system": "urn:iso:std:iso:4217",
+        "value": 135.57
+      },
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "code": "USD",
+            "system": "urn:iso:std:iso:4217",
+            "value": 120
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligpercent"
+              }
+            ]
+          },
+          "value": 0.8
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "amount": {
+            "code": "USD",
+            "system": "urn:iso:std:iso:4217",
+            "value": 96
+          }
+        }
+      ],
+      "unitPrice": {
+        "code": "USD",
+        "system": "urn:iso:std:iso:4217",
+        "value": 135.57
+      },
+      "encounter": [
+        {
+          "reference": "Encounter/example"
+        }
+      ]
+    }
+  ],
+  "enterer": {
+    "reference": "Practitioner/1"
+  },
+  "id": "EB3500",
+  "provider": {
+    "reference": "Practitioner/1"
+  },
+  "type": {
+    "coding": [
+      {
+        "code": "oral",
+        "system": "http://hl7.org/fhir/ex-claimtype"
+      }
+    ]
+  },
+  "status": "active",
+  "patient": {
+    "reference": "Patient/pat1"
+  },
+  "disposition": "Claim settled as per contract.",
+  "identifier": [
+    {
+      "system": "http://www.BenefitsInc.com/fhir/explanationofbenefit",
+      "value": "987654321"
+    }
+  ],
+  "created": "2014-08-16",
+  "resourceType": "ExplanationOfBenefit",
+  "totalBenefit": {
+    "code": "USD",
+    "system": "urn:iso:std:iso:4217",
+    "value": 96
+  },
+  "payee": {
+    "resourceType": {
+      "coding": [
+        {
+          "code": "organization",
+          "system": "http://hl7.org/fhir/resource-type-link"
+        }
+      ]
+    },
+    "party": {
+      "reference": "Organization/2"
+    },
+    "type": {
+      "coding": [
+        {
+          "code": "provider",
+          "system": "http://hl7.org/fhir/payeetype"
+        }
+      ]
+    }
+  },
+  "careTeam": [
+    {
+      "provider": {
+        "reference": "Practitioner/example"
+      },
+      "sequence": 1
+    }
+  ],
+  "organization": {
+    "reference": "Organization/2"
+  },
+  "outcome": {
+    "coding": [
+      {
+        "code": "complete",
+        "system": "http://hl7.org/fhir/remittance-outcome"
+      }
+    ]
+  }
+}

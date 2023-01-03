@@ -1,0 +1,54 @@
+{
+  "identifier": [
+    {
+      "value": "893869400546",
+      "system": "http://hl7.org/fhir/sid/us-npi"
+    },
+    {
+      "value": "q8jywxyy7s9",
+      "use": "usual",
+      "system": "https://api.1up.health/r4"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2021-02-18T11:25:34.230Z",
+    "versionId": "9000000000003",
+    "profile": [
+      "http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitionerrole"
+    ]
+  },
+  "code": [
+    {
+      "coding": [
+        {
+          "code": "208D00000X",
+          "display": "General Practice",
+          "system": "http://nucc.org/provider-taxonomy"
+        }
+      ],
+      "text": "General Practice"
+    }
+  ],
+  "organization": {
+    "reference": "Organization?identifier=http://hl7.org/fhir/sid/us-npi|846309199264",
+    "type": "Organization"
+  },
+  "resourceType": "PractitionerRole",
+  "specialty": [
+    {
+      "coding": [
+        {
+          "code": "208D00000X",
+          "display": "General Practice",
+          "system": "http://nucc.org/provider-taxonomy"
+        }
+      ],
+      "text": "General Practice"
+    }
+  ],
+  "practitioner": {
+    "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|893869400546",
+    "type": "Practitioner"
+  },
+  "id": "001291b6a2f1cfe68998ba1d5feb81b99db7"
+}

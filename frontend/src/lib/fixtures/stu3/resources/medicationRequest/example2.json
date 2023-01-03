@@ -1,0 +1,112 @@
+{
+  "resourceType": "MedicationRequest",
+  "id": "medrx0313",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: medrx0313</p><p><b>identifier</b>: 12345689 (OFFICIAL)</p><p><b>status</b>: completed</p><p><b>intent</b>: order</p><p><b>medication</b>: Azithromycin 250mg capsule (product) <span>(Details : {SNOMED CT code '324252006' = 'Azithromycin 250mg capsule', given as 'Azithromycin 250mg capsule (product)'})</span></p><p><b>subject</b>: <a>Donald Duck</a></p><p><b>authoredOn</b>: 15/01/2015</p><h3>Requesters</h3><table><tr><td>-</td><td><b>Agent</b></td><td><b>OnBehalfOf</b></td></tr><tr><td>*</td><td><a>Patrick Pump</a></td><td><a>Organization/f002</a></td></tr></table><p><b>reasonCode</b>: Traveller's Diarrhea (disorder) <span>(Details : {SNOMED CT code '11840006' = 'Traveler's diarrhea', given as 'Traveller's Diarrhea (disorder)'})</span></p><p><b>dosageInstruction</b>: </p><h3>DispenseRequests</h3><table><tr><td>-</td><td><b>ValidityPeriod</b></td><td><b>Quantity</b></td><td><b>ExpectedSupplyDuration</b></td></tr><tr><td>*</td><td>15/01/2015 --&gt; 15/01/2016</td><td>5 Tab<span> (Details: http://hl7.org/fhir/v3/orderableDrugForm code Tab = 'Tab')</span></td><td>5 days<span> (Details: UCUM code d = 'd')</span></td></tr></table><p><b>priorPrescription</b>: <a>Vancomycin IV</a></p></div>"
+  },
+  "identifier": [
+    {
+      "use": "official",
+      "system": "http://www.bmc.nl/portal/prescriptions",
+      "value": "12345689"
+    }
+  ],
+  "status": "completed",
+  "intent": "order",
+  "medicationCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "324252006",
+        "display": "Azithromycin 250mg capsule (product)"
+      }
+    ]
+  },
+  "subject": {
+    "reference": "Patient/pat1",
+    "display": "Donald Duck"
+  },
+  "authoredOn": "2015-01-15",
+  "requester": {
+    "agent": {
+      "reference": "Practitioner/f007",
+      "display": "Patrick Pump"
+    },
+    "onBehalfOf": {
+      "reference": "Organization/f002"
+    }
+  },
+  "reasonCode": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "11840006",
+          "display": "Traveller's Diarrhea (disorder)"
+        }
+      ]
+    }
+  ],
+  "dosageInstruction": [
+    {
+      "sequence": 1,
+      "text": "500mg daily for 5 days",
+      "additionalInstruction": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "421984009",
+              "display": "Until finished - dosing instruction fragment (qualifier value)"
+            }
+          ]
+        }
+      ],
+      "timing": {
+        "repeat": {
+          "frequency": 1,
+          "period": 1,
+          "periodUnit": "d"
+        }
+      },
+      "route": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "26643006",
+            "display": "Oral Route (qualifier value)"
+          }
+        ]
+      },
+      "doseQuantity": {
+        "value": 500,
+        "unit": "mg",
+        "system": "http://unitsofmeasure.org",
+        "code": "mg"
+      }
+    }
+  ],
+  "dispenseRequest": {
+    "validityPeriod": {
+      "start": "2015-01-15",
+      "end": "2016-01-15"
+    },
+    "quantity": {
+      "value": 5,
+      "unit": "Tab",
+      "system": "http://hl7.org/fhir/v3/orderableDrugForm",
+      "code": "Tab"
+    },
+    "expectedSupplyDuration": {
+      "value": 5,
+      "unit": "days",
+      "system": "http://unitsofmeasure.org",
+      "code": "d"
+    }
+  },
+  "priorPrescription": {
+    "reference": "MedicationRequest/medrx0318",
+    "display": "Vancomycin IV"
+  }
+}

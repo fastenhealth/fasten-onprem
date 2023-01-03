@@ -1,0 +1,24 @@
+{
+  "model": "123",
+  "meta": {
+    "lastUpdated": "2019-12-17T07:13:49.463Z",
+    "versionId": "9000000000000"
+  },
+  "status": "available",
+  "patient": {
+    "reference": "Patient/d47f763e7c7f"
+  },
+  "resourceType": "Device",
+  "expiry": "2020-04-14T00:00:00Z",
+  "id": "d47f763e7c7fdd6aa910abc238a6ac23ea57bac07dfe617e",
+  "type": {
+    "coding": [
+      {
+        "system": "urn:oid:1.2.840.114350.1.13.0.1.7.10.737780.70",
+        "code": "65",
+        "display": "Drain"
+      }
+    ],
+    "text": "Drain"
+  }
+}

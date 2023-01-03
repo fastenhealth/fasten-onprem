@@ -1,0 +1,83 @@
+{
+  "birthDate": "1980-01-01",
+  "identifier": [
+    {
+      "value": "2548efa3-7a1d-2c71-c1b1-315a48167fbf",
+      "system": "urn:oid:2.16.840.1.113883.4.391.318531"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2020-01-13T10:57:31.051Z",
+    "versionId": "9000000000001"
+  },
+  "text": {
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Female Adult</p><p>DOB:1980-01-01</p><p>Gender:Female</p></div>",
+    "status": "generated"
+  },
+  "address": [
+    {
+      "state": "MA",
+      "type": "postal",
+      "city": "Westborough",
+      "use": "home",
+      "line": [
+        "123 Tech Dr"
+      ],
+      "postalCode": "01581"
+    }
+  ],
+  "name": [
+    {
+      "family": "Adult",
+      "given": [
+        "Female"
+      ]
+    }
+  ],
+  "gender": "female",
+  "active": true,
+  "resourceType": "Patient",
+  "extension": [
+    {
+      "url": "https://fhir.healow.com/FHIRServer/fhir/BJFCBD/http://hl7.org/fhir/us/core/StructureDefinition/us-core-race"
+    },
+    {
+      "url": "https://fhir.healow.com/FHIRServer/fhir/BJFCBD/http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity"
+    },
+    {
+      "valueCoding": {
+        "code": "UNK"
+      },
+      "url": "https://fhir.healow.com/FHIRServer/fhir/BJFCBD/http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex"
+    }
+  ],
+  "telecom": [
+    {
+      "value": "123-456-7890",
+      "use": "home",
+      "system": "phone"
+    },
+    {
+      "use": "mobile",
+      "system": "phone"
+    },
+    {
+      "value": "mailto:adultfemalefhir@ecw.com",
+      "system": "email"
+    }
+  ],
+  "id": "3933013c85d9",
+  "communication": [
+    {
+      "language": {
+        "coding": [
+          {
+            "system": "urn:ietf:bcp:47",
+            "code": "en",
+            "display": "en"
+          }
+        ]
+      }
+    }
+  ]
+}

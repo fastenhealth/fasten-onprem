@@ -1,0 +1,164 @@
+{
+  "resourceType": "QuestionnaireResponse",
+  "id": "bb",
+  "_id": {
+    "fhir_comments": [
+      "  Please not that in this questionnaire, the questions are mostly unnamed, that is, the questions are not identified using the <name> element. It will therefore\n    be hard to extract useful information in an automated way from this questionnaire. This is, however, quite often the case when modelling existing questionnaires  "
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div>\n      <pre>\n        Cathy Jones, female. Birth weight 3.25 kg at 44.3 cm. \n        Injection of Vitamin K given on 1972-11-30 (first dose) and 1972-12-11 (second dose)\n        Note: Was able to speak Chinese at birth.\n      </pre>\n    </div>"
+  },
+  "status": "completed",
+  "subject": {
+    "reference": "http://hl7.org/fhir/Patient/1"
+  },
+  "author": {
+    "reference": "http://hl7.org/fhir/Practitioner/example"
+  },
+  "authored": "2013-02-19T14:15:00+10:00",
+  "group": {
+    "linkId": "PHR",
+    "title": "NSW Government My Personal Health Record, january 2013",
+    "group": [
+      {
+        "fhir_comments": [
+          "  Many groups left out of this example  "
+        ],
+        "linkId": "birthDetails",
+        "title": "Birth details - To be completed by health professional",
+        "group": [
+          {
+            "question": [
+              {
+                "linkId": "nameOfChild",
+                "text": "Name of child",
+                "answer": [
+                  {
+                    "valueString": "Cathy Jones"
+                  }
+                ]
+              },
+              {
+                "linkId": "sex",
+                "text": "Sex",
+                "answer": [
+                  {
+                    "valueCoding": {
+                      "code": "f"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "linkId": "neonatalInformation",
+            "title": "Neonatal Information",
+            "question": [
+              {
+                "linkId": "birthWeight",
+                "text": "Birth weight (kg)",
+                "answer": [
+                  {
+                    "valueDecimal": 3.25
+                  }
+                ]
+              },
+              {
+                "linkId": "birthLength",
+                "text": "Birth length (cm)",
+                "answer": [
+                  {
+                    "valueDecimal": 44.3
+                  }
+                ]
+              },
+              {
+                "linkId": "vitaminKgiven",
+                "text": "Vitamin K given",
+                "answer": [
+                  {
+                    "valueCoding": {
+                      "code": "INJECTION"
+                    },
+                    "group": [
+                      {
+                        "extension": [
+                          {
+                            "url": "http://example.org/Profile/questionnaire#visibilityCondition",
+                            "valueString": "HAS_VALUE(../choice/code) AND NEQ(../choice/code,'NO')",
+                            "_valueString": {
+                              "fhir_comments": [
+                                "  note: this syntax is for demonstration purposes only, will need to be finalized during DSTU  "
+                              ]
+                            }
+                          }
+                        ],
+                        "linkId": "vitaminKgivenDoses",
+                        "question": [
+                          {
+                            "linkId": "vitaminiKDose1",
+                            "text": "1st dose",
+                            "answer": [
+                              {
+                                "valueDate": "1972-11-30"
+                              }
+                            ]
+                          },
+                          {
+                            "linkId": "vitaminiKDose2",
+                            "text": "2nd dose",
+                            "answer": [
+                              {
+                                "valueDate": "1972-12-11"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "linkId": "hepBgiven",
+                "text": "Hep B given y / n",
+                "answer": [
+                  {
+                    "valueBoolean": true,
+                    "group": [
+                      {
+                        "linkId": "hepBgivenDate",
+                        "question": [
+                          {
+                            "text": "Date given",
+                            "answer": [
+                              {
+                                "valueDate": "1972-12-04"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "linkId": "abnormalitiesAtBirth",
+                "text": "Abnormalities noted at birth",
+                "answer": [
+                  {
+                    "valueString": "Already able to speak Chinese"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

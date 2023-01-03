@@ -1,0 +1,47 @@
+{
+  "birthDate": "2014-06-01",
+  "identifier": [
+    {
+      "value": "-20140000010000",
+      "system": "https://bluebutton.cms.gov/resources/variables/bene_id"
+    },
+    {
+      "value": "bd865fac4096e53bdc1dcf4126483fba3ca55965cf1d2a0f22e931f14e17840d",
+      "system": "https://bluebutton.cms.gov/resources/identifier/hicn-hash"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-04T15:35:35.815Z",
+    "versionId": "9000000000000"
+  },
+  "address": [
+    {
+      "district": "999",
+      "state": "05",
+      "postalCode": "99999"
+    }
+  ],
+  "name": [
+    {
+      "family": "Doe",
+      "given": [
+        "John",
+        "X"
+      ],
+      "use": "usual"
+    }
+  ],
+  "gender": "male",
+  "resourceType": "Patient",
+  "extension": [
+    {
+      "valueCoding": {
+        "system": "https://bluebutton.cms.gov/resources/variables/race",
+        "code": "2",
+        "display": "Black"
+      },
+      "url": "https://api.1up.health/fhir/stu3/variables/c2a8c3e3d035fd7d4fcf6c0caf63481f33dd8b4b6ab95482"
+    }
+  ],
+  "id": "dc793caf0d58"
+}

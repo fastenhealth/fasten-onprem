@@ -1,0 +1,419 @@
+{
+  "information": [
+    {
+      "category": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/codesystem/information",
+            "code": "https://bluebutton.cms.gov/resources/variables/daw_prod_slctn_cd",
+            "display": "Dispense as Written (DAW) Product Selection Code"
+          }
+        ]
+      },
+      "sequence": 1,
+      "code": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/variables/daw_prod_slctn_cd",
+            "code": "0",
+            "display": "No Product Selection Indicated (may also have missing values)"
+          }
+        ]
+      }
+    },
+    {
+      "category": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/codesystem/information",
+            "code": "https://bluebutton.cms.gov/resources/variables/dspnsng_stus_cd",
+            "display": "Dispensing Status Code"
+          }
+        ]
+      },
+      "sequence": 2,
+      "code": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/variables/dspnsng_stus_cd",
+            "code": "C",
+            "display": "Completion of partial fill"
+          }
+        ]
+      }
+    },
+    {
+      "category": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/codesystem/information",
+            "code": "https://bluebutton.cms.gov/resources/variables/drug_cvrg_stus_cd",
+            "display": "Drug Coverage Status Code"
+          }
+        ]
+      },
+      "sequence": 3,
+      "code": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/variables/drug_cvrg_stus_cd",
+            "code": "C",
+            "display": "Covered"
+          }
+        ]
+      }
+    },
+    {
+      "category": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/codesystem/information",
+            "code": "https://bluebutton.cms.gov/resources/variables/rx_orgn_cd",
+            "display": "Prescription Origination Code"
+          }
+        ]
+      },
+      "sequence": 4,
+      "code": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/variables/rx_orgn_cd",
+            "code": "3",
+            "display": "Electronic"
+          }
+        ]
+      }
+    },
+    {
+      "category": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/codesystem/information",
+            "code": "https://bluebutton.cms.gov/resources/variables/brnd_gnrc_cd",
+            "display": "Brand-Generic Code Reported by Submitting Plan"
+          }
+        ]
+      },
+      "sequence": 5,
+      "code": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/variables/brnd_gnrc_cd",
+            "code": "G",
+            "display": "Generic Null/missing"
+          }
+        ]
+      }
+    },
+    {
+      "category": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/codesystem/information",
+            "code": "https://bluebutton.cms.gov/resources/variables/phrmcy_srvc_type_cd",
+            "display": "Pharmacy service type code"
+          }
+        ]
+      },
+      "sequence": 6,
+      "code": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/variables/phrmcy_srvc_type_cd"
+          }
+        ]
+      }
+    },
+    {
+      "category": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/codesystem/information",
+            "code": "https://bluebutton.cms.gov/resources/variables/ptnt_rsdnc_cd",
+            "display": "Patient Residence Code"
+          }
+        ]
+      },
+      "sequence": 7,
+      "code": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/variables/ptnt_rsdnc_cd",
+            "code": "90"
+          }
+        ]
+      }
+    },
+    {
+      "category": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/codesystem/information",
+            "code": "https://bluebutton.cms.gov/resources/variables/submsn_clr_cd",
+            "display": "Submission clarification code"
+          }
+        ]
+      },
+      "sequence": 8,
+      "code": {
+        "coding": [
+          {
+            "system": "https://bluebutton.cms.gov/resources/variables/submsn_clr_cd",
+            "code": "21",
+            "display": "LTC dispensing rule for <=14 day supply is not applicable due to CMS exclusion or the fact that the manufacturer’s packaging does not allow for special dispensing"
+          }
+        ]
+      }
+    }
+  ],
+  "facility": {
+    "identifier": {
+      "value": "999999999999999",
+      "system": "http://hl7.org/fhir/sid/us-npi"
+    }
+  },
+  "identifier": [
+    {
+      "value": "-3410339348",
+      "system": "https://bluebutton.cms.gov/resources/variables/pde_id"
+    },
+    {
+      "value": "4669765623",
+      "system": "https://bluebutton.cms.gov/resources/identifier/claim-group"
+    },
+    {
+      "value": "33437629246",
+      "system": "https://bluebutton.cms.gov/resources/variables/rx_srvc_rfrnc_num"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2020-01-10T08:42:58.808Z",
+    "versionId": "9000000000000"
+  },
+  "status": "active",
+  "item": [
+    {
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/cvrd_d_plan_pd_amt",
+                "display": "Amount paid by Part D plan for the PDE (drug is covered by Part D)"
+              }
+            ]
+          },
+          "reason": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/variables/drug_cvrg_stus_cd",
+                "code": "C",
+                "display": "Covered"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/gdc_blw_oopt_amt",
+                "display": "Gross Drug Cost Below Part D Out-of-Pocket Threshold (GDCB)"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/gdc_abv_oopt_amt",
+                "display": "Gross Drug Cost Above Part D Out-of-Pocket Threshold (GDCA)"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/ptnt_pay_amt",
+                "display": "Amount Paid by Patient"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/othr_troop_amt",
+                "display": "Other True Out-of-Pocket (TrOOP) Amount"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/lics_amt",
+                "display": "Amount paid for the PDE by Part D low income subsidy"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/plro_amt",
+                "display": "Reduction in patient liability due to payments by other payers (PLRO)"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/tot_rx_cst_amt",
+                "display": "Total drug cost (Part D)"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/rptd_gap_dscnt_num",
+                "display": "Gap Discount Amount"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        }
+      ],
+      "sequence": 1,
+      "servicedDate": "2016-06-01",
+      "quantity": {
+        "value": 30
+      },
+      "careTeamLinkId": [
+        2
+      ],
+      "service": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/ndc",
+            "code": "60505257908",
+            "display": "ATORVASTATIN CALCIUM - ATORVASTATIN CALCIUM TRIHYDRATE"
+          }
+        ]
+      }
+    }
+  ],
+  "patient": {
+    "reference": "Patient/dc793caf0d58"
+  },
+  "organization": {
+    "identifier": {
+      "value": "999999999999999",
+      "system": "http://hl7.org/fhir/sid/us-npi"
+    }
+  },
+  "resourceType": "ExplanationOfBenefit",
+  "careTeam": [
+    {
+      "sequence": 2,
+      "provider": {
+        "identifier": {
+          "value": "999999999999999",
+          "system": "http://hl7.org/fhir/sid/us-npi"
+        }
+      },
+      "role": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/claimcareteamrole",
+            "code": "primary",
+            "display": "Primary provider"
+          }
+        ]
+      }
+    }
+  ],
+  "id": "dc793caf0d5817e9f930617b54fee112916ad85cb64d3aeb",
+  "insurance": {
+    "coverage": {
+      "reference": "Coverage/dc793caf0d58ad1fb66cbe7ba7e20b8191fe69f72524dcbc"
+    }
+  },
+  "type": {
+    "coding": [
+      {
+        "system": "https://bluebutton.cms.gov/resources/codesystem/eob-type",
+        "code": "PDE"
+      },
+      {
+        "system": "http://hl7.org/fhir/ex-claimtype",
+        "code": "pharmacy",
+        "display": "Pharmacy"
+      }
+    ]
+  }
+}

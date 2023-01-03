@@ -1,0 +1,495 @@
+{
+  "resourceType": "ClaimResponse",
+  "id": "R3503",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">A human-readable rendering of the ClaimResponse to Claim Oral Average with additional items</div>"
+  },
+  "identifier": [
+    {
+      "system": "http://www.BenefitsInc.com/fhir/remittance",
+      "value": "R3503"
+    }
+  ],
+  "status": "active",
+  "patient": {
+    "reference": "Patient/1"
+  },
+  "created": "2014-08-16",
+  "insurer": {
+    "identifier": {
+      "system": "http://www.jurisdiction.org/insurers",
+      "value": "555123"
+    }
+  },
+  "requestProvider": {
+    "reference": "Organization/1"
+  },
+  "request": {
+    "identifier": {
+      "system": "http://happyvalley.com/claim",
+      "value": "12346"
+    }
+  },
+  "outcome": "complete",
+  "disposition": "Claim settled as per contract.",
+  "payeeType": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/payeetype",
+        "code": "provider"
+      }
+    ]
+  },
+  "item": [
+    {
+      "sequenceLinkId": 1,
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        }
+      ]
+    },
+    {
+      "sequenceLinkId": 2,
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 105.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligpercent"
+              }
+            ]
+          },
+          "value": 80.00
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "amount": {
+            "value": 84.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        }
+      ]
+    },
+    {
+      "sequenceLinkId": 3,
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 750.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligpercent"
+              }
+            ]
+          },
+          "value": 80.00
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "amount": {
+            "value": 600.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        }
+      ],
+      "detail": [
+        {
+          "sequenceLinkId": 1,
+          "adjudication": [
+            {
+              "category": {
+                "coding": [
+                  {
+                    "code": "eligible"
+                  }
+                ]
+              },
+              "amount": {
+                "value": 750.00,
+                "system": "urn:iso:std:iso:4217",
+                "code": "USD"
+              }
+            },
+            {
+              "category": {
+                "coding": [
+                  {
+                    "code": "eligpercent"
+                  }
+                ]
+              },
+              "value": 80.00
+            },
+            {
+              "category": {
+                "coding": [
+                  {
+                    "code": "benefit"
+                  }
+                ]
+              },
+              "amount": {
+                "value": 600.00,
+                "system": "urn:iso:std:iso:4217",
+                "code": "USD"
+              }
+            }
+          ]
+        },
+        {
+          "sequenceLinkId": 2,
+          "adjudication": [
+            {
+              "category": {
+                "coding": [
+                  {
+                    "code": "eligible"
+                  }
+                ]
+              },
+              "amount": {
+                "value": 0.00,
+                "system": "urn:iso:std:iso:4217",
+                "code": "USD"
+              }
+            },
+            {
+              "category": {
+                "coding": [
+                  {
+                    "code": "benefit"
+                  }
+                ]
+              },
+              "amount": {
+                "value": 0.00,
+                "system": "urn:iso:std:iso:4217",
+                "code": "USD"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "addItem": [
+    {
+      "sequenceLinkId": 1,
+      "service": {
+        "coding": [
+          {
+            "system": "http://example.org/fhir/oralservicecodes",
+            "code": "1101"
+          }
+        ]
+      },
+      "modifier": [
+        {
+          "coding": [
+            {
+              "system": "http://example.org/fhir/modifiers",
+              "code": "x",
+              "display": "None"
+            }
+          ]
+        }
+      ],
+      "fee": {
+        "value": 135.57,
+        "system": "urn:iso:std:iso:4217",
+        "code": "USD"
+      },
+      "noteNumber": [
+        101
+      ],
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 100.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "copay"
+              }
+            ]
+          },
+          "amount": {
+            "value": 10.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligpercent"
+              }
+            ]
+          },
+          "value": 80.00
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "reason": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/adjudication-reason",
+                "code": "ar002",
+                "display": "Plan Limit Reached"
+              }
+            ]
+          },
+          "amount": {
+            "value": 72.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        }
+      ]
+    },
+    {
+      "sequenceLinkId": 2,
+      "service": {
+        "coding": [
+          {
+            "system": "http://example.org/fhir/oralservicecodes",
+            "code": "2141",
+            "display": "Radiograph, bytewing"
+          }
+        ]
+      },
+      "fee": {
+        "value": 35.57,
+        "system": "urn:iso:std:iso:4217",
+        "code": "USD"
+      },
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 35.57,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligpercent"
+              }
+            ]
+          },
+          "value": 80.00
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "amount": {
+            "value": 28.47,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        }
+      ]
+    },
+    {
+      "sequenceLinkId": 3,
+      "service": {
+        "coding": [
+          {
+            "system": "http://example.org/fhir/oralservicecodes",
+            "code": "expense"
+          }
+        ]
+      },
+      "modifier": [
+        {
+          "coding": [
+            {
+              "system": "http://example.org/fhir/modifiers",
+              "code": "x",
+              "display": "None"
+            }
+          ]
+        }
+      ],
+      "fee": {
+        "value": 350.00,
+        "system": "urn:iso:std:iso:4217",
+        "code": "USD"
+      },
+      "noteNumber": [
+        101
+      ],
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 350.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligpercent"
+              }
+            ]
+          },
+          "value": 80.00
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "amount": {
+            "value": 270.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        }
+      ]
+    }
+  ],
+  "totalCost": {
+    "value": 1340.57,
+    "system": "urn:iso:std:iso:4217",
+    "code": "USD"
+  },
+  "totalBenefit": {
+    "value": 1054.47,
+    "system": "urn:iso:std:iso:4217",
+    "code": "USD"
+  },
+  "payment": {
+    "type": {
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/ex-paymenttype",
+          "code": "complete"
+        }
+      ]
+    },
+    "date": "2014-08-31",
+    "amount": {
+      "value": 100.47,
+      "system": "urn:iso:std:iso:4217",
+      "code": "USD"
+    },
+    "identifier": {
+      "system": "http://www.BenefitsInc.com/fhir/paymentidentifier",
+      "value": "201408-2-15507"
+    }
+  }
+}

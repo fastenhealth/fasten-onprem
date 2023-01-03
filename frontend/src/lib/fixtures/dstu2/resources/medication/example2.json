@@ -1,0 +1,37 @@
+{
+  "resourceType": "Medication",
+  "id": "medexample002",
+  "text": {
+    "fhir_comments": [
+      "  this example includes a coded generic medication  "
+    ],
+    "status": "generated",
+    "div": "<div>Amoxicillin 250mg/5ml Suspension</div>"
+  },
+  "code": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "323733007",
+        "display": "Amoxcycillin 250mg/5ml oral suspension (product)"
+      },
+      {
+        "system": "http://hc-sc.gc.ca",
+        "code": "0131314003",
+        "display": "Amoxicillin (Amoxcillin Trihydrate) 250mg/5mL"
+      }
+    ]
+  },
+  "isBrand": false,
+  "product": {
+    "form": {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "385024007",
+          "display": "Oral Suspension"
+        }
+      ]
+    }
+  }
+}

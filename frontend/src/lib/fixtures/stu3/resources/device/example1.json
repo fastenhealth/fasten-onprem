@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "lastUpdated": "2019-12-17T06:53:56.263Z",
+    "versionId": "9000000000000"
+  },
+  "status": "active",
+  "text": {
+    "div": "<table xmlns=\"http://www.w3.org/1999/xhtml\"><thead><tr><th>Patient Control No</th><th>Implanted device</th><th>Area</th><th>Manufacturer Type</th><th>Device Identifier</th><th>Model</th><th>Serial</th></tr></thead><tbody><tr><td>9146</td><td ID=\"device1\"/><td/><td/><td/><td/><td/></tr></tbody></table>",
+    "status": "generated"
+  },
+  "patient": {
+    "reference": "Patient/3933013c85d9"
+  },
+  "resourceType": "Device",
+  "udi": {
+    "name": "No implant information"
+  },
+  "id": "3933013c85d9b9d7502af569130218748c0b50889c6b7ee9",
+  "type": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "NA",
+        "display": "NA"
+      }
+    ]
+  }
+}

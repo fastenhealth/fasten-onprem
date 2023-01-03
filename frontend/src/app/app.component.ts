@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
-import {fromWorker} from 'observable-webworker';
 import {Observable, of} from 'rxjs';
 import {ToastService} from './services/toast.service';
 

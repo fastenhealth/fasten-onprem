@@ -1,0 +1,8 @@
+{
+  "use": "maiden",
+  "family": "Windsor",
+  "given": ["Peter", "James"],
+  "period": {
+    "end": "2002"
+  }
+}

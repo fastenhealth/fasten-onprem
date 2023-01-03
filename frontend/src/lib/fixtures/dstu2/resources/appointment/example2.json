@@ -1,0 +1,71 @@
+{
+  "resourceType": "Appointment",
+  "id": "examplereq",
+  "text": {
+    "status": "generated",
+    "div": "<div>Brian MRI results discussion</div>"
+  },
+  "identifier": [
+    {
+      "system": "http://example.org/sampleappointment-identifier",
+      "value": "123"
+    }
+  ],
+  "status": "proposed",
+  "type": {
+    "coding": [
+      {
+        "code": "52",
+        "display": "General Discussion"
+      }
+    ]
+  },
+  "reason": {
+    "text": "Clinical Review"
+  },
+  "priority": 5,
+  "description": "Discussion on the results of your recent MRI",
+  "minutesDuration": 15,
+  "slot": [
+    {
+      "reference": "Slot/example"
+    }
+  ],
+  "comment": "Further expand on the results of the MRI and determine the next actions that may be appropriate.",
+  "participant": [
+    {
+      "actor": {
+        "reference": "Patient/example",
+        "display": "Peter James Chalmers"
+      },
+      "required": "required",
+      "status": "needs-action"
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "code": "attending"
+            }
+          ]
+        }
+      ],
+      "required": "required",
+      "status": "needs-action"
+    },
+    {
+      "actor": {
+        "reference": "Location/1",
+        "display": "South Wing, second floor"
+      },
+      "required": "required",
+      "_required": {
+        "fhir_comments": [
+          "  This resource auto accepts, so doesn't need negotiation  "
+        ]
+      },
+      "status": "accepted"
+    }
+  ]
+}

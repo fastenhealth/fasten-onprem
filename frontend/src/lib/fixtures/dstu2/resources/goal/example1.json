@@ -1,0 +1,47 @@
+{
+  "subject": {
+    "reference": "Patient/f8fedcd9e6e5"
+  },
+  "identifier": [
+    {
+      "value": "TbtW9qZPjDclmbmGLLcZkRAB",
+      "system": "https:open-ic.epic.com"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-02T08:52:19.194Z",
+    "versionId": "9000000000000"
+  },
+  "status": "in-progress",
+  "addresses": [
+    {
+      "reference": "Condition/f8fedcd9e6e533803cb605092c300355176ccac658517fac",
+      "display": "Asthma"
+    }
+  ],
+  "note": [
+    {
+      "text": "Remove pet dander from your life."
+    }
+  ],
+  "resourceType": "Goal",
+  "category": [
+    {
+      "coding": [
+        {
+          "system": "urn:oid:1.2.840.114350.1.13.0.1.7.4.737184.20005",
+          "code": "7",
+          "display": "Contingency"
+        }
+      ],
+      "text": "Contingency"
+    }
+  ],
+  "startDate": "2016-03-26",
+  "description": "Reduce the need for your rescue inhaler to less than once each month",
+  "id": "f8fedcd9e6e55fbfc6a98758e0b2e202cb817b4af2812ade",
+  "author": {
+    "reference": "Practitioner/f8fedcd9e6e565a21f457909",
+    "display": "MOORE, NICK"
+  }
+}

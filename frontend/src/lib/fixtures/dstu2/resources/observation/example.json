@@ -1,0 +1,33 @@
+{
+  "subject": {
+    "reference": "Patient/f8fedcd9e6e5"
+  },
+  "valueString": "The following orders were created for panel order CBC and differential.\r\nProcedure                               Abnormality         Status                   \r\n---------                               -----------         ------                   \r\nCBC auto differential[973580]           Abnormal            Final result             \r\n\r\n\r\nPlease view results for these tests on the individual orders.",
+  "identifier": [
+    {
+      "value": "T.kP0ynFiOMogm8bwZdB6xk2FJJzmPZMiRLzWHpCpPxQB",
+      "system": "https:open-ic.epic.com"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-02T09:10:48.154Z",
+    "versionId": "9000000000000"
+  },
+  "status": "final",
+  "effectiveDateTime": "2015-10-03T20:21:00.000Z",
+  "code": {
+    "text": "Narrative"
+  },
+  "resourceType": "Observation",
+  "category": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/observation-category",
+        "code": "laboratory",
+        "display": "Laboratory"
+      }
+    ],
+    "text": "Laboratory"
+  },
+  "id": "f8fedcd9e6e5036e9d131bf04809e1abb60bb27899c599bc"
+}

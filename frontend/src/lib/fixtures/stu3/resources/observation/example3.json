@@ -1,0 +1,68 @@
+{
+  "subject": {
+    "reference": "Patient/d47f763e7c7f"
+  },
+  "identifier": [
+    {
+      "value": "TS2G0euUg9yDMXFHKu51AT.CYze.oBjEnrmumkCVxSgEB",
+      "system": "https:open-ic.epic.com"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-17T07:13:51.750Z",
+    "versionId": "9000000000000"
+  },
+  "status": "final",
+  "effectiveDateTime": "2015-12-31T18:00:00.000Z",
+  "referenceRange": [
+    {
+      "low": {
+        "unit": "fL",
+        "code": "fL",
+        "system": "http://unitsofmeasure.org",
+        "value": 7.5
+      },
+      "high": {
+        "unit": "fL",
+        "code": "fL",
+        "system": "http://unitsofmeasure.org",
+        "value": 11.5
+      },
+      "text": "7.5 - 11.5 fL"
+    }
+  ],
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "32623-1",
+        "display": "Platelet mean volume [Entitic volume] in Blood by Automated count"
+      }
+    ],
+    "text": "PLATELET MEAN VOLUME [FL] IN BLOOD BY AUTOMATED COUNT"
+  },
+  "resourceType": "Observation",
+  "category": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/observation-category",
+        "code": "laboratory",
+        "display": "Laboratory"
+      }
+    ],
+    "text": "Laboratory"
+  },
+  "performer": [
+    {
+      "reference": "Practitioner/d47f763e7c7f5f92257a4f79",
+      "display": "Medical Director Hspc, MD"
+    }
+  ],
+  "valueQuantity": {
+    "unit": "fL",
+    "code": "fL",
+    "system": "http://unitsofmeasure.org",
+    "value": 11
+  },
+  "id": "d47f763e7c7f0cae346dd750a1c75c2b4ad7af511ac3ddea"
+}

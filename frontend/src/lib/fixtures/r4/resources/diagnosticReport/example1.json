@@ -1,0 +1,129 @@
+{
+  "resourceType": "DiagnosticReport",
+  "id": "f001",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: f001</p><p><b>contained</b>: </p><p><b>identifier</b>: nr1239044 (OFFICIAL)</p><p><b>basedOn</b>: id: req; L2381; status: active; intent: original-order; Complete blood count (hemogram) panel - Blood by Automated count <span>(Details : {LOINC code '58410-2' = 'Complete blood count (hemogram) panel - Blood by Automated count', given as 'Complete blood count (hemogram) panel - Blood by Automated count'})</span>; P. van den Heuvel; ????; Annotation: patient almost fainted during procedure</p><p><b>status</b>: final</p><p><b>category</b>: Haematology test <span>(Details : {SNOMED CT code '252275004' = 'Haematology test', given as 'Haematology test'}; {http://hl7.org/fhir/v2/0074 code 'HM' = 'Hematology)</span></p><p><b>code</b>: Complete blood count (hemogram) panel - Blood by Automated count <span>(Details : {LOINC code '58410-2' = 'Complete blood count (hemogram) panel - Blood by Automated count', given as 'Complete blood count (hemogram) panel - Blood by Automated count'})</span></p><p><b>subject</b>: <a>P. van den Heuvel</a></p><p><b>issued</b>: 15/05/2013 7:32:52 PM</p><h3>Performers</h3><table><tr><td>-</td><td><b>Actor</b></td></tr><tr><td>*</td><td><a>Burgers University Medical Centre</a></td></tr></table><p><b>result</b>: </p><ul><li><a>Observation/f001</a></li><li><a>Observation/f002</a></li><li><a>Observation/f003</a></li><li><a>Observation/f004</a></li><li><a>Observation/f005</a></li></ul><p><b>conclusion</b>: Core lab</p></div>"
+  },
+  "contained": [
+    {
+      "resourceType": "ProcedureRequest",
+      "id": "req",
+      "extension": [
+        {
+          "url": "http://example.org/bodysitecode",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "14975008",
+                "display": "Forearm structure"
+              }
+            ]
+          }
+        }
+      ],
+      "identifier": [
+        {
+          "system": "http://www.bmc.nl/zorgportal/identifiers/labresults",
+          "value": "L2381"
+        }
+      ],
+      "status": "active",
+      "intent": "original-order",
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "58410-2",
+            "display": "Complete blood count (hemogram) panel - Blood by Automated count"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/f001",
+        "display": "P. van den Heuvel"
+      },
+      "context": {
+        "reference": "Encounter/f001"
+      },
+      "requester": {
+        "agent": {
+          "reference": "Practitioner/f001",
+          "display": "E.van den Broek"
+        }
+      },
+      "note": [
+        {
+          "text": "patient almost fainted during procedure"
+        }
+      ]
+    }
+  ],
+  "identifier": [
+    {
+      "use": "official",
+      "system": "http://www.bmc.nl/zorgportal/identifiers/reports",
+      "value": "nr1239044"
+    }
+  ],
+  "basedOn": [
+    {
+      "reference": "#req"
+    }
+  ],
+  "status": "final",
+  "category": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "252275004",
+        "display": "Haematology test"
+      },
+      {
+        "system": "http://hl7.org/fhir/v2/0074",
+        "code": "HM"
+      }
+    ]
+  },
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "58410-2",
+        "display": "Complete blood count (hemogram) panel - Blood by Automated count"
+      }
+    ]
+  },
+  "subject": {
+    "reference": "Patient/f001",
+    "display": "P. van den Heuvel"
+  },
+  "issued": "2013-05-15T19:32:52+01:00",
+  "performer": [
+    {
+      "actor": {
+        "reference": "Organization/f001",
+        "display": "Burgers University Medical Centre"
+      }
+    }
+  ],
+  "result": [
+    {
+      "reference": "Observation/f001"
+    },
+    {
+      "reference": "Observation/f002"
+    },
+    {
+      "reference": "Observation/f003"
+    },
+    {
+      "reference": "Observation/f004"
+    },
+    {
+      "reference": "Observation/f005"
+    }
+  ],
+  "conclusion": "Core lab"
+}

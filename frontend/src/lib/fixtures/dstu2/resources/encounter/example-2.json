@@ -1,0 +1,45 @@
+{
+  "location": [
+    {
+      "location": {
+        "reference": "Location/3d3d15496c25367770de3c76",
+        "display": "Baseline West Medical Center, BW Hospital 1, BW Radiology"
+      },
+      "status": "active"
+    }
+  ],
+  "identifier": [
+    {
+      "period": {
+        "start": "2019-08-07T22:12:36.000Z"
+      },
+      "system": "urn:oid:4.4.4.4.4.4",
+      "type": {
+        "text": "FIN NBR"
+      },
+      "value": "20001765",
+      "use": "usual"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-09T13:23:28.052Z",
+    "versionId": "9000000000002"
+  },
+  "status": "in-progress",
+  "text": {
+    "div": "<div><p><b>Encounter</b></p><p><b>Location</b>: Baseline West Medical Center, BW Hospital 1, BW Radiology</p><p><b>Class</b>: Outpatient</p><p><b>Status</b>: in Progress</p><p><b>Period Start Date</b>: Aug 21, 2019  5:00 A.M. UTC</p></div>",
+    "status": "generated"
+  },
+  "period": {
+    "start": "2019-08-21T05:00:00.000Z"
+  },
+  "class": "outpatient",
+  "patient": {
+    "reference": "Patient/3d3d15496c25"
+  },
+  "resourceType": "Encounter",
+  "serviceProvider": {
+    "reference": "Organization/3d3d15496c250146b108471c"
+  },
+  "id": "3d3d15496c2505140729b4b5a5873d71b64cbb59c680788e"
+}

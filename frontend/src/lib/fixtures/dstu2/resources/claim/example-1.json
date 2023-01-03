@@ -1,0 +1,79 @@
+{
+  "resourceType": "Claim",
+  "id": "100150",
+  "text": {
+    "status": "generated",
+    "div": "<div>A human-readable rendering of the Oral Health Claim</div>"
+  },
+  "type": "oral",
+  "identifier": [
+    {
+      "system": "http://happyvalley.com/claim",
+      "value": "12345"
+    }
+  ],
+  "created": "2014-08-16",
+  "target": {
+    "reference": "Organization/2"
+  },
+  "organization": {
+    "reference": "Organization/1"
+  },
+  "use": "complete",
+  "priority": {
+    "code": "normal"
+  },
+  "payee": {
+    "type": {
+      "code": "provider"
+    }
+  },
+  "diagnosis": [
+    {
+      "sequence": 1,
+      "diagnosis": {
+        "code": "123456"
+      }
+    }
+  ],
+  "patient": {
+    "reference": "Patient/1"
+  },
+  "coverage": [
+    {
+      "sequence": 1,
+      "focal": true,
+      "coverage": {
+        "reference": "Coverage/9876B1"
+      },
+      "relationship": {
+        "code": "self"
+      }
+    }
+  ],
+  "item": [
+    {
+      "sequence": 1,
+      "type": {
+        "code": "service"
+      },
+      "provider": {
+        "reference": "Practitioner/example"
+      },
+      "service": {
+        "code": "1200"
+      },
+      "serviceDate": "2014-08-16",
+      "unitPrice": {
+        "value": 135.57,
+        "system": "urn:iso:std:iso:4217",
+        "code": "USD"
+      },
+      "net": {
+        "value": 135.57,
+        "system": "urn:iso:std:iso:4217",
+        "code": "USD"
+      }
+    }
+  ]
+}

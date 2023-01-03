@@ -1,0 +1,49 @@
+{
+  "resourceType": "MedicationDispense",
+  "id": "meddisp008",
+  "text": {
+    "status": "generated",
+    "div": "<div>\n\t\t\t<p>\n\t\t\t\t<big>Capecitabine (Recurrent/Metastatic)</big>\n\t\t\t</p>\n\t\t\t<p>Course:</p>\n\t\t\t<p>Name: Capecitabine</p>\n\t\t\t<p>Agent Protocols Options:</p>\n\t\t\t<p>\n\t\t\t\t<b>Capecitabine 1000-1250 mg/m^2 PO twice daily D1-14</b>\n\t\t\t</p>\n\t\t\t<p>Offset: None</p>\n\t\t\t<p>Cycle length: Q21D</p>\n\t\t</div>"
+  },
+  "status": "completed",
+  "patient": {
+    "reference": "Patient/example"
+  },
+  "dispenser": {
+    "reference": "Practitioner/example"
+  },
+  "authorizingPrescription": [
+    {
+      "reference": "MedicationOrder/medrx006"
+    }
+  ],
+  "medicationReference": {
+    "reference": "Medication/f001"
+  },
+  "dosageInstruction": [
+    {
+      "timing": {
+        "repeat": {
+          "frequency": 2,
+          "period": 21,
+          "periodUnits": "d"
+        }
+      },
+      "route": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "394899003",
+            "display": "oral administration of treatment"
+          }
+        ]
+      },
+      "doseQuantity": {
+        "value": 1000,
+        "unit": "mg/m^2",
+        "system": "http://unitsofmeasure.org",
+        "code": "ml"
+      }
+    }
+  ]
+}

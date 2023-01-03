@@ -1,0 +1,170 @@
+{
+  "resourceType": "ClaimResponse",
+  "id": "R3500",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">A human-readable rendering of the ClaimResponse</div>"
+  },
+  "identifier": [
+    {
+      "system": "http://www.BenefitsInc.com/fhir/remittance",
+      "value": "R3500"
+    }
+  ],
+  "status": "active",
+  "type": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+        "code": "oral"
+      }
+    ]
+  },
+  "subType": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/ex-claimsubtype",
+        "code": "emergency"
+      }
+    ]
+  },
+  "use": "claim",
+  "patient": {
+    "reference": "Patient/1"
+  },
+  "created": "2014-08-16",
+  "insurer": {
+    "identifier": {
+      "system": "http://www.jurisdiction.org/insurers",
+      "value": "555123"
+    }
+  },
+  "requestor": {
+    "reference": "Organization/1"
+  },
+  "request": {
+    "reference": "http://www.BenefitsInc.com/fhir/oralhealthclaim/15476332402"
+  },
+  "outcome": "complete",
+  "disposition": "Claim settled as per contract.",
+  "payeeType": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/payeetype",
+        "code": "provider"
+      }
+    ]
+  },
+  "item": [
+    {
+      "itemSequence": 1,
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 135.57,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "copay"
+              }
+            ]
+          },
+          "amount": {
+            "value": 10.0,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligpercent"
+              }
+            ]
+          },
+          "value": 80.0
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "reason": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/adjudication-reason",
+                "code": "ar002",
+                "display": "Plan Limit Reached"
+              }
+            ]
+          },
+          "amount": {
+            "value": 90.47,
+            "currency": "USD"
+          }
+        }
+      ]
+    }
+  ],
+  "total": [
+    {
+      "category": {
+        "coding": [
+          {
+            "code": "submitted"
+          }
+        ]
+      },
+      "amount": {
+        "value": 135.57,
+        "currency": "USD"
+      }
+    },
+    {
+      "category": {
+        "coding": [
+          {
+            "code": "benefit"
+          }
+        ]
+      },
+      "amount": {
+        "value": 90.47,
+        "currency": "USD"
+      }
+    }
+  ],
+  "payment": {
+    "type": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/ex-paymenttype",
+          "code": "complete"
+        }
+      ]
+    },
+    "date": "2014-08-31",
+    "amount": {
+      "value": 100.47,
+      "currency": "USD"
+    },
+    "identifier": {
+      "system": "http://www.BenefitsInc.com/fhir/paymentidentifier",
+      "value": "201408-2-1569478"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "resourceType": "AllergyIntolerance",
+  "id": "medication",
+  "text": {
+    "fhir_comments": [
+      "   the date that this entry was recorded   "
+    ],
+    "status": "generated",
+    "div": "<div><p><b>Generated Narrative with Details</b></p><p><b>id</b>: medication</p><p><b>recordedDate</b>: 01/03/2010</p><p><b>recorder</b>: <a>Practitioner/13</a></p><p><b>patient</b>: <a>Patient/example</a></p><p><b>substance</b>: ALLERGENIC EXTRACT, PENICILLIN <span>(Details : {RxNorm code '314422' = '??', given as 'ALLERGENIC EXTRACT, PENICILLIN'})</span></p><p><b>status</b>: unconfirmed</p><p><b>criticality</b>: CRITH</p><p><b>category</b>: medication</p><h3>Reactions</h3><table><tr><td>-</td><td><b>Manifestation</b></td></tr><tr><td>*</td><td>Hives <span>(Details : {SNOMED CT code '247472004' = '247472004', given as 'Hives'})</span></td></tr></table></div>"
+  },
+  "recordedDate": "2010-03-01",
+  "recorder": {
+    "fhir_comments": [
+      "   who made the record / last updated it   "
+    ],
+    "reference": "Practitioner/13"
+  },
+  "patient": {
+    "fhir_comments": [
+      "   the patient that actually has the risk of adverse reaction   "
+    ],
+    "reference": "Patient/example"
+  },
+  "substance": {
+    "fhir_comments": [
+      "   subtance, coded from RxNorm   "
+    ],
+    "coding": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "314422",
+        "display": "ALLERGENIC EXTRACT, PENICILLIN"
+      }
+    ]
+  },
+  "status": "unconfirmed",
+  "criticality": "CRITH",
+  "category": "medication",
+  "reaction": [
+    {
+      "manifestation": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "247472004",
+              "display": "Hives"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

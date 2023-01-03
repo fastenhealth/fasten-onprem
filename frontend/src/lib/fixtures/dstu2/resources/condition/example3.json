@@ -1,0 +1,69 @@
+{
+  "clinicalStatus": "resolved",
+  "identifier": [
+    {
+      "value": "TbwFAdhXPAOlUZhhB55y1ngB",
+      "system": "https:open-ic.epic.com"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-17T07:13:48.736Z",
+    "versionId": "9000000000000"
+  },
+  "onsetDateTime": "2016-04-05",
+  "asserter": {
+    "reference": "Practitioner/d47f763e7c7f177f3046826b",
+    "display": "MOORE, NICK"
+  },
+  "patient": {
+    "reference": "Patient/d47f763e7c7f"
+  },
+  "code": {
+    "coding": [
+      {
+        "system": "urn:oid:2.16.840.1.113883.6.90",
+        "code": "R57.9",
+        "display": "Shock"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "27942005",
+        "display": "Shock (disorder)"
+      }
+    ],
+    "text": "Shock"
+  },
+  "dateRecorded": "2016-04-07",
+  "resourceType": "Condition",
+  "abatementDateTime": "2016-04-07T00:00:00.000Z",
+  "category": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "29308-4",
+        "display": "Diagnosis"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "439401001",
+        "display": "Diagnosis"
+      },
+      {
+        "system": "http://hl7.org/fhir/condition-category",
+        "code": "diagnosis",
+        "display": "Diagnosis"
+      },
+      {
+        "system": "http://argonautwiki.hl7.org/extension-codes",
+        "code": "problem",
+        "display": "Problem"
+      }
+    ],
+    "text": "Diagnosis"
+  },
+  "verificationStatus": "confirmed",
+  "id": "d47f763e7c7f0e8435cab047d01bce407005e391761b9298",
+  "severity": {
+    "text": "Medium"
+  }
+}

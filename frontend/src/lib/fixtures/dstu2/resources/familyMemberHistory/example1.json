@@ -1,0 +1,44 @@
+{
+  "resourceType": "FamilyMemberHistory",
+  "id": "father",
+  "text": {
+    "status": "generated",
+    "div": "<div>Father died of a heart attack aged 74</div>"
+  },
+  "patient": {
+    "reference": "Patient/example",
+    "display": "Peter Patient"
+  },
+  "date": "2011-03-18",
+  "status": "completed",
+  "relationship": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/familial-relationship",
+        "code": "father"
+      }
+    ]
+  },
+  "condition": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "315619001",
+            "display": "Myocardial Infarction"
+          }
+        ],
+        "text": "Heart Attack"
+      },
+      "onsetQuantity": {
+        "value": 74,
+        "unit": "a",
+        "system": "http://unitsofmeasure.org"
+      },
+      "note": {
+        "text": "Was fishing at the time. At least he went doing someting he loved."
+      }
+    }
+  ]
+}

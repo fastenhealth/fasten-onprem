@@ -1,0 +1,79 @@
+{
+  "resourceType": "Location",
+  "id": "1",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Burgers UMC, South Wing, second floor</div>"
+  },
+  "extension": [
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/location-alias",
+      "valueString": "Burgers University Medical Center, South Wing, second floor"
+    },
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/location-alias",
+      "valueString": "BU MC, SW, F2"
+    }
+  ],
+  "identifier": [
+    {
+      "value": "B1-S.F2"
+    }
+  ],
+  "status": "active",
+  "name": "South Wing, second floor",
+  "description": "Second floor of the Old South Wing, formerly in use by Psychiatry",
+  "mode": "instance",
+  "telecom": [
+    {
+      "system": "phone",
+      "value": "2328",
+      "use": "work"
+    },
+    {
+      "system": "fax",
+      "value": "2329",
+      "use": "work"
+    },
+    {
+      "system": "email",
+      "value": "second wing admissions"
+    },
+    {
+      "system": "url",
+      "value": "http://sampleorg.com/southwing",
+      "use": "work"
+    }
+  ],
+  "address": {
+    "use": "work",
+    "line": [
+      "Galapagosweg 91, Building A"
+    ],
+    "city": "Den Burg",
+    "postalCode": "9105 PZ",
+    "country": "NLD"
+  },
+  "physicalType": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/location-physical-type",
+        "code": "wi",
+        "display": "Wing"
+      }
+    ]
+  },
+  "position": {
+    "longitude": -83.6945691,
+    "latitude": 42.25475478,
+    "altitude": 0
+  },
+  "managingOrganization": {
+    "reference": "Organization/f001"
+  },
+  "endpoint": [
+    {
+      "reference": "Endpoint/example"
+    }
+  ]
+}

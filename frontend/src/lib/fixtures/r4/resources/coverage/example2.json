@@ -1,0 +1,48 @@
+{
+  "resourceType": "Coverage",
+  "id": "7547E",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">A human-readable rendering of the European Health Insurance Card</div>"
+  },
+  "identifier": [
+    {
+      "system": "http://ehic.com/insurer/123456789/member",
+      "value": "A123456780"
+    }
+  ],
+  "status": "active",
+  "type": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "EHCPOL",
+        "display": "extended healthcare"
+      }
+    ]
+  },
+  "subscriber": {
+    "reference": "Patient/5"
+  },
+  "beneficiary": {
+    "reference": "Patient/5"
+  },
+  "relationship": {
+    "coding": [
+      {
+        "code": "self"
+      }
+    ]
+  },
+  "period": {
+    "end": "2012-03-17"
+  },
+  "payor": [
+    {
+      "identifier": {
+        "system": "http://ehic.com/insurer",
+        "value": "123456789"
+      }
+    }
+  ]
+}

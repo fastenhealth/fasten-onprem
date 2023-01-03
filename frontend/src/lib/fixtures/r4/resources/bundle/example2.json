@@ -1,0 +1,511 @@
+{
+  "entry": [
+    {
+      "resource": {
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR",
+                  "display": "Medical Record Number"
+                }
+              ],
+              "text": "Medical Record Number"
+            },
+            "value": "3c7a1e79-163e-b362-4c8d-699c205019e6",
+            "system": "http://hospital.smarthealthit.org"
+          }
+        ],
+        "extension": [
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "code": "2106-3",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "White"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "White",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race"
+          },
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Non Hispanic or Latino",
+                  "code": "2186-5"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Non Hispanic or Latino",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity"
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "M"
+          }
+        ],
+        "address": [
+          {
+            "country": "United States",
+            "state": "Massachusetts",
+            "use": "home",
+            "postalCode": "01027"
+          },
+          {
+            "country": "United States",
+            "state": "Massachusetts",
+            "use": "billing",
+            "postalCode": "01027"
+          }
+        ],
+        "gender": "male",
+        "name": [
+          {
+            "use": "official",
+            "text": "Mauricio81 Pouros728"
+          }
+        ],
+        "birthDate": "2002-01-24",
+        "resourceType": "Patient"
+      }
+    },
+    {
+      "resource": {
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR",
+                  "display": "Medical Record Number"
+                }
+              ],
+              "text": "Medical Record Number"
+            },
+            "value": "fa025632-2f0d-a891-c579-717f169c93f2",
+            "system": "http://hospital.smarthealthit.org"
+          }
+        ],
+        "extension": [
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "code": "2054-5",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Black or African American"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Black or African American",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race"
+          },
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Non Hispanic or Latino",
+                  "code": "2186-5"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Non Hispanic or Latino",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity"
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "M"
+          }
+        ],
+        "address": [
+          {
+            "country": "United States",
+            "use": "home",
+            "state": "Massachusetts"
+          },
+          {
+            "country": "United States",
+            "use": "billing",
+            "state": "Massachusetts"
+          }
+        ],
+        "gender": "male",
+        "deceasedDateTime": "2019-05-05",
+        "name": [
+          {
+            "use": "official",
+            "text": "Rolando809 Kautzer186"
+          }
+        ],
+        "birthDate": "1940-05-19",
+        "resourceType": "Patient"
+      }
+    },
+    {
+      "resource": {
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR",
+                  "display": "Medical Record Number"
+                }
+              ],
+              "text": "Medical Record Number"
+            },
+            "value": "06bfecbd-9cb2-c8c2-e02f-06eb9a11dd90",
+            "system": "http://hospital.smarthealthit.org"
+          }
+        ],
+        "extension": [
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "code": "2054-5",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Black or African American"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Black or African American",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race"
+          },
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Non Hispanic or Latino",
+                  "code": "2186-5"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Non Hispanic or Latino",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity"
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "M"
+          }
+        ],
+        "address": [
+          {
+            "country": "United States",
+            "state": "Massachusetts",
+            "use": "home",
+            "postalCode": "02116"
+          },
+          {
+            "country": "United States",
+            "state": "Massachusetts",
+            "use": "billing",
+            "postalCode": "02116"
+          }
+        ],
+        "gender": "male",
+        "deceasedDateTime": "1995-01-21",
+        "name": [
+          {
+            "use": "official",
+            "text": "Sol312 Ferry570"
+          }
+        ],
+        "birthDate": "1940-05-19",
+        "resourceType": "Patient"
+      }
+    },
+    {
+      "resource": {
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR",
+                  "display": "Medical Record Number"
+                }
+              ],
+              "text": "Medical Record Number"
+            },
+            "value": "d4e4d602-ac93-8e1f-4e04-dc82b896204c",
+            "system": "http://hospital.smarthealthit.org"
+          }
+        ],
+        "extension": [
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "code": "2054-5",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Black or African American"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Black or African American",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race"
+          },
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Non Hispanic or Latino",
+                  "code": "2186-5"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Non Hispanic or Latino",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity"
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "M"
+          }
+        ],
+        "address": [
+          {
+            "country": "United States",
+            "state": "Massachusetts",
+            "use": "home",
+            "postalCode": "02116"
+          },
+          {
+            "country": "United States",
+            "state": "Massachusetts",
+            "use": "billing",
+            "postalCode": "02116"
+          }
+        ],
+        "gender": "male",
+        "deceasedDateTime": "2002-04-22",
+        "name": [
+          {
+            "use": "official",
+            "text": "Rhett759 Dooley940"
+          }
+        ],
+        "birthDate": "1940-05-19",
+        "resourceType": "Patient"
+      }
+    },
+    {
+      "resource": {
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR",
+                  "display": "Medical Record Number"
+                }
+              ],
+              "text": "Medical Record Number"
+            },
+            "value": "ff436997-139e-8c19-88c4-c3fd5be4ed09",
+            "system": "http://hospital.smarthealthit.org"
+          }
+        ],
+        "extension": [
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "code": "2054-5",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Black or African American"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Black or African American",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race"
+          },
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Non Hispanic or Latino",
+                  "code": "2186-5"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Non Hispanic or Latino",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity"
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "M"
+          }
+        ],
+        "address": [
+          {
+            "country": "United States",
+            "state": "Massachusetts",
+            "use": "home",
+            "postalCode": "02152"
+          },
+          {
+            "country": "United States",
+            "state": "Massachusetts",
+            "use": "billing",
+            "postalCode": "02152"
+          }
+        ],
+        "gender": "male",
+        "deceasedDateTime": "2018-07-07",
+        "name": [
+          {
+            "use": "official",
+            "text": "Trent525 Ledner144"
+          }
+        ],
+        "birthDate": "1940-05-19",
+        "resourceType": "Patient"
+      }
+    },
+    {
+      "resource": {
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR",
+                  "display": "Medical Record Number"
+                }
+              ],
+              "text": "Medical Record Number"
+            },
+            "value": "b3d8797f-0b8b-ad2a-09ac-d2f03d6fd9ac",
+            "system": "http://hospital.smarthealthit.org"
+          }
+        ],
+        "extension": [
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "code": "2054-5",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Black or African American"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Black or African American",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race"
+          },
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Non Hispanic or Latino",
+                  "code": "2186-5"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Non Hispanic or Latino",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity"
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "M"
+          }
+        ],
+        "address": [
+          {
+            "country": "United States",
+            "state": "Massachusetts",
+            "use": "home",
+            "postalCode": "02215"
+          },
+          {
+            "country": "United States",
+            "state": "Massachusetts",
+            "use": "billing",
+            "postalCode": "02215"
+          }
+        ],
+        "gender": "male",
+        "name": [
+          {
+            "use": "official",
+            "text": "Damon455 Frami345"
+          }
+        ],
+        "birthDate": "1940-05-19",
+        "resourceType": "Patient"
+      }
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2021-02-10T18:04:23.588Z",
+    "versionId": "9000000000000"
+  },
+  "resourceType": "Bundle",
+  "id": "5f4791a23a3c43de7aaef2cd792da54c1268",
+  "type": "collection"
+}

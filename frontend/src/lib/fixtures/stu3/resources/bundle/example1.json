@@ -1,0 +1,185 @@
+{
+  "entry": [
+    {
+      "resource": {
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR",
+                  "display": "Medical Record Number"
+                }
+              ],
+              "text": "Medical Record Number"
+            },
+            "value": "fa025632-xxxx-a891-c579-717f169c93f2",
+            "system": "http://hospital.smarthealthit.org"
+          }
+        ],
+        "extension": [
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "display": "Black or African American",
+                  "code": "2054-5",
+                  "system": "urn:oid:2.16.840.1.113883.6.238"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Black or African American",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race"
+          },
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "display": "Hispanic or Latino",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Hispanic or Latino",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity"
+          },
+          {
+            "valueCode": "M",
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex"
+          }
+        ],
+        "address": [
+          {
+            "country": "United States",
+            "state": "Nevada",
+            "use": "home",
+            "postalCode": "89107"
+          },
+          {
+            "country": "United States",
+            "state": "Nevada",
+            "use": "billing",
+            "postalCode": "89107"
+          }
+        ],
+        "gender": "male",
+        "name": [
+          {
+            "use": "official",
+            "text": "Claudio955 Ramón841"
+          }
+        ],
+        "birthDate": "2015-07-09",
+        "resourceType": "Patient"
+      },
+      "request": {
+        "method": "POST",
+        "url": "https://api.1up.health/r4/r4/835043ec8e6b792147ef928d14b2222534bf"
+      }
+    },
+    {
+      "resource": {
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR",
+                  "display": "Medical Record Number"
+                }
+              ],
+              "text": "Medical Record Number"
+            },
+            "value": "f56391c2-xxxx-b378-46ef-87c1643a2ba0",
+            "system": "http://hospital.smarthealthit.org"
+          }
+        ],
+        "extension": [
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "display": "White",
+                  "code": "2106-3",
+                  "system": "urn:oid:2.16.840.1.113883.6.238"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "White",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race"
+          },
+          {
+            "extension": [
+              {
+                "valueCoding": {
+                  "display": "Hispanic or Latino",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2135-2"
+                },
+                "url": "ombCategory"
+              },
+              {
+                "valueString": "Hispanic or Latino",
+                "url": "text"
+              }
+            ],
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity"
+          },
+          {
+            "valueCode": "F",
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex"
+          }
+        ],
+        "address": [
+          {
+            "country": "United States",
+            "state": "Nevada",
+            "use": "home",
+            "postalCode": "89104"
+          },
+          {
+            "country": "United States",
+            "state": "Nevada",
+            "use": "billing",
+            "postalCode": "89104"
+          }
+        ],
+        "gender": "female",
+        "name": [
+          {
+            "use": "official",
+            "text": "Mayte822 Venegas795"
+          }
+        ],
+        "birthDate": "2010-10-13",
+        "resourceType": "Patient"
+      },
+      "request": {
+        "method": "POST",
+        "url": "https://api.1up.health/r4/r4/835043ec8e6b792147ef928d14b2222534bf"
+      }
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2021-02-11T15:48:43.346Z",
+    "versionId": "9000000000000"
+  },
+  "resourceType": "Bundle",
+  "id": "22fcb5e3112f3ad2bf9150c505ec377de99e",
+  "type": "transaction"
+}

@@ -1,0 +1,125 @@
+{
+  "resourceType": "ResearchStudy",
+  "id": "example",
+  "title": "Example study",
+  "protocol": {
+    "reference": "PlanDefinition/pdf1"
+  },
+  "partOf": {
+    "reference": "ResearchStudy/rsd1"
+  },
+  "status": "completed",
+  "category": [
+    {
+      "coding": [
+        {
+          "code": "GENE",
+          "display": "Gene expression"
+        }
+      ]
+    }
+  ],
+  "focus": [
+    {
+      "coding": [
+        {
+          "code": "PRC",
+          "display": "Prostate cancer"
+        }
+      ]
+    }
+  ],
+  "keyword": [
+    {
+      "text": "Prostate cancer",
+      "coding": [
+        {
+          "code": "PRC",
+          "display": "Prostate cancer"
+        }
+      ]
+    },
+    {
+      "text": "Gene expression research",
+      "coding": [
+        {
+          "code": "GENE",
+          "display": "Gene expression"
+        }
+      ]
+    }
+  ],
+  "contact": [
+    {
+      "name": "Professor Brand",
+      "telecom": [
+        {
+          "system": "phone",
+          "value": "+31715269702",
+          "use": "work"
+        }
+      ]
+    }
+  ],
+  "period": {
+    "start": "2015-02-01",
+    "end": "2015-02-21"
+  },
+  "enrollment": [
+    {
+      "reference": "Group/enr1"
+    },
+    {
+      "reference": "Group/enr2"
+    }
+  ],
+  "sponsor": {
+    "reference": "Organization/spn1"
+  },
+  "principalInvestigator": {
+    "reference": "Practitioner/pnv1"
+  },
+  "site": [
+    {
+      "reference": "Location/st1"
+    },
+    {
+      "reference": "Location/st2"
+    }
+  ],
+  "note": [
+    {
+      "text": "Example comment 1"
+    },
+    {
+      "text": "Example comment 2"
+    }
+  ],
+  "description": "Example markdown list:\n* abc\n* def",
+  "arm": [
+    {
+      "name": "Study arm 1",
+      "code": {
+        "coding": [
+          {
+            "code": "GENE",
+            "display": "Gene expression"
+          }
+        ]
+      },
+      "description": "Study arm 1 description"
+    },
+    {
+      "name": "Study arm 2",
+      "code": {
+        "coding": [
+          {
+            "code": "PRC",
+            "display": "Prostate cancer"
+          }
+        ]
+      },
+      "description": "Study arm 2 description"
+    }
+  ]
+}

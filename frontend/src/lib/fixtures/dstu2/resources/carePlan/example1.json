@@ -1,0 +1,82 @@
+{
+  "activity": [
+    {
+      "detail": {
+        "category": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/care-plan-activity-category",
+              "code": "procedure",
+              "display": "Procedure"
+            }
+          ],
+          "text": "procedure"
+        },
+        "prohibited": false,
+        "code": {
+          "text": "ADULT DIET"
+        }
+      }
+    },
+    {
+      "detail": {
+        "category": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/care-plan-activity-category",
+              "code": "procedure",
+              "display": "Procedure"
+            }
+          ],
+          "text": "procedure"
+        },
+        "prohibited": false,
+        "code": {
+          "text": "CARDIAC EVENT MONITOR"
+        }
+      }
+    }
+  ],
+  "subject": {
+    "reference": "Patient/d47f763e7c7f"
+  },
+  "identifier": [
+    {
+      "value": "TUKRxL29bxE9lyAcdTIyrWC6Ln5gZ-z7CLr2r-2SY964B",
+      "system": "https:open-ic.epic.com"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-17T07:13:49.881Z",
+    "versionId": "9000000000000"
+  },
+  "status": "active",
+  "addresses": [
+    {
+      "reference": "Condition/d47f763e7c7fbb9a295fc79abb2710019bcfaf4a5bdd47d2",
+      "display": "Dog bite"
+    },
+    {
+      "reference": "Condition/d47f763e7c7ff6ffb2d82b02c185bda1034b056581a7cb23",
+      "display": "TB (pulmonary tuberculosis)"
+    },
+    {
+      "reference": "Condition/d47f763e7c7f45a7d3438ebbc3ba863b8cbdec347ee212db",
+      "display": "Diabetes mellitus type 2, uncomplicated"
+    }
+  ],
+  "resourceType": "CarePlan",
+  "category": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "38717003",
+          "display": "Longitudinal"
+        }
+      ],
+      "text": "Longitudinal"
+    }
+  ],
+  "id": "d47f763e7c7f686af51544b15ede60429843b787ef0bf58e"
+}

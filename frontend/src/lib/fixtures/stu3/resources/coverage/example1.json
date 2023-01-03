@@ -1,0 +1,65 @@
+{
+  "status": "active",
+  "beneficiary": {
+    "reference": "Patient/4"
+  },
+  "payor": [
+    {
+      "reference": "Organization/2"
+    }
+  ],
+  "relationship": {
+    "coding": [
+      {
+        "code": "self"
+      }
+    ]
+  },
+  "sequence": "9",
+  "resourceType": "Coverage",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">A human-readable rendering of the coverage</div>"
+  },
+  "period": {
+    "start": "2011-05-23",
+    "end": "2012-05-23"
+  },
+  "subscriber": {
+    "reference": "Patient/4"
+  },
+  "dependent": "0",
+  "identifier": [
+    {
+      "system": "http://benefitsinc.com/certificate",
+      "value": "12345"
+    }
+  ],
+  "type": {
+    "coding": [
+      {
+        "code": "EHCPOL",
+        "system": "http://hl7.org/fhir/v3/ActCode",
+        "display": "extended healthcare"
+      }
+    ]
+  },
+  "id": "9876B1",
+  "policyHolder": {
+    "reference": "http://benefitsinc.com/FHIR/Organization/CBI35"
+  },
+  "grouping": {
+    "group": "CBI35",
+    "subPlanDisplay": "Includes afterlife benefits",
+    "subClassDisplay": "Low deductable, max $20 copay",
+    "groupDisplay": "Corporate Baker's Inc. Local #35",
+    "subClass": "Tier2",
+    "subPlan": "P7",
+    "plan": "B37FC",
+    "subGroupDisplay": "Trainee Part-time Benefits",
+    "planDisplay": "Full Coverage: Medical, Dental, Pharmacy, Vision, EHC",
+    "class": "SILVER",
+    "classDisplay": "Silver: Family Plan spouse only",
+    "subGroup": "123"
+  }
+}

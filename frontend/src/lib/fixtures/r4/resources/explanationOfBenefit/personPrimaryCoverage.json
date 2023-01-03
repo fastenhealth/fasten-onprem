@@ -1,0 +1,307 @@
+{
+  "resourceType": "ExplanationOfBenefit",
+  "id": "EB3500",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">A human-readable rendering of the ExplanationOfBenefit</div>"
+  },
+  "identifier": [
+    {
+      "system": "http://www.BenefitsInc.com/fhir/explanationofbenefit",
+      "value": "987654321"
+    }
+  ],
+  "status": "active",
+  "type": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+        "code": "oral"
+      }
+    ]
+  },
+  "use": "claim",
+  "patient": {
+    "reference": "Patient/pat1"
+  },
+  "created": "2014-08-16",
+  "enterer": {
+    "reference": "Practitioner/1"
+  },
+  "insurer": {
+    "reference": "Organization/3"
+  },
+  "provider": {
+    "reference": "Practitioner/1"
+  },
+  "payee": {
+    "type": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/payeetype",
+          "code": "provider"
+        }
+      ]
+    },
+    "party": {
+      "reference": "Organization/2"
+    }
+  },
+  "facility": {
+    "reference": "Location/1"
+  },
+  "claim": {
+    "reference": "Claim/100150"
+  },
+  "claimResponse": {
+    "reference": "ClaimResponse/R3500"
+  },
+  "outcome": "complete",
+  "disposition": "Claim settled as per contract.",
+  "careTeam": [
+    {
+      "sequence": 1,
+      "provider": {
+        "reference": "Practitioner/example"
+      }
+    }
+  ],
+  "insurance": [
+    {
+      "focal": true,
+      "coverage": {
+        "reference": "Coverage/9876B1"
+      }
+    }
+  ],
+  "item": [
+    {
+      "sequence": 1,
+      "careTeamSequence": [1],
+      "productOrService": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/ex-USCLS",
+            "code": "1205"
+          }
+        ]
+      },
+      "servicedDate": "2014-08-16",
+      "unitPrice": {
+        "value": 135.57,
+        "currency": "USD"
+      },
+      "net": {
+        "value": 135.57,
+        "currency": "USD"
+      },
+      "udi": [
+        {
+          "reference": "Device/example"
+        }
+      ],
+      "encounter": [
+        {
+          "reference": "Encounter/example"
+        }
+      ],
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 120.0,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligpercent"
+              }
+            ]
+          },
+          "value": 0.8
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "amount": {
+            "value": 96.0,
+            "currency": "USD"
+          }
+        }
+      ]
+    },
+    {
+      "sequence": 2,
+      "careTeamSequence": [1],
+      "productOrService": {
+        "coding": [
+          {
+            "code": "group"
+          }
+        ]
+      },
+      "servicedDate": "2014-08-16",
+      "net": {
+        "value": 200.0,
+        "currency": "USD"
+      },
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "amount": {
+            "value": 180.0,
+            "currency": "USD"
+          }
+        }
+      ],
+      "detail": [
+        {
+          "sequence": 1,
+          "productOrService": {
+            "coding": [
+              {
+                "code": "group"
+              }
+            ]
+          },
+          "net": {
+            "value": 200.0,
+            "currency": "USD"
+          },
+          "udi": [
+            {
+              "reference": "Device/example"
+            }
+          ],
+          "adjudication": [
+            {
+              "category": {
+                "coding": [
+                  {
+                    "code": "benefit"
+                  }
+                ]
+              },
+              "amount": {
+                "value": 180.0,
+                "currency": "USD"
+              }
+            }
+          ],
+          "subDetail": [
+            {
+              "sequence": 1,
+              "productOrService": {
+                "coding": [
+                  {
+                    "system": "http://terminology.hl7.org/CodeSystem/ex-USCLS",
+                    "code": "1205"
+                  }
+                ]
+              },
+              "unitPrice": {
+                "value": 200.0,
+                "currency": "USD"
+              },
+              "net": {
+                "value": 200.0,
+                "currency": "USD"
+              },
+              "udi": [
+                {
+                  "reference": "Device/example"
+                }
+              ],
+              "adjudication": [
+                {
+                  "category": {
+                    "coding": [
+                      {
+                        "code": "eligible"
+                      }
+                    ]
+                  },
+                  "amount": {
+                    "value": 200.0,
+                    "currency": "USD"
+                  }
+                },
+                {
+                  "category": {
+                    "coding": [
+                      {
+                        "code": "eligpercent"
+                      }
+                    ]
+                  },
+                  "value": 0.9
+                },
+                {
+                  "category": {
+                    "coding": [
+                      {
+                        "code": "benefit"
+                      }
+                    ]
+                  },
+                  "amount": {
+                    "value": 180.0,
+                    "currency": "USD"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "total": [
+    {
+      "category": {
+        "coding": [
+          {
+            "code": "submitted"
+          }
+        ]
+      },
+      "amount": {
+        "value": 135.57,
+        "currency": "USD"
+      }
+    },
+    {
+      "category": {
+        "coding": [
+          {
+            "code": "benefit"
+          }
+        ]
+      },
+      "amount": {
+        "value": 96.0,
+        "currency": "USD"
+      }
+    }
+  ]
+}
