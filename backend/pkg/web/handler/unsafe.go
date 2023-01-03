@@ -43,7 +43,7 @@ func UnsafeRequestSource(c *gin.Context) {
 		return
 	}
 
-	client, updatedSource, err := factory.GetSourceClient(sourcePkg.GetFastenEnv(), foundSource.SourceType, c, logger, foundSource)
+	client, updatedSource, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), foundSource.SourceType, c, logger, foundSource)
 	if err != nil {
 		logger.Errorf("Could not initialize source client %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})

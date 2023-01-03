@@ -98,7 +98,7 @@ func CreateManualSource(c *gin.Context) {
 	manualSourceCredential := models.SourceCredential{
 		SourceType: sourcePkg.SourceTypeManual,
 	}
-	tempSourceClient, _, err := factory.GetSourceClient(sourcePkg.GetFastenEnv(), sourcePkg.SourceTypeManual, c, logger, manualSourceCredential)
+	tempSourceClient, _, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourcePkg.SourceTypeManual, c, logger, manualSourceCredential)
 	if err != nil {
 		logger.Errorln("An error occurred while initializing hub client using manual source without credentials", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
@@ -121,7 +121,7 @@ func CreateManualSource(c *gin.Context) {
 		return
 	}
 
-	manualSourceClient, _, err := factory.GetSourceClient(sourcePkg.GetFastenEnv(), sourcePkg.SourceTypeManual, c, logger, manualSourceCredential)
+	manualSourceClient, _, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourcePkg.SourceTypeManual, c, logger, manualSourceCredential)
 	if err != nil {
 		logger.Errorln("An error occurred while initializing hub client using manual source with credential", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
@@ -179,7 +179,7 @@ func ListSource(c *gin.Context) {
 
 func SyncSourceResources(c context.Context, logger *logrus.Entry, databaseRepo database.DatabaseRepository, sourceCred models.SourceCredential) (sourceModels.UpsertSummary, error) {
 	// after creating the source, we should do a bulk import
-	sourceClient, updatedSource, err := factory.GetSourceClient(sourcePkg.GetFastenEnv(), sourceCred.SourceType, c, logger, sourceCred)
+	sourceClient, updatedSource, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourceCred.SourceType, c, logger, sourceCred)
 	if err != nil {
 		logger.Errorln("An error occurred while initializing hub client using source credential", err)
 		return sourceModels.UpsertSummary{}, err
