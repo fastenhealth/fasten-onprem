@@ -12,6 +12,7 @@ import {Location} from '@angular/common';
 import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {environment} from '../../../environments/environment';
+import {forkJoin} from 'rxjs';
 // If you dont import this angular will import the wrong "Location"
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
@@ -54,38 +55,50 @@ export class MedicalSourcesComponent implements OnInit {
   modalSelectedSourceListItem:SourceListItem = null;
 
   ngOnInit(): void {
-    this.lighthouseApi.getLighthouseSourceMetadataMap().subscribe((metadataSources: {[name:string]: MetadataSource}) => {
-      this.metadataSources = metadataSources
 
-      const callbackSourceType = this.route.snapshot.paramMap.get('source_type')
-      if(callbackSourceType){
-        this.callback(callbackSourceType).then(console.log)
+    forkJoin([this.lighthouseApi.getLighthouseSourceMetadataMap(), this.fastenApi.getSources()]).subscribe(results => {
+
+      //handle source metadata map response
+      this.metadataSources = results[0] as {[name:string]: MetadataSource}
+
+      //handle sources
+      const sourceList = results[1] as Source[]
+
+      for (const sourceType in this.metadataSources) {
+        let isConnected = false
+        for(const connectedSource of sourceList){
+          if(connectedSource.source_type == sourceType){
+            this.connectedSourceList.push({source: connectedSource, metadata: this.metadataSources[sourceType]})
+            isConnected = true
+            break
+          }
+        }
+
+        if(!isConnected){
+          //this source has not been found in the connected list, lets add it to the available list.
+          this.availableSourceList.push({metadata: this.metadataSources[sourceType]})
+        }
       }
 
-      this.fastenApi.getSources()
-        .subscribe((paginatedList: Source[]) => {
-          const sourceList = paginatedList as Source[]
 
-          for (const sourceType in this.metadataSources) {
-            let isConnected = false
-            for(const connectedSource of sourceList){
-              if(connectedSource.source_type == sourceType){
-                this.connectedSourceList.push({source: connectedSource, metadata: this.metadataSources[sourceType]})
-                isConnected = true
-                break
-              }
-            }
+      //check if we've just started connecting a "source_type"
+      const callbackSourceType = this.route.snapshot.paramMap.get('source_type')
+      if(callbackSourceType){
+        this.status[callbackSourceType] = "token"
+        console.log("Setting status to 'token' for:", callbackSourceType)
 
-            if(!isConnected){
-              //this source has not been found in the connected list, lets add it to the available list.
-              this.availableSourceList.push({metadata: this.metadataSources[sourceType]})
-            }
-          }
+        //move this source from available to connected (with a progress bar)
+        //remove item from available sources list, add to connected sources.
+        let sourcesInProgress = this.availableSourceList.splice(this.availableSourceList.findIndex((item) => item.metadata.source_type == callbackSourceType), 1);
+        console.log("Moving sources:", sourcesInProgress)
 
-        })
+        //the structure of "availableSourceList" vs "connectedSourceList" sources is slightly different,
+        //connectedSourceList contains a "source" field. The this.fastenApi.createSource() call in the callback function will set it.
+        this.connectedSourceList.push(...sourcesInProgress)
+
+        this.callback(callbackSourceType).then(console.log)
+      }
     })
-
-
   }
 
   /**
@@ -195,14 +208,10 @@ export class MedicalSourcesComponent implements OnInit {
             // const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
             delete this.status[sourceType]
             // window.location.reload();
+            // this.connectedSourceList.
+            //TODO: find the index of the "inprogress" source in the connected List, and then add this source to its source metadata.
 
             console.log("source sync-all response:", msg)
-            //remove item from available sources list, add to connected sources.
-            this.availableSourceList.splice(this.availableSourceList.findIndex((item) => item.metadata.source_type == sourceType), 1);
-            if(this.connectedSourceList.findIndex((item) => item.metadata.source_type == sourceType) == -1){
-              //only add this as a connected source if its "new"
-              this.connectedSourceList.push({source: msg, metadata: this.metadataSources[sourceType]})
-            }
 
             const toastNotification = new ToastNotification()
             toastNotification.type = ToastType.Success
@@ -251,6 +260,11 @@ export class MedicalSourcesComponent implements OnInit {
   }
 
   public openModal(contentModalRef, sourceListItem: SourceListItem) {
+    if(this.status[sourceListItem.metadata.source_type] || !sourceListItem.source){
+      //if this source is currently "loading" dont open the modal window
+      return
+    }
+
     this.modalSelectedSourceListItem = sourceListItem
     this.modalService.open(contentModalRef, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
       this.modalSelectedSourceListItem = null

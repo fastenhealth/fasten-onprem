@@ -25,14 +25,18 @@
 
 
       <h2 class="az-content-title">Connected Sources</h2>
+      {{status | json}}
 
       <div class="row">
         <div *ngFor="let sourceInfo of connectedSourceList" class="col-sm-3 mg-b-20 px-3">
           <div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer">
-            <div (click)="openModal(contentModalRef, sourceInfo)" class="card-body d-flex align-items-center">
-              <img [src]="'assets/sources/'+sourceInfo?.metadata['source_type']+'.png'" [alt]="sourceInfo?.metadata.display" class="img-fluid">
-              <div *ngIf="status[sourceInfo.source?.source_type]" class="progress">
-                <div [style.width]="status[sourceInfo?.source?.source_type] == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
+            <div (click)="openModal(contentModalRef, sourceInfo)" class="card-body">
+
+              <div class="h-100 d-flex align-items-center">
+                <img [src]="'assets/sources/'+sourceInfo?.metadata['source_type']+'.png'" [alt]="sourceInfo?.metadata.display" class="img-fluid">
+              </div>
+              <div *ngIf="status[sourceInfo.metadata?.source_type]" class="progress">
+                <div [style.width]="status[sourceInfo?.metadata?.source_type] == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
               </div>
             </div>
             <div class="card-footer text-center p-1" style="width:100%">
@@ -73,7 +77,6 @@
           <div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': !sourceData.metadata.enabled}">
             <div class="card-body d-flex align-items-center">
               <img style="max-height: 130px;" [src]="'assets/sources/'+sourceData.metadata.source_type+'.png'" [alt]="metadataSources[sourceData.metadata.source_type].display" class="img-fluid">
-
               <div *ngIf="status[sourceData.metadata.source_type]" class="progress">
                 <div [style.width]="status[sourceData.metadata.source_type] == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
               </div>
