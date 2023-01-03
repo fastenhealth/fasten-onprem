@@ -1,0 +1,80 @@
+{
+  "status": "active",
+  "category": [
+    {
+      "coding": [
+        {
+          "code": "encounter",
+          "system": "http://hl7.org/fhir/care-team-category"
+        }
+      ]
+    }
+  ],
+  "participant": [
+    {
+      "member": {
+        "display": "Peter James Chalmers",
+        "reference": "Patient/example"
+      },
+      "role": {
+        "text": "responsiblePerson"
+      }
+    },
+    {
+      "member": {
+        "display": "Dorothy Dietition",
+        "reference": "#pr1"
+      },
+      "onBehalfOf": {
+        "reference": "Organization/f001"
+      },
+      "role": {
+        "text": "adviser"
+      },
+      "period": {
+        "end": "2013-01-01"
+      }
+    }
+  ],
+  "name": "Peter James Charlmers Care Plan for Inpatient Encounter",
+  "managingOrganization": [
+    {
+      "reference": "Organization/f001"
+    }
+  ],
+  "resourceType": "CareTeam",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Care Team</div>"
+  },
+  "period": {
+    "end": "2013-01-01"
+  },
+  "contained": [
+    {
+      "resourceType": "Practitioner",
+      "id": "pr1",
+      "name": [
+        {
+          "given": [
+            "Dorothy"
+          ],
+          "family": "Dietician"
+        }
+      ]
+    }
+  ],
+  "context": {
+    "reference": "Encounter/example"
+  },
+  "identifier": [
+    {
+      "value": "12345"
+    }
+  ],
+  "id": "example",
+  "subject": {
+    "display": "Peter James Chalmers",
+    "reference": "Patient/example"
+  }
+}

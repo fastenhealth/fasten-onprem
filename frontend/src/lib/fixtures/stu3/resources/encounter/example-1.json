@@ -1,0 +1,48 @@
+{
+  "subject": {
+    "reference": "Patient/dc793caf0d58"
+  },
+  "location": [
+    {
+      "location": {
+        "reference": "Location/dc793caf0d58c01e0aae53ff",
+        "display": "Other Place of Service. Other place of service not identified above."
+      },
+      "status": "completed"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-04T15:36:41.882Z",
+    "versionId": "9000000000000"
+  },
+  "status": "finished",
+  "period": {
+    "start": "2015-02-01",
+    "end": "2015-02-01"
+  },
+  "reason": [
+    {
+      "coding": [
+        {
+          "system": "https://bluebutton.cms.gov/resources/variables/line_cms_type_srvc_cd",
+          "code": "1",
+          "display": "Medical care"
+        }
+      ]
+    }
+  ],
+  "resourceType": "Encounter",
+  "id": "dc793caf0d581930ae375f2128a2581b840de7ccd42462d0",
+  "participant": [
+    {
+      "individual": {
+        "reference": "Practitioner/dc793caf0d5859f236a302eb",
+        "display": "Sameer Sharma M.D."
+      },
+      "period": {
+        "start": "2015-02-01",
+        "end": "2015-02-01"
+      }
+    }
+  ]
+}

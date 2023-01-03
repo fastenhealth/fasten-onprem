@@ -1,0 +1,47 @@
+{
+  "subject": {
+    "reference": "Patient/f8fedcd9e6e5"
+  },
+  "identifier": [
+    {
+      "value": "T20lh4qYCPP9sg31ZDfMLcwB",
+      "system": "https:open-ic.epic.com"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-02T08:52:19.407Z",
+    "versionId": "9000000000000"
+  },
+  "status": "in-progress",
+  "addresses": [
+    {
+      "reference": "Condition/f8fedcd9e6e5ef816b0ff28731ecb8c966ea62965bfad90c",
+      "display": "Hemoglobin A1c Above Reference Range"
+    }
+  ],
+  "note": [
+    {
+      "text": "Regularly monitor A1C levels toward overall goal of 6.0."
+    }
+  ],
+  "resourceType": "Goal",
+  "category": [
+    {
+      "coding": [
+        {
+          "system": "urn:oid:1.2.840.114350.1.13.0.1.7.4.737184.20005",
+          "code": "5",
+          "display": "Result Component"
+        }
+      ],
+      "text": "Result Component"
+    }
+  ],
+  "startDate": "2016-03-26",
+  "description": "Hemoglobin A1c < 7.0",
+  "id": "f8fedcd9e6e5e7e09b2dbd78ee404b4fff4bf23e28914f1c",
+  "author": {
+    "reference": "Practitioner/f8fedcd9e6e565a21f457909",
+    "display": "MOORE, NICK"
+  }
+}

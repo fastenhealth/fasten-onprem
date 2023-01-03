@@ -1,0 +1,101 @@
+{
+  "status": "booked",
+  "comment": "Further expand on the results of the MRI and determine the next actions that may be appropriate.",
+  "serviceCategory": {
+    "coding": [
+      {
+        "code": "gp",
+        "system": "http://example.org/service-category",
+        "display": "General Practice"
+      }
+    ]
+  },
+  "end": "2013-12-10T11:00:00Z",
+  "description": "Discussion on the results of your recent MRI",
+  "created": "2013-10-10",
+  "resourceType": "Appointment",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Brian MRI results discussion</div>"
+  },
+  "serviceType": [
+    {
+      "coding": [
+        {
+          "code": "52",
+          "display": "General Discussion"
+        }
+      ]
+    }
+  ],
+  "specialty": [
+    {
+      "coding": [
+        {
+          "code": "gp",
+          "system": "http://example.org/specialty",
+          "display": "General Practice"
+        }
+      ]
+    }
+  ],
+  "priority": 5,
+  "start": "2013-12-10T09:00:00Z",
+  "indication": [
+    {
+      "display": "Severe burn of left ear",
+      "reference": "Condition/example"
+    }
+  ],
+  "appointmentType": {
+    "coding": [
+      {
+        "code": "follow",
+        "system": "http://example.org/appointment-type",
+        "display": "Followup"
+      }
+    ]
+  },
+  "participant": [
+    {
+      "status": "accepted",
+      "required": "required",
+      "actor": {
+        "display": "Peter James Chalmers",
+        "reference": "Patient/example"
+      }
+    },
+    {
+      "status": "accepted",
+      "required": "required",
+      "type": [
+        {
+          "coding": [
+            {
+              "code": "ATND",
+              "system": "http://hl7.org/fhir/v3/ParticipationType"
+            }
+          ]
+        }
+      ],
+      "actor": {
+        "display": "Dr Adam Careful",
+        "reference": "Practitioner/example"
+      }
+    },
+    {
+      "status": "accepted",
+      "required": "required",
+      "actor": {
+        "display": "South Wing, second floor",
+        "reference": "Location/1"
+      }
+    }
+  ],
+  "id": "example",
+  "incomingReferral": [
+    {
+      "reference": "ReferralRequest/example"
+    }
+  ]
+}

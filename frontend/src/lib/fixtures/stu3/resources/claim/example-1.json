@@ -1,0 +1,105 @@
+{
+  "resourceType": "Claim",
+  "id": "100150",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">A human-readable rendering of the Oral Health Claim</div>"
+  },
+  "identifier": [
+    {
+      "system": "http://happyvalley.com/claim",
+      "value": "12345"
+    }
+  ],
+  "status": "active",
+  "type": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/ex-claimtype",
+        "code": "oral"
+      }
+    ]
+  },
+  "use": "complete",
+  "patient": {
+    "reference": "Patient/1"
+  },
+  "created": "2014-08-16",
+  "insurer": {
+    "reference": "Organization/2"
+  },
+  "organization": {
+    "reference": "Organization/1"
+  },
+  "priority": {
+    "coding": [
+      {
+        "code": "normal"
+      }
+    ]
+  },
+  "payee": {
+    "type": {
+      "coding": [
+        {
+          "code": "provider"
+        }
+      ]
+    }
+  },
+  "careTeam": [
+    {
+      "sequence": 1,
+      "provider": {
+        "reference": "Practitioner/example"
+      }
+    }
+  ],
+  "diagnosis": [
+    {
+      "sequence": 1,
+      "diagnosisCodeableConcept": {
+        "coding": [
+          {
+            "code": "123456"
+          }
+        ]
+      }
+    }
+  ],
+  "insurance": [
+    {
+      "sequence": 1,
+      "focal": true,
+      "coverage": {
+        "reference": "Coverage/9876B1"
+      }
+    }
+  ],
+  "item": [
+    {
+      "sequence": 1,
+      "careTeamLinkId": [
+        1
+      ],
+      "service": {
+        "coding": [
+          {
+            "code": "1200"
+          }
+        ]
+      },
+      "servicedDate": "2014-08-16",
+      "unitPrice": {
+        "value": 135.57,
+        "system": "urn:iso:std:iso:4217",
+        "code": "USD"
+      },
+      "net": {
+        "value": 135.57,
+        "system": "urn:iso:std:iso:4217",
+        "code": "USD"
+      }
+    }
+  ]
+}

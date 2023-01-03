@@ -1,0 +1,26 @@
+{
+  "identifier": [
+    {
+      "value": "TItWfhjChtlo0pFh9nzctSQB",
+      "system": "https:open-ic.epic.com"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-02T08:52:22.856Z",
+    "versionId": "9000000000000"
+  },
+  "name": {
+    "given": [
+      "Nick"
+    ],
+    "text": "Nick Moore",
+    "family": [
+      "Moore"
+    ],
+    "use": "usual"
+  },
+  "gender": "other",
+  "active": true,
+  "resourceType": "Practitioner",
+  "id": "99c389c2674d"
+}

@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "lastUpdated": "2021-06-04T00:53:35.305Z",
+    "security": [],
+    "versionId": "9000000000000",
+    "tag": [
+      {
+        "version": "0.0.1",
+        "code": "http://build.fhir.org/ig/HL7/davinci-pdex-formulary/",
+        "system": "urn:uuid:internal-1up-health-coding-systems-ig"
+      }
+    ],
+    "profile": [
+      "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-FormularyDrug"
+    ]
+  },
+  "code": {
+    "coding": [
+      {
+        "code": "855626",
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "display": "Twice-Daily diclofenac epolamine 0.013 MG/MG Medicated Patch"
+      }
+    ],
+    "text": "DICLOFENAC EPOLAMINE           "
+  },
+  "resourceType": "MedicationKnowledge",
+  "extension": [
+    {
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "code": "preferred-brand",
+            "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-DrugTierCS",
+            "display": "Preferred Brand: Brand name drugs"
+          }
+        ]
+      },
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-DrugTierID-extension"
+    },
+    {
+      "valueBoolean": false,
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-PriorAuthorization-extension"
+    },
+    {
+      "valueBoolean": false,
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-StepTherapyLimit-extension"
+    },
+    {
+      "valueBoolean": true,
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-QuantityLimit-extension"
+    },
+    {
+      "valueString": "Kansas Medicaid FFS",
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-PlanID-extension"
+    }
+  ],
+  "id": "005kXKf85FaCyxINxeN9DxgvKT6lSaa7lYIRlgx1up"
+}

@@ -1,0 +1,33 @@
+{
+  "subject": {
+    "reference": "Patient/3933013c85d9"
+  },
+  "meta": {
+    "lastUpdated": "2019-12-17T06:53:56.300Z",
+    "versionId": "9000000000000"
+  },
+  "status": "active",
+  "text": {
+    "div": "<table xmlns=\"http://www.w3.org/1999/xhtml\"><thead><tr><th>Practitioner Name</th></tr></thead><tbody><tr><td ID=\"ref0\">Willis Sam</td></tr></tbody></table>",
+    "status": "generated"
+  },
+  "resourceType": "CareTeam",
+  "id": "3933013c85d9e617681fdbc40bc0426b6b22c1c6455da9c7",
+  "participant": [
+    {
+      "member": {
+        "reference": "Practitioner/3933013c85d971d28f40b6f9",
+        "display": "Willis Sam"
+      },
+      "role": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "223366009",
+            "display": "Healthcare professional"
+          }
+        ]
+      }
+    }
+  ]
+}

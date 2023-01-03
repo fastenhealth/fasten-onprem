@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "lastUpdated": "2021-06-04T00:56:15.145Z",
+    "security": [],
+    "versionId": "9000000000000",
+    "tag": [
+      {
+        "version": "0.0.1",
+        "code": "http://build.fhir.org/ig/HL7/davinci-pdex-formulary/",
+        "system": "urn:uuid:internal-1up-health-coding-systems-ig"
+      }
+    ],
+    "profile": [
+      "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-FormularyDrug"
+    ]
+  },
+  "code": {
+    "coding": [
+      {
+        "code": "197806",
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "display": "ibuprofen 600 MG Oral Tablet"
+      }
+    ],
+    "text": "IBUPROFEN                      "
+  },
+  "resourceType": "MedicationKnowledge",
+  "extension": [
+    {
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "code": "preferred-generic",
+            "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-DrugTierCS",
+            "display": "Preferred Generic: Commonly prescribed generic drugs."
+          }
+        ]
+      },
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-DrugTierID-extension"
+    },
+    {
+      "valueBoolean": false,
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-PriorAuthorization-extension"
+    },
+    {
+      "valueBoolean": false,
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-StepTherapyLimit-extension"
+    },
+    {
+      "valueBoolean": false,
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-QuantityLimit-extension"
+    },
+    {
+      "valueString": "Kansas Medicaid FFS",
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-PlanID-extension"
+    }
+  ],
+  "id": "00EUVZObpL76jmcl0oBMDj6xynsZoYpG7ui7aYx1up"
+}

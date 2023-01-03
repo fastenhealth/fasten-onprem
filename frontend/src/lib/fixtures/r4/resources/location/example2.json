@@ -1,0 +1,42 @@
+{
+  "resourceType": "Location",
+  "id": "amb",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Mobile Clinic</div>"
+  },
+  "status": "active",
+  "name": "BUMC Ambulance",
+  "description": "Ambulance provided by Burgers University Medical Center",
+  "mode": "kind",
+  "type": [
+    {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+          "code": "AMB",
+          "display": "Ambulance"
+        }
+      ]
+    }
+  ],
+  "telecom": [
+    {
+      "system": "phone",
+      "value": "2329",
+      "use": "mobile"
+    }
+  ],
+  "physicalType": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+        "code": "ve",
+        "display": "Vehicle"
+      }
+    ]
+  },
+  "managingOrganization": {
+    "reference": "Organization/f001"
+  }
+}

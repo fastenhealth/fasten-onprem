@@ -1,0 +1,183 @@
+{
+  "resourceType": "DocumentReference",
+  "id": "example",
+  "text": {
+    "status": "generated"
+  },
+  "contained": [
+    {
+      "resourceType": "Practitioner",
+      "id": "a2",
+      "name": {
+        "family": [
+          "Smitty"
+        ],
+        "given": [
+          "Gerald"
+        ]
+      },
+      "practitionerRole": [
+        {
+          "managingOrganization": {
+            "display": "Cleveland Clinic"
+          },
+          "role": {
+            "text": "Attending"
+          },
+          "specialty": [
+            {
+              "text": "Orthopedic"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "masterIdentifier": {
+    "system": "urn:ietf:rfc:3986",
+    "value": "urn:oid:1.3.6.1.4.1.21367.2005.3.7"
+  },
+  "identifier": [
+    {
+      "system": "urn:ietf:rfc:3986",
+      "value": "urn:oid:1.3.6.1.4.1.21367.2005.3.7.1234"
+    }
+  ],
+  "subject": {
+    "reference": "Patient/xcda"
+  },
+  "type": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "34108-1",
+        "display": "Outpatient Note"
+      }
+    ]
+  },
+  "class": {
+    "coding": [
+      {
+        "system": "http://ihe.net/xds/connectathon/classCodes",
+        "code": "History and Physical",
+        "display": "History and Physical"
+      }
+    ]
+  },
+  "author": [
+    {
+      "reference": "Practitioner/xcda1"
+    },
+    {
+      "reference": "#a2"
+    }
+  ],
+  "custodian": {
+    "reference": "Organization/organization-example"
+  },
+  "authenticator": {
+    "reference": "Organization/organization-example"
+  },
+  "created": "2005-12-24T09:35:00+11:00",
+  "indexed": "2005-12-24T09:43:41+11:00",
+  "status": "current",
+  "docStatus": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/composition-status",
+        "code": "preliminary",
+        "display": "preliminary"
+      }
+    ]
+  },
+  "relatesTo": [
+    {
+      "code": "appends",
+      "target": {
+        "reference": "DocumentReference/example"
+      }
+    }
+  ],
+  "description": "Physical",
+  "securityLabel": [
+    {
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/v3/Confidentiality",
+          "code": "V",
+          "display": "very restricted"
+        }
+      ]
+    }
+  ],
+  "content": [
+    {
+      "attachment": {
+        "contentType": "application/hl7-v3+xml",
+        "language": "en-US",
+        "url": "http://example.org/xds/mhd/Binary/07a6483f-732b-461e-86b6-edb665c45510",
+        "size": 3654,
+        "hash": "2jmj7l5rSw0yVb/vlWAYkK/YBwk="
+      },
+      "format": [
+        {
+          "system": "urn:oid:1.3.6.1.4.1.19376.1.2.3",
+          "code": "urn:ihe:pcc:handp:2008",
+          "display": "History and Physical Specification"
+        }
+      ]
+    }
+  ],
+  "context": {
+    "encounter": {
+      "reference": "Encounter/xcda"
+    },
+    "event": [
+      {
+        "coding": [
+          {
+            "system": "http://ihe.net/xds/connectathon/eventCodes",
+            "code": "T-D8200",
+            "display": "Arm"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2004-12-23T08:00:00+11:00",
+      "end": "2004-12-23T08:01:00+11:00"
+    },
+    "facilityType": {
+      "coding": [
+        {
+          "system": "http://www.ihe.net/xds/connectathon/healthcareFacilityTypeCodes",
+          "code": "Outpatient",
+          "display": "Outpatient"
+        }
+      ]
+    },
+    "practiceSetting": {
+      "coding": [
+        {
+          "system": "http://www.ihe.net/xds/connectathon/practiceSettingCodes",
+          "code": "General Medicine",
+          "display": "General Medicine"
+        }
+      ]
+    },
+    "sourcePatientInfo": {
+      "reference": "Patient/xcda"
+    },
+    "related": [
+      {
+        "identifier": {
+          "system": "urn:ietf:rfc:3986",
+          "value": "urn:oid:1.3.6.1.4.1.21367.2005.3.7.2345"
+        },
+        "ref": {
+          "reference": "Patient/xcda"
+        }
+      }
+    ]
+  }
+}

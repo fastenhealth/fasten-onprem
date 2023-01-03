@@ -1,0 +1,37 @@
+{
+  "subject": {
+    "reference": "Patient/dc793caf0d58"
+  },
+  "performedPeriod": {
+    "start": "2016-09-01",
+    "end": "2016-09-01"
+  },
+  "location": {
+    "display": "Other Place of Service. Other place of service not identified above."
+  },
+  "meta": {
+    "lastUpdated": "2019-12-04T15:36:55.673Z",
+    "versionId": "9000000000000"
+  },
+  "status": "completed",
+  "code": {
+    "coding": [
+      {
+        "version": "6",
+        "system": "https://bluebutton.cms.gov/resources/codesystem/hcpcs",
+        "code": "92286"
+      }
+    ]
+  },
+  "resourceType": "Procedure",
+  "category": {
+    "coding": [
+      {
+        "system": "https://bluebutton.cms.gov/resources/variables/line_cms_type_srvc_cd",
+        "code": "Q",
+        "display": "Vision items or services"
+      }
+    ]
+  },
+  "id": "dc793caf0d5821d600e63ac87b7b2604e4ce49af99d904d5"
+}

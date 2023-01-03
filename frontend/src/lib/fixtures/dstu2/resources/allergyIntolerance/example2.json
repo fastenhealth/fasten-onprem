@@ -1,0 +1,45 @@
+{
+  "identifier": [
+    {
+      "system": "https:apporchard.epic.com",
+      "value": "TiYVOwXLLFsgMZ1Aq9GBTOgB"
+    }
+  ],
+  "recorder": {
+    "reference": "Practitioner/065b82c2aaa2d8e0f318408e",
+    "display": "Nurse Family Medicine, RN"
+  },
+  "reaction": [
+    {
+      "manifestation": [
+        {
+          "text": "Hives"
+        }
+      ],
+      "certainty": "confirmed",
+      "onset": "2008-02-22"
+    }
+  ],
+  "recordedDate": "2008-02-22T06:00:00.000Z",
+  "substance": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/ndfrt",
+        "code": "N0000005840",
+        "display": "PENICILLINS"
+      }
+    ],
+    "text": "PENICILLINS"
+  },
+  "onset": "2008-02-22",
+  "meta": {
+    "lastUpdated": "2019-11-20T20:01:51.301Z",
+    "versionId": "9000000000000"
+  },
+  "patient": {
+    "reference": "Patient/065b82c2aaa2"
+  },
+  "id": "065b82c2aaa2ac17f9d5d762505c572bea319743f2ef75ba",
+  "resourceType": "AllergyIntolerance",
+  "status": "confirmed"
+}

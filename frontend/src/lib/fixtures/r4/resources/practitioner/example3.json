@@ -1,0 +1,62 @@
+{
+  "resourceType": "Practitioner",
+  "id": "f002",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: f002</p><p><b>identifier</b>: 730291637 (OFFICIAL), 174BIP3JH438 (USUAL)</p><p><b>name</b>: Pieter Voigt (OFFICIAL)</p><p><b>telecom</b>: ph: 0205569336(WORK), p.voigt@bmc.nl(WORK), fax: 0205669382(WORK)</p><p><b>address</b>: Galapagosweg 91 Den Burg 9105 PZ NLD (WORK)</p><p><b>gender</b>: male</p><p><b>birthDate</b>: 29/04/1979</p></div>"
+  },
+  "identifier": [
+    {
+      "use": "official",
+      "system": "urn:oid:2.16.528.1.1007.3.1",
+      "value": "730291637"
+    },
+    {
+      "use": "usual",
+      "system": "urn:oid:2.16.840.1.113883.2.4.6.3",
+      "value": "174BIP3JH438"
+    }
+  ],
+  "name": [
+    {
+      "use": "official",
+      "family": "Voigt",
+      "given": [
+        "Pieter"
+      ],
+      "suffix": [
+        "MD"
+      ]
+    }
+  ],
+  "telecom": [
+    {
+      "system": "phone",
+      "value": "0205569336",
+      "use": "work"
+    },
+    {
+      "system": "email",
+      "value": "p.voigt@bmc.nl",
+      "use": "work"
+    },
+    {
+      "system": "fax",
+      "value": "0205669382",
+      "use": "work"
+    }
+  ],
+  "address": [
+    {
+      "use": "work",
+      "line": [
+        "Galapagosweg 91"
+      ],
+      "city": "Den Burg",
+      "postalCode": "9105 PZ",
+      "country": "NLD"
+    }
+  ],
+  "gender": "male",
+  "birthDate": "1979-04-29"
+}

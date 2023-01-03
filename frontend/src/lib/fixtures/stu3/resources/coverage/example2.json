@@ -1,0 +1,74 @@
+{
+  "beneficiary": {
+    "reference": "Patient/dc793caf0d58"
+  },
+  "meta": {
+    "lastUpdated": "2020-01-10T08:42:35.958Z",
+    "versionId": "9000000000000"
+  },
+  "status": "active",
+  "contract": [
+    {
+      "id": "ptc-contract1"
+    },
+    {
+      "reference": "Coverage/dc793caf0d5821fbff63e1fca1c90a981dd53cb294d95059"
+    }
+  ],
+  "resourceType": "Coverage",
+  "grouping": {
+    "subGroup": "Medicare",
+    "subPlan": "Part A"
+  },
+  "extension": [
+    {
+      "valueCoding": {
+        "system": "https://bluebutton.cms.gov/resources/variables/ms_cd",
+        "code": "10",
+        "display": "Aged without end-stage renal disease (ESRD)"
+      },
+      "url": "https://api.1up.health/fhir/stu3/variables/dc793caf0d589ba4dfac5b63cb206f33f5f85f57b9bf3a21"
+    },
+    {
+      "valueCoding": {
+        "system": "https://bluebutton.cms.gov/resources/variables/orec",
+        "code": "0",
+        "display": "Old age and survivor’s insurance (OASI)"
+      },
+      "url": "https://api.1up.health/fhir/stu3/variables/dc793caf0d58386069c29ddeceac3bfca0d910f9ae816595"
+    },
+    {
+      "valueCoding": {
+        "system": "https://bluebutton.cms.gov/resources/variables/crec",
+        "code": "0",
+        "display": "Old age and survivor’s insurance (OASI)"
+      },
+      "url": "https://api.1up.health/fhir/stu3/variables/dc793caf0d581058ae6aaee6d26ac75637fae2b67f05deea"
+    },
+    {
+      "valueCoding": {
+        "system": "https://bluebutton.cms.gov/resources/variables/esrd_ind",
+        "code": "0",
+        "display": "the beneficiary does not have ESRD"
+      },
+      "url": "https://api.1up.health/fhir/stu3/variables/dc793caf0d587c064dfea62ee5b98096c9f6bd71f8cebd2a"
+    },
+    {
+      "valueCoding": {
+        "system": "https://bluebutton.cms.gov/resources/variables/a_trm_cd",
+        "code": "0",
+        "display": "Not Terminated"
+      },
+      "url": "https://api.1up.health/fhir/stu3/variables/dc793caf0d58e096649ae4bb9a7b7a95b854ab4f51f722f2"
+    }
+  ],
+  "id": "dc793caf0d580b3db4663fa901eb90f7e5b05042b6c7e4a2",
+  "type": {
+    "coding": [
+      {
+        "system": "Medicare",
+        "code": "Part A"
+      }
+    ]
+  }
+}

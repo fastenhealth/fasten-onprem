@@ -1,0 +1,157 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "zika-virus-exposure-assessment",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n      <pre>\n      </pre>\n    </div>"
+  },
+  "url": "http://example.org/Questionnaire/zika-virus-exposure-assessment",
+  "name": "ExampleZikaVirusExposureAssessment",
+  "title": "Example Zika Virus Exposure Assessment",
+  "status": "draft",
+  "subjectType": ["Patient"],
+  "date": "2016-11-14",
+  "description": "Example questionnaire to assess Zika virus exposure potential.",
+  "effectivePeriod": {
+    "start": "2016-11-14"
+  },
+  "item": [
+    {
+      "extension": [
+        {
+          "url": "http://example.org/additional-information",
+          "valueAttachment": {
+            "url": "http://www.cdc.gov/zika/geo/index.html",
+            "title": "Areas with active Zika virus transmission/exposure risk"
+          }
+        }
+      ],
+      "linkId": "1",
+      "code": [
+        {
+          "system": "http://example.org/questionnaires",
+          "code": "CDE: Resident of or Frequent Traveler to Zika Area"
+        }
+      ],
+      "text": "Are you a resident of, or do you travel frequently to, an area with active Zika transmission?",
+      "type": "boolean"
+    },
+    {
+      "extension": [
+        {
+          "url": "http://example.org/additional-information",
+          "valueAttachment": {
+            "url": "http://www.cdc.gov/zika/geo/index.html",
+            "title": "Areas with active Zika virus transmission/exposure risk"
+          }
+        }
+      ],
+      "linkId": "2",
+      "code": [
+        {
+          "system": "http://example.org/questionnaires",
+          "code": "CDE: Recent Travel to Zika Area"
+        }
+      ],
+      "text": "Have you recently traveled to an area with active Zika transmission?",
+      "type": "boolean",
+      "enableWhen": [
+        {
+          "question": "1",
+          "operator": "=",
+          "answerBoolean": false
+        }
+      ]
+    },
+    {
+      "linkId": "3",
+      "code": [
+        {
+          "system": "http://example.org/questionnaires",
+          "code": "CDE: Time Since Returned From Travel"
+        }
+      ],
+      "text": "How long has it been since you returned?",
+      "type": "quantity",
+      "enableWhen": [
+        {
+          "question": "2",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "extension": [
+        {
+          "url": "http://example.org/additional-information",
+          "valueAttachment": {
+            "url": "http://www.cdc.gov/zika/geo/index.html",
+            "title": "Areas with active Zika virus transmission/exposure risk"
+          }
+        }
+      ],
+      "linkId": "4",
+      "code": [
+        {
+          "system": "http://example.org/questionnaires",
+          "code": "CDE: Recent Sexual Encounter with Traveler to Zika Area"
+        }
+      ],
+      "text": "Have you recently had condomless sex with a partner that has travelled in an area with active Zika transmission?",
+      "type": "boolean",
+      "enableWhen": [
+        {
+          "question": "2",
+          "operator": "=",
+          "answerBoolean": false
+        }
+      ]
+    },
+    {
+      "linkId": "5",
+      "code": [
+        {
+          "system": "http://example.org/questionnaires",
+          "code": "CDE: Time Since Sexual Encounter"
+        }
+      ],
+      "text": "How long has it been since your last condomless sexual encounter?",
+      "type": "quantity",
+      "enableWhen": [
+        {
+          "question": "4",
+          "operator": "=",
+          "answerBoolean": true
+        }
+      ]
+    },
+    {
+      "extension": [
+        {
+          "url": "http://example.org/additional-information",
+          "valueAttachment": {
+            "url": "http://www.cdc.gov/zika/geo/index.html",
+            "title": "Areas with active Zika virus transmission/exposure risk"
+          }
+        }
+      ],
+      "linkId": "6",
+      "code": [
+        {
+          "system": "http://example.org/questionnaires",
+          "code": "CDE: Planned Travel to Zika Area"
+        }
+      ],
+      "text": "Do you plan to travel to an area with active Zika transmission?",
+      "type": "boolean",
+      "enableWhen": [
+        {
+          "question": "4",
+          "operator": "=",
+          "answerBoolean": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "resourceType": "ExplanationOfBenefit",
+  "id": "R3500",
+  "text": {
+    "status": "generated",
+    "div": "<div>A human-readable rendering of the ExplanationOfBenefit</div>"
+  },
+  "identifier": [
+    {
+      "system": "http://www.BenefitsInc.com/fhir/eob",
+      "value": "987654321"
+    }
+  ],
+  "request": {
+    "reference": "http://www.BenefitsInc.com/fhir/oralhealthclaim/15476332402"
+  },
+  "outcome": "complete",
+  "disposition": "Claim settled as per contract.",
+  "created": "2014-08-16",
+  "organization": {
+    "reference": "Organization/2"
+  },
+  "requestOrganization": {
+    "reference": "Organization/1"
+  }
+}

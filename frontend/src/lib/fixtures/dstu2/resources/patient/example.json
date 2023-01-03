@@ -1,0 +1,169 @@
+{
+  "birthDate": "1985-08-01",
+  "identifier": [
+    {
+      "value": "E3826",
+      "use": "usual",
+      "system": "urn:oid:1.2.840.114350.1.13.327.1.7.5.737384.0"
+    },
+    {
+      "value": "203579",
+      "use": "usual",
+      "system": "urn:oid:1.2.3.4"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-02T08:52:19.909Z",
+    "versionId": "9000000000000"
+  },
+  "address": [
+    {
+      "country": "US",
+      "state": "WI",
+      "city": "Verona",
+      "use": "home",
+      "line": [
+        "1979 Milky Way Dr."
+      ],
+      "postalCode": "53593"
+    },
+    {
+      "country": "US",
+      "period": {
+        "start": "2011-08-04T00:00:00Z",
+        "end": "2014-08-04T00:00:00Z"
+      },
+      "city": "MADISON",
+      "use": "temp",
+      "line": [
+        "5301 Tokay Blvd"
+      ],
+      "postalCode": "53711",
+      "state": "WI"
+    }
+  ],
+  "deceasedBoolean": false,
+  "name": [
+    {
+      "given": [
+        "Jason"
+      ],
+      "text": "Jason Argonaut",
+      "family": [
+        "Argonaut"
+      ],
+      "use": "usual"
+    }
+  ],
+  "gender": "male",
+  "active": true,
+  "careProvider": [
+    {
+      "reference": "Practitioner/ff567a66d87e69bfddf2c781",
+      "display": "Physician Family Medicine"
+    }
+  ],
+  "maritalStatus": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/ValueSet/marital-status",
+        "code": "S",
+        "display": "Never Married"
+      }
+    ],
+    "text": "Single"
+  },
+  "resourceType": "Patient",
+  "extension": [
+    {
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "2.16.840.1.113883.5.104",
+            "code": "2028-9",
+            "display": "Asian"
+          }
+        ],
+        "text": "Asian"
+      },
+      "url": "https://api.1up.health/fhir/dstu2/StructureDefinition/ff567a66d87e7e88733170be21e580b4f3f34758b3a9b7c9"
+    },
+    {
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "2.16.840.1.113883.5.50",
+            "code": "2186-5",
+            "display": "Not Hispanic or Latino"
+          }
+        ],
+        "text": "Not Hispanic or Latino"
+      },
+      "url": "https://api.1up.health/fhir/dstu2/StructureDefinition/ff567a66d87e0f1ba6c4fdd56b71507cf2602eb6e5f5d24c"
+    },
+    {
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v3/AdministrativeGender",
+            "code": "M",
+            "display": "Male"
+          }
+        ],
+        "text": "Male"
+      },
+      "url": "https://api.1up.health/fhir/dstu2/StructureDefinition/ff567a66d87e8cf8a74385b1f7123bbd9870c03276722ccb"
+    }
+  ],
+  "telecom": [
+    {
+      "value": "608-271-9000",
+      "use": "home",
+      "system": "phone"
+    },
+    {
+      "value": "608-771-9000",
+      "use": "work",
+      "system": "phone"
+    },
+    {
+      "value": "608-771-9000",
+      "use": "mobile",
+      "system": "phone"
+    },
+    {
+      "value": "608-771-9000",
+      "use": "home",
+      "system": "fax"
+    },
+    {
+      "period": {
+        "start": "2011-08-04T00:00:00Z",
+        "end": "2014-08-04T00:00:00Z"
+      },
+      "system": "phone",
+      "value": "608-771-9000",
+      "use": "temp"
+    },
+    {
+      "value": "open@epic.com",
+      "system": "email"
+    }
+  ],
+  "id": "f8fedcd9e6e5",
+  "communication": [
+    {
+      "preferred": true,
+      "language": {
+        "coding": [
+          {
+            "system": "urn:oid:2.16.840.1.113883.6.99",
+            "code": "en",
+            "display": "English"
+          }
+        ],
+        "text": "English"
+      }
+    }
+  ]
+}

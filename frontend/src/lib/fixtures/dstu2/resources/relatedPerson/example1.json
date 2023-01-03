@@ -1,0 +1,79 @@
+{
+  "resourceType": "RelatedPerson",
+  "id": "benedicte",
+  "text": {
+    "status": "generated",
+    "div": "<div>\n      <table>\n        <tbody>\n          <tr>\n            <td>Name</td>\n            <td>Bénédicte du Marché</td>\n          </tr>\n          <tr>\n            <td>Address</td>\n            <td>43, Place du Marché Sainte Catherine, 75004 Paris, France</td>\n          </tr>\n          <tr>\n            <td>Contacts</td>\n            <td>Phone: +33 (237) 998327</td>\n          </tr>\n        </tbody>\n      </table>\n    </div>"
+  },
+  "identifier": [
+    {
+      "use": "usual",
+      "type": {
+        "text": "INSEE"
+      },
+      "system": "urn:oid:1.2.250.1.61",
+      "value": "272117510400399"
+    }
+  ],
+  "patient": {
+    "reference": "Patient/example"
+  },
+  "relationship": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/patient-contact-relationship",
+        "code": "partner"
+      },
+      {
+        "system": "http://hl7.org/fhir/v3/RoleCode",
+        "code": "WIFE"
+      }
+    ]
+  },
+  "name": {
+    "family": [
+      "du",
+      "Marché"
+    ],
+    "_family": [
+      {
+        "extension": [
+          {
+            "fhir_comments": [
+              "  the \"du\" part is a family name prefix (VV in iso 21090)  "
+            ],
+            "url": "http://hl7.org/fhir/StructureDefinitioniso-21090#qualifier",
+            "valueCode": "VV"
+          }
+        ]
+      },
+      null
+    ],
+    "given": [
+      "Bénédicte"
+    ]
+  },
+  "telecom": [
+    {
+      "system": "phone",
+      "value": "+33 (237) 998327"
+    }
+  ],
+  "gender": "female",
+  "address": [
+    {
+      "line": [
+        "43, Place du Marché Sainte Catherine"
+      ],
+      "city": "Paris",
+      "postalCode": "75004",
+      "country": "FRA"
+    }
+  ],
+  "photo": [
+    {
+      "contentType": "image/jpeg",
+      "url": "Binary/f016"
+    }
+  ]
+}

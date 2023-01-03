@@ -1,0 +1,45 @@
+{
+  "resourceType": "List",
+  "id": "example",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n      <table>\n        <thead>\n          <tr>\n            <th>Condition</th>\n            <th>Severity</th>\n            <th>Date</th>\n            <th>Location</th>\n            <th>Status</th>\n          </tr>\n        </thead>\n        <tbody>\n          <tr>\n            <td>Burnt Ear</td>\n            <td>Severe</td>\n            <td>24-May 2012</td>\n            <td>Left Ear</td>\n            <td>deleted</td>\n          </tr>\n          <tr>\n            <td>Asthma</td>\n            <td>Mild</td>\n            <td>21-Nov 2012</td>\n            <td>--</td>\n            <td>added</td>\n          </tr>\n        </tbody>\n      </table>\n    </div>"
+  },
+  "identifier": [
+    {
+      "system": "urn:uuid:a9fcea7c-fcdf-4d17-a5e0-f26dda030b59",
+      "value": "23974652"
+    }
+  ],
+  "status": "current",
+  "mode": "changes",
+  "subject": {
+    "reference": "Patient/example"
+  },
+  "encounter": {
+    "reference": "Encounter/example"
+  },
+  "date": "2012-11-25T22:17:00+11:00",
+  "source": {
+    "reference": "Patient/example"
+  },
+  "entry": [
+    {
+      "flag": {
+        "text": "Deleted due to error"
+      },
+      "deleted": true,
+      "item": {
+        "reference": "Condition/example"
+      }
+    },
+    {
+      "flag": {
+        "text": "Added"
+      },
+      "item": {
+        "reference": "Condition/example2"
+      }
+    }
+  ]
+}

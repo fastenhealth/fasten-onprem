@@ -1,0 +1,152 @@
+{
+  "status": "active",
+  "definition": [
+    {
+      "display": "A PlanDefinition protocol for obesity"
+    }
+  ],
+  "replaces": [
+    {
+      "display": "Plan from urgent care clinic"
+    }
+  ],
+  "addresses": [
+    {
+      "display": "obesity",
+      "reference": "#p1"
+    }
+  ],
+  "description": "Manage obesity and weight loss",
+  "category": [
+    {
+      "text": "Weight management plan"
+    }
+  ],
+  "author": [
+    {
+      "display": "Dr Adam Careful",
+      "reference": "Practitioner/example"
+    }
+  ],
+  "resourceType": "CarePlan",
+  "text": {
+    "status": "additional",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n      <p> A simple care plan to indicate a patient taking their weight once a day because of obesity.</p>\n    </div>"
+  },
+  "goal": [
+    {
+      "reference": "Goal/example"
+    }
+  ],
+  "basedOn": [
+    {
+      "display": "Management of Type 2 Diabetes"
+    }
+  ],
+  "period": {
+    "end": "2017-06-01"
+  },
+  "contained": [
+    {
+      "code": {
+        "text": "Obesity"
+      },
+      "resourceType": "Condition",
+      "id": "p1",
+      "clinicalStatus": "active",
+      "verificationStatus": "confirmed",
+      "subject": {
+        "display": "Peter James Chalmers",
+        "reference": "Patient/example"
+      }
+    }
+  ],
+  "intent": "plan",
+  "context": {
+    "reference": "Encounter/home"
+  },
+  "activity": [
+    {
+      "outcomeCodeableConcept": [
+        {
+          "coding": [
+            {
+              "code": "161832001",
+              "system": "http://snomed.info/sct",
+              "display": "Progressive weight loss"
+            }
+          ]
+        }
+      ],
+      "outcomeReference": [
+        {
+          "display": "Weight Measured",
+          "reference": "Observation/example"
+        }
+      ],
+      "detail": {
+        "category": {
+          "coding": [
+            {
+              "code": "observation",
+              "system": "http://hl7.org/fhir/care-plan-activity-category"
+            }
+          ]
+        },
+        "status": "completed",
+        "code": {
+          "coding": [
+            {
+              "code": "3141-9",
+              "system": "http://loinc.org",
+              "display": "Weight Measured"
+            },
+            {
+              "code": "27113001",
+              "system": "http://snomed.info/sct",
+              "display": "Body weight"
+            }
+          ]
+        },
+        "statusReason": "Achieved weight loss to mitigate diabetes risk.",
+        "performer": [
+          {
+            "display": "Peter James Chalmers",
+            "reference": "Patient/example"
+          }
+        ],
+        "prohibited": false,
+        "location": {
+          "display": "Patient's home"
+        },
+        "scheduledTiming": {
+          "repeat": {
+            "frequency": 1,
+            "periodUnit": "d",
+            "period": 1
+          }
+        }
+      }
+    }
+  ],
+  "careTeam": [
+    {
+      "reference": "CareTeam/example"
+    }
+  ],
+  "identifier": [
+    {
+      "value": "12345"
+    }
+  ],
+  "id": "example",
+  "partOf": [
+    {
+      "display": "Overall wellness plan"
+    }
+  ],
+  "subject": {
+    "display": "Peter James Chalmers",
+    "reference": "Patient/example"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "lastUpdated": "2021-06-04T00:52:39.222Z",
+    "security": [],
+    "versionId": "9000000000000",
+    "tag": [
+      {
+        "version": "0.0.1",
+        "code": "http://build.fhir.org/ig/HL7/davinci-pdex-formulary/",
+        "system": "urn:uuid:internal-1up-health-coding-systems-ig"
+      }
+    ],
+    "profile": [
+      "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-FormularyDrug"
+    ]
+  },
+  "code": {
+    "coding": [
+      {
+        "code": "1726324",
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "display": "5 ML irinotecan hydrochloride 20 MG/ML Injection"
+      }
+    ],
+    "text": "IRINOTECAN HCL                 "
+  },
+  "resourceType": "MedicationKnowledge",
+  "extension": [
+    {
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "code": "generic",
+            "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-DrugTierCS",
+            "display": "Generic: Commonly prescribed generic drugs that cost more than drugs in the ‘preferred generic’ tier."
+          }
+        ]
+      },
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-DrugTierID-extension"
+    },
+    {
+      "valueBoolean": false,
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-PriorAuthorization-extension"
+    },
+    {
+      "valueBoolean": false,
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-StepTherapyLimit-extension"
+    },
+    {
+      "valueBoolean": false,
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-QuantityLimit-extension"
+    },
+    {
+      "valueString": "Kansas Medicaid FFS",
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-PlanID-extension"
+    }
+  ],
+  "id": "00cSdK2hArNsoCskgED4BEZ1oazY5acoIEDpWMx1up"
+}

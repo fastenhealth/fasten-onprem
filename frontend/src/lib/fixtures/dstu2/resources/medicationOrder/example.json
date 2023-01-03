@@ -1,0 +1,129 @@
+{
+  "resourceType": "MedicationOrder",
+  "id": "medrx001",
+  "text": {
+    "status": "generated",
+    "div": "<div><p><b>Generated Narrative with Details</b></p><p><b>id</b>: medrx001</p><p><b>identifier</b>: 12345 (OFFICIAL)</p><p><b>dateWritten</b>: 15/01/2015</p><p><b>status</b>: active</p><p><b>patient</b>: <a>Eve Everywoman</a></p><p><b>prescriber</b>: <a>Patrick Pump</a></p><p><b>encounter</b>: <a>encounter who leads to this priscription</a></p><p><b>reason</b>: Otitis Media <span>(Details : {SNOMED CT code '65363002' = '65363002', given as 'Otitis Media'})</span></p><p><b>medication</b>: <a>prescribed medication</a></p><h3>DosageInstructions</h3><table><tr><td>-</td><td><b>Text</b></td><td><b>AdditionalInstructions</b></td><td><b>Timing</b></td><td><b>Site[x]</b></td><td><b>Route</b></td><td><b>Dose[x]</b></td></tr><tr><td>*</td><td>Take 5ml three times daily</td><td>With or after food <span>(Details : {SNOMED CT code '311504000' = '311504000', given as 'With or after food'})</span></td><td>Do 3 per 1 days</td><td>Entire oral cavity <span>(Details : {SNOMED CT code '181220002' = '181220002', given as 'Entire oral cavity'})</span></td><td>Oral Route <span>(Details : {SNOMED CT code '26643006' = '26643006', given as 'Oral Route'})</span></td><td>5 mL<span> (Details: http://unitsofmeasure.org code mL = '??')</span></td></tr></table><h3>DispenseRequests</h3><table><tr><td>-</td><td><b>Medication[x]</b></td><td><b>ValidityPeriod</b></td><td><b>NumberOfRepeatsAllowed</b></td><td><b>Quantity</b></td><td><b>ExpectedSupplyDuration</b></td></tr><tr><td>*</td><td><a>Medication/MedicationExample3</a></td><td>15/01/2015 --&gt; 15/01/2016</td><td>2</td><td>100 mL<span> (Details: http://unitsofmeasure.org code mL = '??')</span></td><td>10 days<span> (Details: http://unitsofmeasure.org code d = '??')</span></td></tr></table><h3>Substitutions</h3><table><tr><td>-</td><td><b>Type</b></td><td><b>Reason</b></td></tr><tr><td>*</td><td>Generic Composition <span>(Details : {http://hl7.org/fhir code 'G' = '??', given as 'Generic Composition'})</span></td><td>formulary policy <span>(Details : {http://hl7.org/fhir code 'FP' = '??', given as 'formulary policy'})</span></td></tr></table></div>"
+  },
+  "identifier": [
+    {
+      "use": "official",
+      "system": "http://www.bmc.nl/portal/prescriptions",
+      "value": "12345"
+    }
+  ],
+  "dateWritten": "2015-01-15",
+  "status": "active",
+  "patient": {
+    "reference": "Patient/f001",
+    "display": "Eve Everywoman"
+  },
+  "prescriber": {
+    "reference": "Practitioner/f007",
+    "display": "Patrick Pump"
+  },
+  "encounter": {
+    "reference": "Encounter/f002",
+    "display": "encounter who leads to this priscription"
+  },
+  "reasonCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "65363002",
+        "display": "Otitis Media"
+      }
+    ]
+  },
+  "medicationReference": {
+    "reference": "Medication/MedicationExample2",
+    "display": "prescribed medication"
+  },
+  "dosageInstruction": [
+    {
+      "text": "Take 5ml three times daily",
+      "additionalInstructions": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "311504000",
+            "display": "With or after food"
+          }
+        ]
+      },
+      "timing": {
+        "repeat": {
+          "frequency": 3,
+          "period": 1,
+          "periodUnits": "d"
+        }
+      },
+      "siteCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "181220002",
+            "display": "Entire oral cavity"
+          }
+        ]
+      },
+      "route": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "26643006",
+            "display": "Oral Route"
+          }
+        ]
+      },
+      "doseQuantity": {
+        "value": 5,
+        "unit": "mL",
+        "system": "http://unitsofmeasure.org",
+        "code": "mL"
+      }
+    }
+  ],
+  "dispenseRequest": {
+    "medicationReference": {
+      "reference": "Medication/MedicationExample3"
+    },
+    "validityPeriod": {
+      "start": "2015-01-15",
+      "end": "2016-01-15"
+    },
+    "numberOfRepeatsAllowed": 2,
+    "quantity": {
+      "value": 100,
+      "unit": "mL",
+      "system": "http://unitsofmeasure.org",
+      "code": "mL"
+    },
+    "expectedSupplyDuration": {
+      "value": 10,
+      "unit": "days",
+      "system": "http://unitsofmeasure.org",
+      "code": "d"
+    }
+  },
+  "substitution": {
+    "type": {
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir",
+          "code": "G",
+          "display": "Generic Composition"
+        }
+      ]
+    },
+    "reason": {
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir",
+          "code": "FP",
+          "display": "formulary policy"
+        }
+      ]
+    }
+  }
+}

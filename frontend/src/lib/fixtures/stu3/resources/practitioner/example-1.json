@@ -1,0 +1,62 @@
+{
+  "identifier": [
+    {
+      "value": "K36641",
+      "use": "official",
+      "system": "Medicare PIN IL"
+    },
+    {
+      "value": "I50813",
+      "use": "official",
+      "system": "Medicare UPIN IL"
+    },
+    {
+      "value": "1033278056",
+      "use": "official",
+      "system": "https://nppes.cms.hhs.gov"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-04T15:35:43.698Z",
+    "versionId": "9000000000000"
+  },
+  "address": [
+    {
+      "country": "US",
+      "state": "In",
+      "city": "Hammond",
+      "use": "work",
+      "line": [
+        "5815 S Calumet Ave"
+      ]
+    }
+  ],
+  "name": [
+    {
+      "given": [
+        "Sameer"
+      ],
+      "suffix": [
+        "M.D."
+      ],
+      "family": "Sharma",
+      "use": "official"
+    }
+  ],
+  "gender": "male",
+  "active": true,
+  "resourceType": "Practitioner",
+  "telecom": [
+    {
+      "value": "3125520010",
+      "use": "work",
+      "system": "fax"
+    },
+    {
+      "value": "3125236837",
+      "use": "work",
+      "system": "phone"
+    }
+  ],
+  "id": "9bbfcffd1e8a"
+}

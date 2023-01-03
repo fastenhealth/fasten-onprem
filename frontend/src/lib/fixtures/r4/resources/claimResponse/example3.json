@@ -1,0 +1,513 @@
+{
+  "resourceType": "ClaimResponse",
+  "id": "R3503",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">A human-readable rendering of the ClaimResponse to Claim Oral Average with additional items</div>"
+  },
+  "identifier": [
+    {
+      "system": "http://www.BenefitsInc.com/fhir/remittance",
+      "value": "R3503"
+    }
+  ],
+  "status": "active",
+  "type": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+        "code": "oral"
+      }
+    ]
+  },
+  "use": "claim",
+  "patient": {
+    "reference": "Patient/1"
+  },
+  "created": "2014-08-16",
+  "insurer": {
+    "identifier": {
+      "system": "http://www.jurisdiction.org/insurers",
+      "value": "555123"
+    }
+  },
+  "requestor": {
+    "reference": "Organization/1"
+  },
+  "request": {
+    "identifier": {
+      "system": "http://happyvalley.com/claim",
+      "value": "12346"
+    }
+  },
+  "outcome": "complete",
+  "disposition": "Claim settled as per contract.",
+  "payeeType": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/payeetype",
+        "code": "provider"
+      }
+    ]
+  },
+  "item": [
+    {
+      "itemSequence": 1,
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0.0,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "amount": {
+            "value": 0.0,
+            "currency": "USD"
+          }
+        }
+      ]
+    },
+    {
+      "itemSequence": 2,
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 105.0,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligpercent"
+              }
+            ]
+          },
+          "value": 80.0
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "amount": {
+            "value": 84.0,
+            "currency": "USD"
+          }
+        }
+      ]
+    },
+    {
+      "itemSequence": 3,
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 750.0,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligpercent"
+              }
+            ]
+          },
+          "value": 80.0
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "amount": {
+            "value": 600.0,
+            "currency": "USD"
+          }
+        }
+      ],
+      "detail": [
+        {
+          "detailSequence": 1,
+          "adjudication": [
+            {
+              "category": {
+                "coding": [
+                  {
+                    "code": "eligible"
+                  }
+                ]
+              },
+              "amount": {
+                "value": 750.0,
+                "currency": "USD"
+              }
+            },
+            {
+              "category": {
+                "coding": [
+                  {
+                    "code": "eligpercent"
+                  }
+                ]
+              },
+              "value": 80.0
+            },
+            {
+              "category": {
+                "coding": [
+                  {
+                    "code": "benefit"
+                  }
+                ]
+              },
+              "amount": {
+                "value": 600.0,
+                "currency": "USD"
+              }
+            }
+          ]
+        },
+        {
+          "detailSequence": 2,
+          "adjudication": [
+            {
+              "category": {
+                "coding": [
+                  {
+                    "code": "eligible"
+                  }
+                ]
+              },
+              "amount": {
+                "value": 0.0,
+                "currency": "USD"
+              }
+            },
+            {
+              "category": {
+                "coding": [
+                  {
+                    "code": "benefit"
+                  }
+                ]
+              },
+              "amount": {
+                "value": 0.0,
+                "currency": "USD"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "addItem": [
+    {
+      "itemSequence": [1],
+      "productOrService": {
+        "coding": [
+          {
+            "system": "http://example.org/fhir/oralservicecodes",
+            "code": "1101"
+          }
+        ]
+      },
+      "modifier": [
+        {
+          "coding": [
+            {
+              "system": "http://example.org/fhir/modifiers",
+              "code": "x",
+              "display": "None"
+            }
+          ]
+        }
+      ],
+      "net": {
+        "value": 135.57,
+        "currency": "USD"
+      },
+      "noteNumber": [101],
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 100.0,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "copay"
+              }
+            ]
+          },
+          "amount": {
+            "value": 10.0,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligpercent"
+              }
+            ]
+          },
+          "value": 80.0
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "reason": {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/adjudication-reason",
+                "code": "ar002",
+                "display": "Plan Limit Reached"
+              }
+            ]
+          },
+          "amount": {
+            "value": 72.0,
+            "currency": "USD"
+          }
+        }
+      ]
+    },
+    {
+      "itemSequence": [1],
+      "productOrService": {
+        "coding": [
+          {
+            "system": "http://example.org/fhir/oralservicecodes",
+            "code": "2141",
+            "display": "Radiograph, bytewing"
+          }
+        ]
+      },
+      "net": {
+        "value": 35.57,
+        "currency": "USD"
+      },
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 35.57,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligpercent"
+              }
+            ]
+          },
+          "value": 80.0
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "amount": {
+            "value": 28.47,
+            "currency": "USD"
+          }
+        }
+      ]
+    },
+    {
+      "itemSequence": [3],
+      "detailSequence": [2],
+      "productOrService": {
+        "coding": [
+          {
+            "system": "http://example.org/fhir/oralservicecodes",
+            "code": "expense"
+          }
+        ]
+      },
+      "modifier": [
+        {
+          "coding": [
+            {
+              "system": "http://example.org/fhir/modifiers",
+              "code": "x",
+              "display": "None"
+            }
+          ]
+        }
+      ],
+      "net": {
+        "value": 350.0,
+        "currency": "USD"
+      },
+      "noteNumber": [101],
+      "adjudication": [
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligible"
+              }
+            ]
+          },
+          "amount": {
+            "value": 350.0,
+            "currency": "USD"
+          }
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "eligpercent"
+              }
+            ]
+          },
+          "value": 80.0
+        },
+        {
+          "category": {
+            "coding": [
+              {
+                "code": "benefit"
+              }
+            ]
+          },
+          "amount": {
+            "value": 270.0,
+            "currency": "USD"
+          }
+        }
+      ]
+    }
+  ],
+  "total": [
+    {
+      "category": {
+        "coding": [
+          {
+            "code": "submitted"
+          }
+        ]
+      },
+      "amount": {
+        "value": 1340.57,
+        "currency": "USD"
+      }
+    },
+    {
+      "category": {
+        "coding": [
+          {
+            "code": "benefit"
+          }
+        ]
+      },
+      "amount": {
+        "value": 1054.47,
+        "currency": "USD"
+      }
+    }
+  ],
+  "payment": {
+    "type": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/ex-paymenttype",
+          "code": "complete"
+        }
+      ]
+    },
+    "date": "2014-08-31",
+    "amount": {
+      "value": 100.47,
+      "currency": "USD"
+    },
+    "identifier": {
+      "system": "http://www.BenefitsInc.com/fhir/paymentidentifier",
+      "value": "201408-2-15507"
+    }
+  },
+  "processNote": [
+    {
+      "number": 101,
+      "type": "print",
+      "text": "Package codes are not permitted. Codes replaced by Insurer.",
+      "language": {
+        "coding": [
+          {
+            "system": "urn:ietf:bcp:47",
+            "code": "en-CA"
+          }
+        ]
+      }
+    }
+  ]
+}

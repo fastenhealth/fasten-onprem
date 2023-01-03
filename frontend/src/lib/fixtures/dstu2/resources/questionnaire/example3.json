@@ -1,0 +1,766 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "questionnaire-sdc-profile-example-cap",
+  "text": {
+    "status": "generated",
+    "div": "<div><p><b>Generated Narrative with Details</b></p><p><b>id</b>: questionnaire-sdc-profile-example-cap</p><p><b>status</b>: published</p><blockquote><p><b>group</b></p><p><b>linkId</b>: root</p><p><b>title</b>: (Ask Richard)</p><p><b>required</b>: true</p><p><b>repeats</b>: false</p><h3>Groups</h3><table><tr><td>-</td></tr><tr><td>*</td></tr><tr><td>*</td></tr></table></blockquote></div>"
+  },
+  "status": "published",
+  "group": {
+    "linkId": "root",
+    "title": "(Ask Richard)",
+    "required": true,
+    "repeats": false,
+    "group": [
+      {
+        "linkId": "1",
+        "title": "MARGINS",
+        "required": true,
+        "repeats": false,
+        "question": [
+          {
+            "linkId": "1.1",
+            "text": "Status of surgical margin involvement by tumor (observable entity)",
+            "_text": {
+              "fhir_comments": [
+                "     Should probably have a snomed code as the \"concept\" here     "
+              ]
+            },
+            "type": "choice",
+            "required": true,
+            "repeats": false,
+            "option": [
+              {
+                "code": "M1",
+                "display": "Margins univolved by tumor"
+              },
+              {
+                "code": "M2",
+                "display": "Margin(s) involved by tumor"
+              },
+              {
+                "code": "M3",
+                "display": "Cannot be determined"
+              },
+              {
+                "code": "M4",
+                "display": "Not applicable"
+              }
+            ],
+            "group": [
+              {
+                "extension": [
+                  {
+                    "extension": [
+                      {
+                        "url": "#question",
+                        "valueString": "1.1"
+                      },
+                      {
+                        "url": "#answer",
+                        "valueCoding": {
+                          "code": "M1"
+                        }
+                      }
+                    ],
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                  }
+                ],
+                "linkId": "1.1.1",
+                "required": true,
+                "repeats": false,
+                "question": [
+                  {
+                    "linkId": "1.1.1.1",
+                    "text": "Distance from Closest Margin",
+                    "type": "choice",
+                    "required": false,
+                    "repeats": false,
+                    "option": [
+                      {
+                        "code": "D1",
+                        "display": "Specify (mm)"
+                      },
+                      {
+                        "code": "D2",
+                        "display": "Cannot be assessed (explain)"
+                      }
+                    ],
+                    "group": [
+                      {
+                        "extension": [
+                          {
+                            "extension": [
+                              {
+                                "url": "#question",
+                                "valueString": "1.1.1.1"
+                              },
+                              {
+                                "url": "#answer",
+                                "valueCoding": {
+                                  "code": "D1"
+                                }
+                              }
+                            ],
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                          }
+                        ],
+                        "linkId": "1.1.1.1.1",
+                        "required": true,
+                        "repeats": false,
+                        "question": [
+                          {
+                            "extension": [
+                              {
+                                "fhir_comments": [
+                                  "     This *has* to be treated as a distinct question, not a characteristic of the code.\n                  - it has its own properties and could map to its own data element.  That makes it\n                  a question in its own right.  It would be possible for display software to render\n                  the question so that the question text doesn't display when it's the same as the text\n                  of the corresponding answer.  Alternatively, we could petition to allow question.text\n                  to be omitted, at least in some circumstances.     "
+                                ],
+                                "url": "http://hl7.org/fhir/StructureDefinition/minValue",
+                                "valueDecimal": 0.01
+                              },
+                              {
+                                "url": "http://hl7.org/fhir/StructureDefinition/maxValue",
+                                "valueDecimal": 1000
+                              },
+                              {
+                                "url": "http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces",
+                                "valueInteger": 2
+                              }
+                            ],
+                            "linkId": "1.1.1.1.1.1",
+                            "text": "Specify (mm)",
+                            "type": "decimal",
+                            "required": true,
+                            "repeats": false
+                          }
+                        ]
+                      },
+                      {
+                        "extension": [
+                          {
+                            "extension": [
+                              {
+                                "url": "#question",
+                                "valueString": "1.1.1.1"
+                              },
+                              {
+                                "url": "#answer",
+                                "valueCoding": {
+                                  "code": "D2"
+                                }
+                              }
+                            ],
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                          }
+                        ],
+                        "linkId": "1.1.1.1.2",
+                        "required": true,
+                        "repeats": false,
+                        "question": [
+                          {
+                            "extension": [
+                              {
+                                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxLength",
+                                "valueInteger": 4000
+                              }
+                            ],
+                            "linkId": "1.1.1.1.2.1",
+                            "text": "Cannot be assessed (explain)",
+                            "type": "string",
+                            "required": true,
+                            "repeats": false
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "linkId": "1.1.1.2",
+                    "text": "Specify Margin, if possible",
+                    "type": "choice",
+                    "required": false,
+                    "repeats": false,
+                    "option": [
+                      {
+                        "code": "W1",
+                        "display": "Specify margin"
+                      },
+                      {
+                        "code": "W2",
+                        "display": "Cannot be determined (explain)"
+                      }
+                    ],
+                    "group": [
+                      {
+                        "extension": [
+                          {
+                            "extension": [
+                              {
+                                "url": "#question",
+                                "valueString": "1.1.1.2"
+                              },
+                              {
+                                "url": "#answer",
+                                "valueCoding": {
+                                  "code": "W1"
+                                }
+                              }
+                            ],
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                          }
+                        ],
+                        "linkId": "1.1.1.2.1",
+                        "required": true,
+                        "repeats": false,
+                        "question": [
+                          {
+                            "extension": [
+                              {
+                                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxLength",
+                                "valueInteger": 4000
+                              }
+                            ],
+                            "linkId": "1.1.1.2.1.1",
+                            "text": "Specify margin",
+                            "type": "string",
+                            "required": true,
+                            "repeats": false
+                          }
+                        ]
+                      },
+                      {
+                        "extension": [
+                          {
+                            "extension": [
+                              {
+                                "url": "#question",
+                                "valueString": "1.1.1.2"
+                              },
+                              {
+                                "url": "#answer",
+                                "valueCoding": {
+                                  "code": "W2"
+                                }
+                              }
+                            ],
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                          }
+                        ],
+                        "linkId": "1.1.1.2.2",
+                        "required": true,
+                        "repeats": false,
+                        "question": [
+                          {
+                            "extension": [
+                              {
+                                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxLength",
+                                "valueInteger": 4000
+                              }
+                            ],
+                            "linkId": "1.1.1.2.2.1",
+                            "text": "Cannot be determined (explain)",
+                            "type": "string",
+                            "required": true,
+                            "repeats": false
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "extension": [
+                  {
+                    "extension": [
+                      {
+                        "url": "#question",
+                        "valueString": "1.1"
+                      },
+                      {
+                        "url": "#answer",
+                        "valueCoding": {
+                          "code": "M2"
+                        }
+                      }
+                    ],
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                  }
+                ],
+                "linkId": "1.1.2",
+                "required": true,
+                "repeats": false,
+                "question": [
+                  {
+                    "linkId": "1.1.2.1",
+                    "text": "Specify Margin(s), if possible",
+                    "type": "choice",
+                    "required": true,
+                    "repeats": false,
+                    "option": [
+                      {
+                        "code": "I1",
+                        "display": "Specify margin(s)"
+                      },
+                      {
+                        "code": "I2",
+                        "display": "Cannot be determined (explain)"
+                      }
+                    ],
+                    "group": [
+                      {
+                        "extension": [
+                          {
+                            "extension": [
+                              {
+                                "url": "#question",
+                                "valueString": "1.1.2.1"
+                              },
+                              {
+                                "url": "#answer",
+                                "valueCoding": {
+                                  "code": "I1"
+                                }
+                              }
+                            ],
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                          }
+                        ],
+                        "linkId": "1.1.2.1.1",
+                        "required": true,
+                        "repeats": false,
+                        "question": [
+                          {
+                            "extension": [
+                              {
+                                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxLength",
+                                "valueInteger": 4000
+                              }
+                            ],
+                            "linkId": "1.1.2.1.1.1",
+                            "text": "Specify margin(s)",
+                            "type": "string",
+                            "required": true,
+                            "repeats": false
+                          }
+                        ]
+                      },
+                      {
+                        "extension": [
+                          {
+                            "extension": [
+                              {
+                                "url": "#question",
+                                "valueString": "1.1.2.1"
+                              },
+                              {
+                                "url": "#answer",
+                                "valueCoding": {
+                                  "code": "I2"
+                                }
+                              }
+                            ],
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                          }
+                        ],
+                        "linkId": "1.1.2.1.2",
+                        "required": true,
+                        "repeats": false,
+                        "question": [
+                          {
+                            "extension": [
+                              {
+                                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxLength",
+                                "valueInteger": 4000
+                              }
+                            ],
+                            "linkId": "1.1.2.1.2.1",
+                            "text": "Cannot be determined (explain)",
+                            "type": "string",
+                            "required": true,
+                            "repeats": false
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "extension": [
+                  {
+                    "extension": [
+                      {
+                        "url": "#question",
+                        "valueString": "1.1"
+                      },
+                      {
+                        "url": "#answer",
+                        "valueCoding": {
+                          "code": "M3"
+                        }
+                      }
+                    ],
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                  }
+                ],
+                "linkId": "1.1.3",
+                "required": true,
+                "repeats": false,
+                "question": [
+                  {
+                    "extension": [
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxLength",
+                        "valueInteger": 4000
+                      }
+                    ],
+                    "linkId": "1.1.3.1",
+                    "text": "Cannot be determined",
+                    "type": "string",
+                    "required": true,
+                    "repeats": false
+                  }
+                ]
+              },
+              {
+                "extension": [
+                  {
+                    "extension": [
+                      {
+                        "url": "#question",
+                        "valueString": "1.1"
+                      },
+                      {
+                        "url": "#answer",
+                        "valueCoding": {
+                          "code": "M4"
+                        }
+                      }
+                    ],
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                  }
+                ],
+                "linkId": "1.1.4",
+                "required": true,
+                "repeats": false,
+                "question": [
+                  {
+                    "extension": [
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxLength",
+                        "valueInteger": 4000
+                      }
+                    ],
+                    "linkId": "1.1.4.1",
+                    "text": "Not Applicable",
+                    "type": "string",
+                    "required": true,
+                    "repeats": false
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "linkId": "2",
+        "title": "ACCESSORY FINDINGS",
+        "required": true,
+        "repeats": false,
+        "question": [
+          {
+            "linkId": "2.1",
+            "text": "Treatment Effect (applicable to carcinomas treated with neoadjuvant therapy)",
+            "type": "choice",
+            "required": false,
+            "repeats": false,
+            "option": [
+              {
+                "code": "E1",
+                "display": "Not identified"
+              },
+              {
+                "code": "E2",
+                "display": "Present (specify)"
+              },
+              {
+                "code": "E3",
+                "display": "Indeterminate"
+              }
+            ],
+            "group": [
+              {
+                "extension": [
+                  {
+                    "extension": [
+                      {
+                        "url": "#question",
+                        "valueString": "2.1"
+                      },
+                      {
+                        "url": "#answer",
+                        "valueCoding": {
+                          "code": "E1"
+                        }
+                      }
+                    ],
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                  }
+                ],
+                "linkId": "2.1.1",
+                "required": true,
+                "repeats": false,
+                "question": [
+                  {
+                    "extension": [
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxLength",
+                        "valueInteger": 4000
+                      }
+                    ],
+                    "linkId": "2.1.1.1",
+                    "text": "Not identified",
+                    "type": "string",
+                    "required": true,
+                    "repeats": false
+                  }
+                ]
+              },
+              {
+                "extension": [
+                  {
+                    "extension": [
+                      {
+                        "url": "#question",
+                        "valueString": "2.1"
+                      },
+                      {
+                        "url": "#answer",
+                        "valueCoding": {
+                          "code": "E2"
+                        }
+                      }
+                    ],
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                  }
+                ],
+                "linkId": "2.1.2",
+                "required": true,
+                "repeats": false,
+                "question": [
+                  {
+                    "extension": [
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxLength",
+                        "valueInteger": 4000
+                      }
+                    ],
+                    "linkId": "2.1.2.1",
+                    "text": "Present (specify)",
+                    "type": "string",
+                    "required": true,
+                    "repeats": false
+                  }
+                ]
+              },
+              {
+                "extension": [
+                  {
+                    "extension": [
+                      {
+                        "url": "#question",
+                        "valueString": "2.1"
+                      },
+                      {
+                        "url": "#answer",
+                        "valueCoding": {
+                          "code": "E3"
+                        }
+                      }
+                    ],
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                  }
+                ],
+                "linkId": "2.1.3",
+                "required": true,
+                "repeats": false,
+                "question": [
+                  {
+                    "extension": [
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxLength",
+                        "valueInteger": 4000
+                      }
+                    ],
+                    "linkId": "2.1.3.1",
+                    "text": "Indeterminate",
+                    "type": "string",
+                    "required": true,
+                    "repeats": false
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "linkId": "2.2",
+            "text": "Tumor Description",
+            "type": "choice",
+            "required": false,
+            "repeats": true,
+            "option": [
+              {
+                "code": "U1",
+                "display": "Hemorrhagic"
+              },
+              {
+                "code": "U2",
+                "display": "Necrotic"
+              },
+              {
+                "code": "U3",
+                "display": "Invasion"
+              },
+              {
+                "code": "U4",
+                "display": "Other (specify)"
+              }
+            ],
+            "group": [
+              {
+                "extension": [
+                  {
+                    "extension": [
+                      {
+                        "url": "#question",
+                        "valueString": "2.2"
+                      },
+                      {
+                        "url": "#answer",
+                        "valueCoding": {
+                          "system": "http://cap.org/example/fhir/tumor-description",
+                          "code": "U3"
+                        }
+                      }
+                    ],
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                  }
+                ],
+                "linkId": "2.2.1",
+                "required": true,
+                "repeats": false,
+                "question": [
+                  {
+                    "linkId": "2.2.1.1",
+                    "text": "??",
+                    "type": "choice",
+                    "_type": {
+                      "fhir_comments": [
+                        "     Can't have a question with no text     "
+                      ]
+                    },
+                    "required": false,
+                    "repeats": true,
+                    "option": [
+                      {
+                        "code": "V1",
+                        "display": "Capsule"
+                      },
+                      {
+                        "code": "V2",
+                        "display": "Vessels"
+                      },
+                      {
+                        "code": "V3",
+                        "display": "Extra-adrenal (specify)"
+                      }
+                    ],
+                    "group": [
+                      {
+                        "extension": [
+                          {
+                            "extension": [
+                              {
+                                "url": "#question",
+                                "valueString": "2.2.1.1"
+                              },
+                              {
+                                "url": "#answer",
+                                "valueCoding": {
+                                  "code": "V3"
+                                }
+                              }
+                            ],
+                            "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                          }
+                        ],
+                        "linkId": "2.2.1.1.1",
+                        "required": true,
+                        "repeats": false,
+                        "question": [
+                          {
+                            "extension": [
+                              {
+                                "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxLength",
+                                "valueInteger": 4000
+                              }
+                            ],
+                            "linkId": "2.2.1.1.1.1",
+                            "text": "Extra-adrenal (specify)",
+                            "type": "string",
+                            "required": true,
+                            "repeats": false
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "extension": [
+                  {
+                    "extension": [
+                      {
+                        "url": "#question",
+                        "valueString": "2.2"
+                      },
+                      {
+                        "url": "#answer",
+                        "valueCoding": {
+                          "system": "http://cap.org/example/fhir/tumor-description",
+                          "code": "U4"
+                        }
+                      }
+                    ],
+                    "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-enableWhen"
+                  }
+                ],
+                "linkId": "2.2.2",
+                "required": true,
+                "repeats": false,
+                "question": [
+                  {
+                    "extension": [
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/questionnaire-maxLength",
+                        "valueInteger": 4000
+                      }
+                    ],
+                    "linkId": "2.2.2.1",
+                    "text": "Other (specify)",
+                    "type": "string",
+                    "required": true,
+                    "repeats": false
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

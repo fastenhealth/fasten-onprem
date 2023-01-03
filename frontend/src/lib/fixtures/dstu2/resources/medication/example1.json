@@ -1,0 +1,83 @@
+{
+  "resourceType": "Medication",
+  "id": "medexample004",
+  "text": {
+    "fhir_comments": [
+      "  this example is fully popluated  "
+    ],
+    "status": "generated",
+    "div": "<div>Amoxicillin 250mg/5ml Powder for Suspension</div>"
+  },
+  "code": {
+    "coding": [
+      {
+        "system": "http://www.fda.gov/Drugs/InformationOnDrugs/ucm142438.htm",
+        "code": "54569-2931",
+        "display": "Amoxicillin Powder, for Suspension 250mg/5ml"
+      }
+    ]
+  },
+  "isBrand": true,
+  "manufacturer": {
+    "reference": "http://www.a-smeds.com/fhirresource/1"
+  },
+  "product": {
+    "form": {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "42108003",
+          "display": "Powder for Suspension"
+        }
+      ]
+    },
+    "ingredient": [
+      {
+        "item": {
+          "display": "Amoxicillin"
+        },
+        "amount": {
+          "numerator": {
+            "value": 250,
+            "system": "http://unitsofmeasure.org",
+            "code": "mg"
+          },
+          "denominator": {
+            "value": 5,
+            "system": "http://unitsofmeasure.org",
+            "code": "mL"
+          }
+        }
+      }
+    ],
+    "batch": [
+      {
+        "lotNumber": "12345",
+        "expirationDate": "2018-12-22"
+      }
+    ]
+  },
+  "package": {
+    "container": {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "419672006",
+          "display": "Bottle - unit of product usage"
+        }
+      ]
+    },
+    "content": [
+      {
+        "item": {
+          "reference": "MedicationExample14"
+        },
+        "amount": {
+          "value": 7.5,
+          "unit": "gm",
+          "system": "http://unitsofmeasure.org"
+        }
+      }
+    ]
+  }
+}

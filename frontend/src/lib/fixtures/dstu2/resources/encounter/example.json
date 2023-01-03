@@ -1,0 +1,163 @@
+{
+  "location": [
+    {
+      "location": {
+        "reference": "Location/3d3d15496c25564786a3d088",
+        "display": "Baseline East Medical Center, BE Hospital, 1N, 0151, A"
+      },
+      "status": "completed"
+    }
+  ],
+  "identifier": [
+    {
+      "period": {
+        "start": "2018-03-22T19:39:59.000Z"
+      },
+      "system": "urn:oid:3.3.3.3.3.3",
+      "type": {
+        "text": "FIN NBR"
+      },
+      "value": "20003633",
+      "use": "usual"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-09T13:23:27.830Z",
+    "versionId": "9000000000002"
+  },
+  "status": "finished",
+  "hospitalization": {
+    "destination": {
+      "reference": "0b8a0111-e8e6-4c26-a91c-5069cbc6b1ca/3d3d15496c2577ebee2109629d06d688166ac47000b4298a",
+      "display": "Transfer to Another Hospital"
+    }
+  },
+  "priority": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/encounter-priority",
+        "code": "no-urg",
+        "userSelected": false,
+        "display": "Non-urgent"
+      }
+    ],
+    "text": "Elective"
+  },
+  "text": {
+    "div": "<div><p><b>Encounter</b></p><p><b>Location</b>: Baseline East Medical Center, BE Hospital, 1N, 0151, A</p><p><b>Class</b>: Inpatient</p><p><b>Status</b>: Finished</p><p><b>Period Start Date</b>: Mar 22, 2018 12:00 P.M. UTC</p><p><b>Period End Date</b>: Mar 22, 2018  9:29 P.M. UTC</p></div>",
+    "status": "generated"
+  },
+  "period": {
+    "start": "2018-03-22T12:00:00.000Z",
+    "end": "2018-03-22T21:29:00.000Z"
+  },
+  "class": "inpatient",
+  "patient": {
+    "reference": "Patient/3d3d15496c25"
+  },
+  "resourceType": "Encounter",
+  "serviceProvider": {
+    "reference": "Organization/3d3d15496c25221c90e67e4a"
+  },
+  "extension": [
+    {
+      "url": "https://api.1up.health/fhir/dstu2/StructureDefinition/3d3d15496c25068a1ef486b3e2d2ccdca018bdb2a8883afe"
+    }
+  ],
+  "contained": [
+    {
+      "id": "bd5cfae3b762",
+      "resourceType": "Location",
+      "meta": {
+        "lastUpdated": "2019-12-09T13:25:47.627Z",
+        "versionId": "9000000000002"
+      },
+      "type": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v3/RoleCode",
+            "code": "HOSP",
+            "userSelected": false,
+            "display": "Hospital"
+          }
+        ],
+        "text": "Transfer to Another Hospital"
+      }
+    }
+  ],
+  "id": "3d3d15496c252c4b48a21bec944df64211915ff6f7027ab9",
+  "participant": [
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/v3/ParticipationType",
+              "code": "ADM",
+              "userSelected": false,
+              "display": "admitter"
+            }
+          ],
+          "text": "Admitting Physician"
+        }
+      ],
+      "period": {
+        "start": "2019-02-13T19:57:00.000Z"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/v3/ParticipationType",
+              "code": "ADM",
+              "userSelected": false,
+              "display": "admitter"
+            }
+          ],
+          "text": "Admitting Physician"
+        }
+      ],
+      "period": {
+        "start": "2018-03-22T19:39:59.000Z"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/v3/ParticipationType",
+              "code": "ATND",
+              "userSelected": false,
+              "display": "attender"
+            }
+          ],
+          "text": "Attending Physician"
+        }
+      ],
+      "period": {
+        "start": "2018-06-25T14:58:00.000Z"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/v3/ParticipationType",
+              "code": "ATND",
+              "userSelected": false,
+              "display": "attender"
+            }
+          ],
+          "text": "Attending Physician"
+        }
+      ],
+      "period": {
+        "start": "2018-03-22T21:28:09.000Z"
+      }
+    }
+  ]
+}

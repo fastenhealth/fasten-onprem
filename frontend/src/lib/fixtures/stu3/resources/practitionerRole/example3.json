@@ -1,0 +1,40 @@
+{
+  "resourceType": "PractitionerRole",
+  "id": "f007-0",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">\n            <span style=\"color: gray;\">practitioner:</span> Simone Heps<br/><span style=\"color: gray;\">organisation:</span> BMC<br/><span style=\"color: gray;\">role:</span> Care role\n          </div>"
+  },
+  "practitioner": {
+    "reference": "Practitioner/f007",
+    "display": "Simone Heps"
+  },
+  "organization": {
+    "reference": "Organization/f001",
+    "display": "BMC"
+  },
+  "code": [
+    {
+      "coding": [
+        {
+          "system": "urn:oid:2.16.840.1.113883.2.4.15.111",
+          "code": "01.000",
+          "display": "Arts"
+        }
+      ],
+      "text": "Care role"
+    }
+  ],
+  "specialty": [
+    {
+      "coding": [
+        {
+          "system": "urn:oid:2.16.840.1.113883.2.4.15.111",
+          "code": "01.015",
+          "display": "Physician"
+        }
+      ],
+      "text": "specialization"
+    }
+  ]
+}

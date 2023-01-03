@@ -1,0 +1,33 @@
+{
+  "resourceType": "Coverage",
+  "id": "9876B1",
+  "text": {
+    "status": "generated",
+    "div": "<div>A human-readable rendering of the coverage</div>"
+  },
+  "issuer": {
+    "reference": "Organization/2"
+  },
+  "period": {
+    "start": "2011-05-23",
+    "end": "2012-05-23"
+  },
+  "type": {
+    "system": "http://hl7.org/fhir/v3/ActCode",
+    "code": "EHCPOL",
+    "display": "extended healthcare"
+  },
+  "identifier": [
+    {
+      "system": "http://benefitsinc.com/certificate",
+      "value": "12345"
+    }
+  ],
+  "plan": "CBI35",
+  "subPlan": "123",
+  "dependent": 1,
+  "sequence": 1,
+  "subscriber": {
+    "reference": "Patient/4"
+  }
+}

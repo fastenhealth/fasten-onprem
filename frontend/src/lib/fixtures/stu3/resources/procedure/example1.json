@@ -1,0 +1,46 @@
+{
+  "status": "completed",
+  "followUp": [
+    {
+      "text": "ROS 5 days  - 2013-04-10"
+    }
+  ],
+  "code": {
+    "text": "Appendectomy",
+    "coding": [
+      {
+        "code": "80146002",
+        "system": "http://snomed.info/sct",
+        "display": "Appendectomy (Procedure)"
+      }
+    ]
+  },
+  "resourceType": "Procedure",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Routine Appendectomy</div>"
+  },
+  "note": [
+    {
+      "text": "Routine Appendectomy. Appendix was inflamed and in retro-caecal position"
+    }
+  ],
+  "performedDateTime": "2013-04-05",
+  "performer": [
+    {
+      "actor": {
+        "display": "Dr Cecil Surgeon",
+        "reference": "Practitioner/example"
+      }
+    }
+  ],
+  "reasonCode": [
+    {
+      "text": "Generalized abdominal pain 24 hours. Localized in RIF with rebound and guarding"
+    }
+  ],
+  "id": "example",
+  "subject": {
+    "reference": "Patient/example"
+  }
+}

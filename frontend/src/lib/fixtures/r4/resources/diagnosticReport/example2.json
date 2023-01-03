@@ -1,0 +1,1000 @@
+{
+  "resourceType": "DiagnosticReport",
+  "id": "micro",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: micro</p><p><b>contained</b>: , , , , , , , , , , , , , , , , , , , , , , , , , </p><p><b>identifier</b>: 290741144</p><p><b>basedOn</b>: id: req; 255337816; status: active; intent: original-order; Culture, MRSA <span>(Details : {LOINC code '632-0' = 'Bacteria identified in Wound by Aerobe culture)</span>; ????</p><p><b>status</b>: final</p><p><b>category</b>: Microbiology <span>(Details : {http://hl7.org/fhir/v2/0074 code 'MB' = 'Microbiology)</span></p><p><b>code</b>: Culture, MRSA <span>(Details : {LOINC code '632-0' = 'Bacteria identified in Wound by Aerobe culture)</span></p><p><b>subject</b>: <a>Patient/example</a></p><p><b>issued</b>: 10/08/2009 8:25:44 AM</p><h3>Performers</h3><table><tr><td>-</td><td><b>Actor</b></td></tr><tr><td>*</td><td>Todd Ashby</td></tr></table><p><b>result</b>: id: org1; status: final; Staphylococcus aureus Panel <span>(Details : {http://acme.org/lab/codes/organisms code 'Staaur' = 'Staaur)</span>; ????</p></div>"
+  },
+  "contained": [
+    {
+      "resourceType": "Observation",
+      "id": "obx1-4",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "ORGANISM"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/organisms",
+            "code": "Staaur"
+          }
+        ],
+        "text": "Staphylococcus aureus"
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx1-5",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "CULTPOSNEG"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/flags",
+            "code": "POS"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-1",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60504",
+            "display": "Ampicillin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "R"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-2",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60512",
+            "display": "Cefazolin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 2,
+        "comparator": "<="
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-4",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60516",
+            "display": "Cefoxitin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 4,
+        "comparator": "<="
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-6",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60527",
+            "display": "Clindamycin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 0.5,
+        "comparator": ">="
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-8",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "61203",
+            "display": "Daptomycin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 1,
+        "comparator": ">="
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-10",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60532",
+            "display": "Doxycycline"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 0.5,
+        "comparator": "<="
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-12",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60533",
+            "display": "Erythromycin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 8,
+        "comparator": ">="
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "R"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-14",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60536",
+            "display": "Gentamicin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 2,
+        "comparator": "<="
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-16",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "61007",
+            "display": "Levofloxacin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 0.5,
+        "comparator": "<="
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-18",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60699",
+            "display": "Linezolid"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 4
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-20",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "61204",
+            "display": "Moxifloxacin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 0.5,
+        "comparator": "<="
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-22",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60551",
+            "display": "Oxacillin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 0.5
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-24",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60552",
+            "display": "Penicillin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 2,
+        "comparator": ">="
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "R"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-26",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60697",
+            "display": "Quinupristin/Dalfopristin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 0.5
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-28",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60555",
+            "display": "Rifampin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 0.5,
+        "comparator": "<="
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-30",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60558",
+            "display": "Tetracycline"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 0.5,
+        "comparator": "<="
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-32",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60561",
+            "display": "Trimethoprim/Sulfamethoxazole"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 0.0526,
+        "comparator": "<="
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx2-34",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60563",
+            "display": "Vancomycin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueQuantity": {
+        "value": 1
+      },
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "nte-1",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "2099930",
+            "display": "D-Test"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "valueString": "D-Test:  Negative - This isolate does not demonstrate inducible clindamycin resistance in vitro."
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obx3-1",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/tests",
+            "code": "60036",
+            "display": "Oxacillin"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "interpretation": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v2/0078",
+            "code": "S"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obr-2",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/panels",
+            "code": "60790",
+            "display": "Susceptibility - Automated broth dilution (Billed)"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "performer": [
+        {
+          "display": "Todd Ashby"
+        }
+      ],
+      "related": [
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-1"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-2"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-4"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-6"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-8"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-10"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-12"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-14"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-16"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-18"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-20"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-22"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-24"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-26"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-28"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-30"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-32"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx2-34"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#nte-1"
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "Observation",
+      "id": "obr-3",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/panels",
+            "code": "60418",
+            "display": "Susceptibility - Disk diffusion (Billed)"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "related": [
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx3-1"
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "Observation",
+      "id": "org1",
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://acme.org/lab/codes/organisms",
+            "code": "Staaur"
+          }
+        ],
+        "text": "Staphylococcus aureus Panel"
+      },
+      "subject": {
+        "reference": "Patient/example"
+      },
+      "related": [
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx1-4"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obx1-5"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obr-2"
+          }
+        },
+        {
+          "type": "has-member",
+          "target": {
+            "reference": "#obr-3"
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "ProcedureRequest",
+      "id": "req",
+      "identifier": [
+        {
+          "value": "255337816"
+        }
+      ],
+      "status": "active",
+      "intent": "original-order",
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "632-0"
+          }
+        ],
+        "text": "Culture, MRSA"
+      },
+      "subject": {
+        "reference": "Patient/example"
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "system": "http://hnam.org/identifiers/orders",
+      "value": "290741144"
+    }
+  ],
+  "basedOn": [
+    {
+      "reference": "#req"
+    }
+  ],
+  "status": "final",
+  "category": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/v2/0074",
+        "code": "MB"
+      }
+    ]
+  },
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "632-0"
+      }
+    ],
+    "text": "Culture, MRSA"
+  },
+  "subject": {
+    "reference": "Patient/example"
+  },
+  "issued": "2009-08-10T08:25:44+10:00",
+  "performer": [
+    {
+      "actor": {
+        "display": "Todd Ashby"
+      }
+    }
+  ],
+  "result": [
+    {
+      "reference": "#org1"
+    }
+  ]
+}

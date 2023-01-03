@@ -1,0 +1,282 @@
+{
+  "resourceType": "List",
+  "id": "CoveragePlanV3001",
+  "meta": {
+    "versionId": "1",
+    "lastUpdated": "2019-05-22T18:36:03.000+00:00",
+    "profile": [
+      "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-CoveragePlan"
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><h2>Sample Gold Health Plan</h2><table class=\"clstu\"><tr><td>Date: 2015-06-12Mode: snapshotStatus: current</td></tr><tr><td></td></tr></table><table class=\"grid\"><tr style=\"backgound-color: #eeeeee\"><td><b>Items</b></td></tr><tr><td><a href=\"MedicationKnowledge-FormularyDrugV3001.html\">Generated Summary: <span title=\"Codes: {http://www.nlm.nih.gov/research/umls/rxnorm 1049640}\">Percocet 5 MG / 325 MG Oral Tablet</span></a></td></tr></table></div>"
+  },
+  "extension": [
+    {
+      "extension": [
+        {
+          "url": "drugTierID",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-DrugTierCS",
+                "code": "generic",
+                "display": "Generic: Commonly prescribed generic drugs that cost more than drugs in the ‘preferred generic’ tier."
+              }
+            ]
+          }
+        },
+        {
+          "url": "mailOrder",
+          "valueBoolean": true
+        },
+        {
+          "extension": [
+            {
+              "url": "pharmacyType",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-PharmacyTypeCS",
+                    "code": "1-month-in-retail",
+                    "display": "1 month in network retail: 1 Month Supply via in-network retail pharmacy."
+                  }
+                ]
+              }
+            },
+            {
+              "url": "copayAmount",
+              "valueMoney": {
+                "value": 0
+              }
+            },
+            {
+              "url": "copayOption",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-CopayOptionCS",
+                    "code": "no-charge",
+                    "display": "No Charge: No cost sharing is charged (this indicates that this benefit is not subject to the deductible)."
+                  }
+                ]
+              }
+            },
+            {
+              "url": "coinsuranceRate",
+              "valueDecimal": 0
+            },
+            {
+              "url": "coinsuranceOption",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-CoinsuranceOptionCS",
+                    "code": "after-deductible",
+                    "display": "After Deductible: The consumer first pays the deductible, and after the deductible is met, the consumer pays the coinsurance portion of allowed charges (this indicates that this benefit is subject to the deductible)."
+                  }
+                ]
+              }
+            }
+          ],
+          "url": "costSharing"
+        },
+        {
+          "extension": [
+            {
+              "url": "pharmacyType",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-PharmacyTypeCS",
+                    "code": "1-month-out-retail",
+                    "display": "1 month out of network retail: 1 Month Supply via out-of-network retail pharmacy."
+                  }
+                ]
+              }
+            },
+            {
+              "url": "copayAmount",
+              "valueMoney": {
+                "value": 0
+              }
+            },
+            {
+              "url": "copayOption",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-CopayOptionCS",
+                    "code": "no-charge",
+                    "display": "No Charge: No cost sharing is charged (this indicates that this benefit is not subject to the deductible)."
+                  }
+                ]
+              }
+            },
+            {
+              "url": "coinsuranceRate",
+              "valueDecimal": 0
+            },
+            {
+              "url": "coinsuranceOption",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-CoinsuranceOptionCS",
+                    "code": "after-deductible",
+                    "display": "After Deductible: The consumer first pays the deductible, and after the deductible is met, the consumer pays the coinsurance portion of allowed charges (this indicates that this benefit is subject to the deductible)."
+                  }
+                ]
+              }
+            }
+          ],
+          "url": "costSharing"
+        },
+        {
+          "extension": [
+            {
+              "url": "pharmacyType",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-PharmacyTypeCS",
+                    "code": "3-month-in-retail",
+                    "display": "3 month in network retail: 3 Month Supply via in-network retail pharmacy."
+                  }
+                ]
+              }
+            },
+            {
+              "url": "copayAmount",
+              "valueMoney": {
+                "value": 0
+              }
+            },
+            {
+              "url": "copayOption",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-CopayOptionCS",
+                    "code": "no-charge",
+                    "display": "No Charge: No cost sharing is charged (this indicates that this benefit is not subject to the deductible)."
+                  }
+                ]
+              }
+            },
+            {
+              "url": "coinsuranceRate",
+              "valueDecimal": 0
+            },
+            {
+              "url": "coinsuranceOption",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-CoinsuranceOptionCS",
+                    "code": "after-deductible",
+                    "display": "After Deductible: The consumer first pays the deductible, and after the deductible is met, the consumer pays the coinsurance portion of allowed charges (this indicates that this benefit is subject to the deductible)."
+                  }
+                ]
+              }
+            }
+          ],
+          "url": "costSharing"
+        },
+        {
+          "extension": [
+            {
+              "url": "pharmacyType",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-PharmacyTypeCS",
+                    "code": "3-month-out-retail",
+                    "display": "3 month out of network retail: 3 Month Supply via out-of-network retail pharmacy."
+                  }
+                ]
+              }
+            },
+            {
+              "url": "copayAmount",
+              "valueMoney": {
+                "value": 0
+              }
+            },
+            {
+              "url": "copayOption",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-CopayOptionCS",
+                    "code": "no-charge",
+                    "display": "No Charge: No cost sharing is charged (this indicates that this benefit is not subject to the deductible)."
+                  }
+                ]
+              }
+            },
+            {
+              "url": "coinsuranceRate",
+              "valueDecimal": 0
+            },
+            {
+              "url": "coinsuranceOption",
+              "valueCodeableConcept": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/us/davinci-drug-formulary/CodeSystem/usdf-CoinsuranceOptionCS",
+                    "code": "after-deductible",
+                    "display": "After Deductible: The consumer first pays the deductible, and after the deductible is met, the consumer pays the coinsurance portion of allowed charges (this indicates that this benefit is subject to the deductible)."
+                  }
+                ]
+              }
+            }
+          ],
+          "url": "costSharing"
+        }
+      ],
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-DrugTierDefinition-extension"
+    },
+    {
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-MarketingURL-extension",
+      "valueString": "https://content.carefirst.com/sbc/D,$0/ D,$0/ D,$0/ D,$0/ D,$0B+"
+    },
+    {
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-FormularyURL-extension",
+      "valueString": "http://url/to/formulary/information"
+    },
+    {
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-SummaryURL-extension",
+      "valueString": "http://url/to/health/plan/information"
+    },
+    {
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-EmailPlanContact-extension",
+      "valueString": "Patrick.Breen@carefirst.com"
+    },
+    {
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-Network-extension",
+      "valueString": "PREFERRED"
+    },
+    {
+      "url": "http://hl7.org/fhir/us/davinci-drug-formulary/StructureDefinition/usdf-PlanIDType-extension",
+      "valueString": "HIOS-PLAN-ID"
+    }
+  ],
+  "identifier": [
+    {
+      "value": "test"
+    }
+  ],
+  "status": "current",
+  "mode": "snapshot",
+  "title": "Sample Gold Health Plan",
+  "date": "2015-06-12",
+  "entry": [
+    {
+      "item": {
+        "reference": "MedicationKnowledge/FormularyDrugV3001"
+      }
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
+import {fhirModelFactory} from '../../../lib/models/factory';
 
 @Component({
   selector: 'app-resource-detail',
@@ -22,6 +23,15 @@ export class ResourceDetailComponent implements OnInit {
       this.resource = resourceFhir;
       this.sourceId = this.route.snapshot.paramMap.get('source_id')
       this.sourceName = "unknown" //TODO popualte this
+
+      try{
+        let parsed = fhirModelFactory(resourceFhir["source_resource_type"], resourceFhir["resource_raw"])
+        console.log("Successfully parsed model", parsed)
+      } catch (e) {
+        console.log("FAILED TO PARSE", resourceFhir)
+        console.error(e)
+      }
+
     });
   }
 

@@ -1,0 +1,84 @@
+{
+  "resourceType": "ClaimResponse",
+  "id": "R3501",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">A human-readable rendering of the ClaimResponse that demonstrates returning errors</div>"
+  },
+  "identifier": [
+    {
+      "system": "http://www.BenefitsInc.com/fhir/remittance",
+      "value": "R3501"
+    }
+  ],
+  "status": "active",
+  "type": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+        "code": "oral"
+      }
+    ]
+  },
+  "use": "claim",
+  "patient": {
+    "reference": "Patient/1"
+  },
+  "created": "2014-08-16",
+  "insurer": {
+    "identifier": {
+      "system": "http://www.jurisdiction.org/insurers",
+      "value": "555123"
+    }
+  },
+  "requestor": {
+    "reference": "Practitioner/1"
+  },
+  "request": {
+    "reference": "Claim/100156"
+  },
+  "outcome": "error",
+  "disposition": "Claim could not be processed",
+  "formCode": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/forms-codes",
+        "code": "2"
+      }
+    ]
+  },
+  "processNote": [
+    {
+      "number": 1,
+      "type": "display",
+      "text": "Invalid claim",
+      "language": {
+        "coding": [
+          {
+            "system": "urn:ietf:bcp:47",
+            "code": "en-CA"
+          }
+        ]
+      }
+    }
+  ],
+  "communicationRequest": [
+    {
+      "reference": "CommunicationRequest/fm-solicit"
+    }
+  ],
+  "error": [
+    {
+      "itemSequence": 3,
+      "detailSequence": 2,
+      "code": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/adjudication-error",
+            "code": "a002"
+          }
+        ]
+      }
+    }
+  ]
+}

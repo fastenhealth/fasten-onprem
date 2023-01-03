@@ -1,0 +1,86 @@
+{
+  "resourceType": "Questionnaire",
+  "id": "f201",
+  "text": {
+    "status": "generated",
+    "div": "<div>\n<pre>Lifelines Questionnaire 1 part 1\n  1. Do you have allergies?\n  2. General Questions:\n    2.a) What is your gender?\n    2.b) What is your date of birth?\n    2.c) What is your country of birth?\n    2.d) What is your marital status?\n    3. Intoxications:\n      3.a) Do you smoke?\n      3.b) Do you drink alcohol?</pre>\n    </div>"
+  },
+  "status": "published",
+  "date": "2010",
+  "subjectType": [
+    "Patient"
+  ],
+  "group": {
+    "linkId": "root",
+    "concept": [
+      {
+        "system": "http://example.org/system/code/lifelines/nl",
+        "code": "VL 1-1, 18-65_1.2.2",
+        "display": "Lifelines Questionnaire 1 part 1"
+      }
+    ],
+    "required": true,
+    "group": [
+      {
+        "linkId": "1",
+        "question": [
+          {
+            "linkId": "1.1",
+            "_linkId": {
+              "fhir_comments": [
+                " Separate answer "
+              ]
+            },
+            "text": "Do you have allergies?"
+          }
+        ]
+      },
+      {
+        "linkId": "2",
+        "_linkId": {
+          "fhir_comments": [
+            " Answers to general questions "
+          ]
+        },
+        "text": "General questions",
+        "question": [
+          {
+            "linkId": "2.1",
+            "text": "What is your gender?"
+          },
+          {
+            "linkId": "2.2",
+            "text": "What is your date of birth?"
+          },
+          {
+            "linkId": "2.3",
+            "text": "What is your country of birth?"
+          },
+          {
+            "linkId": "2.4",
+            "text": "What is your marital status?"
+          }
+        ]
+      },
+      {
+        "linkId": "3",
+        "title": "Intoxications",
+        "_title": {
+          "fhir_comments": [
+            " Answers to intoxications "
+          ]
+        },
+        "question": [
+          {
+            "linkId": "3.1",
+            "text": "Do you smoke?"
+          },
+          {
+            "linkId": "3.2",
+            "text": "Do you drink alchohol?"
+          }
+        ]
+      }
+    ]
+  }
+}

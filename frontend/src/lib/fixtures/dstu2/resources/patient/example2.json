@@ -1,0 +1,132 @@
+{
+  "birthDate": "1985-08-01",
+  "identifier": [
+    {
+      "value": "E3827",
+      "use": "usual",
+      "system": "urn:oid:1.2.840.114350.1.13.327.1.7.5.737384.0"
+    },
+    {
+      "value": "203580",
+      "use": "usual",
+      "system": "urn:oid:1.2.3.4"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-17T07:13:48.589Z",
+    "versionId": "9000000000000"
+  },
+  "address": [
+    {
+      "country": "DK",
+      "state": "CHIS",
+      "city": "København",
+      "use": "home",
+      "line": [
+        "Vandtårnsvej 83A",
+        "2860 Søborg"
+      ],
+      "postalCode": "12345"
+    }
+  ],
+  "deceasedBoolean": false,
+  "name": [
+    {
+      "given": [
+        "Jessica"
+      ],
+      "text": "Jessica Argonaut",
+      "family": [
+        "Argonaut"
+      ],
+      "use": "usual"
+    }
+  ],
+  "gender": "female",
+  "active": true,
+  "careProvider": [
+    {
+      "reference": "Practitioner/ff567a66d87e69bfddf2c781",
+      "display": "Physician Family Medicine"
+    }
+  ],
+  "maritalStatus": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/ValueSet/marital-status",
+        "code": "S",
+        "display": "Never Married"
+      }
+    ],
+    "text": "Single"
+  },
+  "resourceType": "Patient",
+  "extension": [
+    {
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "2.16.840.1.113883.5.104",
+            "code": "2131-1",
+            "display": "Other Race"
+          }
+        ],
+        "text": "Other Race"
+      },
+      "url": "https://api.1up.health/fhir/dstu2/StructureDefinition/ff567a66d87e7e88733170be21e580b4f3f34758b3a9b7c9"
+    },
+    {
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "2.16.840.1.113883.5.50",
+            "code": "2135-2",
+            "display": "Hispanic or Latino"
+          }
+        ],
+        "text": "Hispanic or Latino"
+      },
+      "url": "https://api.1up.health/fhir/dstu2/StructureDefinition/ff567a66d87e0f1ba6c4fdd56b71507cf2602eb6e5f5d24c"
+    },
+    {
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/v3/AdministrativeGender",
+            "code": "F",
+            "display": "Female"
+          }
+        ],
+        "text": "Female"
+      },
+      "url": "https://api.1up.health/fhir/dstu2/StructureDefinition/ff567a66d87e8cf8a74385b1f7123bbd9870c03276722ccb"
+    }
+  ],
+  "telecom": [
+    {
+      "value": "608-271-9000",
+      "use": "home",
+      "system": "phone"
+    },
+    {
+      "value": "open@epic.com",
+      "system": "email"
+    }
+  ],
+  "id": "d47f763e7c7f",
+  "communication": [
+    {
+      "preferred": true,
+      "language": {
+        "coding": [
+          {
+            "system": "urn:oid:2.16.840.1.113883.6.99",
+            "code": "da",
+            "display": "Danish"
+          }
+        ],
+        "text": "Danish"
+      }
+    }
+  ]
+}

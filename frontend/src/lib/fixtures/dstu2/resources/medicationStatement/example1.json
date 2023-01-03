@@ -1,0 +1,83 @@
+{
+  "informationSource": {
+    "reference": "Practitioner/d47f763e7c7f272a7681dee5",
+    "display": "Physician Endocrinology, MD"
+  },
+  "dosage": [
+    {
+      "quantityQuantity": {
+        "value": 1,
+        "unit": "capsule"
+      },
+      "asNeededBoolean": false,
+      "text": "Take 1 capsule (30 mg total) by mouth every morning for 10 days. Max Daily Amount: 30 mg",
+      "route": {
+        "coding": [
+          {
+            "system": "urn:oid:1.2.840.114350.1.13.0.1.7.4.698288.330",
+            "code": "15",
+            "display": "Oral"
+          }
+        ],
+        "text": "Oral"
+      },
+      "method": {
+        "coding": [
+          {
+            "system": "urn:oid:1.2.840.114350.1.13.0.1.7.4.798268.8600",
+            "code": "11",
+            "display": "Take"
+          }
+        ],
+        "text": "Take"
+      },
+      "timing": {
+        "repeat": {
+          "periodUnits": "d",
+          "period": 1,
+          "boundsPeriod": {
+            "start": "2016-04-19T00:00:00Z",
+            "end": "2016-04-29T00:00:00Z"
+          },
+          "frequency": 1
+        }
+      }
+    }
+  ],
+  "medicationCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "861232",
+        "display": "amphetamine-dextroamphetamine XR (ADDERALL XR) 30 MG 24 hr capsule"
+      }
+    ],
+    "text": "amphetamine-dextroamphetamine XR (ADDERALL XR) 30 MG 24 hr capsule"
+  },
+  "identifier": [
+    {
+      "value": "975877",
+      "use": "usual",
+      "system": "urn:oid:1.2.840.114350.1.13.0.1.7.2.798268"
+    },
+    {
+      "value": "975877:4000892929",
+      "use": "usual",
+      "system": "urn:oid:1.2.840.114350.1.13.0.1.7.3.798268.801"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-17T07:13:49.721Z",
+    "versionId": "9000000000000"
+  },
+  "status": "active",
+  "patient": {
+    "reference": "Patient/d47f763e7c7f"
+  },
+  "resourceType": "MedicationStatement",
+  "effectivePeriod": {
+    "start": "2016-04-19T00:00:00Z",
+    "end": "2016-04-29T00:00:00Z"
+  },
+  "id": "d47f763e7c7f5f21743d7a5bda75101c0642be174ee7c492"
+}

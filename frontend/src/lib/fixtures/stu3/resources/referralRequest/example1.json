@@ -1,0 +1,94 @@
+{
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Referral to Dr Dave for Beverly weaver to have grommets inserted in her r) ear</div>"
+  },
+  "reasonCode": [
+    {
+      "text": "For consideration of Grommets"
+    }
+  ],
+  "id": "example",
+  "subject": {
+    "display": "Beverly Weaver",
+    "reference": "https://fhir.orionhealth.com/blaze/fhir/Patient/77662"
+  },
+  "basedOn": [
+    {
+      "display": "ProcedureRequest for Myringotomy and insertion of tympanic ventilation tube"
+    }
+  ],
+  "serviceRequested": [
+    {
+      "text": "Insertion of grommets",
+      "coding": [
+        {
+          "code": "172676009",
+          "system": "http://snomed.info/sct",
+          "display": "Myringotomy and insertion of tympanic ventilation tube"
+        }
+      ]
+    }
+  ],
+  "priority": "routine",
+  "occurrencePeriod": {
+    "end": "2014-03-14"
+  },
+  "type": {
+    "coding": [
+      {
+        "code": "103696004",
+        "system": "http://snomed.info/sct",
+        "display": "Patient referral to specialist"
+      }
+    ]
+  },
+  "status": "active",
+  "description": "In the past 2 years Beverly has had 6 instances of r) sided Otitis media. She is     falling behind her peers at school, and displaying some learning difficulties.",
+  "groupIdentifier": {
+    "value": "1234"
+  },
+  "specialty": {
+    "coding": [
+      {
+        "code": "ent",
+        "system": "http://orionhealth.com/fhir/apps/specialties",
+        "display": "ENT"
+      }
+    ]
+  },
+  "authoredOn": "2014-02-14",
+  "intent": "order",
+  "requester": {
+    "agent": {
+      "display": "Serena Shrink",
+      "reference": "https://fhir.orionhealth.com/blaze/fhir/Practitioner/77272"
+    }
+  },
+  "recipient": [
+    {
+      "display": "Dr Dave",
+      "reference": "https://fhir.orionhealth.com/blaze/fhir/Practitioner/76597"
+    }
+  ],
+  "definition": [
+    {
+      "display": "Protocol for insertion of tympanic ventilation tube"
+    }
+  ],
+  "replaces": [
+    {
+      "display": "prior ReferralRequest"
+    }
+  ],
+  "resourceType": "ReferralRequest",
+  "context": {
+    "display": "Beverly Waver's encounter on 2014-02-14"
+  },
+  "identifier": [
+    {
+      "system": "http://orionhealth.com/fhir/apps/referralids",
+      "value": "ret4421"
+    }
+  ]
+}

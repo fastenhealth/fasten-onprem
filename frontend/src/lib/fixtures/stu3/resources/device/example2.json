@@ -1,0 +1,64 @@
+{
+  "resourceType": "Device",
+  "id": "example-udi1",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: example-udi1</p><p><b>identifier</b>: 1234-5678-90AB-CDEF, Serial Number = 10987654d321</p><h3>Udis</h3><table><tr><td>-</td><td><b>DeviceIdentifier</b></td><td><b>Name</b></td><td><b>Jurisdiction</b></td><td><b>CarrierHRF</b></td><td><b>CarrierAIDC</b></td><td><b>Issuer</b></td><td><b>EntryType</b></td></tr><tr><td>*</td><td>00844588003288</td><td>FHIR® Hip System</td><td><a>http://hl7.org/fhir/NamingSystem/fda-udi</a></td><td>{01}00844588003288{17}141120{10}7654321D{21}10987654d321</td><td>XWQyMDExMDg1NzY3NDAwMjAxNzE3MTQxMTIwMTBOWUZVTDAx4oaUMjExOTI4MzfihpQ3MTNBMUIyQzNENEU1RjZH</td><td><a>http://hl7.org/fhir/NamingSystem/gs1</a></td><td>barcode</td></tr></table><p><b>status</b>: active</p><p><b>type</b>: Coated femoral stem prosthesis, modular <span>(Details : {SNOMED CT code '468063009' = 'Coated femoral stem prosthesis, modular', given as 'Coated femoral stem prosthesis, modular'})</span></p><p><b>lotNumber</b>: 7654321D</p><p><b>manufacturer</b>: Acme Devices, Inc</p><p><b>expirationDate</b>: 20/11/2014</p><p><b>model</b>: PM/Octane 2014</p><p><b>patient</b>: <a>Patient/example</a></p><p><b>safety</b>: MR Unsafe <span>(Details : {urn:oid:2.16.840.1.113883.3.26.1.1 code 'mr-unsafe' = 'mr-unsafe', given as 'MR Unsafe'})</span></p></div>"
+  },
+  "identifier": [
+    {
+      "system": "http://acme.com/devices/pacemakers/octane/serial",
+      "value": "1234-5678-90AB-CDEF"
+    },
+    {
+      "type": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/identifier-type",
+            "code": "SNO"
+          }
+        ]
+      },
+      "value": "10987654d321"
+    }
+  ],
+  "udi": {
+    "deviceIdentifier": "00844588003288",
+    "name": "FHIR® Hip System",
+    "jurisdiction": "http://hl7.org/fhir/NamingSystem/fda-udi",
+    "carrierHRF": "{01}00844588003288{17}141120{10}7654321D{21}10987654d321",
+    "carrierAIDC": "XWQyMDExMDg1NzY3NDAwMjAxNzE3MTQxMTIwMTBOWUZVTDAx4oaUMjExOTI4MzfihpQ3MTNBMUIyQzNENEU1RjZH",
+    "issuer": "http://hl7.org/fhir/NamingSystem/gs1",
+    "entryType": "barcode"
+  },
+  "status": "active",
+  "type": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "468063009",
+        "display": "Coated femoral stem prosthesis, modular"
+      }
+    ],
+    "text": "Coated femoral stem prosthesis, modular"
+  },
+  "lotNumber": "7654321D",
+  "manufacturer": "Acme Devices, Inc",
+  "expirationDate": "2014-11-20",
+  "model": "PM/Octane 2014",
+  "patient": {
+    "reference": "Patient/example"
+  },
+  "safety": [
+    {
+      "coding": [
+        {
+          "system": "urn:oid:2.16.840.1.113883.3.26.1.1",
+          "code": "mr-unsafe",
+          "display": "MR Unsafe"
+        }
+      ],
+      "text": "MR Unsafe"
+    }
+  ]
+}

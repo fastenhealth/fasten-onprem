@@ -1,0 +1,196 @@
+{
+  "resourceType": "Claim",
+  "id": "960151",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">A human-readable rendering of the Claim</div>"
+  },
+  "identifier": [
+    {
+      "system": "http://happyhospital.com/claim",
+      "value": "96123451"
+    }
+  ],
+  "status": "active",
+  "type": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/ex-claimtype",
+        "code": "institutional"
+      }
+    ]
+  },
+  "use": "complete",
+  "patient": {
+    "reference": "Patient/1"
+  },
+  "billablePeriod": {
+    "start": "2014-08-15",
+    "end": "2014-08-16"
+  },
+  "created": "2014-08-16",
+  "enterer": {
+    "identifier": {
+      "system": "http://jurisdiction.org/facilities/HOSP1234/users",
+      "value": "UC1234"
+    }
+  },
+  "insurer": {
+    "reference": "Organization/2"
+  },
+  "provider": {
+    "identifier": {
+      "system": "http://npid.org/providerid",
+      "value": "NJ12345"
+    }
+  },
+  "organization": {
+    "reference": "Organization/1"
+  },
+  "priority": {
+    "coding": [
+      {
+        "code": "normal"
+      }
+    ]
+  },
+  "payee": {
+    "type": {
+      "coding": [
+        {
+          "code": "provider"
+        }
+      ]
+    }
+  },
+  "facility": {
+    "identifier": {
+      "system": "http://jurisdiction.org/facilities",
+      "value": "HOSP1234"
+    }
+  },
+  "careTeam": [
+    {
+      "sequence": 1,
+      "provider": {
+        "reference": "Practitioner/example"
+      },
+      "responsible": true,
+      "role": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/claim-careteamrole",
+            "code": "primary"
+          }
+        ]
+      },
+      "qualification": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/provider-qualification",
+            "code": "physician"
+          }
+        ]
+      }
+    }
+  ],
+  "diagnosis": [
+    {
+      "sequence": 1,
+      "diagnosisCodeableConcept": {
+        "coding": [
+          {
+            "code": "654456"
+          }
+        ]
+      },
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/ex-diagnosistype",
+              "code": "admitting"
+            }
+          ]
+        }
+      ],
+      "packageCode": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/ex-diagnosisrelatedgroup",
+            "code": "400",
+            "display": "Head trauma - concussion"
+          }
+        ]
+      }
+    }
+  ],
+  "insurance": [
+    {
+      "sequence": 1,
+      "focal": true,
+      "coverage": {
+        "reference": "Coverage/9876B1"
+      },
+      "businessArrangement": "BA987123",
+      "preAuthRef": [
+        "PA2014G56473"
+      ]
+    }
+  ],
+  "accident": {
+    "date": "2014-07-09",
+    "type": {
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/v3/ActIncidentCode",
+          "code": "SPT",
+          "display": "Sporting Accident"
+        }
+      ]
+    },
+    "locationAddress": {
+      "text": "Grouse Mountain Ski Hill"
+    }
+  },
+  "employmentImpacted": {
+    "start": "2014-08-16",
+    "end": "2014-08-16"
+  },
+  "hospitalization": {
+    "start": "2014-08-15",
+    "end": "2014-08-16"
+  },
+  "item": [
+    {
+      "sequence": 1,
+      "careTeamLinkId": [
+        1
+      ],
+      "service": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/ex-serviceproduct",
+            "code": "exam"
+          }
+        ]
+      },
+      "servicedDate": "2014-08-16",
+      "unitPrice": {
+        "value": 125.00,
+        "system": "urn:iso:std:iso:4217",
+        "code": "USD"
+      },
+      "net": {
+        "value": 125.00,
+        "system": "urn:iso:std:iso:4217",
+        "code": "USD"
+      }
+    }
+  ],
+  "total": {
+    "value": 125.00,
+    "system": "urn:iso:std:iso:4217",
+    "code": "USD"
+  }
+}

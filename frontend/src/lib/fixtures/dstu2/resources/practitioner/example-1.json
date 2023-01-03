@@ -1,0 +1,42 @@
+{
+  "identifier": [
+    {
+      "value": "1000",
+      "use": "usual",
+      "system": "PROVID"
+    },
+    {
+      "value": "207Q00000X",
+      "use": "usual",
+      "system": "urn:oid:1.2.840.114350.1.13.0.1.7.5.737384.7"
+    },
+    {
+      "value": "1100099997",
+      "use": "usual",
+      "system": "urn:oid:1.2.840.114350.1.13.0.1.7.5.737384.60"
+    },
+    {
+      "value": "6011",
+      "use": "usual",
+      "system": "urn:oid:1.2.840.114350.1.13.0.1.7.5.737384.63"
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2019-12-02T08:52:22.501Z",
+    "versionId": "9000000000000"
+  },
+  "name": {
+    "given": [
+      "Physician"
+    ],
+    "text": "Physician Family Medicine",
+    "family": [
+      "Family Medicine"
+    ],
+    "use": "usual"
+  },
+  "gender": "male",
+  "active": true,
+  "resourceType": "Practitioner",
+  "id": "31903d3bb791"
+}

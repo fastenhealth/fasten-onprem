@@ -1,0 +1,133 @@
+{
+  "resourceType": "MedicationAdministration",
+  "id": "medadmin0301",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: medadmin0301</p><p><b>contained</b>: , </p><p><b>status</b>: in-progress</p><p><b>medication</b>: id: med0301; Vancomycin Hydrochloride (VANCOMYCIN HYDROCHLORIDE) <span>(Details : {http://hl7.org/fhir/sid/ndc code '0069-2587-10' = '0069-2587-10', given as 'Vancomycin Hydrochloride (VANCOMYCIN HYDROCHLORIDE)'})</span></p><p><b>subject</b>: <a>Donald Duck</a></p><p><b>context</b>: <a>encounter who leads to this prescription</a></p><p><b>effective</b>: 15/01/2015 2:30:00 PM --&gt; (ongoing)</p><h3>Performers</h3><table><tr><td>-</td><td><b>Actor</b></td></tr><tr><td>*</td><td><a>Patrick Pump</a></td></tr></table><p><b>reasonCode</b>: Given as Ordered <span>(Details : {http://hl7.org/fhir/reason-medication-given code 'b' = 'Given as Ordered', given as 'Given as Ordered'})</span></p><p><b>prescription</b>: <a>MedicationRequest/medrx0318</a></p><h3>Dosages</h3><table><tr><td>-</td><td><b>Text</b></td><td><b>Route</b></td><td><b>Method</b></td><td><b>Dose</b></td></tr><tr><td>*</td><td>500mg IV q6h x 3 days</td><td>Intravenous route (qualifier value) <span>(Details : {SNOMED CT code '47625008' = 'Intravenous route', given as 'Intravenous route (qualifier value)'})</span></td><td>IV Push <span>(Details )</span></td><td>500 mg<span> (Details: UCUM code mg = 'mg')</span></td></tr></table><p><b>eventHistory</b>: Author's Signature. Generated Summary: id: signature; recorded: 01/02/2017 5:23:07 PM; </p></div>"
+  },
+  "contained": [
+    {
+      "resourceType": "Medication",
+      "id": "med0301",
+      "code": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/ndc",
+            "code": "0069-2587-10",
+            "display": "Vancomycin Hydrochloride (VANCOMYCIN HYDROCHLORIDE)"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Provenance",
+      "id": "signature",
+      "target": [
+        {
+          "reference": "ProcedureRequest/physiotherapy"
+        }
+      ],
+      "recorded": "2017-02-01T17:23:07Z",
+      "agent": [
+        {
+          "role": [
+            {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/v3/ParticipationType",
+                  "code": "AUT"
+                }
+              ]
+            }
+          ],
+          "whoReference": {
+            "reference": "Practitioner/example",
+            "display": "Dr Adam Careful"
+          }
+        }
+      ],
+      "signature": [
+        {
+          "type": [
+            {
+              "system": "urn:iso-astm:E1762-95:2013",
+              "code": "1.2.840.10065.1.12.1.1",
+              "display": "Author's Signature"
+            }
+          ],
+          "when": "2017-02-01T17:23:07Z",
+          "whoReference": {
+            "reference": "Practitioner/example",
+            "display": "Dr Adam Careful"
+          },
+          "contentType": "application/signature+xml",
+          "blob": "dGhpcyBibG9iIGlzIHNuaXBwZWQ="
+        }
+      ]
+    }
+  ],
+  "status": "in-progress",
+  "medicationReference": {
+    "reference": "#med0301"
+  },
+  "subject": {
+    "reference": "Patient/pat1",
+    "display": "Donald Duck"
+  },
+  "context": {
+    "reference": "Encounter/f001",
+    "display": "encounter who leads to this prescription"
+  },
+  "effectivePeriod": {
+    "start": "2015-01-15T14:30:00+01:00"
+  },
+  "performer": [
+    {
+      "actor": {
+        "reference": "Practitioner/f007",
+        "display": "Patrick Pump"
+      }
+    }
+  ],
+  "reasonCode": [
+    {
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/reason-medication-given",
+          "code": "b",
+          "display": "Given as Ordered"
+        }
+      ]
+    }
+  ],
+  "prescription": {
+    "reference": "MedicationRequest/medrx0318"
+  },
+  "dosage": {
+    "text": "500mg IV q6h x 3 days",
+    "route": {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "47625008",
+          "display": "Intravenous route (qualifier value)"
+        }
+      ]
+    },
+    "method": {
+      "text": "IV Push"
+    },
+    "dose": {
+      "value": 500,
+      "unit": "mg",
+      "system": "http://unitsofmeasure.org",
+      "code": "mg"
+    }
+  },
+  "eventHistory": [
+    {
+      "reference": "#signature",
+      "display": "Author's Signature"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "subject": {
+    "reference": "Patient/dc793caf0d58"
+  },
+  "clinicalStatus": "active",
+  "meta": {
+    "lastUpdated": "2019-12-04T15:36:48.015Z",
+    "versionId": "9000000000000"
+  },
+  "code": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "2449",
+        "display": "HYPOTHYROIDISM NOS"
+      }
+    ]
+  },
+  "resourceType": "Condition",
+  "category": [
+    {
+      "coding": [
+        {
+          "system": "https://bluebutton.cms.gov/resources/codesystem/diagnosis-type",
+          "code": "principal",
+          "display": "The single medical diagnosis that is most relevant to the patient's chief complaint or need for treatment."
+        }
+      ]
+    }
+  ],
+  "verificationStatus": "confirmed",
+  "id": "dc793caf0d58013364d147279d94fd802cc3b1a63e57dd33"
+}

@@ -1,0 +1,508 @@
+{
+  "resourceType": "Claim",
+  "id": "660152",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">A human-readable rendering of the Vision Claim for Glasses</div>"
+  },
+  "contained": [
+    {
+      "resourceType": "ClaimResponse",
+      "id": "claimresponse-1",
+      "identifier": [
+        {
+          "system": "http://thebenefircompany.com/claimresponse",
+          "value": "CR6532875367"
+        }
+      ]
+    },
+    {
+      "resourceType": "Device",
+      "id": "device-frame"
+    },
+    {
+      "resourceType": "Device",
+      "id": "device-lens"
+    }
+  ],
+  "identifier": [
+    {
+      "system": "http://happysight.com/claim",
+      "value": "6612347"
+    }
+  ],
+  "status": "active",
+  "type": {
+    "coding": [
+      {
+        "system": "http://hl7.org/fhir/ex-claimtype",
+        "code": "vision"
+      }
+    ]
+  },
+  "use": "complete",
+  "patient": {
+    "reference": "Patient/1"
+  },
+  "created": "2014-08-16",
+  "insurer": {
+    "reference": "Organization/2"
+  },
+  "organization": {
+    "reference": "Organization/1"
+  },
+  "priority": {
+    "coding": [
+      {
+        "code": "normal"
+      }
+    ]
+  },
+  "prescription": {
+    "reference": "http://www.optdocs.com/prescription/12345"
+  },
+  "payee": {
+    "type": {
+      "coding": [
+        {
+          "code": "provider"
+        }
+      ]
+    }
+  },
+  "careTeam": [
+    {
+      "sequence": 1,
+      "provider": {
+        "reference": "Practitioner/example"
+      }
+    }
+  ],
+  "diagnosis": [
+    {
+      "sequence": 1,
+      "diagnosisCodeableConcept": {
+        "coding": [
+          {
+            "code": "654321"
+          }
+        ]
+      }
+    }
+  ],
+  "insurance": [
+    {
+      "sequence": 1,
+      "focal": false,
+      "coverage": {
+        "reference": "Coverage/9876B1"
+      },
+      "preAuthRef": [
+        "PR7652387237"
+      ],
+      "claimResponse": {
+        "reference": "#claimresponse-1"
+      }
+    },
+    {
+      "sequence": 2,
+      "focal": true,
+      "coverage": {
+        "reference": "Coverage/9876B1"
+      },
+      "preAuthRef": [
+        "AB543GTD7567"
+      ]
+    }
+  ],
+  "item": [
+    {
+      "sequence": 1,
+      "careTeamLinkId": [
+        1
+      ],
+      "revenue": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/ex-revenue-center",
+            "code": "0010",
+            "display": "Vision Clinic"
+          }
+        ]
+      },
+      "category": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/benefit-subcategory",
+            "code": "F6",
+            "display": "Vision Coverage"
+          }
+        ]
+      },
+      "service": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/ex-visionservice",
+            "code": "glasses"
+          }
+        ]
+      },
+      "modifier": [
+        {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/modifiers",
+              "code": "rooh"
+            }
+          ]
+        }
+      ],
+      "programCode": [
+        {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/ex-programcode",
+              "code": "none"
+            }
+          ]
+        }
+      ],
+      "servicedDate": "2014-08-16",
+      "unitPrice": {
+        "value": 235.40,
+        "system": "urn:iso:std:iso:4217",
+        "code": "USD"
+      },
+      "net": {
+        "value": 235.40,
+        "system": "urn:iso:std:iso:4217",
+        "code": "USD"
+      },
+      "detail": [
+        {
+          "sequence": 1,
+          "revenue": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/ex-revenue-center",
+                "code": "0010",
+                "display": "Vision Clinic"
+              }
+            ]
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/benefit-subcategory",
+                "code": "F6",
+                "display": "Vision Coverage"
+              }
+            ]
+          },
+          "service": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/ex-visionservice",
+                "code": "frame"
+              }
+            ]
+          },
+          "modifier": [
+            {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/modifiers",
+                  "code": "rooh"
+                }
+              ]
+            }
+          ],
+          "unitPrice": {
+            "value": 100.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          },
+          "factor": 1.1,
+          "net": {
+            "value": 110.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          },
+          "udi": [
+            {
+              "reference": "#device-frame"
+            }
+          ]
+        },
+        {
+          "sequence": 2,
+          "revenue": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/ex-revenue-center",
+                "code": "0010",
+                "display": "Vision Clinic"
+              }
+            ]
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/benefit-subcategory",
+                "code": "F6",
+                "display": "Vision Coverage"
+              }
+            ]
+          },
+          "service": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/ex-visionservice",
+                "code": "lens"
+              }
+            ]
+          },
+          "programCode": [
+            {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/ex-programcode",
+                  "code": "none"
+                }
+              ]
+            }
+          ],
+          "quantity": {
+            "value": 2
+          },
+          "unitPrice": {
+            "value": 55.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          },
+          "net": {
+            "value": 110.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          },
+          "subDetail": [
+            {
+              "sequence": 1,
+              "revenue": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/ex-revenue-center",
+                    "code": "0010",
+                    "display": "Vision Clinic"
+                  }
+                ]
+              },
+              "category": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/benefit-subcategory",
+                    "code": "F6",
+                    "display": "Vision Coverage"
+                  }
+                ]
+              },
+              "service": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/ex-visionservice",
+                    "code": "lens"
+                  }
+                ]
+              },
+              "modifier": [
+                {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/modifiers",
+                      "code": "rooh"
+                    }
+                  ]
+                }
+              ],
+              "programCode": [
+                {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/ex-programcode",
+                      "code": "none"
+                    }
+                  ]
+                }
+              ],
+              "quantity": {
+                "value": 2
+              },
+              "unitPrice": {
+                "value": 30.00,
+                "system": "urn:iso:std:iso:4217",
+                "code": "USD"
+              },
+              "factor": 1.1,
+              "net": {
+                "value": 66.00,
+                "system": "urn:iso:std:iso:4217",
+                "code": "USD"
+              },
+              "udi": [
+                {
+                  "reference": "#device-lens"
+                }
+              ]
+            },
+            {
+              "sequence": 2,
+              "revenue": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/ex-revenue-center",
+                    "code": "0010",
+                    "display": "Vision Clinic"
+                  }
+                ]
+              },
+              "category": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/benefit-subcategory",
+                    "code": "F6",
+                    "display": "Vision Coverage"
+                  }
+                ]
+              },
+              "service": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/ex-visionservice",
+                    "code": "hardening"
+                  }
+                ]
+              },
+              "modifier": [
+                {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/modifiers",
+                      "code": "rooh"
+                    }
+                  ]
+                }
+              ],
+              "quantity": {
+                "value": 2
+              },
+              "unitPrice": {
+                "value": 15.00,
+                "system": "urn:iso:std:iso:4217",
+                "code": "USD"
+              },
+              "factor": 1.1,
+              "net": {
+                "value": 33.00,
+                "system": "urn:iso:std:iso:4217",
+                "code": "USD"
+              }
+            },
+            {
+              "sequence": 3,
+              "revenue": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/ex-revenue-center",
+                    "code": "0010",
+                    "display": "Vision Clinic"
+                  }
+                ]
+              },
+              "category": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/benefit-subcategory",
+                    "code": "F6",
+                    "display": "Vision Coverage"
+                  }
+                ]
+              },
+              "service": {
+                "coding": [
+                  {
+                    "system": "http://hl7.org/fhir/ex-visionservice",
+                    "code": "UV coating"
+                  }
+                ]
+              },
+              "modifier": [
+                {
+                  "coding": [
+                    {
+                      "system": "http://hl7.org/fhir/modifiers",
+                      "code": "rooh"
+                    }
+                  ]
+                }
+              ],
+              "quantity": {
+                "value": 2
+              },
+              "unitPrice": {
+                "value": 5.00,
+                "system": "urn:iso:std:iso:4217",
+                "code": "USD"
+              },
+              "factor": 1.1,
+              "net": {
+                "value": 11.00,
+                "system": "urn:iso:std:iso:4217",
+                "code": "USD"
+              }
+            }
+          ]
+        },
+        {
+          "sequence": 3,
+          "revenue": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/ex-revenue-center",
+                "code": "0010",
+                "display": "Vision Clinic"
+              }
+            ]
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/benefit-subcategory",
+                "code": "F6",
+                "display": "Vision Coverage"
+              }
+            ]
+          },
+          "service": {
+            "coding": [
+              {
+                "system": "http://hl7.org/fhir/ex-visionservice",
+                "code": "fst"
+              }
+            ]
+          },
+          "unitPrice": {
+            "value": 220.00,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          },
+          "factor": 0.07,
+          "net": {
+            "value": 15.40,
+            "system": "urn:iso:std:iso:4217",
+            "code": "USD"
+          }
+        }
+      ]
+    }
+  ]
+}
