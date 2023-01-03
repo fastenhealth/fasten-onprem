@@ -85,12 +85,10 @@ export class MedicalSourcesComponent implements OnInit {
       const callbackSourceType = this.route.snapshot.paramMap.get('source_type')
       if(callbackSourceType){
         this.status[callbackSourceType] = "token"
-        console.log("Setting status to 'token' for:", callbackSourceType)
 
         //move this source from available to connected (with a progress bar)
         //remove item from available sources list, add to connected sources.
         let sourcesInProgress = this.availableSourceList.splice(this.availableSourceList.findIndex((item) => item.metadata.source_type == callbackSourceType), 1);
-        console.log("Moving sources:", sourcesInProgress)
 
         //the structure of "availableSourceList" vs "connectedSourceList" sources is slightly different,
         //connectedSourceList contains a "source" field. The this.fastenApi.createSource() call in the callback function will set it.
@@ -209,7 +207,10 @@ export class MedicalSourcesComponent implements OnInit {
             delete this.status[sourceType]
             // window.location.reload();
             // this.connectedSourceList.
-            //TODO: find the index of the "inprogress" source in the connected List, and then add this source to its source metadata.
+
+            //find the index of the "inprogress" source in the connected List, and then add this source to its source metadata.
+            let foundSource = this.connectedSourceList.findIndex((item) => item.metadata.source_type == sourceType)
+            this.connectedSourceList[foundSource].source = msg
 
             console.log("source sync-all response:", msg)
 
