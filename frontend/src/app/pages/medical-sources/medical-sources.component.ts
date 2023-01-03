@@ -202,7 +202,7 @@ export class MedicalSourcesComponent implements OnInit {
         })
 
         this.fastenApi.createSource(dbSourceCredential)
-          .subscribe((msg) => {
+          .subscribe((resp) => {
             // const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
             delete this.status[sourceType]
             // window.location.reload();
@@ -210,9 +210,9 @@ export class MedicalSourcesComponent implements OnInit {
 
             //find the index of the "inprogress" source in the connected List, and then add this source to its source metadata.
             let foundSource = this.connectedSourceList.findIndex((item) => item.metadata.source_type == sourceType)
-            this.connectedSourceList[foundSource].source = msg
+            this.connectedSourceList[foundSource].source = resp.source
 
-            console.log("source sync-all response:", msg)
+            console.log("source sync-all response:", resp.summary)
 
             const toastNotification = new ToastNotification()
             toastNotification.type = ToastType.Success

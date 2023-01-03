@@ -37,12 +37,13 @@ export class FastenApiService {
       );
   }
 
-  createSource(source: Source): Observable<Source> {
+  createSource(source: Source): Observable<any> {
     return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/source`, source)
       .pipe(
         map((response: ResponseWrapper) => {
           console.log("SOURCE RESPONSE", response)
-          return response.data as Source
+          // @ts-ignore
+          return {summary: response.data, source: response.source}
         })
       );
   }
