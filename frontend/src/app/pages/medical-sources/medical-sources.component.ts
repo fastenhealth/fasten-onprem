@@ -43,6 +43,7 @@ export class MedicalSourcesComponent implements OnInit {
 
   environment_name = environment.environment_name
   status: { [name: string]: string } = {}
+  loading: boolean = true
 
   metadataSources: {[name:string]: MetadataSource} = {}
 
@@ -57,7 +58,7 @@ export class MedicalSourcesComponent implements OnInit {
   ngOnInit(): void {
 
     forkJoin([this.lighthouseApi.getLighthouseSourceMetadataMap(), this.fastenApi.getSources()]).subscribe(results => {
-
+      this.loading = false
       //handle source metadata map response
       this.metadataSources = results[0] as {[name:string]: MetadataSource}
 
@@ -96,6 +97,8 @@ export class MedicalSourcesComponent implements OnInit {
 
         this.callback(callbackSourceType).then(console.log)
       }
+    }, err => {
+      this.loading = false
     })
   }
 
