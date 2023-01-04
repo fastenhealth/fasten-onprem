@@ -13,6 +13,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.12.0
+	github.com/stretchr/testify v1.8.1
 	github.com/urfave/cli/v2 v2.11.2
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17
@@ -22,6 +23,7 @@ require (
 
 require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fastenhealth/gofhir-models v0.0.4 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
@@ -48,6 +50,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/samber/lo v1.35.0 // indirect
