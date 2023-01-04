@@ -69,6 +69,19 @@
       <p class="mg-b-20">The following medical companies have API's which Fasten can use to retrieve your medical history.
         Please click the logos below to initiate the connection.</p>
 
+      <!-- Search -->
+      <div class="row row-sm sticky-top pt-2" style="position:sticky;">
+        <div class="col-lg-4">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="search-prefix">Search</span>
+            </div>
+            <input (keyup)="searchTermChanged($event)" type="text" class="form-control" placeholder="Search Term">
+          </div><!-- input-group -->
+        </div><!-- col -->
+      </div>
+
+
       <div *ngIf="!loading else isLoadingTemplate" class="row row-sm">
         <div *ngFor="let sourceData of availableSourceList" (click)="connectHandler($event, sourceData.metadata.source_type)" class="col-sm-3 mg-b-20 px-3">
           <div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': !sourceData.metadata.enabled}">

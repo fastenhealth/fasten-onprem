@@ -13,6 +13,7 @@ import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {environment} from '../../../environments/environment';
 import {forkJoin} from 'rxjs';
+import Fuse from 'fuse.js'
 // If you dont import this angular will import the wrong "Location"
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
@@ -21,7 +22,6 @@ export class SourceListItem {
   source?: Source
   metadata: MetadataSource
 }
-
 
 @Component({
   selector: 'app-medical-sources',
@@ -49,11 +49,14 @@ export class MedicalSourcesComponent implements OnInit {
 
   connectedSourceList: SourceListItem[] = [] //source's are populated for this list
   availableSourceList: SourceListItem[] = []
-
   uploadedFile: File[] = []
 
   closeResult = '';
   modalSelectedSourceListItem:SourceListItem = null;
+
+  searchIndex = null
+  searchTerm: string = ""
+
 
   ngOnInit(): void {
 
@@ -97,9 +100,54 @@ export class MedicalSourcesComponent implements OnInit {
 
         this.callback(callbackSourceType).then(console.log)
       }
+
+      //setup Search
+      const options = {
+        // isCaseSensitive: false,
+        // includeScore: false,
+        // shouldSort: true,
+        // includeMatches: false,
+        findAllMatches: true,
+        // minMatchCharLength: 1,
+        // location: 0,
+        // threshold: 0.6,
+        // distance: 100,
+        // useExtendedSearch: false,
+        // ignoreLocation: false,
+        // ignoreFieldNorm: false,
+        // fieldNormWeight: 1,
+        keys: [
+          "metadata.display",
+          "metadata.category",
+          "metadata.source_type"
+        ]
+      };
+
+      this.searchIndex = new Fuse(this.availableSourceList, options);
+
+
     }, err => {
       this.loading = false
     })
+  }
+
+  public searchTermChanged($event):void {
+    this.searchTerm = $event.target.value
+    console.log("search term changed:", )
+
+    let searchResults
+    if(this.searchTerm){
+      searchResults = this.searchIndex.search(this.searchTerm).map((result) => {
+        return result.item
+      })
+    }
+    else {
+      //emtpy search term, show all (original) values.
+      searchResults = this.searchIndex.getIndex().docs
+    }
+
+    this.availableSourceList = searchResults
+    console.log(this.availableSourceList)
   }
 
   /**
