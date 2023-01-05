@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {FastenApiService} from '../../services/fasten-api.service';
+import {forkJoin} from 'rxjs';
 
 @Component({
   selector: 'app-patient-profile',
@@ -8,6 +9,7 @@ import {FastenApiService} from '../../services/fasten-api.service';
   styleUrls: ['./patient-profile.component.scss']
 })
 export class PatientProfileComponent implements OnInit {
+  loading: boolean = false
 
   patient: ResourceFhir = null
   immunizations: ResourceFhir[] = []
@@ -17,19 +19,20 @@ export class PatientProfileComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.fastenApi.getResources("Patient").subscribe(results => {
-      console.log(results)
-      this.patient = results[0]
-    })
+    this.loading = true
 
-    this.fastenApi.getResources("Immunization").subscribe(results => {
+    forkJoin([
+      this.fastenApi.getResources("Patient"),
+      this.fastenApi.getResources("Immunization"),
+      this.fastenApi.getResources("AllergyIntolerance")
+    ]).subscribe(results => {
+      this.loading = false
       console.log(results)
-      this.immunizations = results
-    })
-
-    this.fastenApi.getResources("AllergyIntolerance").subscribe(results => {
-      console.log(results)
-      this.allergyIntolerances = results
+      this.patient = results[0][0]
+      this.immunizations = results[1]
+      this.allergyIntolerances = results[2]
+    }, error => {
+      this.loading = false
     })
   }
 

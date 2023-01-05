@@ -13,12 +13,12 @@ import {Location} from '@angular/common';
   styleUrls: ['./auth-signin.component.scss']
 })
 export class AuthSigninComponent implements OnInit {
+  loading: boolean = false
+
   submitted: boolean = false
   existingUser: User = new User()
   errorMsg: string = ""
   showExternalIdP: boolean = environment.environment_cloud
-
-  loading: boolean = false
 
   constructor(
     private authService: AuthService,

@@ -12,6 +12,8 @@ import {forkJoin} from 'rxjs';
   styleUrls: ['./medical-history.component.scss']
 })
 export class MedicalHistoryComponent implements OnInit {
+  loading: boolean = false
+
   closeResult = '';
   conditions: ResourceFhir[] = []
 
@@ -25,7 +27,9 @@ export class MedicalHistoryComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.loading = true
     this.fastenApi.getResourceGraph().subscribe(results => {
+      this.loading = false
       this.conditions = results["Condition"]
       this.unassigned_encounters = results["Encounter"]
 
@@ -54,6 +58,8 @@ export class MedicalHistoryComponent implements OnInit {
       }
 
 
+    }, error => {
+      this.loading = false
     })
 
   }

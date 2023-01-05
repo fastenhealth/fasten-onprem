@@ -11,6 +11,7 @@ import {getPath} from '../../components/list-generic-resource/utils';
   styleUrls: ['./source-detail.component.scss']
 })
 export class SourceDetailComponent implements OnInit {
+  loading: boolean = false
 
   selectedSource: Source = null
   selectedPatient: ResourceFhir = null
@@ -26,13 +27,17 @@ export class SourceDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loading = true
     //always request the source summary
     this.fastenApi.getSourceSummary(this.route.snapshot.paramMap.get('source_id')).subscribe((sourceSummary) => {
+      this.loading = false
       this.selectedSource = sourceSummary.source;
       this.selectedPatient = sourceSummary.patient;
       for(let resourceTypeCount of sourceSummary.resource_type_counts){
         this.resourceTypeCounts[resourceTypeCount.resource_type] = resourceTypeCount.count
       }
+    }, error => {
+      this.loading = false
     });
   }
 

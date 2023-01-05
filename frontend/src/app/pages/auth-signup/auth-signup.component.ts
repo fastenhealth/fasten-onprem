@@ -11,10 +11,11 @@ import {AuthService} from '../../services/auth.service';
   styleUrls: ['./auth-signup.component.scss']
 })
 export class AuthSignupComponent implements OnInit {
+  loading: boolean = false
+
   submitted: boolean = false
   newUser: User = new User()
   errorMsg: string = ""
-  loading: boolean = false
 
   constructor(
     private authService: AuthService,

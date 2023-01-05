@@ -10,11 +10,11 @@ import * as fhirpath from 'fhirpath';
   styleUrls: ['./report-labs.component.scss']
 })
 export class ReportLabsComponent implements OnInit {
+  loading: boolean = false
 
   observationGroups: {[key: string]: ResourceFhir[]} = {}
   observationGroupTitles: {[key: string]: string} = {}
 
-  loading = true
   isEmptyReport = false
 
   constructor(
@@ -22,6 +22,7 @@ export class ReportLabsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.loading = true
     this.fastenApi.getResources("Observation").subscribe(results => {
       this.loading = false
       results = results || []

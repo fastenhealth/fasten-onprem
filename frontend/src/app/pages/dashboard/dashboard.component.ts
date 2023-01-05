@@ -14,6 +14,7 @@ import {LighthouseService} from '../../services/lighthouse.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  loading: boolean = false
 
   sources: Source[] = []
   encounterCount: number = 0
@@ -29,26 +30,10 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
-    // this.fastenApi.getSummary()
-    //   .subscribe( (summary) => {
-    //     console.log(summary);
-    //     this.sources = summary.sources
-    //
-    //     //calculate the number of records
-    //     summary.resource_type_counts.forEach((resourceTypeInfo) => {
-    //       this.recordsCount += resourceTypeInfo.count
-    //       if(resourceTypeInfo.resource_type == "Encounter"){
-    //         this.encounterCount = resourceTypeInfo.count
-    //       }
-    //     })
-    //
-    //     summary.patients.forEach((resourceFhir) => {
-    //       this.patientForSource[resourceFhir.source_id] = resourceFhir
-    //     })
-    //   })
+    this.loading = true
 
     forkJoin([this.fastenApi.getSummary(), this.lighthouseApi.getLighthouseSourceMetadataMap()]).subscribe(results => {
+      this.loading = false
       let summary = results[0] as Summary
       let metadataSource = results[1] as { [name: string]: MetadataSource }
 
@@ -74,6 +59,8 @@ export class DashboardComponent implements OnInit {
       summary.patients.forEach((resourceFhir) => {
         this.patientForSource[resourceFhir.source_id] = resourceFhir
       })
+    }, error => {
+      this.loading = false
     });
 
 

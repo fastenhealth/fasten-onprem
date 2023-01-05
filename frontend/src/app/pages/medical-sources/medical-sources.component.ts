@@ -29,21 +29,10 @@ export class SourceListItem {
   styleUrls: ['./medical-sources.component.scss']
 })
 export class MedicalSourcesComponent implements OnInit {
-
-  constructor(
-    private lighthouseApi: LighthouseService,
-    private fastenApi: FastenApiService,
-    private modalService: NgbModal,
-    private route: ActivatedRoute,
-    private router: Router,
-    private location: Location,
-    private toastService: ToastService
-  ) { }
-
+  loading: boolean = false
 
   environment_name = environment.environment_name
   status: { [name: string]: string } = {}
-  loading: boolean = true
 
   metadataSources: {[name:string]: MetadataSource} = {}
 
@@ -57,9 +46,18 @@ export class MedicalSourcesComponent implements OnInit {
   searchIndex = null
   searchTerm: string = ""
 
+  constructor(
+    private lighthouseApi: LighthouseService,
+    private fastenApi: FastenApiService,
+    private modalService: NgbModal,
+    private route: ActivatedRoute,
+    private router: Router,
+    private location: Location,
+    private toastService: ToastService
+  ) { }
 
   ngOnInit(): void {
-
+    this.loading = true
     forkJoin([this.lighthouseApi.getLighthouseSourceMetadataMap(), this.fastenApi.getSources()]).subscribe(results => {
       this.loading = false
       //handle source metadata map response
