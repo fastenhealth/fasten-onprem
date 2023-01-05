@@ -100,7 +100,7 @@
         </div><!-- col -->
       </div><!-- row -->
 
-      <div class="card card-dashboard-seven">
+      <div *ngIf="!loading else isLoadingTemplate" class="card card-dashboard-seven">
         <div class="card-header">
           <div class="row row-sm">
             <div class="col-6 col-md-4 col-xl">
@@ -180,6 +180,15 @@
 
         </div>
       </div>
+
+      <ng-template #isLoadingTemplate>
+        <div class="row">
+          <div class="col-12">
+            <app-loading-spinner [loadingTitle]="'Please wait, loading sources...'"></app-loading-spinner>
+          </div>
+        </div>
+      </ng-template>
+
     </div><!-- az-content-body -->
   </div>
 </div><!-- az-content -->
