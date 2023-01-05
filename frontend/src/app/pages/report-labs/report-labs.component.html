@@ -5,8 +5,9 @@
       <!-- Header Row -->
       <report-header [reportHeaderTitle]="'Labs'" [reportHeaderSubTitle]="'The Lab report turns data into meaningful information'" ></report-header>
 
+      <ng-container [ngTemplateOutlet]="loading ? isLoadingTemplate : isEmptyReport ? emptyReport : report"></ng-container>
 
-      <ng-container *ngIf="!isEmptyReport; else emptyReport">
+      <ng-template #report>
         <!-- Observations Title -->
         <div class="row mt-5 mb-3">
           <div class="col-6">
@@ -20,9 +21,16 @@
                                      [observationCode]="observationGroup.key"
                                      [observationTitle]="observationGroupTitles[observationGroup.key]"
         ></app-report-labs-observation>
-      </ng-container>
+      </ng-template>
 
 
+      <ng-template #isLoadingTemplate>
+        <div class="row">
+          <div class="col-12">
+            <app-loading-spinner [loadingTitle]="'Please wait, loading report...'"></app-loading-spinner>
+          </div>
+        </div>
+      </ng-template>
 
 
       <ng-template #emptyReport>

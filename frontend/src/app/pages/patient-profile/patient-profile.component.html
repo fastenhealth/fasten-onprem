@@ -5,7 +5,7 @@
       <!-- Header Row -->
       <report-header [reportHeaderTitle]="'Patient Profile'"></report-header>
 
-      <div class="pl-3 pr-3">
+      <div *ngIf="!loading else isLoadingTemplate" class="pl-3 pr-3">
         <!-- Patient Name Row -->
         <div class="row mt-5 mb-3">
           <div class="col-6">
@@ -169,6 +169,15 @@
           </div>
         </div>
       </div>
+
+      <ng-template #isLoadingTemplate>
+        <div class="row">
+          <div class="col-12">
+            <app-loading-spinner [loadingTitle]="'Please wait, loading patient profile...'"></app-loading-spinner>
+          </div>
+        </div>
+      </ng-template>
+
     </div>
   </div>
 </div>
