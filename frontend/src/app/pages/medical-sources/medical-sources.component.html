@@ -136,12 +136,7 @@
 <ng-template #isLoadingTemplate>
   <div class="row">
     <div class="col-12">
-      <div class="text-center">
-        <p class="pb-3">Please wait, loading sources...</p>
-        <div class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-      </div>
+      <app-loading-spinner [loadingTitle]="'Please wait, loading sources...'"></app-loading-spinner>
     </div>
   </div>
 </ng-template>

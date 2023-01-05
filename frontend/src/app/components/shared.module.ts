@@ -42,6 +42,7 @@ import {FilterPipe} from '../pipes/filter.pipe';
 import { ReportMedicalHistoryConditionComponent } from './report-medical-history-condition/report-medical-history-condition.component';
 import { ReportLabsObservationComponent } from './report-labs-observation/report-labs-observation.component';
 import { ChartsModule } from 'ng2-charts';
+import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 
 @NgModule({
   imports: [
@@ -90,45 +91,47 @@ import { ChartsModule } from 'ng2-charts';
     FilterPipe,
     ReportMedicalHistoryConditionComponent,
     ReportLabsObservationComponent,
+    LoadingSpinnerComponent,
   ],
-    exports: [
-        ComponentsSidebarComponent,
-        ListAllergyIntoleranceComponent,
-        ListAdverseEventComponent,
-        ListCarePlanComponent,
-        ListCommunicationComponent,
-        ListConditionComponent,
-        ListEncounterComponent,
-        ListAppointmentComponent,
-        ListGenericResourceComponent,
-        ListImmunizationComponent,
-        ListMedicationAdministrationComponent,
-        ListMedicationComponent,
-        ListMedicationDispenseComponent,
-        ListMedicationRequestComponent,
-        ListNutritionOrderComponent,
-        ListObservationComponent,
-        ListPatientComponent,
-        ListProcedureComponent,
-        ListDeviceRequestComponent,
-        UtilitiesSidebarComponent,
-        ListCoverageComponent,
-        ListServiceRequestComponent,
-        ListDocumentReferenceComponent,
-        ListDeviceComponent,
-        ListDiagnosticReportComponent,
-        ListGoalComponent,
-        ResourceListComponent,
-        ResourceListOutletDirective,
-        ToastComponent,
-        ReportHeaderComponent,
-        ReportMedicalHistoryEditorComponent,
-        FhirPathPipe,
-        FilterPipe,
-        ReportMedicalHistoryConditionComponent,
-        ReportLabsObservationComponent
+  exports: [
+    ComponentsSidebarComponent,
+    ListAllergyIntoleranceComponent,
+    ListAdverseEventComponent,
+    ListCarePlanComponent,
+    ListCommunicationComponent,
+    ListConditionComponent,
+    ListEncounterComponent,
+    ListAppointmentComponent,
+    ListGenericResourceComponent,
+    ListImmunizationComponent,
+    ListMedicationAdministrationComponent,
+    ListMedicationComponent,
+    ListMedicationDispenseComponent,
+    ListMedicationRequestComponent,
+    ListNutritionOrderComponent,
+    ListObservationComponent,
+    ListPatientComponent,
+    ListProcedureComponent,
+    ListDeviceRequestComponent,
+    UtilitiesSidebarComponent,
+    ListCoverageComponent,
+    ListServiceRequestComponent,
+    ListDocumentReferenceComponent,
+    ListDeviceComponent,
+    ListDiagnosticReportComponent,
+    ListGoalComponent,
+    ResourceListComponent,
+    ResourceListOutletDirective,
+    ToastComponent,
+    ReportHeaderComponent,
+    ReportMedicalHistoryEditorComponent,
+    FhirPathPipe,
+    FilterPipe,
+    ReportMedicalHistoryConditionComponent,
+    ReportLabsObservationComponent,
+    LoadingSpinnerComponent
 
-    ]
+  ]
 })
 
 export class SharedModule { }
