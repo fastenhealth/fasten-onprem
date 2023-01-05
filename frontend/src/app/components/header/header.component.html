@@ -64,11 +64,11 @@
           <div class="az-dropdown-header d-sm-none">
             <a class="az-header-arrow" (click)="closeMenu($event)"><i class="icon ion-md-arrow-back"></i></a>
           </div>
-          <div class="az-header-profile">
+          <div [routerLink]="'/patient-profile'" class="az-header-profile cursor-pointer">
             <div class="az-img-user">
               <img src="assets/logo/logo-text.png" alt="">
             </div><!-- az-img-user -->
-            <h6>{{current_user_claims.full_name || current_user_claims.email || current_user_claims.sub}}</h6>
+            <h6>{{current_user_claims.full_name || current_user_claims.sub || current_user_claims.email }}</h6>
             <span>Adminstrator</span>
           </div><!-- az-header-profile -->
 

@@ -172,6 +172,7 @@ export class AuthService {
 
     //parse the authToken to get user information
     let jwtClaims = jose.decodeJwt(authToken)
+
     // @ts-ignore
     return jwtClaims as UserRegisteredClaims
   }
