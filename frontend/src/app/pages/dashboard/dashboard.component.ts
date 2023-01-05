@@ -60,7 +60,7 @@ export class DashboardComponent implements OnInit {
         "source_type": "manual",
         "display": "Manual",
         "category": ["Manual"],
-        "enabled": true,
+        "hidden": false,
       }
 
       //calculate the number of records

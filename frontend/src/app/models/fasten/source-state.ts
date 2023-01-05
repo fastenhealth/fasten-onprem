@@ -5,6 +5,6 @@ export class SourceState {
   code_verifier?: string
   code_challenge_method?: string
   code_challenge?: string
-  enabled: boolean
+  hidden: boolean
   redirect_uri?: string
 }

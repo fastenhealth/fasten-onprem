@@ -84,7 +84,7 @@
 
       <div *ngIf="!loading else isLoadingTemplate" class="row row-sm">
         <div *ngFor="let sourceData of availableSourceList" (click)="connectHandler($event, sourceData.metadata.source_type)" class="col-sm-3 mg-b-20 px-3">
-          <div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': !sourceData.metadata.enabled}">
+          <div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': sourceData.metadata.hidden}">
             <div class="card-body d-flex align-items-center">
               <img style="max-height: 130px;" [src]="'assets/sources/'+sourceData.metadata.source_type+'.png'" [alt]="metadataSources[sourceData.metadata.source_type].display" class="img-fluid">
               <div *ngIf="status[sourceData.metadata.source_type]" class="progress">
