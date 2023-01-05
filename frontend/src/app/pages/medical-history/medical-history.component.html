@@ -5,7 +5,9 @@
       <!-- Header Row -->
       <report-header [reportHeaderTitle]="'Medical History'" [reportHeaderSubTitle]="'Organized by conditions, describes the scope and breadth of medical care'"></report-header>
 
-      <ng-container *ngIf="conditions.length || unassigned_encounters.length; else emptyReport">
+      <ng-container [ngTemplateOutlet]="loading ? isLoadingTemplate : (conditions.length == 0 && unassigned_encounters.length == 0) ? emptyReport : report"></ng-container>
+
+      <ng-template #report>
         <!-- Editor Button -->
         <div class="row mt-5 mb-3">
           <div class="col-12">
@@ -28,7 +30,7 @@
 
         <!-- Condition List -->
         <app-report-medical-history-condition *ngFor="let condition of conditions; let i = index" [condition]="condition"></app-report-medical-history-condition>
-      </ng-container>
+      </ng-template>
 
       <ng-template #emptyReport>
         <div class="d-flex align-items-center" style="height:100%">
@@ -45,6 +47,13 @@
         </div>
       </ng-template>
 
+      <ng-template #isLoadingTemplate>
+        <div class="row">
+          <div class="col-12">
+            <app-loading-spinner [loadingTitle]="'Please wait, loading report...'"></app-loading-spinner>
+          </div>
+        </div>
+      </ng-template>
 
     </div>
   </div>
