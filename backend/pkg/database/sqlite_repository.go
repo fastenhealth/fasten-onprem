@@ -196,6 +196,8 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 			SourceResourceID:   rawResource.SourceResourceID,
 			SourceResourceType: rawResource.SourceResourceType,
 		},
+		SortTitle:           rawResource.SortTitle,
+		SortDate:            rawResource.SortDate,
 		ResourceRaw:         datatypes.JSON(rawResource.ResourceRaw),
 		RelatedResourceFhir: nil,
 	}

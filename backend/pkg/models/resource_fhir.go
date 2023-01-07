@@ -2,10 +2,14 @@ package models
 
 import (
 	"gorm.io/datatypes"
+	"time"
 )
 
 type ResourceFhir struct {
 	OriginBase
+
+	SortDate  time.Time `json:"sort_date" gorm:"sort_date"`
+	SortTitle string    `json:"sort_title" gorm:"sort_title"`
 
 	//embedded data
 	ResourceRaw datatypes.JSON `json:"resource_raw" gorm:"resource_raw"`
