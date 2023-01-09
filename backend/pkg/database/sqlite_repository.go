@@ -461,7 +461,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context) ([]*m
 			continue
 		}
 
-		if strings.ToLower(resource.SourceResourceType) == "condition" {
+		if strings.ToLower(resource.SourceResourceType) == "condition" || strings.ToLower(resource.SourceResourceType) == strings.ToLower(pkg.FhirResourceTypeComposition) {
 			conditionList = append(conditionList, resource)
 		} else if strings.ToLower(resource.SourceResourceType) == "encounter" {
 			encounterList = append(encounterList, resource)
@@ -747,13 +747,12 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 	} else {
 		//- else:
 		//	- Create a Composition resource type (populated with "relatesTo" references to all provided Resources)
-
 		compositionResource = &models.ResourceFhir{
 			OriginBase: models.OriginBase{
 				UserID:             placeholderSource.UserID, //
 				SourceID:           placeholderSource.ID,     //Empty SourceID expected ("0000-0000-0000-0000")
 				SourceResourceType: pkg.FhirResourceTypeComposition,
-				//SourceResourceID:   "",
+				SourceResourceID:   uuid.New().String(),
 			},
 			SortDate:            nil, //TOOD: figoure out the sortDate by looking for the earliest sort date for all nested resources
 			SortTitle:           &compositionTitle,
@@ -783,13 +782,19 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 	}
 	compositionResource.ResourceRaw = rawResourceJson
 
+	//store the Composition resource
+	_, err = sr.UpsertResource(ctx, compositionResource)
+	if err != nil {
+		return err
+	}
+
 	// - add AddResourceAssociation for all resources linked to the Composition resource
 	for _, resource := range rawResourceLookupTable {
 		if err := sr.AddResourceAssociation(
 			ctx,
 			&placeholderSource,
-			resource.SourceResourceType,
-			resource.SourceResourceID,
+			compositionResource.SourceResourceType,
+			compositionResource.SourceResourceID,
 			sourceLookup[resource.SourceID],
 			resource.SourceResourceType,
 			resource.SourceResourceID,
@@ -799,9 +804,7 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 		}
 	}
 
-	//store the Composition resource
-	_, err = sr.UpsertResource(ctx, compositionResource)
-	return err
+	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
