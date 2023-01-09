@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/dominikbraun/graph"
 	sourceModel "github.com/fastenhealth/fasten-sources/clients/models"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
@@ -121,10 +122,10 @@ func (sr *SqliteRepository) GetUserByUsername(ctx context.Context, username stri
 }
 
 func (sr *SqliteRepository) GetCurrentUser(ctx context.Context) *models.User {
-	username := ctx.Value("AUTH_USERNAME")
+	username := ctx.Value(pkg.ContextKeyTypeAuthUsername)
 	if username == nil {
 		ginCtx := ctx.(*gin.Context)
-		username = ginCtx.MustGet("AUTH_USERNAME")
+		username = ginCtx.MustGet(pkg.ContextKeyTypeAuthUsername)
 	}
 
 	var currentUser models.User
@@ -205,7 +206,7 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 	//create associations
 	//note: we create the association in the related_resources table **before** the model actually exists.
 
-	if rawResource.ReferencedResources != nil {
+	if rawResource.ReferencedResources != nil && len(rawResource.ReferencedResources) > 0 {
 		for _, referencedResource := range rawResource.ReferencedResources {
 			parts := strings.Split(referencedResource, "/")
 			if len(parts) != 2 {
@@ -227,7 +228,17 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 		}
 	}
 
-	sr.Logger.Infof("insert/update (%v) %v", rawResource.SourceResourceType, rawResource.SourceResourceID)
+	return sr.UpsertResource(ctx, wrappedResourceModel)
+
+}
+
+//this method will upsert a resource, however it will not create associations.
+func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceModel *models.ResourceFhir) (bool, error) {
+	wrappedResourceModel.UserID = sr.GetCurrentUser(ctx).ID
+	wrappedResourceModel.RelatedResourceFhir = nil
+	cachedResourceRaw := wrappedResourceModel.ResourceRaw
+
+	sr.Logger.Infof("insert/update (%v) %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID)
 
 	createResult := sr.GormClient.WithContext(ctx).Where(models.OriginBase{
 		SourceID:           wrappedResourceModel.GetSourceID(),
@@ -240,7 +251,7 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 	} else if createResult.RowsAffected == 0 {
 		//at this point, wrappedResourceModel contains the data found in the database.
 		// check if the database resource matches the new resource.
-		if wrappedResourceModel.ResourceRaw.String() != string(rawResource.ResourceRaw) {
+		if wrappedResourceModel.ResourceRaw.String() != string(cachedResourceRaw) {
 			updateResult := createResult.Omit("RelatedResourceFhir.*").Updates(wrappedResourceModel)
 			return updateResult.RowsAffected > 0, updateResult.Error
 		} else {
@@ -251,34 +262,6 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 		//resource was created
 		return createResult.RowsAffected > 0, createResult.Error
 	}
-
-	//return results.RowsAffected > 0, results.Error
-
-	//if sr.GormClient.Debug().WithContext(ctx).
-	//	Where(models.OriginBase{
-	//		SourceID:           wrappedResourceModel.GetSourceID(),
-	//		SourceResourceID:   wrappedResourceModel.GetSourceResourceID(),
-	//		SourceResourceType: wrappedResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-	//	}).Updates(wrappedResourceModel).RowsAffected == 0 {
-	//	sr.Logger.Infof("resource does not exist, creating: %s %s %s", wrappedResourceModel.GetSourceID(), wrappedResourceModel.GetSourceResourceID(), wrappedResourceModel.GetSourceResourceType())
-	//	return sr.GormClient.Debug().Create(wrappedResourceModel).Error
-	//}
-	//return nil
-}
-
-func (sr *SqliteRepository) UpsertResource(ctx context.Context, resourceModel *models.ResourceFhir) error {
-	sr.Logger.Infof("insert/update (%T) %v", resourceModel, resourceModel)
-
-	if sr.GormClient.WithContext(ctx).
-		Where(models.OriginBase{
-			SourceID:           resourceModel.GetSourceID(),
-			SourceResourceID:   resourceModel.GetSourceResourceID(),
-			SourceResourceType: resourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-		}).Updates(resourceModel).RowsAffected == 0 {
-		sr.Logger.Infof("resource does not exist, creating: %s %s %s", resourceModel.GetSourceID(), resourceModel.GetSourceResourceID(), resourceModel.GetSourceResourceType())
-		return sr.GormClient.Create(resourceModel).Error
-	}
-	return nil
 }
 
 func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceFhir, error) {
@@ -407,6 +390,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context) ([]*m
 	}
 
 	//Generate Graph
+	// TODO optimization: eventually cache the graph in a database/storage, and update when new resources are added.
 	g := graph.New(resourceVertexId, graph.Directed(), graph.Acyclic(), graph.Rooted())
 
 	//add vertices to the graph (must be done first)
@@ -672,6 +656,152 @@ func (sr *SqliteRepository) RemoveResourceAssociation(ctx context.Context, sourc
 		"related_resource_fhir_source_resource_type": relatedResourceType,
 		"related_resource_fhir_source_resource_id":   relatedResourceId,
 	}).Error
+}
+
+// AddResourceComposition
+// this will group resources together into a "Composition" -- primarily to group related Encounters & Conditions into one semantic root.
+// algorithm:
+// - find source for each resource
+// - (validate) ensure the current user and the source for each resource matches
+// - check if there is a Composition resource Type already.
+// 		- if Composition type already exists:
+// 			- update "relatesTo" field with additional data.
+// 		- else:
+//			- Create a Composition resource type (populated with "relatesTo" references to all provided Resources)
+// - add AddResourceAssociation for all resources linked to the Composition resource
+// - store the Composition resource
+func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceFhir) error {
+	currentUser := sr.GetCurrentUser(ctx)
+
+	//generate placeholder source
+	placeholderSource := models.SourceCredential{UserID: currentUser.ID, SourceType: "manual", ModelBase: models.ModelBase{ID: uuid.MustParse("00000000-0000-0000-0000-000000000000")}}
+
+	existingCompositionResources := []*models.ResourceFhir{}
+	rawResourceLookupTable := map[string]*models.ResourceFhir{}
+
+	//find the source for each resource we'd like to merge. (for ownership verification)
+	sourceLookup := map[uuid.UUID]*models.SourceCredential{}
+	for _, resource := range resources {
+		if resource.SourceResourceType == pkg.FhirResourceTypeComposition {
+			//skip, Composition resources don't have a valid SourceCredential
+			existingCompositionResources = append(existingCompositionResources, resource)
+
+			//compositions may include existing resources, make sure we handle these
+			for _, related := range resource.RelatedResourceFhir {
+				rawResourceLookupTable[fmt.Sprintf("%s/%s", related.SourceResourceType, related.SourceResourceID)] = related
+			}
+			continue
+		}
+
+		if _, sourceOk := sourceLookup[resource.SourceID]; !sourceOk {
+			//source has not been added yet, lets query for it.
+			sourceCred, err := sr.GetSource(ctx, resource.SourceID.String())
+			if err != nil {
+				return fmt.Errorf("could not find source %s", resource.SourceID.String())
+			}
+			sourceLookup[resource.SourceID] = sourceCred
+		}
+
+		rawResourceLookupTable[fmt.Sprintf("%s/%s", resource.SourceResourceType, resource.SourceResourceID)] = resource
+	}
+
+	// (validate) ensure the current user and the source for each resource matches
+	for _, source := range sourceLookup {
+		if source.UserID != currentUser.ID {
+			return fmt.Errorf("source must be owned by the current user: %s vs %s", source.UserID, currentUser.ID)
+		}
+	}
+
+	// - check if there is a Composition resource Type already.
+	var compositionResource *models.ResourceFhir
+
+	if len(existingCompositionResources) > 0 {
+		//- if Composition type already exists in this set
+		//	- update "relatesTo" field with additional data.
+		compositionResource = existingCompositionResources[0]
+
+		//unassociated all existing composition resources.
+		for _, existingCompositionResource := range existingCompositionResources[1:] {
+			for _, relatedResource := range existingCompositionResource.RelatedResourceFhir {
+				if err := sr.RemoveResourceAssociation(
+					ctx,
+					&placeholderSource,
+					existingCompositionResource.SourceResourceType,
+					existingCompositionResource.SourceResourceID,
+					sourceLookup[relatedResource.SourceID],
+					relatedResource.SourceResourceType,
+					relatedResource.SourceResourceID,
+				); err != nil {
+					//ignoring errors, could be due to duplicate edges
+					return fmt.Errorf("an error occurred while removing resource association: %v", err)
+				}
+			}
+
+			//remove this resource
+			err := sr.GormClient.WithContext(ctx).Delete(existingCompositionResource)
+			if err.Error != nil {
+				return fmt.Errorf("an error occurred while removing resource: %v", err)
+			}
+		}
+
+	} else {
+		//- else:
+		//	- Create a Composition resource type (populated with "relatesTo" references to all provided Resources)
+
+		compositionResource = &models.ResourceFhir{
+			OriginBase: models.OriginBase{
+				UserID:             placeholderSource.UserID, //
+				SourceID:           placeholderSource.ID,     //Empty SourceID expected ("0000-0000-0000-0000")
+				SourceResourceType: pkg.FhirResourceTypeComposition,
+				//SourceResourceID:   "",
+			},
+			SortDate:            nil, //TOOD: figoure out the sortDate by looking for the earliest sort date for all nested resources
+			SortTitle:           &compositionTitle,
+			RelatedResourceFhir: resources,
+		}
+	}
+
+	// - Generate an "updated" RawResource json blob
+	rawCompositionResource := models.ResourceComposition{
+		Title:     compositionTitle,
+		RelatesTo: []models.ResourceCompositionRelatesTo{},
+	}
+
+	for relatedResourceKey, _ := range rawResourceLookupTable {
+		rawCompositionResource.RelatesTo = append(rawCompositionResource.RelatesTo, models.ResourceCompositionRelatesTo{
+			Target: models.ResourceCompositionRelatesToTarget{
+				TargetReference: models.ResourceCompositionRelatesToTargetReference{
+					Reference: relatedResourceKey,
+				},
+			},
+		})
+	}
+
+	rawResourceJson, err := json.Marshal(rawCompositionResource)
+	if err != nil {
+		return err
+	}
+	compositionResource.ResourceRaw = rawResourceJson
+
+	// - add AddResourceAssociation for all resources linked to the Composition resource
+	for _, resource := range rawResourceLookupTable {
+		if err := sr.AddResourceAssociation(
+			ctx,
+			&placeholderSource,
+			resource.SourceResourceType,
+			resource.SourceResourceID,
+			sourceLookup[resource.SourceID],
+			resource.SourceResourceType,
+			resource.SourceResourceID,
+		); err != nil {
+			//ignoring errors, could be due to duplicate edges
+			sr.Logger.Warnf("an error occurred while creating resource association: %v", err)
+		}
+	}
+
+	//store the Composition resource
+	_, err = sr.UpsertResource(ctx, compositionResource)
+	return err
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

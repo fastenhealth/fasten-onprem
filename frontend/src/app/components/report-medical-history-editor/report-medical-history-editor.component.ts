@@ -7,10 +7,12 @@ import {ITreeOptions} from '@circlon/angular-tree-component';
 
 class RelatedNode {
   name: string
-  sourceResourceType: string
-  sourceResourceId: string
-  sourceId: string
+  source_resource_type: string
+  source_resource_id: string
+  source_id: string
   children: RelatedNode[]
+  show_checkbox: boolean
+  resource: ResourceFhir
 }
 
 @Component({
@@ -54,7 +56,7 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
     allowDrop: false,
   }
 
-  selectedResources:{[id:string]:ResourceFhir} = {}
+  selectedResources:{ [id:string]: ResourceFhir} = {}
   constructor(
     public activeModal: NgbActiveModal,
     private fastenApi: FastenApiService,
@@ -65,19 +67,25 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
   }
 
 
-  onResourceCheckboxClick($event, node:{data:ResourceFhir}){
+  onResourceCheckboxClick($event, node:{data:RelatedNode}){
     let key = `${node.data.source_id}/${node.data.source_resource_type}/${node.data.source_resource_id}`
     if($event.target.checked){
-      this.selectedResources[key] = node.data
+      this.selectedResources[key] = node.data.resource
     } else {
       //delete this key (unselected)
       delete this.selectedResources[key]
     }
+    console.log("selected resources", this.selectedResources)
   }
 
   onMergeResourcesClick() {
 
-    this.fastenApi.createResourceComposition(Object.values(this.selectedResources)).subscribe(results => {
+    let resources: ResourceFhir[] = []
+    for(let key in this.selectedResources){
+      resources.push(this.selectedResources[key])
+    }
+
+    this.fastenApi.createResourceComposition("HARDCODED TITLE NNAME", resources).subscribe(results => {
       console.log(results)
     })
 
@@ -91,13 +99,14 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
 
     //create an unassigned encounters "condition"
     if(this.encounters.length > 0){
-      let unassignedCondition = {
+      let unassignedCondition: RelatedNode = {
         name: "[Unassigned Encounters]",
-        sourceResourceType: "Condition",
-        sourceResourceId: "UNASSIGNED",
-        sourceId: null,
-        showCheckbox: true,
-        children: []
+        source_resource_type: "Condition",
+        source_resource_id: "UNASSIGNED",
+        source_id: null,
+        show_checkbox: true,
+        children: [],
+        resource: null
       }
 
       for(let encounter of this.encounters){
@@ -120,12 +129,13 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
 
   recGenerateNode(resourceFhir: ResourceFhir): RelatedNode {
     let relatedNode = {
-      showCheckbox: false,
-      sourceId: resourceFhir.source_id,
+      show_checkbox: false,
+      source_id: resourceFhir.source_id,
       name: `[${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}]`,
-      sourceResourceId: resourceFhir.source_resource_id,
-      sourceResourceType: resourceFhir.source_resource_type,
+      source_resource_id: resourceFhir.source_resource_id,
+      source_resource_type: resourceFhir.source_resource_type,
       children: [],
+      resource: resourceFhir
     }
 
     switch (resourceFhir.source_resource_type) {

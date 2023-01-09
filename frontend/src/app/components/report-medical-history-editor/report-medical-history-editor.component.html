@@ -7,7 +7,7 @@
 
     <ng-template #treeNodeWrapperTemplate let-node let-index="index">
       <div class="node-wrapper" [style.padding-left]="node.getNodePadding()">
-        <tree-node-checkbox *ngIf="node.data.resourceType == 'Condition' || node.data.resourceType == 'Encounter'"
+        <tree-node-checkbox *ngIf="node.data.source_resource_type == 'Condition' || node.data.source_resource_type == 'Encounter'"
                             (click)="onResourceCheckboxClick($event, node)"
                             [node]="node"></tree-node-checkbox>
         <tree-node-expander [node]="node"></tree-node-expander>

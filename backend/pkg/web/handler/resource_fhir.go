@@ -60,17 +60,24 @@ func GetResourceFhir(c *gin.Context) {
 func CreateResourceComposition(c *gin.Context) {
 
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
-	//databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
-	resources := []models.ResourceFhir{}
-	if err := c.ShouldBindJSON(&resources); err != nil {
-		logger.Errorln("An error occurred while parsing posted resources", err)
+	type jsonPayload struct {
+		Resources []*models.ResourceFhir `json:"resources"`
+		Title     string                 `json:"title"`
+	}
+	var payload jsonPayload
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		logger.Errorln("An error occurred while parsing posted resources & title", err)
 		c.JSON(http.StatusBadRequest, gin.H{"success": false})
 		return
 	}
-
-	//TODO: call repository CreateResourceComposition function.
-
+	err := databaseRepo.AddResourceComposition(c, payload.Title, payload.Resources)
+	if err != nil {
+		logger.Errorln("An error occurred while creating resource group (composition)", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{"success": true})
 }
 

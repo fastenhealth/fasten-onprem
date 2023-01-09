@@ -7,4 +7,6 @@ const (
 
 	ContextKeyTypeAuthUsername string = "AUTH_USERNAME"
 	ContextKeyTypeAuthToken    string = "AUTH_TOKEN"
+
+	FhirResourceTypeComposition string = "Composition"
 )
