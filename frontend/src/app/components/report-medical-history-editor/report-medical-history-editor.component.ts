@@ -23,9 +23,8 @@ class RelatedNode {
 export class ReportMedicalHistoryEditorComponent implements OnInit {
 
   @Input() conditions: ResourceFhir[] = []
-  @Input() encounters: ResourceFhir[] = []
 
-  assignedEncounters: {[name: string]: ResourceFhir} = {}
+  resourceLookup: {[name: string]: ResourceFhir} = {}
 
   nodes = [
     // {
@@ -63,6 +62,7 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log("ngOnInit STATUS", this.conditions)
     this.nodes = this.generateNodes(this.conditions)
   }
 
@@ -96,30 +96,14 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
 
   generateNodes(resouceFhirList: ResourceFhir[]): RelatedNode[] {
     let relatedNodes = resouceFhirList.map((resourceFhir) => { return this.recGenerateNode(resourceFhir) })
-
-    //create an unassigned encounters "condition"
-    if(this.encounters.length > 0){
-      let unassignedCondition: RelatedNode = {
-        name: "[Unassigned Encounters]",
-        source_resource_type: "Condition",
-        source_resource_id: "UNASSIGNED",
-        source_id: null,
-        show_checkbox: true,
-        children: [],
-        resource: null
-      }
-
-      for(let encounter of this.encounters){
-        let encounterId = `${encounter.source_id}/${encounter.source_resource_type}/${encounter.source_resource_id}`
-        if(!this.assignedEncounters[encounterId]){
-          this.assignedEncounters[encounterId] = encounter
-          unassignedCondition.children.push(this.recGenerateNode(encounter))
+    for(let relatedNode of relatedNodes){
+      if(relatedNode.source_id  == 'UNASSIGNED' && relatedNode.source_resource_type == 'UNASSIGNED' && relatedNode.source_resource_id == 'UNASSIGNED'){
+        //this is a placeholder for the Unassigned resources. This resource cannot be merged, but all child resources can be, so lets set them to true
+        for(let unassignedEncounters of relatedNode.children){
+          unassignedEncounters.show_checkbox = true
         }
-      }
-
-      if(unassignedCondition.children.length > 0){
-        //only add the unassigned condition block if the subchildren list is populated.
-        relatedNodes.push(unassignedCondition)
+      } else {
+        relatedNode.show_checkbox = true
       }
     }
 
@@ -162,7 +146,7 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
         break
     }
 
-    this.assignedEncounters[`${resourceFhir.source_id}/${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}`] = resourceFhir
+    this.resourceLookup[`${resourceFhir.source_id}/${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}`] = resourceFhir
 
     if(!resourceFhir.related_resources){
       return relatedNode

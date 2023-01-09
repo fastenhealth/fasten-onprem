@@ -58,3 +58,5 @@ vendor
 fasten.db
 test.go
 /.couchdb
+
+config.dev.yaml

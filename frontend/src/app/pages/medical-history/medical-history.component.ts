@@ -67,7 +67,6 @@ export class MedicalHistoryComponent implements OnInit {
   openEditorRelated(): void {
     const modalRef = this.modalService.open(ReportMedicalHistoryEditorComponent);
     modalRef.componentInstance.conditions = this.conditions;
-    modalRef.componentInstance.encounters = this.unassigned_encounters;
   }
 
 

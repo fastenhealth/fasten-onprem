@@ -22,7 +22,7 @@ import {PractitionerRoleModel} from './resources/practitioner-role-model';
 import {ProcedureModel} from './resources/procedure-model';
 import {RelatedPersonModel} from './resources/related-person-model';
 import {ResearchStudyModel} from './resources/research-study-model';
-import {BinaryModel} from './resources/binary-model';
+// import {BinaryModel} from './resources/binary-model';
 
 export function fhirModelFactory(modelName: string, fhirResource: any, fhirVersion: fhirVersions = fhirVersions.R4):any {
  switch (modelName) {
@@ -35,9 +35,9 @@ export function fhirModelFactory(modelName: string, fhirResource: any, fhirVersi
    case "Appointment": {
      return new AppointmentModel(fhirResource, fhirVersion)
    }
-   case "Binary": {
-     return new BinaryModel(fhirResource, fhirVersion)
-   }
+   // case "Binary": {
+   //   return new BinaryModel(fhirResource, fhirVersion)
+   // }
    case "CarePlan": {
      return new CarePlanModel(fhirResource, fhirVersion)
    }
