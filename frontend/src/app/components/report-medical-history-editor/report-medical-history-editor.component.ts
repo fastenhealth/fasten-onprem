@@ -23,8 +23,8 @@ class RelatedNode {
 export class ReportMedicalHistoryEditorComponent implements OnInit {
 
   @Input() conditions: ResourceFhir[] = []
-
   resourceLookup: {[name: string]: ResourceFhir} = {}
+  compositionTitle: string = ""
 
   nodes = [
     // {
@@ -71,6 +71,9 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
     let key = `${node.data.source_id}/${node.data.source_resource_type}/${node.data.source_resource_id}`
     if($event.target.checked){
       this.selectedResources[key] = node.data.resource
+      if(!this.compositionTitle){
+        this.compositionTitle = node.data.resource.sort_title
+      }
     } else {
       //delete this key (unselected)
       delete this.selectedResources[key]
@@ -85,7 +88,7 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
       resources.push(this.selectedResources[key])
     }
 
-    this.fastenApi.createResourceComposition("HARDCODED TITLE NNAME", resources).subscribe(results => {
+    this.fastenApi.createResourceComposition(this.compositionTitle, resources).subscribe(results => {
       console.log(results)
       this.activeModal.close()
     },(err) => {})

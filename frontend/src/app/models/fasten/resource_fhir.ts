@@ -8,6 +8,9 @@ export class ResourceFhir {
   resource_raw: IResourceRaw
   related_resources?: ResourceFhir[] = []
 
+  sort_title: string = ""
+  sort_date: Date = null
+
   constructor(object?: any) {
     return Object.assign(this, object)
   }
