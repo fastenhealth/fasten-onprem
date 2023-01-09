@@ -87,9 +87,8 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
 
     this.fastenApi.createResourceComposition("HARDCODED TITLE NNAME", resources).subscribe(results => {
       console.log(results)
-    })
-
-    //todo, close this window.
+      this.activeModal.close()
+    },(err) => {})
   }
 
 
