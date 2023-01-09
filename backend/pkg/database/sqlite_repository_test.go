@@ -8,6 +8,7 @@ import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -123,6 +124,30 @@ func (suite *RepositoryTestSuite) TestCreateUser_WithExitingUser_ShouldFail() {
 }
 
 //TODO: ensure user's cannot specify the ID when creating a user.
+func (suite *RepositoryTestSuite) TestCreateUser_WithUserProvidedId_ShouldBeReplaced() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	//test
+	userProvidedId := uuid.New()
+	userModel := &models.User{
+		ModelBase: models.ModelBase{
+			ID: userProvidedId,
+		},
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	dbRepo.CreateUser(context.Background(), userModel)
+
+	//assert
+	require.NotEmpty(suite.T(), userModel.ID)
+	require.NotEqual(suite.T(), userProvidedId.String(), userModel.ID.String())
+}
 
 func (suite *RepositoryTestSuite) TestGetUserByUsername() {
 	//setup
