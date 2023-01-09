@@ -3,13 +3,13 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {FastenApiService} from '../../services/fasten-api.service';
 import * as fhirpath from 'fhirpath';
+import {ITreeOptions} from '@circlon/angular-tree-component';
 
 class RelatedNode {
   name: string
-  resourceType: string
-  resourceId: string
+  sourceResourceType: string
+  sourceResourceId: string
   sourceId: string
-  draggable: boolean
   children: RelatedNode[]
 }
 
@@ -49,15 +49,12 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
     //   ]
     // }
   ];
-  options = {
-    allowDrag: (node) => {return node.data.draggable},
-    allowDrop: (element, { parent, index }) => {
-      // return true / false based on element, to.parent, to.index. e.g.
-      return parent.data.resourceType == "Condition";
-    },
-
+  options: ITreeOptions = {
+    allowDrag: false,
+    allowDrop: false,
   }
 
+  selectedResources:{[id:string]:ResourceFhir} = {}
   constructor(
     public activeModal: NgbActiveModal,
     private fastenApi: FastenApiService,
@@ -68,22 +65,23 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
   }
 
 
-  onResourceMoved($event) {
+  onResourceCheckboxClick($event, node:{data:ResourceFhir}){
+    let key = `${node.data.source_id}/${node.data.source_resource_type}/${node.data.source_resource_id}`
+    if($event.target.checked){
+      this.selectedResources[key] = node.data
+    } else {
+      //delete this key (unselected)
+      delete this.selectedResources[key]
+    }
+  }
 
-    this.fastenApi.replaceResourceAssociation({
+  onMergeResourcesClick() {
 
-      source_id: $event.to.parent.sourceId,
-      source_resource_type: $event.to.parent.resourceType,
-      source_resource_id: $event.to.parent.resourceId,
-
-      new_related_source_id: $event.node.sourceId,
-      new_related_source_resource_type: $event.node.resourceType,
-      new_related_source_resource_id: $event.node.resourceId,
-
-
-    }).subscribe(results => {
+    this.fastenApi.createResourceComposition(Object.values(this.selectedResources)).subscribe(results => {
       console.log(results)
     })
+
+    //todo, close this window.
   }
 
 
@@ -95,10 +93,10 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
     if(this.encounters.length > 0){
       let unassignedCondition = {
         name: "[Unassigned Encounters]",
-        resourceType: "Condition",
-        resourceId: "UNASSIGNED",
-        sourceId: "UNASSIGNED",
-        draggable: false,
+        sourceResourceType: "Condition",
+        sourceResourceId: "UNASSIGNED",
+        sourceId: null,
+        showCheckbox: true,
         children: []
       }
 
@@ -122,11 +120,11 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
 
   recGenerateNode(resourceFhir: ResourceFhir): RelatedNode {
     let relatedNode = {
+      showCheckbox: false,
       sourceId: resourceFhir.source_id,
       name: `[${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}]`,
-      resourceId: resourceFhir.source_resource_id,
-      resourceType: resourceFhir.source_resource_type,
-      draggable: resourceFhir.source_resource_type == "Encounter" || resourceFhir.source_resource_type == "Condition",
+      sourceResourceId: resourceFhir.source_resource_id,
+      sourceResourceType: resourceFhir.source_resource_type,
       children: [],
     }
 

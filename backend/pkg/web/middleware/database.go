@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,7 @@ func RepositoryMiddleware(appConfig config.Interface, globalLogger logrus.FieldL
 
 	//TODO: determine where we can call defer deviceRepo.Close()
 	return func(c *gin.Context) {
-		c.Set("REPOSITORY", deviceRepo)
+		c.Set(pkg.ContextKeyTypeDatabase, deviceRepo)
 		c.Next()
 	}
 }

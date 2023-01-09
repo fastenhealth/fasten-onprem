@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
@@ -10,8 +11,8 @@ import (
 )
 
 func ListResourceFhir(c *gin.Context) {
-	logger := c.MustGet("LOGGER").(*logrus.Entry)
-	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	listResourceQueryOptions := models.ListResourceQueryOptions{}
 	if len(c.Query("sourceResourceType")) > 0 {
@@ -40,8 +41,8 @@ func ListResourceFhir(c *gin.Context) {
 
 //this endpoint retrieves a specific resource by its ID
 func GetResourceFhir(c *gin.Context) {
-	logger := c.MustGet("LOGGER").(*logrus.Entry)
-	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	resourceId := strings.Trim(c.Param("resourceId"), "/")
 	sourceId := strings.Trim(c.Param("sourceId"), "/")
@@ -56,54 +57,19 @@ func GetResourceFhir(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": wrappedResourceModel})
 }
 
-func ReplaceResourceAssociation(c *gin.Context) {
+func CreateResourceComposition(c *gin.Context) {
 
-	logger := c.MustGet("LOGGER").(*logrus.Entry)
-	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	//databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
-	resourceAssociation := models.ResourceAssociation{}
-	if err := c.ShouldBindJSON(&resourceAssociation); err != nil {
-		logger.Errorln("An error occurred while parsing posted resource association data", err)
+	resources := []models.ResourceFhir{}
+	if err := c.ShouldBindJSON(&resources); err != nil {
+		logger.Errorln("An error occurred while parsing posted resources", err)
 		c.JSON(http.StatusBadRequest, gin.H{"success": false})
 		return
 	}
 
-	sourceCred, err := databaseRepo.GetSource(c, resourceAssociation.SourceID)
-	if err != nil {
-		logger.Errorln("An error occurred while retrieving source", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
-		return
-	}
-
-	if len(resourceAssociation.OldRelatedSourceID) > 0 {
-		oldRelatedSourceCred, err := databaseRepo.GetSource(c, resourceAssociation.OldRelatedSourceID)
-		if err != nil {
-			logger.Errorln("An error occurred while retrieving old related source", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
-			return
-		}
-
-		err = databaseRepo.RemoveResourceAssociation(c, sourceCred, resourceAssociation.SourceResourceType, resourceAssociation.SourceResourceID, oldRelatedSourceCred, resourceAssociation.OldRelatedSourceResourceType, resourceAssociation.OldRelatedSourceResourceID)
-		if err != nil {
-			logger.Errorln("An error occurred while deleting resource association", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
-			return
-		}
-	}
-
-	newRelatedSourceCred, err := databaseRepo.GetSource(c, resourceAssociation.NewRelatedSourceID)
-	if err != nil {
-		logger.Errorln("An error occurred while retrieving new related source", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
-		return
-	}
-
-	err = databaseRepo.AddResourceAssociation(c, sourceCred, resourceAssociation.SourceResourceType, resourceAssociation.SourceResourceID, newRelatedSourceCred, resourceAssociation.NewRelatedSourceResourceType, resourceAssociation.NewRelatedSourceResourceID)
-	if err != nil {
-		logger.Errorln("An error occurred while associating resource", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
-		return
-	}
+	//TODO: call repository CreateResourceComposition function.
 
 	c.JSON(http.StatusOK, gin.H{"success": true})
 }
@@ -114,8 +80,8 @@ func ReplaceResourceAssociation(c *gin.Context) {
 // find the PredecessorMap
 // - filter to only vertices that are "Condition" or "Encounter" and are "root" nodes (have no edges directed to this node)
 func GetResourceFhirGraph(c *gin.Context) {
-	logger := c.MustGet("LOGGER").(*logrus.Entry)
-	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	conditionResourceList, encounterResourceList, err := databaseRepo.GetFlattenedResourceGraph(c)
 	if err != nil {

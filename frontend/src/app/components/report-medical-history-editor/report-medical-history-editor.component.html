@@ -3,9 +3,33 @@
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"><span aria-hidden="true">×</span></button>
 </div>
 <div class="modal-body">
-  <tree-root [nodes]="nodes" [options]="options" (moveNode)="onResourceMoved($event)"></tree-root>
+  <tree-root [nodes]="nodes" [options]="options">
+
+    <ng-template #treeNodeWrapperTemplate let-node let-index="index">
+      <div class="node-wrapper" [style.padding-left]="node.getNodePadding()">
+        <tree-node-checkbox *ngIf="node.data.resourceType == 'Condition' || node.data.resourceType == 'Encounter'"
+                            (click)="onResourceCheckboxClick($event, node)"
+                            [node]="node"></tree-node-checkbox>
+        <tree-node-expander [node]="node"></tree-node-expander>
+        <div class="node-content-wrapper"
+             [class.node-content-wrapper-active]="node.isActive"
+             [class.node-content-wrapper-focused]="node.isFocused"
+             (click)="node.mouseAction('click', $event)"
+             (dblclick)="node.mouseAction('dblClick', $event)"
+             (contextmenu)="node.mouseAction('contextMenu', $event)"
+             (treeDrop)="node.onDrop($event)"
+             [treeAllowDrop]="node.allowDrop"
+             [treeDrag]="node"
+             [treeDragEnabled]="node.allowDrag()">
+
+          <tree-node-content [node]="node" [index]="index"></tree-node-content>
+        </div>
+      </div>
+    </ng-template>
+  </tree-root>
 </div>
 <div class="modal-footer">
+  <button type="button" class="btn btn-indigo" (click)="onMergeResourcesClick()">Merge Selected</button>
   <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
 </div>
 

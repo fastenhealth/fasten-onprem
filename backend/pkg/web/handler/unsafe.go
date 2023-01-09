@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/fastenhealth/fasten-sources/clients/factory"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/gin-gonic/gin"
@@ -17,9 +18,10 @@ These Endpoints are only available when Fasten is deployed with allow_unsafe_end
 */
 
 func UnsafeRequestSource(c *gin.Context) {
-	logger := c.MustGet("LOGGER").(*logrus.Entry)
-	appConfig := c.MustGet("CONFIG").(config.Interface)
-	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
 	//safety check incase this function is called in another way
 	if !appConfig.GetBool("web.allow_unsafe_endpoints") {
 		c.JSON(http.StatusServiceUnavailable, gin.H{"success": false})
@@ -78,4 +80,19 @@ func UnsafeRequestSource(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": resp})
+}
+
+func UnsafeResourceGraph(c *gin.Context) {
+	appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
+	//safety check incase this function is called in another way
+	if !appConfig.GetBool("web.allow_unsafe_endpoints") {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"success": false})
+		return
+	}
+
+	//!!!!!!INSECURE!!!!!!S
+	//We're setting the username to a user provided value, this is insecure, but required for calling databaseRepo fns
+	c.Set(pkg.ContextKeyTypeAuthUsername, c.Param("username"))
+
+	GetResourceFhirGraph(c)
 }
