@@ -9,6 +9,7 @@ import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/glebarez/sqlite"
 	"github.com/google/uuid"
@@ -491,6 +492,10 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context) ([]*m
 	for ndx, _ := range encounterList {
 		// this is a "root" encounter, which is not related to any condition, we should add it to the Unknown encounters list
 		flattenRelatedResourcesFn(encounterList[ndx])
+
+		//sort all related resources (by date, desc)
+		encounterList[ndx].RelatedResourceFhir = utils.SortResourceListByDate(encounterList[ndx].RelatedResourceFhir)
+
 	}
 
 	// Step 4: find all encounters referenced by the root conditions, populate them, then add them to the condition as RelatedResourceFhir
@@ -504,10 +509,13 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context) ([]*m
 			flattenRelatedResourcesFn(relatedResourceFhir)
 			conditionList[ndx].RelatedResourceFhir = append(conditionList[ndx].RelatedResourceFhir, relatedResourceFhir)
 		}
+
+		//sort all related resources (by date, desc)
+		conditionList[ndx].RelatedResourceFhir = utils.SortResourceListByDate(conditionList[ndx].RelatedResourceFhir)
 	}
 
-	//TODO: sort conditionList by date
-
+	conditionList = utils.SortResourceListByDate(conditionList)
+	encounterList = utils.SortResourceListByDate(encounterList)
 	return conditionList, encounterList, nil
 }
 
