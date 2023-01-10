@@ -3,8 +3,11 @@ import * as _ from "lodash";
 import {CodableConceptModel, hasValue} from '../datatypes/codable-concept-model';
 import {ReferenceModel} from '../datatypes/reference-model';
 import {CodingModel} from '../datatypes/coding-model';
+import {FastenDisplayModel} from '../fasten/fasten-display-model';
+import {FastenOptions} from '../fasten/fasten-options';
 
-export class PatientModel {
+export class PatientModel extends FastenDisplayModel {
+
   id: string|undefined
   patientName: string|undefined
   patientBirthDate: string|undefined
@@ -20,7 +23,8 @@ export class PatientModel {
   isDeceased: boolean|undefined
   deceasedDate: string|undefined
 
-  constructor(fhirResource: any, fhirVersion?: fhirVersions) {
+  constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
+    super(fastenOptions)
     this.id = this.getId(fhirResource);
     this.patientName = this.getNames(fhirResource);
     this.patientBirthDate = this.getBirthDate(fhirResource);

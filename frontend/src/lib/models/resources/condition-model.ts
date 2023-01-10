@@ -2,8 +2,11 @@ import {fhirVersions} from '../constants';
 import * as _ from "lodash";
 import {CodableConceptModel, hasValue} from '../datatypes/codable-concept-model';
 import {ReferenceModel} from '../datatypes/reference-model';
+import {FastenDisplayModel} from '../fasten/fasten-display-model';
+import {FastenOptions} from '../fasten/fasten-options';
 
-export class ConditionModel {
+export class ConditionModel extends FastenDisplayModel {
+
   codeText: string | undefined
   severityText: string | undefined
   hasAsserter: boolean | undefined
@@ -14,7 +17,8 @@ export class ConditionModel {
   dateRecorded: string | undefined
   onsetDateTime: string | undefined
 
-  constructor(fhirResource: any, fhirVersion?: fhirVersions) {
+  constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
+    super(fastenOptions)
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 

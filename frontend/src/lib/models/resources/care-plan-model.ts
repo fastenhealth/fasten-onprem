@@ -1,8 +1,10 @@
 import {fhirVersions} from '../constants';
 import * as _ from "lodash";
 import {ReferenceModel} from '../datatypes/reference-model';
+import {FastenDisplayModel} from '../fasten/fasten-display-model';
+import {FastenOptions} from '../fasten/fasten-options';
 
-export class CarePlanModel {
+export class CarePlanModel extends FastenDisplayModel {
 
   status: string | undefined
   expiry: string | undefined
@@ -23,7 +25,8 @@ export class CarePlanModel {
   periodEnd: string | undefined
   author: ReferenceModel | undefined
 
-  constructor(fhirResource: any, fhirVersion?: fhirVersions) {
+  constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
+    super(fastenOptions)
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 

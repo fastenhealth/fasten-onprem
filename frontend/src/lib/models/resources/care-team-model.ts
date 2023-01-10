@@ -2,8 +2,11 @@ import {fhirVersions} from '../constants';
 import * as _ from "lodash";
 import {ReferenceModel} from '../datatypes/reference-model';
 import {CodableConceptModel} from '../datatypes/codable-concept-model';
+import {FastenDisplayModel} from '../fasten/fasten-display-model';
+import {FastenOptions} from '../fasten/fasten-options';
 
-export class CareTeamModel {
+export class CareTeamModel extends FastenDisplayModel {
+
   name: string | undefined
   status: string | undefined
   periodStart: string | undefined
@@ -14,7 +17,8 @@ export class CareTeamModel {
   encounter: ReferenceModel | undefined
   managingOrganization: ReferenceModel | undefined
 
-  constructor(fhirResource: any, fhirVersion?: fhirVersions) {
+  constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
+    super(fastenOptions)
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4)
   }
 

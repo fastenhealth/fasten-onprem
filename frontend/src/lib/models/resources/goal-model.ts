@@ -3,8 +3,10 @@ import * as _ from "lodash";
 import {CodableConceptModel, hasValue} from '../datatypes/codable-concept-model';
 import {ReferenceModel} from '../datatypes/reference-model';
 import {CodingModel} from '../datatypes/coding-model';
+import {FastenDisplayModel} from '../fasten/fasten-display-model';
+import {FastenOptions} from '../fasten/fasten-options';
 
-export class GoalModel {
+export class GoalModel extends FastenDisplayModel {
 
   title: string | undefined
   status: string | undefined
@@ -24,7 +26,8 @@ export class GoalModel {
   subject: ReferenceModel | undefined
   statusDate: string | undefined
 
-  constructor(fhirResource: any, fhirVersion?: fhirVersions) {
+  constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
+    super(fastenOptions)
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 

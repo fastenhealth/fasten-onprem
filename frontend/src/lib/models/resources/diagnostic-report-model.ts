@@ -3,8 +3,11 @@ import * as _ from "lodash";
 import {CodableConceptModel, hasValue} from '../datatypes/codable-concept-model';
 import {ReferenceModel} from '../datatypes/reference-model';
 import {CodingModel} from '../datatypes/coding-model';
+import {FastenDisplayModel} from '../fasten/fasten-display-model';
+import {FastenOptions} from '../fasten/fasten-options';
 
-export class DiagnosticReportModel {
+export class DiagnosticReportModel extends FastenDisplayModel {
+
   title: string | undefined
   status: string | undefined
   effectiveDateTime: string | undefined
@@ -15,7 +18,8 @@ export class DiagnosticReportModel {
   performer: ReferenceModel | undefined
   issued: string | undefined
 
-  constructor(fhirResource: any, fhirVersion?: fhirVersions) {
+  constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
+    super(fastenOptions)
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 

@@ -3,8 +3,11 @@ import * as _ from "lodash";
 import {CodableConceptModel, hasValue} from '../datatypes/codable-concept-model';
 import {ReferenceModel} from '../datatypes/reference-model';
 import {CodingModel} from '../datatypes/coding-model';
+import {FastenDisplayModel} from '../fasten/fasten-display-model';
+import {FastenOptions} from '../fasten/fasten-options';
 
-export class AppointmentModel {
+export class AppointmentModel extends FastenDisplayModel {
+
   description: string|undefined
   status: string|undefined
   start: string|undefined
@@ -19,7 +22,8 @@ export class AppointmentModel {
   cancelationReason: string|undefined
   serviceCategory: string|undefined
 
-  constructor(fhirResource: any, fhirVersion?: fhirVersions) {
+  constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
+    super(fastenOptions)
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 

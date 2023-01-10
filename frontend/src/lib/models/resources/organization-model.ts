@@ -3,15 +3,19 @@ import * as _ from "lodash";
 import {CodableConceptModel, hasValue} from '../datatypes/codable-concept-model';
 import {ReferenceModel} from '../datatypes/reference-model';
 import {CodingModel} from '../datatypes/coding-model';
+import {FastenDisplayModel} from '../fasten/fasten-display-model';
+import {FastenOptions} from '../fasten/fasten-options';
 
-export class OrganizationModel {
+export class OrganizationModel extends FastenDisplayModel {
+
   identifier: string|undefined
   name: string|undefined
   addresses: string|undefined
   telecom: string|undefined
   typeCodings: any[]|undefined
 
-  constructor(fhirResource: any, fhirVersion?: fhirVersions) {
+  constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
+    super(fastenOptions)
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 

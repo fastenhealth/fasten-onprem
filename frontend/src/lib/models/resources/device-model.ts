@@ -2,8 +2,11 @@ import {fhirVersions} from '../constants';
 import * as _ from "lodash";
 import {CodableConceptModel, hasValue} from '../datatypes/codable-concept-model';
 import {ReferenceModel} from '../datatypes/reference-model';
+import {FastenDisplayModel} from '../fasten/fasten-display-model';
+import {FastenOptions} from '../fasten/fasten-options';
 
-export class DeviceModel {
+export class DeviceModel extends FastenDisplayModel {
+
   model: string | undefined
   status: string | undefined
   hasExpiry: boolean | undefined
@@ -16,7 +19,8 @@ export class DeviceModel {
   safety: string | undefined
   hasSafety: boolean | undefined
 
-  constructor(fhirResource: any, fhirVersion?: fhirVersions) {
+  constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
+    super(fastenOptions)
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 
