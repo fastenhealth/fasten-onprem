@@ -4,6 +4,7 @@ import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -29,6 +30,12 @@ func ListResourceFhir(c *gin.Context) {
 	}
 
 	wrappedResourceModels, err := databaseRepo.ListResources(c, listResourceQueryOptions)
+
+	if c.Query("sortBy") == "title" {
+		wrappedResourceModels = utils.SortResourceListByTitle(wrappedResourceModels)
+	} else {
+		wrappedResourceModels = utils.SortResourceListByDate(wrappedResourceModels)
+	}
 
 	if err != nil {
 		logger.Errorln("An error occurred while retrieving resources", err)

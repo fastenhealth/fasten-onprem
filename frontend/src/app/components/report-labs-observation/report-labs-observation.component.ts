@@ -160,6 +160,10 @@ export class ReportLabsObservationComponent implements OnInit {
 
     let referenceRanges = []
 
+    //sort observations
+    this.observations = this.observations.sort((a, b) => a.sort_date > b.sort_date ? -1 : a.sort_date < b.sort_date ? 1 : 0)
+
+
     for(let observation of this.observations){
       //get label
       this.barChartLabels.push(

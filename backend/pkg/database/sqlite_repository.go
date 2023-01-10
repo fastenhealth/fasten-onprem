@@ -494,7 +494,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context) ([]*m
 		flattenRelatedResourcesFn(encounterList[ndx])
 
 		//sort all related resources (by date, desc)
-		encounterList[ndx].RelatedResourceFhir = utils.SortResourceListByDate(encounterList[ndx].RelatedResourceFhir)
+		encounterList[ndx].RelatedResourceFhir = utils.SortResourcePtrListByDate(encounterList[ndx].RelatedResourceFhir)
 
 	}
 
@@ -511,11 +511,11 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context) ([]*m
 		}
 
 		//sort all related resources (by date, desc)
-		conditionList[ndx].RelatedResourceFhir = utils.SortResourceListByDate(conditionList[ndx].RelatedResourceFhir)
+		conditionList[ndx].RelatedResourceFhir = utils.SortResourcePtrListByDate(conditionList[ndx].RelatedResourceFhir)
 	}
 
-	conditionList = utils.SortResourceListByDate(conditionList)
-	encounterList = utils.SortResourceListByDate(encounterList)
+	conditionList = utils.SortResourcePtrListByDate(conditionList)
+	encounterList = utils.SortResourcePtrListByDate(encounterList)
 	return conditionList, encounterList, nil
 }
 

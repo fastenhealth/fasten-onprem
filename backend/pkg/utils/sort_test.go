@@ -29,7 +29,7 @@ func TestSortResourceListByTitle(t *testing.T) {
 	}
 
 	//test
-	resources = SortResourceListByTitle(resources)
+	resources = SortResourcePtrListByTitle(resources)
 
 	//assert
 	require.Equal(t, "a", *resources[0].SortTitle)
@@ -60,7 +60,7 @@ func TestSortResourceListByDate(t *testing.T) {
 	}
 
 	//test
-	resources = SortResourceListByDate(resources)
+	resources = SortResourcePtrListByDate(resources)
 
 	//assert
 	require.Equal(t, a, *resources[0].SortDate)
