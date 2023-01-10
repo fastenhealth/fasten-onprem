@@ -136,7 +136,7 @@ func CreateManualSource(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"success": true, "data": summary})
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": summary, "source": manualSourceCredential})
 }
 
 func GetSource(c *gin.Context) {

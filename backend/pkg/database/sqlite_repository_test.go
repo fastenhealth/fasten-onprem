@@ -256,3 +256,5 @@ func (suite *RepositoryTestSuite) TestGetCurrentUser_WithContextBackgroundAuthUs
 	//assert
 	require.Nil(suite.T(), userModelResult)
 }
+
+//TODO - merging multiple Compositions is broken
