@@ -1,4 +1,4 @@
-import {fhirVersions} from '../constants';
+import {fhirVersions, ResourceType} from '../constants';
 import * as _ from "lodash";
 import {CodableConceptModel, hasValue} from '../datatypes/codable-concept-model';
 import {ReferenceModel} from '../datatypes/reference-model';
@@ -17,6 +17,8 @@ export class RelatedPersonModel extends FastenDisplayModel {
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
+    this.resourceType = ResourceType.RelatedPerson
+
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 

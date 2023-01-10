@@ -1,4 +1,4 @@
-import {fhirVersions} from '../constants';
+import {fhirVersions, ResourceType} from '../constants';
 import * as _ from "lodash";
 import {ReferenceModel} from '../datatypes/reference-model';
 import {CodableConceptModel} from '../datatypes/codable-concept-model';
@@ -19,6 +19,7 @@ export class CareTeamModel extends FastenDisplayModel {
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
+    this.resourceType = ResourceType.CareTeam
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4)
   }
 
@@ -36,7 +37,7 @@ export class CareTeamModel extends FastenDisplayModel {
 
     this.participants = _.get(fhirResource, 'participant', []).map((item: any) => {
       const display = _.get(item, 'member.display');
-      const role = _.get(item, 'role.text') || _.get(item, 'role.coding.0.display');
+      const role = _.get(item, 'role.text') || _.get(item, 'role[0].text') || _.get(item, 'role.coding.0.display');
       const periodStart = _.get(item, 'period.start');
       const periodEnd = _.get(item, 'period.end');
 

@@ -1,4 +1,4 @@
-import {fhirVersions} from './constants';
+import {fhirVersions, ResourceType} from './constants';
 import {AdverseEventModel} from './resources/adverse-event-model';
 import {AllergyIntoleranceModel} from './resources/allergy-intolerance-model';
 import {AppointmentModel} from './resources/appointment-model';
@@ -26,8 +26,8 @@ import {FastenOptions} from './fasten/fasten-options';
 import {FastenDisplayModel} from './fasten/fasten-display-model';
 // import {BinaryModel} from './resources/binary-model';
 
-export function fhirModelFactory(modelName: string, fhirResource: any, fhirVersion: fhirVersions = fhirVersions.R4, fastenOptions?: FastenOptions):FastenDisplayModel {
- switch (modelName) {
+export function fhirModelFactory(modelResourceType: ResourceType, fhirResource: any, fhirVersion: fhirVersions = fhirVersions.R4, fastenOptions?: FastenOptions):FastenDisplayModel {
+ switch (modelResourceType) {
    case "AdverseEvent": {
      return new AdverseEventModel(fhirResource, fhirVersion, fastenOptions)
    }

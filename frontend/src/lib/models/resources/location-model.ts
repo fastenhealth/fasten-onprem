@@ -3,7 +3,7 @@ import {AddressModel} from '../datatypes/address-model';
 import {TelecomModel} from '../datatypes/telecom-model';
 import {CodableConceptModel} from '../datatypes/codable-concept-model';
 import {ReferenceModel} from '../datatypes/reference-model';
-import {fhirVersions} from '../constants';
+import {fhirVersions, ResourceType} from '../constants';
 import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
 
@@ -21,6 +21,7 @@ export class LocationModel extends FastenDisplayModel {
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
+    this.resourceType = ResourceType.Location
 
     this.name = _.get(fhirResource, 'name');
     this.status = _.get(fhirResource, 'status');
