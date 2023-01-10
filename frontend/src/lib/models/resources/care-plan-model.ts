@@ -9,25 +9,25 @@ export class CarePlanModel extends FastenDisplayModel {
   status: string | undefined
   expiry: string | undefined
   category: any[] | undefined
-  hasCategory: boolean | undefined
+  has_category: boolean | undefined
   goals: ReferenceModel[] | undefined
-  hasGoals: boolean | undefined
+  has_goals: boolean | undefined
   addresses: ReferenceModel[] | undefined
-  hasAddresses: boolean | undefined
+  has_addresses: boolean | undefined
   activity: any
-  hasActivity: boolean | undefined
-  basedOn: string | undefined
-  partOf: string | undefined
+  has_activity: boolean | undefined
+  based_on: string | undefined
+  part_of: string | undefined
   intent: string | undefined
   description: string | undefined
   subject: ReferenceModel | undefined
-  periodStart: string | undefined
-  periodEnd: string | undefined
+  period_start: string | undefined
+  period_end: string | undefined
   author: ReferenceModel | undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.CarePlan
+    this.source_resource_type = ResourceType.CarePlan
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 
@@ -35,22 +35,22 @@ export class CarePlanModel extends FastenDisplayModel {
     this.status = _.get(fhirResource, 'status', '');
     this.expiry = _.get(fhirResource, 'expiry');
     this.category = _.get(fhirResource, 'category');
-    this.hasCategory = Array.isArray(_.get(fhirResource, 'category.0.coding'));
+    this.has_category = Array.isArray(_.get(fhirResource, 'category.0.coding'));
     this.goals = _.get(fhirResource, 'goal');
-    this.hasGoals = Array.isArray(this.goals);
+    this.has_goals = Array.isArray(this.goals);
     this.addresses = _.get(fhirResource, 'addresses')
-    this.hasAddresses = Array.isArray(this.addresses);
+    this.has_addresses = Array.isArray(this.addresses);
     this.description = _.get(fhirResource, 'description');
     this.subject = _.get(fhirResource, 'subject');
-    this.periodStart = _.get(fhirResource, 'period.start');
-    this.periodEnd = _.get(fhirResource, 'period.end');
+    this.period_start = _.get(fhirResource, 'period.start');
+    this.period_end = _.get(fhirResource, 'period.end');
     this.author = _.get(fhirResource, 'author');
   };
 
   dstu2DTO(fhirResource: any){
     this.activity = _.get(fhirResource, 'activity');
-    this.hasActivity = Array.isArray(this.activity);
-    this.activity = !this.hasActivity
+    this.has_activity = Array.isArray(this.activity);
+    this.activity = !this.has_activity
       ? this.activity
       : this.activity.map((item: any) => {
         const categories = _.get(item, 'detail.category.coding');
@@ -66,8 +66,8 @@ export class CarePlanModel extends FastenDisplayModel {
 
   stu3DTO(fhirResource: any) {
     let activity = _.get(fhirResource, 'activity');
-    this.hasActivity = Array.isArray(activity);
-    this.activity = !this.hasActivity
+    this.has_activity = Array.isArray(activity);
+    this.activity = !this.has_activity
       ? activity
       : activity.map((item: any) => {
         const categories = [
@@ -82,15 +82,15 @@ export class CarePlanModel extends FastenDisplayModel {
           categories,
         };
       });
-    this.basedOn = _.get(fhirResource, 'basedOn', []);
-    this.partOf = _.get(fhirResource, 'partOf', []);
+    this.based_on = _.get(fhirResource, 'basedOn', []);
+    this.part_of = _.get(fhirResource, 'partOf', []);
     this.intent = _.get(fhirResource, 'intent', []);
   };
 
   r4DTO(fhirResource: any) {
     this.activity = _.get(fhirResource, 'activity');
-    this.hasActivity = Array.isArray(this.activity);
-    this.activity = !this.hasActivity
+    this.has_activity = Array.isArray(this.activity);
+    this.activity = !this.has_activity
       ? this.activity
       : this.activity.map((item: any) => {
         const categories = [

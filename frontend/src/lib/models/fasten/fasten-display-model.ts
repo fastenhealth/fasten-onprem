@@ -2,14 +2,13 @@ import {FastenOptions} from './fasten-options';
 import {ResourceType} from '../constants';
 
 export class FastenDisplayModel {
-  resourceType: ResourceType | undefined
-  sortTitle: string | undefined
-  sortDate: Date | undefined
+  source_resource_type: ResourceType | undefined
+  source_resource_id: string | undefined
+  source_id: string | undefined
+  sort_title: string | undefined
+  sort_date: Date | undefined
 
-  constructor(options?: FastenOptions) {
-    if(options){
-      this.sortTitle = options.sortTitle
-      this.sortDate = options.sortDate
-    }
-  }
+  related_resources: {[ modelResourceType: string]: FastenDisplayModel[]} = {}
+
+  constructor(options?: FastenOptions) {}
 }

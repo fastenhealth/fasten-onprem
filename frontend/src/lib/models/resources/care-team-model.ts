@@ -9,17 +9,17 @@ export class CareTeamModel extends FastenDisplayModel {
 
   name: string | undefined
   status: string | undefined
-  periodStart: string | undefined
-  periodEnd: string | undefined
+  period_start: string | undefined
+  period_end: string | undefined
   participants: any[] | undefined
   category: CodableConceptModel[] | undefined
   subject: ReferenceModel | undefined
   encounter: ReferenceModel | undefined
-  managingOrganization: ReferenceModel | undefined
+  managing_organization: ReferenceModel | undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.CareTeam
+    this.source_resource_type = ResourceType.CareTeam
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4)
   }
 
@@ -27,11 +27,11 @@ export class CareTeamModel extends FastenDisplayModel {
     // Default value for title - "Care team"
     this.name = _.get(fhirResource, 'name', 'Care team');
     this.status = _.get(fhirResource, 'status');
-    this.periodStart = _.get(fhirResource, 'period.start');
-    this.periodEnd = _.get(fhirResource, 'period.end');
+    this.period_start = _.get(fhirResource, 'period.start');
+    this.period_end = _.get(fhirResource, 'period.end');
     this.category = _.get(fhirResource, 'category');
     this.subject = _.get(fhirResource, 'subject');
-    this.managingOrganization =
+    this.managing_organization =
       _.get(fhirResource, 'managingOrganization[0]') ||
       _.get(fhirResource, 'managingOrganization');
 

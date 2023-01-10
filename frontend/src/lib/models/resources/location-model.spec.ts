@@ -17,7 +17,7 @@ describe('LocationModel', () => {
       expectedLocation.status = 'active'
       expectedLocation.description = 'Second floor of the Old South Wing, formerly in use by Psychiatry'
       expectedLocation.mode = "instance"
-      expectedLocation.managingOrganization = {"reference": "Organization/f001"}
+      expectedLocation.managing_organization = {"reference": "Organization/f001"}
       expectedLocation.address = new AddressModel({
         city: "Den Burg",
         line: ['Galapagosweg 91, Building A'],
@@ -31,7 +31,7 @@ describe('LocationModel', () => {
         {system: 'url', value: 'http://sampleorg.com/southwing', use: 'work'}
       ]
       expectedLocation.type = []
-      expectedLocation.physicalType = new CodableConceptModel({
+      expectedLocation.physical_type = new CodableConceptModel({
         text: '',
         coding: [
           {
@@ -52,7 +52,7 @@ describe('LocationModel', () => {
       expectedLocation.status = 'active'
       expectedLocation.description = "Ambulance provided by Burgers University Medical Center"
       expectedLocation.mode = "kind"
-      expectedLocation.managingOrganization = {"reference": "Organization/f001"}
+      expectedLocation.managing_organization = {"reference": "Organization/f001"}
       expectedLocation.telecom = [
         {system: 'phone', value: '2329', use: 'mobile'}
       ]
@@ -66,7 +66,7 @@ describe('LocationModel', () => {
           }
         ]
       })]
-      expectedLocation.physicalType = new CodableConceptModel({
+      expectedLocation.physical_type = new CodableConceptModel({
         text: '',
         coding: [
           {
@@ -90,7 +90,7 @@ describe('LocationModel', () => {
       expectedLocation.status = 'active'
       expectedLocation.description = "Second floor of the Old South Wing, formerly in use by Psychiatry"
       expectedLocation.mode = "instance"
-      expectedLocation.managingOrganization = {"reference": "Organization/f001"}
+      expectedLocation.managing_organization = {"reference": "Organization/f001"}
       expectedLocation.telecom = [
         {
           "system": "phone",
@@ -121,7 +121,7 @@ describe('LocationModel', () => {
         "postalCode": "9105 PZ",
         "country": "NLD"
       })
-      expectedLocation.physicalType = new CodableConceptModel({
+      expectedLocation.physical_type = new CodableConceptModel({
         text: '',
         coding: [
           {

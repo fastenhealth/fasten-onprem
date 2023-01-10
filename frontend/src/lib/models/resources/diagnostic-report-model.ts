@@ -10,17 +10,17 @@ export class DiagnosticReportModel extends FastenDisplayModel {
 
   title: string | undefined
   status: string | undefined
-  effectiveDateTime: string | undefined
-  categoryCoding: CodingModel[] | undefined
-  hasCategoryCoding: boolean | undefined
-  hasPerformer: boolean | undefined
+  effective_datetime: string | undefined
+  category_coding: CodingModel[] | undefined
+  has_category_coding: boolean | undefined
+  has_performer: boolean | undefined
   conclusion: string | undefined
   performer: ReferenceModel | undefined
   issued: string | undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.DiagnosticReport
+    this.source_resource_type = ResourceType.DiagnosticReport
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 
@@ -30,19 +30,19 @@ export class DiagnosticReportModel extends FastenDisplayModel {
       _.get(fhirResource, 'code.display') ||
       _.get(fhirResource, 'code.coding.0.display', null);
     this.status = _.get(fhirResource, 'status', '');
-    this.effectiveDateTime = _.get(fhirResource, 'effectiveDateTime');
-    this.categoryCoding = _.get(fhirResource, 'category.coding');
-    this.hasCategoryCoding = Array.isArray(this.categoryCoding);
+    this.effective_datetime = _.get(fhirResource, 'effectiveDateTime');
+    this.category_coding = _.get(fhirResource, 'category.coding');
+    this.has_category_coding = Array.isArray(this.category_coding);
     this.conclusion = _.get(fhirResource, 'conclusion');
     this.issued = _.get(fhirResource, 'issued');
   };
 
   dstu2DTO(fhirResource:any){
-    this.hasPerformer = _.has(fhirResource, 'performer');
+    this.has_performer = _.has(fhirResource, 'performer');
     this.performer = _.get(fhirResource, 'performer');
   };
   stu3DTO(fhirResource:any){
-    this.hasPerformer = _.has(fhirResource, 'performer.0.actor.display');
+    this.has_performer = _.has(fhirResource, 'performer.0.actor.display');
     this.performer = _.get(fhirResource, 'performer.0.actor');
   };
 
@@ -51,9 +51,9 @@ export class DiagnosticReportModel extends FastenDisplayModel {
     if (!this.performer) {
       this.performer = _.get(fhirResource, 'performer.0');
     }
-    this.hasPerformer = !!this.performer;
-    this.categoryCoding = _.get(fhirResource, 'category.coding');
-    this.hasCategoryCoding = Array.isArray(this.categoryCoding);
+    this.has_performer = !!this.performer;
+    this.category_coding = _.get(fhirResource, 'category.coding');
+    this.has_category_coding = Array.isArray(this.category_coding);
   };
 
   resourceDTO(fhirResource:any, fhirVersion: fhirVersions){

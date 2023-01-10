@@ -8,13 +8,13 @@ import {FastenOptions} from '../fasten/fasten-options';
 
 export class EncounterModel extends FastenDisplayModel {
 
-  periodEnd: string | undefined
-  periodStart: string | undefined
-  hasParticipant: boolean | undefined
-  locationDisplay: string | undefined
-  encounterType: CodableConceptModel[] | undefined
-  resourceClass: string | undefined
-  resourceStatus: string | undefined
+  period_end: string | undefined
+  period_start: string | undefined
+  has_participant: boolean | undefined
+  location_display: string | undefined
+  encounter_type: CodableConceptModel[] | undefined
+  resource_class: string | undefined
+  resource_status: string | undefined
   participant: {
     display?: string,
     reference: ReferenceModel,
@@ -24,25 +24,25 @@ export class EncounterModel extends FastenDisplayModel {
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.Encounter
+    this.source_resource_type = ResourceType.Encounter
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 
   commonDTO(fhirResource:any){
-    this.resourceStatus = _.get(fhirResource, 'status');
-    this.locationDisplay = _.get(
+    this.resource_status = _.get(fhirResource, 'status');
+    this.location_display = _.get(
       fhirResource,
       'location[0].location.display',
       'Encounter',
     );
-    this.encounterType = _.get(fhirResource, 'type');
-    this.hasParticipant = _.has(fhirResource, 'participant');
+    this.encounter_type = _.get(fhirResource, 'type');
+    this.has_participant = _.has(fhirResource, 'participant');
   };
 
   dstu2DTO(fhirResource:any){
-    this.periodEnd = _.get(fhirResource, 'period.end');
-    this.periodStart = _.get(fhirResource, 'period.start');
-    this.resourceClass = _.get(fhirResource, 'class');
+    this.period_end = _.get(fhirResource, 'period.end');
+    this.period_start = _.get(fhirResource, 'period.start');
+    this.resource_class = _.get(fhirResource, 'class');
     this.participant = _.get(fhirResource, 'participant', []).map((item: any) => {
       let periodStart = _.get(item, 'period.start');
       periodStart = new Date(periodStart).toLocaleString();
@@ -57,11 +57,11 @@ export class EncounterModel extends FastenDisplayModel {
   };
 
   stu3DTO(fhirResource:any){
-    this.periodEnd = _.get(fhirResource, 'period.end');
-    this.periodStart = _.get(fhirResource, 'period.start');
+    this.period_end = _.get(fhirResource, 'period.end');
+    this.period_start = _.get(fhirResource, 'period.start');
 
 
-    this.resourceClass = _.get(fhirResource, 'class.display');
+    this.resource_class = _.get(fhirResource, 'class.display');
     this.participant = _.get(fhirResource, 'participant', []).map((item: any) => {
       let periodStart = _.get(item, 'period.start');
       const reference = _.get(item, 'individual', {});
@@ -75,10 +75,10 @@ export class EncounterModel extends FastenDisplayModel {
   };
 
   r4DTO(fhirResource:any){
-    this.periodEnd = _.get(fhirResource, 'period.end');
-    this.periodStart = _.get(fhirResource, 'period.start');
+    this.period_end = _.get(fhirResource, 'period.end');
+    this.period_start = _.get(fhirResource, 'period.start');
 
-    this.resourceClass = _.get(fhirResource, 'class.display');
+    this.resource_class = _.get(fhirResource, 'class.display');
     this.participant = _.get(fhirResource, 'participant', []).map((item: any) => {
       let periodStart = _.get(item, 'period.start');
       const reference = _.get(item, 'individual', {});

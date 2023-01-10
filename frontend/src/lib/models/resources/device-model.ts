@@ -9,52 +9,52 @@ export class DeviceModel extends FastenDisplayModel {
 
   model: string | undefined
   status: string | undefined
-  hasExpiry: boolean | undefined
-  getExpiry: string | undefined
-  getTypeCoding: string | undefined
-  hasTypeCoding: boolean | undefined
-  getUdi: string | undefined
-  udiCarrierAIDC: string | undefined
-  udiCarrierHRF: string | undefined
+  has_expiry: boolean | undefined
+  get_expiry: string | undefined
+  get_type_coding: string | undefined
+  has_type_coding: boolean | undefined
+  get_udi: string | undefined
+  udi_carrier_aidc: string | undefined
+  udi_carrier_hrf: string | undefined
   safety: string | undefined
-  hasSafety: boolean | undefined
+  has_safety: boolean | undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.Device
+    this.source_resource_type = ResourceType.Device
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 
 
   commonDTO(fhirResource:any){
-    this.model = _.get(fhirResource, 'model', 'Device');
+    this.model = _.get(fhirResource, 'model') || _.get(fhirResource,"code.text", 'Device');
     this.status = _.get(fhirResource, 'status', '');
-    this.getTypeCoding = _.get(fhirResource, 'type.coding');
-    this.hasTypeCoding = Array.isArray(this.getTypeCoding);
+    this.get_type_coding = _.get(fhirResource, 'type.coding');
+    this.has_type_coding = Array.isArray(this.get_type_coding);
   };
 
   dstu2DTO(fhirResource:any){
-    this.getUdi = _.get(fhirResource, 'udi');
-    this.hasExpiry = _.has(fhirResource, 'expiry');
-    this.getExpiry = _.get(fhirResource, 'expiry');
+    this.get_udi = _.get(fhirResource, 'udi');
+    this.has_expiry = _.has(fhirResource, 'expiry');
+    this.get_expiry = _.get(fhirResource, 'expiry');
   };
 
   stu3DTO(fhirResource:any){
-    this.getUdi = _.get(fhirResource, 'udi.name');
-    this.hasExpiry = _.has(fhirResource, 'expirationDate');
-    this.getExpiry = _.get(fhirResource, 'expirationDate');
+    this.get_udi = _.get(fhirResource, 'udi.name');
+    this.has_expiry = _.has(fhirResource, 'expirationDate');
+    this.get_expiry = _.get(fhirResource, 'expirationDate');
     this.safety = _.get(fhirResource, 'safety', []);
-    this.hasSafety = hasValue(this.safety);
+    this.has_safety = hasValue(this.safety);
   };
 
   r4DTO(fhirResource:any){
-    this.getUdi = _.get(fhirResource, 'udiCarrier.deviceIdentifier');
-    this.hasExpiry = _.has(fhirResource, 'expirationDate');
-    this.getExpiry = _.get(fhirResource, 'expirationDate');
-    this.udiCarrierAIDC = _.get(fhirResource, 'udiCarrier.carrierAIDC');
-    this.udiCarrierHRF = _.get(fhirResource, 'udiCarrier.carrierHRF');
+    this.get_udi = _.get(fhirResource, 'udiCarrier.deviceIdentifier');
+    this.has_expiry = _.has(fhirResource, 'expirationDate');
+    this.get_expiry = _.get(fhirResource, 'expirationDate');
+    this.udi_carrier_aidc = _.get(fhirResource, 'udiCarrier.carrierAIDC');
+    this.udi_carrier_hrf = _.get(fhirResource, 'udiCarrier.carrierHRF');
     this.safety = _.get(fhirResource, 'safety', []);
-    this.hasSafety = hasValue(this.safety);
+    this.has_safety = hasValue(this.safety);
   };
 
   resourceDTO(fhirResource:any, fhirVersion:fhirVersions){

@@ -11,20 +11,20 @@ export class AppointmentModel extends FastenDisplayModel {
   description: string|undefined
   status: string|undefined
   start: string|undefined
-  typeCoding: string|undefined
+  type_coding: string|undefined
   comment: string|undefined
   participant: string|undefined
-  participantPatient: string|undefined
-  participantPractitioner: string|undefined
-  participantLocation: string|undefined
-  minutesDuration: string|undefined
+  participant_patient: string|undefined
+  participant_practitioner: string|undefined
+  participant_location: string|undefined
+  minutes_duration: string|undefined
   reason: string|undefined
-  cancelationReason: string|undefined
-  serviceCategory: string|undefined
+  cancelation_reason: string|undefined
+  service_category: string|undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.Appointment
+    this.source_resource_type = ResourceType.Appointment
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 
@@ -33,7 +33,7 @@ export class AppointmentModel extends FastenDisplayModel {
     this.description = _.get(fhirResource, 'description');
     this.status = _.get(fhirResource, 'status');
     this.start = _.get(fhirResource, 'start');
-    this.typeCoding = _.get(fhirResource, 'type.coding');
+    this.type_coding = _.get(fhirResource, 'type.coding');
     this.comment = _.get(fhirResource, 'comment');
     this.participant = _.get(fhirResource, 'participant');
     // const {
@@ -41,20 +41,20 @@ export class AppointmentModel extends FastenDisplayModel {
     //   participantPractitioner,
     //   participantLocation,
     // } = prepareParticipantData(participant);
-    this.minutesDuration = _.get(fhirResource, 'minutesDuration');
+    this.minutes_duration = _.get(fhirResource, 'minutesDuration');
     this.reason = _.get(fhirResource, 'reason', []);
   };
 
   stu3DTO(fhirResource:any) {
-    this.serviceCategory = _.get(fhirResource, 'serviceCategory', []);
-    this.typeCoding = _.get(fhirResource, 'appointmentType.coding');
+    this.service_category = _.get(fhirResource, 'serviceCategory', []);
+    this.type_coding = _.get(fhirResource, 'appointmentType.coding');
   };
 
   r4DTO(fhirResource:any) {
     this.reason = _.get(fhirResource, 'reasonCode', []);
-    this.cancelationReason = _.get(fhirResource, 'cancelationReason', []);
-    this.serviceCategory = _.get(fhirResource, 'serviceCategory', []);
-    this.typeCoding = _.get(fhirResource, 'appointmentType.coding');
+    this.cancelation_reason = _.get(fhirResource, 'cancelationReason', []);
+    this.service_category = _.get(fhirResource, 'serviceCategory', []);
+    this.type_coding = _.get(fhirResource, 'appointmentType.coding');
   };
 
   resourceDTO(fhirResource:any, fhirVersion:fhirVersions){

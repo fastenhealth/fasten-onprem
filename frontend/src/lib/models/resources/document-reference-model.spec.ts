@@ -15,10 +15,10 @@ describe('DocumentReferenceModel', () => {
       expected.description = 'Physical'
       expected.status =  'current'
       // expected.docStatus: string | undefined
-      expected.typeCoding = { system: 'http://loinc.org', code: '34108-1', display: 'Outpatient Note' }
+      expected.type_coding = { system: 'http://loinc.org', code: '34108-1', display: 'Outpatient Note' }
       // expected.classCoding: string | undefined
-      expected.createdAt = '2005-12-24T09:43:41+11:00'
-      expected.securityLabelCoding = { system: 'http://terminology.hl7.org/CodeSystem/v3-Confidentiality', code: 'V', display: 'very restricted' }
+      expected.created_at = '2005-12-24T09:43:41+11:00'
+      expected.security_label_coding = { system: 'http://terminology.hl7.org/CodeSystem/v3-Confidentiality', code: 'V', display: 'very restricted' }
       expected.context = {
         eventCoding: { system: 'http://ihe.net/xds/connectathon/eventCodes', code: 'T-D8200', display: 'Arm' },
         facilityTypeCoding: { system: 'http://www.ihe.net/xds/connectathon/healthcareFacilityTypeCodes', code: 'Outpatient', display: 'Outpatient' },

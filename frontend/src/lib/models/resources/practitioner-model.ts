@@ -9,21 +9,21 @@ import {FastenOptions} from '../fasten/fasten-options';
 export class PractitionerModel extends FastenDisplayModel {
 
   identifier: string|undefined
-  name: string|undefined
+  name: any|undefined
   gender: string|undefined
   status: string|undefined
-  isContactData: boolean|undefined
+  is_contact_data: boolean|undefined
   contactData: {
     name: string,
     relationship: string
   }|undefined
   telecom: string|undefined
   address: string|undefined
-  birthDate: string|undefined
+  birthdate: string|undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.Practitioner
+    this.source_resource_type = ResourceType.Practitioner
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 
@@ -33,8 +33,8 @@ export class PractitionerModel extends FastenDisplayModel {
     this.identifier = _.get(fhirResource, 'identifier', '');
     this.gender = _.get(fhirResource, 'gender', '');
     this.status = _.get(fhirResource, 'active') === true ? 'active' : '';
-    this.isContactData = _.has(fhirResource, 'contact[0]');
-    this.birthDate = _.get(fhirResource, 'birthDate');
+    this.is_contact_data = _.has(fhirResource, 'contact[0]');
+    this.birthdate = _.get(fhirResource, 'birthDate');
     this.contactData = {
       name: _.get(fhirResource, 'contact[0].name'),
       relationship: _.get(fhirResource, 'contact[0].relationship[0].text'),

@@ -9,44 +9,44 @@ import {FastenOptions} from '../fasten/fasten-options';
 export class PatientModel extends FastenDisplayModel {
 
   id: string|undefined
-  patientName: string|undefined
-  patientBirthDate: string|undefined
-  patientGender: string|undefined
-  patientContact: string|undefined
-  patientAddress: string|undefined
-  patientPhones: string|undefined
-  communicationLanguage: string|undefined
-  hasCommunicationLanguage: boolean|undefined
-  hasPatientPhones: boolean|undefined
+  patient_name: string|undefined
+  patient_birthdate: string|undefined
+  patient_gender: string|undefined
+  patient_contact: string|undefined
+  patient_address: string|undefined
+  patient_phones: string|undefined
+  communication_language: string|undefined
+  has_communication_language: boolean|undefined
+  has_patient_phones: boolean|undefined
   active: string|undefined
-  activeStatus: string|undefined
-  isDeceased: boolean|undefined
-  deceasedDate: string|undefined
+  active_status: string|undefined
+  is_deceased: boolean|undefined
+  deceased_date: string|undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.Patient
+    this.source_resource_type = ResourceType.Patient
 
     this.id = this.getId(fhirResource);
-    this.patientName = this.getNames(fhirResource);
-    this.patientBirthDate = this.getBirthDate(fhirResource);
-    this.patientGender = this.getGender(fhirResource);
-    this.patientContact = _.get(fhirResource, 'contact[0]');
-    this.patientAddress = _.get(fhirResource, 'address[0]');
-    this.patientPhones = _.get(fhirResource, 'telecom', []).filter(
+    this.patient_name = this.getNames(fhirResource);
+    this.patient_birthdate = this.getBirthDate(fhirResource);
+    this.patient_gender = this.getGender(fhirResource);
+    this.patient_contact = _.get(fhirResource, 'contact[0]');
+    this.patient_address = _.get(fhirResource, 'address[0]');
+    this.patient_phones = _.get(fhirResource, 'telecom', []).filter(
         (telecom: any) => telecom.system === 'phone',
     );
     let communicationLanguage = _.get(fhirResource, 'communication', [])
       .filter((item: any) => Boolean(_.get(item, 'language.coding', null)))
       .map((item: any) => item.language.coding);
-    this.communicationLanguage = _.get(communicationLanguage, '0', []);
-    this.hasCommunicationLanguage = !_.isEmpty(communicationLanguage);
-    this.hasPatientPhones = !_.isEmpty(this.patientPhones);
+    this.communication_language = _.get(communicationLanguage, '0', []);
+    this.has_communication_language = !_.isEmpty(communicationLanguage);
+    this.has_patient_phones = !_.isEmpty(this.patient_phones);
     this.active = _.get(fhirResource, 'active', false);
-    this.activeStatus = this.active ? 'active' : 'inactive';
+    this.active_status = this.active ? 'active' : 'inactive';
     let deceasedBoolean = _.get(fhirResource, 'deceasedBoolean', false);
-    this.deceasedDate = _.get(fhirResource, 'deceasedDateTime');
-    this.isDeceased = deceasedBoolean || this.deceasedDate;
+    this.deceased_date = _.get(fhirResource, 'deceasedDateTime');
+    this.is_deceased = deceasedBoolean || this.deceased_date;
 
   }
   getId(fhirResource: any) {

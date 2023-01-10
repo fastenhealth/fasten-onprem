@@ -12,11 +12,11 @@ export class OrganizationModel extends FastenDisplayModel {
   name: string|undefined
   addresses: string|undefined
   telecom: string|undefined
-  typeCodings: any[]|undefined
+  type_codings: any[]|undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.Organization
+    this.source_resource_type = ResourceType.Organization
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 
@@ -28,11 +28,11 @@ export class OrganizationModel extends FastenDisplayModel {
     this.telecom = _.get(fhirResource, 'telecom');
   };
   dstu2DTO(fhirResource:any){
-    this.typeCodings = _.get(fhirResource, 'type.coding');
+    this.type_codings = _.get(fhirResource, 'type.coding');
   };
   stu3DTO(fhirResource:any){
     let typeCodings = _.get(fhirResource, 'type', []).map((type: { coding: any; }) => type.coding);
-    this.typeCodings = _.flatten(typeCodings)
+    this.type_codings = _.flatten(typeCodings)
   };
 
   resourceDTO(fhirResource:any, fhirVersion:fhirVersions){

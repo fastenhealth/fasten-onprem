@@ -16,7 +16,7 @@ export class PractitionerRoleModel extends FastenDisplayModel {
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.PractitionerRole
+    this.source_resource_type = ResourceType.PractitionerRole
 
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }

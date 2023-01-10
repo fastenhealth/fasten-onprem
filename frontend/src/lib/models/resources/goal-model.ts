@@ -10,46 +10,46 @@ export class GoalModel extends FastenDisplayModel {
 
   title: string | undefined
   status: string | undefined
-  hasStatus: boolean | undefined
-  startDate: string | undefined
-  hasCategory: boolean | undefined
+  has_status: boolean | undefined
+  start_date: string | undefined
+  has_category: boolean | undefined
   category: CodableConceptModel[] | undefined
-  hasUdi: boolean | undefined
+  has_udi: boolean | undefined
   udi: string | undefined
   addresses: any[] | undefined
-  hasAddresses: boolean | undefined
+  has_addresses: boolean | undefined
   author: string | undefined
   description: string | undefined
-  outcomeReference: string | undefined
-  achievementStatus: CodingModel | undefined
+  outcome_reference: string | undefined
+  achievement_status: CodingModel | undefined
   priority: CodingModel | undefined
   subject: ReferenceModel | undefined
-  statusDate: string | undefined
+  status_date: string | undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.Goal
+    this.source_resource_type = ResourceType.Goal
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 
   commonDTO(fhirResource: any){
     this.title = _.get(fhirResource, 'note[0].text', 'Goal');
     this.status = _.get(fhirResource, 'status', '');
-    this.hasStatus = _.has(fhirResource, 'status');
-    this.startDate = _.get(fhirResource, 'startDate');
+    this.has_status = _.has(fhirResource, 'status');
+    this.start_date = _.get(fhirResource, 'startDate');
     let category = _.get(fhirResource, 'category');
     if(category){
       this.category = category.map((cat:any) => new CodableConceptModel(cat))
     }
-    this.hasCategory = Array.isArray(this.category);
-    this.hasUdi = _.has(fhirResource, 'udi');
+    this.has_category = Array.isArray(this.category);
+    this.has_udi = _.has(fhirResource, 'udi');
     this.udi = _.get(fhirResource, 'udi');
     this.addresses = _.get(fhirResource, 'addresses');
-    this.hasAddresses = Array.isArray(this.addresses);
+    this.has_addresses = Array.isArray(this.addresses);
     this.author = _.get(fhirResource, 'author');
     this.priority = _.get(fhirResource, 'priority.coding[0]');
     this.subject = _.get(fhirResource, 'subject');
-    this.statusDate = _.get(fhirResource, 'statusDate');
+    this.status_date = _.get(fhirResource, 'statusDate');
   };
   dstu2DTO(fhirResource:any){
     this.description = _.get(fhirResource, 'description');
@@ -57,13 +57,13 @@ export class GoalModel extends FastenDisplayModel {
   stu3DTO(fhirResource:any){
     this.description = _.get(fhirResource, 'description.text', null);
     this.title = _.get(fhirResource, 'statusReason');
-    this.outcomeReference = _.get(fhirResource, 'outcomeReference');
+    this.outcome_reference = _.get(fhirResource, 'outcomeReference');
   };
   r4DTO(fhirResource:any){
     this.description = _.get(fhirResource, 'description.text', null);
     this.status = _.get(fhirResource, 'lifecycleStatus', '');
-    this.hasStatus = _.has(fhirResource, 'lifecycleStatus');
-    this.achievementStatus = _.get(fhirResource, 'achievementStatus.coding[0]');
+    this.has_status = _.has(fhirResource, 'lifecycleStatus');
+    this.achievement_status = _.get(fhirResource, 'achievementStatus.coding[0]');
   };
 
   resourceDTO(fhirResource: any, fhirVersion:fhirVersions){

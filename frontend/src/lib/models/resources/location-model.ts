@@ -15,13 +15,13 @@ export class LocationModel extends FastenDisplayModel {
   address: AddressModel
   telecom: TelecomModel[]
   type: CodableConceptModel[]
-  physicalType: CodableConceptModel
+  physical_type: CodableConceptModel
   mode: string
-  managingOrganization: ReferenceModel
+  managing_organization: ReferenceModel
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.Location
+    this.source_resource_type = ResourceType.Location
 
     this.name = _.get(fhirResource, 'name');
     this.status = _.get(fhirResource, 'status');
@@ -29,9 +29,9 @@ export class LocationModel extends FastenDisplayModel {
     this.address = new AddressModel(_.get(fhirResource, 'address'));
     this.telecom = _.get(fhirResource, 'telecom');
     this.type = (_.get(fhirResource, 'type') || []).map((_type: any) => new CodableConceptModel(_type));
-    this.physicalType = new CodableConceptModel(_.get(fhirResource, 'physicalType'));
+    this.physical_type = new CodableConceptModel(_.get(fhirResource, 'physicalType'));
     this.mode = _.get(fhirResource, 'mode');
-    this.managingOrganization = _.get(fhirResource, 'managingOrganization');
+    this.managing_organization = _.get(fhirResource, 'managingOrganization');
 
   }
 }

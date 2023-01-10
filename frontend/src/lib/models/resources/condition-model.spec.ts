@@ -11,12 +11,12 @@ describe('ConditionModel', () => {
     it('should parse example1.json', () => {
       let fixture = require("../../fixtures/r4/resources/condition/example1.json")
       let expected = new ConditionModel({})
-      expected.codeText = 'Burn of ear'
-      expected.severityText = 'Severe'
+      expected.code_text = 'Burn of ear'
+      expected.severity_text = 'Severe'
       // expected.hasAsserter: boolean | undefined
       // expected.asserter: string | undefined
-      expected.hasBodySite = true
-      expected.bodySite = [new CodableConceptModel({
+      expected.has_body_site = true
+      expected.body_site = [new CodableConceptModel({
         "coding": [
           {
             "system": "http://snomed.info/sct",
@@ -26,22 +26,22 @@ describe('ConditionModel', () => {
         ],
         "text": "Left Ear"
       })]
-      expected.clinicalStatus = 'active'
+      expected.clinical_status = 'active'
       // expected.dateRecorded: string | undefined
-      expected.onsetDateTime = '2012-05-24'
+      expected.onset_datetime = '2012-05-24'
 
       expect(new ConditionModel(fixture)).toEqual(expected);
     });
     it('should parse example2.json', () => {
       let fixture = require("../../fixtures/r4/resources/condition/example2.json")
       let expected = new ConditionModel({})
-      expected.codeText = 'Asthma'
-      expected.severityText = 'Mild'
+      expected.code_text = 'Asthma'
+      expected.severity_text = 'Mild'
       // expected.hasAsserter: boolean | undefined
       // expected.asserter: string | undefined
-      expected.hasBodySite = false
+      expected.has_body_site = false
       // expected.bodySite
-      expected.clinicalStatus = 'active'
+      expected.clinical_status = 'active'
       // expected.dateRecorded: string | undefined
       // expected.onsetDateTime = '2012-05-24'
 
@@ -50,15 +50,15 @@ describe('ConditionModel', () => {
     it('should parse example3.json', () => {
       let fixture = require("../../fixtures/r4/resources/condition/example3.json")
       let expected = new ConditionModel({})
-      expected.codeText = 'Fever'
-      expected.severityText = 'Mild'
-      expected.hasAsserter = true
+      expected.code_text = 'Fever'
+      expected.severity_text = 'Mild'
+      expected.has_asserter = true
       expected.asserter = { reference: 'Practitioner/f201' }
-      expected.hasBodySite = true
-      expected.bodySite = [new CodableConceptModel({ text: '', coding: [ Object({ system: 'http://snomed.info/sct', code: '38266002', display: 'Entire body as a whole' }) ] })]
-      expected.clinicalStatus = 'resolved'
-      expected.dateRecorded = '2013-04-04'
-      expected.onsetDateTime =  '2013-04-02'
+      expected.has_body_site = true
+      expected.body_site = [new CodableConceptModel({ text: '', coding: [ Object({ system: 'http://snomed.info/sct', code: '38266002', display: 'Entire body as a whole' }) ] })]
+      expected.clinical_status = 'resolved'
+      expected.date_recorded = '2013-04-04'
+      expected.onset_datetime =  '2013-04-02'
 
       expect(new ConditionModel(fixture)).toEqual(expected);
     });

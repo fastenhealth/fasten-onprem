@@ -10,26 +10,26 @@ export class ResearchStudyModel extends FastenDisplayModel {
 
   title:string|undefined
   status:string|undefined
-  categoryCoding:string|undefined
-  focusCoding:string|undefined
-  protocolReference:string|undefined
-  partOfReference:string|undefined
+  category_coding:string|undefined
+  focus_coding:string|undefined
+  protocol_reference:string|undefined
+  part_of_reference:string|undefined
   contacts:string|undefined
-  keywordConcepts:string|undefined
+  keyword_concepts:string|undefined
   period:string|undefined
-  enrollmentReferences:string|undefined
-  sponsorReference:string|undefined
-  principalInvestigatorReference:string|undefined
-  siteReferences:string|undefined
+  enrollment_references:string|undefined
+  sponsor_reference:string|undefined
+  principal_investigator_reference:string|undefined
+  site_references:string|undefined
   comments:string|undefined
   description:string|undefined
   arms:string|undefined
   location:string|undefined
-  primaryPurposeType:string|undefined
+  primary_purpose_type:string|undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.ResearchStudy
+    this.source_resource_type = ResourceType.ResearchStudy
 
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
@@ -38,24 +38,24 @@ export class ResearchStudyModel extends FastenDisplayModel {
   commonDTO(fhirResource:any) {
     this.title = _.get(fhirResource, 'title', 'Research Study');
     this.status = _.get(fhirResource, 'status');
-    this.categoryCoding = _.get(fhirResource, 'category[0].coding[0]');
-    this.focusCoding = _.get(fhirResource, 'focus[0].coding[0]');
-    this.protocolReference = _.get(fhirResource, 'protocol');
-    this.partOfReference = _.get(fhirResource, 'partOf');
+    this.category_coding = _.get(fhirResource, 'category[0].coding[0]');
+    this.focus_coding = _.get(fhirResource, 'focus[0].coding[0]');
+    this.protocol_reference = _.get(fhirResource, 'protocol');
+    this.part_of_reference = _.get(fhirResource, 'partOf');
     this.contacts = _.get(fhirResource, 'contact', []).map((contact: any) => {
       const name = _.get(contact, 'name');
       const telecoms = _.get(contact, 'telecom');
       return { name, telecoms };
     });
-    this.keywordConcepts = _.get(fhirResource, 'keyword', []);
+    this.keyword_concepts = _.get(fhirResource, 'keyword', []);
     this.period = _.get(fhirResource, 'period', {});
-    this.enrollmentReferences = _.get(fhirResource, 'enrollment', []);
-    this.sponsorReference = _.get(fhirResource, 'sponsor');
-    this.principalInvestigatorReference = _.get(
+    this.enrollment_references = _.get(fhirResource, 'enrollment', []);
+    this.sponsor_reference = _.get(fhirResource, 'sponsor');
+    this.principal_investigator_reference = _.get(
       fhirResource,
       'principalInvestigator',
     );
-    this.siteReferences = _.get(fhirResource, 'site', []);
+    this.site_references = _.get(fhirResource, 'site', []);
     this.comments = _.get(fhirResource, 'note', []);
     this.description = _.get(fhirResource, 'description');
     this.arms = _.get(fhirResource, 'arm', []).map((arm: any) => {
@@ -68,7 +68,7 @@ export class ResearchStudyModel extends FastenDisplayModel {
 
   r4DTO(fhirResource:any) {
     this.location = _.get(fhirResource, 'location');
-    this.primaryPurposeType = _.get(fhirResource, 'primaryPurposeType');
+    this.primary_purpose_type = _.get(fhirResource, 'primaryPurposeType');
 
   };
 

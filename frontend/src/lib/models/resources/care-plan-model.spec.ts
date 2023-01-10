@@ -14,9 +14,9 @@ describe('CarePlanModel', () => {
       // expected.expiry = "completed"
       // expected.category = "completed"
       expected.goals = [ { reference: '#goal' } ]
-      expected.hasGoals = true
+      expected.has_goals = true
       expected.addresses = [ { reference: "Condition/f201", display: '?????' } ]
-      expected.hasAddresses = true
+      expected.has_addresses = true
       expected.activity = [
         {
           title: '64915003',
@@ -26,10 +26,10 @@ describe('CarePlanModel', () => {
           ]
         }
       ]
-      expected.hasActivity = true
+      expected.has_activity = true
       expected.subject = {"reference": "Patient/f001", display: 'P. van de Heuvel'}
-      expected.periodStart = "2011-06-26"
-      expected.periodEnd = "2011-06-27"
+      expected.period_start = "2011-06-26"
+      expected.period_end = "2011-06-27"
       // expected.basedOn
 
       // expected.title = 'Cashew nuts'
@@ -58,19 +58,19 @@ describe('CarePlanModel', () => {
       // expected.expiry = "completed"
       // expected.category = "completed"
       expected.goals = [ { reference: '#goal' } ]
-      expected.hasGoals = true
+      expected.has_goals = true
       expected.addresses = [ { reference: '#p1', "display": "pregnancy" } ]
-      expected.hasAddresses = true
+      expected.has_addresses = true
       expected.activity = [
         { title: undefined, hasCategories: false, categories: [  ] },
         { title: 'First Antenatal encounter', hasCategories: true, categories: [ { system: 'http://example.org/mySystem', code: '1an' } ] },
         { title: 'Follow-up Antenatal encounter', hasCategories: true, categories: [ { system: 'http://example.org/mySystem', code: 'an' } ] },
         { title: 'Delivery', hasCategories: true, categories: [ { system: 'http://example.org/mySystem', code: 'del' } ] }
       ]
-      expected.hasActivity = true
+      expected.has_activity = true
       expected.subject = {display: 'Eve Everywoman', reference: "Patient/1"}
-      expected.periodStart = '2013-01-01'
-      expected.periodEnd = '2013-10-01'
+      expected.period_start = '2013-01-01'
+      expected.period_end = '2013-10-01'
 
       expect(new CarePlanModel(fixture)).toEqual(expected);
     });
@@ -82,20 +82,20 @@ describe('CarePlanModel', () => {
       // expected.expiry = "completed"
       expected.category = [{ text: 'Weight management plan' }]
       expected.goals = [ { reference: 'Goal/example' } ]
-      expected.hasGoals = true
+      expected.has_goals = true
       expected.addresses = [
         { reference: '#p1', display: 'obesity' }
       ]
-      expected.hasAddresses = true
+      expected.has_addresses = true
       expected.activity = [
         { title: '3141-9', hasCategories: true, categories: [ Object({ system: 'http://loinc.org', code: '3141-9', display: 'Weight Measured' }), Object({ system: 'http://snomed.info/sct', code: '27113001', display: 'Body weight' }) ] }
 
       ]
-      expected.hasActivity = true
+      expected.has_activity = true
       expected.description = 'Manage obesity and weight loss'
       expected.subject = {display: 'Peter James Chalmers', reference: 'Patient/example'}
       // expected.periodStart = '2013-01-01'
-      expected.periodEnd = '2017-06-01'
+      expected.period_end = '2017-06-01'
       expected.author = { reference: 'Practitioner/example', display: 'Dr Adam Careful' }
       expect(new CarePlanModel(fixture)).toEqual(expected);
     });

@@ -16,12 +16,12 @@ describe('DiagnosticReportModel', () => {
       expected.title = 'Complete blood count (hemogram) panel - Blood by Automated count'
       expected.status = 'final'
       // expected.effectiveDateTime: string | undefined
-      expected.categoryCoding = [
+      expected.category_coding = [
         { system: 'http://snomed.info/sct', code: '252275004', display: 'Haematology test' },
         { system: 'http://hl7.org/fhir/v2/0074', code: 'HM' }
       ]
-      expected.hasCategoryCoding = true
-      expected.hasPerformer = true
+      expected.has_category_coding = true
+      expected.has_performer = true
       expected.conclusion = 'Core lab'
       expected.performer = { reference: 'Organization/f001', display: 'Burgers University Medical Centre' }
       expected.issued = '2013-05-15T19:32:52+01:00'

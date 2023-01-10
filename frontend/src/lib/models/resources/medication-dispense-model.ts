@@ -8,24 +8,24 @@ import {FastenOptions} from '../fasten/fasten-options';
 
 export class MedicationDispenseModel extends FastenDisplayModel {
 
-  medicationTitle: string|undefined
-  medicationCoding: string|undefined
-  typeCoding: string|undefined
-  hasDosageInstruction: boolean|undefined
-  dosageInstruction: any[] | undefined
-  dosageInstructionData: any[]|undefined
-  whenPrepared: string|undefined
+  medication_title: string|undefined
+  medication_coding: string|undefined
+  type_coding: string|undefined
+  has_dosage_instruction: boolean|undefined
+  dosage_instruction: any[] | undefined
+  dosage_instruction_data: any[]|undefined
+  when_prepared: string|undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.resourceType = ResourceType.MedicationDispense
+    this.source_resource_type = ResourceType.MedicationDispense
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 
 
   commonDTO(fhirResource:any){
-    this.typeCoding = _.get(fhirResource, 'type.coding.0');
-    this.whenPrepared = _.get(fhirResource, 'whenPrepared');
+    this.type_coding = _.get(fhirResource, 'type.coding.0');
+    this.when_prepared = _.get(fhirResource, 'whenPrepared');
   };
 
   dstu2DTO(fhirResource:any){
@@ -51,10 +51,10 @@ export class MedicationDispenseModel extends FastenDisplayModel {
       });
     };
 
-    this.medicationTitle = _.get(fhirResource, 'medicationReference.display');
-    this.dosageInstruction = _.get(fhirResource, 'dosageInstruction', []);
-    this.hasDosageInstruction = Array.isArray(this.dosageInstruction) && this.dosageInstruction.length > 0;
-    this.dosageInstructionData = prepareDosageInstructionData(this.dosageInstruction || []);
+    this.medication_title = _.get(fhirResource, 'medicationReference.display');
+    this.dosage_instruction = _.get(fhirResource, 'dosageInstruction', []);
+    this.has_dosage_instruction = Array.isArray(this.dosage_instruction) && this.dosage_instruction.length > 0;
+    this.dosage_instruction_data = prepareDosageInstructionData(this.dosage_instruction || []);
   };
 
   stu3DTO(fhirResource:any){
@@ -79,14 +79,14 @@ export class MedicationDispenseModel extends FastenDisplayModel {
         return data;
       });
     };
-    this.medicationTitle =
+    this.medication_title =
       _.get(fhirResource, 'medicationReference.display') ||
       _.get(fhirResource, 'contained[0].code.coding[0].display');
-    this.medicationCoding = _.get(fhirResource, 'contained[0].code.coding[0]');
-    this.dosageInstruction = _.get(fhirResource, 'dosageInstruction', []);
-    this.hasDosageInstruction =
-      Array.isArray(this.dosageInstruction) && this.dosageInstruction.length > 0;
-    this.dosageInstructionData = prepareDosageInstructionData(this.dosageInstruction);
+    this.medication_coding = _.get(fhirResource, 'contained[0].code.coding[0]');
+    this.dosage_instruction = _.get(fhirResource, 'dosageInstruction', []);
+    this.has_dosage_instruction =
+      Array.isArray(this.dosage_instruction) && this.dosage_instruction.length > 0;
+    this.dosage_instruction_data = prepareDosageInstructionData(this.dosage_instruction);
   };
 
   r4DTO(fhirResource:any){
@@ -111,14 +111,14 @@ export class MedicationDispenseModel extends FastenDisplayModel {
         return data;
       });
     };
-    this.medicationTitle =
+    this.medication_title =
       _.get(fhirResource, 'medicationReference.display') ||
       _.get(fhirResource, 'contained[0].code.coding[0].display');
-    this.medicationCoding = _.get(fhirResource, 'contained[0].code.coding[0]');
-    this.dosageInstruction = _.get(fhirResource, 'dosageInstruction', []);
-    this.hasDosageInstruction =
-      Array.isArray(this.dosageInstruction) && this.dosageInstruction.length > 0;
-    this.dosageInstructionData = prepareDosageInstructionData(this.dosageInstruction);
+    this.medication_coding = _.get(fhirResource, 'contained[0].code.coding[0]');
+    this.dosage_instruction = _.get(fhirResource, 'dosageInstruction', []);
+    this.has_dosage_instruction =
+      Array.isArray(this.dosage_instruction) && this.dosage_instruction.length > 0;
+    this.dosage_instruction_data = prepareDosageInstructionData(this.dosage_instruction);
   };
 
   resourceDTO(fhirResource:any, fhirVersion: fhirVersions){
