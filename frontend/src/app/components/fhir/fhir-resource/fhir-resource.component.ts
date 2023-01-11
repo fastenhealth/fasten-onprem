@@ -15,6 +15,7 @@ import {ResourceType} from '../../../../lib/models/constants';
 import {FallbackComponent} from '../resources/fallback/fallback.component';
 import {BinaryComponent} from '../resources/binary/binary.component';
 import {FhirResourceComponentInterface} from './fhir-resource-component-interface';
+import {ImmunizationComponent} from '../resources/immunization/immunization.component';
 
 @Component({
   selector: 'fhir-resource',
@@ -101,9 +102,9 @@ export class FhirResourceComponent implements OnInit, OnChanges {
       // case "Goal": {
       //   return ListGoalComponent;
       // }
-      // case "Immunization": {
-      //   return ListImmunizationComponent;
-      // }
+      case "Immunization": {
+        return ImmunizationComponent;
+      }
       // case "Medication": {
       //   return ListMedicationComponent;
       // }

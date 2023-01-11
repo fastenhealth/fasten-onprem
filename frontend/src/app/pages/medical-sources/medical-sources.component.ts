@@ -38,6 +38,7 @@ export class MedicalSourcesComponent implements OnInit {
 
   connectedSourceList: SourceListItem[] = [] //source's are populated for this list
   availableSourceList: SourceListItem[] = []
+  totalAvailableSourceList: number = 0
   uploadedFile: File[] = []
 
   closeResult = '';
@@ -98,6 +99,7 @@ export class MedicalSourcesComponent implements OnInit {
 
         this.callback(callbackSourceType).then(console.log)
       }
+      this.totalAvailableSourceList = this.availableSourceList.length
 
       //setup Search
       const options = {

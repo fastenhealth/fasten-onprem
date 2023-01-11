@@ -54,6 +54,7 @@ import { FhirResourceComponent } from './fhir/fhir-resource/fhir-resource.compon
 import { FhirResourceOutletDirective } from './fhir/fhir-resource/fhir-resource-outlet.directive';
 import { FallbackComponent } from './fhir/resources/fallback/fallback.component';
 import {HighlightModule} from 'ngx-highlightjs';
+import { ImmunizationComponent } from './fhir/resources/immunization/immunization.component';
 
 @NgModule({
   imports: [
@@ -114,6 +115,7 @@ import {HighlightModule} from 'ngx-highlightjs';
     FhirResourceComponent,
     FhirResourceOutletDirective,
     FallbackComponent,
+    ImmunizationComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
