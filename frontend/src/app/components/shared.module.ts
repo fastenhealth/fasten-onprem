@@ -53,6 +53,7 @@ import { HtmlComponent } from './fhir/datatypes/html/html.component';
 import { FhirResourceComponent } from './fhir/fhir-resource/fhir-resource.component';
 import { FhirResourceOutletDirective } from './fhir/fhir-resource/fhir-resource-outlet.directive';
 import { FallbackComponent } from './fhir/resources/fallback/fallback.component';
+import {HighlightModule} from 'ngx-highlightjs';
 
 @NgModule({
   imports: [
@@ -63,7 +64,8 @@ import { FallbackComponent } from './fhir/resources/fallback/fallback.component'
     FormsModule,
     MomentModule,
     TreeModule,
-    ChartsModule
+    ChartsModule,
+    HighlightModule,
   ],
   declarations: [
     ComponentsSidebarComponent,

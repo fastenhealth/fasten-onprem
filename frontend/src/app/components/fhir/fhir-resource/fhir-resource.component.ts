@@ -53,7 +53,7 @@ export class FhirResourceComponent implements OnInit, OnChanges {
     }
   }
 
-  typeLookup(resourceType: ResourceType): Type<any> {
+  typeLookup(resourceType: ResourceType): Type<FhirResourceComponentInterface> {
     if(!resourceType){
       //dont try to render anything if the resourceType isnt set.
       return null
