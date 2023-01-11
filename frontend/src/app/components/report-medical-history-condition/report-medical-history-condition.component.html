@@ -40,15 +40,17 @@
           <!--              </div>-->
         </div>
 
-        <ng-container *ngIf="conditionGroup.related_resources.length > 0">
-          <a class="cursor-pointer tx-indigo" (click)="collapse.toggle()">show all</a>
-          <div #collapse="ngbCollapse" [ngbCollapse]="true">
+        <div class="row pt-2" *ngIf="conditionGroup.related_resources.length > 0">
+          <div class="col-12">
+            <a class="cursor-pointer tx-indigo" (click)="collapse.toggle()">show all</a>
+            <div #collapse="ngbCollapse" [ngbCollapse]="true">
 
-            <ul>
-              <li class="cursor-pointer tx-indigo" *ngFor="let resourceEntry of resourcesLookup | keyvalue" [routerLink]="resourceEntry.key">{{resourceEntry.value.source_resource_type}} {{resourceEntry.value.sort_title ? '- '+resourceEntry.value.sort_title : '' }} </li>
-            </ul>
+              <ul>
+                <li class="cursor-pointer tx-indigo" *ngFor="let resourceEntry of resourcesLookup | keyvalue" [routerLink]="resourceEntry.key">{{resourceEntry.value.source_resource_type}} {{resourceEntry.value.sort_title ? '- '+resourceEntry.value.sort_title : '' }} </li>
+              </ul>
+            </div>
           </div>
-        </ng-container>
+        </div>
 
 
       </div>
