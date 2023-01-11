@@ -24,6 +24,7 @@ import {RelatedPersonModel} from './resources/related-person-model';
 import {ResearchStudyModel} from './resources/research-study-model';
 import {FastenOptions} from './fasten/fasten-options';
 import {FastenDisplayModel} from './fasten/fasten-display-model';
+import {MedicationRequestModel} from './resources/medication-request-model';
 
 // import {BinaryModel} from './resources/binary-model';
 
@@ -57,6 +58,9 @@ export function fhirModelFactory(modelResourceType: ResourceType, fhirResourceWr
     //   resourceModel = new ClaimResponseModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
     case "Condition":
+      resourceModel = new ConditionModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "Composition":
       resourceModel = new ConditionModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
     // case "Coverage":
@@ -104,9 +108,9 @@ export function fhirModelFactory(modelResourceType: ResourceType, fhirResourceWr
     // case "MedicationOrder":
     //   resourceModel = new MedicationOrderModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
-    // case "MedicationRequest":
-    //   resourceModel = new MedicationRequestModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
-    // break
+    case "MedicationRequest":
+      resourceModel = new MedicationRequestModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    break
     // case "MedicationStatement":
     //   resourceModel = new MedicationStatementModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
