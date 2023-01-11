@@ -6,7 +6,7 @@
         {{conditionDisplayModel?.sort_title ? conditionDisplayModel?.sort_title : (conditionGroup | fhirPath: "Condition.code.text.first()":"Condition.code.coding.display.first()")}}
       </div>
       <div class="col-6">
-        {{conditionGroup | fhirPath: "Condition.onsetPeriod.start":"Condition.onsetDateTime" | date }} - {{conditionGroup | fhirPath: "Condition.onsetPeriod.end" | date}}
+        {{conditionDisplayModel?.sort_date ? (conditionDisplayModel?.sort_date | date) : (conditionGroup | fhirPath: "Condition.onsetPeriod.start":"Condition.onsetDateTime" | date) }} - {{conditionGroup | fhirPath: "Condition.onsetPeriod.end" | date}}
       </div>
     </div>
   </div><!-- card-header -->

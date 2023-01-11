@@ -762,9 +762,6 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 				SourceResourceType: pkg.FhirResourceTypeComposition,
 				SourceResourceID:   uuid.New().String(),
 			},
-			SortDate:            nil, //TOOD: figoure out the sortDate by looking for the earliest sort date for all nested resources
-			SortTitle:           &compositionTitle,
-			RelatedResourceFhir: resources,
 		}
 	}
 
@@ -789,6 +786,10 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 		return err
 	}
 	compositionResource.ResourceRaw = rawResourceJson
+
+	compositionResource.SortTitle = &compositionTitle
+	compositionResource.RelatedResourceFhir = utils.SortResourcePtrListByDate(resources)
+	compositionResource.SortDate = compositionResource.RelatedResourceFhir[0].SortDate
 
 	//store the Composition resource
 	_, err = sr.UpsertResource(ctx, compositionResource)

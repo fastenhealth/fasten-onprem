@@ -58,7 +58,7 @@ export class MedicalSourcesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true
-    forkJoin([this.lighthouseApi.getLighthouseSourceMetadataMap(), this.fastenApi.getSources()]).subscribe(results => {
+    forkJoin([this.lighthouseApi.getLighthouseSourceMetadataMap(true), this.fastenApi.getSources()]).subscribe(results => {
       this.loading = false
       //handle source metadata map response
       this.metadataSources = results[0] as {[name:string]: MetadataSource}

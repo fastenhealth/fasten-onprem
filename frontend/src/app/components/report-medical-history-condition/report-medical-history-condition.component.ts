@@ -10,6 +10,7 @@ import {ProcedureModel} from '../../../lib/models/resources/procedure-model';
 import {DeviceModel} from '../../../lib/models/resources/device-model';
 import {DiagnosticReportModel} from '../../../lib/models/resources/diagnostic-report-model';
 import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
+import * as _ from "lodash";
 
 @Component({
   selector: 'app-report-medical-history-condition',
@@ -68,6 +69,7 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
     //add resources to the lookup table, ensure uniqueness.
     this.conditionDisplayModel = this.recExtractResources(this.conditionGroup)
 
+    let involvedInCareMap: {[resource_id: string]: {displayName: string, role?: string, email?: string}} = {}
 
     //loop though all resources, process display data
     for(let resourceId in this.resourcesLookup){
@@ -76,23 +78,54 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
       switch(resource.source_resource_type){
         case ResourceType.CareTeam:
           for(let participant of (resource as CareTeamModel).participants){
-            this.involvedInCare.push({
-              displayName: participant.display,
-              role: participant.role
-            })
+            let id = participant.reference || participant.display
+            involvedInCareMap[id] = _.mergeWith(
+              {},
+              involvedInCareMap[id],
+              {
+                displayName: participant.display,
+                role: participant.role
+              },
+            )
           }
           break
         case ResourceType.Practitioner:
-          this.involvedInCare.push({
-            displayName: `${(resource as PractitionerModel).name?.family }, ${(resource as PractitionerModel).name?.given}`,
-            role: `${(resource as PractitionerModel).name?.prefix || (resource as PractitionerModel).name?.suffix}`
-          })
+          let practitionerModel = resource as PractitionerModel
+          let id = `${resource.source_resource_type}/${resource.source_resource_id}`
+          involvedInCareMap[id] = _.mergeWith(
+            {},
+            involvedInCareMap[id],
+            {
+              displayName: practitionerModel.name?.family && practitionerModel.name?.given ? `${practitionerModel.name?.family }, ${practitionerModel.name?.given}` : practitionerModel.name?.text,
+              role: practitionerModel.name?.prefix || practitionerModel.name?.suffix,
+              // email: _.find((resource as PractitionerModel).telecom, {"system": "email"})[0].value,
+            },
+          )
+
+
           break
         case ResourceType.Encounter:
-          this.encounters.push(resource as EncounterModel)
+          this.encounters.push(resource as EncounterModel);
+
+          (resource as EncounterModel).participant.map((participant) => {
+            let id = participant.reference
+            involvedInCareMap[id] = _.mergeWith(
+              {},
+              involvedInCareMap[id],
+              {
+                displayName: participant.display,
+                role: participant.role,
+              },
+            )
+          })
           break
       }
 
+    }
+
+    console.log("GENERATED INVOLVED IN CARE MAP", involvedInCareMap)
+    for(let resourceId in involvedInCareMap){
+      this.involvedInCare.push(involvedInCareMap[resourceId])
     }
   }
 
