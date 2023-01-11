@@ -151,7 +151,7 @@ export function fhirModelFactory(modelResourceType: ResourceType, fhirResourceWr
     //   resourceModel = new ResourceCategoryModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
     default: {
-      throw new Error("Unknown resource data structure")
+      throw new Error("Ignoring Unknown resource data structure:" + modelResourceType)
     }
   }
 

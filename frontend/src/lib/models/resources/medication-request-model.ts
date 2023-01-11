@@ -35,6 +35,6 @@ export class MedicationRequestModel extends FastenDisplayModel {
     this.created = _.get(fhirResource, 'authoredOn');
     this.intent = _.get(fhirResource, 'intent');
 
-    this.display = _.get(fhirResource, 'medicationCodeableConcept.text') || this.medication_codeable_concept.display || _.get(fhirResource, 'medicationCodeableConcept.text') || this.medication_reference.display
+    this.display = _.get(fhirResource, 'medicationCodeableConcept.text') || this.medication_codeable_concept?.display || _.get(fhirResource, 'medicationCodeableConcept.text') || this.medication_reference?.display
   }
 }

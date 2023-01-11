@@ -99,7 +99,7 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
   generateNodes(resouceFhirList: ResourceFhir[]): RelatedNode[] {
     let relatedNodes = resouceFhirList.map((resourceFhir) => { return this.recGenerateNode(resourceFhir) })
     for(let relatedNode of relatedNodes){
-      if(relatedNode.source_id  == 'UNASSIGNED' && relatedNode.source_resource_type == 'UNASSIGNED' && relatedNode.source_resource_id == 'UNASSIGNED'){
+      if(relatedNode.source_id  == 'UNASSIGNED' && relatedNode.source_resource_type == 'Condition' && relatedNode.source_resource_id == 'UNASSIGNED'){
         //this is a placeholder for the Unassigned resources. This resource cannot be merged, but all child resources can be, so lets set them to true
         for(let unassignedEncounters of relatedNode.children){
           unassignedEncounters.show_checkbox = true
@@ -117,7 +117,7 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
     let relatedNode = {
       show_checkbox: false,
       source_id: resourceFhir.source_id,
-      name: `[${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}]`,
+      name: `[${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id.length > 10 ? resourceFhir.source_resource_id.substring(0, 10)+ '...' : resourceFhir.source_resource_id}] `,
       source_resource_id: resourceFhir.source_resource_id,
       source_resource_type: resourceFhir.source_resource_type,
       children: [],
@@ -126,26 +126,34 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
 
     switch (resourceFhir.source_resource_type) {
       case "Condition":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Condition.onsetPeriod.start")} ${fhirpath.evaluate(resourceFhir.resource_raw, "Condition.code.text.first()")}`
+        relatedNode.name += resourceFhir.sort_title || ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Condition.onsetPeriod.start")} ${fhirpath.evaluate(resourceFhir.resource_raw, "Condition.code.text.first()")}`
+        if(resourceFhir.sort_date){
+          relatedNode.name += ` - ${new Date(resourceFhir.sort_date).toLocaleDateString("en-US")}`
+        }
       break
       case "Encounter":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Encounter.period.start")} ${fhirpath.evaluate(resourceFhir.resource_raw, "Encounter.location.first().location.display")}`
+        relatedNode.name += resourceFhir.sort_title ||` ${fhirpath.evaluate(resourceFhir.resource_raw, "Encounter.period.start")} ${fhirpath.evaluate(resourceFhir.resource_raw, "Encounter.location.first().location.display")}`
+        if(resourceFhir.sort_date){
+          relatedNode.name += ` - ${new Date(resourceFhir.sort_date).toLocaleDateString("en-US")}`
+        }
         break
       case "CareTeam":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "CareTeam.participant.member.display")}`
+        relatedNode.name += resourceFhir.sort_title || ` ${fhirpath.evaluate(resourceFhir.resource_raw, "CareTeam.participant.member.display")}`
         break
       case "Location":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Location.name")}`
+        relatedNode.name += resourceFhir.sort_title || ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Location.name")}`
         break
       case "Organization":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Organization.name")}`
+        relatedNode.name += resourceFhir.sort_title || ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Organization.name")}`
         break
       case "Practitioner":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Practitioner.name.family")}`
+        relatedNode.name += resourceFhir.sort_title || ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Practitioner.name.family")}`
         break
       case "MedicationRequest":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "MedicationRequest.medicationReference.display")}`
+        relatedNode.name += resourceFhir.sort_title || ` ${fhirpath.evaluate(resourceFhir.resource_raw, "MedicationRequest.medicationReference.display")}`
         break
+      default:
+        relatedNode.name += resourceFhir.sort_title
     }
 
     this.resourceLookup[`${resourceFhir.source_id}/${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}`] = resourceFhir
