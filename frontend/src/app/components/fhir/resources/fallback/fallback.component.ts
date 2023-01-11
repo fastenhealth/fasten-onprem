@@ -2,11 +2,11 @@ import {Component, Input, OnInit} from '@angular/core';
 import {BinaryModel} from '../../../../../lib/models/resources/binary-model';
 
 @Component({
-  selector: 'fhir-img',
-  templateUrl: './img.component.html',
-  styleUrls: ['./img.component.scss']
+  selector: 'fhir-fallback',
+  templateUrl: './fallback.component.html',
+  styleUrls: ['./fallback.component.scss']
 })
-export class ImgComponent implements OnInit {
+export class FallbackComponent implements OnInit {
   @Input() displayModel: BinaryModel
 
   constructor() { }

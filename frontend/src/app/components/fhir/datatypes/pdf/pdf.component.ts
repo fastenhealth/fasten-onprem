@@ -7,7 +7,7 @@ import {BinaryModel} from '../../../../../lib/models/resources/binary-model';
   styleUrls: ['./pdf.component.scss']
 })
 export class PdfComponent implements OnInit {
-  @Input() fhirModel: BinaryModel
+  @Input() displayModel: BinaryModel
 
   constructor() { }
 

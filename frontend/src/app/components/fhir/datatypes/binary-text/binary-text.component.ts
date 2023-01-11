@@ -7,7 +7,7 @@ import {BinaryModel} from '../../../../../lib/models/resources/binary-model';
   styleUrls: ['./binary-text.component.scss']
 })
 export class BinaryTextComponent implements OnInit {
-  @Input() fhirModel: BinaryModel
+  @Input() displayModel: BinaryModel
 
   constructor() { }
 

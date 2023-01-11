@@ -50,6 +50,9 @@ import { ImgComponent } from './fhir/datatypes/img/img.component';
 import { BinaryTextComponent } from './fhir/datatypes/binary-text/binary-text.component';
 import { MarkdownComponent } from './fhir/datatypes/markdown/markdown.component';
 import { HtmlComponent } from './fhir/datatypes/html/html.component';
+import { FhirResourceComponent } from './fhir/fhir-resource/fhir-resource.component';
+import { FhirResourceOutletDirective } from './fhir/fhir-resource/fhir-resource-outlet.directive';
+import { FallbackComponent } from './fhir/resources/fallback/fallback.component';
 
 @NgModule({
   imports: [
@@ -106,6 +109,9 @@ import { HtmlComponent } from './fhir/datatypes/html/html.component';
     BinaryTextComponent,
     MarkdownComponent,
     HtmlComponent,
+    FhirResourceComponent,
+    FhirResourceOutletDirective,
+    FallbackComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -144,8 +150,9 @@ import { HtmlComponent } from './fhir/datatypes/html/html.component';
         ReportMedicalHistoryConditionComponent,
         ReportLabsObservationComponent,
         LoadingSpinnerComponent,
-        BinaryComponent
-
+        BinaryComponent,
+        FhirResourceComponent,
+        FhirResourceOutletDirective
     ]
 })
 

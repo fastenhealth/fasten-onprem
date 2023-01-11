@@ -8,12 +8,12 @@ import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
   styleUrls: ['./html.component.scss']
 })
 export class HtmlComponent implements OnInit {
-  @Input() fhirModel: BinaryModel
+  @Input() displayModel: BinaryModel
   contentMarkup:SafeHtml;
   constructor(private sanitized: DomSanitizer) { }
 
   ngOnInit(): void {
-    this.contentMarkup = this.sanitized.bypassSecurityTrustHtml(this.fhirModel.content);
+    this.contentMarkup = this.sanitized.bypassSecurityTrustHtml(this.displayModel.content);
 
   }
 

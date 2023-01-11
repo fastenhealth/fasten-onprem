@@ -11,7 +11,7 @@
       <ng-container *ngIf="displayModel">
         <pre><code  [highlight]="displayModel | json"></code></pre>
 
-        <fhir-binary *ngIf="displayModel.source_resource_type == 'Binary'" [fhirModel]="displayModel"></fhir-binary>
+        <fhir-resource [displayModel]="displayModel"></fhir-resource>
 
       </ng-container>
       <ng-container *ngIf="resource else isLoadingTemplate">
