@@ -1,0 +1,23 @@
+<ng-container [ngTemplateOutlet]="
+  fhirModel.content_type == 'application/pdf' ? showPdf :
+  fhirModel.content_type == 'image/jpeg' ? showImg :
+  (fhirModel.content_type == 'text/html' || fhirModel.content_type == 'application/html') ? showHtml :
+  (fhirModel.content_type == 'application/xml' || fhirModel.content_type == 'application/json') ? showText :
+  showEmpty
+"></ng-container>
+
+<ng-template #showPdf>
+  <fhir-pdf [fhirModel]="fhirModel"></fhir-pdf>
+</ng-template>
+<ng-template #showImg>
+  <fhir-img [fhirModel]="fhirModel"></fhir-img>
+</ng-template>
+<ng-template #showHtml>
+  <fhir-html [fhirModel]="fhirModel"></fhir-html>
+</ng-template>
+<ng-template #showText>
+  <fhir-binary-text [fhirModel]="fhirModel"></fhir-binary-text>
+</ng-template>
+<ng-template #showEmpty>
+  Unknown Binary content type {{fhirModel.content_type}}
+</ng-template>

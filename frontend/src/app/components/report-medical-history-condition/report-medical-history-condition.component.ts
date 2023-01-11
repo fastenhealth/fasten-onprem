@@ -92,13 +92,16 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
         case ResourceType.Practitioner:
           let practitionerModel = resource as PractitionerModel
           let id = `${resource.source_resource_type}/${resource.source_resource_id}`
+
+          let telecomEmails =_.find(practitionerModel.telecom, {"system": "email"})
+          let email = _.get(telecomEmails, '[0].value')
           involvedInCareMap[id] = _.mergeWith(
             {},
             involvedInCareMap[id],
             {
               displayName: practitionerModel.name?.family && practitionerModel.name?.given ? `${practitionerModel.name?.family }, ${practitionerModel.name?.given}` : practitionerModel.name?.text,
               role: practitionerModel.name?.prefix || practitionerModel.name?.suffix,
-              // email: _.find((resource as PractitionerModel).telecom, {"system": "email"})[0].value,
+              email: email,
             },
           )
 

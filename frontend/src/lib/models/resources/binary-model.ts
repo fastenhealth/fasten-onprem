@@ -12,7 +12,7 @@ export class BinaryModel extends FastenDisplayModel{
     super(fastenOptions)
     this.source_resource_type = ResourceType.Binary
 
-    this.content = fhirResource.content
+    this.content = fhirResource.data ? atob(fhirResource.data) : '';
     this.content_type = fhirResource.contentType
   }
 }
