@@ -9,9 +9,13 @@ import {BinaryModel} from '../../../../../lib/models/resources/binary-model';
 export class PdfComponent implements OnInit {
   @Input() displayModel: BinaryModel
 
+  height: number
   constructor() { }
 
   ngOnInit(): void {
+    const maxHeight = 600;
+    const contentHeight = (1111 * this.displayModel.data.length) / (24996 / 7.5);
+    this.height = Math.min(maxHeight, contentHeight);
   }
 
 }

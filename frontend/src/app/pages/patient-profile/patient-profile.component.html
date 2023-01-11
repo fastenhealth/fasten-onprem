@@ -143,7 +143,7 @@
 
             <p>
               <ng-container *ngFor="let immunization of immunizations; let i = index">
-                <strong class="tx-indigo">{{immunization | fhirPath: "Immunization.vaccineCode.text" }}</strong><br/>
+                <strong routerLink="/source/{{immunization?.source_id}}/resource/{{immunization?.source_resource_id}}" class="tx-indigo">{{immunization | fhirPath: "Immunization.vaccineCode.text" }}</strong><br/>
                 {{immunization | fhirPath: "Immunization.occurrenceDateTime" | date }}<br/>
                 {{immunization | fhirPath: "Immunization.location.display" }}<br/>
                 <br/>
@@ -156,7 +156,7 @@
 
             <p>
               <ng-container *ngFor="let allergy of allergyIntolerances; let i = index">
-                <strong class="tx-indigo">{{allergy | fhirPath: "AllergyIntolerance.code.text" }}</strong><br/>
+                <strong routerLink="/source/{{allergy?.source_id}}/resource/{{allergy?.source_resource_id}}" class="tx-indigo">{{allergy | fhirPath: "AllergyIntolerance.code.text" }}</strong><br/>
                 {{allergy | fhirPath: "AllergyIntolerance.occurrenceDateTime" | date }}<br/>
                 <br/>
               </ng-container>
