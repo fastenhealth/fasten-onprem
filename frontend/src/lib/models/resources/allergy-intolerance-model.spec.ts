@@ -13,8 +13,8 @@ describe('AllergyIntoleranceModel', () => {
       let expected = new AllergyIntoleranceModel({})
       expected.title = 'Cashew nuts'
       expected.status = 'Confirmed'
-      expected.recordedDate = '2014-10-09T14:58:00+11:00'
-      expected.substanceCoding = [
+      expected.recorded_date = '2014-10-09T14:58:00+11:00'
+      expected.substance_coding = [
         {
           "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
           "code": "1160593",
@@ -35,8 +35,8 @@ describe('AllergyIntoleranceModel', () => {
       let expected = new AllergyIntoleranceModel({})
       expected.title = 'Penicillin G'
       expected.status = 'Unconfirmed'
-      expected.recordedDate = '2010-03-01'
-      expected.substanceCoding = []
+      expected.recorded_date = '2010-03-01'
+      expected.substance_coding = []
       // expected.asserter = { reference: 'Patient/example' }
       // expected.note = [{ text: 'The criticality is high becasue of the observed anaphylactic reaction when challenged with cashew extract.' }]
       // expected.type = ''
@@ -51,8 +51,8 @@ describe('AllergyIntoleranceModel', () => {
       let expected = new AllergyIntoleranceModel({})
       expected.title = 'No Known Allergy (situation)'
       expected.status = 'Confirmed'
-      expected.recordedDate = '2015-08-06T15:37:31-06:00'
-      expected.substanceCoding = []
+      expected.recorded_date = '2015-08-06T15:37:31-06:00'
+      expected.substance_coding = []
       // expected.asserter = { reference: 'Patient/example' }
       // expected.note = [{ text: 'The criticality is high becasue of the observed anaphylactic reaction when challenged with cashew extract.' }]
       // expected.type = 'allergy'
@@ -69,8 +69,8 @@ describe('AllergyIntoleranceModel', () => {
       let expected = new AllergyIntoleranceModel({})
       expected.title = "ALLERGENIC EXTRACT, PENICILLIN"
       expected.status = 'unconfirmed'
-      expected.recordedDate = "2010-03-01"
-      expected.substanceCoding = [
+      expected.recorded_date = "2010-03-01"
+      expected.substance_coding = [
         {
           "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
           "code": "314422",
@@ -91,8 +91,8 @@ describe('AllergyIntoleranceModel', () => {
       let expected = new AllergyIntoleranceModel({})
       expected.title = 'PENICILLINS'
       expected.status = 'confirmed'
-      expected.recordedDate = '2008-02-22T06:00:00.000Z'
-      expected.substanceCoding = [
+      expected.recorded_date = '2008-02-22T06:00:00.000Z'
+      expected.substance_coding = [
         {
           "system": 'http://hl7.org/fhir/ndfrt' ,
           "code": 'N0000005840' ,
@@ -116,8 +116,8 @@ describe('AllergyIntoleranceModel', () => {
       let expected = new AllergyIntoleranceModel({})
       expected.title = 'Cashew nuts'
       expected.status = 'confirmed'
-      expected.recordedDate = '2014-10-09T14:58:00+11:00'
-      expected.substanceCoding = [
+      expected.recorded_date = '2014-10-09T14:58:00+11:00'
+      expected.substance_coding = [
         {
           "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
           "code": "1160593",
@@ -138,8 +138,8 @@ describe('AllergyIntoleranceModel', () => {
       let expected = new AllergyIntoleranceModel({})
       expected.title =  'Fish - dietary (substance)'
       expected.status = 'confirmed'
-      expected.recordedDate = '2015-08-06T15:37:31-06:00'
-      expected.substanceCoding = []
+      expected.recorded_date = '2015-08-06T15:37:31-06:00'
+      expected.substance_coding = []
       // expected.asserter = {reference: 'Patient/example'}
       // expected.note = []
       // expected.type = 'allergy'

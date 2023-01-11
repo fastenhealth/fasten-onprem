@@ -1,12 +1,12 @@
 <div class="card card-dashboard-seven mb-3">
   <div class="card-header tx-medium">
-    <div class="row cursor-pointer" routerLink="/source/{{condition?.source_id}}/resource/{{condition?.source_resource_id}}">
+    <div class="row cursor-pointer" routerLink="/source/{{conditionDisplayModel?.source_id}}/resource/{{conditionDisplayModel?.source_resource_id}}">
       <!-- Condition Header -->
       <div class="col-6">
-        {{condition | fhirPath: "Condition.code.text.first()":"Condition.code.coding.display.first()"}}
+        {{conditionDisplayModel?.sort_title ? conditionDisplayModel?.sort_title : (conditionGroup | fhirPath: "Condition.code.text.first()":"Condition.code.coding.display.first()")}}
       </div>
       <div class="col-6">
-        {{condition | fhirPath: "Condition.onsetPeriod.start":"Condition.onsetDateTime" | date }} - {{condition | fhirPath: "Condition.onsetPeriod.end" | date}}
+        {{conditionGroup | fhirPath: "Condition.onsetPeriod.start":"Condition.onsetDateTime" | date }} - {{conditionGroup | fhirPath: "Condition.onsetPeriod.end" | date}}
       </div>
     </div>
   </div><!-- card-header -->
@@ -14,29 +14,21 @@
 
     <div class="row">
       <!-- Condition Details -->
-
+<!--      {{conditionDisplayModel | json}}-->
       <div class="col-6 mb-2">
 
-        <div class="row  pl-3">
+        <div *ngIf="involvedInCare.length > 0" class="row  pl-3">
           <div class="col-12 mt-3 mb-2 tx-indigo">
             <p>Involved in Care</p>
           </div>
-          <ng-container *ngFor="let careTeamEntry of careTeams | keyvalue">
-            <div class="col-6">
-              <strong>{{careTeamEntry.value | fhirPath: "CareTeam.participant.member.display"}}</strong>
-            </div>
-            <div class="col-6">
-              {{careTeamEntry.value | fhirPath: "CareTeam.participant.role.text"}}
-            </div>
-          </ng-container>
-
-          <ng-container *ngFor="let practitionerEntry of practitioners | keyvalue">
-            <div class="col-6">
-              <strong>{{practitionerEntry.value | fhirPath: "Practitioner.name.family"}}, {{practitionerEntry.value | fhirPath: "Practitioner.name.given"}}</strong>
-            </div>
-            <div class="col-6">
-              {{practitionerEntry.value | fhirPath: "Practitioner.name.prefix"}}
-            </div>
+          <ng-container *ngFor="let practitioner of involvedInCare">
+              <div class="col-6">
+                <strong>{{practitioner.displayName}}</strong>
+              </div>
+              <div class="col-6">
+                {{practitioner.role}}
+                <!-- TODO: add email address link here -->
+              </div>
           </ng-container>
 
 
@@ -48,12 +40,12 @@
           <!--              </div>-->
         </div>
 
-        <ng-container *ngIf="condition.related_resources.length > 0">
+        <ng-container *ngIf="conditionGroup.related_resources.length > 0">
           <a class="cursor-pointer tx-indigo" (click)="collapse.toggle()">show all</a>
           <div #collapse="ngbCollapse" [ngbCollapse]="true">
 
             <ul>
-              <li class="cursor-pointer tx-indigo" *ngFor="let resource of condition.related_resources" routerLink="/source/{{resource?.source_id}}/resource/{{resource?.source_resource_id}}">Resource: {{resource.source_resource_type}}/{{resource.source_resource_id}}</li>
+              <li class="cursor-pointer tx-indigo" *ngFor="let resourceEntry of resourcesLookup | keyvalue" [routerLink]="resourceEntry.key">{{resourceEntry.value.source_resource_type}} {{resourceEntry.value.sort_title ? '- '+resourceEntry.value.sort_title : '' }} </li>
             </ul>
           </div>
         </ng-container>
@@ -62,50 +54,53 @@
       </div>
       <div class="col-6 bg-gray-100">
         <div class="row">
-          <ng-container *ngFor="let encounter of condition.related_resources | filter:'source_resource_type':'Encounter'">
+
+          <ng-container *ngFor="let encounter of encounters">
 
             <div routerLink="/source/{{encounter?.source_id}}/resource/{{encounter?.source_resource_id}}" class="col-6 mt-3 mb-2 tx-indigo">
-              <strong>{{encounter | fhirPath: "Encounter.period.start" | date}}</strong>
+              <strong>{{encounter.period_start | date}}</strong>
             </div>
             <div routerLink="/source/{{encounter?.source_id}}/resource/{{encounter?.source_resource_id}}" class="col-6 mt-3 mb-2 tx-indigo">
-              <small>{{encounter | fhirPath: "Encounter.location.first().location.display"}}</small>
+              <small>{{encounter.location_display }}</small>
             </div>
 
-            <div *ngIf="encounter.related_resources | filter:'source_resource_type':'MedicationRequest' as medications" class="col-12 mt-2 mb-2">
+            <div *ngIf="encounter?.related_resources?.MedicationRequest || encounter?.related_resources?.Medication" class="col-12 mt-2 mb-2">
               <strong>Medications:</strong>
               <ul>
-                <li routerLink="/source/{{medication?.source_id}}/resource/{{medication?.source_resource_id}}" *ngFor="let medication of medications">
-                  {{medication | fhirPath: "MedicationRequest.medicationReference.display":"MedicationRequest.medicationCodeableConcept.text"}}
+                <li routerLink="/source/{{medication?.source_id}}/resource/{{medication?.source_resource_id}}" *ngFor="let medication of encounter?.related_resources?.MedicationRequest">
+                  {{medication.display }}
+                </li>
+                <li routerLink="/source/{{medication?.source_id}}/resource/{{medication?.source_resource_id}}" *ngFor="let medication of encounter?.related_resources?.Medication">
+                  {{medication.title}}
                 </li>
               </ul>
             </div>
 
 
-            <div *ngIf="encounter.related_resources | filter:'source_resource_type':'Procedure' as procedures" class="col-12 mt-2 mb-2">
+            <div *ngIf="encounter?.related_resources?.Procedure as procedures" class="col-12 mt-2 mb-2">
               <strong>Procedures:</strong>
               <ul>
                 <li routerLink="/source/{{procedure?.source_id}}/resource/{{procedure?.source_resource_id}}" *ngFor="let procedure of procedures">
-                  {{procedure | fhirPath: "Procedure.code.text"}}
+                  {{procedure.display}}
                 </li>
               </ul>
             </div>
 
 
-            <div *ngIf="encounter.related_resources | filter:'source_resource_type':'DiagnosticReport' as diagnosticReports" class="col-12 mt-2 mb-2">
+            <div *ngIf="encounter?.related_resources?.DiagnosticReport as diagnosticReports" class="col-12 mt-2 mb-2">
               <strong>Tests and Examinations:</strong>
               <ul>
                 <li routerLink="/source/{{diagnosticReport?.source_id}}/resource/{{diagnosticReport?.source_resource_id}}" *ngFor="let diagnosticReport of diagnosticReports">
-                  {{diagnosticReport | fhirPath: "DiagnosticReport.code.text":"DiagnosticReport.code.coding.display"}}
+                  {{diagnosticReport.title}}
                 </li>
               </ul>
             </div>
 
-
-            <div *ngIf="encounter.related_resources | filter:'source_resource_type':'Device' as devices" class="col-12 mt-2 mb-2">
+            <div *ngIf="encounter?.related_resources?.Device as devices" class="col-12 mt-2 mb-2">
               <strong>Device:</strong>
               <ul>
                 <li routerLink="/source/{{device?.source_id}}/resource/{{device?.source_resource_id}}" *ngFor="let device of devices">
-                  {{device | fhirPath: "Device.code.text"}}
+                  {{device.model}}
                 </li>
               </ul>
             </div>

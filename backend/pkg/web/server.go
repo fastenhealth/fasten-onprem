@@ -60,7 +60,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 				secure.GET("/resource/fhir", handler.ListResourceFhir)
 				secure.GET("/resource/graph", handler.GetResourceFhirGraph)
 				secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
-				secure.POST("/resource/association", handler.ReplaceResourceAssociation)
+				secure.POST("/resource/composition", handler.CreateResourceComposition)
 			}
 
 			if ae.Config.GetBool("web.allow_unsafe_endpoints") {
@@ -80,6 +80,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 				{
 					//http://localhost:9090/api/raw/test@test.com/436d7277-ad56-41ce-9823-44e353d1b3f6/Patient/smart-1288992
 					unsafe.GET("/:username/:sourceId/*path", handler.UnsafeRequestSource)
+					unsafe.GET("/:username/graph", handler.UnsafeResourceGraph)
 
 				}
 			}

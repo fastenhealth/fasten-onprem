@@ -3,20 +3,25 @@ import {AddressModel} from '../datatypes/address-model';
 import {TelecomModel} from '../datatypes/telecom-model';
 import {CodableConceptModel} from '../datatypes/codable-concept-model';
 import {ReferenceModel} from '../datatypes/reference-model';
-import {fhirVersions} from '../constants';
+import {fhirVersions, ResourceType} from '../constants';
+import {FastenDisplayModel} from '../fasten/fasten-display-model';
+import {FastenOptions} from '../fasten/fasten-options';
 
-export class LocationModel {
+export class LocationModel extends FastenDisplayModel {
+
   name: string
   status: string
   description: string
   address: AddressModel
   telecom: TelecomModel[]
   type: CodableConceptModel[]
-  physicalType: CodableConceptModel
+  physical_type: CodableConceptModel
   mode: string
-  managingOrganization: ReferenceModel
+  managing_organization: ReferenceModel
 
-  constructor(fhirResource: any, fhirVersion?: fhirVersions) {
+  constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
+    super(fastenOptions)
+    this.source_resource_type = ResourceType.Location
 
     this.name = _.get(fhirResource, 'name');
     this.status = _.get(fhirResource, 'status');
@@ -24,9 +29,9 @@ export class LocationModel {
     this.address = new AddressModel(_.get(fhirResource, 'address'));
     this.telecom = _.get(fhirResource, 'telecom');
     this.type = (_.get(fhirResource, 'type') || []).map((_type: any) => new CodableConceptModel(_type));
-    this.physicalType = new CodableConceptModel(_.get(fhirResource, 'physicalType'));
+    this.physical_type = new CodableConceptModel(_.get(fhirResource, 'physicalType'));
     this.mode = _.get(fhirResource, 'mode');
-    this.managingOrganization = _.get(fhirResource, 'managingOrganization');
+    this.managing_organization = _.get(fhirResource, 'managingOrganization');
 
   }
 }

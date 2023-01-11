@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/analogj/go-util v0.0.0-20210417161720-39b497cca03b
 	github.com/dominikbraun/graph v0.15.0
-	github.com/fastenhealth/fasten-sources v0.0.11
+	github.com/fastenhealth/fasten-sources v0.0.14
 	github.com/gin-gonic/gin v1.8.1
 	github.com/glebarez/sqlite v1.5.0
 	github.com/golang-jwt/jwt/v4 v4.4.2
@@ -17,6 +17,7 @@ require (
 	github.com/urfave/cli/v2 v2.11.2
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17
+	golang.org/x/net v0.2.0
 	gorm.io/datatypes v1.0.7
 	gorm.io/gorm v1.24.1
 )
@@ -62,7 +63,6 @@ require (
 	github.com/subosito/gotenv v1.3.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
-	golang.org/x/net v0.2.0 // indirect
 	golang.org/x/oauth2 v0.2.0 // indirect
 	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/term v0.2.0 // indirect

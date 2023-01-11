@@ -1,4 +1,4 @@
-import {fhirVersions} from './constants';
+import {fhirVersions, ResourceType} from './constants';
 import {AdverseEventModel} from './resources/adverse-event-model';
 import {AllergyIntoleranceModel} from './resources/allergy-intolerance-model';
 import {AppointmentModel} from './resources/appointment-model';
@@ -22,126 +22,144 @@ import {PractitionerRoleModel} from './resources/practitioner-role-model';
 import {ProcedureModel} from './resources/procedure-model';
 import {RelatedPersonModel} from './resources/related-person-model';
 import {ResearchStudyModel} from './resources/research-study-model';
-import {BinaryModel} from './resources/binary-model';
+import {FastenOptions} from './fasten/fasten-options';
+import {FastenDisplayModel} from './fasten/fasten-display-model';
+import {MedicationRequestModel} from './resources/medication-request-model';
 
-export function fhirModelFactory(modelName: string, fhirResource: any, fhirVersion: fhirVersions = fhirVersions.R4):any {
- switch (modelName) {
-   case "AdverseEvent": {
-     return new AdverseEventModel(fhirResource, fhirVersion)
-   }
-   case "AllergyIntolerance": {
-     return new AllergyIntoleranceModel(fhirResource, fhirVersion)
-   }
-   case "Appointment": {
-     return new AppointmentModel(fhirResource, fhirVersion)
-   }
-   case "Binary": {
-     return new BinaryModel(fhirResource, fhirVersion)
-   }
-   case "CarePlan": {
-     return new CarePlanModel(fhirResource, fhirVersion)
-   }
-   case "CareTeam": {
-     return new CareTeamModel(fhirResource, fhirVersion)
-   }
-   // case "Claim": {
-   //   return new ClaimModel(fhirResource, fhirVersion)
-   // }
-   // case "ClaimResponse": {
-   //   return new ClaimResponseModel(fhirResource, fhirVersion)
-   // }
-   case "Condition": {
-     return new ConditionModel(fhirResource, fhirVersion)
-   }
-   // case "Coverage": {
-   //   return new CoverageModel(fhirResource, fhirVersion)
-   // }
-   case "Device": {
-     return new DeviceModel(fhirResource, fhirVersion)
-   }
-   case "DiagnosticReport": {
-     return new DiagnosticReportModel(fhirResource, fhirVersion)
-   }
-   case "DocumentReference": {
-     return new DocumentReferenceModel(fhirResource, fhirVersion)
-   }
-   case "Encounter": {
-     return new EncounterModel(fhirResource, fhirVersion)
-   }
-   // case "ExplanationOfBenefit": {
-   //   return new ExplanationOfBenefitModel(fhirResource, fhirVersion)
-   // }
-   // case "FamilyMemberHistory": {
-   //   return new FamilyMemberHistoryModel(fhirResource, fhirVersion)
-   // }
-   case "Goal": {
-     return new GoalModel(fhirResource, fhirVersion)
-   }
-   case "Immunization": {
-     return new ImmunizationModel(fhirResource, fhirVersion)
-   }
-   case "Location": {
-     return new LocationModel(fhirResource, fhirVersion)
-   }
-   case "Medication": {
-     return new MedicationModel(fhirResource, fhirVersion)
-   }
-   // case "MedicationAdministration": {
-   //   return new MedicationAdministrationModel(fhirResource, fhirVersion)
-   // }
-   case "MedicationDispense": {
-     return new MedicationDispenseModel(fhirResource, fhirVersion)
-   }
-   // case "MedicationKnowledge": {
-   //   return new MedicationKnowledgeModel(fhirResource, fhirVersion)
-   // }
-   // case "MedicationOrder": {
-   //   return new MedicationOrderModel(fhirResource, fhirVersion)
-   // }
-   // case "MedicationRequest": {
-   //   return new MedicationRequestModel(fhirResource, fhirVersion)
-   // }
-   // case "MedicationStatement": {
-   //   return new MedicationStatementModel(fhirResource, fhirVersion)
-   // }
-   case "Observation": {
-     return new ObservationModel(fhirResource, fhirVersion)
-   }
-   case "Organization": {
-     return new OrganizationModel(fhirResource, fhirVersion)
-   }
-   case "Patient": {
-     return new PatientModel(fhirResource, fhirVersion)
-   }
-   case "Practitioner": {
-     return new PractitionerModel(fhirResource, fhirVersion)
-   }
-   case "PractitionerRole": {
-     return new PractitionerRoleModel(fhirResource, fhirVersion)
-   }
-   case "Procedure": {
-     return new ProcedureModel(fhirResource, fhirVersion)
-   }
-   // case "Questionnaire": {
-   //   return new QuestionnaireModel(fhirResource, fhirVersion)
-   // }
-   // case "QuestionnaireResponse": {
-   //   return new QuestionnaireResponseModel(fhirResource, fhirVersion)
-   // }
-   // case "ReferralRequest": {
-   //   return new ReferralRequestModel(fhirResource, fhirVersion)
-   // }
-   case "RelatedPerson": {
-     return new RelatedPersonModel(fhirResource, fhirVersion)
-   }
-   case "ResearchStudy": {
-     return new ResearchStudyModel(fhirResource, fhirVersion)
-   }
-   // case "ResourceCategory": {
-   //   return new ResourceCategoryModel(fhirResource, fhirVersion)
-   // }
-   default: {
-     throw new Error("Unknown resource data structure")
-   }
- }
+// import {BinaryModel} from './resources/binary-model';
+
+export function fhirModelFactory(modelResourceType: ResourceType, fhirResourceWrapper: any, fhirVersion: fhirVersions = fhirVersions.R4, fastenOptions?: FastenOptions): FastenDisplayModel {
+
+  let resourceModel: FastenDisplayModel
+  switch (modelResourceType) {
+    case "AdverseEvent":
+      resourceModel = new AdverseEventModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "AllergyIntolerance":
+      resourceModel = new AllergyIntoleranceModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "Appointment":
+      resourceModel = new AppointmentModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+
+    // case "Binary": {
+    //   resourceModel = new BinaryModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    // }
+    case "CarePlan":
+      resourceModel = new CarePlanModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "CareTeam":
+      resourceModel = new CareTeamModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    // case "Claim":
+    //   resourceModel = new ClaimModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    // break
+    // case "ClaimResponse":
+    //   resourceModel = new ClaimResponseModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    // break
+    case "Condition":
+      resourceModel = new ConditionModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "Composition":
+      resourceModel = new ConditionModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    // case "Coverage":
+    //   resourceModel = new CoverageModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    // break
+    case "Device":
+      resourceModel = new DeviceModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "DiagnosticReport":
+      resourceModel = new DiagnosticReportModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "DocumentReference":
+      resourceModel = new DocumentReferenceModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "Encounter":
+      resourceModel = new EncounterModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    // case "ExplanationOfBenefit":
+    //   resourceModel = new ExplanationOfBenefitModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    // break
+    // case "FamilyMemberHistory":
+    //   resourceModel = new FamilyMemberHistoryModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    //break
+    case "Goal":
+      resourceModel = new GoalModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "Immunization":
+      resourceModel = new ImmunizationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "Location":
+      resourceModel = new LocationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "Medication":
+      resourceModel = new MedicationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    // case "MedicationAdministration":
+    //   resourceModel = new MedicationAdministrationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    // break
+    case "MedicationDispense":
+      resourceModel = new MedicationDispenseModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    // case "MedicationKnowledge":
+    //   resourceModel = new MedicationKnowledgeModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    // break
+    // case "MedicationOrder":
+    //   resourceModel = new MedicationOrderModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    // break
+    case "MedicationRequest":
+      resourceModel = new MedicationRequestModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    break
+    // case "MedicationStatement":
+    //   resourceModel = new MedicationStatementModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    // break
+    case "Observation":
+      resourceModel = new ObservationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "Organization":
+      resourceModel = new OrganizationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "Patient":
+      resourceModel = new PatientModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "Practitioner":
+      resourceModel = new PractitionerModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "PractitionerRole":
+      resourceModel = new PractitionerRoleModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "Procedure":
+      resourceModel = new ProcedureModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    // case "Questionnaire":
+    //   resourceModel = new QuestionnaireModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    // break
+    // case "QuestionnaireResponse":
+    //   resourceModel = new QuestionnaireResponseModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    // break
+    // case "ReferralRequest":
+    //   resourceModel = new ReferralRequestModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    // break
+    case "RelatedPerson":
+      resourceModel = new RelatedPersonModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "ResearchStudy":
+      resourceModel = new ResearchStudyModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    // case "ResourceCategory":
+    //   resourceModel = new ResourceCategoryModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    // break
+    default: {
+      throw new Error("Ignoring Unknown resource data structure:" + modelResourceType)
+    }
+  }
+
+  //transfer data from wrapper to the display model.
+  resourceModel.source_resource_id = fhirResourceWrapper.source_resource_id
+  resourceModel.source_id = fhirResourceWrapper.source_id
+  resourceModel.sort_title = fhirResourceWrapper.sort_title
+  resourceModel.sort_date = fhirResourceWrapper.sort_date
+
+  return resourceModel
 }

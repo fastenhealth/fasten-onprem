@@ -20,7 +20,7 @@ describe('AdverseEventModel', () => {
       // expected.hasEventType = true
       expected.date = "2017-01-29T12:34:56+00:00"
       expected.seriousness = new CodableConceptModel({ coding: [ Object({ system: 'http://terminology.hl7.org/CodeSystem/adverse-event-seriousness', code: 'Non-serious', display: 'Non-serious' }) ] })
-      expected.hasSeriousness = true
+      expected.has_seriousness = true
       expected.actuality = 'actual'
       expected.event = new CodableConceptModel({
         "coding": [
@@ -32,7 +32,7 @@ describe('AdverseEventModel', () => {
         ],
         "text": "This was a mild rash on the left forearm"
       })
-      expected.hasEvent = true
+      expected.has_event = true
 
       expect(new AdverseEventModel(fixture)).toEqual(expected);
     });

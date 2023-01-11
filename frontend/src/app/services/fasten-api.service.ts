@@ -148,8 +148,12 @@ export class FastenApiService {
       );
   }
 
-  replaceResourceAssociation(resourceAssociation: ResourceAssociation): Observable<any> {
-    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/association`, resourceAssociation)
+  //this method allows a user to manually group related FHIR resources together (conditions, encounters, etc).
+  createResourceComposition(title: string, resources: ResourceFhir[]){
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/composition`, {
+      "resources": resources,
+      "title": title,
+    })
       .pipe(
         map((response: ResponseWrapper) => {
           console.log("RESPONSE", response)

@@ -6,6 +6,7 @@ import (
 	"github.com/fastenhealth/fasten-sources/clients/factory"
 	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
@@ -15,8 +16,8 @@ import (
 )
 
 func CreateSource(c *gin.Context) {
-	logger := c.MustGet("LOGGER").(*logrus.Entry)
-	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	sourceCred := models.SourceCredential{}
 	if err := c.ShouldBindJSON(&sourceCred); err != nil {
@@ -45,8 +46,8 @@ func CreateSource(c *gin.Context) {
 }
 
 func SourceSync(c *gin.Context) {
-	logger := c.MustGet("LOGGER").(*logrus.Entry)
-	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	logger.Infof("Get SourceCredential Credentials: %v", c.Param("sourceId"))
 
@@ -67,8 +68,8 @@ func SourceSync(c *gin.Context) {
 }
 
 func CreateManualSource(c *gin.Context) {
-	logger := c.MustGet("LOGGER").(*logrus.Entry)
-	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	// single file
 	file, err := c.FormFile("file")
@@ -135,12 +136,12 @@ func CreateManualSource(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"success": true, "data": summary})
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": summary, "source": manualSourceCredential})
 }
 
 func GetSource(c *gin.Context) {
-	logger := c.MustGet("LOGGER").(*logrus.Entry)
-	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	sourceCred, err := databaseRepo.GetSource(c, c.Param("sourceId"))
 	if err != nil {
@@ -152,8 +153,8 @@ func GetSource(c *gin.Context) {
 }
 
 func GetSourceSummary(c *gin.Context) {
-	logger := c.MustGet("LOGGER").(*logrus.Entry)
-	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	sourceSummary, err := databaseRepo.GetSourceSummary(c, c.Param("sourceId"))
 	if err != nil {
@@ -165,8 +166,8 @@ func GetSourceSummary(c *gin.Context) {
 }
 
 func ListSource(c *gin.Context) {
-	logger := c.MustGet("LOGGER").(*logrus.Entry)
-	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	sourceCreds, err := databaseRepo.GetSources(c)
 	if err != nil {

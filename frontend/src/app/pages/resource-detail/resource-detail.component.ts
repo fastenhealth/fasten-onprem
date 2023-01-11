@@ -3,6 +3,7 @@ import {FastenApiService} from '../../services/fasten-api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {fhirModelFactory} from '../../../lib/models/factory';
+import {ResourceType} from '../../../lib/models/constants';
 
 @Component({
   selector: 'app-resource-detail',
@@ -29,7 +30,7 @@ export class ResourceDetailComponent implements OnInit {
       this.sourceName = "unknown" //TODO popualte this
 
       try{
-        let parsed = fhirModelFactory(resourceFhir["source_resource_type"], resourceFhir["resource_raw"])
+        let parsed = fhirModelFactory(resourceFhir["source_resource_type"] as ResourceType, resourceFhir)
         console.log("Successfully parsed model", parsed)
       } catch (e) {
         console.log("FAILED TO PARSE", resourceFhir)

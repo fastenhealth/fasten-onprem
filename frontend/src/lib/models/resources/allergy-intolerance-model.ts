@@ -1,14 +1,16 @@
 import {CodingModel} from '../datatypes/coding-model';
 import * as _ from "lodash";
-import {fhirVersions} from '../constants'
+import {fhirVersions, ResourceType} from '../constants'
 import {ReferenceModel} from '../datatypes/reference-model';
+import {FastenDisplayModel} from '../fasten/fasten-display-model';
+import {FastenOptions} from '../fasten/fasten-options';
 
-export class AllergyIntoleranceModel {
+export class AllergyIntoleranceModel extends FastenDisplayModel {
 
   title: string | undefined
   status: string | undefined
-  recordedDate: string | undefined
-  substanceCoding: CodingModel[] | undefined
+  recorded_date: string | undefined
+  substance_coding: CodingModel[] | undefined
   // reaction: string | undefined
   asserter: ReferenceModel | undefined
   note: { text: string }[] | undefined
@@ -16,7 +18,9 @@ export class AllergyIntoleranceModel {
   category: string[] | undefined
   patient: ReferenceModel | undefined
 
-  constructor(fhirResource: any, fhirVersion?: fhirVersions) {
+  constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
+    super(fastenOptions)
+    this.source_resource_type = ResourceType.AllergyIntolerance
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 
@@ -34,8 +38,8 @@ export class AllergyIntoleranceModel {
       _.get(fhirResource, 'substance.coding[0].display') ||
       _.get(fhirResource, 'substance.text', '');
     this.status = _.get(fhirResource, 'status', '');
-    this.recordedDate = _.get(fhirResource, 'recordedDate');
-    this.substanceCoding = _.get(fhirResource, 'substance.coding', []);
+    this.recorded_date = _.get(fhirResource, 'recordedDate');
+    this.substance_coding = _.get(fhirResource, 'substance.coding', []);
     this.asserter = _.get(fhirResource, 'reporter');
     this.note = []
     this.category = _.get(fhirResource, 'category') ? [_.get(fhirResource, 'category')] : [];
@@ -48,11 +52,11 @@ export class AllergyIntoleranceModel {
   stu3DTO(fhirResource: any) {
     this.title = _.get(fhirResource, 'code.coding.0.display');
     this.status = _.get(fhirResource, 'verificationStatus');
-    this.recordedDate = _.get(fhirResource, 'assertedDate');
+    this.recorded_date = _.get(fhirResource, 'assertedDate');
     let substanceCoding = _.get(fhirResource, 'reaction', []).filter((item: any) =>
       _.get(item, 'substance.coding'),
     );
-    this.substanceCoding = _.get(substanceCoding, '0.substance.coding', []);
+    this.substance_coding = _.get(substanceCoding, '0.substance.coding', []);
 
     this.note = _.get(fhirResource, 'note');
   };
@@ -60,11 +64,11 @@ export class AllergyIntoleranceModel {
   r4DTO(fhirResource: any) {
     this.title = _.get(fhirResource, 'code.coding.0.display');
     this.status = _.get(fhirResource, 'verificationStatus.coding[0].display');
-    this.recordedDate = _.get(fhirResource, 'recordedDate');
+    this.recorded_date = _.get(fhirResource, 'recordedDate');
     let substanceCoding = _.get(fhirResource, 'reaction', []).filter((item: any) =>
       _.get(item, 'substance.coding'),
     );
-    this.substanceCoding = _.get(substanceCoding, '0.substance.coding', []);
+    this.substance_coding = _.get(substanceCoding, '0.substance.coding', []);
 
     this.note = _.get(fhirResource, 'note');
   };

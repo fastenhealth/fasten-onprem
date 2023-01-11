@@ -43,6 +43,7 @@ import { ReportMedicalHistoryConditionComponent } from './report-medical-history
 import { ReportLabsObservationComponent } from './report-labs-observation/report-labs-observation.component';
 import { ChartsModule } from 'ng2-charts';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   imports: [
@@ -50,6 +51,7 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
     BrowserModule,
     NgxDatatableModule,
     NgbModule,
+    FormsModule,
     MomentModule,
     TreeModule,
     ChartsModule

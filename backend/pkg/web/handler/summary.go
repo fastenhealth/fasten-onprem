@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -8,8 +9,8 @@ import (
 )
 
 func GetSummary(c *gin.Context) {
-	logger := c.MustGet("LOGGER").(*logrus.Entry)
-	databaseRepo := c.MustGet("REPOSITORY").(database.DatabaseRepository)
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	summary, err := databaseRepo.GetSummary(c)
 	if err != nil {

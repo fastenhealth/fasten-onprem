@@ -15,7 +15,7 @@ describe('CareTeamModel', () => {
       expected.name = "Peter James Charlmers Care Plan for Inpatient Encounter"
       expected.status = "active"
       // expected.periodStart
-      expected.periodEnd = "2013-01-01"
+      expected.period_end = "2013-01-01"
       // expected.participants
       expected.category = [
         { coding: [
@@ -30,7 +30,7 @@ describe('CareTeamModel', () => {
       expected.encounter = {
         "reference": "Encounter/example"
       }
-      expected.managingOrganization = { reference: 'Organization/f001' }
+      expected.managing_organization = { reference: 'Organization/f001' }
       expected.participants = [
         { display: 'Peter James Chalmers', role: undefined, periodStart: undefined, periodEnd: undefined },
         { display: 'Dorothy Dietition', role: undefined, periodStart: undefined, periodEnd: '2013-01-01' }

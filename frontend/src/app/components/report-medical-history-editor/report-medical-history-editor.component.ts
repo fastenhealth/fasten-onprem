@@ -3,14 +3,16 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {FastenApiService} from '../../services/fasten-api.service';
 import * as fhirpath from 'fhirpath';
+import {ITreeOptions} from '@circlon/angular-tree-component';
 
 class RelatedNode {
   name: string
-  resourceType: string
-  resourceId: string
-  sourceId: string
-  draggable: boolean
+  source_resource_type: string
+  source_resource_id: string
+  source_id: string
   children: RelatedNode[]
+  show_checkbox: boolean
+  resource: ResourceFhir
 }
 
 @Component({
@@ -21,9 +23,8 @@ class RelatedNode {
 export class ReportMedicalHistoryEditorComponent implements OnInit {
 
   @Input() conditions: ResourceFhir[] = []
-  @Input() encounters: ResourceFhir[] = []
-
-  assignedEncounters: {[name: string]: ResourceFhir} = {}
+  resourceLookup: {[name: string]: ResourceFhir} = {}
+  compositionTitle: string = ""
 
   nodes = [
     // {
@@ -49,70 +50,62 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
     //   ]
     // }
   ];
-  options = {
-    allowDrag: (node) => {return node.data.draggable},
-    allowDrop: (element, { parent, index }) => {
-      // return true / false based on element, to.parent, to.index. e.g.
-      return parent.data.resourceType == "Condition";
-    },
-
+  options: ITreeOptions = {
+    allowDrag: false,
+    allowDrop: false,
   }
 
+  selectedResources:{ [id:string]: ResourceFhir} = {}
   constructor(
     public activeModal: NgbActiveModal,
     private fastenApi: FastenApiService,
   ) { }
 
   ngOnInit(): void {
+    console.log("ngOnInit STATUS", this.conditions)
     this.nodes = this.generateNodes(this.conditions)
   }
 
 
-  onResourceMoved($event) {
+  onResourceCheckboxClick($event, node:{data:RelatedNode}){
+    let key = `${node.data.source_id}/${node.data.source_resource_type}/${node.data.source_resource_id}`
+    if($event.target.checked){
+      this.selectedResources[key] = node.data.resource
+      if(!this.compositionTitle){
+        this.compositionTitle = node.data.resource.sort_title
+      }
+    } else {
+      //delete this key (unselected)
+      delete this.selectedResources[key]
+    }
+    console.log("selected resources", this.selectedResources)
+  }
 
-    this.fastenApi.replaceResourceAssociation({
+  onMergeResourcesClick() {
 
-      source_id: $event.to.parent.sourceId,
-      source_resource_type: $event.to.parent.resourceType,
-      source_resource_id: $event.to.parent.resourceId,
+    let resources: ResourceFhir[] = []
+    for(let key in this.selectedResources){
+      resources.push(this.selectedResources[key])
+    }
 
-      new_related_source_id: $event.node.sourceId,
-      new_related_source_resource_type: $event.node.resourceType,
-      new_related_source_resource_id: $event.node.resourceId,
-
-
-    }).subscribe(results => {
+    this.fastenApi.createResourceComposition(this.compositionTitle, resources).subscribe(results => {
       console.log(results)
-    })
+      this.activeModal.close()
+    },(err) => {})
   }
 
 
 
   generateNodes(resouceFhirList: ResourceFhir[]): RelatedNode[] {
     let relatedNodes = resouceFhirList.map((resourceFhir) => { return this.recGenerateNode(resourceFhir) })
-
-    //create an unassigned encounters "condition"
-    if(this.encounters.length > 0){
-      let unassignedCondition = {
-        name: "[Unassigned Encounters]",
-        resourceType: "Condition",
-        resourceId: "UNASSIGNED",
-        sourceId: "UNASSIGNED",
-        draggable: false,
-        children: []
-      }
-
-      for(let encounter of this.encounters){
-        let encounterId = `${encounter.source_id}/${encounter.source_resource_type}/${encounter.source_resource_id}`
-        if(!this.assignedEncounters[encounterId]){
-          this.assignedEncounters[encounterId] = encounter
-          unassignedCondition.children.push(this.recGenerateNode(encounter))
+    for(let relatedNode of relatedNodes){
+      if(relatedNode.source_id  == 'UNASSIGNED' && relatedNode.source_resource_type == 'Condition' && relatedNode.source_resource_id == 'UNASSIGNED'){
+        //this is a placeholder for the Unassigned resources. This resource cannot be merged, but all child resources can be, so lets set them to true
+        for(let unassignedEncounters of relatedNode.children){
+          unassignedEncounters.show_checkbox = true
         }
-      }
-
-      if(unassignedCondition.children.length > 0){
-        //only add the unassigned condition block if the subchildren list is populated.
-        relatedNodes.push(unassignedCondition)
+      } else {
+        relatedNode.show_checkbox = true
       }
     }
 
@@ -122,39 +115,48 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
 
   recGenerateNode(resourceFhir: ResourceFhir): RelatedNode {
     let relatedNode = {
-      sourceId: resourceFhir.source_id,
-      name: `[${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}]`,
-      resourceId: resourceFhir.source_resource_id,
-      resourceType: resourceFhir.source_resource_type,
-      draggable: resourceFhir.source_resource_type == "Encounter" || resourceFhir.source_resource_type == "Condition",
+      show_checkbox: false,
+      source_id: resourceFhir.source_id,
+      name: `[${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id.length > 10 ? resourceFhir.source_resource_id.substring(0, 10)+ '...' : resourceFhir.source_resource_id}] `,
+      source_resource_id: resourceFhir.source_resource_id,
+      source_resource_type: resourceFhir.source_resource_type,
       children: [],
+      resource: resourceFhir
     }
 
     switch (resourceFhir.source_resource_type) {
       case "Condition":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Condition.onsetPeriod.start")} ${fhirpath.evaluate(resourceFhir.resource_raw, "Condition.code.text.first()")}`
+        relatedNode.name += resourceFhir.sort_title || ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Condition.onsetPeriod.start")} ${fhirpath.evaluate(resourceFhir.resource_raw, "Condition.code.text.first()")}`
+        if(resourceFhir.sort_date){
+          relatedNode.name += ` - ${new Date(resourceFhir.sort_date).toLocaleDateString("en-US")}`
+        }
       break
       case "Encounter":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Encounter.period.start")} ${fhirpath.evaluate(resourceFhir.resource_raw, "Encounter.location.first().location.display")}`
+        relatedNode.name += resourceFhir.sort_title ||` ${fhirpath.evaluate(resourceFhir.resource_raw, "Encounter.period.start")} ${fhirpath.evaluate(resourceFhir.resource_raw, "Encounter.location.first().location.display")}`
+        if(resourceFhir.sort_date){
+          relatedNode.name += ` - ${new Date(resourceFhir.sort_date).toLocaleDateString("en-US")}`
+        }
         break
       case "CareTeam":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "CareTeam.participant.member.display")}`
+        relatedNode.name += resourceFhir.sort_title || ` ${fhirpath.evaluate(resourceFhir.resource_raw, "CareTeam.participant.member.display")}`
         break
       case "Location":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Location.name")}`
+        relatedNode.name += resourceFhir.sort_title || ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Location.name")}`
         break
       case "Organization":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Organization.name")}`
+        relatedNode.name += resourceFhir.sort_title || ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Organization.name")}`
         break
       case "Practitioner":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Practitioner.name.family")}`
+        relatedNode.name += resourceFhir.sort_title || ` ${fhirpath.evaluate(resourceFhir.resource_raw, "Practitioner.name.family")}`
         break
       case "MedicationRequest":
-        relatedNode.name += ` ${fhirpath.evaluate(resourceFhir.resource_raw, "MedicationRequest.medicationReference.display")}`
+        relatedNode.name += resourceFhir.sort_title || ` ${fhirpath.evaluate(resourceFhir.resource_raw, "MedicationRequest.medicationReference.display")}`
         break
+      default:
+        relatedNode.name += resourceFhir.sort_title
     }
 
-    this.assignedEncounters[`${resourceFhir.source_id}/${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}`] = resourceFhir
+    this.resourceLookup[`${resourceFhir.source_id}/${resourceFhir.source_resource_type}/${resourceFhir.source_resource_id}`] = resourceFhir
 
     if(!resourceFhir.related_resources){
       return relatedNode

@@ -52,7 +52,7 @@ export class MedicalHistoryComponent implements OnInit {
           },
           source_id: 'UNASSIGNED',
           source_resource_id: 'UNASSIGNED',
-          source_resource_type: 'UNASSIGNED',
+          source_resource_type: 'Condition',
           related_resources: this.unassigned_encounters
         } as any)
       }
@@ -65,9 +65,10 @@ export class MedicalHistoryComponent implements OnInit {
   }
 
   openEditorRelated(): void {
-    const modalRef = this.modalService.open(ReportMedicalHistoryEditorComponent);
+    const modalRef = this.modalService.open(ReportMedicalHistoryEditorComponent, {
+      size: 'xl',
+    });
     modalRef.componentInstance.conditions = this.conditions;
-    modalRef.componentInstance.encounters = this.unassigned_encounters;
   }
 
 

@@ -24,6 +24,7 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'source/:source_id', component: SourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'source/:source_id/resource/:resource_id', component: ResourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+  { path: 'source/:source_id/resource/:resource_type/:resource_id', component: ResourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'sources', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'sources/callback/:source_type', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 

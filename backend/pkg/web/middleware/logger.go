@@ -3,6 +3,7 @@ package middleware
 import (
 	"bytes"
 	"fmt"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"io"
@@ -51,7 +52,7 @@ func LoggerMiddleware(logger *logrus.Entry) gin.HandlerFunc {
 		path := c.Request.URL.Path
 		blw := &responseBodyLogWriter{body: &bytes.Buffer{}, ResponseWriter: c.Writer}
 		c.Writer = blw
-		c.Set("LOGGER", logger)
+		c.Set(pkg.ContextKeyTypeLogger, logger)
 		start := time.Now()
 		c.Next()
 		stop := time.Since(start)
