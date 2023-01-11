@@ -8,7 +8,13 @@
         <span>{{resource?.source_resource_id}}</span>
       </div>
 
-      <pre *ngIf="resource else isLoadingTemplate"><code  [highlight]="resource.resource_raw | json"></code></pre>
+      <ng-container *ngIf="resource else isLoadingTemplate">
+
+
+
+        <pre><code  [highlight]="resource.resource_raw | json"></code></pre>
+      </ng-container>
+
 
       <ng-template #isLoadingTemplate>
         <div class="row">

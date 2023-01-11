@@ -30,7 +30,7 @@ export class ResourceDetailComponent implements OnInit {
       this.sourceName = "unknown" //TODO popualte this
 
       try{
-        let parsed = fhirModelFactory(resourceFhir["source_resource_type"] as ResourceType, resourceFhir)
+        let parsed = fhirModelFactory(resourceFhir.source_resource_type as ResourceType, resourceFhir)
         console.log("Successfully parsed model", parsed)
       } catch (e) {
         console.log("FAILED TO PARSE", resourceFhir)
