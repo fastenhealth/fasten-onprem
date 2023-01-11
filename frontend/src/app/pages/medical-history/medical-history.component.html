@@ -29,7 +29,7 @@
         </div>
 
         <!-- Condition List -->
-        <app-report-medical-history-condition *ngFor="let condition of conditions; let i = index" [condition]="condition"></app-report-medical-history-condition>
+        <app-report-medical-history-condition *ngFor="let condition of conditions; let i = index" [conditionGroup]="condition"></app-report-medical-history-condition>
       </ng-template>
 
       <ng-template #emptyReport>
