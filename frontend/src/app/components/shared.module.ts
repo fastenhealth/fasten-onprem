@@ -58,6 +58,7 @@ import { ImmunizationComponent } from './fhir/resources/immunization/immunizatio
 import { BadgeComponent } from './fhir/common/badge/badge.component';
 import { TableComponent } from './fhir/common/table/table.component';
 import { CodingComponent } from './fhir/datatypes/coding/coding.component';
+import { AllergyIntoleranceComponent } from './fhir/resources/allergy-intolerance/allergy-intolerance.component';
 
 @NgModule({
   imports: [
@@ -122,6 +123,7 @@ import { CodingComponent } from './fhir/datatypes/coding/coding.component';
     BadgeComponent,
     TableComponent,
     CodingComponent,
+    AllergyIntoleranceComponent,
   ],
     exports: [
         ComponentsSidebarComponent,

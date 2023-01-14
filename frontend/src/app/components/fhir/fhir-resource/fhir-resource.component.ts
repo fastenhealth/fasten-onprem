@@ -16,6 +16,7 @@ import {FallbackComponent} from '../resources/fallback/fallback.component';
 import {BinaryComponent} from '../resources/binary/binary.component';
 import {FhirResourceComponentInterface} from './fhir-resource-component-interface';
 import {ImmunizationComponent} from '../resources/immunization/immunization.component';
+import {AllergyIntoleranceComponent} from '../resources/allergy-intolerance/allergy-intolerance.component';
 
 @Component({
   selector: 'fhir-resource',
@@ -63,9 +64,9 @@ export class FhirResourceComponent implements OnInit, OnChanges {
       // case "Appointment": {
       //   return ListAppointmentComponent;
       // }
-      // case "AllergyIntolerance": {
-      //   return ListAllergyIntoleranceComponent;
-      // }
+      case "AllergyIntolerance": {
+        return AllergyIntoleranceComponent;
+      }
       // case "AdverseEvent": {
       //   return ListAdverseEventComponent;
       // }
