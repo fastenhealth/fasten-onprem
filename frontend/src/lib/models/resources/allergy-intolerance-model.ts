@@ -62,7 +62,7 @@ export class AllergyIntoleranceModel extends FastenDisplayModel {
   };
 
   r4DTO(fhirResource: any) {
-    this.title = _.get(fhirResource, 'code.coding.0.display');
+    this.title = _.get(fhirResource, 'code.coding.0.display') || _.get(fhirResource, 'code.text')
     this.status = _.get(fhirResource, 'verificationStatus.coding[0].display');
     this.recorded_date = _.get(fhirResource, 'recordedDate');
     let substanceCoding = _.get(fhirResource, 'reaction', []).filter((item: any) =>

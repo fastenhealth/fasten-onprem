@@ -71,6 +71,11 @@ export class ImmunizationComponent implements OnInit, FhirResourceComponentInter
       data_type: TableRowItemDataType.CodingList,
       enabled: this.displayModel.has_route,
     },
+      {
+      label: 'Location',
+      data: this.displayModel.location,
+      enabled: !!this.displayModel.location,
+    },
     {
       label: 'Site',
       data: this.displayModel.site,

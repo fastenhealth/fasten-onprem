@@ -143,10 +143,15 @@
 
             <p>
               <ng-container *ngFor="let immunization of immunizations; let i = index">
-                <strong routerLink="/source/{{immunization?.source_id}}/resource/{{immunization?.source_resource_id}}" class="tx-indigo">{{immunization | fhirPath: "Immunization.vaccineCode.text" }}</strong><br/>
-                {{immunization | fhirPath: "Immunization.occurrenceDateTime" | date }}<br/>
-                {{immunization | fhirPath: "Immunization.location.display" }}<br/>
+                <strong class="cursor-pointer tx-indigo" [ngbPopover]="immunizationPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover">{{immunization.title }}</strong><br/>
+                {{immunization.sort_date | date }}<br/>
+                {{immunization.location }}<br/>
                 <br/>
+
+
+                <ng-template #immunizationPopoverContent>
+                  <fhir-resource [displayModel]="immunization"></fhir-resource>
+                </ng-template>
               </ng-container>
             </p>
 
@@ -156,14 +161,14 @@
 
             <p>
               <ng-container *ngFor="let allergy of allergyIntolerances; let i = index">
-                <strong routerLink="/source/{{allergy?.source_id}}/resource/{{allergy?.source_resource_id}}" class="tx-indigo">{{allergy | fhirPath: "AllergyIntolerance.code.text" }}</strong><br/>
-                {{allergy | fhirPath: "AllergyIntolerance.occurrenceDateTime" | date }}<br/>
+                <strong class="cursor-pointer tx-indigo" [ngbPopover]="allergyIntolerancesPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover">{{allergy.title}}</strong><br/>
+                {{allergy.recorded_date }}<br/>
                 <br/>
-              </ng-container>
 
-              <strong class="tx-indigo">Latex</strong><br/>
-              (AV/Historical) with rash and agitation<br/>
-              <br/>
+                <ng-template #allergyIntolerancesPopoverContent>
+                  <fhir-resource [displayModel]="allergy"></fhir-resource>
+                </ng-template>
+              </ng-container>
 
             </p>
           </div>
