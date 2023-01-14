@@ -17,6 +17,8 @@ import {BinaryComponent} from '../resources/binary/binary.component';
 import {FhirResourceComponentInterface} from './fhir-resource-component-interface';
 import {ImmunizationComponent} from '../resources/immunization/immunization.component';
 import {AllergyIntoleranceComponent} from '../resources/allergy-intolerance/allergy-intolerance.component';
+import {MedicationComponent} from '../resources/medication/medication.component';
+import {MedicationRequestComponent} from '../resources/medication-request/medication-request.component';
 
 @Component({
   selector: 'fhir-resource',
@@ -106,18 +108,18 @@ export class FhirResourceComponent implements OnInit, OnChanges {
       case "Immunization": {
         return ImmunizationComponent;
       }
-      // case "Medication": {
-      //   return ListMedicationComponent;
-      // }
+      case "Medication": {
+        return MedicationComponent;
+      }
       // case "MedicationAdministration": {
       //   return ListMedicationAdministrationComponent;
       // }
       // case "MedicationDispense": {
       //   return ListMedicationDispenseComponent;
       // }
-      // case "MedicationRequest": {
-      //   return ListMedicationRequestComponent;
-      // }
+      case "MedicationRequest": {
+        return MedicationRequestComponent;
+      }
       // case "NutritionOrder": {
       //   return ListNutritionOrderComponent;
       // }

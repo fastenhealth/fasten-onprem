@@ -59,6 +59,8 @@ import { BadgeComponent } from './fhir/common/badge/badge.component';
 import { TableComponent } from './fhir/common/table/table.component';
 import { CodingComponent } from './fhir/datatypes/coding/coding.component';
 import { AllergyIntoleranceComponent } from './fhir/resources/allergy-intolerance/allergy-intolerance.component';
+import { MedicationComponent } from './fhir/resources/medication/medication.component';
+import { MedicationRequestComponent } from './fhir/resources/medication-request/medication-request.component';
 
 @NgModule({
   imports: [
@@ -124,6 +126,8 @@ import { AllergyIntoleranceComponent } from './fhir/resources/allergy-intoleranc
     TableComponent,
     CodingComponent,
     AllergyIntoleranceComponent,
+    MedicationComponent,
+    MedicationRequestComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
