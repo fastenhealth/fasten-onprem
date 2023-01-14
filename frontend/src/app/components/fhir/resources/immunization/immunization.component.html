@@ -1,57 +1,19 @@
-<ngb-accordion #a="ngbAccordion" activeIds="custom-panel-1">
-  <ngb-panel id="custom-panel-1">
-  <ng-template ngbPanelHeader>
-    <button ngbPanelToggle class="accordion-button">Default-looking "custom" panel</button>
-  </ng-template>
-  <ng-template ngbPanelContent>
-
-
-
-    <div class="table-responsive">
-      <table class="table mg-b-0">
-        <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Position</th>
-          <th>Salary</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>Tiger Nixon</td>
-          <td>System Architect</td>
-          <td>$320,800</td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Garrett Winters</td>
-          <td>Accountant</td>
-          <td>$170,750</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td>Ashton Cox</td>
-          <td>Junior Technical Author</td>
-          <td>$86,000</td>
-        </tr>
-        <tr>
-          <th scope="row">4</th>
-          <td>Cedric Kelly</td>
-          <td>Senior Javascript Developer</td>
-          <td>$433,060</td>
-        </tr>
-        <tr>
-          <th scope="row">5</th>
-          <td>Airi Satou</td>
-          <td>Accountant</td>
-          <td>$162,700</td>
-        </tr>
-        </tbody>
-      </table>
+<div class="card card-fhir-resource" >
+  <div class="card-header" (click)="isCollapsed = ! isCollapsed">
+    <div>
+      <h6 class="card-title">{{displayModel.title}}</h6>
+      <p class="card-text"><strong>Start date</strong> {{displayModel.sort_date | date}}</p>
     </div>
+    <fhir-ui-badge class="float-right" [status]="displayModel.status">{{displayModel.status}}</fhir-ui-badge>
+<!--    <div class="btn-group">-->
+<!--      <button class="btn active">Day</button>-->
+<!--      <button class="btn">Week</button>-->
+<!--      <button class="btn">Month</button>-->
+<!--    </div>-->
+  </div>
+  <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed" class="card-body">
+    <p class="az-content-text mg-b-20">Describes the event of a patient being administered a vaccine or a record of an immunization as reported by a patient, a clinician or another party.</p>
+    <fhir-ui-table [displayModel]="displayModel" [tableData]="tableData"></fhir-ui-table>
+  </div>
 
-  </ng-template>
-  </ngb-panel>
-</ngb-accordion>
+</div>

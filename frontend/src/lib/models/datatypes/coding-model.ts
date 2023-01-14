@@ -3,4 +3,5 @@ export interface CodingModel {
   code?: string
   system?: string
   value?: any
+  unit?: string
 }
