@@ -3,5 +3,6 @@ import {FastenDisplayModel} from '../../../../lib/models/fasten/fasten-display-m
 //all Fhir Resource  components must implement this Interface
 export interface FhirResourceComponentInterface {
   displayModel: FastenDisplayModel;
+  showDetails: boolean;
   markForCheck()
 }

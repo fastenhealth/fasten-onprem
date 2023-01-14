@@ -20,6 +20,8 @@ import {AllergyIntoleranceComponent} from '../resources/allergy-intolerance/alle
 import {MedicationComponent} from '../resources/medication/medication.component';
 import {MedicationRequestComponent} from '../resources/medication-request/medication-request.component';
 import {FastenDisplayModel} from '../../../../lib/models/fasten/fasten-display-model';
+import {ProcedureComponent} from '../resources/procedure/procedure.component';
+import {DiagnosticReportComponent} from '../resources/diagnostic-report/diagnostic-report.component';
 
 @Component({
   selector: 'fhir-resource',
@@ -30,6 +32,7 @@ import {FastenDisplayModel} from '../../../../lib/models/fasten/fasten-display-m
 export class FhirResourceComponent implements OnInit, OnChanges {
 
   @Input() displayModel: FastenDisplayModel
+  @Input() showDetails: boolean = true
 
   //location to dynamically load the displayModel
   @ViewChild(FhirResourceOutletDirective, {static: true}) fhirResourceOutlet!: FhirResourceOutletDirective;
@@ -53,6 +56,7 @@ export class FhirResourceComponent implements OnInit, OnChanges {
       console.log("Attempting to create fhir display component", this.displayModel, componentType)
       const componentRef = viewContainerRef.createComponent<FhirResourceComponentInterface>(componentType);
       componentRef.instance.displayModel = this.displayModel;
+      componentRef.instance.showDetails = this.showDetails;
       componentRef.instance.markForCheck()
 
     }
@@ -94,9 +98,9 @@ export class FhirResourceComponent implements OnInit, OnChanges {
       // case "DeviceRequest": {
       //   return ListDeviceRequestComponent;
       // }
-      // case "DiagnosticReport": {
-      //   return ListDiagnosticReportComponent;
-      // }
+      case "DiagnosticReport": {
+        return DiagnosticReportComponent;
+      }
       // case "DocumentReference": {
       //   return ListDocumentReferenceComponent;
       // }
@@ -127,9 +131,9 @@ export class FhirResourceComponent implements OnInit, OnChanges {
       // case "Observation": {
       //   return ListObservationComponent;
       // }
-      // case "Procedure": {
-      //   return ListProcedureComponent;
-      // }
+      case "Procedure": {
+        return ProcedureComponent;
+      }
       // case "ServiceRequest": {
       //   return ListServiceRequestComponent;
       // }

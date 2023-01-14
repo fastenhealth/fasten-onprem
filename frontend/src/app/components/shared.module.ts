@@ -61,6 +61,8 @@ import { CodingComponent } from './fhir/datatypes/coding/coding.component';
 import { AllergyIntoleranceComponent } from './fhir/resources/allergy-intolerance/allergy-intolerance.component';
 import { MedicationComponent } from './fhir/resources/medication/medication.component';
 import { MedicationRequestComponent } from './fhir/resources/medication-request/medication-request.component';
+import { ProcedureComponent } from './fhir/resources/procedure/procedure.component';
+import { DiagnosticReportComponent } from './fhir/resources/diagnostic-report/diagnostic-report.component';
 
 @NgModule({
   imports: [
@@ -128,6 +130,8 @@ import { MedicationRequestComponent } from './fhir/resources/medication-request/
     AllergyIntoleranceComponent,
     MedicationComponent,
     MedicationRequestComponent,
+    ProcedureComponent,
+    DiagnosticReportComponent,
   ],
     exports: [
         ComponentsSidebarComponent,

@@ -9,7 +9,7 @@ export class TableRowItem {
 }
 
 export enum TableRowItemDataType {
-  string = "string",
+  String = "string",
   Reference = "reference",
   Coding = "coding",
   CodingList = "codingList"

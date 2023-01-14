@@ -10,6 +10,7 @@ import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-
 })
 export class FallbackComponent implements OnInit, FhirResourceComponentInterface {
   @Input() displayModel: BinaryModel
+  @Input() showDetails: boolean = true
 
   constructor(public changeRef: ChangeDetectorRef, public router: Router) {}
 

@@ -11,6 +11,8 @@ import {AllergyIntoleranceModel} from '../../../../../lib/models/resources/aller
 })
 export class AllergyIntoleranceComponent implements OnInit, FhirResourceComponentInterface {
   @Input() displayModel: AllergyIntoleranceModel
+  @Input() showDetails: boolean = true
+
   isCollapsed: boolean = false
 
   tableData: TableRowItem[] = []

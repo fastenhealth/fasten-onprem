@@ -10,4 +10,7 @@
     <p class="az-content-text mg-b-20">Risk of harmful or undesirable physiological response which is specific to an individual and associated with exposure to a substance.</p>
     <fhir-ui-table [displayModel]="displayModel" [tableData]="tableData"></fhir-ui-table>
   </div>
+  <div *ngIf="showDetails" class="card-footer">
+    <a class="float-right" routerLink="/source/{{displayModel?.source_id}}/resource/{{displayModel?.source_resource_id}}">details</a>
+  </div>
 </div>

@@ -12,6 +12,8 @@ import * as _ from "lodash";
 })
 export class ImmunizationComponent implements OnInit, FhirResourceComponentInterface {
   @Input() displayModel: ImmunizationModel
+  @Input() showDetails: boolean = true
+
   isCollapsed: boolean = false
 
   tableData: TableRowItem[] = []

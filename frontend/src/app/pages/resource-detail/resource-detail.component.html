@@ -9,7 +9,7 @@
       </div>
 
       <ng-container *ngIf="displayModel">
-        <fhir-resource [displayModel]="displayModel"></fhir-resource>
+        <fhir-resource [displayModel]="displayModel" [showDetails]="false"></fhir-resource>
       </ng-container>
       <ng-container *ngIf="resource else isLoadingTemplate">
         <pre><code  [highlight]="resource.resource_raw | json"></code></pre>

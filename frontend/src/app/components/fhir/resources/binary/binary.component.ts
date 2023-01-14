@@ -10,6 +10,7 @@ import {Router} from '@angular/router';
 })
 export class BinaryComponent implements OnInit, FhirResourceComponentInterface {
   @Input() displayModel: BinaryModel
+  @Input() showDetails: boolean = true
 
   constructor(public changeRef: ChangeDetectorRef, public router: Router) {}
 

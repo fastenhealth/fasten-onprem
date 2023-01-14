@@ -93,8 +93,12 @@
             <div *ngIf="encounter?.related_resources?.Procedure as procedures" class="col-12 mt-2 mb-2">
               <strong>Procedures:</strong>
               <ul>
-                <li routerLink="/source/{{procedure?.source_id}}/resource/{{procedure?.source_resource_id}}" *ngFor="let procedure of procedures">
+                <li class="cursor-pointer" [ngbPopover]="procedurePopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover"  *ngFor="let procedure of procedures">
                   {{procedure.display}}
+
+                  <ng-template #procedurePopoverContent>
+                    <fhir-resource [displayModel]="procedure"></fhir-resource>
+                  </ng-template>
                 </li>
               </ul>
             </div>
@@ -103,8 +107,12 @@
             <div *ngIf="encounter?.related_resources?.DiagnosticReport as diagnosticReports" class="col-12 mt-2 mb-2">
               <strong>Tests and Examinations:</strong>
               <ul>
-                <li routerLink="/source/{{diagnosticReport?.source_id}}/resource/{{diagnosticReport?.source_resource_id}}" *ngFor="let diagnosticReport of diagnosticReports">
+                <li class="cursor-pointer" [ngbPopover]="diagnosticReportPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let diagnosticReport of diagnosticReports">
                   {{diagnosticReport.title}}
+
+                  <ng-template #diagnosticReportPopoverContent>
+                    <fhir-resource [displayModel]="diagnosticReport"></fhir-resource>
+                  </ng-template>
                 </li>
               </ul>
             </div>

@@ -11,6 +11,7 @@ import {MedicationRequestModel} from '../../../../../lib/models/resources/medica
 })
 export class MedicationRequestComponent implements OnInit, FhirResourceComponentInterface {
   @Input() displayModel: MedicationRequestModel
+  @Input() showDetails: boolean = true
   isCollapsed: boolean = false
 
   tableData: TableRowItem[] = []
