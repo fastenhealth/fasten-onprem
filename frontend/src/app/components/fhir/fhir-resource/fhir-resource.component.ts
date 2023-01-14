@@ -19,6 +19,7 @@ import {ImmunizationComponent} from '../resources/immunization/immunization.comp
 import {AllergyIntoleranceComponent} from '../resources/allergy-intolerance/allergy-intolerance.component';
 import {MedicationComponent} from '../resources/medication/medication.component';
 import {MedicationRequestComponent} from '../resources/medication-request/medication-request.component';
+import {FastenDisplayModel} from '../../../../lib/models/fasten/fasten-display-model';
 
 @Component({
   selector: 'fhir-resource',
@@ -28,7 +29,7 @@ import {MedicationRequestComponent} from '../resources/medication-request/medica
 })
 export class FhirResourceComponent implements OnInit, OnChanges {
 
-  @Input() displayModel: BinaryModel
+  @Input() displayModel: FastenDisplayModel
 
   //location to dynamically load the displayModel
   @ViewChild(FhirResourceOutletDirective, {static: true}) fhirResourceOutlet!: FhirResourceOutletDirective;

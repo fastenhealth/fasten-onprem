@@ -69,13 +69,24 @@
             <div *ngIf="encounter?.related_resources?.MedicationRequest || encounter?.related_resources?.Medication" class="col-12 mt-2 mb-2">
               <strong>Medications:</strong>
               <ul>
-                <li routerLink="/source/{{medication?.source_id}}/resource/{{medication?.source_resource_id}}" *ngFor="let medication of encounter?.related_resources?.MedicationRequest">
+                <li class="cursor-pointer" [ngbPopover]="medicationRequestPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let medication of encounter?.related_resources?.MedicationRequest">
                   {{medication.display }}
+
+                  <ng-template #medicationRequestPopoverContent>
+                    <fhir-resource [displayModel]="medication"></fhir-resource>
+                  </ng-template>
                 </li>
-                <li routerLink="/source/{{medication?.source_id}}/resource/{{medication?.source_resource_id}}" *ngFor="let medication of encounter?.related_resources?.Medication">
+                <li class="cursor-pointer" [ngbPopover]="medicationPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let medication of encounter?.related_resources?.Medication">
                   {{medication.title}}
+
+                  <ng-template #medicationPopoverContent>
+                    <fhir-resource [displayModel]="medication"></fhir-resource>
+                  </ng-template>
                 </li>
               </ul>
+
+
+
             </div>
 
 
