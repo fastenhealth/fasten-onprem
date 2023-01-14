@@ -63,6 +63,7 @@ import { MedicationComponent } from './fhir/resources/medication/medication.comp
 import { MedicationRequestComponent } from './fhir/resources/medication-request/medication-request.component';
 import { ProcedureComponent } from './fhir/resources/procedure/procedure.component';
 import { DiagnosticReportComponent } from './fhir/resources/diagnostic-report/diagnostic-report.component';
+import { PractitionerComponent } from './fhir/resources/practitioner/practitioner.component';
 
 @NgModule({
   imports: [
@@ -132,6 +133,7 @@ import { DiagnosticReportComponent } from './fhir/resources/diagnostic-report/di
     MedicationRequestComponent,
     ProcedureComponent,
     DiagnosticReportComponent,
+    PractitionerComponent,
   ],
     exports: [
         ComponentsSidebarComponent,

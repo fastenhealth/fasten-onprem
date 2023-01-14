@@ -22,6 +22,7 @@ import {MedicationRequestComponent} from '../resources/medication-request/medica
 import {FastenDisplayModel} from '../../../../lib/models/fasten/fasten-display-model';
 import {ProcedureComponent} from '../resources/procedure/procedure.component';
 import {DiagnosticReportComponent} from '../resources/diagnostic-report/diagnostic-report.component';
+import {PractitionerComponent} from '../resources/practitioner/practitioner.component';
 
 @Component({
   selector: 'fhir-resource',
@@ -134,6 +135,9 @@ export class FhirResourceComponent implements OnInit, OnChanges {
       case "Procedure": {
         return ProcedureComponent;
       }
+      // case "Practitioner": {
+      //   return PractitionerComponent;
+      // }
       // case "ServiceRequest": {
       //   return ListServiceRequestComponent;
       // }
