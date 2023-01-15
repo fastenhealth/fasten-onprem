@@ -1,36 +1,3 @@
-//Custom
-
-.cursor-pointer {
-  cursor: pointer;
-}
-
-
-//disable card
-
-.card-disable {
-  -webkit-filter: grayscale(100%);
-  filter: grayscale(100%);
-  background-color: lightgrey !important;
-  opacity: 0.5;
-  cursor: auto !important;
-}
-
-// if text is too long, we can truncate
-.truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-// toast notifications container
-// sticky-top float-right pt-3 pr-3
-.toast-container {
-  position: fixed;
-  right: 20px;
-  top: 20px;
-  z-index: 1000;
-}
-
 /* You can add global styles to this file, and also import other style files */
 /*
 * Azia v1.0.0 (https://www.bootstrapdash.com/demo/azia/v1.0/)
@@ -248,3 +215,5 @@
 @import '~@swimlane/ngx-datatable/assets/icons.css';
 @import '~@circlon/angular-tree-component/css/angular-tree-component.css';
 @import '~highlight.js/styles/github.css';
+
+@import 'custom';

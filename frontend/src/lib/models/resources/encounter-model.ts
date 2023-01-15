@@ -17,7 +17,8 @@ export class EncounterModel extends FastenDisplayModel {
   resource_status: string | undefined
   participant: {
     display?: string,
-    reference: ReferenceModel,
+    role?: string,
+    reference?: string,
     text?: string,
     periodStart?:string
   }[] | undefined
@@ -81,10 +82,10 @@ export class EncounterModel extends FastenDisplayModel {
     this.resource_class = _.get(fhirResource, 'class.display');
     this.participant = _.get(fhirResource, 'participant', []).map((item: any) => {
       let periodStart = _.get(item, 'period.start');
-      const reference = _.get(item, 'individual', {});
       return {
-        display: _.get(item, 'type[0].coding[0].display'),
-        reference: reference,
+        role: _.get(item, 'type[0].text') || _.get(item, 'type[0].coding[0].display'),
+        display: _.get(item, 'individual.display'),
+        reference: _.get(item, 'individual.reference'),
         text: _.get(item, 'type[0].text'),
         periodStart,
       };

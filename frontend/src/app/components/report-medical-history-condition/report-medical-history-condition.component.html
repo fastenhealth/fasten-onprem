@@ -6,7 +6,7 @@
         {{conditionDisplayModel?.sort_title ? conditionDisplayModel?.sort_title : (conditionGroup | fhirPath: "Condition.code.text.first()":"Condition.code.coding.display.first()")}}
       </div>
       <div class="col-6">
-        {{conditionGroup | fhirPath: "Condition.onsetPeriod.start":"Condition.onsetDateTime" | date }} - {{conditionGroup | fhirPath: "Condition.onsetPeriod.end" | date}}
+        {{conditionDisplayModel?.sort_date ? (conditionDisplayModel?.sort_date | date) : (conditionGroup | fhirPath: "Condition.onsetPeriod.start":"Condition.onsetDateTime" | date) }} - {{conditionGroup | fhirPath: "Condition.onsetPeriod.end" | date}}
       </div>
     </div>
   </div><!-- card-header -->
@@ -40,15 +40,17 @@
           <!--              </div>-->
         </div>
 
-        <ng-container *ngIf="conditionGroup.related_resources.length > 0">
-          <a class="cursor-pointer tx-indigo" (click)="collapse.toggle()">show all</a>
-          <div #collapse="ngbCollapse" [ngbCollapse]="true">
+        <div class="row pt-2" *ngIf="conditionGroup.related_resources.length > 0">
+          <div class="col-12">
+            <a class="cursor-pointer tx-indigo" (click)="collapse.toggle()">show all</a>
+            <div #collapse="ngbCollapse" [ngbCollapse]="true">
 
-            <ul>
-              <li class="cursor-pointer tx-indigo" *ngFor="let resourceEntry of resourcesLookup | keyvalue" [routerLink]="resourceEntry.key">{{resourceEntry.value.source_resource_type}} {{resourceEntry.value.sort_title ? '- '+resourceEntry.value.sort_title : '' }} </li>
-            </ul>
+              <ul>
+                <li class="cursor-pointer tx-indigo" *ngFor="let resourceEntry of resourcesLookup | keyvalue" [routerLink]="resourceEntry.key">{{resourceEntry.value.source_resource_type}} {{resourceEntry.value.sort_title ? '- '+resourceEntry.value.sort_title : '' }} </li>
+              </ul>
+            </div>
           </div>
-        </ng-container>
+        </div>
 
 
       </div>
@@ -67,21 +69,36 @@
             <div *ngIf="encounter?.related_resources?.MedicationRequest || encounter?.related_resources?.Medication" class="col-12 mt-2 mb-2">
               <strong>Medications:</strong>
               <ul>
-                <li routerLink="/source/{{medication?.source_id}}/resource/{{medication?.source_resource_id}}" *ngFor="let medication of encounter?.related_resources?.MedicationRequest">
+                <li class="cursor-pointer" [ngbPopover]="medicationRequestPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let medication of encounter?.related_resources?.MedicationRequest">
                   {{medication.display }}
+
+                  <ng-template #medicationRequestPopoverContent>
+                    <fhir-resource [displayModel]="medication"></fhir-resource>
+                  </ng-template>
                 </li>
-                <li routerLink="/source/{{medication?.source_id}}/resource/{{medication?.source_resource_id}}" *ngFor="let medication of encounter?.related_resources?.Medication">
+                <li class="cursor-pointer" [ngbPopover]="medicationPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let medication of encounter?.related_resources?.Medication">
                   {{medication.title}}
+
+                  <ng-template #medicationPopoverContent>
+                    <fhir-resource [displayModel]="medication"></fhir-resource>
+                  </ng-template>
                 </li>
               </ul>
+
+
+
             </div>
 
 
             <div *ngIf="encounter?.related_resources?.Procedure as procedures" class="col-12 mt-2 mb-2">
               <strong>Procedures:</strong>
               <ul>
-                <li routerLink="/source/{{procedure?.source_id}}/resource/{{procedure?.source_resource_id}}" *ngFor="let procedure of procedures">
+                <li class="cursor-pointer" [ngbPopover]="procedurePopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover"  *ngFor="let procedure of procedures">
                   {{procedure.display}}
+
+                  <ng-template #procedurePopoverContent>
+                    <fhir-resource [displayModel]="procedure"></fhir-resource>
+                  </ng-template>
                 </li>
               </ul>
             </div>
@@ -90,8 +107,12 @@
             <div *ngIf="encounter?.related_resources?.DiagnosticReport as diagnosticReports" class="col-12 mt-2 mb-2">
               <strong>Tests and Examinations:</strong>
               <ul>
-                <li routerLink="/source/{{diagnosticReport?.source_id}}/resource/{{diagnosticReport?.source_resource_id}}" *ngFor="let diagnosticReport of diagnosticReports">
+                <li class="cursor-pointer" [ngbPopover]="diagnosticReportPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let diagnosticReport of diagnosticReports">
                   {{diagnosticReport.title}}
+
+                  <ng-template #diagnosticReportPopoverContent>
+                    <fhir-resource [displayModel]="diagnosticReport"></fhir-resource>
+                  </ng-template>
                 </li>
               </ul>
             </div>

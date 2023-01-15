@@ -4,6 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {fhirModelFactory} from '../../../lib/models/factory';
 import {ResourceType} from '../../../lib/models/constants';
+import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
 
 @Component({
   selector: 'app-resource-detail',
@@ -16,6 +17,7 @@ export class ResourceDetailComponent implements OnInit {
   sourceId: string = ""
   sourceName: string = ""
   resource: ResourceFhir = null
+  displayModel: FastenDisplayModel = null
 
   constructor(private fastenApi: FastenApiService, private router: Router, private route: ActivatedRoute) {
   }
@@ -30,7 +32,8 @@ export class ResourceDetailComponent implements OnInit {
       this.sourceName = "unknown" //TODO popualte this
 
       try{
-        let parsed = fhirModelFactory(resourceFhir["source_resource_type"] as ResourceType, resourceFhir)
+        let parsed = fhirModelFactory(resourceFhir.source_resource_type as ResourceType, resourceFhir)
+        this.displayModel = parsed
         console.log("Successfully parsed model", parsed)
       } catch (e) {
         console.log("FAILED TO PARSE", resourceFhir)

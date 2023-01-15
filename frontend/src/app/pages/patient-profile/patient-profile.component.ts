@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {forkJoin} from 'rxjs';
+import {fhirModelFactory} from '../../../lib/models/factory';
+import {ResourceType} from '../../../lib/models/constants';
+import {ImmunizationModel} from '../../../lib/models/resources/immunization-model';
+import {AllergyIntoleranceModel} from '../../../lib/models/resources/allergy-intolerance-model';
 
 @Component({
   selector: 'app-patient-profile',
@@ -12,8 +16,8 @@ export class PatientProfileComponent implements OnInit {
   loading: boolean = false
 
   patient: ResourceFhir = null
-  immunizations: ResourceFhir[] = []
-  allergyIntolerances: ResourceFhir[] = []
+  immunizations: ImmunizationModel[] = []
+  allergyIntolerances: AllergyIntoleranceModel[] = []
   constructor(
     private fastenApi: FastenApiService,
   ) { }
@@ -29,8 +33,12 @@ export class PatientProfileComponent implements OnInit {
       this.loading = false
       console.log(results)
       this.patient = results[0][0]
-      this.immunizations = results[1]
-      this.allergyIntolerances = results[2]
+      this.immunizations = results[1].map((immunization) => {
+        return fhirModelFactory(immunization.source_resource_type as ResourceType, immunization) as ImmunizationModel
+      })
+      this.allergyIntolerances = results[2].map((allergy) => {
+        return fhirModelFactory(allergy.source_resource_type as ResourceType, allergy) as AllergyIntoleranceModel
+      })
     }, error => {
       this.loading = false
     })

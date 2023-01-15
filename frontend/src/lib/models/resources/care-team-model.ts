@@ -11,7 +11,13 @@ export class CareTeamModel extends FastenDisplayModel {
   status: string | undefined
   period_start: string | undefined
   period_end: string | undefined
-  participants: any[] | undefined
+  participants: {
+    reference:string
+    display:string,
+    role:string,
+    periodStart: string,
+    periodEnd: string
+  }[] | undefined
   category: CodableConceptModel[] | undefined
   subject: ReferenceModel | undefined
   encounter: ReferenceModel | undefined
@@ -36,12 +42,14 @@ export class CareTeamModel extends FastenDisplayModel {
       _.get(fhirResource, 'managingOrganization');
 
     this.participants = _.get(fhirResource, 'participant', []).map((item: any) => {
+      const reference = _.get(item, 'member.reference');
       const display = _.get(item, 'member.display');
       const role = _.get(item, 'role.text') || _.get(item, 'role[0].text') || _.get(item, 'role.coding.0.display');
       const periodStart = _.get(item, 'period.start');
       const periodEnd = _.get(item, 'period.end');
 
       return {
+        reference,
         display,
         role,
         periodStart,

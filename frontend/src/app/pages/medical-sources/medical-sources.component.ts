@@ -38,6 +38,7 @@ export class MedicalSourcesComponent implements OnInit {
 
   connectedSourceList: SourceListItem[] = [] //source's are populated for this list
   availableSourceList: SourceListItem[] = []
+  totalAvailableSourceList: number = 0
   uploadedFile: File[] = []
 
   closeResult = '';
@@ -58,7 +59,7 @@ export class MedicalSourcesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true
-    forkJoin([this.lighthouseApi.getLighthouseSourceMetadataMap(), this.fastenApi.getSources()]).subscribe(results => {
+    forkJoin([this.lighthouseApi.getLighthouseSourceMetadataMap(true), this.fastenApi.getSources()]).subscribe(results => {
       this.loading = false
       //handle source metadata map response
       this.metadataSources = results[0] as {[name:string]: MetadataSource}
@@ -98,6 +99,7 @@ export class MedicalSourcesComponent implements OnInit {
 
         this.callback(callbackSourceType).then(console.log)
       }
+      this.totalAvailableSourceList = this.availableSourceList.length
 
       //setup Search
       const options = {

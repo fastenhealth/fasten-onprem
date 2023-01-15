@@ -26,6 +26,7 @@ export class ImmunizationModel extends FastenDisplayModel {
   has_site: boolean | undefined
   patient: ReferenceModel | undefined
   note: any[] | undefined
+  location: string | undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
@@ -67,6 +68,7 @@ export class ImmunizationModel extends FastenDisplayModel {
     this.provided_date =
       _.get(fhirResource, 'occurrenceDateTime') ||
       _.get(fhirResource, 'occurrenceString');
+    this.location = _.get(fhirResource, 'location.display')
   };
 
   resourceDTO(fhirResource:any, fhirVersion:fhirVersions){

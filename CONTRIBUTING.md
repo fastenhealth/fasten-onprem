@@ -79,6 +79,7 @@ Next we'll start the processes described above:
 # In terminal #1, run the following
 cd frontend 
 yarn dist -- -c [sandbox|prod]
+# eg. yarn dist -- -c prod
 
 # In terminal #2, run the following
 go mod vendor

@@ -1,0 +1,173 @@
+//Custom
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+
+//disable card
+
+.card-disable {
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+  background-color: lightgrey !important;
+  opacity: 0.5;
+  cursor: auto !important;
+}
+
+// if text is too long, we can truncate
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// toast notifications container
+// sticky-top float-right pt-3 pr-3
+.toast-container {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  z-index: 1000;
+}
+
+// Fhir Resource Cards
+
+.card-fhir-resource-popover {
+  max-width:500px;
+}
+
+.card-fhir-resource {
+  position: relative;
+  border-color: $gray-300;
+
+  .card-header {
+    padding: 20px;
+    background-color: transparent;
+
+    @include media-breakpoint-up(sm) {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      color: $gray-900;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .card-text {
+      margin-bottom: 0;
+    }
+
+    .btn-group {
+      margin-top: 15px;
+      @include media-breakpoint-up(sm) { margin-top: 0; }
+
+      .btn {
+        font-size: 12px;
+        font-weight: 500;
+        padding: 5px 10px;
+        min-height: inherit;
+        background-color: #fff;
+        color: $gray-600;
+        border: 1px solid $gray-300;
+
+        @include hover-focus() {
+          background-color: $gray-100;
+          border-color: $gray-300;
+        }
+
+        + .btn { margin-left: -1px; }
+
+        &.active {
+          color: $gray-900;
+          background-color: $gray-200;
+          border-color: $gray-300;
+        }
+      }
+    }
+  }
+
+  //.card-body {
+  //  padding: 10px 0 20px;
+  //  position: relative;
+  //  overflow: hidden;
+  //
+  //  .flot-chart-wrapper {
+  //    position: relative;
+  //    margin-left: -28px;
+  //    margin-right: -20px;
+  //  }
+  //
+  //  .flot-chart {
+  //    width: 100%;
+  //    height: 150px;
+  //
+  //    @include media-breakpoint-up(sm) { height: 275px; }
+  //    @include media-breakpoint-only(lg) { height: 252px; }
+  //
+  //    .flot-y-axis > div {
+  //      transform: translateX(50px);
+  //      text-shadow: 1px 1px rgba(#fff, .75);
+  //      color: $body-color;
+  //      font-weight: 700;
+  //      font-size: 11px;
+  //    }
+  //
+  //    .flot-x-axis > div {
+  //      color: $gray-500;
+  //      font-weight: 500;
+  //      font-size: 11px;
+  //    }
+  //  }
+  //}
+
+  .card-body-top {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding-left: 20px;
+
+    @include media-breakpoint-up(sm) {
+      position: absolute;
+      top: -5px;
+      left: 20px;
+      z-index: 5;
+      padding-left: 0;
+    }
+
+    > div {
+      flex-basis: 50%;
+      @include media-breakpoint-up(sm) { flex-basis: auto; }
+
+      + div {
+        @include media-breakpoint-up(sm) { margin-left: 30px; }
+      }
+    }
+
+    label {
+      font-size: 12px;
+      margin-bottom: 3px;
+
+      @include media-breakpoint-up(sm) { font-size: $font-size-base; }
+    }
+
+    h2 {
+      font-size: 20px; //$font-size-base;
+      font-weight: 600;
+      font-family: 'Archivo', $font-family-base;
+      color: $gray-900;
+
+      @include media-breakpoint-up(sm) {
+        font-size: 24px;
+        letter-spacing: -.5px;
+      }
+    }
+  }
+}
+
+

@@ -32,7 +32,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.loading = true
 
-    forkJoin([this.fastenApi.getSummary(), this.lighthouseApi.getLighthouseSourceMetadataMap()]).subscribe(results => {
+    forkJoin([this.fastenApi.getSummary(), this.lighthouseApi.getLighthouseSourceMetadataMap(true)]).subscribe(results => {
       this.loading = false
       let summary = results[0] as Summary
       let metadataSource = results[1] as { [name: string]: MetadataSource }

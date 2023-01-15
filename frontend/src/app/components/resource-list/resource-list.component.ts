@@ -90,7 +90,7 @@ export class ResourceListComponent implements OnInit, OnChanges {
     }
   }
 
-  typeLookup(resourceType: string): Type<any> {
+  typeLookup(resourceType: string): Type<ResourceListComponentInterface> {
     if(!resourceType){
       //dont try to render anything if the resourceType isnt set.
       return null

@@ -25,6 +25,7 @@ import {ResearchStudyModel} from './resources/research-study-model';
 import {FastenOptions} from './fasten/fasten-options';
 import {FastenDisplayModel} from './fasten/fasten-display-model';
 import {MedicationRequestModel} from './resources/medication-request-model';
+import {BinaryModel} from './resources/binary-model';
 
 // import {BinaryModel} from './resources/binary-model';
 
@@ -41,10 +42,9 @@ export function fhirModelFactory(modelResourceType: ResourceType, fhirResourceWr
     case "Appointment":
       resourceModel = new AppointmentModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-
-    // case "Binary": {
-    //   resourceModel = new BinaryModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
-    // }
+    case "Binary":
+      resourceModel = new BinaryModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
     case "CarePlan":
       resourceModel = new CarePlanModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break

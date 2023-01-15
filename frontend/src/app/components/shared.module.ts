@@ -44,6 +44,26 @@ import { ReportLabsObservationComponent } from './report-labs-observation/report
 import { ChartsModule } from 'ng2-charts';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 import {FormsModule} from '@angular/forms';
+import { BinaryComponent } from './fhir/resources/binary/binary.component';
+import { PdfComponent } from './fhir/datatypes/pdf/pdf.component';
+import { ImgComponent } from './fhir/datatypes/img/img.component';
+import { BinaryTextComponent } from './fhir/datatypes/binary-text/binary-text.component';
+import { MarkdownComponent } from './fhir/datatypes/markdown/markdown.component';
+import { HtmlComponent } from './fhir/datatypes/html/html.component';
+import { FhirResourceComponent } from './fhir/fhir-resource/fhir-resource.component';
+import { FhirResourceOutletDirective } from './fhir/fhir-resource/fhir-resource-outlet.directive';
+import { FallbackComponent } from './fhir/resources/fallback/fallback.component';
+import {HighlightModule} from 'ngx-highlightjs';
+import { ImmunizationComponent } from './fhir/resources/immunization/immunization.component';
+import { BadgeComponent } from './fhir/common/badge/badge.component';
+import { TableComponent } from './fhir/common/table/table.component';
+import { CodingComponent } from './fhir/datatypes/coding/coding.component';
+import { AllergyIntoleranceComponent } from './fhir/resources/allergy-intolerance/allergy-intolerance.component';
+import { MedicationComponent } from './fhir/resources/medication/medication.component';
+import { MedicationRequestComponent } from './fhir/resources/medication-request/medication-request.component';
+import { ProcedureComponent } from './fhir/resources/procedure/procedure.component';
+import { DiagnosticReportComponent } from './fhir/resources/diagnostic-report/diagnostic-report.component';
+import { PractitionerComponent } from './fhir/resources/practitioner/practitioner.component';
 
 @NgModule({
   imports: [
@@ -54,7 +74,8 @@ import {FormsModule} from '@angular/forms';
     FormsModule,
     MomentModule,
     TreeModule,
-    ChartsModule
+    ChartsModule,
+    HighlightModule,
   ],
   declarations: [
     ComponentsSidebarComponent,
@@ -94,46 +115,67 @@ import {FormsModule} from '@angular/forms';
     ReportMedicalHistoryConditionComponent,
     ReportLabsObservationComponent,
     LoadingSpinnerComponent,
+    BinaryComponent,
+    PdfComponent,
+    ImgComponent,
+    BinaryTextComponent,
+    MarkdownComponent,
+    HtmlComponent,
+    FhirResourceComponent,
+    FhirResourceOutletDirective,
+    FallbackComponent,
+    ImmunizationComponent,
+    BadgeComponent,
+    TableComponent,
+    CodingComponent,
+    AllergyIntoleranceComponent,
+    MedicationComponent,
+    MedicationRequestComponent,
+    ProcedureComponent,
+    DiagnosticReportComponent,
+    PractitionerComponent,
   ],
-  exports: [
-    ComponentsSidebarComponent,
-    ListAllergyIntoleranceComponent,
-    ListAdverseEventComponent,
-    ListCarePlanComponent,
-    ListCommunicationComponent,
-    ListConditionComponent,
-    ListEncounterComponent,
-    ListAppointmentComponent,
-    ListGenericResourceComponent,
-    ListImmunizationComponent,
-    ListMedicationAdministrationComponent,
-    ListMedicationComponent,
-    ListMedicationDispenseComponent,
-    ListMedicationRequestComponent,
-    ListNutritionOrderComponent,
-    ListObservationComponent,
-    ListPatientComponent,
-    ListProcedureComponent,
-    ListDeviceRequestComponent,
-    UtilitiesSidebarComponent,
-    ListCoverageComponent,
-    ListServiceRequestComponent,
-    ListDocumentReferenceComponent,
-    ListDeviceComponent,
-    ListDiagnosticReportComponent,
-    ListGoalComponent,
-    ResourceListComponent,
-    ResourceListOutletDirective,
-    ToastComponent,
-    ReportHeaderComponent,
-    ReportMedicalHistoryEditorComponent,
-    FhirPathPipe,
-    FilterPipe,
-    ReportMedicalHistoryConditionComponent,
-    ReportLabsObservationComponent,
-    LoadingSpinnerComponent
-
-  ]
+    exports: [
+        ComponentsSidebarComponent,
+        ListAllergyIntoleranceComponent,
+        ListAdverseEventComponent,
+        ListCarePlanComponent,
+        ListCommunicationComponent,
+        ListConditionComponent,
+        ListEncounterComponent,
+        ListAppointmentComponent,
+        ListGenericResourceComponent,
+        ListImmunizationComponent,
+        ListMedicationAdministrationComponent,
+        ListMedicationComponent,
+        ListMedicationDispenseComponent,
+        ListMedicationRequestComponent,
+        ListNutritionOrderComponent,
+        ListObservationComponent,
+        ListPatientComponent,
+        ListProcedureComponent,
+        ListDeviceRequestComponent,
+        UtilitiesSidebarComponent,
+        ListCoverageComponent,
+        ListServiceRequestComponent,
+        ListDocumentReferenceComponent,
+        ListDeviceComponent,
+        ListDiagnosticReportComponent,
+        ListGoalComponent,
+        ResourceListComponent,
+        ResourceListOutletDirective,
+        ToastComponent,
+        ReportHeaderComponent,
+        ReportMedicalHistoryEditorComponent,
+        FhirPathPipe,
+        FilterPipe,
+        ReportMedicalHistoryConditionComponent,
+        ReportLabsObservationComponent,
+        LoadingSpinnerComponent,
+        BinaryComponent,
+        FhirResourceComponent,
+        FhirResourceOutletDirective
+    ]
 })
 
 export class SharedModule { }

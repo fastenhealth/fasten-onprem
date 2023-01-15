@@ -17,7 +17,7 @@ export class PractitionerModel extends FastenDisplayModel {
     name: string,
     relationship: string
   }|undefined
-  telecom: string|undefined
+  telecom: { system?: string, value?: string, use?: string }[]|undefined
   address: string|undefined
   birthdate: string|undefined
 

@@ -13,9 +13,10 @@ export class MedicationRequestModel extends FastenDisplayModel {
   reason_code: string|undefined
   dosage_instruction: string|undefined
   has_dosage_instruction: boolean|undefined
-  requester: string|undefined
+  requester: ReferenceModel|undefined
   created: string|undefined
   intent: string|undefined
+  status: string|undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
@@ -27,6 +28,7 @@ export class MedicationRequestModel extends FastenDisplayModel {
       'medicationCodeableConcept.coding.0',
     );
     this.reason_code = _.get(fhirResource, 'reasonCode');
+    this.status = _.get(fhirResource, 'status');
     this.dosage_instruction = _.get(fhirResource, 'dosageInstruction');
     this.has_dosage_instruction =
       Array.isArray(this.dosage_instruction) && this.dosage_instruction.length > 0;

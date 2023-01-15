@@ -22,7 +22,7 @@ export class LighthouseService {
     if(showHidden){
       endpointUrl.searchParams.set('show_hidden', 'true');
     }
-    
+
     return this._httpClient.get<ResponseWrapper>(endpointUrl.toString())
       .pipe(
         map((response: ResponseWrapper) => {
