@@ -14,7 +14,7 @@ type DatabaseRepository interface {
 	CreateUser(context.Context, *models.User) error
 
 	GetUserByUsername(context.Context, string) (*models.User, error)
-	GetCurrentUser(context.Context) *models.User
+	GetCurrentUser(ctx context.Context) (*models.User, error)
 
 	GetSummary(ctx context.Context) (*models.Summary, error)
 

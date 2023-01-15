@@ -210,9 +210,10 @@ func (suite *RepositoryTestSuite) TestGetCurrentUser_WithContextBackgroundAuthUs
 	require.NoError(suite.T(), err)
 
 	//test
-	userModelResult := dbRepo.GetCurrentUser(context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username"))
+	userModelResult, err := dbRepo.GetCurrentUser(context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username"))
 
 	//assert
+	require.NoError(suite.T(), err)
 	require.NotNil(suite.T(), userModelResult)
 	require.Equal(suite.T(), userModelResult.Username, "test_username")
 }
@@ -235,9 +236,10 @@ func (suite *RepositoryTestSuite) TestGetCurrentUser_WithGinContextBackgroundAut
 	//test
 	ginContext := gin.Context{}
 	ginContext.Set(pkg.ContextKeyTypeAuthUsername, "test_username")
-	userModelResult := dbRepo.GetCurrentUser(&ginContext)
+	userModelResult, err := dbRepo.GetCurrentUser(&ginContext)
 
 	//assert
+	require.NoError(suite.T(), err)
 	require.NotNil(suite.T(), userModelResult)
 	require.Equal(suite.T(), userModelResult.Username, "test_username")
 }
@@ -251,9 +253,10 @@ func (suite *RepositoryTestSuite) TestGetCurrentUser_WithContextBackgroundAuthUs
 	require.NoError(suite.T(), err)
 
 	//test
-	userModelResult := dbRepo.GetCurrentUser(context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username"))
+	userModelResult, err := dbRepo.GetCurrentUser(context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username"))
 
 	//assert
+	require.Error(suite.T(), err)
 	require.Nil(suite.T(), userModelResult)
 }
 
