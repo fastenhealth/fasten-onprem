@@ -2,6 +2,9 @@ import { GoalModel } from './goal-model';
 import {DocumentReferenceModel} from './document-reference-model';
 import {CodableConceptModel} from '../datatypes/codable-concept-model';
 
+import * as example1Fixture from "../../fixtures/r4/resources/goal/example1.json"
+import * as example2Fixture from "../../fixtures/r4/resources/goal/example2.json"
+
 describe('GoalModel', () => {
   it('should create an instance', () => {
     expect(new GoalModel({})).toBeTruthy();
@@ -10,7 +13,6 @@ describe('GoalModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let fixture = require("../../fixtures/r4/resources/goal/example1.json")
       let expected = new GoalModel({})
 
       // expected.title: string | undefined
@@ -33,11 +35,10 @@ describe('GoalModel', () => {
       expected.subject = { reference: 'Patient/example', display: 'Peter James Chalmers' }
       expected.status_date = '2016-02-14'
 
-      expect(new GoalModel(fixture)).toEqual(expected);
+      expect(new GoalModel(example1Fixture)).toEqual(expected);
     });
 
     it('should parse example2.json', () => {
-      let fixture = require("../../fixtures/r4/resources/goal/example2.json")
       let expected = new GoalModel({})
 
       // expected.title: string | undefined
@@ -57,7 +58,7 @@ describe('GoalModel', () => {
       expected.subject = { reference: 'Patient/example', display: 'Peter James Chalmers' }
       // expected.statusDate = '2016-02-14'
 
-      expect(new GoalModel(fixture)).toEqual(expected);
+      expect(new GoalModel(example2Fixture)).toEqual(expected);
     });
   })
 

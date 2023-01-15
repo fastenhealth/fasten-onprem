@@ -1,5 +1,9 @@
 import { EncounterModel } from './encounter-model';
 import {DocumentReferenceModel} from './document-reference-model';
+import * as example1Fixture from "../../fixtures/r4/resources/encounter/example1.json"
+import * as example2Fixture from "../../fixtures/r4/resources/encounter/example2.json"
+import * as example3Fixture from "../../fixtures/r4/resources/encounter/example3.json"
+
 
 describe('EncounterModel', () => {
   it('should create an instance', () => {
@@ -8,7 +12,6 @@ describe('EncounterModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let fixture = require("../../fixtures/r4/resources/encounter/example1.json")
       let expected = new EncounterModel({})
       // periodEnd: string | undefined
       // periodStart: string | undefined
@@ -19,11 +22,10 @@ describe('EncounterModel', () => {
       expected.resource_status = 'in-progress'
       // participant
 
-      expect(new EncounterModel(fixture)).toEqual(expected);
+      expect(new EncounterModel(example1Fixture)).toEqual(expected);
     });
 
     it('should parse example2.json', () => {
-      let fixture = require("../../fixtures/r4/resources/encounter/example2.json")
       let expected = new EncounterModel({})
       expected.period_end = '2015-01-17T16:30:00+10:00'
       expected.period_start = '2015-01-17T16:00:00+10:00'
@@ -41,11 +43,10 @@ describe('EncounterModel', () => {
         }
       ]
 
-      expect(new EncounterModel(fixture)).toEqual(expected);
+      expect(new EncounterModel(example2Fixture)).toEqual(expected);
     });
 
     it('should parse example3.json', () => {
-      let fixture = require("../../fixtures/r4/resources/encounter/example3.json")
       let expected = new EncounterModel({})
       // expected.periodEnd = '2015-01-17T16:30:00+10:00'
       // expected.periodStart = '2015-01-17T16:00:00+10:00'
@@ -58,7 +59,7 @@ describe('EncounterModel', () => {
         { display: undefined, reference: Object({ reference: 'Practitioner/f201' }), text: undefined, periodStart: undefined }
       ]
 
-      expect(new EncounterModel(fixture)).toEqual(expected);
+      expect(new EncounterModel(example3Fixture)).toEqual(expected);
     });
 
   })

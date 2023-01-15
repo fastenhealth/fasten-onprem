@@ -1,6 +1,7 @@
 import { AdverseEventModel } from './adverse-event-model';
 import {AllergyIntoleranceModel} from './allergy-intolerance-model';
 import {CodableConceptModel} from '../datatypes/codable-concept-model';
+import * as example1Fixture from "../../fixtures/r4/resources/adverseEvent/example1.json";
 
 describe('AdverseEventModel', () => {
   it('should create an instance', () => {
@@ -10,7 +11,6 @@ describe('AdverseEventModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let fixture = require("../../fixtures/r4/resources/adverseEvent/example1.json")
       let expected = new AdverseEventModel({})
       expected.subject = {
         "reference": "Patient/example"
@@ -34,7 +34,7 @@ describe('AdverseEventModel', () => {
       })
       expected.has_event = true
 
-      expect(new AdverseEventModel(fixture)).toEqual(expected);
+      expect(new AdverseEventModel(example1Fixture)).toEqual(expected);
     });
   })
 });

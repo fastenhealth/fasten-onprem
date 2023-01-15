@@ -1,4 +1,5 @@
 import { ImmunizationModel } from './immunization-model';
+import * as example1Fixture from "../../fixtures/r4/resources/immunization/example1.json"
 
 describe('ImmunizationModel', () => {
   it('should create an instance', () => {
@@ -7,7 +8,6 @@ describe('ImmunizationModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let fixture = require("../../fixtures/r4/resources/immunization/example1.json")
       let expected = new ImmunizationModel({})
 
       expected.title = 'Fluvax (Influenza)'
@@ -29,7 +29,7 @@ describe('ImmunizationModel', () => {
       expected.patient = { reference: 'Patient/example' }
       expected.note = [ { text: 'Notes on adminstration of vaccine' } ]
 
-      expect(new ImmunizationModel(fixture)).toEqual(expected);
+      expect(new ImmunizationModel(example1Fixture)).toEqual(expected);
     });
   })
 });

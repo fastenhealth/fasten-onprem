@@ -1,4 +1,5 @@
 import { AddressModel } from './address-model';
+import * as fixture from "../../fixtures/r4/datatypes/address.json"
 
 describe('AddressModel', () => {
   it('should create an instance', () => {
@@ -6,7 +7,6 @@ describe('AddressModel', () => {
   });
 
   it('should parse fhirdata', () => {
-    let fixture = require("../../fixtures/r4/datatypes/address.json")
     let expectedAddress = new AddressModel({})
     expectedAddress.city = "SALEM"
     expectedAddress.country = "US"

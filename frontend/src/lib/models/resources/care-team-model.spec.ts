@@ -2,6 +2,9 @@ import { CareTeamModel } from './care-team-model';
 import {CarePlanModel} from './care-plan-model';
 import {ReferenceModel} from '../datatypes/reference-model';
 
+import * as fixture from "../../fixtures/r4/resources/careTeam/example1.json"
+
+
 describe('CareTeamModel', () => {
   it('should create an instance', () => {
     expect(new CareTeamModel({})).toBeTruthy();
@@ -10,7 +13,6 @@ describe('CareTeamModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let fixture = require("../../fixtures/r4/resources/careTeam/example1.json")
       let expected = new CareTeamModel({})
       expected.name = "Peter James Charlmers Care Plan for Inpatient Encounter"
       expected.status = "active"

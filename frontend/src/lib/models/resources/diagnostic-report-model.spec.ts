@@ -1,6 +1,8 @@
 import { DiagnosticReportModel } from './diagnostic-report-model';
 import {DeviceModel} from './device-model';
 import {CodableConceptModel} from '../datatypes/codable-concept-model';
+import example1Fixture from "../../fixtures/r4/resources/diagnosticReport/example1.json"
+
 
 describe('DiagnosticReportModel', () => {
   it('should create an instance', () => {
@@ -10,7 +12,6 @@ describe('DiagnosticReportModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let fixture = require("../../fixtures/r4/resources/diagnosticReport/example1.json")
       let expected = new DiagnosticReportModel({})
 
       expected.title = 'Complete blood count (hemogram) panel - Blood by Automated count'
@@ -26,7 +27,7 @@ describe('DiagnosticReportModel', () => {
       expected.performer = { reference: 'Organization/f001', display: 'Burgers University Medical Centre' }
       expected.issued = '2013-05-15T19:32:52+01:00'
 
-      expect(new DiagnosticReportModel(fixture)).toEqual(expected);
+      expect(new DiagnosticReportModel(example1Fixture)).toEqual(expected);
     });
 
     // it('should parse example2.json', () => {

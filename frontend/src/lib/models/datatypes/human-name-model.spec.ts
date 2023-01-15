@@ -1,5 +1,6 @@
 import { HumanNameModel } from './human-name-model';
 import {AddressModel} from './address-model';
+import * as fixture from "../../fixtures/r4/datatypes/human-name.json"
 
 describe('HumanNameModel', () => {
   it('should create an instance', () => {
@@ -7,7 +8,6 @@ describe('HumanNameModel', () => {
   });
 
   it('should parse fhirdata', () => {
-    let fixture = require("../../fixtures/r4/datatypes/human-name.json")
     let expectedHumanName = new HumanNameModel({})
     expectedHumanName.givenName = 'Peter, James'
     expectedHumanName.familyName = 'Windsor'

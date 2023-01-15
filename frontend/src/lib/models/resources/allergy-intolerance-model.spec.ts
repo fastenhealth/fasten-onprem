@@ -1,5 +1,12 @@
 import {AllergyIntoleranceModel} from './allergy-intolerance-model';
 import {fhirVersions} from '../constants';
+import * as example1Fixture from "../../fixtures/r4/resources/allergyIntolerance/example1.json";
+import * as example2Fixture from "../../fixtures/r4/resources/allergyIntolerance/example2.json";
+import * as example3Fixture from "../../fixtures/r4/resources/allergyIntolerance/example3.json";
+
+import * as example1DstuFixture from "../../fixtures/dstu2/resources/allergyIntolerance/example2.json"
+import * as example1Stu3Fixture from "../../fixtures/stu3/resources/allergyIntolerance/example1.json"
+import * as example2Stu3Fixture from "../../fixtures/stu3/resources/allergyIntolerance/example2.json"
 
 describe('AllergyIntoleranceModel', () => {
   it('should create an instance', () => {
@@ -9,7 +16,6 @@ describe('AllergyIntoleranceModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let fixture = require("../../fixtures/r4/resources/allergyIntolerance/example1.json")
       let expected = new AllergyIntoleranceModel({})
       expected.title = 'Cashew nuts'
       expected.status = 'Confirmed'
@@ -27,11 +33,10 @@ describe('AllergyIntoleranceModel', () => {
       expected.category = ['food']
       expected.patient = {reference: 'Patient/example'}
 
-      expect(new AllergyIntoleranceModel(fixture)).toEqual(expected);
+      expect(new AllergyIntoleranceModel(example1Fixture)).toEqual(expected);
     });
 
     it('should parse r4 example2.json', () => {
-      let fixture = require("../../fixtures/r4/resources/allergyIntolerance/example2.json")
       let expected = new AllergyIntoleranceModel({})
       expected.title = 'Penicillin G'
       expected.status = 'Unconfirmed'
@@ -43,11 +48,10 @@ describe('AllergyIntoleranceModel', () => {
       expected.category = ['medication']
       expected.patient = {reference: 'Patient/example'}
 
-      expect(new AllergyIntoleranceModel(fixture)).toEqual(expected);
+      expect(new AllergyIntoleranceModel(example2Fixture)).toEqual(expected);
     });
 
     it('should parse r4 example3.json', () => {
-      let fixture = require("../../fixtures/r4/resources/allergyIntolerance/example3.json")
       let expected = new AllergyIntoleranceModel({})
       expected.title = 'No Known Allergy (situation)'
       expected.status = 'Confirmed'
@@ -59,13 +63,12 @@ describe('AllergyIntoleranceModel', () => {
       // expected.category = [ 'food' ]
       expected.patient = {reference: 'Patient/mom'}
 
-      expect(new AllergyIntoleranceModel(fixture)).toEqual(expected);
+      expect(new AllergyIntoleranceModel(example3Fixture)).toEqual(expected);
     });
   })
   describe('with dstu2', () => {
 
     it('should parse example1.json', () => {
-      let fixture = require("../../fixtures/dstu2/resources/allergyIntolerance/example1.json")
       let expected = new AllergyIntoleranceModel({})
       expected.title = "ALLERGENIC EXTRACT, PENICILLIN"
       expected.status = 'unconfirmed'
@@ -83,11 +86,10 @@ describe('AllergyIntoleranceModel', () => {
       expected.category = ['medication']
       expected.patient = {reference: 'Patient/example'}
 
-      expect(new AllergyIntoleranceModel(fixture, fhirVersions.DSTU2)).toEqual(expected);
+      expect(new AllergyIntoleranceModel(example3Fixture, fhirVersions.DSTU2)).toEqual(expected);
     });
 
     it('should parse example2.json', () => {
-      let fixture = require("../../fixtures/dstu2/resources/allergyIntolerance/example2.json")
       let expected = new AllergyIntoleranceModel({})
       expected.title = 'PENICILLINS'
       expected.status = 'confirmed'
@@ -105,14 +107,14 @@ describe('AllergyIntoleranceModel', () => {
       expected.category = []
       expected.patient = {reference: 'Patient/065b82c2aaa2'}
 
-      expect(new AllergyIntoleranceModel(fixture, fhirVersions.DSTU2)).toEqual(expected);
+      expect(new AllergyIntoleranceModel(example1DstuFixture, fhirVersions.DSTU2)).toEqual(expected);
     });
 
   })
   describe('with stu3', () => {
 
     it('should parse example1.json', () => {
-      let fixture = require("../../fixtures/stu3/resources/allergyIntolerance/example1.json")
+
       let expected = new AllergyIntoleranceModel({})
       expected.title = 'Cashew nuts'
       expected.status = 'confirmed'
@@ -130,11 +132,11 @@ describe('AllergyIntoleranceModel', () => {
       expected.category = ['food']
       expected.patient = {reference: 'Patient/example'}
 
-      expect(new AllergyIntoleranceModel(fixture, fhirVersions.STU3)).toEqual(expected);
+      expect(new AllergyIntoleranceModel(example1Stu3Fixture, fhirVersions.STU3)).toEqual(expected);
     });
 
     it('should parse example2.json', () => {
-      let fixture = require("../../fixtures/stu3/resources/allergyIntolerance/example2.json")
+
       let expected = new AllergyIntoleranceModel({})
       expected.title =  'Fish - dietary (substance)'
       expected.status = 'confirmed'
@@ -146,7 +148,7 @@ describe('AllergyIntoleranceModel', () => {
       expected.category = ['food']
       expected.patient = {reference: 'Patient/example'}
 
-      expect(new AllergyIntoleranceModel(fixture, fhirVersions.STU3)).toEqual(expected);
+      expect(new AllergyIntoleranceModel(example2Stu3Fixture, fhirVersions.STU3)).toEqual(expected);
     });
 
   })

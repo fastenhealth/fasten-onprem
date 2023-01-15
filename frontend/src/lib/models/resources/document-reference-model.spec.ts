@@ -1,6 +1,8 @@
 import { DocumentReferenceModel } from './document-reference-model';
 import {AdverseEventModel} from './adverse-event-model';
 import {CodableConceptModel} from '../datatypes/codable-concept-model';
+import * as example1Fixture from "../../fixtures/r4/resources/documentReference/example1.json"
+
 
 describe('DocumentReferenceModel', () => {
   it('should create an instance', () => {
@@ -10,7 +12,6 @@ describe('DocumentReferenceModel', () => {
   describe('with r4', () => {
 
     it('should parse example1.json', () => {
-      let fixture = require("../../fixtures/r4/resources/documentReference/example1.json")
       let expected = new DocumentReferenceModel({})
       expected.description = 'Physical'
       expected.status =  'current'
@@ -28,7 +29,7 @@ describe('DocumentReferenceModel', () => {
       }
       // expected.context: any | undefined
 
-      expect(new DocumentReferenceModel(fixture)).toEqual(expected);
+      expect(new DocumentReferenceModel(example1Fixture)).toEqual(expected);
     });
   })
 

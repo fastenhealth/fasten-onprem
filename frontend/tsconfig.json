@@ -25,7 +25,9 @@
     "lib": [
       "es2020",
       "dom",
-    ]
+    ],
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "angularCompilerOptions": {
     //customizations

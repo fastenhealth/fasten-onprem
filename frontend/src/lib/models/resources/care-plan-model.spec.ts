@@ -1,5 +1,9 @@
 import { CarePlanModel } from './care-plan-model';
 
+import * as heartOperationPlanFixture from "../../fixtures/r4/resources/carePlan/heartOperationPlan.json"
+import * as pregnancyPlanFixture from "../../fixtures/r4/resources/carePlan/pregnancyPlan.json"
+import * as weightLossPlanFixture from "../../fixtures/r4/resources/carePlan/weightLossPlan.json"
+
 describe('CarePlanModel', () => {
   it('should create an instance', () => {
     expect(new CarePlanModel({})).toBeTruthy();
@@ -8,7 +12,7 @@ describe('CarePlanModel', () => {
   describe('with r4', () => {
 
     it('should parse heartOperationPlan.json', () => {
-      let fixture = require("../../fixtures/r4/resources/carePlan/heartOperationPlan.json")
+
       let expected = new CarePlanModel({})
       expected.status = "completed"
       // expected.expiry = "completed"
@@ -48,11 +52,11 @@ describe('CarePlanModel', () => {
       // expected.category = ['food']
       // expected.patient = {reference: 'Patient/example'}
 
-      expect(new CarePlanModel(fixture)).toEqual(expected);
+      expect(new CarePlanModel(heartOperationPlanFixture)).toEqual(expected);
     });
 
     it('should parse pregnancyPlan.json', () => {
-      let fixture = require("../../fixtures/r4/resources/carePlan/pregnancyPlan.json")
+
       let expected = new CarePlanModel({})
       expected.status = "active"
       // expected.expiry = "completed"
@@ -72,11 +76,11 @@ describe('CarePlanModel', () => {
       expected.period_start = '2013-01-01'
       expected.period_end = '2013-10-01'
 
-      expect(new CarePlanModel(fixture)).toEqual(expected);
+      expect(new CarePlanModel(pregnancyPlanFixture)).toEqual(expected);
     });
 
     it('should parse weightLossPlan.json', () => {
-      let fixture = require("../../fixtures/r4/resources/carePlan/weightLossPlan.json")
+
       let expected = new CarePlanModel({})
       expected.status = "active"
       // expected.expiry = "completed"
@@ -97,7 +101,7 @@ describe('CarePlanModel', () => {
       // expected.periodStart = '2013-01-01'
       expected.period_end = '2017-06-01'
       expected.author = { reference: 'Practitioner/example', display: 'Dr Adam Careful' }
-      expect(new CarePlanModel(fixture)).toEqual(expected);
+      expect(new CarePlanModel(weightLossPlanFixture)).toEqual(expected);
     });
 
   })

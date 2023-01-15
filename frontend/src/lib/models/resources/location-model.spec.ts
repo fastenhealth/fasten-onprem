@@ -3,6 +3,9 @@ import {HumanNameModel} from '../datatypes/human-name-model';
 import {AddressModel} from '../datatypes/address-model';
 import {CodableConceptModel} from '../datatypes/codable-concept-model';
 import {fhirVersions} from '../constants';
+import * as example1Fixture from "../../fixtures/r4/resources/location/example1.json"
+import * as example2Fixture from "../../fixtures/r4/resources/location/example2.json"
+import * as example1Dstu2Fixture from "../../fixtures/dstu2/resources/location/example1.json"
 
 describe('LocationModel', () => {
   it('should create an instance', () => {
@@ -11,7 +14,6 @@ describe('LocationModel', () => {
 
   describe('with r4', () => {
     it('should parse example1.json', () => {
-      let fixture = require("../../fixtures/r4/resources/location/example1.json")
       let expectedLocation = new LocationModel({})
       expectedLocation.name = 'South Wing, second floor'
       expectedLocation.status = 'active'
@@ -42,11 +44,10 @@ describe('LocationModel', () => {
         ]
       })
 
-      expect(new LocationModel(fixture)).toEqual(expectedLocation);
+      expect(new LocationModel(example1Fixture)).toEqual(expectedLocation);
     });
 
     it('should parse example2.json', () => {
-      let fixture = require("../../fixtures/r4/resources/location/example2.json")
       let expectedLocation = new LocationModel({})
       expectedLocation.name = 'BUMC Ambulance'
       expectedLocation.status = 'active'
@@ -77,14 +78,13 @@ describe('LocationModel', () => {
         ]
       })
 
-      expect(new LocationModel(fixture)).toEqual(expectedLocation);
+      expect(new LocationModel(example2Fixture)).toEqual(expectedLocation);
     });
   })
 
   describe('with dstu2', () => {
 
     it('should parse example1.json', () => {
-      let fixture = require("../../fixtures/dstu2/resources/location/example1.json")
       let expectedLocation = new LocationModel({})
       expectedLocation.name = "South Wing, second floor"
       expectedLocation.status = 'active'
@@ -132,7 +132,7 @@ describe('LocationModel', () => {
         ]
       })
 
-      expect(new LocationModel(fixture, fhirVersions.DSTU2)).toEqual(expectedLocation);
+      expect(new LocationModel(example1Dstu2Fixture, fhirVersions.DSTU2)).toEqual(expectedLocation);
     });
   })
 });
