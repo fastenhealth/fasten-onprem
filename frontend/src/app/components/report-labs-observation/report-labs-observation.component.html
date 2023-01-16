@@ -3,10 +3,10 @@
     <div class="row" >
       <!-- Condition Header -->
       <div class="col-6">
-        <span routerLink="/source/{{observations[0]?.source_id}}/resource/{{observations[0]?.source_resource_id}}">{{observationTitle}}</span>
+        <span routerLink="/source/{{firstObservation?.source_id}}/resource/{{firstObservation?.source_resource_id}}">{{observationTitle}}</span>
       </div>
       <div class="col-6">
-        {{observations[0] | fhirPath: "Observation.effectiveDateTime": "Observation.issued" |  date}}
+        {{firstObservation | fhirPath: "Observation.effectiveDateTime": "Observation.issued" |  date}}
       </div>
     </div>
   </div><!-- card-header -->
@@ -20,13 +20,13 @@
         <div class="row  pl-3">
           <div class="col-12 mt-3 mb-2">
             <p>
-              <strong>Short Name:</strong> {{observations[0] | fhirPath: "Observation.code.text"}} <br/>
-              <strong>Result:</strong> {{observations[0] | fhirPath: "Observation.valueQuantity.value"}} {{observations[0] | fhirPath: "Observation.valueQuantity.unit"}} <br/>
+              <strong>Short Name:</strong> {{firstObservation | fhirPath: "Observation.code.text"}} <br/>
+              <strong>Result:</strong> {{firstObservation | fhirPath: "Observation.valueQuantity.value"}} {{firstObservation | fhirPath: "Observation.valueQuantity.unit"}} <br/>
               <br/>
-              <strong>Latest Test Date:</strong> {{observations[0] | fhirPath: "Observation.effectiveDateTime": "Observation.issued" |  date}} <br/>
-              <strong>Ordered By:</strong> {{observations[0] | fhirPath: "Observation.encounter.display"}} <br/>
+              <strong>Latest Test Date:</strong> {{firstObservation | fhirPath: "Observation.effectiveDateTime": "Observation.issued" |  date}} <br/>
+              <strong>Ordered By:</strong> {{firstObservation | fhirPath: "Observation.encounter.display"}} <br/>
               <strong>LOINC Code:</strong> {{observationCode}} <br/>
-              <strong>Notes:</strong> {{observations[0] | fhirPath: "Observation.note.text"}}
+              <strong>Notes:</strong> {{firstObservation | fhirPath: "Observation.note.text"}}
 
               <br/>
               <br/>

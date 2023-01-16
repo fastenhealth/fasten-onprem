@@ -14,10 +14,11 @@ import {formatDate} from '@angular/common';
 })
 export class ReportLabsObservationComponent implements OnInit {
 
-  @Input() observations: ResourceFhir[]
+  @Input() observations: ResourceFhir[] = []
   @Input() observationCode: string
   @Input() observationTitle: string
 
+  firstObservation: ResourceFhir = null
   // based on https://stackoverflow.com/questions/38889716/chartjs-2-stacked-bar-with-marker-on-top
   // https://stackoverflow.com/questions/62711919/chart-js-horizontal-lines-per-bar
 
@@ -161,9 +162,11 @@ export class ReportLabsObservationComponent implements OnInit {
     let referenceRanges = []
 
     //sort observations
-    this.observations = this.observations.sort((a, b) => a.sort_date > b.sort_date ? -1 : a.sort_date < b.sort_date ? 1 : 0)
+    this.observations = this.observations?.sort((a, b) => a.sort_date > b.sort_date ? -1 : a.sort_date < b.sort_date ? 1 : 0)
 
-
+    if(this.observations.length > 0){
+      this.firstObservation = this.observations[0]
+    }
     for(let observation of this.observations){
       //get label
       this.barChartLabels.push(
@@ -187,6 +190,8 @@ export class ReportLabsObservationComponent implements OnInit {
         fhirpath.evaluate(observation.resource_raw, "Observation.referenceRange.high.value")[0]
       ])
     }
+
+
 
     // @ts-ignore
     this.barChartData[0].data = referenceRanges

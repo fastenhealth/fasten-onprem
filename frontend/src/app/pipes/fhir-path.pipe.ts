@@ -8,6 +8,9 @@ import { evaluate } from 'fhirpath'
 export class FhirPathPipe implements PipeTransform {
 
   transform(resourceFhir: ResourceFhir, ...pathQueryWithFallback: string[]): string {
+    if(!resourceFhir){
+      return null
+    }
 
     for(let pathQuery of pathQueryWithFallback){
       let result = evaluate(resourceFhir.resource_raw, pathQuery).join(", ")
