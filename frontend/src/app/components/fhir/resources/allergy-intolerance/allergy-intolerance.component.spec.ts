@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AllergyIntoleranceComponent } from './allergy-intolerance.component';
+import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
 
 describe('AllergyIntoleranceComponent', () => {
   let component: AllergyIntoleranceComponent;
@@ -8,7 +9,8 @@ describe('AllergyIntoleranceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AllergyIntoleranceComponent ]
+      declarations: [ AllergyIntoleranceComponent ],
+      imports: [NgbCollapseModule]
     })
     .compileComponents();
 

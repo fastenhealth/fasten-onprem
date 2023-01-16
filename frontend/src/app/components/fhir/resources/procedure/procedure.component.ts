@@ -5,7 +5,7 @@ import {Router} from '@angular/router';
 import {ProcedureModel} from '../../../../../lib/models/resources/procedure-model';
 
 @Component({
-  selector: 'app-procedure',
+  selector: 'fhir-procedure',
   templateUrl: './procedure.component.html',
   styleUrls: ['./procedure.component.scss']
 })

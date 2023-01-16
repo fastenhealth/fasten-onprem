@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProcedureComponent } from './procedure.component';
+import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('ProcedureComponent', () => {
   let component: ProcedureComponent;
@@ -8,7 +10,10 @@ describe('ProcedureComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProcedureComponent ]
+      declarations: [ ProcedureComponent ],
+      imports: [NgbCollapseModule],
+      providers: [RouterTestingModule]
+
     })
     .compileComponents();
 

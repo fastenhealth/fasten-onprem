@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BinaryComponent } from './binary.component';
+import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
 
 describe('BinaryComponent', () => {
   let component: BinaryComponent;
@@ -8,7 +9,9 @@ describe('BinaryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BinaryComponent ]
+      declarations: [ BinaryComponent ],
+      imports: [NgbCollapseModule]
+
     })
     .compileComponents();
 

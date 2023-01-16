@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MedicationComponent } from './medication.component';
+import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
 
 describe('MedicationComponent', () => {
   let component: MedicationComponent;
@@ -8,7 +9,9 @@ describe('MedicationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MedicationComponent ]
+      declarations: [ MedicationComponent ],
+      imports: [NgbCollapseModule]
+
     })
     .compileComponents();
 
