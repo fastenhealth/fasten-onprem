@@ -12,7 +12,7 @@ export class CareTeamModel extends FastenDisplayModel {
   period_start: string | undefined
   period_end: string | undefined
   participants: {
-    reference?: string,
+    reference?: ReferenceModel,
     display?:string,
     role?:string,
     periodStart?: string,
@@ -42,7 +42,7 @@ export class CareTeamModel extends FastenDisplayModel {
       _.get(fhirResource, 'managingOrganization');
 
     this.participants = _.get(fhirResource, 'participant', []).map((item: any) => {
-      const reference = _.get(item, 'member.reference');
+      const reference = _.get(item, 'member') as ReferenceModel;
       const display = _.get(item, 'member.display');
       const role = _.get(item, 'role.text') || _.get(item, 'role[0].text') || _.get(item, 'role.coding.0.display');
       const periodStart = _.get(item, 'period.start');

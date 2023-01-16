@@ -34,8 +34,23 @@ describe('CareTeamModel', () => {
       }
       expected.managing_organization = { reference: 'Organization/f001' }
       expected.participants = [
-        { display: 'Peter James Chalmers', role: undefined, periodStart: undefined, periodEnd: undefined },
-        { display: 'Dorothy Dietition', role: undefined, periodStart: undefined, periodEnd: '2013-01-01' }
+        {
+          display: 'Peter James Chalmers',
+          role: "responsiblePerson",
+          periodStart: undefined,
+          periodEnd: undefined,
+          reference: {reference: 'Patient/example', display: 'Peter James Chalmers' }
+        },
+        {
+          display: 'Dorothy Dietition',
+          role: 'adviser',
+          periodStart: undefined,
+          periodEnd: '2013-01-01',
+          reference: {
+            "reference": "#pr1",
+            "display": "Dorothy Dietition"
+          }
+        }
       ]
 
       expect(new CareTeamModel(fixture)).toEqual(expected);

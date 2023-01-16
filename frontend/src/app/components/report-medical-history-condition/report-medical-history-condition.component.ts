@@ -78,7 +78,7 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
       switch(resource.source_resource_type){
         case ResourceType.CareTeam:
           for(let participant of (resource as CareTeamModel).participants){
-            let id = participant.reference || participant.display
+            let id = participant.reference.reference || participant.display
             involvedInCareMap[id] = _.mergeWith(
               {},
               involvedInCareMap[id],
