@@ -4,7 +4,8 @@ import * as example1Fixture from "../../fixtures/r4/resources/allergyIntolerance
 import * as example2Fixture from "../../fixtures/r4/resources/allergyIntolerance/example2.json";
 import * as example3Fixture from "../../fixtures/r4/resources/allergyIntolerance/example3.json";
 
-import * as example1DstuFixture from "../../fixtures/dstu2/resources/allergyIntolerance/example2.json"
+import * as example1DstuFixture from "../../fixtures/dstu2/resources/allergyIntolerance/example1.json"
+import * as example2DstuFixture from "../../fixtures/dstu2/resources/allergyIntolerance/example2.json"
 import * as example1Stu3Fixture from "../../fixtures/stu3/resources/allergyIntolerance/example1.json"
 import * as example2Stu3Fixture from "../../fixtures/stu3/resources/allergyIntolerance/example2.json"
 
@@ -86,7 +87,7 @@ describe('AllergyIntoleranceModel', () => {
       expected.category = ['medication']
       expected.patient = {reference: 'Patient/example'}
 
-      expect(new AllergyIntoleranceModel(example3Fixture, fhirVersions.DSTU2)).toEqual(expected);
+      expect(new AllergyIntoleranceModel(example1DstuFixture, fhirVersions.DSTU2)).toEqual(expected);
     });
 
     it('should parse example2.json', () => {
@@ -107,7 +108,7 @@ describe('AllergyIntoleranceModel', () => {
       expected.category = []
       expected.patient = {reference: 'Patient/065b82c2aaa2'}
 
-      expect(new AllergyIntoleranceModel(example1DstuFixture, fhirVersions.DSTU2)).toEqual(expected);
+      expect(new AllergyIntoleranceModel(example2DstuFixture, fhirVersions.DSTU2)).toEqual(expected);
     });
 
   })

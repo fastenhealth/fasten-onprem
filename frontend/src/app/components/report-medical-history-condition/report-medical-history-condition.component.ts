@@ -167,7 +167,7 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
   }
 
   genResourceId(relatedResource: ResourceFhir): string {
-    return `/source/${relatedResource.source_id}/resource/${relatedResource.source_resource_type}/${relatedResource.source_resource_id}`
+    return `/source/${relatedResource?.source_id}/resource/${relatedResource?.source_resource_type}/${relatedResource?.source_resource_id}`
   }
 
 }
