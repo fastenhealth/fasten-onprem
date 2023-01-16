@@ -13,7 +13,7 @@ export class CodingComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.has_additional_info = !!(this.coding.code || this.coding.system)
+    this.has_additional_info = !!(this.coding?.code || this.coding?.system)
   }
 
 }

@@ -29,6 +29,7 @@ import {AuthService} from './services/auth.service';
 import { PatientProfileComponent } from './pages/patient-profile/patient-profile.component';
 import { MedicalHistoryComponent } from './pages/medical-history/medical-history.component';
 import { ReportLabsComponent } from './pages/report-labs/report-labs.component';
+import {PipesModule} from './pipes/pipes.module';
 
 
 @NgModule({
@@ -57,7 +58,8 @@ import { ReportLabsComponent } from './pages/report-labs/report-labs.component';
     ChartsModule,
     NgxDropzoneModule,
     HighlightModule,
-    MomentModule
+    MomentModule,
+    PipesModule
   ],
   providers: [
     {

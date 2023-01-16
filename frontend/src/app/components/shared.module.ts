@@ -31,14 +31,12 @@ import {ListDeviceComponent} from './list-generic-resource/list-device.component
 import {ListDiagnosticReportComponent} from './list-generic-resource/list-diagnostic-report.component';
 import {ListGoalComponent} from './list-generic-resource/list-goal.component';
 import { ListFallbackResourceComponent } from './list-fallback-resource/list-fallback-resource.component';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbCollapseModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { ToastComponent } from './toast/toast.component';
 import { MomentModule } from 'ngx-moment';
 import { ReportHeaderComponent } from './report-header/report-header.component';
-import { FhirPathPipe } from '../pipes/fhir-path.pipe';
 import { ReportMedicalHistoryEditorComponent } from './report-medical-history-editor/report-medical-history-editor.component';
 import { TreeModule } from '@circlon/angular-tree-component';
-import {FilterPipe} from '../pipes/filter.pipe';
 import { ReportMedicalHistoryConditionComponent } from './report-medical-history-condition/report-medical-history-condition.component';
 import { ReportLabsObservationComponent } from './report-labs-observation/report-labs-observation.component';
 import { ChartsModule } from 'ng2-charts';
@@ -64,6 +62,9 @@ import { MedicationRequestComponent } from './fhir/resources/medication-request/
 import { ProcedureComponent } from './fhir/resources/procedure/procedure.component';
 import { DiagnosticReportComponent } from './fhir/resources/diagnostic-report/diagnostic-report.component';
 import { PractitionerComponent } from './fhir/resources/practitioner/practitioner.component';
+import {FhirPathPipe} from '../pipes/fhir-path.pipe';
+import {FilterPipe} from '../pipes/filter.pipe';
+import {PipesModule} from '../pipes/pipes.module';
 
 @NgModule({
   imports: [
@@ -71,11 +72,13 @@ import { PractitionerComponent } from './fhir/resources/practitioner/practitione
     BrowserModule,
     NgxDatatableModule,
     NgbModule,
+    NgbCollapseModule,
     FormsModule,
     MomentModule,
     TreeModule,
     ChartsModule,
     HighlightModule,
+    PipesModule
   ],
   declarations: [
     ComponentsSidebarComponent,
@@ -109,9 +112,7 @@ import { PractitionerComponent } from './fhir/resources/practitioner/practitione
     ListFallbackResourceComponent,
     ToastComponent,
     ReportHeaderComponent,
-    FhirPathPipe,
     ReportMedicalHistoryEditorComponent,
-    FilterPipe,
     ReportMedicalHistoryConditionComponent,
     ReportLabsObservationComponent,
     LoadingSpinnerComponent,
@@ -167,14 +168,23 @@ import { PractitionerComponent } from './fhir/resources/practitioner/practitione
         ToastComponent,
         ReportHeaderComponent,
         ReportMedicalHistoryEditorComponent,
-        FhirPathPipe,
-        FilterPipe,
         ReportMedicalHistoryConditionComponent,
         ReportLabsObservationComponent,
         LoadingSpinnerComponent,
         BinaryComponent,
         FhirResourceComponent,
-        FhirResourceOutletDirective
+        FhirResourceOutletDirective,
+      FallbackComponent,
+      ImmunizationComponent,
+      BadgeComponent,
+      TableComponent,
+      CodingComponent,
+      AllergyIntoleranceComponent,
+      MedicationComponent,
+      MedicationRequestComponent,
+      ProcedureComponent,
+      DiagnosticReportComponent,
+      PractitionerComponent
     ]
 })
 
