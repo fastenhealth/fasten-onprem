@@ -10,7 +10,7 @@ import {MedicationRequestModel} from '../../../../../lib/models/resources/medica
   styleUrls: ['./medication-request.component.scss']
 })
 export class MedicationRequestComponent implements OnInit, FhirResourceComponentInterface {
-  @Input() displayModel: MedicationRequestModel
+  @Input() displayModel: MedicationRequestModel | null
   @Input() showDetails: boolean = true
   isCollapsed: boolean = false
 
@@ -23,31 +23,31 @@ export class MedicationRequestComponent implements OnInit, FhirResourceComponent
     this.tableData = [
       {
         label: 'Medication',
-        data: this.displayModel.medication_codeable_concept,
+        data: this.displayModel?.medication_codeable_concept,
         data_type: TableRowItemDataType.Coding,
-        enabled: !!this.displayModel.medication_codeable_concept,
+        enabled: !!this.displayModel?.medication_codeable_concept,
       },
       {
         label: 'Requester',
-        data: this.displayModel.requester,
+        data: this.displayModel?.requester,
         data_type: TableRowItemDataType.Reference,
-        enabled: !!this.displayModel.requester,
+        enabled: !!this.displayModel?.requester,
       },
       {
         label: 'Created',
-        data: this.displayModel.created,
-        enabled: !!this.displayModel.created,
+        data: this.displayModel?.created,
+        enabled: !!this.displayModel?.created,
       },
       {
         label: 'Type of request',
-        data: this.displayModel.intent,
-        enabled: !!this.displayModel.intent,
+        data: this.displayModel?.intent,
+        enabled: !!this.displayModel?.intent,
       },
       {
         label: 'Reason',
-        data: this.displayModel.reason_code,
+        data: this.displayModel?.reason_code,
         data_type: TableRowItemDataType.Coding,
-        enabled: !!this.displayModel.reason_code,
+        enabled: !!this.displayModel?.reason_code,
       },
       // {
       //   label: 'Dosage',

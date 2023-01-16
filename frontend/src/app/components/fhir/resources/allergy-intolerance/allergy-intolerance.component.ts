@@ -23,31 +23,31 @@ export class AllergyIntoleranceComponent implements OnInit, FhirResourceComponen
     this.tableData = [
       {
         label: 'Substance',
-        data: this.displayModel.substance_coding,
+        data: this.displayModel?.substance_coding,
         data_type: TableRowItemDataType.CodingList,
-        enabled: !!this.displayModel.substance_coding,
+        enabled: !!this.displayModel?.substance_coding,
       },
       {
         label: 'Type',
-        data: this.displayModel.type,
-        enabled: !!this.displayModel.type,
+        data: this.displayModel?.type,
+        enabled: !!this.displayModel?.type,
       },
       {
         label: 'Category',
-        data: this.displayModel.category?.join(" "),
-        enabled: !!this.displayModel.category,
+        data: this.displayModel?.category?.join(" "),
+        enabled: !!this.displayModel?.category,
       },
     {
       label: 'Patient',
-      data: this.displayModel.patient,
+      data: this.displayModel?.patient,
       data_type: TableRowItemDataType.Reference,
-      enabled: !!this.displayModel.patient,
+      enabled: !!this.displayModel?.patient,
     },
     {
       label: 'Asserted by',
-      data: this.displayModel.asserter,
+      data: this.displayModel?.asserter,
       data_type: TableRowItemDataType.Reference,
-      enabled: !!this.displayModel.asserter,
+      enabled: !!this.displayModel?.asserter,
     },
     // {
     //   label: 'Manifestation',

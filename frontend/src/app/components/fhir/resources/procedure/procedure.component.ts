@@ -10,7 +10,7 @@ import {ProcedureModel} from '../../../../../lib/models/resources/procedure-mode
   styleUrls: ['./procedure.component.scss']
 })
 export class ProcedureComponent implements OnInit, FhirResourceComponentInterface {
-  @Input() displayModel: ProcedureModel
+  @Input() displayModel: ProcedureModel | null
   @Input() showDetails: boolean = true
   isCollapsed: boolean = false
 
@@ -23,20 +23,20 @@ export class ProcedureComponent implements OnInit, FhirResourceComponentInterfac
     this.tableData = [
       {
         label: 'Identification',
-        data: this.displayModel.coding,
+        data: this.displayModel?.coding,
         data_type: TableRowItemDataType.CodingList,
-        enabled: this.displayModel.has_coding,
+        enabled: this.displayModel?.has_coding,
       },
     {
       label: 'Category',
-      data: this.displayModel.category,
+      data: this.displayModel?.category,
       data_type: TableRowItemDataType.Coding,
-      enabled: !!this.displayModel.category,
+      enabled: !!this.displayModel?.category,
     },
     {
       label: 'Performed by',
-      data: this.displayModel.performer,
-      enabled: this.displayModel.has_performer_data,
+      data: this.displayModel?.performer,
+      enabled: this.displayModel?.has_performer_data,
     },
     // {
     //   label: 'Reason procedure performed',
@@ -45,9 +45,9 @@ export class ProcedureComponent implements OnInit, FhirResourceComponentInterfac
     // },
     {
       label: 'Location',
-      data: this.displayModel.location_reference,
+      data: this.displayModel?.location_reference,
       data_type: TableRowItemDataType.Reference,
-      enabled: !!this.displayModel.location_reference,
+      enabled: !!this.displayModel?.location_reference,
     },
     // {
     //   label: 'Additional information about the procedure',
@@ -56,9 +56,9 @@ export class ProcedureComponent implements OnInit, FhirResourceComponentInterfac
     // },
     {
       label: 'The result of procedure',
-      data: this.displayModel.outcome,
+      data: this.displayModel?.outcome,
       data_type: TableRowItemDataType.Coding,
-      enabled: !!this.displayModel.outcome,
+      enabled: !!this.displayModel?.outcome,
     },
   ];
 

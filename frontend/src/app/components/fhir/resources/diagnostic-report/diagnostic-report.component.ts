@@ -22,25 +22,25 @@ export class DiagnosticReportComponent implements OnInit, FhirResourceComponentI
     this.tableData = [
       {
         label: 'Issued',
-        data: this.displayModel.issued,
-        enabled: !!this.displayModel.issued,
+        data: this.displayModel?.issued,
+        enabled: !!this.displayModel?.issued,
       },
       {
         label: 'Category',
-        data: this.displayModel.category_coding,
+        data: this.displayModel?.category_coding,
         data_type: TableRowItemDataType.CodingList,
-        enabled: this.displayModel.has_category_coding,
+        enabled: this.displayModel?.has_category_coding,
       },
       {
         label: 'Performer',
-        data: this.displayModel.performer,
+        data: this.displayModel?.performer,
         data_type: TableRowItemDataType.Reference,
-        enabled: this.displayModel.has_performer,
+        enabled: this.displayModel?.has_performer,
       },
       {
         label: 'Conclusion',
-        data: this.displayModel.conclusion,
-        enabled: !!this.displayModel.conclusion,
+        data: this.displayModel?.conclusion,
+        enabled: !!this.displayModel?.conclusion,
       },
     ];
   }

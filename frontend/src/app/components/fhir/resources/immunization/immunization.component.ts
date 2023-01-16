@@ -24,40 +24,40 @@ export class ImmunizationComponent implements OnInit, FhirResourceComponentInter
 
     this.tableData.push(    {
         label: 'Manufacturer Text',
-        data: this.displayModel.manufacturer_text,
-        enabled: !!this.displayModel.manufacturer_text,
+        data: this.displayModel?.manufacturer_text,
+        enabled: !!this.displayModel?.manufacturer_text,
       },
       {
         label: 'Manufacturer Text',
-        data: `${this.displayModel.lot_number}` + this.displayModel.lot_number_expiration_date ? ` expires on ${this.displayModel.lot_number_expiration_date}` : '',
-        enabled: this.displayModel.has_lot_number,
+        data: `${this.displayModel?.lot_number}` + this.displayModel?.lot_number_expiration_date ? ` expires on ${this.displayModel?.lot_number_expiration_date}` : '',
+        enabled: this.displayModel?.has_lot_number,
       },
       {
         label: 'Dosage',
         data:
         [
-          _.get(this.displayModel.dose_quantity, 'value'),
-          _.get(this.displayModel.dose_quantity, 'unit') || _.get(this.displayModel.dose_quantity, 'code'),
+          _.get(this.displayModel?.dose_quantity, 'value'),
+          _.get(this.displayModel?.dose_quantity, 'unit') || _.get(this.displayModel?.dose_quantity, 'code'),
         ].join(' '),
-        enabled: this.displayModel.has_dose_quantity,
+        enabled: this.displayModel?.has_dose_quantity,
       },
       {
         label: 'Patient',
-        data: this.displayModel.patient,
+        data: this.displayModel?.patient,
         data_type: TableRowItemDataType.Reference,
-        enabled: !!this.displayModel.patient,
+        enabled: !!this.displayModel?.patient,
       },
     {
       label: 'Requester',
-      data: this.displayModel.requester,
+      data: this.displayModel?.requester,
       data_type: TableRowItemDataType.Reference,
-      enabled: !!this.displayModel.requester,
+      enabled: !!this.displayModel?.requester,
     },
     {
       label: 'Performer',
-      data: this.displayModel.performer,
+      data: this.displayModel?.performer,
       data_type: TableRowItemDataType.Reference,
-      enabled: !!this.displayModel.performer,
+      enabled: !!this.displayModel?.performer,
     },
     // {
     //   label: 'Note',
@@ -67,20 +67,20 @@ export class ImmunizationComponent implements OnInit, FhirResourceComponentInter
     // },
     {
       label: 'Route',
-      data: this.displayModel.route,
+      data: this.displayModel?.route,
       data_type: TableRowItemDataType.CodingList,
-      enabled: this.displayModel.has_route,
+      enabled: this.displayModel?.has_route,
     },
       {
       label: 'Location',
-      data: this.displayModel.location,
-      enabled: !!this.displayModel.location,
+      data: this.displayModel?.location,
+      enabled: !!this.displayModel?.location,
     },
     {
       label: 'Site',
-      data: this.displayModel.site,
+      data: this.displayModel?.site,
       data_type: TableRowItemDataType.CodingList,
-      enabled: this.displayModel.has_site,
+      enabled: this.displayModel?.has_site,
     })
 
   }

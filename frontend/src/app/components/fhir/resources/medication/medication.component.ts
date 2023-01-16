@@ -23,15 +23,15 @@ export class MedicationComponent implements OnInit, FhirResourceComponentInterfa
     this.tableData = [
       {
         label: 'Manufacturer',
-        data: this.displayModel.manufacturer,
+        data: this.displayModel?.manufacturer,
         data_type: TableRowItemDataType.Reference,
-        enabled: !!this.displayModel.manufacturer,
+        enabled: !!this.displayModel?.manufacturer,
       },
       {
         label: 'Form',
-        data: this.displayModel.product_form,
+        data: this.displayModel?.product_form,
         data_type: TableRowItemDataType.CodingList,
-        enabled: !!this.displayModel.product_form,
+        enabled: !!this.displayModel?.product_form,
       },
       // {
       //   label: 'Ingredient',
@@ -44,9 +44,9 @@ export class MedicationComponent implements OnInit, FhirResourceComponentInterfa
       // },
       {
         label: 'Package container',
-        data: this.displayModel.package_coding,
+        data: this.displayModel?.package_coding,
         data_type: TableRowItemDataType.CodingList,
-        enabled: this.displayModel.has_package_coding,
+        enabled: this.displayModel?.has_package_coding,
       },
       // {
       //   label: 'Images',

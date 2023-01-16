@@ -2,9 +2,9 @@
   <div class="card-header" (click)="isCollapsed = ! isCollapsed">
     <div>
       <h6 class="card-title">{{displayModel.title}}</h6>
-      <p class="card-text tx-gray-400" *ngIf="displayModel.sort_date"><strong>Start date</strong> {{displayModel.sort_date | date}}</p>
+      <p class="card-text tx-gray-400" *ngIf="displayModel?.sort_date"><strong>Start date</strong> {{displayModel?.sort_date | date}}</p>
     </div>
-    <fhir-ui-badge class="float-right" [status]="displayModel.status">{{displayModel.status}}</fhir-ui-badge>
+    <fhir-ui-badge class="float-right" [status]="displayModel?.status">{{displayModel?.status}}</fhir-ui-badge>
     <!--    <div class="btn-group">-->
     <!--      <button class="btn active">Day</button>-->
     <!--      <button class="btn">Week</button>-->

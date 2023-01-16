@@ -11,7 +11,7 @@ import {PractitionerModel} from '../../../../../lib/models/resources/practitione
   styleUrls: ['./practitioner.component.scss']
 })
 export class PractitionerComponent implements OnInit, FhirResourceComponentInterface {
-  @Input() displayModel: PractitionerModel
+  @Input() displayModel: PractitionerModel | null
   @Input() showDetails: boolean = true
 
   isCollapsed: boolean = false
@@ -31,8 +31,8 @@ export class PractitionerComponent implements OnInit, FhirResourceComponentInter
       // },
     {
       label: 'Gender',
-      data: this.displayModel.gender,
-      enabled: !!this.displayModel.gender,
+      data: this.displayModel?.gender,
+      enabled: !!this.displayModel?.gender,
     },
     // {
     //   label: 'Birth date',
