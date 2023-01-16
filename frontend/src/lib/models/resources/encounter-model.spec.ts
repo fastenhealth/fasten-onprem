@@ -36,10 +36,11 @@ describe('EncounterModel', () => {
       expected.resource_status = 'finished'
       expected.participant = [
         {
-          display: undefined,
+          display: 'Dr Adam Careful',
           reference: { reference: 'Practitioner/example', display: 'Dr Adam Careful' },
           text: undefined,
-          periodStart: '2015-01-17T16:00:00+10:00'
+          periodStart: '2015-01-17T16:00:00+10:00',
+          role: undefined,
         }
       ]
 
@@ -56,7 +57,12 @@ describe('EncounterModel', () => {
       expected.resource_class = 'ambulatory'
       expected.resource_status = 'finished'
       expected.participant = [
-        { display: undefined, reference: Object({ reference: 'Practitioner/f201' }), text: undefined, periodStart: undefined }
+        { display: undefined,
+          reference: Object({ reference: 'Practitioner/f201' }),
+          text: undefined,
+          periodStart: undefined,
+          role: undefined
+        }
       ]
 
       expect(new EncounterModel(example3Fixture)).toEqual(expected);
