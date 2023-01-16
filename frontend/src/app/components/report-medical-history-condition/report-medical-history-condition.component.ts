@@ -111,7 +111,7 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
           this.encounters.push(resource as EncounterModel);
 
           (resource as EncounterModel).participant.map((participant) => {
-            let id = participant.reference
+            let id = participant.reference.reference
             involvedInCareMap[id] = _.mergeWith(
               {},
               involvedInCareMap[id],

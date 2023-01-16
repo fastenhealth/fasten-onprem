@@ -12,11 +12,11 @@ export class CareTeamModel extends FastenDisplayModel {
   period_start: string | undefined
   period_end: string | undefined
   participants: {
-    reference:string
-    display:string,
-    role:string,
-    periodStart: string,
-    periodEnd: string
+    reference?: string,
+    display?:string,
+    role?:string,
+    periodStart?: string,
+    periodEnd?: string
   }[] | undefined
   category: CodableConceptModel[] | undefined
   subject: ReferenceModel | undefined

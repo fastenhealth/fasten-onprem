@@ -18,7 +18,7 @@ export class EncounterModel extends FastenDisplayModel {
   participant: {
     display?: string,
     role?: string,
-    reference?: string,
+    reference?: ReferenceModel,
     text?: string,
     periodStart?:string
   }[] | undefined
@@ -85,7 +85,7 @@ export class EncounterModel extends FastenDisplayModel {
       return {
         role: _.get(item, 'type[0].text') || _.get(item, 'type[0].coding[0].display'),
         display: _.get(item, 'individual.display'),
-        reference: _.get(item, 'individual.reference'),
+        reference: _.get(item, 'individual'),
         text: _.get(item, 'type[0].text'),
         periodStart,
       };

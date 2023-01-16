@@ -1,4 +1,4 @@
-import * as moment from 'moment'
+import moment from "moment";
 
 /**
  * Walks thru an object (ar array) and returns the value found at the provided
