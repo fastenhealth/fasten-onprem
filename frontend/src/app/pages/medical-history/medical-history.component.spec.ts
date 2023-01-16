@@ -13,8 +13,6 @@ describe('MedicalHistoryComponent', () => {
 
   beforeEach(async () => {
 
-    // httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
-    // fastenApiService = new FastenApiService(httpClientSpy, );
     mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['getResourceGraph'])
     await TestBed.configureTestingModule({
       declarations: [ MedicalHistoryComponent ],
