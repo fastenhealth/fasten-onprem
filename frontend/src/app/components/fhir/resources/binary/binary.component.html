@@ -1,8 +1,8 @@
 <ng-container [ngTemplateOutlet]="
-  displayModel.content_type == 'application/pdf' ? showPdf :
-  displayModel.content_type == 'image/jpeg' ? showImg :
-  (displayModel.content_type == 'text/html' || displayModel.content_type == 'application/html') ? showHtml :
-  (displayModel.content_type == 'application/xml' || displayModel.content_type == 'application/json') ? showText :
+  displayModel?.content_type == 'application/pdf' ? showPdf :
+  displayModel?.content_type == 'image/jpeg' ? showImg :
+  (displayModel?.content_type == 'text/html' || displayModel?.content_type == 'application/html') ? showHtml :
+  (displayModel?.content_type == 'application/xml' || displayModel?.content_type == 'application/json') ? showText :
   showEmpty
 "></ng-container>
 

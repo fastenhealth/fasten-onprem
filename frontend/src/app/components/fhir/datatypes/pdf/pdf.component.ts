@@ -14,8 +14,11 @@ export class PdfComponent implements OnInit {
 
   ngOnInit(): void {
     const maxHeight = 600;
-    const contentHeight = (1111 * this.displayModel.data.length) / (24996 / 7.5);
-    this.height = Math.min(maxHeight, contentHeight);
+    if (this.displayModel){
+      const contentHeight = (1111 * this.displayModel?.data.length) / (24996 / 7.5);
+      this.height = Math.min(maxHeight, contentHeight);
+    }
+
   }
 
 }

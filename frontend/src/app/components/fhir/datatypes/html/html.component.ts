@@ -13,7 +13,7 @@ export class HtmlComponent implements OnInit {
   constructor(private sanitized: DomSanitizer) { }
 
   ngOnInit(): void {
-    this.contentMarkup = this.sanitized.bypassSecurityTrustHtml(this.displayModel.content);
+    this.contentMarkup = this.sanitized.bypassSecurityTrustHtml(this.displayModel?.content);
 
   }
 

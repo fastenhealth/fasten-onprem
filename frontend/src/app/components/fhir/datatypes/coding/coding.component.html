@@ -1,6 +1,6 @@
 <div>
-  <span>{{coding.display}}</span>
-  <span *ngIf="has_additional_info" [title]="coding.system">
-  ({{coding.code || '?'}})
+  <span>{{coding?.display}}</span>
+  <span *ngIf="has_additional_info" [title]="coding?.system">
+  ({{coding?.code || '?'}})
   </span>
 </div>
