@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FhirResourceComponent } from './fhir-resource.component';
+import {FhirResourceOutletDirective} from './fhir-resource-outlet.directive';
 
 describe('FhirResourceComponent', () => {
   let component: FhirResourceComponent;
@@ -8,7 +9,7 @@ describe('FhirResourceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FhirResourceComponent ]
+      declarations: [ FhirResourceComponent, FhirResourceOutletDirective ],
     })
     .compileComponents();
 
