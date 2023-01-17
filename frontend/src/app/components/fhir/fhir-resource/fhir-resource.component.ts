@@ -52,7 +52,7 @@ export class FhirResourceComponent implements OnInit, OnChanges {
     const viewContainerRef = this.fhirResourceOutlet.viewContainerRef;
     viewContainerRef.clear();
 
-    let componentType = this.typeLookup(this.displayModel.source_resource_type)
+    let componentType = this.typeLookup(this.displayModel?.source_resource_type)
     if(componentType != null){
       console.log("Attempting to create fhir display component", this.displayModel, componentType)
       const componentRef = viewContainerRef.createComponent<FhirResourceComponentInterface>(componentType);

@@ -65,7 +65,6 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-
     //add resources to the lookup table, ensure uniqueness.
     this.conditionDisplayModel = this.recExtractResources(this.conditionGroup)
 
@@ -142,7 +141,7 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
     //ensure display model is populated
     if(!resourceDisplayModel){
       try{
-        resourceDisplayModel = fhirModelFactory(resource.source_resource_type as ResourceType, resource)
+        resourceDisplayModel = fhirModelFactory(resource?.source_resource_type as ResourceType, resource)
         this.resourcesLookup[resourceId] = resourceDisplayModel
       }catch(e){
         console.error(e) //failed to parse a model

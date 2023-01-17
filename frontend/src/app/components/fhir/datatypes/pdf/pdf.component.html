@@ -1,6 +1,6 @@
 <div>
   <embed
-    src="data:${{displayModel.content_type}};base64,${{displayModel.data}}"
+    [src]="safeUrl"
     type="{{displayModel?.content_type}}"
     [style]="{
       width: '100%',
