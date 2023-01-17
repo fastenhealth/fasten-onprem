@@ -40,7 +40,7 @@
           <!--              </div>-->
         </div>
 
-        <div class="row pt-2" *ngIf="conditionGroup.related_resources.length > 0">
+        <div class="row pt-2" *ngIf="conditionGroup?.related_resources?.length > 0">
           <div class="col-12">
             <a class="cursor-pointer tx-indigo" (click)="collapse.toggle()">show all</a>
             <div #collapse="ngbCollapse" [ngbCollapse]="true">
