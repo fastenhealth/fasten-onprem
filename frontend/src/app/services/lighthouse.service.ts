@@ -146,7 +146,7 @@ export class LighthouseService {
       introspection_endpoint: sourceMetadata.introspection_endpoint,
     }
 
-    console.log("STARTING--- Oauth.validateAuthResponse")
+    console.log("STARTING--- Oauth.validateAuthResponse", as)
     const params = Oauth.validateAuthResponse(as, client, new URLSearchParams({"code": code, "state": expectedSourceStateInfo.state}), expectedSourceStateInfo.state)
     if (Oauth.isOAuth2Error(params)) {
       console.log('error', params)

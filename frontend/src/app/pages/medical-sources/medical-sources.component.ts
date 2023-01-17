@@ -200,8 +200,9 @@ export class MedicalSourcesComponent implements OnInit {
 
         if(callbackError && !callbackCode){
           //TOOD: print this message in the UI
-          console.error("an error occurred while authenticating to this source. Please try again later", callbackErrorDescription)
-          return
+          let errMsg = "an error occurred while authenticating to this source. Please try again later"
+          console.error(errMsg, callbackErrorDescription)
+          throw new Error(errMsg)
         }
 
         console.log("callback code:", callbackCode)
@@ -210,6 +211,12 @@ export class MedicalSourcesComponent implements OnInit {
         let payload: any
         payload = await this.lighthouseApi.swapOauthToken(sourceType, sourceMetadata,expectedSourceStateInfo, callbackCode)
 
+        if(!payload.access_token || payload.error){
+          //if the access token is not set, then something is wrong,
+          let errMsg = payload.error || "unable to retrieve access_token"
+          console.error(errMsg)
+          throw new Error(errMsg)
+        }
 
         //If payload.patient is not set, make sure we extract the patient ID from the id_token or make an introspection req
         if(!payload.patient && payload.id_token){
@@ -289,6 +296,17 @@ export class MedicalSourcesComponent implements OnInit {
             this.toastService.show(toastNotification)
             console.error(err)
           });
+      })
+      .catch((err) => {
+        delete this.status[sourceType]
+        // window.location.reload();
+
+        const toastNotification = new ToastNotification()
+        toastNotification.type = ToastType.Error
+        toastNotification.message = `An error occurred while accessing ${sourceType}: ${err}`
+        toastNotification.autohide = false
+        this.toastService.show(toastNotification)
+        console.error(err)
       })
   }
 
