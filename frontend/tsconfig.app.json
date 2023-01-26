@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "skipLibCheck": true, //this is because fhirclient types.d.ts file includes reference to "http" (Node) library
+//    "skipLibCheck": false,
     //TODO open an upstream issue: Cannot find module 'http' or its corresponding type declarations.
 
     "outDir": "./out-tsc/app",

@@ -3,8 +3,6 @@ import {LighthouseService} from '../../services/lighthouse.service';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-source-metadata';
 import {Source} from '../../models/fasten/source';
-import {getAccessTokenExpiration, jwtDecode} from 'fhirclient/lib/lib';
-import BrowserAdapter from 'fhirclient/lib/adapters/BrowserAdapter';
 import {MetadataSource} from '../../models/fasten/metadata-source';
 import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -224,7 +222,7 @@ export class MedicalSourcesComponent implements OnInit {
           console.log("NO PATIENT ID present, decoding jwt to extract patient")
           //const introspectionResp = await Oauth.introspectionRequest(as, client, payload.access_token)
           //console.log(introspectionResp)
-          payload.patient = jwtDecode(payload.id_token, new BrowserAdapter())["profile"].replace(/^(Patient\/)/,'')
+          payload.patient = this.jwtDecode(payload.id_token)["profile"].replace(/^(Patient\/)/,'')
         }
 
 
@@ -256,7 +254,7 @@ export class MedicalSourcesComponent implements OnInit {
           id_token:              payload.id_token,
 
           // @ts-ignore - in some cases the getAccessTokenExpiration is a string, which cases failures to store Source in db.
-          expires_at:            parseInt(getAccessTokenExpiration(payload, new BrowserAdapter())),
+          expires_at:            parseInt(this.getAccessTokenExpiration(payload)),
         })
 
         this.fastenApi.createSource(dbSourceCredential)
@@ -374,6 +372,49 @@ export class MedicalSourcesComponent implements OnInit {
     } else {
       return `with: ${reason}`;
     }
+  }
+
+
+  /**
+   * https://github.com/smart-on-fhir/client-js/blob/8f64b770dbcd0abd30646e239cd446dfa4d831f6/src/lib.ts#L311
+   * Decodes a JWT token and returns it's body.
+   * @param token The token to read
+   * @param env An `Adapter` or any other object that has an `atob` method
+   * @category Utility
+   */
+  private jwtDecode(token: string): Record<string, any> | null
+  {
+    const payload = token.split(".")[1];
+    return payload ? JSON.parse(atob(payload)) : null;
+  }
+
+  /**
+   * https://github.com/smart-on-fhir/client-js/blob/8f64b770dbcd0abd30646e239cd446dfa4d831f6/src/lib.ts#L334
+   * Given a token response, computes and returns the expiresAt timestamp.
+   * Note that this should only be used immediately after an access token is
+   * received, otherwise the computed timestamp will be incorrect.
+   * @param tokenResponse
+   * @param env
+   */
+  private getAccessTokenExpiration(tokenResponse: any): number
+  {
+    const now = Math.floor(Date.now() / 1000);
+
+    // Option 1 - using the expires_in property of the token response
+    if (tokenResponse.expires_in) {
+      return now + tokenResponse.expires_in;
+    }
+
+    // Option 2 - using the exp property of JWT tokens (must not assume JWT!)
+    if (tokenResponse.access_token) {
+      let tokenBody = this.jwtDecode(tokenResponse.access_token);
+      if (tokenBody && tokenBody['exp']) {
+        return tokenBody['exp'];
+      }
+    }
+
+    // Option 3 - if none of the above worked set this to 5 minutes after now
+    return now + 300;
   }
 
 }

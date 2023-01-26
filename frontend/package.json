@@ -33,7 +33,6 @@
     "@swimlane/ngx-datatable": "^20.0.0",
     "bootstrap": "^4.4.1",
     "chart.js": "2.9.4",
-    "fhirclient": "^2.5.1",
     "fhirpath": "^3.3.0",
     "fuse.js": "^6.6.2",
     "humanize-duration": "^3.27.3",
