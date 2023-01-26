@@ -10,7 +10,7 @@ RUN yarn --version && \
     yarn config delete proxy && \
     yarn config delete https-proxy && \
     yarn config list && \
-    yarn config set registry ' http://registry.npmjs.org' && \
+    yarn config set registry 'http://registry.npmjs.org' && \
     yarn install --frozen-lockfile
 COPY frontend/ ./
 RUN yarn run build -- --configuration ${FASTEN_ENV} --output-path=../dist
