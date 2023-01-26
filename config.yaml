@@ -20,7 +20,10 @@ web:
     frontend:
       path: /opt/fasten/web
 database:
-  location: 'fasten.db'
+  location: '/opt/fasten/db/fasten.db'
 log:
   file: '' #absolute or relative paths allowed, eg. web.log
   level: INFO
+jwt:
+  issuer:
+    key: "thisismysupersecuressessionsecretlength"
