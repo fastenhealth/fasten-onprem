@@ -30,7 +30,6 @@ jobs:
           node-version: 18.x
       - name: Build Frontend
         run: |
-          cd frontend
           make frontend-build-${{ github.ref_name == 'sandbox' && 'sandbox' || 'prod' }}
 
       - name: Set up QEMU
