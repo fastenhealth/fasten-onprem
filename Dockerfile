@@ -11,7 +11,7 @@ RUN yarn --version && \
     yarn config delete https-proxy && \
     yarn config set registry 'http://registry.npmjs.org' && \
     yarn config list && \
-    yarn install --frozen-lockfile
+    yarn install --frozen-lockfile --network-timeout 300000
 COPY frontend/ ./
 RUN yarn run build -- --configuration ${FASTEN_ENV} --output-path=../dist
 
