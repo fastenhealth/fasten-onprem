@@ -31,7 +31,7 @@ jobs:
       - name: Build Frontend
         run: |
           cd frontend
-          make build-frontend-${{ github.ref_name == 'sandbox' && 'sandbox' || 'prod' }}
+          make frontend-build-${{ github.ref_name == 'sandbox' && 'sandbox' || 'prod' }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
