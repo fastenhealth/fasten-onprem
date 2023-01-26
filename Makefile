@@ -37,6 +37,16 @@ frontend-dep:
 	cd frontend
 	yarn install --frozen-lockfile
 
+.PHONY: frontend-build-sandbox
+frontend-build-sandbox: frontend-dep
+	cd frontend
+	yarn run build -- --configuration sandbox --output-path=../dist
+
+.PHONY: frontend-build-prod
+frontend-build-sandbox: frontend-dep
+	cd frontend
+	yarn run build -- --configuration prod --output-path=../dist
+
 .PHONY: frontend-test
 # reduce logging, disable angular-cli analytics for ci environment
 frontend-test: frontend-dep

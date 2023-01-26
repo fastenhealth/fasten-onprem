@@ -1,13 +1,21 @@
 #########################################################################################################
 # Frontend Build
 #########################################################################################################
-FROM node:18 as frontend-build
-ARG FASTEN_ENV=sandbox
-WORKDIR /usr/src/fastenhealth/frontend
-COPY frontend/ ./
+# !!!! GAH !!!!
+# https://blog.thesparktree.com/docker-multi-arch-github-actions#q-i-enabled-multi-arch-builds-and-my-builds-take-1h-what-gives
+# https://github.com/fastenhealth/fasten-onprem/issues/43
 
-RUN yarn install --frozen-lockfile && \
-    yarn run build -- --configuration ${FASTEN_ENV} --output-path=../dist
+#make sure you run `make frontend-build-sandbox` or `make frontend-build-main` before `docker build .`
+
+#FROM node:18 as frontend-build
+#ARG FASTEN_ENV=sandbox
+#WORKDIR /usr/src/fastenhealth/frontend
+#COPY frontend/ ./
+#
+#RUN yarn install --frozen-lockfile && \
+#    yarn run build -- --configuration ${FASTEN_ENV} --output-path=../dist
+
+
 
 #########################################################################################################
 # Backend Build
@@ -37,7 +45,7 @@ FROM gcr.io/distroless/static-debian11
 
 WORKDIR /opt/fasten/
 COPY --from=backend-build  /opt/fasten/ /opt/fasten/
-COPY --from=frontend-build /usr/src/fastenhealth/dist /opt/fasten/web
+COPY dist/ /opt/fasten/web/
 COPY --from=backend-build /go/bin/fasten /opt/fasten/fasten
 COPY LICENSE.md /opt/fasten/LICENSE.md
 COPY config.yaml /opt/fasten/config/config.yaml
