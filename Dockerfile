@@ -4,16 +4,10 @@
 FROM node:18 as frontend-build
 ARG FASTEN_ENV=sandbox
 WORKDIR /usr/src/fastenhealth/frontend
-COPY frontend/package.json frontend/yarn.lock ./
-
-RUN yarn --version && \
-    yarn config delete proxy && \
-    yarn config delete https-proxy && \
-    yarn config set registry 'http://registry.npmjs.org' && \
-    yarn config list && \
-    yarn install
 COPY frontend/ ./
-RUN yarn run build -- --configuration ${FASTEN_ENV} --output-path=../dist
+
+RUN yarn install --frozen-lockfile && \
+    yarn run build -- --configuration ${FASTEN_ENV} --output-path=../dist
 
 #########################################################################################################
 # Backend Build
