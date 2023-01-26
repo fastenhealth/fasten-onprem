@@ -6,8 +6,7 @@ ARG FASTEN_ENV=sandbox
 WORKDIR /usr/src/fastenhealth/frontend
 COPY frontend/package.json frontend/yarn.lock ./
 
-RUN yarn config set registry "http://registry.npmjs.org" \
-    && yarn install --frozen-lockfile
+RUN yarn config list && yarn install --frozen-lockfile
 COPY frontend/ ./
 RUN yarn run build -- --configuration ${FASTEN_ENV} --output-path=../dist
 
