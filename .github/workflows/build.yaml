@@ -29,10 +29,10 @@ jobs:
 #          run: |
 #            cd /work
 #            make binary-frontend && echo "print contents of /work/dist" && ls -alt /work/dist
-#      - name: Set up QEMU
-#        uses: docker/setup-qemu-action@v2
-#        with:
-#          platforms: 'arm64,arm'
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: 'arm64,arm'
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       # Login against a Docker registry except on PR
@@ -50,6 +50,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
+          flavor: |
+            latest=false
           tags: |
             type=ref,enable=true,event=branch
             type=ref,enable=true,event=tag
@@ -59,7 +61,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
-#          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           context: .
           file: Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
