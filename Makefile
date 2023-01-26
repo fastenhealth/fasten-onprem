@@ -43,7 +43,7 @@ frontend-build-sandbox: frontend-dep
 	yarn run build -- --configuration sandbox --output-path=../dist
 
 .PHONY: frontend-build-prod
-frontend-build-sandbox: frontend-dep
+frontend-build-prod: frontend-dep
 	cd frontend
 	yarn run build -- --configuration prod --output-path=../dist
 
