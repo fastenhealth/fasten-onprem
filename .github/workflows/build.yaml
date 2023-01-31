@@ -1,7 +1,7 @@
 name: Docker
 on:
   push:
-    branches: [ main, sandbox ]
+    branches: [ main, sandbox, depot ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
 
@@ -61,7 +61,7 @@ jobs:
       - name: Build and push Docker image
         uses: depot/build-push-action@v1
         with:
-          project: abc123xyz
+          project: vhwr5r7tw1
           platforms: linux/amd64,linux/arm64
           context: .
           file: Dockerfile
