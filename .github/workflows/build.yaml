@@ -25,15 +25,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Set Node.js 18.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-      - name: Build Frontend
-        run: |
-          make frontend-build-${{ github.ref_name == 'sandbox' && 'sandbox' || 'prod' }}
-
-      - name: Set up Depot
+      - name: Set up depot.dev multi-arch runner
         uses: depot/setup-action@v1
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
