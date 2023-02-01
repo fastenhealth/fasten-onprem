@@ -42,7 +42,7 @@ jobs:
           go install github.com/golang/mock/mockgen@v1.6.0
           go generate ./...
           make backend-test-coverage
-          CGO_ENABLED=0 go build ./backend/cmd/fasten/
+          CGO_ENABLED=0 go build -buildvcs=false ./backend/cmd/fasten/
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
