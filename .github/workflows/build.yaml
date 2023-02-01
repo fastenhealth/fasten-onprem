@@ -1,7 +1,7 @@
 name: Docker
 on:
   push:
-    branches: [ main, sandbox, depot ]
+    branches: [ main, sandbox ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
 
@@ -43,7 +43,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: |
-            latest=false
+            latest=${{ github.event_name == 'push' && contains(github.ref, 'refs/tags/') }}
           tags: |
             type=ref,enable=true,event=branch
             type=ref,enable=true,event=tag
