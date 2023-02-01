@@ -117,3 +117,7 @@ Jason Kulatunga - Initial Development - @AnalogJ
 # Sponsors
 
 Fasten is only possible with the help of my [Github Sponsors](https://github.com/sponsors/AnalogJ/) and Reddit supporters!
+
+I'd also like to thank the following Corporate Sponsors:
+
+<a href="https://depot.dev/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/depot.png" height="100px" /></a>
