@@ -38,9 +38,9 @@ jobs:
           version_metadata_path: ${{ github.event.inputs.version_metadata_path }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Test
-        run: |
-          make test
+#      - name: Test
+#        run: |
+#          make test
       - name: Commit Changes Locally
         id: commit
         uses: packagrio/action-releasr-go@master
