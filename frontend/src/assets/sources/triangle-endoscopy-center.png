@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/  dc: http://purl.org/dc/terms/  foaf: http://xmlns.com/foaf/0.1/  og: http://ogp.me/ns#  rdfs: http://www.w3.org/2000/01/rdf-schema#  schema: http://schema.org/  sioc: http://rdfs.org/sioc/ns#  sioct: http://rdfs.org/sioc/types#  skos: http://www.w3.org/2004/02/skos/core#  xsd: http://www.w3.org/2001/XMLSchema# ">
+  <head>
+    <!-- DHWS-5557 -->
+    <link rel='dns-prefetch' href='fonts.gstatic.com'>
+        <link rel='dns-prefetch' href='https://alertbar.oit.duke.edu'>
+    <link rel='dns-prefetch' href='https://maxcdn.bootstrapcdn.com'>
+    <!-- DHWS-5557 -->
+    <meta charset="utf-8" />
+<link rel="canonical" href="https://www.dukehealth.org/" />
+<link rel="shortlink" href="https://www.dukehealth.org/" />
+<meta property="og:site_name" content="Duke Health" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.dukehealth.org/" />
+<meta property="og:title" content="Duke Health | Connect with your health care at Duke Health" />
+<meta property="og:description" content="As a world-class academic and health care system, Duke Health strives to transform medicine and health locally and globally." />
+<meta property="og:image" content="https://www.dukehealth.org/sites/default/files/blog_post/duke_health_white_logov2_1.jpg" />
+<meta name="Generator" content="Drupal 9 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="As a world-class academic and health care system, Duke Health strives to transform medicine and health locally and globally." />
+<link rel="icon" href="/themes/custom/dukehealth/favicon.ico" type="image/vnd.microsoft.icon" />
+<script src="/sites/default/files/google_tag/default/google_tag.script.js?roy89b" defer></script>
+
+    <title>Duke Health | Connect with your health care at Duke Health</title>
+    <link rel="stylesheet" media="all" href="/sites/default/files/css/css_JYoelZ-4aJkQN4AnRfIXxpuF8zhJNXvb1-1_50k5BwA.css" />
+<link rel="stylesheet" media="all" href="https://alertbar.oit.duke.edu/sites/all/themes/blackwell/css/alert.css" defer />
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_poT1admVVbMkqr7wKKK9pu6_Vp5kqvSl87AyOmEQSYs.css" />
+
+    
+    <meta name="format-detection" content="telephone=no" />
+    <!-- Apple Touch Icons. Used by most mobile browsers when user bookmarks a page. -->
+    <!-- For iPad with high-resolution Retina display running iOS ≥ 7: -->
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="https://www.dukehealth.org/themes/custom/dukehealth/images/apple-touch-icon-152x152-precomposed.png">
+    <!-- For iPad with high-resolution Retina display running iOS ≤ 6: -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://www.dukehealth.org/themes/custom/dukehealth/images/apple-touch-icon-144x144-precomposed.png">
+    <!-- For iPhone with high-resolution Retina display running iOS ≥ 7: -->
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="https://www.dukehealth.org/themes/custom/dukehealth/images/apple-touch-icon-120x120-precomposed.png">
+    <!-- For iPhone with high-resolution Retina display running iOS ≤ 6: -->
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="https://www.dukehealth.org/themes/custom/dukehealth/images/apple-touch-icon-114x114-precomposed.png">
+    <!-- For the iPad mini and the first- and second-generation iPad on iOS ≥ 7: -->
+    <link rel="apple-touch-icon-precomposed" sizes="76x76" href="https://www.dukehealth.org/themes/custom/dukehealth/images/apple-touch-icon-76x76-precomposed.png">
+    <!-- For the iPad mini and the first- and second-generation iPad on iOS ≤ 6: -->
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://www.dukehealth.org/themes/custom/dukehealth/images/apple-touch-icon-72x72-precomposed.png">
+    <!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+    <link rel="apple-touch-icon-precomposed" href="https://www.dukehealth.org/themes/custom/dukehealth/images/apple-touch-icon-precomposed.png">
+    <meta name="google-site-verification" content="5y1A1OK8Kh3ZGRNn0SicEnyzuPTvvqAP-zNt64i3kXE" />
+
+  </head>
+  <body>
+        <a href="#mainContent" onclick="skipToMainContent(event)" class="visually-hidden focusable skip-link">
+      Skip Navigation
+    </a>
+    <div data-clarity-unmask="True">
+      <noscript aria-hidden="true"><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WPFLX4V" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+</style>
+
+
+
+
+<header
+  class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
+    <nav aria-label="Main Navigation" class="flex-column container">
+    
+    <div class="row gx-md-1">
+
+
+                <div class="p-0 col-3 nav-brand">
+  <a class="brand-link" href="/">
+    <span class="duke-logo-header"></span>
+    <span class="sr-only">DukeHealth home page</span>
+  </a>
+</div>
+
+      
+      <div class="menu-toggler-search-container d-lg-none">
+        <div id="mobile-search-button" onclick="window.globalSearch.triggerSearch(this, event);">
+          <i class="icon-search duke-input-global-header-search"></i>
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".megamenu-collapse"
+                aria-controls="megamenu-collapse" aria-expanded="false" aria-label="Toggle mega menu">
+          Menu
+        </button>
+      </div>
+
+      <div id="megaMenu" class="collapse navbar-collapse megamenu-collapse">
+      </div>
+    </div>
+
+    <div class="row gx-md-1 d-lg-none mobile-global-search-input-container" id="mobile-global-search-input-container" style="display:none;">
+        <div class="col-12 position-absolute">
+          <form action="javascript:void(0)">
+            <label for="mobile-search-input" class="hiddenAcc">Search</label>
+            <input
+              type="search"
+              class="mobile-search-input"
+              id="mobile-search-input"
+              placeholder="Search Duke Health"
+              autocomplete="off"
+              onkeyup="window.globalSearch.mobileInputKeyUp(this, event)"
+            />
+            <button class="d-none" type="submit">Submit</button>
+          </form>
+        </div>
+
+        <div class="dropdown-menu mobile-auto-suggest" id="mobile-suggestion-list-container">
+
+        </div>
+    </div>
+
+      </nav>
+  </header>
+
+<div id="mainContent"></div>
+
+
+  <!-- Start - DHWS-4871: Duke Alerts on and off -->
+    <!-- End - DHWS-4871: Duke Alerts on and off -->
+
+
+
+        
+  
+
+
+<script>
+  /* Do things after DOM has fully loaded */
+
+  var announcement = document.getElementById('announcement');
+  var closeElem = document.getElementById('close-banner-btn');
+  if(announcement) {
+    var bannerExpiryCookieKey = 'bannerCloseExpiry';
+    var announcementShowDisplay = '';
+    var hideClose = ['/', '/wifi'];
+
+    if(hideClose.indexOf(location.pathname)>=0) {
+      announcement.style.display = announcementShowDisplay;
+      closeElem.style.display = 'none';
+      manageBodyClass();
+    }
+
+    closeElem.addEventListener("click", function(e) {
+        announcement.style.display = 'none';
+        var date = new Date();
+        document.cookie = "".concat(bannerExpiryCookieKey, "=; expires=Thu, 01 Jan 1970 00:00:01 GMT;");
+
+        /*get expiry from URL for testing, before pushing to UAT/PROD, just keep the line number 23(the else part) without any condition if else rest remove below code*/
+        var expiry = +getParameterByName('expiry');
+        if (expiry) {
+          date.setMinutes(date.getMinutes() + expiry);
+        } else {
+          date.setDate(date.getDate() + 1);// This line only needed for production
+        }
+        /*UP to this line*/
+
+        document.cookie = "".concat(bannerExpiryCookieKey, "=").concat(date.getTime(), "; path=/;");
+        intervalToShowBanner();
+        manageBodyClass();
+    });
+
+    showBanner();
+
+    function getCookieValue(key) {
+      var b = document.cookie.match('(^|[^;]+)\\s*' + key + '\\s*=\\s*([^;]+)');
+      return b ? b.pop() : '';
+    }
+
+    function showBanner() {
+      var bannerExpiryTime = getCookieValue(bannerExpiryCookieKey);
+      if (!bannerExpiryTime || bannerExpiryTime < (new Date()).getTime()) {
+        document.cookie = "".concat(bannerExpiryCookieKey, "=; expires=Thu, 01 Jan 1970 00:00:01 GMT;");
+        announcement.style.display = announcementShowDisplay;
+      } else {
+        intervalToShowBanner();
+      }
+      manageBodyClass();
+    }
+
+    var timeoutRef;
+
+    function intervalToShowBanner() {
+      clearTimeout(timeoutRef);
+      var bannerExpiryTime = getCookieValue(bannerExpiryCookieKey);
+      var date = (new Date()).getTime();
+      if (bannerExpiryTime && bannerExpiryTime > date) {
+        var timeout = (bannerExpiryTime - date) + 5000;
+        var temp = new Date();
+        temp.setMilliseconds(temp.getMilliseconds() + timeout);
+        // console.log('expiry set at ', temp);
+        timeoutRef = setTimeout(function () {
+          showBanner();
+        }, timeout);
+      }
+    }
+
+    function manageBodyClass() {
+      var box = document.querySelector("body");
+      if (getComputedStyle(announcement)['display'] === 'none') {
+        box.classList.remove("has-duke-announcement");
+      } else if (getComputedStyle(announcement)['display'] === announcementShowDisplay) {
+        box.classList.add('has-duke-announcement');
+      }
+    }
+
+    function getParameterByName(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, '\\$&');
+      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+  } else {
+    window.addEventListener('load', function(event) {
+      document.querySelector("body").classList.remove("has-duke-announcement");
+    });
+    
+  }
+
+</script>
+
+<main id="main-content" class="">
+  <div id="page" class="page">
+          <header class="page__header">
+        <div class="container p-0">
+            <div data-drupal-messages-fallback class="hidden"></div>
+
+
+        </div>
+      </header>
+              <div class="page__content">
+        <h1 class="visually-hidden">Duke Health</h1>
+                  <div class="header-image" style="display: none;">
+            <figure class="header-img-container">
+              <a href="" class="img-link" id="headerImageLink">
+                <img src="" alt="Header Image" id="headerImage" loading="lazy" />
+              </a>
+              <div class="header-text-wrapper">
+                <div class="container header-title-content">
+                  <div class="header-title-content-wrapper">
+                    <div class="header-banner-logo d-none d-lg-block">
+                      <span class="logo-img"></span>
+                    </div>
+                    <h2 class="header-text" style="display:none"></h2>
+                      <div class="header-button-container">
+                        <a href="" class="header-button link-button" style="display:none"></a>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </figure>
+          </div>
+                  
+  <div class="block block--basic block--homepagesectionwithmobilequicklinks">
+
+  
+    
+
+      
+            <div class="basic__body"><div class="mobile-quick-nav row">
+<div class="mobile-quick-nav-menu-item col-md-4"><a class="mob-nav-link fad-link" href="/find-doctors-physicians">Find a Doctor</a></div>
+<div class="mobile-quick-nav-menu-item col-md-4"><a class="mob-nav-link treatments-link" href="/adult-treatments">Search Treatments</a></div>
+<div class="mobile-quick-nav-menu-item col-md-4"><a class="mob-nav-link location-link" href="/locations?view=list">Find a Location</a></div>
+</div>
+</div>
+      
+  
+  </div>
+
+  <div class="block block--basic block--homepagesectionwithbuttonsbelowtheheroimage">
+
+  
+    
+
+      
+            <div class="basic__body"><div class="welcome-section container">
+<div class="button-content row">
+<div class="welcome-button mychart-section col-md-4">
+<div class="button log-in-button ada-login"><a href="https://www.dukemychart.org/home/" style="border-bottom: 0px;">Access Duke MyChart</a></div>
+</div>
+<div class="welcome-button col-md-4">
+<div class="button take-me-to-button wipe-button ada-login accessiblity_button_fix" style="height: auto;">
+<div><a class="main-link" href="https://www.dukehealth.org/#" onclick="event.preventDefault();" style="border-bottom: 0px;">For Doctors and Researchers</a></div>
+<div class="secondary-links" style="display: none;"><a class="second-link ada-login-sublinks" href="https://physicians.dukehealth.org/">Physician Resources</a> <a class="second-link ada-login-sublinks" href="https://corporate.dukehealth.org/">About Duke Health </a> <a class="second-link ada-login-sublinks" href="https://medschool.duke.edu/">Duke School of Medicine</a></div>
+</div>
+</div>
+<div class="welcome-button give-us-a-call col-md-4">
+<h3 class="give-us-a-call">Give Us a Call</h3>
+<div class="duke-phone"><a href="tel:8558556484" style="border-bottom: 0px;">855-855-6484</a></div>
+</div>
+</div>
+</div>
+</div>
+      
+  
+  </div>
+
+
+          
+  <div class="block block--basic block--hideadministrationsearchandcloneoperationlinkincontentview-2">
+
+  
+    
+
+      
+            <div class="basic__body"><style type="text/css">
+<!--/*--><![CDATA[/* ><!--*/
+.views-ui-edit-display-form .form-item-abstract { display: none; }
+.view-content .views-field-operations .clone {display:none !important;}
+
+
+/*--><!]]>*/
+</style></div>
+      
+  
+  </div>
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <div class="text-center whats-new">
+        What&#039;s New
+      </div>
+    </div>
+  </div>
+
+  <div class="row announcement-section">
+          <div class="col-lg-4 announcement-item">
+                                      <a href="/blog/duke-pediatric-heart-surgeons-perform-worlds-first-partial-heart-transplant" class="announcement-link" style="border-bottom: 0;">
+              <img src="https://www.dukehealth.org/sites/default/files/styles/announcement_images/public/blog_part_heart_1932x862.jpg?itok=AMDWptGn" class="announcement-img" alt="Newborn Owen with his dad before surgery and a second photo of Owen smiling after surgery." loading="lazy" />
+            </a>
+                          <div class="announcement-body">
+          <h4 class="announcement-title">
+                          <a href="/blog/duke-pediatric-heart-surgeons-perform-worlds-first-partial-heart-transplant">Duke Pediatric Heart Surgeons Perform World’s First Partial Heart Transplant </a>
+              
+          </h4>
+          <div class="announcement-text"><p>At just 17 days old, Owen Monroe became the world’s first partial heart transplant recipient. The revolutionary surgery was performed in April 2022 by Duke pediatric heart surgeons at Duke University Hospital. Today, baby Owen is proof that this new approach can save lives.</p>
+
+<p>“At the beginning, it was, ‘how do we save our son?’ Owen’s mom Tayler said. “But our hope then turned into, ‘I hope this can help other children. It’s amazing what this could potentially do for the world and the medical community.”</p>
+</div>
+        </div>
+      </div>
+          <div class="col-lg-4 announcement-item">
+                                      <a href="/blog/why-you-need-flu-shot" class="announcement-link" style="border-bottom: 0;">
+              <img src="https://www.dukehealth.org/sites/default/files/styles/announcement_images/public/blog_post/MC-1614%202022%20Flu%20Vaccination%20Email%20Graphic%5B20%5D.jpg?itok=x0gdeWZr" class="announcement-img" alt="2022 Flu vaccination" loading="lazy" />
+            </a>
+                          <div class="announcement-body">
+          <h4 class="announcement-title">
+                          <a href="/blog/why-you-need-flu-shot">Flu Season During the COVID Pandemic: Why You Need a Flu Vaccine</a>
+              
+          </h4>
+          <div class="announcement-text"><p>With the flu season underway, it’s important to get a flu vaccination for protection while COVID-19 continues to spread. Your body typically takes up to two weeks to develop an immune response from a vaccine, so getting vaccinated is the safest way to prevent the flu.</p>
+
+<p><em><a href="/blog/spanish-why-you-need-flu-shot">Ver en español</a></em></p>
+</div>
+        </div>
+      </div>
+          <div class="col-lg-4 announcement-item">
+                                      <a href="/blog/duke-clinic-provides-development-feeding-support-children-complex-heart-defects" class="announcement-link" style="border-bottom: 0;">
+              <img src="https://www.dukehealth.org/sites/default/files/styles/announcement_images/public/blog_pcnc_1500x750.jpg?itok=xI7gdTOb" class="announcement-img" alt="Izabel smiles outside at her mom and dad " loading="lazy" />
+            </a>
+                          <div class="announcement-body">
+          <h4 class="announcement-title">
+                          <a href="/blog/duke-clinic-provides-development-feeding-support-children-complex-heart-defects">Duke Clinic Provides Development, Feeding Support to Children with Complex Heart Defects</a>
+              
+          </h4>
+          <div class="announcement-text"><p>After undergoing heart surgery, four-month-old Izabel Westmoreland-Liao struggled to eat, even with a supplemental feeding tube. Nothing her parents tried worked. After weeks of sleepless nights, Izabel’s mother, Kate Westmoreland, called Duke’s Pediatric Cardiac Neurodevelopmental Clinic (PCNC) -- a specialized follow-up program for children with congenital heart disease. Experts assessed Izabel and created a customized plan to get her back on track. Now Izabel is gaining weight, sleeping better at night, and meeting developmental milestones ahead of schedule. “They truly cared for Izabel and wanted her to thrive,” Westmoreland said. “She’s our happy baby again!”</p>
+</div>
+        </div>
+      </div>
+      </div>
+
+
+  <div class="home-page-blogevent-section">
+    
+    <div id="blogEventsContainer" class="d-block d-lg-flex">
+      <div class="col-lg-6 content padding spotlight-section">
+      <div class="spotlight-header-section">
+        <h3 class="header3">Duke Health Blog</h3>
+                  <a href=" /blog" class="button">
+            More Stories&nbsp;<i class="fas fa-arrow-circle-right"></i>
+          </a>
+              </div>
+      <ul class="news-slider" id="news">
+                  <li class="d-flex">
+            <a class="home-spotlight me-3" href="/blog/high-intensity-focused-ultrasound-reduces-shaking-essential-tremor" style="border-bottom: 0px;">
+              <img class="home-thumb" src="https://www.dukehealth.org/sites/default/files/styles/blog_thumbnail_image_crop/public/blog_tremor_1500x750.jpg?h=b98f82e0&amp;itok=vH-esNY7" alt="A doctor examines a patient&#039;s hand"/>
+            </a>
+            <div class="home-spotlight-info">
+              <a class="home-spotlight" href="/blog/high-intensity-focused-ultrasound-reduces-shaking-essential-tremor">
+                <span>High-Intensity Focused Ultrasound Reduces Shaking from Essential Tremor</span>
+              </a>
+            </div>
+          </li>
+                  <li class="d-flex">
+            <a class="home-spotlight me-3" href="/blog/bridge-enhanced-acl-repair-bear-allows-torn-acl-heal-itself" style="border-bottom: 0px;">
+              <img class="home-thumb" src="https://www.dukehealth.org/sites/default/files/styles/blog_thumbnail_image_crop/public/blog_acl_bear_1500x700.jpg?h=b6fded4b&amp;itok=bmhJEwV3" alt="A woman poses in a squat in a gym "/>
+            </a>
+            <div class="home-spotlight-info">
+              <a class="home-spotlight" href="/blog/bridge-enhanced-acl-repair-bear-allows-torn-acl-heal-itself">
+                <span>Bridge-Enhanced ACL Repair (BEAR) Allows Torn ACL to Heal Itself</span>
+              </a>
+            </div>
+          </li>
+                  <li class="d-flex">
+            <a class="home-spotlight me-3" href="/blog/becoming-egg-donor-answers-your-frequently-asked-questions" style="border-bottom: 0px;">
+              <img class="home-thumb" src="https://www.dukehealth.org/sites/default/files/styles/blog_thumbnail_image_crop/public/blog_egg_1500x750.jpg?h=c1b64f60&amp;itok=bL2g-9bp" alt="A doctor speaks with a patient"/>
+            </a>
+            <div class="home-spotlight-info">
+              <a class="home-spotlight" href="/blog/becoming-egg-donor-answers-your-frequently-asked-questions">
+                <span>Becoming an Egg Donor: Answers to Your Frequently Asked Questions</span>
+              </a>
+            </div>
+          </li>
+                  <li class="d-flex">
+            <a class="home-spotlight me-3" href="/blog/comprehensive-physical-therapy-after-amputation-helps-woman-live-independently" style="border-bottom: 0px;">
+              <img class="home-thumb" src="https://www.dukehealth.org/sites/default/files/styles/blog_thumbnail_image_crop/public/blog_joint_health_patient_1932x862.jpg?h=0a30790d&amp;itok=RC9pSMTV" alt="Mary Lou Bowen smiles in front of some green trees"/>
+            </a>
+            <div class="home-spotlight-info">
+              <a class="home-spotlight" href="/blog/comprehensive-physical-therapy-after-amputation-helps-woman-live-independently">
+                <span>Comprehensive Physical Therapy After Amputation Helps Woman Live Independently</span>
+              </a>
+            </div>
+          </li>
+              </ul>
+    </div>
+      <div class=" content padding spotlight-section white-box treatment-events" id="events-pane">
+    <div class="spotlight-header-section  ">
+      <h3 class="header3" id="treatment-events">
+        Events
+      </h3>
+              <a href="/events" class="button">
+          See All&nbsp;<i class="fas fa-arrow-circle-right"></i>
+        </a>
+          </div>
+              <div class="event-list">
+        <!-- DHWS-443 -->
+                  <a href="/events/strong-and-limber-1641219300-1641221700">
+            <div class="event-date d-flex">
+              <div class="date today me-3">
+                <span class="event-month">Feb</span><span
+                  class="event-day">2</span>
+              </div>
+              <div class="event-explanation">
+                <div class="event-text">
+                  Strong and Limber
+                </div>
+                <div
+                  class="event-time">Thursday, 9:15AM - 9:55AM</div>
+              </div>
+            </div>
+          </a>
+                  <a href="/events/aqua-strength-1672756200-1672757700">
+            <div class="event-date d-flex">
+              <div class="date today me-3">
+                <span class="event-month">Feb</span><span
+                  class="event-day">2</span>
+              </div>
+              <div class="event-explanation">
+                <div class="event-text">
+                  Aqua Strength
+                </div>
+                <div
+                  class="event-time">Thursday, 9:30AM - 9:55AM</div>
+              </div>
+            </div>
+          </a>
+                  <a href="/events/aqua-express-1617112800-1617114600">
+            <div class="event-date d-flex">
+              <div class="date today me-3">
+                <span class="event-month">Feb</span><span
+                  class="event-day">2</span>
+              </div>
+              <div class="event-explanation">
+                <div class="event-text">
+                  Aqua Express
+                </div>
+                <div
+                  class="event-time">Thursday, 10:00AM - 10:30AM</div>
+              </div>
+            </div>
+          </a>
+                  <a href="/events/parkinsons-pwrmoves-1673536500-1673539200">
+            <div class="event-date d-flex">
+              <div class="date today me-3">
+                <span class="event-month">Feb</span><span
+                  class="event-day">2</span>
+              </div>
+              <div class="event-explanation">
+                <div class="event-text">
+                  Parkinson&#039;s PWR!Moves
+                </div>
+                <div
+                  class="event-time">Thursday, 10:15AM - 11:00AM</div>
+              </div>
+            </div>
+          </a>
+              </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+        <a style="display: none" class="backToTop" href="javascript:void(0)">
+          <i class="fas fa-chevron-up"></i><span class="d-block">Back to Top</span>
+        </a>
+          
+  <div class="block block--basic block--homepagesectiongivingtodukehealth">
+
+  
+    
+
+      
+            <div class="basic__body"><div class="support-text">Support Duke Health with a donation to our COVID-19 Response Funds</div>
+<div><a class="button blue-fill" href="https://giving.dukehealth.org/ways-to-give/covid-19-response-funds">Make a Gift</a></div>
+</div>
+      
+  
+  </div>
+
+
+      </div>
+      </div>
+</main>
+
+
+  <footer id="footer" class="page__footer">
+        
+  <div class="block block--basic block--dukefooter">
+
+  
+    
+
+      
+            <div class="basic__body"><div class="container" id="footer-wrapper">
+<nav class="footer-holder no-gutters row"><div class="col-lg-3 connect-footer" itemscope="" itemtype="http://schema.org/Organization">
+<div class="row">
+<div class="col-12 col-lg-12 col-md-6"><a class="footer-logo" href="/" itemprop="url"><span class="sr-only">Duke Health Home Page</span></a>
+<ul class="social-share list-inline"><li class="fb list-inline-item"><a class="social-share-link" href="http://www.facebook.com/dukehealth" itemprop="sameAs" target="_blank"><i class="fab fa-facebook-square"><span class="sr-only">Facebook</span></i></a></li>
+<li class="tw list-inline-item"><a class="social-share-link" href="http://twitter.com/DukeHealth" itemprop="sameAs" target="_blank"><i class="fab fa-twitter-square"><span class="sr-only">Twitter</span></i></a></li>
+<li class="yt list-inline-item"><a class="social-share-link" href="http://youtube.com/user/Dukemedicine" itemprop="sameAs" target="_blank"><i class="fab fa-youtube-square"><span class="sr-only">YouTube</span></i></a></li>
+<li class="ig list-inline-item"><a class="social-share-link" href="https://www.instagram.com/dukehealth" itemprop="sameAs" target="_blank"><i class="fab fa-instagram"><span class="sr-only">Instagram</span></i></a></li>
+<li class="linkedin-in list-inline-item"><a class="social-share-link" href="https://www.linkedin.com/company/duke-university-health-system" itemprop="sameAs" target="_blank"><i class="fab fa-linkedin-in"><span class="sr-only">LinkedIn</span></i></a></li>
+</ul></div>
+<div class="col-12 col-lg-12 col-md-6 text-md-end text-lg-start">
+<div><meta itemprop="telephone" content="+8558556484" /><a class="ask-duke" href="tel:8558556484">855-855-6484</a></div>
+</div>
+</div>
+</div>
+<div class="col-lg-9">
+<div class="row">
+<div class="{{ col-md-4 }}">
+<ul class="list-unstyled py-0"><li><a href="/diversity-equity-and-inclusion/Duke-health-stands-against-racism">Duke Health Anti-Racism Pledge</a></li>
+<li><a href="/notice-of-nondiscrimination">Notice of Nondiscrimination</a></li>
+<li><a href="https://www.dukehealth.org/privacy">Notice of Privacy Practices</a></li>
+<li><a aria-label="Terms and Conditions" href="/terms-and-conditions-of-use">Terms and Conditions</a></li>
+<li><a href="/privacy/website-privacy-policy">Website Privacy Policy</a></li>
+</ul></div>
+<div class="{{ col-md-4 }}">
+<ul class="list-unstyled py-0"><li><a href="https://www.dukehealth.org/dukechildrens">Duke Children's</a></li>
+<li><a href="http://medschool.duke.edu/">Duke School of Medicine</a></li>
+<li><a href="http://nursing.duke.edu/">Duke School of Nursing</a></li>
+<li><a href="http://www.duke.edu/">Duke University</a></li>
+</ul></div>
+<div class="{{ col-md-4 }}">
+<ul class="list-unstyled py-0"><li><a href="/about-duke-health">About Duke Health</a></li>
+<li><a href="https://careers.dukehealth.org/">Careers</a></li>
+<li><a href="/contact-us/compliments-suggestions-and-complaints">Contact Us</a></li>
+<li><a href="/keep-date-duke-health">Email Sign Up</a></li>
+<li><a href="https://giving.dukehealth.org/">Giving</a></li>
+<li><a href="https://corporate.dukehealth.org/newsmedia">Newsroom</a></li>
+<li><a href="https://physicians.dukehealth.org/">Referring Physicians</a></li>
+</ul></div>
+</div>
+</div>
+</nav></div>
+</div>
+      
+  
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <div class="copy">Copyright © 2004-2023 Duke University Health System</div>
+    </div>
+  </div>
+</div>
+
+  </footer>
+
+
+
+
+  </div>
+
+      
+    </div>
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","scriptPath":null,"pathPrefix":"","currentPath":"home","currentPathIsAdmin":false,"isFront":true,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"ckeditorheight":{"offset":1,"line_height":1.5,"unit":"em","disable_autogrow":false},"improved_multi_select":{"selectors":["#node-treatments-mini-fad-form .field--name-field-providers select[multiple]","#node-treatments-mini-fad-edit-form .field--name-field-providers select[multiple]",".field--name-field-conditions-and-treatments select[multiple]"],"filtertype":"partial","placeholder_text":"","orderable":true,"js_regex":false,"groupresetfilter":false,"remove_required_attr":false,"buttontext_add":"\u003E","buttontext_addall":"\u00bb","buttontext_del":"\u003C","buttontext_delall":"\u00ab","buttontext_moveup":"Move up","buttontext_movedown":"Move down"},"multiselect":{"widths":"300"},"duke":{"home_page":{"imgArrData":{"desktopImages":[{"image_uri":"https:\/\/www.dukehealth.org\/sites\/default\/files\/homepage_hero_template_01.jpg","alt":"","quote":"Quality care ranked among the best in the nation.","uri":"\/find-doctors-physicians","title":"Find a Doctor","target":"_self"},{"image_uri":"https:\/\/www.dukehealth.org\/sites\/default\/files\/homepage_hero_template_02.jpg","alt":"","quote":"Quality care ranked among the best in the nation.","uri":"\/find-doctors-physicians","title":"Find a Doctor","target":"_self"},{"image_uri":"https:\/\/www.dukehealth.org\/sites\/default\/files\/homepage_hero_template_03.jpg","alt":"","quote":"Quality care ranked among the best in the nation.","uri":"\/find-doctors-physicians","title":"Find a Doctor","target":"_self"},{"image_uri":"https:\/\/www.dukehealth.org\/sites\/default\/files\/homepage_images\/homepage_hero_covid_vaccine_patient.jpg","alt":"","quote":"The COVID-19 vaccine is available by appointment.","uri":"\/duke-covid-19-vaccine-scheduling","title":"Schedule Now","target":"_self"},{"image_uri":"https:\/\/www.dukehealth.org\/sites\/default\/files\/homepage_hero_template_04.jpg","alt":"","quote":"Flu vaccination appointments are available at select Duke Health clinics.","uri":"\/blog\/why-you-need-flu-shot","title":"Learn More","target":"_self"}],"mobileImages":[{"image_uri":"https:\/\/www.dukehealth.org\/sites\/default\/files\/homepage_images\/homepage_hero_mobile_covid_vaccine_patient.jpg","alt":"","quote":"Quality care ranked among the best in the nation.","uri":"\/find-doctors-physicians","title":"Find a Doctor","target":"_self"},{"image_uri":"https:\/\/www.dukehealth.org\/sites\/default\/files\/homepage_hero_mobile_template_01.jpg","alt":"","quote":"Quality care ranked among the best in the nation.","uri":"\/find-doctors-physicians","title":"Find a Doctor","target":"_self"},{"image_uri":"https:\/\/www.dukehealth.org\/sites\/default\/files\/homepage_hero_mobile_template_02.jpg","alt":"","quote":"Quality care ranked among the best in the nation.","uri":"\/find-doctors-physicians","title":"Find a Doctor","target":"_self"},{"image_uri":"https:\/\/www.dukehealth.org\/sites\/default\/files\/homepage_hero_mobile_template_03.jpg","alt":"","quote":"The COVID-19 vaccine is available by appointment.","uri":"\/duke-covid-19-vaccine-scheduling","title":"Schedule Now","target":"_self"},{"image_uri":"https:\/\/www.dukehealth.org\/sites\/default\/files\/homepage_hero_mobile_template_04.jpg","alt":"","quote":"Flu vaccination appointments are available at select Duke Health clinics.","uri":"\/blog\/why-you-need-flu-shot","title":"Learn More","target":"_self"}]}},"headerMenu":[{"title":"Find a Doctor","url":"\/find-doctors-physicians","has_children":false,"description":"findadoctor","external_link":false,"target":"_self","children":[]},{"title":"Treatments","url":"\/","has_children":true,"description":"treatments","external_link":false,"target":"_self","children":[{"title":"Adults","url":"\/","has_children":true,"description":"","external_link":false,"target":"_self","children":[{"title":"Bariatric Surgery","url":"\/treatments\/weight-loss-surgery","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Cancer Care","url":"\/treatments\/cancer","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Cardiology","url":"\/treatments\/heart","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Gastroenterology","url":"\/treatments\/digestive-disorders","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"OB-GYN","url":"\/treatments\/obstetrics-and-gynecology","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Ophthalmology","url":"\/treatments\/eye-care","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Orthopaedic Care","url":"\/treatments\/orthopaedics","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Primary Care","url":"\/treatments\/primary-care","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Spine and Back Care","url":"\/treatments\/spine","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Transplant","url":"\/treatments\/transplant-program","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"See All","url":"\/adult-treatments","has_children":false,"description":"cta","external_link":false,"target":"_self","children":[]}]},{"title":"Children","url":"\/","has_children":true,"description":"","external_link":false,"target":"_self","children":[{"title":"Cancer Care","url":"\/pediatric-treatments\/childhood-cancer","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Cardiology","url":"\/pediatric-treatments\/pediatric-cardiology","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Gastroenterology","url":"\/pediatric-treatments\/pediatric-gastroenterology","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"General Pediatrics","url":"\/treatments\/primary-care\/childrens-primary-care","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"General Surgery","url":"\/pediatric-treatments\/pediatric-general-surgery","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Neurology","url":"\/pediatric-treatments\/pediatric-neurology","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Ophthalmology","url":"\/pediatric-treatments\/pediatric-eye-diseases","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Orthopaedic Care","url":"\/pediatric-treatments\/pediatric-orthopaedics","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Transplant","url":"\/pediatric-treatments\/pediatric-transplants","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Urology","url":"\/pediatric-treatments\/pediatric-urology","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"See All","url":"\/pediatric-treatments","has_children":false,"description":"cta","external_link":false,"target":"_self","children":[]}]},{"title":"Quick Links","url":"\/","has_children":true,"description":"quicklink","external_link":false,"target":"_self","children":[{"title":"Remote Second Opinions","url":"\/remote-second-opinions","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"COVID-19 Testing","url":"\/covid-19-update\/covid-19-testing","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Flu and COVID-19 Vaccines","url":"\/covid-19-update\/schedule-vaccine-step-one","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Choosing the Right Care","url":"\/choosing-the-right-care","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Urgent Care","url":"\/treatments\/urgent-care","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Virtual Urgent Care","url":"\/treatments\/urgent-care\/duke-virtual-urgent-care","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Clinical Trials","url":"\/clinical-trials","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Make an Appointment","url":"\/plan-your-visit\/make-appointment","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Telehealth Appointments","url":"\/telehealth-visits","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Quality and Safety","url":"\/quality-and-safety","has_children":false,"description":"","external_link":false,"target":"_self","children":[]}]}]},{"title":"Locations","url":"\/","has_children":true,"description":"locations","external_link":false,"target":"_self","children":[{"title":"Adults","url":"\/","has_children":true,"description":"","external_link":false,"target":"_self","children":[{"title":"Bariatric Surgery","url":"\/locations?treatment_term_name=Weight%20Loss%20Surgery\u0026age_group=Adults\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Cancer Care","url":"\/locations?treatment_term_name=Cancer\u0026age_group=Adults\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Cardiology","url":"\/locations?treatment_term_name=Cardiology\u0026age_group=Adults\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Endocrinology","url":"\/locations?treatment_term_name=Endocrinology\u0026age_group=Adults\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Gastroenterology","url":"\/locations?treatment_term_name=Gastroenterology\u0026age_group=Adults\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Imaging (Radiology)","url":"\/locations?treatment_term_name=Radiology\u0026age_group=Adults\u0026sc=10\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Ophthalmology","url":"\/locations?treatment_term_name=Ophthalmology\u0026age_group=Adults\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Orthopaedic Care","url":"\/locations?treatment_term_name=Orthopaedics\u0026age_group=Adults\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Primary Care","url":"\/locations?treatment_term_name=Primary%20Care\u0026age_group=Adults\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Pulmonology","url":"\/locations?treatment_term_name=Pulmonology\u0026age_group=Adults\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Spine and Back Care","url":"\/locations?treatment_term_name=Spine\u0026age_group=Adults\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"See All","url":"\/locations?age_group=Adults\u0026view=list","has_children":false,"description":"cta","external_link":false,"target":"_self","children":[]}]},{"title":"Children","url":"\/","has_children":true,"description":"","external_link":false,"target":"_self","children":[{"title":"Cancer Care","url":"\/locations?treatment_term_name=Cancer\u0026age_group=Children\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Cardiology","url":"\/locations?treatment_term_name=Cardiology\u0026age_group=Children\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Gastroenterology","url":"\/locations?treatment_term_name=Gastroenterology\u0026age_group=Children\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"General Pediatrics","url":"\/locations?treatment_term_name=Children%27s%20Primary%20Care\u0026age_group=Children\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Ophthalmology","url":"\/locations?treatment_term_name=Ophthalmology\u0026age_group=Children\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Psychiatry","url":"\/locations?treatment_term_name=Psychiatry\u0026age_group=Children\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"See All","url":"\/locations?age_group=Children\u0026view=list","has_children":false,"description":"cta","external_link":false,"target":"_self","children":[]}]},{"title":"Quick Links","url":"\/","has_children":true,"description":"quicklink","external_link":false,"target":"_self","children":[{"title":"Clinic Statuses - Delays \u0026 Closings","url":"\/duke-clinic-delays-and-closings","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Emergency Rooms","url":"\/locations?location_type_name=Emergency%20Room\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Labs","url":"\/locations\/lab-leave-locations","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"OB-GYN","url":"\/adult-locations?treatment_term_name=Obstetrics%20and%20Gynecology\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Urgent Care","url":"\/locations?location_type_name=Urgent%20Care\u0026view=list","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Telehealth Appointments","url":"\/telehealth-visits","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Duke Children\u0027s Hospital","url":"\/hospitals\/duke-childrens-hospital","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Duke Raleigh Hospital","url":"\/hospitals\/duke-raleigh-hospital","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Duke Regional Hospital","url":"\/hospitals\/duke-regional-hospital","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Duke University Hospital","url":"\/hospitals\/duke-university-hospital","has_children":false,"description":"","external_link":false,"target":"_self","children":[]}]}]},{"title":"Patients \u0026 Visitors","url":"\/","has_children":true,"description":"patientsvisitors","external_link":false,"target":"_self","children":[{"title":"Directory","url":"\/","has_children":true,"description":"hidden","external_link":false,"target":"_self","children":[{"title":"About Duke Health","url":"\/about-duke-health","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Billing\/Financial Resources","url":"\/paying-for-care","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Blog","url":"\/blog","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Clinical Trials","url":"\/clinical-trials","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Contact Us","url":"\/contact-us\/compliments-suggestions-and-complaints","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"International Patients","url":"\/hospitals\/duke-university-hospital\/international-patient-services","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Diversity, Equity, and Inclusion","url":"\/diversity-equity-and-inclusion","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Duke MyChart","url":"\/duke-mychart","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Duke MyChart (Espa\u00f1ol)","url":"\/spanish-duke-mychart","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Events and Classes","url":"\/events","has_children":false,"description":"","external_link":false,"target":"_self","children":[]}]},{"title":"Directory 2","url":"\/","has_children":true,"description":"hidden","external_link":false,"target":"_self","children":[{"title":"FAQs","url":"\/contact-us\/frequently-asked-questions","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Health Insurance","url":"\/health-insurance","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Make a Gift","url":"\/about-duke-health\/make-a-gift\/giving-and-donations","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Medical Records","url":"\/medical-records","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Plan Your Visit","url":"\/plan-your-visit","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Referring Physician Resources","url":"https:\/\/physicians.dukehealth.org","has_children":false,"description":"","external_link":true,"target":"_self","children":[]},{"title":"Support Services","url":"\/support-services","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Telehealth Appointments","url":"\/telehealth-visits","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Volunteer Services","url":"\/volunteer-services","has_children":false,"description":"","external_link":false,"target":"_self","children":[]}]},{"title":"Quick Links","url":"\/","has_children":true,"description":"quicklink","external_link":false,"target":"_self","children":[{"title":"Accessibility Services","url":"\/diversity-equity-and-inclusion\/accessibility-services","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Anti-Racism Pledge","url":"\/diversity-equity-and-inclusion\/Duke-health-stands-against-racism","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Choosing the Right Care","url":"\/choosing-the-right-care","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Duke Health Listens","url":"https:\/\/dukehealthlistens.alidainsights.com\/h\/s\/6nsIy4HsXsILORakXaffuH","has_children":false,"description":"","external_link":true,"target":"_self","children":[]},{"title":"Email Sign Up","url":"\/keep-date-duke-health","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Financial Assistance","url":"\/paying-for-care\/financial-assistance","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Interpreter Services","url":"\/diversity-equity-and-inclusion\/interpreter-services","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Make an Appointment","url":"\/plan-your-visit\/make-an-appointment","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Job Opportunities","url":"\/about-duke-health\/job-opportunities","has_children":false,"description":"","external_link":false,"target":"_self","children":[]},{"title":"Understanding Your Bill","url":"\/paying-for-care\/understand-bill","has_children":false,"description":"","external_link":false,"target":"_self","children":[]}]}]},{"title":"Duke MyChart","url":"https:\/\/www.dukemychart.org\/home\/","has_children":false,"description":"dukemychart","external_link":true,"target":"_self","children":[]}],"patients_visitors_url_patterns":["\/about-duke-health\/","\/contact-us\/","\/health-insurance-and-billing\/","\/medical-records\/","\/paying-for-care\/","\/plan-your-visit\/","\/support-services\/","\/quality-and-safety\/","\/volunteer-services\/","\/notice-of-nondiscrimination\/","\/privacy\/","\/covid-19-update\/","\/VisitorRestrictions\/","\/telehealth-visits\/"],"isLoggedUser":false,"timeZoneOffset":-18000,"search":{"isAcceptingPatientsEnabled":1,"isOpenSchedulingEnabled":1,"DHDesignOSActive":1},"new_patients_button_label":"New to this Doctor","ap_returning_patients_button_label":"Seen this Doctor Before"},"user":{"uid":0,"permissionsHash":"2be2265f90090752c7f5b8571c30903cac34018a0e7a1e9f59fc9d81bdee46e0"}}</script>
+<script src="/sites/default/files/js/js_vuekvAeLEpS4JxZ_JeIJNg072tmj7pkppcV47SnisLE.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es5%2Ces6%2CArray.prototype.includes%2CString.prototype.includes%2CURL%2CObject.assign%2CObject.create%2CObject.keys%2CObject.values%2CIntersectionObserver%2CIntersectionObserverEntry%2CArray.prototype.fill"></script>
+<script src="/sites/default/files/js/js_kxbJ_zH0ihlzk7JWphx4Ra-dA_nQ_siQLvl1lZM4SpI.js"></script>
+
+        <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://www.dukehealth.org/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://www.dukehealth.org/search-results/all?s={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+  </body>
+</html>
