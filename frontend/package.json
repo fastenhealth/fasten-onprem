@@ -46,6 +46,7 @@
     "rxjs": "~6.5.4",
     "tslib": "^2.0.0",
     "uuid": "^9.0.0",
+    "webcrypto-liner": "^1.4.0",
     "zone.js": "~0.11.8"
   },
   "devDependencies": {
