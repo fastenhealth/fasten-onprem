@@ -27,7 +27,7 @@
  * Standard animation support in Angular DOES NOT require any polyfills (as of Angular 6.0).
  */
 // import 'web-animations-js';  // Run `npm install --save web-animations-js`.
-
+import 'webcrypto-liner'
 /**
  * By default, zone.js will patch all possible macroTask and DomEvents
  * user can disable parts of macroTask/DomEvents patch by setting following flags
