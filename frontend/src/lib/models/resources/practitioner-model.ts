@@ -8,7 +8,7 @@ import {FastenOptions} from '../fasten/fasten-options';
 
 export class PractitionerModel extends FastenDisplayModel {
 
-  identifier: string|undefined
+  identifier: CodingModel[]|undefined
   name: any|undefined
   gender: string|undefined
   status: string|undefined
@@ -30,7 +30,7 @@ export class PractitionerModel extends FastenDisplayModel {
 
   commonDTO(fhirResource:any){
     const id = _.get(fhirResource, 'id', '');
-    this.identifier = _.get(fhirResource, 'identifier', '');
+    this.identifier = _.get(fhirResource, 'identifier');
     this.gender = _.get(fhirResource, 'gender', '');
     this.status = _.get(fhirResource, 'active') === true ? 'active' : '';
     this.is_contact_data = _.has(fhirResource, 'contact[0]');

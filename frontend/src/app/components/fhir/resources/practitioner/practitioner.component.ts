@@ -21,7 +21,6 @@ export class PractitionerComponent implements OnInit, FhirResourceComponentInter
   constructor(public changeRef: ChangeDetectorRef, public router: Router) {}
 
   ngOnInit(): void {
-
     this.tableData = [
       // {
       //   label: 'Identifiers',
@@ -62,7 +61,13 @@ export class PractitionerComponent implements OnInit, FhirResourceComponentInter
     //   status: telecom,
     // },
   ];
-
+    for(let idCoding of this.displayModel.identifier){
+      this.tableData.push({
+        label: `Identifier (${idCoding.system})`,
+        data: idCoding.display || idCoding.value,
+        enabled: true,
+      })
+    }
   }
   markForCheck(){
     this.changeRef.markForCheck()
