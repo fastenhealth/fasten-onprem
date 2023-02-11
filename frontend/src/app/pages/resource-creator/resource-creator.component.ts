@@ -9,7 +9,15 @@ export class ResourceCreatorComponent implements OnInit {
 
   collapsePanel: {[name: string]: boolean} = {}
 
-
+  model: any = {
+    condition: {
+      data: {},
+      status: null,
+      started: null,
+      stopped: null,
+      description: null,
+    }
+  }
 
 
   constructor() { }

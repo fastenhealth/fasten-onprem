@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Observable, ObservableInput, of} from 'rxjs';
 import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 import {NlmClinicalTableSearchService} from '../../services/nlm-clinical-table-search.service';
@@ -24,7 +24,9 @@ export enum NlmSearchType {
 })
 export class NlmTypeaheadComponent implements OnInit {
   @Input() searchType: NlmSearchType = NlmSearchType.Condition;
-  model: any = {};
+  @Input() model: any = {};
+  @Output() modelChange = new EventEmitter<any>();
+
   searching = false;
   searchFailed = false;
 
@@ -33,15 +35,10 @@ export class NlmTypeaheadComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  // search = (text$: Observable<string>) => {
-  //   return text$.pipe(
-  //     debounceTime(200),
-  //     distinctUntilChanged(),
-  //     map((term) =>
-  //       term.length < 2 ? [] : this.states.filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10),
-  //     ),
-  //   );
-  // }
+  modelChangeEvent(event){
+    console.log("bubbling modelChange event", event)
+    this.modelChange.emit(event);
+  }
 
   formatter = (x: { text: string }) => x.text;
   search = (text$: Observable<string>) => {

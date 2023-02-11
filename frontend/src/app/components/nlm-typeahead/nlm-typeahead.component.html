@@ -9,6 +9,7 @@
   [ngbTypeahead]="search"
   [inputFormatter]="formatter"
   [resultTemplate]="rt"
+  (ngModelChange)="modelChangeEvent($event)"
   placeholder="Search"
 />
 <small *ngIf="searching" class="form-text text-muted">searching...</small>

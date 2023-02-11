@@ -11,29 +11,35 @@
       <div class="az-content-label mg-b-5">Condition</div>
       <p class="mg-b-20">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna </p>
 
+      <pre>{{model | json}}</pre>
+
       <div class="row row-sm">
         <div class="col-lg">
           <p class="mg-b-10">Medical condition</p>
-          <app-nlm-typeahead></app-nlm-typeahead>
+          <app-nlm-typeahead [(model)]="model.condition.data"></app-nlm-typeahead>
         </div><!-- col -->
         <div class="col-lg mg-t-10 mg-lg-t-0">
           <p class="mg-b-10">Status</p>
-          <input class="form-control" placeholder="Input box" type="text">
+          <select [(ngModel)]="model.condition.status" class="form-control">
+            <option value="" hidden selected>Select Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
         </div><!-- col -->
         <div class="col-lg mg-t-10 mg-lg-t-0">
           <p class="mg-b-10">Started</p>
-          <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cds="ngbDatepicker" (click)="cds.toggle()">
+          <input [(ngModel)]="model.condition.started" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cds="ngbDatepicker" (click)="cds.toggle()">
         </div><!-- col -->
         <div class="col-lg mg-t-10 mg-lg-t-0">
           <p class="mg-b-10">Stopped</p>
-          <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cde="ngbDatepicker" (click)="cde.toggle()">
+          <input [(ngModel)]="model.condition.stopped" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cde="ngbDatepicker" (click)="cde.toggle()">
         </div><!-- col -->
       </div><!-- row -->
 
       <div class="row row-sm mg-t-20">
         <div class="col-lg">
           <p class="mg-b-10">Description/Comment</p>
-          <textarea rows="3" class="form-control" placeholder="Textarea"></textarea>
+          <textarea [(ngModel)]="model.condition.description" rows="3" class="form-control" placeholder="Textarea"></textarea>
         </div><!-- col -->
       </div><!-- row -->
 
@@ -56,10 +62,13 @@
                 </div><!-- col -->
                 <div class="col-lg mg-t-10 mg-lg-t-0">
                   <p class="mg-b-10">Status</p>
-                  <input class="form-control" placeholder="Input box" type="text">
-                </div><!-- col -->
+                  <select class="form-control">
+                    <option value="" hidden selected>Select Status</option>
+                    <option value="active">Active</option>
+                    <option value="stopped">Stopped</option>
+                  </select>                </div><!-- col -->
                 <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Strength</p>
+                  <p class="mg-b-10">Dosage</p>
                   <input class="form-control" placeholder="Input box" type="text">
                 </div><!-- col -->
                 <div class="col-lg mg-t-10 mg-lg-t-0">
@@ -77,10 +86,6 @@
                 <div class="col-lg mg-t-10 mg-lg-t-0">
                   <p class="mg-b-10">Resupply</p>
                   <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #de="ngbDatepicker" (click)="de.toggle()">
-                </div><!-- col -->
-                <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Instructions</p>
-                  <input class="form-control" placeholder="Input box" type="text">
                 </div><!-- col -->
               </div><!-- row -->
               <div class="row row-sm mg-t-20">
@@ -231,202 +236,6 @@
         </div>
       </div>
 
-
-      <div class="az-content-label mg-b-5">Custom Checkboxes &amp; Radios</div>
-      <p class="mg-b-20">A custom styled checkboxes and radios.</p>
-
-      <div class="row">
-        <div class="col-lg-3">
-          <label class="ckbox">
-            <input type="checkbox"><span>Checkbox Unchecked</span>
-          </label>
-        </div><!-- col-3 -->
-        <div class="col-lg-3 mg-t-20 mg-lg-t-0">
-          <label class="ckbox">
-            <input type="checkbox" checked><span>Checkbox Checked</span>
-          </label>
-        </div><!-- col-3 -->
-        <div class="col-lg-3 mg-t-20 mg-lg-t-0">
-          <label class="ckbox">
-            <input type="checkbox" disabled><span>Checkbox Disabled</span>
-          </label>
-        </div><!-- col-3 -->
-      </div><!-- row -->
-
-      <div class="row mg-t-10">
-        <div class="col-lg-3">
-          <label class="rdiobox">
-            <input name="rdio" type="radio">
-            <span>Radio Unchecked</span>
-          </label>
-        </div><!-- col-3 -->
-        <div class="col-lg-3 mg-t-20 mg-lg-t-0">
-          <label class="rdiobox">
-            <input name="rdio" type="radio" checked>
-            <span>Radio Checked</span>
-          </label>
-        </div><!-- col-3 -->
-        <div class="col-lg-3 mg-t-20 mg-lg-t-0">
-          <label class="rdiobox">
-            <input name="rdio" type="radio" disabled>
-            <span>Radio Disabled</span>
-          </label>
-        </div><!-- col-3 -->
-      </div><!-- row -->
-
-      <hr class="mg-y-30">
-
-      <div class="az-content-label mg-b-5">File Browser</div>
-      <p class="mg-b-20">A custom styled file browser.</p>
-
-      <div class="row row-sm">
-        <div class="col-sm-7 col-md-6 col-lg-4">
-          <div class="custom-file">
-            <input type="file" class="custom-file-input" id="customFile">
-            <label class="custom-file-label" for="customFile">Choose file</label>
-          </div>
-        </div><!-- col -->
-      </div><!-- row -->
-
-      <hr class="mg-y-30">
-
-      <div class="az-content-label mg-b-5">Toggle Switches</div>
-      <p class="mg-b-20">A custom made toggles with jquery support.</p>
-
-      <table class="table az-table-reference">
-        <thead>
-        <tr>
-          <th class="wd-40p">Class Reference</th>
-          <th class="wd-60p">Values</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td><code class="pd-0 bg-transparent">class="az-toggle az-toggle-[value]"</code></td>
-          <td>secondary | success | dark</td>
-        </tr>
-        </tbody>
-      </table>
-
-      <hr class="mg-y-30">
-
-      <div class="az-content-label mg-b-5">Input Groups</div>
-      <p class="mg-b-20">Easily extend form controls by adding text, buttons, or button groups on either side of textual inputs.</p>
-
-      <div class="row row-sm">
-        <div class="col-lg-4">
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="basic-addon1">@</span>
-            </div>
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-          </div><!-- input-group -->
-        </div><!-- col -->
-        <div class="col-lg-4">
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
-            <div class="input-group-append">
-              <span class="input-group-text" id="basic-addon2">@example.com</span>
-            </div>
-          </div>
-        </div><!-- col -->
-        <div class="col-lg-4">
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text">$</span>
-            </div>
-            <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
-            <div class="input-group-append">
-              <span class="input-group-text">.00</span>
-            </div>
-          </div><!-- input-group -->
-        </div><!-- col -->
-      </div><!-- row -->
-
-      <div class="row row-sm">
-        <div class="col-lg-4">
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <div class="input-group-text">
-                <label class="ckbox wd-16 mg-b-0">
-                  <input type="checkbox" class="mg-0"><span></span>
-                </label>
-              </div>
-            </div>
-            <input type="text" class="form-control" placeholder="Text input with checkbox">
-          </div><!-- input-group -->
-        </div><!-- col-4 -->
-        <div class="col-lg-4 mg-t-20 mg-lg-t-0">
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <div class="input-group-text">
-                <label class="rdiobox wd-16 mg-b-0">
-                  <input type="radio"><span></span>
-                </label>
-              </div>
-            </div>
-            <input type="text" class="form-control" placeholder="Text input with radiobox">
-          </div><!-- input-group -->
-        </div><!-- col-4 -->
-        <div class="col-lg-4 mg-t-20 mg-lg-t-0">
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search for...">
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
-            </span>
-          </div><!-- input-group -->
-        </div><!-- col-4 -->
-      </div><!-- row -->
-
-      <hr class="mg-y-30">
-
-
-      <div class="az-content-label mg-b-5">jQuery UI Date Picker</div>
-      <p class="mg-b-20">The datepicker is tied to a standard form input field. Click on the input to open an interactive calendar in a small overlay. If a date is chosen, feedback is shown as the input's value.</p>
-
-      <div class="wd-200 mg-b-20">
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <div class="input-group-text" (click)="d.toggle()">
-              <i class="typcn typcn-calendar-outline tx-24 lh--9 op-6"></i>
-            </div>
-          </div>
-          <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #d="ngbDatepicker" (click)="d.toggle()">
-        </div>
-      </div><!-- wd-200 -->
-
-      <p>Set the numberOfMonths option to an integer of 2 or more to show multiple months in a single datepicker.</p>
-
-      <div class="wd-200 mg-b-20">
-        <div class="input-group">
-          <div class="input-group-prepend">
-
-          </div>
-        </div>
-      </div><!-- wd-200 -->
-
-      <p>Display the datepicker embedded in the page instead of in an overlay.</p>
-
-      <hr class="mg-y-30">
-
-      <div class="az-content-label mg-b-5">Timepicker</div>
-      <p class="mg-b-20">A simple component to select time.</p>
-
-      <hr class="mg-y-30">
-
-      <div class="az-content-label mg-b-5">Select<span class="tx-sserif">2</span> Box</div>
-      <p class="mg-b-20">Select2 gives you a customizable select box with support for searching, tagging, remote data sets, infinite scrolling, and many other highly used options.</p>
-
-      <div class="row row-sm mg-b-20">
-        <div class="col-lg-4">
-          <p class="mg-b-10">Single Select</p>
-
-        </div><!-- col-4 -->
-
-      </div><!-- row -->
-
-
-      <div class="ht-40"></div>
 
     </div><!-- az-content-body -->
   </div><!-- container -->
