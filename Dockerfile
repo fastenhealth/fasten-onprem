@@ -51,7 +51,7 @@ COPY --from=backend-build /go/bin/fasten /opt/fasten/fasten
 COPY LICENSE.md /opt/fasten/LICENSE.md
 COPY config.yaml /opt/fasten/config/config.yaml
 
-CMD ["/opt/fasten/fasten", "start", "--config", "/opt/fasten/config/config.yaml"]
+CMD ["/opt/fasten/fasten", "start", "--config", "/opt/fasten/config/config.yaml", "--debug"]
 
 
 
