@@ -1,7 +1,6 @@
 spec:
   name: fasten-onprem
   services:
-    - 
     - dockerfile_path: Dockerfile
       name: app
       git:
