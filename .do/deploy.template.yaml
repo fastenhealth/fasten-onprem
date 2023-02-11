@@ -4,7 +4,7 @@ spec:
     - dockerfile_path: Dockerfile
       name: app
       git:
-        branch: main
+        branch: feat/add-deploy-to-digital-ocean-button
         repo_clone_url: https://github.com/cfu288/fasten-onprem.git
       envs:
         - key: FASTEN_ISSUER_JWT_KEY

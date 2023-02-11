@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://cloud.digitalocean.com/apps/new?repo=https://github.com/cfu288/fasten-onprem/tree/main">
+  <a href="https://cloud.digitalocean.com/apps/new?repo=https://github.com/cfu288/fasten-onprem/tree/feat/add-deploy-to-digital-ocean-button">
     <img src="https://www.deploytodo.com/do-btn-blue.svg" alt="Deploy to DO">
   </a>
 </p>
