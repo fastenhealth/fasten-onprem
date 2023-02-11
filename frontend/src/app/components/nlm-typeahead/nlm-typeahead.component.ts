@@ -8,10 +8,12 @@ export enum NlmSearchType {
   AllergyReaction = 'AllergyReaction',
   Condition = 'Condition',
   MedicalContactType = 'MedicalContactType',
+  MedicalContactIndividual = 'MedicalContactIndividual',
   Medication = 'Medication',
   MedicationWhyStopped = 'MedicationWhyStopped',
   Procedure = 'Procedure',
   Vaccine = 'Vaccine',
+
 
 }
 
@@ -56,6 +58,9 @@ export class NlmTypeaheadComponent implements OnInit {
         break
       case NlmSearchType.MedicalContactType:
         searchOpFn = this.nlmClinicalTableSearchService.searchMedicalContactType
+        break
+      case NlmSearchType.MedicalContactIndividual:
+        searchOpFn = this.nlmClinicalTableSearchService.searchMedicalContactIndividual
         break
       case NlmSearchType.Medication:
         searchOpFn = this.nlmClinicalTableSearchService.searchMedication

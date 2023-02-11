@@ -10,6 +10,8 @@ export interface NlmSearchResults {
   link?: string
   icd9?: string
   icd10?: string
+  provider_type?: string
+  provider_address?: string
 }
 
 
@@ -88,7 +90,7 @@ export class NlmClinicalTableSearchService {
       {"id": "STP-9", "text": "Not covered by insurance"},
       {"id": "STP-10","text": "I don't know"}
     ]
-    let result = searchTerm.length < 2 ? [] : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
 
@@ -506,7 +508,7 @@ export class NlmClinicalTableSearchService {
         "link": "http://www.nlm.nih.gov/medlineplus/drugreactions.html"}
     ]
 
-    let result = searchTerm.length < 2 ? [] : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
 
@@ -529,7 +531,7 @@ export class NlmClinicalTableSearchService {
       {"id": "AL-REACT-25", "text": "Rapid pulse"},
       {"id": "AL-REACT-8", "text": "Headache"}
     ]
-    let result = searchTerm.length < 2 ? [] : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
   //see https://lhcforms.nlm.nih.gov/phr.json
@@ -626,7 +628,7 @@ export class NlmClinicalTableSearchService {
       {"id": "75", "text": "Vaccinia (smallpox)",
         "parentAnswerCode": "uncommon"}
     ]
-    let result = searchTerm.length < 2 ? [] : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
 
@@ -697,9 +699,35 @@ export class NlmClinicalTableSearchService {
       {"id": "URGE", "text": "Urgent care facility"},
       {"id": "UROL", "text": "Urologist"}
     ]
-    let result = searchTerm.length < 2 ? [] : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
+
+
+  searchMedicalContactIndividual(searchTerm: string): Observable<NlmSearchResults[]> {
+    let queryParams = {
+      'terms':searchTerm,
+      'df':'NPI,name.full,provider_type,addr_practice.full'
+    }
+
+    //https://clinicaltables.nlm.nih.gov/api/npi_idv/v3/search?df=&terms=xx
+    return this._httpClient.get<any>(`${this.nlm_clinical_table_search_endpoint}/npi_idv/v3/search`, {params: queryParams})
+      .pipe(
+        map((response) => {
+
+          return response[3].map((item):NlmSearchResults => {
+            return {
+              id: item[0],
+              text: item[1],
+              provider_type: item[2],
+              provider_address: item[3]
+            }
+          })
+        })
+      )
+  }
+
+
 
   searchWikipediaType(searchTerm: string): Observable<NlmSearchResults[]> {
     let queryParams = {
