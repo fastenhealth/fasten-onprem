@@ -19,7 +19,6 @@ import { AuthSigninComponent } from './pages/auth-signin/auth-signin.component';
 import { FormsModule } from '@angular/forms';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { IsAuthenticatedAuthGuard } from './auth-guards/is-authenticated-auth-guard';
-import {FastenApiService} from './services/fasten-api.service';
 import {Router} from '@angular/router';
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
@@ -30,6 +29,7 @@ import { PatientProfileComponent } from './pages/patient-profile/patient-profile
 import { MedicalHistoryComponent } from './pages/medical-history/medical-history.component';
 import { ReportLabsComponent } from './pages/report-labs/report-labs.component';
 import {PipesModule} from './pipes/pipes.module';
+import { ResourceCreatorComponent } from './pages/resource-creator/resource-creator.component';
 
 
 @NgModule({
@@ -46,6 +46,7 @@ import {PipesModule} from './pipes/pipes.module';
     PatientProfileComponent,
     MedicalHistoryComponent,
     ReportLabsComponent,
+    ResourceCreatorComponent,
   ],
   imports: [
     FormsModule,

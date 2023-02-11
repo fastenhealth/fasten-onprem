@@ -62,9 +62,8 @@ import { MedicationRequestComponent } from './fhir/resources/medication-request/
 import { ProcedureComponent } from './fhir/resources/procedure/procedure.component';
 import { DiagnosticReportComponent } from './fhir/resources/diagnostic-report/diagnostic-report.component';
 import { PractitionerComponent } from './fhir/resources/practitioner/practitioner.component';
-import {FhirPathPipe} from '../pipes/fhir-path.pipe';
-import {FilterPipe} from '../pipes/filter.pipe';
 import {PipesModule} from '../pipes/pipes.module';
+import { NlmTypeaheadComponent } from './nlm-typeahead/nlm-typeahead.component';
 
 @NgModule({
   imports: [
@@ -78,7 +77,7 @@ import {PipesModule} from '../pipes/pipes.module';
     TreeModule,
     ChartsModule,
     HighlightModule,
-    PipesModule
+    PipesModule,
   ],
   declarations: [
     ComponentsSidebarComponent,
@@ -135,6 +134,7 @@ import {PipesModule} from '../pipes/pipes.module';
     ProcedureComponent,
     DiagnosticReportComponent,
     PractitionerComponent,
+    NlmTypeaheadComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -174,17 +174,18 @@ import {PipesModule} from '../pipes/pipes.module';
         BinaryComponent,
         FhirResourceComponent,
         FhirResourceOutletDirective,
-      FallbackComponent,
-      ImmunizationComponent,
-      BadgeComponent,
-      TableComponent,
-      CodingComponent,
-      AllergyIntoleranceComponent,
-      MedicationComponent,
-      MedicationRequestComponent,
-      ProcedureComponent,
-      DiagnosticReportComponent,
-      PractitionerComponent
+        FallbackComponent,
+        ImmunizationComponent,
+        BadgeComponent,
+        TableComponent,
+        CodingComponent,
+        AllergyIntoleranceComponent,
+        MedicationComponent,
+        MedicationRequestComponent,
+        ProcedureComponent,
+        DiagnosticReportComponent,
+        PractitionerComponent,
+        NlmTypeaheadComponent
     ]
 })
 

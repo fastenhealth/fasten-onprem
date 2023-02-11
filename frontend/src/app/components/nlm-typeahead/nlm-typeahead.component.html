@@ -1,0 +1,17 @@
+<ng-template #rt let-r="result" let-t="term">
+  <span>{{r.text}}</span>
+</ng-template>
+
+<input
+  type="text"
+  class="form-control"
+  [(ngModel)]="model"
+  [ngbTypeahead]="search"
+  [inputFormatter]="formatter"
+  [resultTemplate]="rt"
+  placeholder="Search"
+/>
+<small *ngIf="searching" class="form-text text-muted">searching...</small>
+<div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
+
+<pre>Model: {{ model | json }}</pre>

@@ -12,6 +12,7 @@ import {SourceDetailComponent} from './pages/source-detail/source-detail.compone
 import {PatientProfileComponent} from './pages/patient-profile/patient-profile.component';
 import {MedicalHistoryComponent} from './pages/medical-history/medical-history.component';
 import {ReportLabsComponent} from './pages/report-labs/report-labs.component';
+import {ResourceCreatorComponent} from './pages/resource-creator/resource-creator.component';
 
 const routes: Routes = [
 
@@ -27,6 +28,7 @@ const routes: Routes = [
   { path: 'source/:source_id/resource/:resource_type/:resource_id', component: ResourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'sources', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'sources/callback/:source_type', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+  { path: 'resource/creator', component: ResourceCreatorComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
 
   { path: 'patient-profile', component: PatientProfileComponent, canActivate: [ IsAuthenticatedAuthGuard] },
