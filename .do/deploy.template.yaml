@@ -10,5 +10,5 @@ spec:
         - key: FASTEN_ENV
           scope: BUILD_TIME
           value: prod
-        - key: FASTEN_ISSUER_JWT_KEY
+        - key: FASTEN_JWT_ISSUER_KEY
           scope: RUN_TIME
