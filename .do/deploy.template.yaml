@@ -12,3 +12,4 @@ spec:
           value: prod
         - key: FASTEN_JWT_ISSUER_KEY
           scope: RUN_TIME
+          type: SECRET
