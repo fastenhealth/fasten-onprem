@@ -15,7 +15,7 @@
       <p>Form Status: {{ form.status }}</p>
 
       <form (ngSubmit)="onSubmit()" [formGroup]="form">
-        <div formGroupName="condition">
+        <ng-container formGroupName="condition">
           <div class="row row-sm">
             <div class="col-lg">
               <p class="mg-b-10">Medical condition</p>
@@ -45,7 +45,8 @@
               <textarea formControlName="description" rows="3" class="form-control" placeholder="Textarea"></textarea>
             </div><!-- col -->
           </div><!-- row -->
-        </div>
+        </ng-container>
+
         <hr class="mg-y-30">
 
         <div class="row">
@@ -58,48 +59,53 @@
                 </div>
               </div>
               <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['medication']" class="card-body">
-                <div class="row row-sm">
-                  <div class="col-lg">
-                    <p class="mg-b-10">Medication name</p>
-                    <app-nlm-typeahead searchType="Medication"></app-nlm-typeahead>
-                  </div><!-- col -->
-                  <div class="col-lg mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Status</p>
-                    <select class="form-control">
-                      <option value="" hidden selected>Select Status</option>
-                      <option value="active">Active</option>
-                      <option value="stopped">Stopped</option>
-                    </select>                </div><!-- col -->
-                  <div class="col-lg mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Dosage</p>
-                    <input class="form-control" placeholder="Input box" type="text">
-                  </div><!-- col -->
-                  <div class="col-lg mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Started</p>
-                    <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #de="ngbDatepicker" (click)="de.toggle()">
-                  </div><!-- col -->
-                  <div class="col-lg mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Stopped</p>
-                    <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #de="ngbDatepicker" (click)="de.toggle()">
-                  </div><!-- col -->
-                  <div class="col-lg mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Why Stopped</p>
-                    <app-nlm-typeahead searchType="MedicationWhyStopped"></app-nlm-typeahead>
-                  </div><!-- col -->
-                  <div class="col-lg mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Resupply</p>
-                    <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #de="ngbDatepicker" (click)="de.toggle()">
-                  </div><!-- col -->
-                </div><!-- row -->
-                <div class="row row-sm mg-t-20">
-                  <div class="col-lg">
-                    <p class="mg-b-10">Instructions</p>
-                    <textarea rows="3" class="form-control" placeholder="Textarea"></textarea>
-                  </div><!-- col -->
-                </div><!-- row -->
+
+                <ng-container formArrayName="medications">
+                  <div class="card" [formGroup]="medicationGroup" *ngFor="let medicationGroup of medications.controls; let i = index">
+                    <div class="row row-sm">
+                      <div class="col-lg">
+                        <p class="mg-b-10">Medication name</p>
+                        <app-nlm-typeahead formControlName="data" searchType="Medication"></app-nlm-typeahead>
+                      </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Status</p>
+                        <select formControlName="status" class="form-control">
+                          <option value="" hidden selected>Select Status</option>
+                          <option value="active">Active</option>
+                          <option value="stopped">Stopped</option>
+                        </select>                </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Dosage</p>
+                        <input formControlName="dosage" class="form-control" placeholder="Input box" type="text">
+                      </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Started</p>
+                        <input formControlName="started" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #ds="ngbDatepicker" (click)="ds.toggle()">
+                      </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Stopped</p>
+                        <input formControlName="stopped" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #dstop="ngbDatepicker" (click)="dstop.toggle()">
+                      </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Why Stopped</p>
+                        <app-nlm-typeahead formControlName="whystopped" searchType="MedicationWhyStopped"></app-nlm-typeahead>
+                      </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Resupply</p>
+                        <input formControlName="resupply" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #dr="ngbDatepicker" (click)="dr.toggle()">
+                      </div><!-- col -->
+                    </div><!-- row -->
+                    <div class="row row-sm mg-t-20">
+                      <div class="col-lg">
+                        <p class="mg-b-10">Instructions</p>
+                        <textarea formControlName="instructions" rows="3" class="form-control" placeholder="Textarea"></textarea>
+                      </div><!-- col -->
+                    </div><!-- row -->
+                  </div>
+                </ng-container>
                 <div class="row pt-2">
                   <div class="col-sm-6 col-md-3">
-                    <button class="btn btn-az-primary btn-block">Add another medication</button>
+                    <button (click)="addMedication()" class="btn btn-az-primary btn-block">Add medication</button>
                   </div>
                 </div>
               </div>
@@ -116,35 +122,41 @@
         <div class="row">
           <div class="col-lg">
             <div class="card card-fhir-resource" >
-              <div class="card-header" (click)="collapsePanel['surgery_implant'] = !collapsePanel['surgery_implant']">
+              <div class="card-header" (click)="collapsePanel['procedure'] = !collapsePanel['procedure']">
                 <div>
                   <h6 class="card-title">Major Surgeries and Implants</h6>
                   <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
                 </div>
               </div>
-              <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['surgery_implant']" class="card-body">
-                <div class="row row-sm">
-                  <div class="col-lg-2">
-                    <p class="mg-b-10">Surgery or Implant</p>
-                    <app-nlm-typeahead searchType="Procedure"></app-nlm-typeahead>
-                  </div><!-- col -->
-                  <div class="col-lg-2 mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">When done</p>
-                    <input class="form-control" placeholder="Input box" type="text">
-                  </div><!-- col -->
-                  <div class="col-lg-8 mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Comments</p>
-                    <input class="form-control" placeholder="Input box" type="text">
-                  </div><!-- col -->
-                </div><!-- row -->
+              <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['procedure']" class="card-body">
+                <ng-container formArrayName="procedures">
+                  <div class="card" [formGroup]="procedureGroup" *ngFor="let procedureGroup of procedures.controls; let i = index">
+                    <div class="row row-sm">
+                      <div class="col-lg-2">
+                        <p class="mg-b-10">Surgery or Implant</p>
+                        <app-nlm-typeahead formControlName="data" searchType="Procedure"></app-nlm-typeahead>
+                      </div><!-- col -->
+                      <div class="col-lg-2 mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">When done</p>
+                        <input formControlName="whendone" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #dwd="ngbDatepicker" (click)="dwd.toggle()">
+                      </div><!-- col -->
+                      <div class="col-lg-8 mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Comments</p>
+                        <input formControlName="comment" class="form-control" placeholder="Input box" type="text">
+                      </div><!-- col -->
+                    </div><!-- row -->
+                  </div>
+                </ng-container>
+
+
                 <div class="row pt-2">
                   <div class="col-sm-6 col-md-3">
-                    <button class="btn btn-az-primary btn-block">Add another surgery or implant</button>
+                    <button (click)="addProcedure()" class="btn btn-az-primary btn-block">Add surgery or implant</button>
                   </div>
                 </div>
               </div>
               <div class="card-footer">
-                <a class="float-right" (click)="collapsePanel['surgery_implant'] = !collapsePanel['surgery_implant']">{{collapsePanel['surgery_implant'] ? 'expand' : 'collapse'}}</a>
+                <a class="float-right" (click)="collapsePanel['procedure'] = !collapsePanel['procedure']">{{collapsePanel['procedure'] ? 'expand' : 'collapse'}}</a>
               </div>
             </div>
           </div>

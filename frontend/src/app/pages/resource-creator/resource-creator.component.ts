@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormArray, FormControl, FormGroup} from '@angular/forms';
 
 export interface MedicationModel {
   data: {},
@@ -54,7 +54,48 @@ export class ResourceCreatorComponent implements OnInit {
         stopped: new FormControl({}),
         description: new FormControl(''),
       }),
+
+      medications: new FormArray([]),
+      procedures: new FormArray([])
     });
+  }
+
+  get medications(): FormArray {
+    return this.form.controls["medications"] as FormArray;
+  }
+  addMedication(){
+    const medicationGroup = new FormGroup({
+      data: new FormControl({}),
+      status: new FormControl(''),
+      dosage: new FormControl({}),
+      started: new FormControl({}),
+      stopped: new FormControl({}),
+      whystopped: new FormControl({}),
+      resupply: new FormControl({}),
+      instructions: new FormControl(''),
+    });
+
+    this.medications.push(medicationGroup);
+  }
+  deleteMedication(medicationIndex: number) {
+    this.medications.removeAt(medicationIndex);
+  }
+
+
+  get procedures(): FormArray {
+    return this.form.controls["procedures"] as FormArray;
+  }
+  addProcedure(){
+    const procedureGroup = new FormGroup({
+      data: new FormControl({}),
+      whendone: new FormControl({}),
+      comment: new FormControl('')
+    });
+
+    this.procedures.push(procedureGroup);
+  }
+  deleteProcedure(surgeryIndex: number) {
+    this.procedures.removeAt(surgeryIndex);
   }
 
   onSubmit() {
