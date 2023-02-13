@@ -5,14 +5,14 @@
 <input
   type="text"
   class="form-control"
-  [(ngModel)]="model"
+  [(ngModel)]="searchResult"
   [ngbTypeahead]="search"
   [inputFormatter]="formatter"
   [resultTemplate]="rt"
-  (ngModelChange)="modelChangeEvent($event)"
+  (ngModelChange)="typeAheadChangeEvent($event)"
   placeholder="Search"
 />
 <small *ngIf="searching" class="form-text text-muted">searching...</small>
 <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
 
-<pre>Model: {{ model | json }}</pre>
+<pre>Model: {{ searchResult | json }}</pre>

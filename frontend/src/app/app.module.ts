@@ -16,7 +16,7 @@ import { far } from '@fortawesome/free-regular-svg-icons';
 import { ResourceDetailComponent } from './pages/resource-detail/resource-detail.component';
 import { AuthSignupComponent } from './pages/auth-signup/auth-signup.component';
 import { AuthSigninComponent } from './pages/auth-signin/auth-signin.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { IsAuthenticatedAuthGuard } from './auth-guards/is-authenticated-auth-guard';
 import {Router} from '@angular/router';
@@ -50,6 +50,7 @@ import { ResourceCreatorComponent } from './pages/resource-creator/resource-crea
   ],
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     BrowserModule,
     FontAwesomeModule,
     SharedModule,
@@ -60,7 +61,7 @@ import { ResourceCreatorComponent } from './pages/resource-creator/resource-crea
     NgxDropzoneModule,
     HighlightModule,
     MomentModule,
-    PipesModule
+    PipesModule,
   ],
   providers: [
     {

@@ -11,231 +11,236 @@
       <div class="az-content-label mg-b-5">Condition</div>
       <p class="mg-b-20">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna </p>
 
-      <pre>{{model | json}}</pre>
+      <pre>{{ form.getRawValue() | json}}</pre>
+      <p>Form Status: {{ form.status }}</p>
 
-      <div class="row row-sm">
-        <div class="col-lg">
-          <p class="mg-b-10">Medical condition</p>
-          <app-nlm-typeahead [(model)]="model.condition.data"></app-nlm-typeahead>
-        </div><!-- col -->
-        <div class="col-lg mg-t-10 mg-lg-t-0">
-          <p class="mg-b-10">Status</p>
-          <select [(ngModel)]="model.condition.status" class="form-control">
-            <option value="" hidden selected>Select Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div><!-- col -->
-        <div class="col-lg mg-t-10 mg-lg-t-0">
-          <p class="mg-b-10">Started</p>
-          <input [(ngModel)]="model.condition.started" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cds="ngbDatepicker" (click)="cds.toggle()">
-        </div><!-- col -->
-        <div class="col-lg mg-t-10 mg-lg-t-0">
-          <p class="mg-b-10">Stopped</p>
-          <input [(ngModel)]="model.condition.stopped" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cde="ngbDatepicker" (click)="cde.toggle()">
-        </div><!-- col -->
-      </div><!-- row -->
+      <form (ngSubmit)="onSubmit()" [formGroup]="form">
+        <div formGroupName="condition">
+          <div class="row row-sm">
+            <div class="col-lg">
+              <p class="mg-b-10">Medical condition</p>
+              <app-nlm-typeahead formControlName="data" ></app-nlm-typeahead>
+            </div><!-- col -->
+            <div class="col-lg mg-t-10 mg-lg-t-0">
+              <p class="mg-b-10">Status</p>
+              <select formControlName="status" class="form-control">
+                <option value="" hidden selected>Select Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div><!-- col -->
+            <div class="col-lg mg-t-10 mg-lg-t-0">
+              <p class="mg-b-10">Started</p>
+              <input formControlName="started" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cds="ngbDatepicker" (click)="cds.toggle()">
+            </div><!-- col -->
+            <div class="col-lg mg-t-10 mg-lg-t-0">
+              <p class="mg-b-10">Stopped</p>
+              <input formControlName="stopped" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cde="ngbDatepicker" (click)="cde.toggle()">
+            </div><!-- col -->
+          </div><!-- row -->
 
-      <div class="row row-sm mg-t-20">
-        <div class="col-lg">
-          <p class="mg-b-10">Description/Comment</p>
-          <textarea [(ngModel)]="model.condition.description" rows="3" class="form-control" placeholder="Textarea"></textarea>
-        </div><!-- col -->
-      </div><!-- row -->
+          <div class="row row-sm mg-t-20">
+            <div class="col-lg">
+              <p class="mg-b-10">Description/Comment</p>
+              <textarea formControlName="description" rows="3" class="form-control" placeholder="Textarea"></textarea>
+            </div><!-- col -->
+          </div><!-- row -->
+        </div>
+        <hr class="mg-y-30">
 
-      <hr class="mg-y-30">
-
-      <div class="row">
-        <div class="col-lg">
-          <div class="card card-fhir-resource" >
-            <div class="card-header" (click)="collapsePanel['medication'] = !collapsePanel['medication']">
-              <div>
-                <h6 class="card-title">Medications</h6>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
-              </div>
-            </div>
-            <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['medication']" class="card-body">
-              <div class="row row-sm">
-                <div class="col-lg">
-                  <p class="mg-b-10">Medication name</p>
-                  <app-nlm-typeahead searchType="Medication"></app-nlm-typeahead>
-                </div><!-- col -->
-                <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Status</p>
-                  <select class="form-control">
-                    <option value="" hidden selected>Select Status</option>
-                    <option value="active">Active</option>
-                    <option value="stopped">Stopped</option>
-                  </select>                </div><!-- col -->
-                <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Dosage</p>
-                  <input class="form-control" placeholder="Input box" type="text">
-                </div><!-- col -->
-                <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Started</p>
-                  <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #de="ngbDatepicker" (click)="de.toggle()">
-                </div><!-- col -->
-                <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Stopped</p>
-                  <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #de="ngbDatepicker" (click)="de.toggle()">
-                </div><!-- col -->
-                <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Why Stopped</p>
-                  <app-nlm-typeahead searchType="MedicationWhyStopped"></app-nlm-typeahead>
-                </div><!-- col -->
-                <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Resupply</p>
-                  <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #de="ngbDatepicker" (click)="de.toggle()">
-                </div><!-- col -->
-              </div><!-- row -->
-              <div class="row row-sm mg-t-20">
-                <div class="col-lg">
-                  <p class="mg-b-10">Instructions</p>
-                  <textarea rows="3" class="form-control" placeholder="Textarea"></textarea>
-                </div><!-- col -->
-              </div><!-- row -->
-              <div class="row pt-2">
-                <div class="col-sm-6 col-md-3">
-                  <button class="btn btn-az-primary btn-block">Add another medication</button>
+        <div class="row">
+          <div class="col-lg">
+            <div class="card card-fhir-resource" >
+              <div class="card-header" (click)="collapsePanel['medication'] = !collapsePanel['medication']">
+                <div>
+                  <h6 class="card-title">Medications</h6>
+                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
                 </div>
               </div>
-            </div>
-            <div class="card-footer">
-              <a class="float-right" (click)="collapsePanel['medication'] = !collapsePanel['medication']">{{collapsePanel['medication'] ? 'expand' : 'collapse'}}</a>
+              <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['medication']" class="card-body">
+                <div class="row row-sm">
+                  <div class="col-lg">
+                    <p class="mg-b-10">Medication name</p>
+                    <app-nlm-typeahead searchType="Medication"></app-nlm-typeahead>
+                  </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Status</p>
+                    <select class="form-control">
+                      <option value="" hidden selected>Select Status</option>
+                      <option value="active">Active</option>
+                      <option value="stopped">Stopped</option>
+                    </select>                </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Dosage</p>
+                    <input class="form-control" placeholder="Input box" type="text">
+                  </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Started</p>
+                    <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #de="ngbDatepicker" (click)="de.toggle()">
+                  </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Stopped</p>
+                    <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #de="ngbDatepicker" (click)="de.toggle()">
+                  </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Why Stopped</p>
+                    <app-nlm-typeahead searchType="MedicationWhyStopped"></app-nlm-typeahead>
+                  </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Resupply</p>
+                    <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #de="ngbDatepicker" (click)="de.toggle()">
+                  </div><!-- col -->
+                </div><!-- row -->
+                <div class="row row-sm mg-t-20">
+                  <div class="col-lg">
+                    <p class="mg-b-10">Instructions</p>
+                    <textarea rows="3" class="form-control" placeholder="Textarea"></textarea>
+                  </div><!-- col -->
+                </div><!-- row -->
+                <div class="row pt-2">
+                  <div class="col-sm-6 col-md-3">
+                    <button class="btn btn-az-primary btn-block">Add another medication</button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <a class="float-right" (click)="collapsePanel['medication'] = !collapsePanel['medication']">{{collapsePanel['medication'] ? 'expand' : 'collapse'}}</a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <hr class="mg-y-30">
+        <hr class="mg-y-30">
 
 
-      <div class="row">
-        <div class="col-lg">
-          <div class="card card-fhir-resource" >
-            <div class="card-header" (click)="collapsePanel['surgery_implant'] = !collapsePanel['surgery_implant']">
-              <div>
-                <h6 class="card-title">Major Surgeries and Implants</h6>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
-              </div>
-            </div>
-            <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['surgery_implant']" class="card-body">
-              <div class="row row-sm">
-                <div class="col-lg-2">
-                  <p class="mg-b-10">Surgery or Implant</p>
-                  <app-nlm-typeahead searchType="Procedure"></app-nlm-typeahead>
-                </div><!-- col -->
-                <div class="col-lg-2 mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">When done</p>
-                  <input class="form-control" placeholder="Input box" type="text">
-                </div><!-- col -->
-                <div class="col-lg-8 mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Comments</p>
-                  <input class="form-control" placeholder="Input box" type="text">
-                </div><!-- col -->
-              </div><!-- row -->
-              <div class="row pt-2">
-                <div class="col-sm-6 col-md-3">
-                  <button class="btn btn-az-primary btn-block">Add another surgery or implant</button>
+        <div class="row">
+          <div class="col-lg">
+            <div class="card card-fhir-resource" >
+              <div class="card-header" (click)="collapsePanel['surgery_implant'] = !collapsePanel['surgery_implant']">
+                <div>
+                  <h6 class="card-title">Major Surgeries and Implants</h6>
+                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
                 </div>
               </div>
-            </div>
-            <div class="card-footer">
-              <a class="float-right" (click)="collapsePanel['surgery_implant'] = !collapsePanel['surgery_implant']">{{collapsePanel['surgery_implant'] ? 'expand' : 'collapse'}}</a>
+              <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['surgery_implant']" class="card-body">
+                <div class="row row-sm">
+                  <div class="col-lg-2">
+                    <p class="mg-b-10">Surgery or Implant</p>
+                    <app-nlm-typeahead searchType="Procedure"></app-nlm-typeahead>
+                  </div><!-- col -->
+                  <div class="col-lg-2 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">When done</p>
+                    <input class="form-control" placeholder="Input box" type="text">
+                  </div><!-- col -->
+                  <div class="col-lg-8 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Comments</p>
+                    <input class="form-control" placeholder="Input box" type="text">
+                  </div><!-- col -->
+                </div><!-- row -->
+                <div class="row pt-2">
+                  <div class="col-sm-6 col-md-3">
+                    <button class="btn btn-az-primary btn-block">Add another surgery or implant</button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <a class="float-right" (click)="collapsePanel['surgery_implant'] = !collapsePanel['surgery_implant']">{{collapsePanel['surgery_implant'] ? 'expand' : 'collapse'}}</a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <hr class="mg-y-30">
+        <hr class="mg-y-30">
 
 
-      <div class="row">
-        <div class="col-lg">
-          <div class="card card-fhir-resource" >
-            <div class="card-header" (click)="collapsePanel['medical_contact'] = !collapsePanel['medical_contact']">
-              <div>
-                <h6 class="card-title">Medical Contacts</h6>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
-              </div>
-            </div>
-            <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['medical_contact']" class="card-body">
-              <div class="row row-sm">
-                <div class="col-lg">
-                  <p class="mg-b-10">Name</p>
-                  <app-nlm-typeahead searchType="MedicalContactIndividual"></app-nlm-typeahead>
-                </div><!-- col -->
-                <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Type</p>
-                  <app-nlm-typeahead searchType="MedicalContactType"></app-nlm-typeahead>
-                </div><!-- col -->
-                <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Telephone</p>
-                  <input class="form-control" placeholder="Input box" type="text">
-                </div><!-- col -->
-                <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Fax</p>
-                  <input class="form-control" placeholder="Input box" type="text">
-                </div><!-- col -->
-                <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Email</p>
-                  <input class="form-control" placeholder="Input box" type="text">
-                </div><!-- col -->
-                <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Comment</p>
-                  <input class="form-control" placeholder="Input box" type="text">
-                </div><!-- col -->
-              </div><!-- row -->
-              <div class="row pt-2">
-                <div class="col-sm-6 col-md-3">
-                  <button class="btn btn-az-primary btn-block">Add another contact</button>
+        <div class="row">
+          <div class="col-lg">
+            <div class="card card-fhir-resource" >
+              <div class="card-header" (click)="collapsePanel['medical_contact'] = !collapsePanel['medical_contact']">
+                <div>
+                  <h6 class="card-title">Medical Contacts</h6>
+                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
                 </div>
               </div>
-            </div>
-            <div class="card-footer">
-              <a class="float-right" (click)="collapsePanel['medical_contact'] = !collapsePanel['medical_contact']">{{collapsePanel['medical_contact'] ? 'expand' : 'collapse'}}</a>
+              <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['medical_contact']" class="card-body">
+                <div class="row row-sm">
+                  <div class="col-lg">
+                    <p class="mg-b-10">Name</p>
+                    <app-nlm-typeahead searchType="MedicalContactIndividual"></app-nlm-typeahead>
+                  </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Type</p>
+                    <app-nlm-typeahead searchType="MedicalContactType"></app-nlm-typeahead>
+                  </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Telephone</p>
+                    <input class="form-control" placeholder="Input box" type="text">
+                  </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Fax</p>
+                    <input class="form-control" placeholder="Input box" type="text">
+                  </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Email</p>
+                    <input class="form-control" placeholder="Input box" type="text">
+                  </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Comment</p>
+                    <input class="form-control" placeholder="Input box" type="text">
+                  </div><!-- col -->
+                </div><!-- row -->
+                <div class="row pt-2">
+                  <div class="col-sm-6 col-md-3">
+                    <button class="btn btn-az-primary btn-block">Add another contact</button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <a class="float-right" (click)="collapsePanel['medical_contact'] = !collapsePanel['medical_contact']">{{collapsePanel['medical_contact'] ? 'expand' : 'collapse'}}</a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <hr class="mg-y-30">
+        <hr class="mg-y-30">
 
 
-      <div class="row">
-        <div class="col-lg">
-          <div class="card card-fhir-resource" >
-            <div class="card-header" (click)="collapsePanel['attachments'] = !collapsePanel['attachments']">
-              <div>
-                <h6 class="card-title">Notes & Attachments</h6>
-                <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
-              </div>
-            </div>
-            <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['attachments']" class="card-body">
-              <div class="row row-sm">
-                <div class="col-lg">
-                  <p class="mg-b-10">Name</p>
-                  <input class="form-control" placeholder="Input box" type="text">
-                </div><!-- col -->
-                <div class="col-lg mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Type</p>
-                  <input class="form-control" placeholder="Input box" type="text">
-                </div><!-- col -->
-
-              </div><!-- row -->
-              <div class="row pt-2">
-                <div class="col-sm-6 col-md-3">
-                  <button class="btn btn-az-primary btn-block">Add another note or attachment</button>
+        <div class="row">
+          <div class="col-lg">
+            <div class="card card-fhir-resource" >
+              <div class="card-header" (click)="collapsePanel['attachments'] = !collapsePanel['attachments']">
+                <div>
+                  <h6 class="card-title">Notes & Attachments</h6>
+                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
                 </div>
               </div>
-            </div>
-            <div class="card-footer">
-              <a class="float-right" (click)="collapsePanel['attachments'] = !collapsePanel['attachments']">{{collapsePanel['attachments'] ? 'expand' : 'collapse'}}</a>
+              <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['attachments']" class="card-body">
+                <div class="row row-sm">
+                  <div class="col-lg">
+                    <p class="mg-b-10">Name</p>
+                    <input class="form-control" placeholder="Input box" type="text">
+                  </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Type</p>
+                    <input class="form-control" placeholder="Input box" type="text">
+                  </div><!-- col -->
+
+                </div><!-- row -->
+                <div class="row pt-2">
+                  <div class="col-sm-6 col-md-3">
+                    <button class="btn btn-az-primary btn-block">Add another note or attachment</button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer">
+                <a class="float-right" (click)="collapsePanel['attachments'] = !collapsePanel['attachments']">{{collapsePanel['attachments'] ? 'expand' : 'collapse'}}</a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
+        <button type="submit">Submit</button>
+      </form>
 
     </div><!-- az-content-body -->
   </div><!-- container -->

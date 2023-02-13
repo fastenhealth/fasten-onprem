@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Observable, ObservableInput, of} from 'rxjs';
 import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 import {NlmClinicalTableSearchService} from '../../services/nlm-clinical-table-search.service';
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 export enum NlmSearchType {
   Allergy = 'Allergy',
@@ -20,25 +21,27 @@ export enum NlmSearchType {
 @Component({
   selector: 'app-nlm-typeahead',
   templateUrl: './nlm-typeahead.component.html',
-  styleUrls: ['./nlm-typeahead.component.scss']
+  styleUrls: ['./nlm-typeahead.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      multi:true,
+      useExisting: NlmTypeaheadComponent
+    }
+  ]
 })
-export class NlmTypeaheadComponent implements OnInit {
+export class NlmTypeaheadComponent implements ControlValueAccessor {
   @Input() searchType: NlmSearchType = NlmSearchType.Condition;
-  @Input() model: any = {};
-  @Output() modelChange = new EventEmitter<any>();
-
   searching = false;
   searchFailed = false;
 
+  searchResult: any = {};
+  onChange = (searchResult) => {};
+  onTouched = () => {};
+  touched = false;
+  disabled = false;
+
   constructor(private nlmClinicalTableSearchService: NlmClinicalTableSearchService) { }
-
-  ngOnInit(): void {
-  }
-
-  modelChangeEvent(event){
-    console.log("bubbling modelChange event", event)
-    this.modelChange.emit(event);
-  }
 
   formatter = (x: { text: string }) => x.text;
   search = (text$: Observable<string>) => {
@@ -99,5 +102,39 @@ export class NlmTypeaheadComponent implements OnInit {
       }),
       tap(() => {this.searching = false}),
     );
+  }
+
+  typeAheadChangeEvent(event){
+    console.log("bubbling modelChange event", event)
+    this.onChange(event);
+  }
+
+  /*
+  Methods related to ControlValueAccessor
+  See: https://blog.angular-university.io/angular-custom-form-controls/
+  This is what allows ngModel and formControlName to be used with this component
+   */
+
+  writeValue(searchResult: any) {
+    this.searchResult = searchResult;
+  }
+
+  registerOnChange(onChange: any) {
+    this.onChange = onChange;
+  }
+
+  registerOnTouched(onTouched: any) {
+    this.onTouched = onTouched;
+  }
+
+  markAsTouched() {
+    if (!this.touched) {
+      this.onTouched();
+      this.touched = true;
+    }
+  }
+
+  setDisabledState(disabled: boolean) {
+    this.disabled = disabled;
   }
 }
