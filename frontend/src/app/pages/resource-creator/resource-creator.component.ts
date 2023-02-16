@@ -11,6 +11,11 @@ export interface MedicationModel {
   resupply: string
 }
 
+export enum ContactType {
+  ContactTypeSearch = 'search',
+  ContactTypeManual = 'manual',
+}
+
 @Component({
   selector: 'app-resource-creator',
   templateUrl: './resource-creator.component.html',
@@ -56,7 +61,9 @@ export class ResourceCreatorComponent implements OnInit {
       }),
 
       medications: new FormArray([]),
-      procedures: new FormArray([])
+      procedures: new FormArray([]),
+      practitioners: new FormArray([]),
+      locations: new FormArray([]),
     });
   }
 
@@ -77,8 +84,8 @@ export class ResourceCreatorComponent implements OnInit {
 
     this.medications.push(medicationGroup);
   }
-  deleteMedication(medicationIndex: number) {
-    this.medications.removeAt(medicationIndex);
+  deleteMedication(index: number) {
+    this.medications.removeAt(index);
   }
 
 
@@ -94,8 +101,53 @@ export class ResourceCreatorComponent implements OnInit {
 
     this.procedures.push(procedureGroup);
   }
-  deleteProcedure(surgeryIndex: number) {
-    this.procedures.removeAt(surgeryIndex);
+  deleteProcedure(index: number) {
+    this.procedures.removeAt(index);
+  }
+
+
+  get practitioners(): FormArray {
+    return this.form.controls["practitioners"] as FormArray;
+  }
+
+  addPractitioner(contactType: ContactType | string){
+    const practitionerGroup = new FormGroup({
+      contactType: new FormControl(contactType),
+      name: new FormControl(''),
+      data: new FormControl({}),
+      profession: new FormControl({}),
+      phone: new FormControl(''),
+      fax: new FormControl(''),
+      email: new FormControl(''),
+      comment: new FormControl(''),
+    });
+
+    this.practitioners.push(practitionerGroup);
+  }
+  deletePractitioner(index: number) {
+    this.practitioners.removeAt(index);
+  }
+
+
+  get locations(): FormArray {
+    return this.form.controls["locations"] as FormArray;
+  }
+
+  addLocation(contactType: ContactType | string){
+    const locationGroup = new FormGroup({
+      name: new FormControl(''),
+      contactType: new FormControl(contactType),
+      data: new FormControl({}),
+      phone: new FormControl(''),
+      fax: new FormControl(''),
+      email: new FormControl(''),
+      comment: new FormControl(''),
+    });
+
+    this.locations.push(locationGroup);
+  }
+  deleteLocation(index: number) {
+    this.locations.removeAt(index);
   }
 
   onSubmit() {

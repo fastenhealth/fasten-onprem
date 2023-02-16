@@ -12,6 +12,8 @@ export interface NlmSearchResults {
   icd10?: string
   provider_type?: string
   provider_address?: string
+  provider_phone?: string
+  provider_fax?: string
 }
 
 
@@ -654,7 +656,7 @@ export class NlmClinicalTableSearchService {
       )
   }
   //see https://lhcforms.nlm.nih.gov/phr.json
-  searchMedicalContactType(searchTerm: string): Observable<NlmSearchResults[]> {
+  searchMedicalContactIndividualProfession(searchTerm: string): Observable<NlmSearchResults[]> {
     let searchOptions: NlmSearchResults[] = [
       {"id": "ALLE", "text": "Allergist"},
       {"id": "CARD", "text": "Cardiologist"},
@@ -707,7 +709,7 @@ export class NlmClinicalTableSearchService {
   searchMedicalContactIndividual(searchTerm: string): Observable<NlmSearchResults[]> {
     let queryParams = {
       'terms':searchTerm,
-      'df':'NPI,name.full,provider_type,addr_practice.full'
+      'df':'NPI,name.full,provider_type,addr_practice.full,addr_practice.fax,addr_practice.phone'
     }
 
     //https://clinicaltables.nlm.nih.gov/api/npi_idv/v3/search?df=&terms=xx
@@ -720,7 +722,34 @@ export class NlmClinicalTableSearchService {
               id: item[0],
               text: item[1],
               provider_type: item[2],
-              provider_address: item[3]
+              provider_address: item[3],
+              provider_fax: item[4],
+              provider_phone: item[5],
+            }
+          })
+        })
+      )
+  }
+
+  searchMedicalContactOrganization(searchTerm: string): Observable<NlmSearchResults[]> {
+    let queryParams = {
+      'terms':searchTerm,
+      'df':'NPI,name.full,provider_type,addr_practice.full,addr_practice.fax,addr_practice.phone'
+    }
+
+    //https://clinicaltables.nlm.nih.gov/api/npi_org/v3/search?df=&terms=xx
+    return this._httpClient.get<any>(`${this.nlm_clinical_table_search_endpoint}/npi_org/v3/search`, {params: queryParams})
+      .pipe(
+        map((response) => {
+
+          return response[3].map((item):NlmSearchResults => {
+            return {
+              id: item[0],
+              text: item[1],
+              provider_type: item[2],
+              provider_address: item[3],
+              provider_fax: item[4],
+              provider_phone: item[5],
             }
           })
         })

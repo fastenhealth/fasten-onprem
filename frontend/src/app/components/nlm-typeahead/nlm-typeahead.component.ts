@@ -8,8 +8,9 @@ export enum NlmSearchType {
   Allergy = 'Allergy',
   AllergyReaction = 'AllergyReaction',
   Condition = 'Condition',
-  MedicalContactType = 'MedicalContactType',
+  MedicalContactIndividualProfession = 'MedicalContactIndividualProfession',
   MedicalContactIndividual = 'MedicalContactIndividual',
+  MedicalContactOrganization = 'MedicalContactOrganization',
   Medication = 'Medication',
   MedicationWhyStopped = 'MedicationWhyStopped',
   Procedure = 'Procedure',
@@ -56,11 +57,14 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
       case NlmSearchType.Condition:
         searchOpFn = this.nlmClinicalTableSearchService.searchCondition
         break
-      case NlmSearchType.MedicalContactType:
-        searchOpFn = this.nlmClinicalTableSearchService.searchMedicalContactType
+      case NlmSearchType.MedicalContactIndividualProfession:
+        searchOpFn = this.nlmClinicalTableSearchService.searchMedicalContactIndividualProfession
         break
       case NlmSearchType.MedicalContactIndividual:
         searchOpFn = this.nlmClinicalTableSearchService.searchMedicalContactIndividual
+        break
+      case NlmSearchType.MedicalContactOrganization:
+        searchOpFn = this.nlmClinicalTableSearchService.searchMedicalContactOrganization
         break
       case NlmSearchType.Medication:
         searchOpFn = this.nlmClinicalTableSearchService.searchMedication
