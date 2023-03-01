@@ -61,7 +61,7 @@
               <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['medication']" class="card-body">
 
                 <ng-container formArrayName="medications">
-                  <div class="card" [formGroup]="medicationGroup" *ngFor="let medicationGroup of medications.controls; let i = index">
+                  <div class="card mg-t-10 pd-20" [formGroup]="medicationGroup" *ngFor="let medicationGroup of medications.controls; let i = index">
                     <div class="row row-sm">
                       <div class="col-lg">
                         <p class="mg-b-10">Medication name</p>
@@ -130,7 +130,7 @@
               </div>
               <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['procedure']" class="card-body">
                 <ng-container formArrayName="procedures">
-                  <div class="card" [formGroup]="procedureGroup" *ngFor="let procedureGroup of procedures.controls; let i = index">
+                  <div class="card mg-t-10 pd-20" [formGroup]="procedureGroup" *ngFor="let procedureGroup of procedures.controls; let i = index">
                     <div class="row row-sm">
                       <div class="col-lg-2">
                         <p class="mg-b-10">Surgery or Implant</p>
@@ -176,7 +176,7 @@
               <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['practitioner']" class="card-body">
 
                 <ng-container formArrayName="practitioners">
-                  <div class="card" [formGroup]="practitionerGroup" *ngFor="let practitionerGroup of practitioners.controls; let i = index">
+                  <div class="card mg-t-10 pd-20" [formGroup]="practitionerGroup" *ngFor="let practitionerGroup of practitioners.controls; let i = index">
 
                     <div class="row row-sm">
                       <ng-container *ngIf="practitionerGroup.value.contactType == 'search'">
@@ -253,7 +253,7 @@
               <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['location']" class="card-body">
 
                 <ng-container formArrayName="locations">
-                  <div class="card" [formGroup]="locationGroup" *ngFor="let locationGroup of locations.controls; let i = index">
+                  <div class="card mg-t-10 pd-20" [formGroup]="locationGroup" *ngFor="let locationGroup of locations.controls; let i = index">
 
                     <div class="row row-sm">
                       <ng-container *ngIf="locationGroup.value.contactType == 'search'">
