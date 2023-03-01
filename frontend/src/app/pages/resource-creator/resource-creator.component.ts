@@ -74,12 +74,18 @@ export class ResourceCreatorComponent implements OnInit {
     const medicationGroup = new FormGroup({
       data: new FormControl({}),
       status: new FormControl(''),
-      dosage: new FormControl({}),
+      dosage: new FormControl({
+        value: '', disabled: true
+      }),
       started: new FormControl({}),
       stopped: new FormControl({}),
       whystopped: new FormControl({}),
       resupply: new FormControl({}),
       instructions: new FormControl(''),
+    });
+
+    medicationGroup.get("data").valueChanges.subscribe(val => {
+      medicationGroup.get("dosage").enable();
     });
 
     this.medications.push(medicationGroup);
@@ -151,6 +157,6 @@ export class ResourceCreatorComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.form)
+    console.log(this.form.getRawValue())
   }
 }
