@@ -1,5 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormArray, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {ResourceCreatePractitioner, ResourceCreatePractitionerData} from '../../models/fasten/resource_create';
+import {uuidV4} from '../../../lib/utils/uuid';
 
 export interface MedicationModel {
   data: {},
@@ -27,6 +30,8 @@ export class ResourceCreatorComponent implements OnInit {
 
 
   @Input() form!: FormGroup;
+  newPractitionerForm: FormGroup
+  newPractitionerModel: ResourceCreatePractitioner
   get isValid() { return true; }
 
   // model: any = {
@@ -41,7 +46,7 @@ export class ResourceCreatorComponent implements OnInit {
   // }
 
 
-  constructor() { }
+  constructor(private modalService: NgbModal) { }
 
   ngOnInit(): void {
 
@@ -80,12 +85,13 @@ export class ResourceCreatorComponent implements OnInit {
       started: new FormControl({}),
       stopped: new FormControl({}),
       whystopped: new FormControl({}),
-      resupply: new FormControl({}),
+      requester: new FormControl(''),
       instructions: new FormControl(''),
     });
 
     medicationGroup.get("data").valueChanges.subscribe(val => {
       medicationGroup.get("dosage").enable();
+      //TODO: find a way to create dependant dosage information based on medication data.
     });
 
     this.medications.push(medicationGroup);
@@ -116,20 +122,21 @@ export class ResourceCreatorComponent implements OnInit {
     return this.form.controls["practitioners"] as FormArray;
   }
 
-  addPractitioner(contactType: ContactType | string){
+  addPractitioner(practitioner: ResourceCreatePractitioner){
     const practitionerGroup = new FormGroup({
-      contactType: new FormControl(contactType),
-      name: new FormControl(''),
-      data: new FormControl({}),
-      profession: new FormControl({}),
-      phone: new FormControl(''),
-      fax: new FormControl(''),
-      email: new FormControl(''),
-      comment: new FormControl(''),
+      id: new FormControl(practitioner.id),
+      profession: new FormControl(practitioner.profession),
+      name: new FormControl(practitioner.name),
+      phone: new FormControl(practitioner.phone),
+      fax: new FormControl(practitioner.fax),
+      email: new FormControl(practitioner.email),
+      address: new FormControl(practitioner.address),
+      comment: new FormControl(practitioner.comment),
     });
 
     this.practitioners.push(practitionerGroup);
   }
+
   deletePractitioner(index: number) {
     this.practitioners.removeAt(index);
   }
@@ -156,7 +163,75 @@ export class ResourceCreatorComponent implements OnInit {
     this.locations.removeAt(index);
   }
 
+
+
+
   onSubmit() {
     console.log(this.form.getRawValue())
+  }
+
+  //Modal Helpers
+  openModal(content, formGroup?: AbstractControl, controlName?: string) {
+    this.newPractitionerForm = new FormGroup({
+      data: new FormControl({}),
+    })
+    this.newPractitionerForm.get("data").valueChanges.subscribe(val => {
+      // @ts-ignore
+      console.log("CHANGE INDIVIDUAL IN MODAL", val)
+      // @ts-ignore
+      if(val.provider_phone){
+        this.newPractitionerModel.phone = val.provider_phone;
+      }
+      if(val.provider_fax){
+        this.newPractitionerModel.fax = val.provider_fax;
+      }
+      if(val.provider_type){
+        this.newPractitionerModel.profession = {id: val.provider_type, text: val.provider_type}
+      }
+      if(val.provider_address){
+        this.newPractitionerModel.address = val.provider_address
+      }
+      if(val.text) {
+        this.newPractitionerModel.name = val.text;
+      }
+    });
+
+
+    this.newPractitionerModel = {
+      // @ts-ignore
+      data: {},
+      name: '',
+      profession: {},
+      phone: '',
+      fax: '',
+      email: '',
+      comment: ''
+    };
+
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
+      (result) => {
+        console.log(`Closed with: ${result}`);
+        //add this to the list of practitioners
+        result.id = uuidV4();
+        this.addPractitioner(result);
+        if(formGroup && controlName){
+          //set this practitioner to the current select box
+          formGroup.get(controlName).setValue(result.id);
+        }
+      },
+      (reason) => {
+        console.log(`Dismissed ${this.getDismissReason(reason)}`)
+      },
+    );
+  }
+
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
+    }
   }
 }

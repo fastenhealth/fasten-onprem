@@ -31,6 +31,7 @@
     "@ng-bootstrap/ng-bootstrap": "10.0.0",
     "@panva/oauth4webapi": "1.2.0",
     "@swimlane/ngx-datatable": "^20.0.0",
+    "@types/fhir": "^0.0.35",
     "asmcrypto.js": "^2.3.2",
     "bootstrap": "^4.4.1",
     "chart.js": "2.9.4",

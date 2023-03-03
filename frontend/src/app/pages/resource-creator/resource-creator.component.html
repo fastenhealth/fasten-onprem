@@ -91,8 +91,15 @@
                         <app-nlm-typeahead formControlName="whystopped" searchType="MedicationWhyStopped"></app-nlm-typeahead>
                       </div><!-- col -->
                       <div class="col-lg mg-t-10 mg-lg-t-0">
-                        <p class="mg-b-10">Resupply</p>
-                        <input formControlName="resupply" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #dr="ngbDatepicker" (click)="dr.toggle()">
+                        <p class="mg-b-10">Prescribing Practitioner</p>
+                        <select formControlName="requester">
+                          <option value="" hidden selected>Select Practitioner</option>
+                          <option value="" (click)="openModal(practitionerCreateModal, medicationGroup, 'requester')">New Practitioner</option>
+                          <optgroup *ngIf="practitioners.controls" class="divider"></optgroup>
+                          <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.value.id">
+                            {{practitioner.value.name}} ({{practitioner.value.profession.text}})
+                          </option>
+                        </select>
                       </div><!-- col -->
                     </div><!-- row -->
                     <div class="row row-sm mg-t-20">
@@ -179,24 +186,15 @@
                   <div class="card mg-t-10 pd-20" [formGroup]="practitionerGroup" *ngFor="let practitionerGroup of practitioners.controls; let i = index">
 
                     <div class="row row-sm">
-                      <ng-container *ngIf="practitionerGroup.value.contactType == 'search'">
-                        <div class="col-lg">
+                        <input formControlName="id" class="form-control" type="hidden">
+
+                        <div class="col-lg mg-t-10 mg-lg-t-0">
                           <p class="mg-b-10">Name</p>
-                          <app-nlm-typeahead formControlName="data" searchType="MedicalContactIndividual"></app-nlm-typeahead>
+                          <input formControlName="name" class="form-control" readonly placeholder="Input box" type="text">
                         </div><!-- col -->
                         <div class="col-lg mg-t-10 mg-lg-t-0">
                           <p class="mg-b-10">Type</p>
                           <app-nlm-typeahead formControlName="profession"  searchType="MedicalContactIndividualProfession"></app-nlm-typeahead>
-                        </div><!-- col -->
-                        <div class="col-lg mg-t-10 mg-lg-t-0">
-                          <p class="mg-b-10">Comment</p>
-                          <input formControlName="comment" class="form-control" placeholder="Input box" type="text">
-                        </div><!-- col -->
-                      </ng-container>
-                      <ng-container *ngIf="practitionerGroup.value.contactType == 'manual'">
-                        <div class="col-lg mg-t-10 mg-lg-t-0">
-                          <p class="mg-b-10">Name</p>
-                          <input formControlName="name" class="form-control" placeholder="Input box" type="text">
                         </div><!-- col -->
                         <div class="col-lg mg-t-10 mg-lg-t-0">
                           <p class="mg-b-10">Telephone</p>
@@ -210,11 +208,14 @@
                           <p class="mg-b-10">Email</p>
                           <input formControlName="email" class="form-control" placeholder="Input box" type="text">
                         </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Address</p>
+                        <input formControlName="address" class="form-control" placeholder="Input box" type="text">
+                      </div><!-- col -->
                         <div class="col-lg mg-t-10 mg-lg-t-0">
                           <p class="mg-b-10">Comment</p>
                           <input formControlName="comment" class="form-control" placeholder="Input box" type="text">
                         </div><!-- col -->
-                      </ng-container>
 
                     </div><!-- row -->
 
@@ -223,10 +224,7 @@
 
                 <div class="row pt-2">
                   <div class="col-sm-6 col-md-4">
-                    <button (click)="addPractitioner('search')" class="btn btn-az-primary btn-block">Search for Practitioner</button>
-                  </div>
-                  <div class="col-sm-6 col-md-4">
-                    <button (click)="addPractitioner('manual')" class="btn btn-az-primary btn-block">Enter manually</button>
+                    <button (click)="openModal(practitionerCreateModal)" class="btn btn-az-primary btn-block">Add Practitioner</button>
                   </div>
                 </div>
               </div>
@@ -353,3 +351,52 @@
     </div><!-- az-content-body -->
   </div><!-- container -->
 </div><!-- az-content -->
+
+
+<ng-template #practitionerCreateModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">New Practitioner</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+
+    <div class="row row-sm">
+
+      <div class="col-6">
+        <p class="mg-b-10">Name</p>
+        <form [formGroup]="newPractitionerForm">
+          <app-nlm-typeahead formControlName="data" searchType="MedicalContactIndividual"></app-nlm-typeahead>
+        </form>
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Type</p>
+        <app-nlm-typeahead [(ngModel)]="newPractitionerModel.profession" searchType="MedicalContactIndividualProfession"></app-nlm-typeahead>
+      </div><!-- col -->
+
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Telephone</p>
+        <input [(ngModel)]="newPractitionerModel.phone" class="form-control" placeholder="Input box" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Fax</p>
+        <input [(ngModel)]="newPractitionerModel.fax" class="form-control" placeholder="Input box" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Email</p>
+        <input [(ngModel)]="newPractitionerModel.email" class="form-control" placeholder="Input box" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Address</p>
+        <input [(ngModel)]="newPractitionerModel.address" class="form-control" placeholder="Input box" type="text">
+      </div><!-- col -->
+      <div class="col-12 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Comment</p>
+        <input [(ngModel)]="newPractitionerModel.comment" class="form-control" placeholder="Input box" type="text">
+      </div><!-- col -->
+
+    </div><!-- row -->
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close(newPractitionerModel)">Add Practitioner</button>
+  </div>
+</ng-template>

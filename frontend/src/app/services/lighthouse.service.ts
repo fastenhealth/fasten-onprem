@@ -8,6 +8,7 @@ import {LighthouseSourceMetadata} from '../models/lighthouse/lighthouse-source-m
 import * as Oauth from '@panva/oauth4webapi';
 import {SourceState} from '../models/fasten/source-state';
 import {MetadataSource} from '../models/fasten/metadata-source';
+import {uuidV4} from '../../lib/utils/uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +44,7 @@ export class LighthouseService {
 
 
   async generateSourceAuthorizeUrl(sourceType: string, lighthouseSource: LighthouseSourceMetadata): Promise<URL> {
-    const state = this.uuidV4()
+    const state = uuidV4()
     let sourceStateInfo = new SourceState()
     sourceStateInfo.state = state
     sourceStateInfo.source_type = sourceType
@@ -182,10 +183,4 @@ export class LighthouseService {
     return parts.join(separator);
   }
 
-  private uuidV4(){
-    // @ts-ignore
-    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-    );
-  }
 }

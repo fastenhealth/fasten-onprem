@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Observable, ObservableInput, of} from 'rxjs';
 import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
-import {NlmClinicalTableSearchService} from '../../services/nlm-clinical-table-search.service';
+import {NlmClinicalTableSearchService, NlmSearchResults} from '../../services/nlm-clinical-table-search.service';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 export enum NlmSearchType {
@@ -16,6 +16,7 @@ export enum NlmSearchType {
   Procedure = 'Procedure',
   Vaccine = 'Vaccine',
 
+  PrePopulated = 'PrePopulated'
 
 }
 
@@ -33,6 +34,9 @@ export enum NlmSearchType {
 })
 export class NlmTypeaheadComponent implements ControlValueAccessor {
   @Input() searchType: NlmSearchType = NlmSearchType.Condition;
+
+  @Input() prePopulatedOptions: NlmSearchResults[] = []
+
   searching = false;
   searchFailed = false;
 
@@ -78,6 +82,10 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
       case NlmSearchType.Vaccine:
         searchOpFn = this.nlmClinicalTableSearchService.searchVaccine
         break
+      case NlmSearchType.PrePopulated:
+        // searchOpFn = this.nlmClinicalTableSearchService.searchVaccine
+        console.log("PREPOPUlATED", this.prePopulatedOptions)
+        break
       default:
         console.error(`unknown search type: ${this.searchType}`)
         return of([]);
@@ -110,7 +118,12 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
 
   typeAheadChangeEvent(event){
     console.log("bubbling modelChange event", event)
-    this.onChange(event);
+    if(typeof event === 'string'){
+      this.onChange({text: event});
+    } else{
+      this.onChange(event);
+    }
+
   }
 
   /*

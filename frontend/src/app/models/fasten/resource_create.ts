@@ -121,17 +121,19 @@ import {IResourceRaw} from './resource_fhir';
 // }
 
 export interface ResourceCreate {
-  condition: {
-    "data": ResourceCreateConditionData | string,
-    "status": "active" | "inactive",
-    "started": ResourceCreateDate,
-    "stopped": ResourceCreateDate,
-    "description": string
-  },
+  condition: ResourceCreateCondition,
   "medications": ResourceCreateMedication[],
   "procedures": ResourceCreateProcedure[],
   "practitioners": ResourceCreatePractitioner[],
   "locations": ResourceCreateLocation[]
+}
+
+export interface ResourceCreateCondition {
+  "data": ResourceCreateConditionData | string,
+  "status": "active" | "inactive",
+  "started": ResourceCreateDate,
+  "stopped": ResourceCreateDate,
+  "description": string
 }
 
 export interface ResourceCreateConditionData {
@@ -176,13 +178,13 @@ export interface ResourceCreateProcedureData {
 }
 
 export interface ResourceCreatePractitioner {
-  "contactType": "search" | "manual"
+  "id"?: string,
   "name": string,
-  "data": ResourceCreatePractitionerData | string,
   "profession": {},
   "phone": string,
   "fax": string,
   "email": string,
+  "address": string,
   "comment": string
 }
 

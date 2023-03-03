@@ -1760,6 +1760,11 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/fhir@^0.0.35":
+  version "0.0.35"
+  resolved "https://registry.npmjs.org/@types/fhir/-/fhir-0.0.35.tgz#e598b99e6468fee556f0e78d398c13ad2571b1eb"
+  integrity sha512-y+VI3Y48xzZBM8AjXPq67EWbiY9VN4Cx5KzN8EplS0Zju8D2KahLXoK6P/PWlKyNTKvJBwemkHzJIocczLRkhQ==
+
 "@types/http-proxy@^1.17.8":
   version "1.17.9"
   resolved "https://registry.npmjs.org/@types/http-proxy/-/http-proxy-1.17.9.tgz#7f0e7931343761efde1e2bf48c40f02f3f75705a"
