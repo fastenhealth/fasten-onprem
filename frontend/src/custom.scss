@@ -4,6 +4,11 @@
   cursor: pointer;
 }
 
+// adds a divider between select options
+select > optgroup > .divider {
+  font-size: 1px;
+  background: rgba(0, 0, 0, 0.5);
+}
 
 //disable card
 

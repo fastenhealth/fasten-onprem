@@ -95,7 +95,7 @@
                         <select formControlName="requester">
                           <option value="" hidden selected>Select Practitioner</option>
                           <option value="" (click)="openModal(practitionerCreateModal, medicationGroup, 'requester')">New Practitioner</option>
-                          <optgroup *ngIf="practitioners.controls" class="divider"></optgroup>
+                          <optgroup *ngIf="practitioners.controls.length" class="divider"></optgroup>
                           <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.value.id">
                             {{practitioner.value.name}} ({{practitioner.value.profession.text}})
                           </option>
