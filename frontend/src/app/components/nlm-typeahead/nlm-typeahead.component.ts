@@ -1,14 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Optional, Output, Self} from '@angular/core';
 import {Observable, ObservableInput, of} from 'rxjs';
 import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 import {NlmClinicalTableSearchService, NlmSearchResults} from '../../services/nlm-clinical-table-search.service';
 import {
-  AbstractControl,
   ControlValueAccessor,
-  NG_VALIDATORS,
-  NG_VALUE_ACCESSOR,
-  ValidationErrors,
-  Validator
+  NgControl,
 } from '@angular/forms';
 
 export enum NlmSearchType {
@@ -32,19 +28,19 @@ export enum NlmSearchType {
   templateUrl: './nlm-typeahead.component.html',
   styleUrls: ['./nlm-typeahead.component.scss'],
   providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      multi:true,
-      useExisting: NlmTypeaheadComponent
-    },
-    {
-      provide: NG_VALIDATORS,
-      multi:true,
-      useExisting: NlmTypeaheadComponent
-    }
+    // {
+    //   provide: NG_VALUE_ACCESSOR,
+    //   multi:true,
+    //   useExisting: NlmTypeaheadComponent
+    // },
+    // {
+    //   provide: NG_VALIDATORS,
+    //   multi:true,
+    //   useExisting: NlmTypeaheadComponent
+    // }
   ]
 })
-export class NlmTypeaheadComponent implements ControlValueAccessor, Validator {
+export class NlmTypeaheadComponent implements ControlValueAccessor {
   @Input() searchType: NlmSearchType = NlmSearchType.Condition;
 
   @Input() prePopulatedOptions: NlmSearchResults[] = []
@@ -58,7 +54,9 @@ export class NlmTypeaheadComponent implements ControlValueAccessor, Validator {
   touched = false;
   disabled = false;
 
-  constructor(private nlmClinicalTableSearchService: NlmClinicalTableSearchService) { }
+  constructor(@Self() @Optional() public control: NgControl, private nlmClinicalTableSearchService: NlmClinicalTableSearchService) {
+    this.control && (this.control.valueAccessor = this);
+  }
 
   formatter = (x: { text: string }) => x.text;
   search = (text$: Observable<string>) => {
@@ -132,16 +130,20 @@ export class NlmTypeaheadComponent implements ControlValueAccessor, Validator {
     this.markAsTouched()
     console.log("bubbling modelChange event", event)
     if(typeof event === 'string'){
-      this.onChange({text: event});
+      if (event.length === 0) {
+        this.onChange(null);
+      } else {
+        this.onChange({text: event});
+      }
     } else{
       this.onChange(event);
     }
-
   }
 
   /*
   Methods related to ControlValueAccessor
   See: https://blog.angular-university.io/angular-custom-form-controls/
+  See: http://prideparrot.com/blog/archive/2019/2/applying_validation_custom_form_component
   This is what allows ngModel and formControlName to be used with this component
    */
 
@@ -167,8 +169,16 @@ export class NlmTypeaheadComponent implements ControlValueAccessor, Validator {
   setDisabledState(disabled: boolean) {
     this.disabled = disabled;
   }
+  public get invalid(): boolean {
+    return this.control ? this.control.invalid : false;
+  }
+  public get showError(): boolean {
+    if (!this.control) {
+      return false;
+    }
 
-  validate(control: AbstractControl): ValidationErrors | null {
-    return null;
+    const { dirty, touched } = this.control;
+
+    return this.invalid ? (dirty || touched) : false;
   }
 }

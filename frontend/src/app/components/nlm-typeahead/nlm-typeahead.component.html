@@ -5,6 +5,7 @@
 <input
   type="text"
   class="form-control"
+  [class.is-invalid]="showError"
   [(ngModel)]="searchResult"
   [ngbTypeahead]="search"
   [inputFormatter]="formatter"

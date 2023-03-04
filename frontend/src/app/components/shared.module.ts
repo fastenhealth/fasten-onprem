@@ -41,7 +41,7 @@ import { ReportMedicalHistoryConditionComponent } from './report-medical-history
 import { ReportLabsObservationComponent } from './report-labs-observation/report-labs-observation.component';
 import { ChartsModule } from 'ng2-charts';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { BinaryComponent } from './fhir/resources/binary/binary.component';
 import { PdfComponent } from './fhir/datatypes/pdf/pdf.component';
 import { ImgComponent } from './fhir/datatypes/img/img.component';
@@ -73,6 +73,7 @@ import { NlmTypeaheadComponent } from './nlm-typeahead/nlm-typeahead.component';
     NgbModule,
     NgbCollapseModule,
     FormsModule,
+    ReactiveFormsModule,
     MomentModule,
     TreeModule,
     ChartsModule,
