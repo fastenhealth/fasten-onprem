@@ -1,7 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {ResourceCreatePractitioner, ResourceCreatePractitionerData} from '../../models/fasten/resource_create';
+import {
+  ResourceCreateOrganization,
+  ResourceCreatePractitioner,
+  ResourceCreatePractitionerData
+} from '../../models/fasten/resource_create';
 import {uuidV4} from '../../../lib/utils/uuid';
 
 export interface MedicationModel {
@@ -32,6 +36,9 @@ export class ResourceCreatorComponent implements OnInit {
   @Input() form!: FormGroup;
   newPractitionerForm: FormGroup
   newPractitionerModel: ResourceCreatePractitioner
+
+  newOrganizationForm: FormGroup
+  newOrganizationModel: ResourceCreateOrganization
   get isValid() { return true; }
 
   // model: any = {
@@ -58,17 +65,17 @@ export class ResourceCreatorComponent implements OnInit {
     //https://angular.io/guide/dynamic-form
     this.form = new FormGroup({
       condition: new FormGroup({
-        data: new FormControl({}),
-        status: new FormControl(''),
-        started: new FormControl({}),
-        stopped: new FormControl({}),
-        description: new FormControl(''),
+        data: new FormControl(null, Validators.required),
+        status: new FormControl(null, Validators.required),
+        started: new FormControl(null, Validators.required),
+        stopped: new FormControl(null),
+        description: new FormControl(null),
       }),
 
       medications: new FormArray([]),
       procedures: new FormArray([]),
       practitioners: new FormArray([]),
-      locations: new FormArray([]),
+      organizations: new FormArray([]),
     });
   }
 
@@ -77,16 +84,16 @@ export class ResourceCreatorComponent implements OnInit {
   }
   addMedication(){
     const medicationGroup = new FormGroup({
-      data: new FormControl({}),
-      status: new FormControl(''),
+      data: new FormControl(null, Validators.required),
+      status: new FormControl(null, Validators.required),
       dosage: new FormControl({
         value: '', disabled: true
       }),
-      started: new FormControl({}),
-      stopped: new FormControl({}),
-      whystopped: new FormControl({}),
-      requester: new FormControl(''),
-      instructions: new FormControl(''),
+      started: new FormControl(null, Validators.required),
+      stopped: new FormControl(null),
+      whystopped: new FormControl(null),
+      requester: new FormControl(null, Validators.required),
+      instructions: new FormControl(null),
     });
 
     medicationGroup.get("data").valueChanges.subscribe(val => {
@@ -106,8 +113,10 @@ export class ResourceCreatorComponent implements OnInit {
   }
   addProcedure(){
     const procedureGroup = new FormGroup({
-      data: new FormControl({}),
-      whendone: new FormControl({}),
+      data: new FormControl(null, Validators.required),
+      whendone: new FormControl(null, Validators.required),
+      performer: new FormControl(null),
+      location: new FormControl(null),
       comment: new FormControl('')
     });
 
@@ -124,12 +133,12 @@ export class ResourceCreatorComponent implements OnInit {
 
   addPractitioner(practitioner: ResourceCreatePractitioner){
     const practitionerGroup = new FormGroup({
-      id: new FormControl(practitioner.id),
-      profession: new FormControl(practitioner.profession),
-      name: new FormControl(practitioner.name),
-      phone: new FormControl(practitioner.phone),
-      fax: new FormControl(practitioner.fax),
-      email: new FormControl(practitioner.email),
+      id: new FormControl(practitioner.id, Validators.required),
+      profession: new FormControl(practitioner.profession, Validators.required),
+      name: new FormControl(practitioner.name, Validators.required),
+      phone: new FormControl(practitioner.phone, Validators.pattern('[- +()0-9]+')),
+      fax: new FormControl(practitioner.fax, Validators.pattern('[- +()0-9]+')),
+      email: new FormControl(practitioner.email, Validators.email),
       address: new FormControl(practitioner.address),
       comment: new FormControl(practitioner.comment),
     });
@@ -142,25 +151,25 @@ export class ResourceCreatorComponent implements OnInit {
   }
 
 
-  get locations(): FormArray {
-    return this.form.controls["locations"] as FormArray;
+  get organizations(): FormArray {
+    return this.form.controls["organizations"] as FormArray;
   }
 
-  addLocation(contactType: ContactType | string){
-    const locationGroup = new FormGroup({
-      name: new FormControl(''),
-      contactType: new FormControl(contactType),
-      data: new FormControl({}),
-      phone: new FormControl(''),
-      fax: new FormControl(''),
-      email: new FormControl(''),
-      comment: new FormControl(''),
+  addOrganization(organization: ResourceCreateOrganization){
+    const organizationGroup = new FormGroup({
+      id: new FormControl(organization.id, Validators.required),
+      name: new FormControl(organization.name, Validators.required),
+      phone: new FormControl(organization.phone, Validators.pattern('[- +()0-9]+')),
+      fax: new FormControl(organization.fax, Validators.pattern('[- +()0-9]+')),
+      email: new FormControl(organization.email, Validators.email),
+      address: new FormControl(organization.address),
+      comment: new FormControl(organization.comment),
     });
 
-    this.locations.push(locationGroup);
+    this.organizations.push(organizationGroup);
   }
-  deleteLocation(index: number) {
-    this.locations.removeAt(index);
+  deleteOrganization(index: number) {
+    this.organizations.removeAt(index);
   }
 
 
@@ -171,14 +180,51 @@ export class ResourceCreatorComponent implements OnInit {
   }
 
   //Modal Helpers
-  openModal(content, formGroup?: AbstractControl, controlName?: string) {
+  openPractitionerModal(content, formGroup?: AbstractControl, controlName?: string) {
+    this.resetPractitionerForm()
+    this.modalService.open(content, { ariaLabelledBy: 'modal-practitioner' }).result.then(
+      (result) => {
+        console.log(`Closed with: ${result}`);
+        //add this to the list of practitioners
+        result.id = uuidV4();
+        this.addPractitioner(result);
+        if(formGroup && controlName){
+          //set this practitioner to the current select box
+          formGroup.get(controlName).setValue(result.id);
+        }
+      },
+      (reason) => {
+        console.log(`Dismissed ${this.getDismissReason(reason)}`)
+      },
+    );
+  }
+
+  openOrganizationModal(content, formGroup?: AbstractControl, controlName?: string) {
+    this.resetOrganizationForm()
+
+    this.modalService.open(content, { ariaLabelledBy: 'modal-organization' }).result.then(
+      (result) => {
+        console.log(`Closed with: ${result}`);
+        //add this to the list of organization
+        result.id = uuidV4();
+        this.addOrganization(result);
+        if(formGroup && controlName){
+          //set this practitioner to the current select box
+          formGroup.get(controlName).setValue(result.id);
+        }
+      },
+      (reason) => {
+        console.log(`Dismissed ${this.getDismissReason(reason)}`)
+      },
+    );
+  }
+
+  private resetPractitionerForm(){
     this.newPractitionerForm = new FormGroup({
       data: new FormControl({}),
     })
     this.newPractitionerForm.get("data").valueChanges.subscribe(val => {
-      // @ts-ignore
       console.log("CHANGE INDIVIDUAL IN MODAL", val)
-      // @ts-ignore
       if(val.provider_phone){
         this.newPractitionerModel.phone = val.provider_phone;
       }
@@ -198,31 +244,45 @@ export class ResourceCreatorComponent implements OnInit {
 
 
     this.newPractitionerModel = {
-      // @ts-ignore
-      data: {},
       name: '',
       profession: {},
       phone: '',
+      address: '',
       fax: '',
       email: '',
       comment: ''
     };
+  }
 
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
-      (result) => {
-        console.log(`Closed with: ${result}`);
-        //add this to the list of practitioners
-        result.id = uuidV4();
-        this.addPractitioner(result);
-        if(formGroup && controlName){
-          //set this practitioner to the current select box
-          formGroup.get(controlName).setValue(result.id);
-        }
-      },
-      (reason) => {
-        console.log(`Dismissed ${this.getDismissReason(reason)}`)
-      },
-    );
+  private resetOrganizationForm(){
+    this.newOrganizationForm = new FormGroup({
+      data: new FormControl({}),
+    })
+    this.newOrganizationForm.get("data").valueChanges.subscribe(val => {
+      console.log("CHANGE Organization IN MODAL", val)
+      if(val.provider_phone){
+        this.newOrganizationModel.phone = val.provider_phone;
+      }
+      if(val.provider_fax){
+        this.newOrganizationModel.fax = val.provider_fax;
+      }
+      if(val.provider_address){
+        this.newOrganizationModel.address = val.provider_address
+      }
+      if(val.text) {
+        this.newOrganizationModel.name = val.text;
+      }
+    });
+
+
+    this.newOrganizationModel = {
+      name: '',
+      phone: '',
+      fax: '',
+      email: '',
+      address: '',
+      comment: ''
+    };
   }
 
   private getDismissReason(reason: any): string {

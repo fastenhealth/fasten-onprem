@@ -12,17 +12,18 @@
       <p class="mg-b-20">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna </p>
 
       <pre>{{ form.getRawValue() | json}}</pre>
-      <p>Form Status: {{ form.status }}</p>
+      <code>Form Status: {{ form.status }}</code>
 
       <form (ngSubmit)="onSubmit()" [formGroup]="form">
+        <code>Condition Status: {{form.get('condition').status}}</code>
         <ng-container formGroupName="condition">
           <div class="row row-sm">
             <div class="col-lg">
-              <p class="mg-b-10">Medical condition</p>
+              <p class="mg-b-10">Medical condition<span ngbTooltip="required" class="text-danger">*</span></p>
               <app-nlm-typeahead formControlName="data" ></app-nlm-typeahead>
             </div><!-- col -->
             <div class="col-lg mg-t-10 mg-lg-t-0">
-              <p class="mg-b-10">Status</p>
+              <p class="mg-b-10">Status<span ngbTooltip="required" class="text-danger">*</span></p>
               <select formControlName="status" class="form-control">
                 <option value="" hidden selected>Select Status</option>
                 <option value="active">Active</option>
@@ -30,12 +31,12 @@
               </select>
             </div><!-- col -->
             <div class="col-lg mg-t-10 mg-lg-t-0">
-              <p class="mg-b-10">Started</p>
+              <p class="mg-b-10">Started<span ngbTooltip="required" class="text-danger">*</span></p>
               <input formControlName="started" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cds="ngbDatepicker" (click)="cds.toggle()">
             </div><!-- col -->
             <div class="col-lg mg-t-10 mg-lg-t-0">
               <p class="mg-b-10">Stopped</p>
-              <input formControlName="stopped" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cde="ngbDatepicker" (click)="cde.toggle()">
+              <input formControlName="stopped" [minDate]="form.get('condition').get('started').value" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cde="ngbDatepicker" (click)="cde.toggle()">
             </div><!-- col -->
           </div><!-- row -->
 
@@ -62,39 +63,40 @@
 
                 <ng-container formArrayName="medications">
                   <div class="card mg-t-10 pd-20" [formGroup]="medicationGroup" *ngFor="let medicationGroup of medications.controls; let i = index">
+                    <code>Medication Status: {{medicationGroup.status}}</code>
                     <div class="row row-sm">
-                      <div class="col-lg">
-                        <p class="mg-b-10">Medication name</p>
+                      <div class="col-lg-6">
+                        <p class="mg-b-10">Medication name<span ngbTooltip="required" class="text-danger">*</span></p>
                         <app-nlm-typeahead formControlName="data" searchType="Medication"></app-nlm-typeahead>
                       </div><!-- col -->
-                      <div class="col-lg mg-t-10 mg-lg-t-0">
-                        <p class="mg-b-10">Status</p>
+                      <div class="col-lg-3 mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Status<span ngbTooltip="required" class="text-danger">*</span></p>
                         <select formControlName="status" class="form-control">
                           <option value="" hidden selected>Select Status</option>
                           <option value="active">Active</option>
                           <option value="stopped">Stopped</option>
                         </select>                </div><!-- col -->
-                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                      <div class="col-lg-3 mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">Dosage</p>
                         <input formControlName="dosage" class="form-control" placeholder="Input box" type="text">
                       </div><!-- col -->
-                      <div class="col-lg mg-t-10 mg-lg-t-0">
-                        <p class="mg-b-10">Started</p>
+                      <div class="col-lg-3 mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Started<span ngbTooltip="required" class="text-danger">*</span></p>
                         <input formControlName="started" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #ds="ngbDatepicker" (click)="ds.toggle()">
                       </div><!-- col -->
-                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                      <div class="col-lg-3 mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">Stopped</p>
-                        <input formControlName="stopped" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #dstop="ngbDatepicker" (click)="dstop.toggle()">
+                        <input [minDate]="medicationGroup.get('started').value" formControlName="stopped" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #dstop="ngbDatepicker" (click)="dstop.toggle()">
                       </div><!-- col -->
-                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                      <div class="col-lg-3 mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">Why Stopped</p>
                         <app-nlm-typeahead formControlName="whystopped" searchType="MedicationWhyStopped"></app-nlm-typeahead>
                       </div><!-- col -->
-                      <div class="col-lg mg-t-10 mg-lg-t-0">
-                        <p class="mg-b-10">Prescribing Practitioner</p>
-                        <select formControlName="requester">
+                      <div class="col-lg-3 mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Prescribing Practitioner<span ngbTooltip="required" class="text-danger">*</span></p>
+                        <select class="form-control" formControlName="requester">
                           <option value="" hidden selected>Select Practitioner</option>
-                          <option value="" (click)="openModal(practitionerCreateModal, medicationGroup, 'requester')">New Practitioner</option>
+                          <option value="" (click)="openPractitionerModal(practitionerCreateModal, medicationGroup, 'requester')">New Practitioner</option>
                           <optgroup *ngIf="practitioners.controls.length" class="divider"></optgroup>
                           <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.value.id">
                             {{practitioner.value.name}} ({{practitioner.value.profession.text}})
@@ -112,7 +114,7 @@
                 </ng-container>
                 <div class="row pt-2">
                   <div class="col-sm-6 col-md-3">
-                    <button (click)="addMedication()" class="btn btn-az-primary btn-block">Add medication</button>
+                    <button (click)="addMedication()" class="btn btn-outline-indigo btn-block">Add medication</button>
                   </div>
                 </div>
               </div>
@@ -139,17 +141,39 @@
                 <ng-container formArrayName="procedures">
                   <div class="card mg-t-10 pd-20" [formGroup]="procedureGroup" *ngFor="let procedureGroup of procedures.controls; let i = index">
                     <div class="row row-sm">
-                      <div class="col-lg-2">
-                        <p class="mg-b-10">Surgery or Implant</p>
+                      <div class="col-lg-8">
+                        <p class="mg-b-10">Surgery or Implant<span ngbTooltip="required" class="text-danger">*</span></p>
                         <app-nlm-typeahead formControlName="data" searchType="Procedure"></app-nlm-typeahead>
                       </div><!-- col -->
-                      <div class="col-lg-2 mg-t-10 mg-lg-t-0">
-                        <p class="mg-b-10">When done</p>
+                      <div class="col-lg-4 mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">When done<span ngbTooltip="required" class="text-danger">*</span></p>
                         <input formControlName="whendone" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #dwd="ngbDatepicker" (click)="dwd.toggle()">
                       </div><!-- col -->
-                      <div class="col-lg-8 mg-t-10 mg-lg-t-0">
+                      <div class="col-lg-6 mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Performed By</p>
+                        <select class="form-control" formControlName="performer">
+                          <option value="" hidden selected>Select Practitioner</option>
+                          <option value="" (click)="openPractitionerModal(practitionerCreateModal, procedureGroup, 'performer')">New Practitioner</option>
+                          <optgroup *ngIf="practitioners.controls.length" class="divider"></optgroup>
+                          <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.value.id">
+                            {{practitioner.value.name}} ({{practitioner.value.profession.text}})
+                          </option>
+                        </select>
+                      </div><!-- col -->
+                      <div class="col-lg-6 mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Location</p>
+                        <select class="form-control" formControlName="location">
+                          <option value="" hidden selected>Select Location</option>
+                          <option value="" (click)="openOrganizationModal(organizationCreateModal, procedureGroup, 'location')">New Organization</option>
+                          <optgroup *ngIf="organizations.controls.length" class="divider"></optgroup>
+                          <option *ngFor="let organization of organizations.controls; let i = index" [value]="organization.value.id">
+                            {{organization.value.name}} ({{organization.value.address}})
+                          </option>
+                        </select>
+                      </div><!-- col -->
+                      <div class="col-lg-12 mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">Comments</p>
-                        <input formControlName="comment" class="form-control" placeholder="Input box" type="text">
+                        <textarea formControlName="comment" class="form-control" placeholder="Input box" rows="3"></textarea>
                       </div><!-- col -->
                     </div><!-- row -->
                   </div>
@@ -158,7 +182,7 @@
 
                 <div class="row pt-2">
                   <div class="col-sm-6 col-md-3">
-                    <button (click)="addProcedure()" class="btn btn-az-primary btn-block">Add surgery or implant</button>
+                    <button (click)="addProcedure()" class="btn btn-outline-indigo btn-block">Add surgery or implant</button>
                   </div>
                 </div>
               </div>
@@ -188,31 +212,31 @@
                     <div class="row row-sm">
                         <input formControlName="id" class="form-control" type="hidden">
 
-                        <div class="col-lg mg-t-10 mg-lg-t-0">
-                          <p class="mg-b-10">Name</p>
+                        <div class="col-lg-6 mg-t-10 mg-lg-t-0">
+                          <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
                           <input formControlName="name" class="form-control" readonly placeholder="Input box" type="text">
                         </div><!-- col -->
-                        <div class="col-lg mg-t-10 mg-lg-t-0">
-                          <p class="mg-b-10">Type</p>
+                        <div class="col-lg-6 mg-t-10 mg-lg-t-0">
+                          <p class="mg-b-10">Type<span ngbTooltip="required" class="text-danger">*</span></p>
                           <app-nlm-typeahead formControlName="profession"  searchType="MedicalContactIndividualProfession"></app-nlm-typeahead>
                         </div><!-- col -->
                         <div class="col-lg mg-t-10 mg-lg-t-0">
                           <p class="mg-b-10">Telephone</p>
-                          <input formControlName="phone" class="form-control" placeholder="Input box" type="text">
+                          <input formControlName="phone" class="form-control" placeholder="(123) 456-7890" type="text">
                         </div><!-- col -->
                         <div class="col-lg mg-t-10 mg-lg-t-0">
                           <p class="mg-b-10">Fax</p>
-                          <input formControlName="fax" class="form-control" placeholder="Input box" type="text">
+                          <input formControlName="fax" class="form-control" placeholder="(123) 456-7890" type="text">
                         </div><!-- col -->
                         <div class="col-lg mg-t-10 mg-lg-t-0">
                           <p class="mg-b-10">Email</p>
-                          <input formControlName="email" class="form-control" placeholder="Input box" type="text">
+                          <input formControlName="email" class="form-control" placeholder="email@example.com" type="text">
                         </div><!-- col -->
                       <div class="col-lg mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">Address</p>
                         <input formControlName="address" class="form-control" placeholder="Input box" type="text">
                       </div><!-- col -->
-                        <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <div class="col-lg-12 mg-t-10 mg-lg-t-0">
                           <p class="mg-b-10">Comment</p>
                           <input formControlName="comment" class="form-control" placeholder="Input box" type="text">
                         </div><!-- col -->
@@ -224,7 +248,7 @@
 
                 <div class="row pt-2">
                   <div class="col-sm-6 col-md-4">
-                    <button (click)="openModal(practitionerCreateModal)" class="btn btn-az-primary btn-block">Add Practitioner</button>
+                    <button (click)="openPractitionerModal(practitionerCreateModal)" class="btn btn-outline-indigo btn-block">Add Practitioner</button>
                   </div>
                 </div>
               </div>
@@ -242,50 +266,40 @@
         <div class="row">
           <div class="col-lg">
             <div class="card card-fhir-resource" >
-              <div class="card-header" (click)="collapsePanel['location'] = !collapsePanel['location']">
+              <div class="card-header" (click)="collapsePanel['organization'] = !collapsePanel['organization']">
                 <div>
                   <h6 class="card-title">Medical Location/Organizations</h6>
                   <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
                 </div>
               </div>
-              <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['location']" class="card-body">
+              <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['organization']" class="card-body">
 
                 <ng-container formArrayName="locations">
-                  <div class="card mg-t-10 pd-20" [formGroup]="locationGroup" *ngFor="let locationGroup of locations.controls; let i = index">
+                  <div class="card mg-t-10 pd-20" [formGroup]="organizationGroup" *ngFor="let organizationGroup of organizations.controls; let i = index">
 
                     <div class="row row-sm">
-                      <ng-container *ngIf="locationGroup.value.contactType == 'search'">
-                        <div class="col-lg">
-                          <p class="mg-b-10">Name</p>
-                          <app-nlm-typeahead formControlName="data" searchType="MedicalContactOrganization"></app-nlm-typeahead>
-                        </div><!-- col -->
-                        <div class="col-lg mg-t-10 mg-lg-t-0">
-                          <p class="mg-b-10">Comment</p>
-                          <input formControlName="comment" class="form-control" placeholder="Input box" type="text">
-                        </div><!-- col -->
-                      </ng-container>
-                      <ng-container *ngIf="locationGroup.value.contactType == 'manual'">
-                        <div class="col-lg mg-t-10 mg-lg-t-0">
-                          <p class="mg-b-10">Name</p>
-                          <input formControlName="name" class="form-control" placeholder="Input box" type="text">
-                        </div><!-- col -->
-                        <div class="col-lg mg-t-10 mg-lg-t-0">
-                          <p class="mg-b-10">Telephone</p>
-                          <input formControlName="phone" class="form-control" placeholder="Input box" type="text">
-                        </div><!-- col -->
-                        <div class="col-lg mg-t-10 mg-lg-t-0">
-                          <p class="mg-b-10">Fax</p>
-                          <input formControlName="fax" class="form-control" placeholder="Input box" type="text">
-                        </div><!-- col -->
-                        <div class="col-lg mg-t-10 mg-lg-t-0">
-                          <p class="mg-b-10">Email</p>
-                          <input formControlName="email" class="form-control" placeholder="Input box" type="text">
-                        </div><!-- col -->
-                        <div class="col-lg mg-t-10 mg-lg-t-0">
-                          <p class="mg-b-10">Comment</p>
-                          <input formControlName="comment" class="form-control" placeholder="Input box" type="text">
-                        </div><!-- col -->
-                      </ng-container>
+                      <input formControlName="id" class="form-control" type="hidden">
+
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
+                        <input formControlName="name" readonly class="form-control" placeholder="Input box" type="text">
+                      </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Telephone</p>
+                        <input formControlName="phone" class="form-control" placeholder="(123) 456-7890" type="text">
+                      </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Fax</p>
+                        <input formControlName="fax" class="form-control" placeholder="(123) 456-7890" type="text">
+                      </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Email</p>
+                        <input formControlName="email" class="form-control" placeholder="email@example.com" type="text">
+                      </div><!-- col -->
+                      <div class="col-lg-12 mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Comment</p>
+                        <input formControlName="comment" class="form-control" placeholder="Input box" type="text">
+                      </div><!-- col -->
 
                     </div><!-- row -->
 
@@ -294,16 +308,13 @@
 
                 <div class="row pt-2">
                   <div class="col-sm-6 col-md-4">
-                    <button (click)="addLocation('search')" class="btn btn-az-primary btn-block">Search for Organization</button>
-                  </div>
-                  <div class="col-sm-6 col-md-4">
-                    <button (click)="addLocation('manual')" class="btn btn-az-primary btn-block">Enter manually</button>
+                    <button (click)="openOrganizationModal(organizationCreateModal)" class="btn btn-outline-indigo btn-block">Add Organization</button>
                   </div>
                 </div>
               </div>
 
               <div class="card-footer">
-                <a class="float-right" (click)="collapsePanel['location'] = !collapsePanel['location']">{{collapsePanel['location'] ? 'expand' : 'collapse'}}</a>
+                <a class="float-right" (click)="collapsePanel['organization'] = !collapsePanel['organization']">{{collapsePanel['organization'] ? 'expand' : 'collapse'}}</a>
               </div>
             </div>
           </div>
@@ -334,7 +345,7 @@
                 </div><!-- row -->
                 <div class="row pt-2">
                   <div class="col-sm-6 col-md-3">
-                    <button class="btn btn-az-primary btn-block">Add another note or attachment</button>
+                    <button class="btn btn-outline-indigo btn-block">Add note or attachment</button>
                   </div>
                 </div>
               </div>
@@ -345,7 +356,7 @@
           </div>
         </div>
 
-        <button type="submit">Submit</button>
+        <button class="mg-t-20 mg-b-20 btn btn-az-primary btn-rounded btn-block " type="submit">Submit</button>
       </form>
 
     </div><!-- az-content-body -->
@@ -355,35 +366,35 @@
 
 <ng-template #practitionerCreateModal let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">New Practitioner</h4>
+    <h4 class="modal-title" id="modal-practitioner">New Practitioner</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
 
     <div class="row row-sm">
 
-      <div class="col-6">
-        <p class="mg-b-10">Name</p>
+      <div class="col-12">
+        <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
         <form [formGroup]="newPractitionerForm">
           <app-nlm-typeahead formControlName="data" searchType="MedicalContactIndividual"></app-nlm-typeahead>
         </form>
       </div><!-- col -->
       <div class="col-6 mg-t-10 mg-lg-t-0">
-        <p class="mg-b-10">Type</p>
+        <p class="mg-b-10">Type<span ngbTooltip="required" class="text-danger">*</span></p>
         <app-nlm-typeahead [(ngModel)]="newPractitionerModel.profession" searchType="MedicalContactIndividualProfession"></app-nlm-typeahead>
       </div><!-- col -->
 
       <div class="col-6 mg-t-10 mg-lg-t-0">
         <p class="mg-b-10">Telephone</p>
-        <input [(ngModel)]="newPractitionerModel.phone" class="form-control" placeholder="Input box" type="text">
+        <input [(ngModel)]="newPractitionerModel.phone" class="form-control" placeholder="(123) 456-7890" type="text">
       </div><!-- col -->
       <div class="col-6 mg-t-10 mg-lg-t-0">
         <p class="mg-b-10">Fax</p>
-        <input [(ngModel)]="newPractitionerModel.fax" class="form-control" placeholder="Input box" type="text">
+        <input [(ngModel)]="newPractitionerModel.fax" class="form-control" placeholder="(123) 456-7890" type="text">
       </div><!-- col -->
       <div class="col-6 mg-t-10 mg-lg-t-0">
         <p class="mg-b-10">Email</p>
-        <input [(ngModel)]="newPractitionerModel.email" class="form-control" placeholder="Input box" type="text">
+        <input [(ngModel)]="newPractitionerModel.email" class="form-control" placeholder="email@example.com" type="text" email>
       </div><!-- col -->
       <div class="col-6 mg-t-10 mg-lg-t-0">
         <p class="mg-b-10">Address</p>
@@ -397,6 +408,52 @@
     </div><!-- row -->
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="modal.close(newPractitionerModel)">Add Practitioner</button>
+    <button type="button" class="btn btn-az-primary" (click)="modal.close(newPractitionerModel)">Add Practitioner</button>
+  </div>
+</ng-template>
+
+
+
+<ng-template #organizationCreateModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-location">New Location</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+
+    <div class="row row-sm">
+
+      <div class="col-12">
+        <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
+        <form [formGroup]="newOrganizationForm">
+          <app-nlm-typeahead formControlName="data" searchType="MedicalContactOrganization"></app-nlm-typeahead>
+        </form>
+      </div><!-- col -->
+
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Telephone</p>
+        <input [(ngModel)]="newOrganizationModel.phone" class="form-control" placeholder="(123) 456-7890" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Fax</p>
+        <input [(ngModel)]="newOrganizationModel.fax" class="form-control" placeholder="(123) 456-7890" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Email</p>
+        <input [(ngModel)]="newOrganizationModel.email" class="form-control" placeholder="email@example.com" type="text" email>
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Address</p>
+        <input [(ngModel)]="newOrganizationModel.address" class="form-control" placeholder="Input box" type="text">
+      </div><!-- col -->
+      <div class="col-12 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Comment</p>
+        <input [(ngModel)]="newOrganizationModel.comment" class="form-control" placeholder="Input box" type="text">
+      </div><!-- col -->
+
+    </div><!-- row -->
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-az-primary" (click)="modal.close(newOrganizationModel)">Add Location</button>
   </div>
 </ng-template>

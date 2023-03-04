@@ -125,7 +125,7 @@ export interface ResourceCreate {
   "medications": ResourceCreateMedication[],
   "procedures": ResourceCreateProcedure[],
   "practitioners": ResourceCreatePractitioner[],
-  "locations": ResourceCreateLocation[]
+  "organizations": ResourceCreateOrganization[]
 }
 
 export interface ResourceCreateCondition {
@@ -197,16 +197,16 @@ export interface ResourceCreatePractitionerData {
   provider_phone: string
 }
 
-export interface ResourceCreateLocation {
+export interface ResourceCreateOrganization {
+  "id"?: string,
   "name": string,
-  "contactType": "search" | "manual"
-  "data": ResourceCreateLocationData | string,
   "phone": string,
   "fax": string,
   "email": string,
+  "address": string,
   "comment": string
 }
-export interface ResourceCreateLocationData {
+export interface ResourceCreateOrganizationData {
   id: string
   text: string
   provider_type: string
