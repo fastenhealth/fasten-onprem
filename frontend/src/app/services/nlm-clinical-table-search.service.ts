@@ -8,10 +8,17 @@ export interface NlmSearchResults {
   text: string
   parentAnswerCode?: string
   link?: string
-  icd9?: string
-  icd10?: string
+  identifier?: Record<string, string>
+
   provider_type?: string
-  provider_address?: string
+  provider_address?: {
+    line1?: string
+    line2?: string
+    city?: string
+    state?: string
+    zip?: string
+    country?: string
+  }
   provider_phone?: string
   provider_fax?: string
 }
@@ -49,7 +56,9 @@ export class NlmClinicalTableSearchService {
               id: item[0],
               text: item[1],
               link: item[2].split(',')[0], //link includes a description at the end, comma separated.
-              icd10: item[3].split(',')[0], //link includes a description at the end, comma separated.
+              identifier: {
+                icd10: item[3].split(',')[0]
+              }, //link includes a description at the end, comma separated.
             }
           })
           return results
@@ -649,7 +658,9 @@ export class NlmClinicalTableSearchService {
               id: item[0],
               text: item[1],
               link: item[2].split(',')[0], //link includes a description at the end, comma separated.
-              icd9: item[3].split(',')[0]
+              identifier: {
+                icd9: item[3].split(',')[0]
+              }
             }
           })
         })
@@ -709,22 +720,32 @@ export class NlmClinicalTableSearchService {
   searchMedicalContactIndividual(searchTerm: string): Observable<NlmSearchResults[]> {
     let queryParams = {
       'terms':searchTerm,
-      'df':'NPI,name.full,provider_type,addr_practice.full,addr_practice.fax,addr_practice.phone'
+      'df':'NPI,name.full,provider_type,addr_practice'
     }
 
     //https://clinicaltables.nlm.nih.gov/api/npi_idv/v3/search?df=&terms=xx
     return this._httpClient.get<any>(`${this.nlm_clinical_table_search_endpoint}/npi_idv/v3/search`, {params: queryParams})
       .pipe(
         map((response) => {
-
           return response[3].map((item):NlmSearchResults => {
+            let addr_practice = JSON.parse(item[3])
             return {
               id: item[0],
+              identifier: {
+                npi: item[0],
+              },
               text: item[1],
               provider_type: item[2],
-              provider_address: item[3],
-              provider_fax: item[4],
-              provider_phone: item[5],
+              provider_address: {
+                line1: addr_practice.line1,
+                line2: addr_practice.line2,
+                city: addr_practice.city,
+                state: addr_practice.state,
+                zip: addr_practice.zip,
+                country: addr_practice.country,
+              },
+              provider_fax: addr_practice.fax,
+              provider_phone: addr_practice.phone,
             }
           })
         })
@@ -734,7 +755,7 @@ export class NlmClinicalTableSearchService {
   searchMedicalContactOrganization(searchTerm: string): Observable<NlmSearchResults[]> {
     let queryParams = {
       'terms':searchTerm,
-      'df':'NPI,name.full,provider_type,addr_practice.full,addr_practice.fax,addr_practice.phone'
+      'df':'NPI,name.full,provider_type,addr_practice'
     }
 
     //https://clinicaltables.nlm.nih.gov/api/npi_org/v3/search?df=&terms=xx
@@ -743,13 +764,24 @@ export class NlmClinicalTableSearchService {
         map((response) => {
 
           return response[3].map((item):NlmSearchResults => {
+            let addr_practice = JSON.parse(item[3])
             return {
               id: item[0],
+              identifier: {
+                npi: item[0],
+              },
               text: item[1],
               provider_type: item[2],
-              provider_address: item[3],
-              provider_fax: item[4],
-              provider_phone: item[5],
+              provider_address: {
+                line1: addr_practice.line1,
+                line2: addr_practice.line2,
+                city: addr_practice.city,
+                state: addr_practice.state,
+                zip: addr_practice.zip,
+                country: addr_practice.country,
+              },
+              provider_fax: addr_practice.fax,
+              provider_phone: addr_practice.fax,
             }
           })
         })

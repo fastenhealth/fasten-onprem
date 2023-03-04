@@ -4,9 +4,10 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   ResourceCreateOrganization,
   ResourceCreatePractitioner,
-  ResourceCreatePractitionerData
+  ResourceCreatePractitionerData, ResourceCreateProcedureData
 } from '../../models/fasten/resource_create';
 import {uuidV4} from '../../../lib/utils/uuid';
+import {NlmSearchResults} from '../../services/nlm-clinical-table-search.service';
 
 export interface MedicationModel {
   data: {},
@@ -65,7 +66,7 @@ export class ResourceCreatorComponent implements OnInit {
     //https://angular.io/guide/dynamic-form
     this.form = new FormGroup({
       condition: new FormGroup({
-        data: new FormControl(null, Validators.required),
+        data: new FormControl<NlmSearchResults>(null, Validators.required),
         status: new FormControl(null, Validators.required),
         started: new FormControl(null, Validators.required),
         stopped: new FormControl(null),
@@ -84,7 +85,7 @@ export class ResourceCreatorComponent implements OnInit {
   }
   addMedication(){
     const medicationGroup = new FormGroup({
-      data: new FormControl(null, Validators.required),
+      data: new FormControl<NlmSearchResults>(null, Validators.required),
       status: new FormControl(null, Validators.required),
       dosage: new FormControl({
         value: '', disabled: true
@@ -113,7 +114,7 @@ export class ResourceCreatorComponent implements OnInit {
   }
   addProcedure(){
     const procedureGroup = new FormGroup({
-      data: new FormControl(null, Validators.required),
+      data: new FormControl<NlmSearchResults>(null, Validators.required),
       whendone: new FormControl(null, Validators.required),
       performer: new FormControl(null),
       location: new FormControl(null),
@@ -134,13 +135,20 @@ export class ResourceCreatorComponent implements OnInit {
   addPractitioner(practitioner: ResourceCreatePractitioner){
     const practitionerGroup = new FormGroup({
       id: new FormControl(practitioner.id, Validators.required),
+      identifier: new FormControl(practitioner.identifier),
       profession: new FormControl(practitioner.profession, Validators.required),
       name: new FormControl(practitioner.name, Validators.required),
       phone: new FormControl(practitioner.phone, Validators.pattern('[- +()0-9]+')),
       fax: new FormControl(practitioner.fax, Validators.pattern('[- +()0-9]+')),
       email: new FormControl(practitioner.email, Validators.email),
-      address: new FormControl(practitioner.address),
-      comment: new FormControl(practitioner.comment),
+      address: new FormGroup({
+        line1: new FormControl(practitioner.address.line1),
+        line2: new FormControl(practitioner.address.line2),
+        city: new FormControl(practitioner.address.city),
+        state: new FormControl(practitioner.address.state),
+        zip: new FormControl(practitioner.address.zip),
+        country: new FormControl(practitioner.address.country),
+      }),
     });
 
     this.practitioners.push(practitionerGroup);
@@ -158,12 +166,13 @@ export class ResourceCreatorComponent implements OnInit {
   addOrganization(organization: ResourceCreateOrganization){
     const organizationGroup = new FormGroup({
       id: new FormControl(organization.id, Validators.required),
+      identifier: new FormControl(organization.identifier),
       name: new FormControl(organization.name, Validators.required),
+      type: new FormControl(organization.type),
       phone: new FormControl(organization.phone, Validators.pattern('[- +()0-9]+')),
       fax: new FormControl(organization.fax, Validators.pattern('[- +()0-9]+')),
       email: new FormControl(organization.email, Validators.email),
       address: new FormControl(organization.address),
-      comment: new FormControl(organization.comment),
     });
 
     this.organizations.push(organizationGroup);
@@ -229,10 +238,14 @@ export class ResourceCreatorComponent implements OnInit {
     this.newPractitionerForm = new FormGroup({
       data: new FormControl({}),
     })
-    this.newPractitionerForm.get("data").valueChanges.subscribe(val => {
-      console.log("CHANGE INDIVIDUAL IN MODAL", val)
-      if(val.provider_phone){
+    this.newPractitionerForm.valueChanges.subscribe(form => {
+      console.log("CHANGE INDIVIDUAL IN MODAL", form)
+      let val = form.data
+      if(form.data.provider_phone){
         this.newPractitionerModel.phone = val.provider_phone;
+      }
+      if(val.identifier){
+        this.newPractitionerModel.identifier = val.identifier;
       }
       if(val.provider_fax){
         this.newPractitionerModel.fax = val.provider_fax;
@@ -251,12 +264,19 @@ export class ResourceCreatorComponent implements OnInit {
 
     this.newPractitionerModel = {
       name: '',
+      identifier: {},
       profession: {},
       phone: '',
-      address: '',
+      address: {
+        line1: '',
+        line2: '',
+        city: '',
+        state: '',
+        zip: '',
+        country: '',
+      },
       fax: '',
       email: '',
-      comment: ''
     };
   }
 
@@ -264,8 +284,15 @@ export class ResourceCreatorComponent implements OnInit {
     this.newOrganizationForm = new FormGroup({
       data: new FormControl({}),
     })
-    this.newOrganizationForm.get("data").valueChanges.subscribe(val => {
-      console.log("CHANGE Organization IN MODAL", val)
+    this.newOrganizationForm.valueChanges.subscribe(form => {
+      console.log("CHANGE Organization IN MODAL", form)
+      let val = form.data
+      if(val.provider_type) {
+        this.newOrganizationModel.type = val.provider_type
+      }
+      if(val.identifier){
+        this.newOrganizationModel.identifier = val.identifier;
+      }
       if(val.provider_phone){
         this.newOrganizationModel.phone = val.provider_phone;
       }
@@ -282,12 +309,20 @@ export class ResourceCreatorComponent implements OnInit {
 
 
     this.newOrganizationModel = {
+      identifier: {},
+      type: '',
       name: '',
       phone: '',
       fax: '',
       email: '',
-      address: '',
-      comment: ''
+      address: {
+        line1: '',
+        line2: '',
+        city: '',
+        state: '',
+        zip: '',
+        country: '',
+      },
     };
   }
 

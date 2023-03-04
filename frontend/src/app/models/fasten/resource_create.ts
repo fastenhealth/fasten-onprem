@@ -8,7 +8,9 @@ import {IResourceRaw} from './resource_fhir';
 //     "id": "14673",
 //       "text": "Hepatitis C",
 //       "link": "http://www.nlm.nih.gov/medlineplus/hepatitisc.html",
-//       "icd10": "B19.20"
+//       "identifier": {
+//         "icd10": "R19.7"
+//       }
 //   },
 //   "status": "active",
 //   "started": {
@@ -59,7 +61,7 @@ import {IResourceRaw} from './resource_fhir';
 //       "id": "5592",
 //       "text": "Abscess drainage",
 //       "link": "http://www.nlm.nih.gov/medlineplus/abscesses.html",
-//       "icd9": ""
+//       "identifier": { "icd9": "" }
 //     },
 //     "whendone": {
 //       "year": 2023,
@@ -168,7 +170,9 @@ export interface ResourceCreateMedicationData {
 export interface ResourceCreateProcedure {
   "data": ResourceCreateProcedureData | string,
   "whendone": ResourceCreateDate,
-  "comment": string
+  "comment": string,
+  "performer": string,
+  "location": string
 }
 export interface ResourceCreateProcedureData {
   id: string
@@ -179,38 +183,48 @@ export interface ResourceCreateProcedureData {
 
 export interface ResourceCreatePractitioner {
   "id"?: string,
+  "identifier": Record<string, string>
   "name": string,
   "profession": {},
   "phone": string,
   "fax": string,
   "email": string,
-  "address": string,
-  "comment": string
+  "address": Address,
 }
 
 export interface ResourceCreatePractitionerData {
   id: string
   text: string
   provider_type: string
-  provider_address: string
+  provider_address: Address
   provider_fax: string
   provider_phone: string
 }
 
 export interface ResourceCreateOrganization {
   "id"?: string,
+  "identifier": Record<string, string>
+  "type": string,
   "name": string,
   "phone": string,
   "fax": string,
   "email": string,
-  "address": string,
-  "comment": string
+  "address": Address,
 }
 export interface ResourceCreateOrganizationData {
   id: string
   text: string
   provider_type: string
-  provider_address: string
+  provider_address: Address
   provider_fax: string
   provider_phone: string
+}
+
+export interface Address {
+  line1?: string
+  line2?: string
+  city?: string
+  state?: string
+  zip?: string
+  country?: string
 }

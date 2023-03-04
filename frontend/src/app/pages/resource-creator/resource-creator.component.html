@@ -18,7 +18,7 @@
         <code>Condition Status: {{form.get('condition').status}}</code>
         <ng-container formGroupName="condition">
           <div class="row row-sm">
-            <div class="col-lg">
+            <div class="col-lg-4">
               <p class="mg-b-10">Medical condition<span ngbTooltip="required" class="text-danger">*</span></p>
               <app-nlm-typeahead formControlName="data" ></app-nlm-typeahead>
             </div><!-- col -->
@@ -236,10 +236,6 @@
                         <p class="mg-b-10">Address</p>
                         <input formControlName="address" class="form-control" placeholder="Input box" type="text">
                       </div><!-- col -->
-                        <div class="col-lg-12 mg-t-10 mg-lg-t-0">
-                          <p class="mg-b-10">Comment</p>
-                          <input formControlName="comment" class="form-control" placeholder="Input box" type="text">
-                        </div><!-- col -->
 
                     </div><!-- row -->
 
@@ -285,6 +281,10 @@
                         <input formControlName="name" readonly class="form-control" placeholder="Input box" type="text">
                       </div><!-- col -->
                       <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Type</p>
+                        <input formControlName="type" class="form-control" placeholder="Input box" type="text">
+                      </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">Telephone</p>
                         <input formControlName="phone" class="form-control" placeholder="(123) 456-7890" type="text">
                       </div><!-- col -->
@@ -295,10 +295,6 @@
                       <div class="col-lg mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">Email</p>
                         <input formControlName="email" class="form-control" placeholder="email@example.com" type="text">
-                      </div><!-- col -->
-                      <div class="col-lg-12 mg-t-10 mg-lg-t-0">
-                        <p class="mg-b-10">Comment</p>
-                        <input formControlName="comment" class="form-control" placeholder="Input box" type="text">
                       </div><!-- col -->
 
                     </div><!-- row -->
@@ -378,6 +374,7 @@
         <form [formGroup]="newPractitionerForm">
           <app-nlm-typeahead formControlName="data" searchType="MedicalContactIndividual"></app-nlm-typeahead>
         </form>
+        <span *ngFor="let extId of newPractitionerModel.identifier | keyvalue" class="badge badge-pill badge-primary">{{extId.key}}: {{extId.value}}</span>
       </div><!-- col -->
       <div class="col-6 mg-t-10 mg-lg-t-0">
         <p class="mg-b-10">Type<span ngbTooltip="required" class="text-danger">*</span></p>
@@ -396,13 +393,28 @@
         <p class="mg-b-10">Email</p>
         <input [(ngModel)]="newPractitionerModel.email" class="form-control" placeholder="email@example.com" type="text" email>
       </div><!-- col -->
-      <div class="col-6 mg-t-10 mg-lg-t-0">
-        <p class="mg-b-10">Address</p>
-        <input [(ngModel)]="newPractitionerModel.address" class="form-control" placeholder="Input box" type="text">
-      </div><!-- col -->
       <div class="col-12 mg-t-10 mg-lg-t-0">
-        <p class="mg-b-10">Comment</p>
-        <input [(ngModel)]="newPractitionerModel.comment" class="form-control" placeholder="Input box" type="text">
+        <p class="mg-b-10">Address</p>
+        <input [(ngModel)]="newPractitionerModel.address.line1" class="form-control" placeholder="Line 1" type="text">
+      </div><!-- col -->
+      <div class="col-12 pd-t-10 mg-t-10 mg-lg-t-0">
+        <input [(ngModel)]="newPractitionerModel.address.line2" class="form-control" placeholder="Line 2" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">City</p>
+        <input [(ngModel)]="newPractitionerModel.address.city" class="form-control" placeholder="City" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">State</p>
+        <input [(ngModel)]="newPractitionerModel.address.state" class="form-control" placeholder="State" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Zip/Postal</p>
+        <input [(ngModel)]="newPractitionerModel.address.zip" class="form-control" placeholder="Zip" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Country</p>
+        <input [(ngModel)]="newPractitionerModel.address.country" class="form-control" placeholder="Country" type="text">
       </div><!-- col -->
 
     </div><!-- row -->
@@ -428,6 +440,12 @@
         <form [formGroup]="newOrganizationForm">
           <app-nlm-typeahead formControlName="data" searchType="MedicalContactOrganization"></app-nlm-typeahead>
         </form>
+        <span *ngFor="let extId of newOrganizationModel.identifier | keyvalue" class="badge badge-pill badge-primary">{{extId.key}}: {{extId.value}}</span>
+      </div><!-- col -->
+
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Type</p>
+        <input [(ngModel)]="newOrganizationModel.type" class="form-control" type="text">
       </div><!-- col -->
 
       <div class="col-6 mg-t-10 mg-lg-t-0">
@@ -442,16 +460,30 @@
         <p class="mg-b-10">Email</p>
         <input [(ngModel)]="newOrganizationModel.email" class="form-control" placeholder="email@example.com" type="text" email>
       </div><!-- col -->
-      <div class="col-6 mg-t-10 mg-lg-t-0">
-        <p class="mg-b-10">Address</p>
-        <input [(ngModel)]="newOrganizationModel.address" class="form-control" placeholder="Input box" type="text">
-      </div><!-- col -->
       <div class="col-12 mg-t-10 mg-lg-t-0">
-        <p class="mg-b-10">Comment</p>
-        <input [(ngModel)]="newOrganizationModel.comment" class="form-control" placeholder="Input box" type="text">
+        <p class="mg-b-10">Address</p>
+        <input [(ngModel)]="newOrganizationModel.address.line1" class="form-control" placeholder="Line 1" type="text">
       </div><!-- col -->
-
-    </div><!-- row -->
+      <div class="col-12 pd-t-10 mg-t-10 mg-lg-t-0">
+        <input [(ngModel)]="newOrganizationModel.address.line2" class="form-control" placeholder="Line 2" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">City</p>
+        <input [(ngModel)]="newOrganizationModel.address.city" class="form-control" placeholder="City" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">State</p>
+        <input [(ngModel)]="newOrganizationModel.address.state" class="form-control" placeholder="State" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Zip/Postal</p>
+        <input [(ngModel)]="newOrganizationModel.address.zip" class="form-control" placeholder="Zip" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Country</p>
+        <input [(ngModel)]="newOrganizationModel.address.country" class="form-control" placeholder="Country" type="text">
+      </div><!-- col -->
+    </div>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-az-primary" (click)="modal.close(newOrganizationModel)">Add Location</button>
