@@ -177,6 +177,12 @@ export class ResourceCreatorComponent implements OnInit {
 
   onSubmit() {
     console.log(this.form.getRawValue())
+    this.form.markAllAsTouched()
+    if (this.form.valid) {
+      console.log('form submitted');
+    }
+
+
   }
 
   //Modal Helpers
