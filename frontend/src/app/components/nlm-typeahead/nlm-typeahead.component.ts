@@ -2,7 +2,14 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Observable, ObservableInput, of} from 'rxjs';
 import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
 import {NlmClinicalTableSearchService, NlmSearchResults} from '../../services/nlm-clinical-table-search.service';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {
+  AbstractControl,
+  ControlValueAccessor,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  ValidationErrors,
+  Validator
+} from '@angular/forms';
 
 export enum NlmSearchType {
   Allergy = 'Allergy',
@@ -29,10 +36,15 @@ export enum NlmSearchType {
       provide: NG_VALUE_ACCESSOR,
       multi:true,
       useExisting: NlmTypeaheadComponent
+    },
+    {
+      provide: NG_VALIDATORS,
+      multi:true,
+      useExisting: NlmTypeaheadComponent
     }
   ]
 })
-export class NlmTypeaheadComponent implements ControlValueAccessor {
+export class NlmTypeaheadComponent implements ControlValueAccessor, Validator {
   @Input() searchType: NlmSearchType = NlmSearchType.Condition;
 
   @Input() prePopulatedOptions: NlmSearchResults[] = []
@@ -117,6 +129,7 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
   }
 
   typeAheadChangeEvent(event){
+    this.markAsTouched()
     console.log("bubbling modelChange event", event)
     if(typeof event === 'string'){
       this.onChange({text: event});
@@ -153,5 +166,9 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
 
   setDisabledState(disabled: boolean) {
     this.disabled = disabled;
+  }
+
+  validate(control: AbstractControl): ValidationErrors | null {
+    return null;
   }
 }
