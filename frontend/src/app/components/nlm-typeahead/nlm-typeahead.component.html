@@ -11,7 +11,10 @@
   [inputFormatter]="formatter"
   [resultTemplate]="rt"
   (ngModelChange)="typeAheadChangeEvent($event)"
+  (click)="typeAheadClickEvent($event)"
+  (focus)="typeAheadFocusEvent($event)"
   placeholder="Search"
+  #instance="ngbTypeahead"
 />
 <small *ngIf="searching" class="form-text text-muted">searching...</small>
 <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>

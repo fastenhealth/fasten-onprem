@@ -1,11 +1,12 @@
-import {Component, EventEmitter, Input, OnInit, Optional, Output, Self} from '@angular/core';
-import {Observable, ObservableInput, of} from 'rxjs';
-import {catchError, debounceTime, distinctUntilChanged, switchMap, tap} from 'rxjs/operators';
+import {Component, EventEmitter, Input, OnInit, Optional, Output, Self, ViewChild} from '@angular/core';
+import {merge, Observable, ObservableInput, of, Subject} from 'rxjs';
+import {catchError, debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/operators';
 import {NlmClinicalTableSearchService, NlmSearchResults} from '../../services/nlm-clinical-table-search.service';
 import {
   ControlValueAccessor,
   NgControl,
 } from '@angular/forms';
+import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 
 export enum NlmSearchType {
   Allergy = 'Allergy',
@@ -43,9 +44,12 @@ export enum NlmSearchType {
 export class NlmTypeaheadComponent implements ControlValueAccessor {
   @Input() searchType: NlmSearchType = NlmSearchType.Condition;
   @Input() debugMode: Boolean = false;
-
+  @Input() openOnFocus: Boolean = false;
   @Input() prePopulatedOptions: NlmSearchResults[] = []
 
+  @ViewChild('instance', { static: true }) instance: NgbTypeahead;
+  focus$ = new Subject<string>();
+  click$ = new Subject<string>();
   searching = false;
   searchFailed = false;
 
@@ -65,15 +69,18 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
     switch (this.searchType) {
       case NlmSearchType.Allergy:
         searchOpFn = this.nlmClinicalTableSearchService.searchAllergy
+        this.openOnFocus = true
         break
       case NlmSearchType.AllergyReaction:
         searchOpFn = this.nlmClinicalTableSearchService.searchAllergyReaction
+        this.openOnFocus = true
         break
       case NlmSearchType.Condition:
         searchOpFn = this.nlmClinicalTableSearchService.searchCondition
         break
       case NlmSearchType.MedicalContactIndividualProfession:
         searchOpFn = this.nlmClinicalTableSearchService.searchMedicalContactIndividualProfession
+        this.openOnFocus = true
         break
       case NlmSearchType.MedicalContactIndividual:
         searchOpFn = this.nlmClinicalTableSearchService.searchMedicalContactIndividual
@@ -86,12 +93,14 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
         break
       case NlmSearchType.MedicationWhyStopped:
         searchOpFn = this.nlmClinicalTableSearchService.searchMedicationWhyStopped
+        this.openOnFocus = true
         break
       case NlmSearchType.Procedure:
         searchOpFn = this.nlmClinicalTableSearchService.searchProcedure
         break
       case NlmSearchType.Vaccine:
         searchOpFn = this.nlmClinicalTableSearchService.searchVaccine
+        this.openOnFocus = true
         break
       case NlmSearchType.PrePopulated:
         // searchOpFn = this.nlmClinicalTableSearchService.searchVaccine
@@ -107,12 +116,18 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
     // https://ng-bootstrap.github.io/#/components/typeahead/api
     searchOpFn = searchOpFn.bind(this.nlmClinicalTableSearchService)
 
-    return text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
+
+    const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    const clicksWithClosedPopup$ = this.click$.pipe(filter(() => !this.instance.isPopupOpen()));
+    const inputFocus$ = this.focus$;
+
+
+
+    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
       tap(() => { this.searching = true }),
       switchMap((term): ObservableInput<any> => {
 
+        console.log("searching for", term)
 
         //must use bind
         return searchOpFn(term).pipe(
@@ -138,6 +153,19 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
       }
     } else{
       this.onChange(event);
+    }
+  }
+
+  // If `openOnFocus` is true, we want to show dropdown/typeahead when the field is clicked or in focus, even if there is no text entered.
+  //See:https://ng-bootstrap.github.io/#/components/typeahead/examples#focus
+  typeAheadClickEvent($event){
+    if(this.openOnFocus){
+      this.click$.next($event.target.value)
+    }
+  }
+  typeAheadFocusEvent($event){
+    if(this.openOnFocus){
+      this.focus$.next($event.target.value)
     }
   }
 
