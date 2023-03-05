@@ -16,21 +16,19 @@
             <strong>Warning!</strong> This form is in early-alpha and is not ready for general use. You will encounter bugs and missing features.
             Please open a <a href="https://github.com/fastenhealth/fasten-onprem/issues">Github Issue</a> if you find any bugs or have any suggestions.
             <br/>
-            Debug mode: <input type="checkbox" [(ngModel)]="debugMode"/>
+            <br/>
+            Enable Debug mode: <input type="checkbox" [(ngModel)]="debugMode"/>
+          </div>
+
+          <div *ngIf="debugMode" class="alert alert-warning">
+            <pre><code  [highlight]="form.getRawValue() | json"></code></pre>
+            <strong>Form Status: {{ form.status }}</strong>
           </div>
         </div>
       </div>
 
       <div class="az-content-label mg-b-5">Condition</div>
       <p class="mg-b-20">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna </p>
-
-      <div *ngIf="debugMode" class="alert alert-warning">
-        <pre><code  [highlight]="form.getRawValue() | json"></code></pre>
-        <strong>Form Status: {{ form.status }}</strong>
-      </div>
-
-
-
 
 
       <form (ngSubmit)="onSubmit()" [formGroup]="form">
