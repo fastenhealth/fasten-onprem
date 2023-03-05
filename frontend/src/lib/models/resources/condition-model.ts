@@ -16,6 +16,8 @@ export class ConditionModel extends FastenDisplayModel {
   clinical_status: string | undefined
   date_recorded: string | undefined
   onset_datetime: string | undefined
+  abatement_datetime: string | undefined
+  note: string | undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
@@ -32,7 +34,11 @@ export class ConditionModel extends FastenDisplayModel {
     this.severity_text =
       _.get(fhirResource, 'severity.coding.0.display') ||
       _.get(fhirResource, 'severity.text');
-    this.onset_datetime = _.get(fhirResource, 'onsetDateTime');
+    this.onset_datetime = _.get(fhirResource, 'onsetDateTime') ||
+      _.get(fhirResource, 'onsetPeriod.start') ||
+      _.get(fhirResource, 'assertedDate');
+    this.abatement_datetime = _.get(fhirResource, 'abatementDateTime') ||
+      _.get(fhirResource, 'abatementPeriod.end');
     this.has_asserter = _.has(fhirResource, 'asserter');
     this.asserter = _.get(fhirResource, 'asserter');
     this.has_body_site = !!_.get(fhirResource, 'bodySite.0.coding.0.display');
@@ -54,6 +60,7 @@ export class ConditionModel extends FastenDisplayModel {
   r4DTO(fhirResource:any){
     this.clinical_status = _.get(fhirResource, 'clinicalStatus.coding.0.code');
     this.date_recorded = _.get(fhirResource, 'recordedDate');
+    this.note = _.get(fhirResource, 'note.0.text');
   };
 
   resourceDTO(fhirResource:any, fhirVersion:fhirVersions){

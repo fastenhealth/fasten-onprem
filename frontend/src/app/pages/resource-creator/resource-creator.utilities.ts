@@ -115,8 +115,8 @@ function resourceCreateConditionToR4Condition(resourceStorage: ResourceStorage, 
         }
       ]
     },
-    onsetDateTime: `${resourceCreateCondition.started.year}-${resourceCreateCondition.started.month}-${resourceCreateCondition.started.day}T00:00:00+00:00`,
-    abatementDateTime: resourceCreateCondition.stopped ? `${resourceCreateCondition.stopped.year}-${resourceCreateCondition.stopped.month}-${resourceCreateCondition.stopped.day}T00:00:00+00:00` : null,
+    onsetDateTime: `${new Date(resourceCreateCondition.started.year, resourceCreateCondition.started.month-1,resourceCreateCondition.started.day).toISOString()}`,
+    abatementDateTime: resourceCreateCondition.stopped ? `${new Date(resourceCreateCondition.stopped.year,resourceCreateCondition.stopped.month-1, resourceCreateCondition.stopped.day).toISOString()}` : null,
     recordedDate: new Date().toISOString(),
     note: note
   } as Condition
@@ -157,7 +157,7 @@ function resourceCreateProcedureToR4Procedure(resourceStorage: ResourceStorage, 
       coding: procedureCodes,
       text: procedureCodes[0].display,
     },
-    performedDateTime: `${resourceCreateProcedure.whendone.year}-${resourceCreateProcedure.whendone.month}-${resourceCreateProcedure.whendone.day}T00:00:00+00:00`,
+    performedDateTime: `${new Date(resourceCreateProcedure.whendone.year, resourceCreateProcedure.whendone.month-1,resourceCreateProcedure.whendone.day).toISOString()}`,
     reasonReference: [
       {
         reference: `urn:uuid:${findCondition(resourceStorage).id}` //Condition
@@ -338,7 +338,7 @@ function resourceCreateMedicationToR4MedicationRequest(resourceStorage: Resource
       ]
     },
     subject: null,
-    authoredOn: `${resourceCreateMedication.started.year}-${resourceCreateMedication.started.month}-${resourceCreateMedication.started.day}T00:00:00+00:00`,
+    authoredOn: `${new Date(resourceCreateMedication.started.year,resourceCreateMedication.started.month-1,resourceCreateMedication.started.day).toISOString()}`,
     requester: {
       reference: `urn:uuid:${resourceCreateMedication.requester}` // Practitioner
     },
@@ -354,8 +354,8 @@ function resourceCreateMedicationToR4MedicationRequest(resourceStorage: Resource
     ],
     dispenseRequest: {
       validityPeriod: {
-        start: `${resourceCreateMedication.started.year}-${resourceCreateMedication.started.month}-${resourceCreateMedication.started.day}T00:00:00+00:00`,
-        end: resourceCreateMedication.stopped ? `${resourceCreateMedication.stopped.year}-${resourceCreateMedication.stopped.month}-${resourceCreateMedication.stopped.day}T00:00:00+00:00` : null,
+        start: `${new Date(resourceCreateMedication.started.year,resourceCreateMedication.started.month-1,resourceCreateMedication.started.day).toISOString()}`,
+        end: resourceCreateMedication.stopped ? `${new Date(resourceCreateMedication.stopped.year,resourceCreateMedication.stopped.month-1,resourceCreateMedication.stopped.day).toISOString()}` : null,
       },
     },
   } as MedicationRequest
