@@ -12,20 +12,20 @@ import {
   BundleEntry,
   Bundle,
   Organization,
-  Practitioner, MedicationRequest
+  Practitioner, MedicationRequest, Patient
 } from 'fhir/r4';
 import {uuidV4} from '../../../lib/utils/uuid';
 
 interface ResourceStorage {
   [resourceType: string]: {
-    [resourceId: string]: Condition | MedicationRequest | Organization | FhirLocation | Practitioner | Procedure
+    [resourceId: string]: Condition | Patient | MedicationRequest | Organization | FhirLocation | Practitioner | Procedure
   }
 }
 
 
 export function GenerateR4Bundle(resourceCreate: ResourceCreate): Bundle {
   let resourceStorage: ResourceStorage = {} //{"resourceType": {"resourceId": resourceData}}
-
+  resourceStorage = placeholderR4Patient(resourceStorage)
   resourceStorage = resourceCreateConditionToR4Condition(resourceStorage, resourceCreate.condition)
   for(let organization of resourceCreate.organizations) {
     resourceStorage = resourceCreateOrganizationToR4Organization(resourceStorage, organization)
@@ -61,6 +61,22 @@ export function GenerateR4Bundle(resourceCreate: ResourceCreate): Bundle {
 }
 
 //Private methods
+
+function placeholderR4Patient(resourceStorage: ResourceStorage): ResourceStorage {
+  resourceStorage['Patient'] = resourceStorage['Patient'] || {}
+  let patientResource = {
+    resourceType: 'Patient',
+    id: uuidV4(),
+    name: [
+      {
+        family: 'Placeholder',
+        given: ['Patient'],
+      }
+    ],
+  } as Patient
+  resourceStorage['Patient'][patientResource.id] = patientResource
+  return resourceStorage
+}
 
 // this model is based on FHIR401 Resource Condition - http://hl7.org/fhir/R4/condition.html
 function resourceCreateConditionToR4Condition(resourceStorage: ResourceStorage, resourceCreateCondition: ResourceCreateCondition): ResourceStorage {
@@ -351,4 +367,9 @@ function resourceCreateMedicationToR4MedicationRequest(resourceStorage: Resource
 function findCondition(resourceStorage: ResourceStorage): Condition {
   let [conditionId] = Object.keys(resourceStorage['Condition'])
   return resourceStorage['Condition'][conditionId] as Condition
+}
+
+function findPatient(resourceStorage: ResourceStorage): Patient {
+  let [patientId] = Object.keys(resourceStorage['Patient'])
+  return resourceStorage['Patient'][patientId] as Patient
 }

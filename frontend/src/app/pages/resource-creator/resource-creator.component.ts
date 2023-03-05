@@ -9,6 +9,7 @@ import {
 import {uuidV4} from '../../../lib/utils/uuid';
 import {NlmSearchResults} from '../../services/nlm-clinical-table-search.service';
 import {GenerateR4Bundle} from './resource-creator.utilities';
+import {FastenApiService} from '../../services/fasten-api.service';
 
 export interface MedicationModel {
   data: {},
@@ -55,7 +56,7 @@ export class ResourceCreatorComponent implements OnInit {
   // }
 
 
-  constructor(private modalService: NgbModal) { }
+  constructor(private modalService: NgbModal, private fastenApi: FastenApiService) { }
 
   ngOnInit(): void {
 
@@ -191,7 +192,15 @@ export class ResourceCreatorComponent implements OnInit {
     if (this.form.valid) {
       console.log('form submitted');
 
-      GenerateR4Bundle(this.form.getRawValue());
+      let bundle = GenerateR4Bundle(this.form.getRawValue());
+
+      let bundleJsonStr = JSON.stringify(bundle);
+      let bundleBlob = new Blob([bundleJsonStr], { type: 'application/json' });
+      let bundleFile = new File([ bundleBlob ], 'bundle.json');
+      this.fastenApi.createManualSource(bundleFile).subscribe((resp) => {
+        console.log(resp)
+      })
+
     }
 
 
