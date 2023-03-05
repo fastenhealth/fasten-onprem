@@ -1,4 +1,6 @@
 import {IResourceRaw} from './resource_fhir';
+import {CodingModel} from '../../../lib/models/datatypes/coding-model';
+import {NlmSearchResults} from '../../services/nlm-clinical-table-search.service';
 
 
 //
@@ -131,20 +133,11 @@ export interface ResourceCreate {
 }
 
 export interface ResourceCreateCondition {
-  "data": ResourceCreateConditionData,
+  "data": NlmSearchResults,
   "status": "active" | "inactive",
   "started": ResourceCreateDate,
   "stopped": ResourceCreateDate,
   "description": string
-}
-
-export interface ResourceCreateConditionData {
-  id: string
-  text: string
-  link: string
-  identifier?: {
-    icd10: string
-  }
 }
 
 export interface ResourceCreateDate {
@@ -154,74 +147,44 @@ export interface ResourceCreateDate {
 }
 
 export interface ResourceCreateMedication {
-  "data": ResourceCreateMedicationData,
+  "data": NlmSearchResults,
   "status": "active" | "inactive",
   "dosage": {},
   "started": ResourceCreateDate,
   "stopped": ResourceCreateDate,
-  "whystopped": {}
+  "whystopped": NlmSearchResults
   "requester": string,
   "instructions": string
 }
 
-export interface ResourceCreateMedicationData {
-  id: string
-  text: string
-}
-
 export interface ResourceCreateProcedure {
-  "data": ResourceCreateProcedureData,
+  "data": NlmSearchResults,
   "whendone": ResourceCreateDate,
   "comment": string,
   "performer": string,
   "location": string
 }
-export interface ResourceCreateProcedureData {
-  id: string
-  text: string
-  link: string
-  identifier?: {
-    icd9: string
-  }
-}
 
 export interface ResourceCreatePractitioner {
   "id"?: string,
-  "identifier": Record<string, string>
+  "identifier": CodingModel[]
   "name": string,
-  "profession": {},
+  "profession": NlmSearchResults,
   "phone": string,
   "fax": string,
   "email": string,
   "address": Address,
-}
-
-export interface ResourceCreatePractitionerData {
-  id: string
-  text: string
-  provider_type: string
-  provider_address: Address
-  provider_fax: string
-  provider_phone: string
 }
 
 export interface ResourceCreateOrganization {
   "id"?: string,
-  "identifier": Record<string, string>
-  "type": string,
+  "identifier": CodingModel[]
+  "type": NlmSearchResults,
   "name": string,
   "phone": string,
   "fax": string,
   "email": string,
   "address": Address,
-}
-export interface ResourceCreateOrganizationData {
-  id: string
-  text: string
-  provider_type: string
-  provider_address: Address
-  provider_fax: string
-  provider_phone: string
 }
 
 export interface Address {

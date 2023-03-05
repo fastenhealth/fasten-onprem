@@ -2,15 +2,20 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
+import {CodingModel} from '../../lib/models/datatypes/coding-model';
 
 export interface NlmSearchResults {
   id: string
   text: string
   parentAnswerCode?: string
   link?: string
-  identifier?: Record<string, string>
+  identifier?: CodingModel[]
 
-  provider_type?: string
+  provider_type?: {
+    id: string,
+    text: string,
+    identifier?: CodingModel[]
+  }
   provider_address?: {
     line1?: string
     line2?: string
@@ -56,9 +61,13 @@ export class NlmClinicalTableSearchService {
               id: item[0],
               text: item[1],
               link: item[2].split(',')[0], //link includes a description at the end, comma separated.
-              identifier: {
-                icd10: item[3].split(',')[0]
-              }, //link includes a description at the end, comma separated.
+              identifier: [
+                {
+                  system: 'http://hl7.org/fhir/sid/icd-10',
+                  code: item[3].split(',')[0],
+                  display: item[1]
+                }
+              ], //link includes a description at the end, comma separated.
             }
           })
           return results
@@ -80,6 +89,13 @@ export class NlmClinicalTableSearchService {
             results.push({
               id: response[2]['SXDG_RXCUI'][ndx], //code response can be a comma sep list (string) of multiple codes
               text: response[2]['DISPLAY_NAME'][ndx],
+              identifier: [
+                {
+                  system: 'http://hl7.org/fhir/sid/rxnorm',
+                  code: response[2]['SXDG_RXCUI'][ndx],
+                  display: response[2]['DISPLAY_NAME'][ndx]
+                }
+              ]
             })
           }
           return results
@@ -88,18 +104,20 @@ export class NlmClinicalTableSearchService {
   }
 
   //see https://lhcforms.nlm.nih.gov/phr.json
+  //see http://hl7.org/fhir/R4/valueset-medicationrequest-status-reason.html
   searchMedicationWhyStopped(searchTerm: string): Observable<NlmSearchResults[]> {
     let searchOptions: NlmSearchResults[] = [
       {"id": "STP-1", "text": "Finished the prescription"},
-      {"id": "STP-2", "text": "Dose change"},
-      {"id": "STP-3", "text": "Problem gone"},
+      {"id": "STP-2", "text": "Dose change", identifier: [{system: 'http://terminology.hl7.org/CodeSystem/medicationrequest-status-reason', code: 'drughigh'}]},
+      {"id": "STP-3", "text": "Problem gone", },
       {"id": "STP-4", "text": "Replaced by better drug"},
       {"id": "STP-5", "text": "Could not tolerate side effects"},
       {"id": "STP-6", "text": "Didn't work"},
-      {"id": "STP-7", "text": "Allergy"},
+      {"id": "STP-7", "text": "Allergy", identifier: [{system: 'http://terminology.hl7.org/CodeSystem/medicationrequest-status-reason', code: 'salg'}]},
       {"id": "STP-8", "text": "Too expensive"},
       {"id": "STP-9", "text": "Not covered by insurance"},
-      {"id": "STP-10","text": "I don't know"}
+      {"id": "STP-10","text": "I don't know"},
+      {"id": "STP-11","text": "Pregnant", identifier: [{system: 'http://terminology.hl7.org/CodeSystem/medicationrequest-status-reason', code: 'preg'}]}
     ]
     let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
@@ -658,69 +676,318 @@ export class NlmClinicalTableSearchService {
               id: item[0],
               text: item[1],
               link: item[2].split(',')[0], //link includes a description at the end, comma separated.
-              identifier: {
-                icd9: item[3].split(',')[0]
-              }
+              identifier: [{
+                system: 'http://hl7.org/fhir/sid/icd-9-cm',
+                code: item[3].split(',')[0],
+                display: item[1]
+              }]
             }
           })
         })
       )
   }
+
   //see https://lhcforms.nlm.nih.gov/phr.json
+  //see https://build.fhir.org/valueset-provider-taxonomy.html
   searchMedicalContactIndividualProfession(searchTerm: string): Observable<NlmSearchResults[]> {
     let searchOptions: NlmSearchResults[] = [
-      {"id": "ALLE", "text": "Allergist"},
-      {"id": "CARD", "text": "Cardiologist"},
-      {"id": "CLIN", "text": "Clinical psychologist"},
-      {"id": "DENT", "text": "Dentist"},
-      {"id": "DERM", "text": "Dermatologist"},
-      {"id": "EAR", "text": "ENT"},
-      {"id": "FP", "text": "Family practitioner"},
-      {"id": "GI", "text": "Gastroenterologist"},
-      {"id": "HEME", "text": "Hematologist"},
-      {"id": "HOSP", "text": "Hospital"},
-      {"id": "IMM", "text": "Immunologist"},
-      {"id": "INTE", "text": "Internist"},
-      {"id": "MEDI", "text": "Medical equipment supplier"},
-      {"id": "NEPH", "text": "Nephrologist"},
-      {"id": "NEUR", "text": "Neurologist"},
-      {"id": "NURS", "text": "Nurse"},
-      {"id": "NURSP", "text": "Nurse practitioner"},
-      {"id": "NURSH", "text": "Nursing Home"},
-      {"id": "OBGY", "text": "Obstetrician/Gynecologist"},
-      {"id": "OT", "text": "Occupational therapist"},
-      {"id": "ONC", "text": "Oncologist"},
-      {"id": "OPHT", "text": "Ophthalmologist"},
-      {"id": "OPTO", "text": "Optometrist"},
-      {"id": "ODO", "text": "Orthodontist"},
-      {"id": "ORTH", "text": "Orthopedist"},
-      {"id": "PEDI", "text": "Pediatrician"},
-      {"id": "PHAR", "text": "Pharmacy"},
-      {"id": "PHMO", "text": "Pharmacy - mail order"},
-      {"id": "PHAR24", "text": "Pharmacy- 24 hour"},
-      {"id": "PMR", "text": "Physical medicine and rehabilitation (PM&R)"},
-      {"id": "PT", "text": "Physical therapist"},
-      {"id": "PLS", "text": "Plastic surgeon"},
-      {"id": "POD", "text": "Podiatrist"},
-      {"id": "PRIM", "text": "Primary care physician"},
-      {"id": "PSYC", "text": "Psychiatrist"},
-      {"id": "PULM", "text": "Pulmonologist"},
-      {"id": "RHEU", "text": "Rheumatologist"},
-      {"id": "SOCI", "text": "Social worker"},
-      {"id": "SLT", "text": "Speech and language therapist"},
-      {"id": "SURG", "text": "Surgeon"},
-      {"id": "URGE", "text": "Urgent care facility"},
-      {"id": "UROL", "text": "Urologist"}
+      {
+        id: "207K00000X",
+        identifier: [{
+          code: "207K00000X",
+          display: "Allergy & Immunology Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Allergy & Immunology Physician"
+      },
+      {
+        id: "103TC0700X",
+        identifier: [{
+          code: "103TC0700X",
+          display: "Clinical Psychologist",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Clinical Psychologist"
+      },
+      {
+        id: "122300000X",
+        identifier: [{
+          code: "122300000X",
+          display: "Dentist",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Dentist"
+      },
+      {
+        id: "207N00000X",
+        identifier: [{
+          code: "207N00000X",
+          display: "Dermatology Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Dermatology Physician"
+      },
+      {
+        id: "207Y00000X",
+        identifier: [{
+          code: "207Y00000X",
+          display: "Otolaryngology Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Otolaryngology Physician (Ear, Nose, Throat/ENT)"
+      },
+      {
+        id: "207Q00000X",
+        identifier: [{
+          code: "207Q00000X",
+          display: "Family Medicine Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Family Medicine Physician"
+      },
+      {
+        id: "207RG0100X",
+        identifier: [{
+          code: "207RG0100X",
+          display: "Gastroenterology Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Gastroenterology Physician"
+      },
+      {
+        id: "207RH0000X",
+        identifier: [{
+          code: "207RH0000X",
+          display: "Hematology (Internal Medicine) Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Hematology (Internal Medicine) Physician"
+      },
+      {
+        id: "207R00000X",
+        identifier: [{
+          code: "207R00000X",
+          display: "Internal Medicine Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Internal Medicine Physician"
+      },
+      {
+        id: "332B00000X",
+        identifier: [{
+          code: "332B00000X",
+          display: "Durable Medical Equipment & Medical Supplies",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Durable Medical Equipment & Medical Supplies"
+      },
+      {
+        id: "207RN0300X",
+        identifier: [{
+          code: "207RN0300X",
+          display: "Nephrology Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Nephrology Physician"
+      },
+      {
+        id: "2084N0400X",
+        identifier: [{
+          code: "2084N0400X",
+          display: "Neurology Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Neurology Physician"
+      },
+      {
+        id: "163W00000X",
+        identifier: [{
+          code: "163W00000X",
+          display: "Registered Nurse",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Registered Nurse"
+      },
+      {
+        id: "363L00000X",
+        identifier: [{
+          code: "363L00000X",
+          display: "Nurse Practitioner",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Nurse Practitioner"
+      },
+      {
+        id: "207V00000X",
+        identifier: [{
+          code: "207V00000X",
+          display: "Obstetrics & Gynecology Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Obstetrics & Gynecology Physician"
+      },
+      {
+        id: "225X00000X",
+        identifier: [{
+          code: "225X00000X",
+          display: "Occupational Therapist",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Occupational Therapist"
+      },
+      {
+        id: "207RH0003X",
+        identifier: [{
+          code: "207RH0003X",
+          display: "Hematology & Oncology Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Hematology & Oncology Physician"
+      },
+      {
+        id: "207W00000X",
+        identifier: [{
+          code: "207W00000X",
+          display: "Ophthalmology Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Ophthalmology Physician"
+      },
+      {
+        id: "152W00000X",
+        identifier: [{
+          code: "152W00000X",
+          display: "Optometrist",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Optometrist"
+      },
+      {
+        id: "1223X0400X",
+        identifier: [{
+          code: "1223X0400X",
+          display: "Orthodontics and Dentofacial Orthopedic Dentist",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Orthodontics and Dentofacial Orthopedic Dentist"
+      },
+      {
+        id: "208000000X",
+        identifier: [{
+          code: "208000000X",
+          display: "Pediatrics Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Pediatrics Physician"
+      },
+      {
+        id: "208100000X",
+        identifier: [{
+          code: "208100000X",
+          display: "Physical Medicine & Rehabilitation Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Physical Medicine & Rehabilitation Physician"
+      },
+      {
+        id: "225100000X",
+        identifier: [{
+          code: "225100000X",
+          display: "Physical Therapist",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Physical Therapist"
+      },
+      {
+        id: "208200000X",
+        identifier: [{
+          code: "208200000X",
+          display: "Plastic Surgery Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Plastic Surgery Physician"
+      },
+      {
+        id: "213E00000X",
+        identifier: [{
+          code: "213E00000X",
+          display: "Podiatrist",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Podiatrist"
+      },
+      {
+        id: "2084P0800X",
+        identifier: [{
+          code: "2084P0800X",
+          display: "Psychiatry Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Psychiatry Physician"
+      },
+      {
+        id: "207RP1001X",
+        identifier: [{
+          code: "207RP1001X",
+          display: "Pulmonary Disease Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Pulmonary Disease Physician"
+      },
+      {
+        id: "207RR0500X",
+        identifier: [{
+          code: "207RR0500X",
+          display: "Rheumatology Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Rheumatology Physician"
+      },
+      {
+        id: "104100000X",
+        identifier: [{
+          code: "104100000X",
+          display: "Social Worker",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Social Worker"
+      },
+      {
+        id: "235500000X",
+        identifier: [{
+          code: "235500000X",
+          display: "Speech/Language/Hearing Specialist/Technologist",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Speech/Language/Hearing Specialist/Technologist"
+      },
+      {
+        id: "208600000X",
+        identifier: [{
+          code: "208600000X",
+          display: "Surgery Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Surgery Physician"
+      },
+      {
+        id: "208800000X",
+        identifier: [{
+          code: "208800000X",
+          display: "Urology Physician",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Urology Physician"
+      }
     ]
     let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
     return of(result)
   }
 
-
   searchMedicalContactIndividual(searchTerm: string): Observable<NlmSearchResults[]> {
     let queryParams = {
       'terms':searchTerm,
-      'df':'NPI,name.full,provider_type,addr_practice'
+      'df':'NPI,name.full,provider_type,addr_practice,licenses.taxonomy.code'
     }
 
     //https://clinicaltables.nlm.nih.gov/api/npi_idv/v3/search?df=&terms=xx
@@ -731,11 +998,28 @@ export class NlmClinicalTableSearchService {
             let addr_practice = JSON.parse(item[3])
             return {
               id: item[0],
-              identifier: {
-                npi: item[0],
-              },
+              identifier: [{
+                system: 'http://hl7.org/fhir/sid/us-npi',
+                value: item[0],
+                type: {
+                  coding: [
+                    {
+                      system: "http://terminology.hl7.org/CodeSystem/v2-0203",
+                      code: "NPI"
+                    }
+                  ]
+                }
+              }],
               text: item[1],
-              provider_type: item[2],
+              provider_type: {
+                id: item[4],
+                text: item[2],
+                identifier: [{
+                  system: 'http://nucc.org/provider-taxonomy',
+                  code: item[4],
+                  display: item[2],
+                }]
+              },
               provider_address: {
                 line1: addr_practice.line1,
                 line2: addr_practice.line2,
@@ -752,10 +1036,12 @@ export class NlmClinicalTableSearchService {
       )
   }
 
+
+  // see http://terminology.hl7.org/CodeSystem/organization-type'
   searchMedicalContactOrganization(searchTerm: string): Observable<NlmSearchResults[]> {
     let queryParams = {
       'terms':searchTerm,
-      'df':'NPI,name.full,provider_type,addr_practice'
+      'df':'NPI,name.full,provider_type,addr_practice,licenses.taxonomy.code'
     }
 
     //https://clinicaltables.nlm.nih.gov/api/npi_org/v3/search?df=&terms=xx
@@ -767,11 +1053,28 @@ export class NlmClinicalTableSearchService {
             let addr_practice = JSON.parse(item[3])
             return {
               id: item[0],
-              identifier: {
-                npi: item[0],
-              },
+              identifier: [{
+                system: 'http://hl7.org/fhir/sid/us-npi',
+                value: item[0],
+                type: {
+                  coding: [
+                    {
+                      system: "http://terminology.hl7.org/CodeSystem/v2-0203",
+                      code: "NPI"
+                    }
+                  ]
+                }
+              }],
               text: item[1],
-              provider_type: item[2],
+              provider_type: {
+                id: item[4],
+                text: item[2],
+                identifier: [{
+                  system: 'http://nucc.org/provider-taxonomy',
+                  code: item[4],
+                  display: item[2],
+                }]
+              },
               provider_address: {
                 line1: addr_practice.line1,
                 line2: addr_practice.line2,
@@ -788,6 +1091,111 @@ export class NlmClinicalTableSearchService {
       )
   }
 
+  searchMedicalContactOrganizationType(searchTerm: string): Observable<NlmSearchResults[]> {
+    let searchOptions: NlmSearchResults[] = [
+      {
+        id: "261Q00000X",
+        identifier: [{
+          code: "261Q00000X",
+          display: "Clinic/Center",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Clinic/Center"
+      },
+      {
+        id: "261QC1500X",
+        identifier: [{
+          code: "261QC1500X",
+          display: "Community Health Clinic/Center",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Community Health Clinic/Center"
+      },
+      {
+        id: "261QM1100X",
+        identifier: [{
+          code: "261QM1100X",
+          display: "Military/U.S. Coast Guard Outpatient Clinic/Center",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Military/U.S. Coast Guard Outpatient Clinic/Center"
+      },
+      {
+        id: "261QP0904X",
+        identifier: [{
+          code: "261QP0904X",
+          display: "Federal Public Health Clinic/Center",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Federal Public Health Clinic/Center"
+      },
+      {
+        id: "261QP2000X",
+        identifier: [{
+          code: "261QP2000X",
+          display: "Physical Therapy Clinic/Center",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Physical Therapy Clinic/Center"
+      },
+      {
+        id: "261QP2300X",
+        identifier: [{
+          code: "261QP2300X",
+          display: "Primary Care Clinic/Center",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Primary Care Clinic/Center"
+      },
+      {
+        id: "261QV0200X",
+        identifier: [{
+          code: "261QV0200X",
+          display: "VA Clinic/Center",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "VA Clinic/Center"
+      },
+      {
+        id: "282N00000X",
+        identifier: [{
+          code: "282N00000X",
+          display: "General Acute Care Hospital",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "General Acute Care Hospital"
+      },
+      {
+        id: "310400000X",
+        identifier: [{
+          code: "310400000X",
+          display: "Assisted Living Facility",
+          system: "http://nucc.org/provider-taxonomy"
+        }],
+        text: "Assisted Living Facility"
+      },
+      {
+        id: "ins",
+        identifier: [{
+          code: "ins",
+          display: "Insurance Company",
+          system: "http://terminology.hl7.org/CodeSystem/organization-type"
+        }],
+        text: "Insurance Company"
+      },
+      {
+        id: "ins",
+        identifier: [{
+          code: "ins",
+          display: "Insurance Company",
+          system: "http://terminology.hl7.org/CodeSystem/organization-type"
+        }],
+        text: "Insurance Company"
+      }
+    ]
+    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    return of(result)
+  }
 
 
   searchWikipediaType(searchTerm: string): Observable<NlmSearchResults[]> {

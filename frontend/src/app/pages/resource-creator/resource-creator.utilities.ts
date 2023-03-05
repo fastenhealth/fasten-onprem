@@ -82,16 +82,6 @@ function placeholderR4Patient(resourceStorage: ResourceStorage): ResourceStorage
 function resourceCreateConditionToR4Condition(resourceStorage: ResourceStorage, resourceCreateCondition: ResourceCreateCondition): ResourceStorage {
   resourceStorage['Condition'] = resourceStorage['Condition'] || {}
 
-  let conditionCodes = []
-  let conditionCode = {
-    display: resourceCreateCondition.data.text,
-  } as any
-  if (resourceCreateCondition.data.identifier) {
-    conditionCode.system = 'http://hl7.org/fhir/sid/icd-10'
-    conditionCode.code = resourceCreateCondition.data.identifier?.icd10
-  }
-  conditionCodes.push(conditionCode)
-
   let note = []
   if (resourceCreateCondition.description) {
     note.push({
@@ -104,8 +94,8 @@ function resourceCreateConditionToR4Condition(resourceStorage: ResourceStorage, 
     resourceType: 'Condition',
     id: uuidV4(),
     code: {
-      coding: conditionCodes,
-      text: conditionCodes[0].display,
+      coding: resourceCreateCondition.data.identifier || [],
+      text: resourceCreateCondition.data.identifier[0].display,
     },
     clinicalStatus: {
       "coding": [
@@ -131,15 +121,6 @@ function resourceCreateConditionToR4Condition(resourceStorage: ResourceStorage, 
 function resourceCreateProcedureToR4Procedure(resourceStorage: ResourceStorage, resourceCreateProcedure: ResourceCreateProcedure): ResourceStorage {
   resourceStorage['Procedure'] = resourceStorage['Procedure'] || {}
 
-  let procedureCodes = []
-  let procedureCode = {
-    display: resourceCreateProcedure.data.text,
-  } as any
-  if (resourceCreateProcedure.data.identifier) {
-    procedureCode.system = 'http://hl7.org/fhir/sid/icd-9'
-    procedureCode.code = resourceCreateProcedure.data.identifier?.icd9
-  }
-  procedureCodes.push(procedureCode)
 
   let note = []
   if (resourceCreateProcedure.comment) {
@@ -154,8 +135,8 @@ function resourceCreateProcedureToR4Procedure(resourceStorage: ResourceStorage, 
     resourceType: 'Procedure',
     id: uuidV4(),
     code: {
-      coding: procedureCodes,
-      text: procedureCodes[0].display,
+      coding:  resourceCreateProcedure.data.identifier || [],
+      text: resourceCreateProcedure.data.identifier[0].display,
     },
     performedDateTime: `${new Date(resourceCreateProcedure.whendone.year, resourceCreateProcedure.whendone.month-1,resourceCreateProcedure.whendone.day).toISOString()}`,
     reasonReference: [
@@ -203,35 +184,14 @@ function resourceCreateOrganizationToR4Organization(resourceStorage: ResourceSto
     })
   }
 
-  let identifier = []
-  if (resourceCreateOrganization.identifier['npi']) {
-    identifier.push({
-      system: "http://hl7.org/fhir/sid/us-npi",
-      value: resourceCreateOrganization.identifier['npi'],
-      type: {
-        coding: [
-          {
-            system: "http://terminology.hl7.org/CodeSystem/v2-0203",
-            code: "NPI"
-          }
-        ]
-      }
-    })
-  }
-
   let organizationResource = {
     resourceType: 'Organization',
     id: resourceCreateOrganization.id,
     name: resourceCreateOrganization.name,
-    identifier: identifier,
+    identifier: resourceCreateOrganization.identifier || [],
     type: [
       {
-        coding: [
-          {
-            system: 'http://terminology.hl7.org/CodeSystem/organization-type',
-            code: resourceCreateOrganization.type,
-          }
-        ]
+        coding: resourceCreateOrganization.type.identifier || [],
       }
     ],
     address: [
@@ -274,19 +234,11 @@ function resourceCreatePractitionerToR4Practitioner(resourceStorage: ResourceSto
       value: resourceCreatePractitioner.email,
     })
   }
-
-  let identifier = []
-  if (resourceCreatePractitioner.identifier['npi']) {
-    identifier.push({
-      system: "http://hl7.org/fhir/sid/us-npi",
-      value: resourceCreatePractitioner.identifier['npi'],
-      type: {
-        coding: [
-          {
-            system: "http://terminology.hl7.org/CodeSystem/v2-0203",
-            code: "NPI"
-          }
-        ]
+  let qualification = []
+  if(resourceCreatePractitioner.profession){
+    qualification.push({
+      code: {
+        coding: resourceCreatePractitioner.profession.identifier || [],
       }
     })
   }
@@ -301,7 +253,7 @@ function resourceCreatePractitionerToR4Practitioner(resourceStorage: ResourceSto
         text: resourceCreatePractitioner.name,
       },
     ],
-    identifier: identifier,
+    identifier: resourceCreatePractitioner.identifier || [],
     address: [
       {
         line: [resourceCreatePractitioner.address.line1, resourceCreatePractitioner.address.line2],
@@ -313,6 +265,7 @@ function resourceCreatePractitionerToR4Practitioner(resourceStorage: ResourceSto
     ],
     telecom: telecom,
     active: true,
+    qualification: qualification
   } as Practitioner
 
   resourceStorage['Practitioner'][practitionerResource.id] = practitionerResource
@@ -327,15 +280,12 @@ function resourceCreateMedicationToR4MedicationRequest(resourceStorage: Resource
     id: uuidV4(),
     resourceType: 'MedicationRequest',
     status: resourceCreateMedication.status,
+    statusReason: {
+      coding: resourceCreateMedication.whystopped.identifier || [],
+    },
     intent: 'order',
     medicationCodeableConcept: {
-      coding: [
-        {
-          system: 'http://www.nlm.nih.gov/research/umls/rxnorm',
-          code: resourceCreateMedication.data.id,
-          display: resourceCreateMedication.data.text,
-        }
-      ]
+      coding: resourceCreateMedication.data.identifier || [],
     },
     subject: null,
     authoredOn: `${new Date(resourceCreateMedication.started.year,resourceCreateMedication.started.month-1,resourceCreateMedication.started.day).toISOString()}`,

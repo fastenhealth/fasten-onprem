@@ -4,7 +4,6 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   ResourceCreateOrganization,
   ResourceCreatePractitioner,
-  ResourceCreatePractitionerData, ResourceCreateProcedureData
 } from '../../models/fasten/resource_create';
 import {uuidV4} from '../../../lib/utils/uuid';
 import {NlmSearchResults} from '../../services/nlm-clinical-table-search.service';
@@ -265,7 +264,7 @@ export class ResourceCreatorComponent implements OnInit {
         this.newPractitionerModel.fax = val.provider_fax;
       }
       if(val.provider_type){
-        this.newPractitionerModel.profession = {id: val.provider_type, text: val.provider_type}
+        this.newPractitionerModel.profession = val.provider_type
       }
       if(val.provider_address){
         this.newPractitionerModel.address = val.provider_address
@@ -278,8 +277,8 @@ export class ResourceCreatorComponent implements OnInit {
 
     this.newPractitionerModel = {
       name: '',
-      identifier: {},
-      profession: {},
+      identifier: [],
+      profession: {id: '', text: ''},
       phone: '',
       address: {
         line1: '',
@@ -323,8 +322,8 @@ export class ResourceCreatorComponent implements OnInit {
 
 
     this.newOrganizationModel = {
-      identifier: {},
-      type: '',
+      identifier: [],
+      type: {id: '', text: ''},
       name: '',
       phone: '',
       fax: '',

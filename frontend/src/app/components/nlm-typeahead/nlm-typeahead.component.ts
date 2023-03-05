@@ -15,6 +15,7 @@ export enum NlmSearchType {
   MedicalContactIndividualProfession = 'MedicalContactIndividualProfession',
   MedicalContactIndividual = 'MedicalContactIndividual',
   MedicalContactOrganization = 'MedicalContactOrganization',
+  MedicalContactOrganizationType = 'MedicalContactOrganizationType',
   Medication = 'Medication',
   MedicationWhyStopped = 'MedicationWhyStopped',
   Procedure = 'Procedure',
@@ -87,6 +88,10 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
         break
       case NlmSearchType.MedicalContactOrganization:
         searchOpFn = this.nlmClinicalTableSearchService.searchMedicalContactOrganization
+        break
+      case NlmSearchType.MedicalContactOrganizationType:
+        searchOpFn = this.nlmClinicalTableSearchService.searchMedicalContactOrganizationType
+        this.openOnFocus = true
         break
       case NlmSearchType.Medication:
         searchOpFn = this.nlmClinicalTableSearchService.searchMedication
