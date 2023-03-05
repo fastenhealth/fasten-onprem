@@ -133,7 +133,7 @@ function resourceCreateProcedureToR4Procedure(resourceStorage: ResourceStorage, 
 
   let procedureCodes = []
   let procedureCode = {
-    display: resourceCreateProcedure.data,
+    display: resourceCreateProcedure.data.text,
   } as any
   if (resourceCreateProcedure.data.identifier) {
     procedureCode.system = 'http://hl7.org/fhir/sid/icd-9'

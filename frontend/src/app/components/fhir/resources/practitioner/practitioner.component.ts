@@ -22,12 +22,6 @@ export class PractitionerComponent implements OnInit, FhirResourceComponentInter
 
   ngOnInit(): void {
     this.tableData = [
-      // {
-      //   label: 'Identifiers',
-      //   testId: 'identifier',
-      //   data: identifier && <Identifier fhirData={identifier} />,
-      //     status: identifier,
-      // },
     {
       label: 'Gender',
       data: this.displayModel?.gender,
@@ -50,15 +44,13 @@ export class PractitionerComponent implements OnInit, FhirResourceComponentInter
     // },
     // {
     //   label: 'Address',
-    //     testId: 'address',
-    //   data: address && <Address fhirData={address} />,
-    //   status: address,
+    //   data: this.displayModel?.address.,
+    //   status: !!this.displayModel?.address,
     // },
     // {
     //   label: 'Telephone',
-    //     testId: 'telecom',
-    //   data: telecom && <Telecom fhirData={telecom} />,
-    //   status: telecom,
+    //   data: this.displayModel.telecom,
+    //   enabled: !!this.displayModel.telecom,
     // },
   ];
     for(let idCoding of this.displayModel.identifier){
@@ -66,6 +58,13 @@ export class PractitionerComponent implements OnInit, FhirResourceComponentInter
         label: `Identifier (${idCoding.system})`,
         data: idCoding.display || idCoding.value,
         enabled: true,
+      })
+    }
+    for(let telecom of this.displayModel.telecom){
+      this.tableData.push({
+        label: telecom.system,
+        data: telecom.value,
+        enabled: !!telecom.value,
       })
     }
   }
