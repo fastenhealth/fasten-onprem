@@ -32,7 +32,7 @@ export enum ContactType {
   styleUrls: ['./resource-creator.component.scss']
 })
 export class ResourceCreatorComponent implements OnInit {
-
+  debugMode = false;
   collapsePanel: {[name: string]: boolean} = {}
 
 

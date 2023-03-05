@@ -42,6 +42,7 @@ export enum NlmSearchType {
 })
 export class NlmTypeaheadComponent implements ControlValueAccessor {
   @Input() searchType: NlmSearchType = NlmSearchType.Condition;
+  @Input() debugMode: Boolean = false;
 
   @Input() prePopulatedOptions: NlmSearchResults[] = []
 

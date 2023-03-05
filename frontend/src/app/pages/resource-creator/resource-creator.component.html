@@ -8,19 +8,40 @@
       </div>
       <h2 class="az-content-title">Create a Record</h2>
 
+      <!-- Editor Button -->
+      <div class="row mt-5 mb-3">
+        <div class="col-12">
+
+          <div class="alert alert-warning" role="alert">
+            <strong>Warning!</strong> This form is in early-alpha and is not ready for general use. You will encounter bugs and missing features.
+            Please open a <a href="https://github.com/fastenhealth/fasten-onprem/issues">Github Issue</a> if you find any bugs or have any suggestions.
+            <br/>
+            Debug mode: <input type="checkbox" [(ngModel)]="debugMode"/>
+          </div>
+        </div>
+      </div>
+
       <div class="az-content-label mg-b-5">Condition</div>
       <p class="mg-b-20">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna </p>
 
-      <pre>{{ form.getRawValue() | json}}</pre>
-      <code>Form Status: {{ form.status }}</code>
+      <div *ngIf="debugMode" class="alert alert-warning">
+        <pre><code  [highlight]="form.getRawValue() | json"></code></pre>
+        <strong>Form Status: {{ form.status }}</strong>
+      </div>
+
+
+
+
 
       <form (ngSubmit)="onSubmit()" [formGroup]="form">
-        <code>Condition Status: {{form.get('condition').status}}</code>
+        <div *ngIf="debugMode" class="alert alert-warning">
+          <strong>Condition Status: {{form.get('condition').status}}</strong>
+        </div>
         <ng-container formGroupName="condition">
           <div class="row row-sm">
             <div class="col-lg-4">
               <p class="mg-b-10">Medical condition<span ngbTooltip="required" class="text-danger">*</span></p>
-              <app-nlm-typeahead formControlName="data" ></app-nlm-typeahead>
+              <app-nlm-typeahead formControlName="data" [debugMode]="debugMode"></app-nlm-typeahead>
             </div><!-- col -->
             <div class="col-lg mg-t-10 mg-lg-t-0">
               <p class="mg-b-10">Status<span ngbTooltip="required" class="text-danger">*</span></p>
@@ -63,11 +84,13 @@
 
                 <ng-container formArrayName="medications">
                   <div class="card mg-t-10 pd-20" [formGroup]="medicationGroup" *ngFor="let medicationGroup of medications.controls; let i = index">
-                    <code>Medication Status: {{medicationGroup.status}}</code>
+                    <div *ngIf="debugMode" class="alert alert-warning">
+                      <strong>Medication Status: {{medicationGroup.status}}</strong>
+                    </div>
                     <div class="row row-sm">
                       <div class="col-lg-6">
                         <p class="mg-b-10">Medication name<span ngbTooltip="required" class="text-danger">*</span></p>
-                        <app-nlm-typeahead formControlName="data" searchType="Medication"></app-nlm-typeahead>
+                        <app-nlm-typeahead formControlName="data" searchType="Medication" [debugMode]="debugMode"></app-nlm-typeahead>
                       </div><!-- col -->
                       <div class="col-lg-3 mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">Status<span ngbTooltip="required" class="text-danger">*</span></p>
@@ -90,7 +113,7 @@
                       </div><!-- col -->
                       <div class="col-lg-3 mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">Why Stopped</p>
-                        <app-nlm-typeahead formControlName="whystopped" searchType="MedicationWhyStopped"></app-nlm-typeahead>
+                        <app-nlm-typeahead formControlName="whystopped" searchType="MedicationWhyStopped" [debugMode]="debugMode"></app-nlm-typeahead>
                       </div><!-- col -->
                       <div class="col-lg-3 mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">Prescribing Practitioner<span ngbTooltip="required" class="text-danger">*</span></p>
@@ -140,10 +163,13 @@
               <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['procedure']" class="card-body">
                 <ng-container formArrayName="procedures">
                   <div class="card mg-t-10 pd-20" [formGroup]="procedureGroup" *ngFor="let procedureGroup of procedures.controls; let i = index">
+                    <div *ngIf="debugMode" class="alert alert-warning">
+                      <strong>Procedure Status: {{procedureGroup.status}}</strong>
+                    </div>
                     <div class="row row-sm">
                       <div class="col-lg-8">
                         <p class="mg-b-10">Surgery or Implant<span ngbTooltip="required" class="text-danger">*</span></p>
-                        <app-nlm-typeahead formControlName="data" searchType="Procedure"></app-nlm-typeahead>
+                        <app-nlm-typeahead formControlName="data" searchType="Procedure" [debugMode]="debugMode"></app-nlm-typeahead>
                       </div><!-- col -->
                       <div class="col-lg-4 mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">When done<span ngbTooltip="required" class="text-danger">*</span></p>
@@ -218,7 +244,7 @@
                         </div><!-- col -->
                         <div class="col-lg-6 mg-t-10 mg-lg-t-0">
                           <p class="mg-b-10">Type<span ngbTooltip="required" class="text-danger">*</span></p>
-                          <app-nlm-typeahead formControlName="profession"  searchType="MedicalContactIndividualProfession"></app-nlm-typeahead>
+                          <app-nlm-typeahead formControlName="profession"  searchType="MedicalContactIndividualProfession" [debugMode]="debugMode"></app-nlm-typeahead>
                         </div><!-- col -->
                         <div class="col-lg mg-t-10 mg-lg-t-0">
                           <p class="mg-b-10">Telephone</p>
@@ -331,17 +357,17 @@
                 <div class="row row-sm">
                   <div class="col-lg">
                     <p class="mg-b-10">Name</p>
-                    <input class="form-control" placeholder="Input box" type="text">
+                    <input disabled class="form-control" placeholder="Input box" type="text">
                   </div><!-- col -->
                   <div class="col-lg mg-t-10 mg-lg-t-0">
                     <p class="mg-b-10">Type</p>
-                    <input class="form-control" placeholder="Input box" type="text">
+                    <input disabled class="form-control" placeholder="Input box" type="text">
                   </div><!-- col -->
 
                 </div><!-- row -->
                 <div class="row pt-2">
                   <div class="col-lg-4 col-md-3">
-                    <button type="button" class="btn btn-outline-indigo btn-block">Add Note or Attachment</button>
+                    <button disabled type="button" class="btn btn-outline-indigo btn-block">Add Note or Attachment</button>
                   </div>
                 </div>
               </div>
@@ -367,18 +393,22 @@
   </div>
   <div class="modal-body">
 
+    <div *ngIf="debugMode" class="alert alert-warning">
+      <pre><code [highlight]="newPractitionerModel | json"></code></pre>
+    </div>
+
     <div class="row row-sm">
 
       <div class="col-12">
         <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
         <form [formGroup]="newPractitionerForm">
-          <app-nlm-typeahead formControlName="data" searchType="MedicalContactIndividual"></app-nlm-typeahead>
+          <app-nlm-typeahead formControlName="data" searchType="MedicalContactIndividual" [debugMode]="debugMode"></app-nlm-typeahead>
         </form>
         <span *ngFor="let extId of newPractitionerModel.identifier | keyvalue" class="badge badge-pill badge-primary">{{extId.key}}: {{extId.value}}</span>
       </div><!-- col -->
       <div class="col-6 mg-t-10 mg-lg-t-0">
         <p class="mg-b-10">Type<span ngbTooltip="required" class="text-danger">*</span></p>
-        <app-nlm-typeahead [(ngModel)]="newPractitionerModel.profession" searchType="MedicalContactIndividualProfession"></app-nlm-typeahead>
+        <app-nlm-typeahead [(ngModel)]="newPractitionerModel.profession" searchType="MedicalContactIndividualProfession" [debugMode]="debugMode"></app-nlm-typeahead>
       </div><!-- col -->
 
       <div class="col-6 mg-t-10 mg-lg-t-0">
@@ -433,12 +463,16 @@
   </div>
   <div class="modal-body">
 
+    <div *ngIf="debugMode" class="alert alert-warning">
+      <pre><code [highlight]="newOrganizationForm | json"></code></pre>
+    </div>
+
     <div class="row row-sm">
 
       <div class="col-12">
         <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
         <form [formGroup]="newOrganizationForm">
-          <app-nlm-typeahead formControlName="data" searchType="MedicalContactOrganization"></app-nlm-typeahead>
+          <app-nlm-typeahead formControlName="data" searchType="MedicalContactOrganization" [debugMode]="debugMode"></app-nlm-typeahead>
         </form>
         <span *ngFor="let extId of newOrganizationModel.identifier | keyvalue" class="badge badge-pill badge-primary">{{extId.key}}: {{extId.value}}</span>
       </div><!-- col -->

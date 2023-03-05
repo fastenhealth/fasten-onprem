@@ -16,4 +16,6 @@
 <small *ngIf="searching" class="form-text text-muted">searching...</small>
 <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
 
-<pre>Model: {{ searchResult | json }}</pre>
+<div *ngIf="debugMode" class="alert alert-warning">
+  <pre><code [highlight]="searchResult | json"></code></pre>
+</div>
