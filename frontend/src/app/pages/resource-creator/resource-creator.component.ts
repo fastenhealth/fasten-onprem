@@ -10,6 +10,7 @@ import {uuidV4} from '../../../lib/utils/uuid';
 import {NlmSearchResults} from '../../services/nlm-clinical-table-search.service';
 import {GenerateR4Bundle} from './resource-creator.utilities';
 import {FastenApiService} from '../../services/fasten-api.service';
+import {Router} from '@angular/router';
 
 export interface MedicationModel {
   data: {},
@@ -56,7 +57,7 @@ export class ResourceCreatorComponent implements OnInit {
   // }
 
 
-  constructor(private modalService: NgbModal, private fastenApi: FastenApiService) { }
+  constructor(private router: Router, private modalService: NgbModal, private fastenApi: FastenApiService) { }
 
   ngOnInit(): void {
 
@@ -199,6 +200,7 @@ export class ResourceCreatorComponent implements OnInit {
       let bundleFile = new File([ bundleBlob ], 'bundle.json');
       this.fastenApi.createManualSource(bundleFile).subscribe((resp) => {
         console.log(resp)
+        this.router.navigate(['/medical-history'])
       })
 
     }
