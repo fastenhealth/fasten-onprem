@@ -8,6 +8,7 @@ import {
 } from '../../models/fasten/resource_create';
 import {uuidV4} from '../../../lib/utils/uuid';
 import {NlmSearchResults} from '../../services/nlm-clinical-table-search.service';
+import {GenerateR4Bundle} from './resource-creator.utilities';
 
 export interface MedicationModel {
   data: {},
@@ -189,6 +190,8 @@ export class ResourceCreatorComponent implements OnInit {
     this.form.markAllAsTouched()
     if (this.form.valid) {
       console.log('form submitted');
+
+      GenerateR4Bundle(this.form.getRawValue());
     }
 
 

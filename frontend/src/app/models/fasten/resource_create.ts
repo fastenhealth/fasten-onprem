@@ -131,7 +131,7 @@ export interface ResourceCreate {
 }
 
 export interface ResourceCreateCondition {
-  "data": ResourceCreateConditionData | string,
+  "data": ResourceCreateConditionData,
   "status": "active" | "inactive",
   "started": ResourceCreateDate,
   "stopped": ResourceCreateDate,
@@ -142,7 +142,9 @@ export interface ResourceCreateConditionData {
   id: string
   text: string
   link: string
-  icd10: string
+  identifier?: {
+    icd10: string
+  }
 }
 
 export interface ResourceCreateDate {
@@ -152,13 +154,13 @@ export interface ResourceCreateDate {
 }
 
 export interface ResourceCreateMedication {
-  "data": ResourceCreateMedicationData | string,
+  "data": ResourceCreateMedicationData,
   "status": "active" | "inactive",
   "dosage": {},
   "started": ResourceCreateDate,
   "stopped": ResourceCreateDate,
   "whystopped": {}
-  "resupply": ResourceCreateDate,
+  "requester": string,
   "instructions": string
 }
 
@@ -168,7 +170,7 @@ export interface ResourceCreateMedicationData {
 }
 
 export interface ResourceCreateProcedure {
-  "data": ResourceCreateProcedureData | string,
+  "data": ResourceCreateProcedureData,
   "whendone": ResourceCreateDate,
   "comment": string,
   "performer": string,
@@ -178,7 +180,9 @@ export interface ResourceCreateProcedureData {
   id: string
   text: string
   link: string
-  icd9: string
+  identifier?: {
+    icd9: string
+  }
 }
 
 export interface ResourceCreatePractitioner {
