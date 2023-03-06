@@ -20,6 +20,7 @@ export class PractitionerModel extends FastenDisplayModel {
   telecom: { system?: string, value?: string, use?: string }[]|undefined
   address: string|undefined
   birthdate: string|undefined
+  qualification: { code: string, system: string }[]|undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
@@ -39,6 +40,7 @@ export class PractitionerModel extends FastenDisplayModel {
       name: _.get(fhirResource, 'contact[0].name'),
       relationship: _.get(fhirResource, 'contact[0].relationship[0].text'),
     };
+    this.qualification = _.get(fhirResource, 'qualification[0].code.coding');
   };
 
   dstu2DTO(fhirResource:any){

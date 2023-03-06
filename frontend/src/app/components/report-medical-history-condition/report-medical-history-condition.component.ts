@@ -95,12 +95,14 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
 
           let telecomEmails =_.find(practitionerModel.telecom, {"system": "email"})
           let email = _.get(telecomEmails, '[0].value')
+          let qualification = _.find(practitionerModel.qualification, {"system": "http://nucc.org/provider-taxonomy"})
+
           involvedInCareMap[id] = _.mergeWith(
             {},
             involvedInCareMap[id],
             {
               displayName: practitionerModel.name?.family && practitionerModel.name?.given ? `${practitionerModel.name?.family }, ${practitionerModel.name?.given}` : practitionerModel.name?.text,
-              role: practitionerModel.name?.prefix || practitionerModel.name?.suffix,
+              role: qualification?.display || practitionerModel.name?.prefix || practitionerModel.name?.suffix,
               email: email,
             },
           )
