@@ -14,7 +14,7 @@
 
     <div class="row">
       <!-- Condition Details -->
-      {{conditionDisplayModel | json}}
+<!--      {{conditionDisplayModel | json}}-->
       <div class="col-6 mb-2">
 
         <div *ngIf="involvedInCare.length > 0" class="row  pl-3">
@@ -59,7 +59,6 @@
         <div class="row">
 
           <ng-container *ngFor="let encounter of encounters">
-
             <div routerLink="/source/{{encounter?.source_id}}/resource/{{encounter?.source_resource_id}}" class="col-6 mt-3 mb-2 tx-indigo">
               <strong>{{encounter.period_start | date}}</strong>
             </div>

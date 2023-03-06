@@ -91,7 +91,9 @@ function resourceCreateConditionToR4Condition(resourceStorage: ResourceStorage, 
   }
 
   let conditionResource = {
-    subject: undefined,
+    subject: {
+      reference: `urn:uuid:${findPatient(resourceStorage).id}` //Patient
+    },
     resourceType: 'Condition',
     id: uuidV4(),
     code: {
@@ -130,35 +132,6 @@ function resourceCreateProcedureToR4Procedure(resourceStorage: ResourceStorage, 
     })
   }
 
-  let procedureResource = {
-    subject: undefined,
-    status: "completed",
-    resourceType: 'Procedure',
-    id: uuidV4(),
-    code: {
-      coding:  resourceCreateProcedure.data.identifier || [],
-      text: resourceCreateProcedure.data.identifier[0].display,
-    },
-    performedDateTime: `${new Date(resourceCreateProcedure.whendone.year, resourceCreateProcedure.whendone.month-1,resourceCreateProcedure.whendone.day).toISOString()}`,
-    reasonReference: [
-      {
-        reference: `urn:uuid:${findCondition(resourceStorage).id}` //Condition
-      }
-    ],
-    performer: [
-      {
-        actor: {
-          reference: `urn:uuid:${resourceCreateProcedure.performer}` //Practitioner
-        },
-        onBehalfOf: {
-          reference: `urn:uuid:${resourceCreateProcedure.location}` //Organization
-        }
-      }
-    ],
-    note: note,
-  } as Procedure
-  resourceStorage['Procedure'][procedureResource.id] = procedureResource
-
   let encounterResource = {
     resourceType: 'Encounter',
     id: uuidV4(),
@@ -187,6 +160,41 @@ function resourceCreateProcedureToR4Procedure(resourceStorage: ResourceStorage, 
     }
   } as Encounter
   resourceStorage['Encounter'][encounterResource.id] = encounterResource
+
+  let procedureResource = {
+    subject: {
+      reference: `urn:uuid:${findPatient(resourceStorage).id}` //Patient
+    },
+    status: "completed",
+    resourceType: 'Procedure',
+
+    id: uuidV4(),
+    code: {
+      coding:  resourceCreateProcedure.data.identifier || [],
+      text: resourceCreateProcedure.data.identifier[0].display,
+    },
+    performedDateTime: `${new Date(resourceCreateProcedure.whendone.year, resourceCreateProcedure.whendone.month-1,resourceCreateProcedure.whendone.day).toISOString()}`,
+    encounter: {
+      reference: `urn:uuid:${encounterResource.id}` //Encounter
+    },
+    reasonReference: [
+      {
+        reference: `urn:uuid:${findCondition(resourceStorage).id}` //Condition
+      }
+    ],
+    performer: [
+      {
+        actor: {
+          reference: `urn:uuid:${resourceCreateProcedure.performer}` //Practitioner
+        },
+        onBehalfOf: {
+          reference: `urn:uuid:${resourceCreateProcedure.location}` //Organization
+        }
+      }
+    ],
+    note: note,
+  } as Procedure
+  resourceStorage['Procedure'][procedureResource.id] = procedureResource
 
   return resourceStorage
 }
@@ -307,41 +315,6 @@ function resourceCreatePractitionerToR4Practitioner(resourceStorage: ResourceSto
 function resourceCreateMedicationToR4MedicationRequest(resourceStorage: ResourceStorage, resourceCreateMedication: ResourceCreateMedication): ResourceStorage {
   resourceStorage['MedicationRequest'] = resourceStorage['MedicationRequest'] || {}
 
-  let medicationRequestResource = {
-    id: uuidV4(),
-    resourceType: 'MedicationRequest',
-    status: resourceCreateMedication.status,
-    statusReason: {
-      coding: resourceCreateMedication.whystopped.identifier || [],
-    },
-    intent: 'order',
-    medicationCodeableConcept: {
-      coding: resourceCreateMedication.data.identifier || [],
-    },
-    subject: null,
-    authoredOn: `${new Date(resourceCreateMedication.started.year,resourceCreateMedication.started.month-1,resourceCreateMedication.started.day).toISOString()}`,
-    requester: {
-      reference: `urn:uuid:${resourceCreateMedication.requester}` // Practitioner
-    },
-    reasonReference: [
-      {
-        reference: `urn:uuid:${findCondition(resourceStorage).id}` //Condition
-      },
-    ],
-    note: [
-      {
-        text: resourceCreateMedication.instructions,
-      }
-    ],
-    dispenseRequest: {
-      validityPeriod: {
-        start: `${new Date(resourceCreateMedication.started.year,resourceCreateMedication.started.month-1,resourceCreateMedication.started.day).toISOString()}`,
-        end: resourceCreateMedication.stopped ? `${new Date(resourceCreateMedication.stopped.year,resourceCreateMedication.stopped.month-1,resourceCreateMedication.stopped.day).toISOString()}` : null,
-      },
-    },
-  } as MedicationRequest
-  resourceStorage['MedicationRequest'][medicationRequestResource.id] = medicationRequestResource
-
   let encounterResource = {
     resourceType: 'Encounter',
     id: uuidV4(),
@@ -367,6 +340,46 @@ function resourceCreateMedicationToR4MedicationRequest(resourceStorage: Resource
     ],
   } as Encounter
   resourceStorage['Encounter'][encounterResource.id] = encounterResource
+
+  let medicationRequestResource = {
+    id: uuidV4(),
+    resourceType: 'MedicationRequest',
+    status: resourceCreateMedication.status,
+    statusReason: {
+      coding: resourceCreateMedication.whystopped.identifier || [],
+    },
+    intent: 'order',
+    medicationCodeableConcept: {
+      coding: resourceCreateMedication.data.identifier || [],
+    },
+    subject:  {
+      reference: `urn:uuid:${findPatient(resourceStorage).id}` //Patient
+    },
+    encounter: {
+      reference: `urn:uuid:${encounterResource.id}` //Encounter
+    },
+    authoredOn: `${new Date(resourceCreateMedication.started.year,resourceCreateMedication.started.month-1,resourceCreateMedication.started.day).toISOString()}`,
+    requester: {
+      reference: `urn:uuid:${resourceCreateMedication.requester}` // Practitioner
+    },
+    reasonReference: [
+      {
+        reference: `urn:uuid:${findCondition(resourceStorage).id}` //Condition
+      },
+    ],
+    note: [
+      {
+        text: resourceCreateMedication.instructions,
+      }
+    ],
+    dispenseRequest: {
+      validityPeriod: {
+        start: `${new Date(resourceCreateMedication.started.year,resourceCreateMedication.started.month-1,resourceCreateMedication.started.day).toISOString()}`,
+        end: resourceCreateMedication.stopped ? `${new Date(resourceCreateMedication.stopped.year,resourceCreateMedication.stopped.month-1,resourceCreateMedication.stopped.day).toISOString()}` : null,
+      },
+    },
+  } as MedicationRequest
+  resourceStorage['MedicationRequest'][medicationRequestResource.id] = medicationRequestResource
 
   return resourceStorage
 }
