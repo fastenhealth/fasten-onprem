@@ -1200,6 +1200,29 @@ export class NlmClinicalTableSearchService {
     return of(result)
   }
 
+  searchCountries(searchTerm: string): Observable<NlmSearchResults[]> {
+
+    //https://tx.fhir.org/r4/ValueSet/$expand?_format=json&filter=Canada&url=http://hl7.org/fhir/ValueSet/iso3166-1-2
+    let queryParams = {
+      '_format': 'json',
+      'filter':searchTerm,
+      'url': 'http://hl7.org/fhir/ValueSet/iso3166-1-2'
+    }
+
+    return this._httpClient.get<any>(`https://tx.fhir.org/r4/ValueSet/$expand`, {params: queryParams})
+      .pipe(
+        map((response) => {
+
+          return (response.expansion.contains || []).map((valueSetItem):NlmSearchResults => {
+            return {
+              id: valueSetItem.code,
+              identifier: [valueSetItem],
+              text: valueSetItem.display,
+            }
+          })
+        })
+      )
+  }
 
   searchWikipediaType(searchTerm: string): Observable<NlmSearchResults[]> {
     let queryParams = {

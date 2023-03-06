@@ -21,6 +21,7 @@ export enum NlmSearchType {
   Procedure = 'Procedure',
   Vaccine = 'Vaccine',
 
+  Countries = 'Countries',
   PrePopulated = 'PrePopulated'
 
 }
@@ -44,8 +45,10 @@ export enum NlmSearchType {
 })
 export class NlmTypeaheadComponent implements ControlValueAccessor {
   @Input() searchType: NlmSearchType = NlmSearchType.Condition;
-  @Input() debugMode: Boolean = false;
-  @Input() openOnFocus: Boolean = false;
+  @Input() debugMode: Boolean = false; //if true, will show the debug panel
+  @Input() openOnFocus: Boolean = false; //if true, will display results on focus
+  @Input() idResult: Boolean = false; //if true, will return the id of the result instead of an object, implies editable = false
+  @Input() editable: Boolean = true; //if true, will allow the user to enter values not in the list
   @Input() prePopulatedOptions: NlmSearchResults[] = []
 
   @ViewChild('instance', { static: true }) instance: NgbTypeahead;
@@ -78,6 +81,11 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
         break
       case NlmSearchType.Condition:
         searchOpFn = this.nlmClinicalTableSearchService.searchCondition
+        break
+      case NlmSearchType.Countries:
+        searchOpFn = this.nlmClinicalTableSearchService.searchCountries
+        this.idResult = true
+        this.editable = false
         break
       case NlmSearchType.MedicalContactIndividualProfession:
         searchOpFn = this.nlmClinicalTableSearchService.searchMedicalContactIndividualProfession
@@ -151,13 +159,23 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
     this.markAsTouched()
     console.log("bubbling modelChange event", event)
     if(typeof event === 'string'){
+      if(this.idResult){
+        this.onChange(null);
+        return
+      }
       if (event.length === 0) {
         this.onChange(null);
       } else {
         this.onChange({text: event});
       }
     } else{
-      this.onChange(event);
+      if(this.idResult){
+        this.onChange(event.id);
+        return
+      }
+      else {
+        this.onChange(event);
+      }
     }
   }
 
