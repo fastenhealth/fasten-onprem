@@ -1,0 +1,24 @@
+<ng-template #rt let-r="result" let-t="term">
+  <span>{{r.text}}</span> <span *ngIf="r.subtext">&nbsp;({{r.subtext}})</span>
+</ng-template>
+
+<input
+  type="text"
+  class="form-control"
+  [class.is-invalid]="showError"
+  [(ngModel)]="searchResult"
+  [ngbTypeahead]="search"
+  [inputFormatter]="formatter"
+  [resultTemplate]="rt"
+  (ngModelChange)="typeAheadChangeEvent($event)"
+  (click)="typeAheadClickEvent($event)"
+  (focus)="typeAheadFocusEvent($event)"
+  placeholder="Search"
+  #instance="ngbTypeahead"
+/>
+<small *ngIf="searching" class="form-text text-muted">searching...</small>
+<div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>
+
+<div *ngIf="debugMode" class="alert alert-warning">
+  <pre><code [highlight]="searchResult | json"></code></pre>
+</div>

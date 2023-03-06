@@ -11,6 +11,7 @@ import {DeviceModel} from '../../../lib/models/resources/device-model';
 import {DiagnosticReportModel} from '../../../lib/models/resources/diagnostic-report-model';
 import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
 import * as _ from "lodash";
+import {ConditionModel} from '../../../lib/models/resources/condition-model';
 
 @Component({
   selector: 'app-report-medical-history-condition',
@@ -50,7 +51,7 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
   * */
   @Input() conditionGroup: ResourceFhir
 
-  conditionDisplayModel: FastenDisplayModel
+  conditionDisplayModel: Partial<ConditionModel>
 
   //lookup table for all resources
   resourcesLookup: {[name:string]: FastenDisplayModel} = {}
@@ -94,12 +95,14 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
 
           let telecomEmails =_.find(practitionerModel.telecom, {"system": "email"})
           let email = _.get(telecomEmails, '[0].value')
+          let qualification = _.find(practitionerModel.qualification, {"system": "http://nucc.org/provider-taxonomy"})
+
           involvedInCareMap[id] = _.mergeWith(
             {},
             involvedInCareMap[id],
             {
               displayName: practitionerModel.name?.family && practitionerModel.name?.given ? `${practitionerModel.name?.family }, ${practitionerModel.name?.given}` : practitionerModel.name?.text,
-              role: practitionerModel.name?.prefix || practitionerModel.name?.suffix,
+              role: qualification?.display || practitionerModel.name?.prefix || practitionerModel.name?.suffix,
               email: email,
             },
           )

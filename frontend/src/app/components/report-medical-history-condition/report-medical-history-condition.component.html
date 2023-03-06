@@ -6,7 +6,7 @@
         {{conditionDisplayModel?.sort_title ? conditionDisplayModel?.sort_title : (conditionGroup | fhirPath: "Condition.code.text.first()":"Condition.code.coding.display.first()")}}
       </div>
       <div class="col-6">
-        {{conditionDisplayModel?.sort_date ? (conditionDisplayModel?.sort_date | date) : (conditionGroup | fhirPath: "Condition.onsetPeriod.start":"Condition.onsetDateTime" | date) }} - {{conditionGroup | fhirPath: "Condition.onsetPeriod.end" | date}}
+        {{conditionDisplayModel?.onset_datetime | date }} <span *ngIf="conditionDisplayModel.abatement_datetime">- {{conditionDisplayModel.abatement_datetime | date}}</span>
       </div>
     </div>
   </div><!-- card-header -->
@@ -32,12 +32,13 @@
           </ng-container>
 
 
-          <!--              <div class="col-12  mt-3 mb-2 tx-indigo">-->
-          <!--                <h5>Initial Presentation</h5>-->
-          <!--              </div>-->
-          <!--              <div class="col-12">-->
-          <!--                Acute right knee pain and tenderness around the joint line - this was likely caused by acute renal failure.-->
-          <!--              </div>-->
+          <div *ngIf="conditionDisplayModel" class="col-12  mt-3 mb-2">
+            <p class="tx-indigo">Initial Presentation</p>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            </p>
+          </div>
+
         </div>
 
         <div class="row pt-2" *ngIf="conditionGroup?.related_resources?.length > 0">
@@ -58,7 +59,6 @@
         <div class="row">
 
           <ng-container *ngFor="let encounter of encounters">
-
             <div routerLink="/source/{{encounter?.source_id}}/resource/{{encounter?.source_resource_id}}" class="col-6 mt-3 mb-2 tx-indigo">
               <strong>{{encounter.period_start | date}}</strong>
             </div>

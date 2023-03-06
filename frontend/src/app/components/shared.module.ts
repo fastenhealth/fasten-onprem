@@ -41,7 +41,7 @@ import { ReportMedicalHistoryConditionComponent } from './report-medical-history
 import { ReportLabsObservationComponent } from './report-labs-observation/report-labs-observation.component';
 import { ChartsModule } from 'ng2-charts';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { BinaryComponent } from './fhir/resources/binary/binary.component';
 import { PdfComponent } from './fhir/datatypes/pdf/pdf.component';
 import { ImgComponent } from './fhir/datatypes/img/img.component';
@@ -62,9 +62,8 @@ import { MedicationRequestComponent } from './fhir/resources/medication-request/
 import { ProcedureComponent } from './fhir/resources/procedure/procedure.component';
 import { DiagnosticReportComponent } from './fhir/resources/diagnostic-report/diagnostic-report.component';
 import { PractitionerComponent } from './fhir/resources/practitioner/practitioner.component';
-import {FhirPathPipe} from '../pipes/fhir-path.pipe';
-import {FilterPipe} from '../pipes/filter.pipe';
 import {PipesModule} from '../pipes/pipes.module';
+import { NlmTypeaheadComponent } from './nlm-typeahead/nlm-typeahead.component';
 
 @NgModule({
   imports: [
@@ -74,11 +73,12 @@ import {PipesModule} from '../pipes/pipes.module';
     NgbModule,
     NgbCollapseModule,
     FormsModule,
+    ReactiveFormsModule,
     MomentModule,
     TreeModule,
     ChartsModule,
     HighlightModule,
-    PipesModule
+    PipesModule,
   ],
   declarations: [
     ComponentsSidebarComponent,
@@ -135,6 +135,7 @@ import {PipesModule} from '../pipes/pipes.module';
     ProcedureComponent,
     DiagnosticReportComponent,
     PractitionerComponent,
+    NlmTypeaheadComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -174,17 +175,18 @@ import {PipesModule} from '../pipes/pipes.module';
         BinaryComponent,
         FhirResourceComponent,
         FhirResourceOutletDirective,
-      FallbackComponent,
-      ImmunizationComponent,
-      BadgeComponent,
-      TableComponent,
-      CodingComponent,
-      AllergyIntoleranceComponent,
-      MedicationComponent,
-      MedicationRequestComponent,
-      ProcedureComponent,
-      DiagnosticReportComponent,
-      PractitionerComponent
+        FallbackComponent,
+        ImmunizationComponent,
+        BadgeComponent,
+        TableComponent,
+        CodingComponent,
+        AllergyIntoleranceComponent,
+        MedicationComponent,
+        MedicationRequestComponent,
+        ProcedureComponent,
+        DiagnosticReportComponent,
+        PractitionerComponent,
+        NlmTypeaheadComponent
     ]
 })
 

@@ -84,6 +84,9 @@ export class FhirResourceComponent implements OnInit, OnChanges {
       // case "CarePlan": {
       //   return ListCarePlanComponent;
       // }
+      // case "CareTeam": {
+      //   return CareTeamComponent;
+      // }
       // case "Communication": {
       //   return ListCommunicationComponent;
       // }
@@ -135,8 +138,11 @@ export class FhirResourceComponent implements OnInit, OnChanges {
       case "Procedure": {
         return ProcedureComponent;
       }
-      // case "Practitioner": {
-      //   return PractitionerComponent;
+      case "Practitioner": {
+        return PractitionerComponent;
+      }
+      // case "PractitionerRole": {
+      //   return PractitionerRoleComponent;
       // }
       // case "ServiceRequest": {
       //   return ListServiceRequestComponent;

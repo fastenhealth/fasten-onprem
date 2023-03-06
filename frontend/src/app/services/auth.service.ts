@@ -8,6 +8,7 @@ import * as Oauth from '@panva/oauth4webapi';
 import {SourceState} from '../models/fasten/source-state';
 import * as jose from 'jose';
 import {UserRegisteredClaims} from '../models/fasten/user-registered-claims';
+import {uuidV4} from '../../lib/utils/uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class AuthService {
   //Third-party JWT auth, used by Fasten Cloud
   public async IdpConnect(idp_type: string) {
 
-    const state = this.uuidV4()
+    const state = uuidV4()
     let sourceStateInfo = new SourceState()
     sourceStateInfo.state = state
     sourceStateInfo.source_type = idp_type
@@ -191,12 +192,5 @@ export class AuthService {
 
   private setAuthToken(token: string) {
     localStorage.setItem(this.FASTEN_JWT_LOCALSTORAGE_KEY, token)
-  }
-
-  private uuidV4(){
-    // @ts-ignore
-    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-    );
   }
 }
