@@ -37,11 +37,6 @@ export class ResourceCreatorComponent implements OnInit {
 
 
   @Input() form!: FormGroup;
-  newPractitionerForm: FormGroup
-  newPractitionerModel: ResourceCreatePractitioner
-
-  newOrganizationForm: FormGroup
-  newOrganizationModel: ResourceCreateOrganization
   get isValid() { return true; }
 
   // model: any = {
@@ -80,6 +75,9 @@ export class ResourceCreatorComponent implements OnInit {
       practitioners: new FormArray([]),
       organizations: new FormArray([]),
     });
+
+    this.resetOrganizationForm()
+    // this.resetPractitionerForm()
   }
 
   get medications(): FormArray {
@@ -208,12 +206,30 @@ export class ResourceCreatorComponent implements OnInit {
   }
 
   //Modal Helpers
+  newPractitionerTypeaheadForm: FormGroup
+  newPractitionerForm: FormGroup //ResourceCreatePractitioner
+
+  newOrganizationTypeaheadForm: FormGroup
+  newOrganizationForm: FormGroup //ResourceCreateOrganization
+
   openPractitionerModal(content, formGroup?: AbstractControl, controlName?: string) {
     this.resetPractitionerForm()
-    this.modalService.open(content, { ariaLabelledBy: 'modal-practitioner' }).result.then(
-      (result) => {
-        console.log(`Closed with: ${result}`);
-        //add this to the list of practitioners
+    this.modalService.open(content, {
+      ariaLabelledBy: 'modal-practitioner',
+      beforeDismiss: () => {
+        console.log("validate Practitioner form")
+        this.newPractitionerForm.markAllAsTouched()
+        this.newPractitionerTypeaheadForm.markAllAsTouched()
+        return this.newPractitionerForm.valid
+      },
+    }).result.then(
+      () => {
+        console.log('Closed without saving');
+      },
+      () => {
+        console.log('Closing, saving form');
+        //add this to the list of organization
+        let result = this.newPractitionerForm.getRawValue()
         result.id = uuidV4();
         this.addPractitioner(result);
         if(formGroup && controlName){
@@ -221,19 +237,28 @@ export class ResourceCreatorComponent implements OnInit {
           formGroup.get(controlName).setValue(result.id);
         }
       },
-      (reason) => {
-        console.log(`Dismissed ${this.getDismissReason(reason)}`)
-      },
     );
   }
 
   openOrganizationModal(content, formGroup?: AbstractControl, controlName?: string) {
     this.resetOrganizationForm()
 
-    this.modalService.open(content, { ariaLabelledBy: 'modal-organization' }).result.then(
-      (result) => {
-        console.log(`Closed with: ${result}`);
+    this.modalService.open(content, {
+      ariaLabelledBy: 'modal-organization',
+      beforeDismiss: () => {
+        console.log("validate Organization form")
+        this.newOrganizationForm.markAllAsTouched()
+        this.newOrganizationTypeaheadForm.markAllAsTouched()
+        return this.newOrganizationForm.valid
+      },
+    }).result.then(
+      () => {
+        console.log('Closed without saving');
+      },
+      () => {
+        console.log('Closing, saving form');
         //add this to the list of organization
+        let result = this.newOrganizationForm.getRawValue()
         result.id = uuidV4();
         this.addOrganization(result);
         if(formGroup && controlName){
@@ -241,111 +266,114 @@ export class ResourceCreatorComponent implements OnInit {
           formGroup.get(controlName).setValue(result.id);
         }
       },
-      (reason) => {
-        console.log(`Dismissed ${this.getDismissReason(reason)}`)
-      },
     );
   }
 
+
   private resetPractitionerForm(){
-    this.newPractitionerForm = new FormGroup({
-      data: new FormControl({}),
+    this.newPractitionerTypeaheadForm = new FormGroup({
+      data: new FormControl(null, Validators.required),
     })
-    this.newPractitionerForm.valueChanges.subscribe(form => {
+    this.newPractitionerTypeaheadForm.valueChanges.subscribe(form => {
       console.log("CHANGE INDIVIDUAL IN MODAL", form)
       let val = form.data
-      if(form.data.provider_phone){
-        this.newPractitionerModel.phone = val.provider_phone;
+      if(val.provider_type){
+        this.newPractitionerForm.get('profession').setValue(val.provider_type)
       }
       if(val.identifier){
-        this.newPractitionerModel.identifier = val.identifier;
+        this.newPractitionerForm.get('identifier').setValue( val.identifier);
+      }
+      if(form.data.provider_phone){
+        this.newPractitionerForm.get('phone').setValue( val.provider_phone);
       }
       if(val.provider_fax){
-        this.newPractitionerModel.fax = val.provider_fax;
+        this.newPractitionerForm.get('fax').setValue(val.provider_fax);
       }
-      if(val.provider_type){
-        this.newPractitionerModel.profession = val.provider_type
-      }
+
       if(val.provider_address){
-        this.newPractitionerModel.address = val.provider_address
+        let addressGroup = this.newPractitionerForm.get('address')
+        addressGroup.get('line1').setValue(val.provider_address.line1)
+        addressGroup.get('line2').setValue(val.provider_address.line2)
+        addressGroup.get('city').setValue(val.provider_address.city)
+        addressGroup.get('state').setValue(val.provider_address.state)
+        addressGroup.get('zip').setValue(val.provider_address.zip)
+        addressGroup.get('country').setValue(val.provider_address.country)
       }
       if(val.text) {
-        this.newPractitionerModel.name = val.text;
+        this.newPractitionerForm.get('name').setValue( val.text);
       }
     });
 
 
-    this.newPractitionerModel = {
-      name: '',
-      identifier: [],
-      profession: {id: '', text: ''},
-      phone: '',
-      address: {
-        line1: '',
-        line2: '',
-        city: '',
-        state: '',
-        zip: '',
-        country: '',
-      },
-      fax: '',
-      email: '',
-    };
+    this.newPractitionerForm = new FormGroup({
+      identifier: new FormControl([]),
+      name: new FormControl(null, Validators.required),
+      profession: new FormControl(null, Validators.required),
+      phone: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+      fax: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+      email: new FormControl(null, Validators.email),
+      address: new FormGroup({
+        line1: new FormControl(null),
+        line2: new FormControl(null),
+        city: new FormControl(null),
+        state: new FormControl(null),
+        zip: new FormControl(null),
+        country: new FormControl(null),
+      })
+    })
+
+
   }
 
   private resetOrganizationForm(){
-    this.newOrganizationForm = new FormGroup({
-      data: new FormControl({}),
+    this.newOrganizationTypeaheadForm = new FormGroup({
+      data: new FormControl(null, Validators.required),
     })
-    this.newOrganizationForm.valueChanges.subscribe(form => {
+    this.newOrganizationTypeaheadForm.valueChanges.subscribe(form => {
       console.log("CHANGE Organization IN MODAL", form)
       let val = form.data
       if(val.provider_type) {
-        this.newOrganizationModel.type = val.provider_type
+        this.newOrganizationForm.get('type').setValue(val.provider_type)
       }
       if(val.identifier){
-        this.newOrganizationModel.identifier = val.identifier;
+        this.newOrganizationForm.get('identifier').setValue(val.identifier)
       }
       if(val.provider_phone){
-        this.newOrganizationModel.phone = val.provider_phone;
+        this.newOrganizationForm.get('phone').setValue(val.provider_phone)
       }
       if(val.provider_fax){
-        this.newOrganizationModel.fax = val.provider_fax;
+        this.newOrganizationForm.get('fax').setValue(val.provider_fax)
       }
       if(val.provider_address){
-        this.newOrganizationModel.address = val.provider_address
+        let addressGroup = this.newOrganizationForm.get('address')
+        addressGroup.get('line1').setValue(val.provider_address.line1)
+        addressGroup.get('line2').setValue(val.provider_address.line2)
+        addressGroup.get('city').setValue(val.provider_address.city)
+        addressGroup.get('state').setValue(val.provider_address.state)
+        addressGroup.get('zip').setValue(val.provider_address.zip)
+        addressGroup.get('country').setValue(val.provider_address.country)
       }
       if(val.text) {
-        this.newOrganizationModel.name = val.text;
+        this.newOrganizationForm.get('name').setValue(val.text)
       }
     });
 
+    this.newOrganizationForm = new FormGroup({
+      identifier: new FormControl([]),
+      name: new FormControl(null, Validators.required),
+      type: new FormControl(null, Validators.required),
+      phone: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+      fax: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+      email: new FormControl(null, Validators.email),
+      address: new FormGroup({
+        line1: new FormControl(null),
+        line2: new FormControl(null),
+        city: new FormControl(null),
+        state: new FormControl(null),
+        zip: new FormControl(null),
+        country: new FormControl(null),
+      })
+    })
 
-    this.newOrganizationModel = {
-      identifier: [],
-      type: {id: '', text: ''},
-      name: '',
-      phone: '',
-      fax: '',
-      email: '',
-      address: {
-        line1: '',
-        line2: '',
-        city: '',
-        state: '',
-        zip: '',
-        country: '',
-      },
-    };
-  }
-
-  private getDismissReason(reason: any): string {
-    if (reason === ModalDismissReasons.ESC) {
-      return 'by pressing ESC';
-    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      return 'by clicking on a backdrop';
-    } else {
-      return `with: ${reason}`;
-    }
   }
 }
