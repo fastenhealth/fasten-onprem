@@ -12,13 +12,13 @@ import {
   BundleEntry,
   Bundle,
   Organization,
-  Practitioner, MedicationRequest, Patient
+  Practitioner, MedicationRequest, Patient, Encounter
 } from 'fhir/r4';
 import {uuidV4} from '../../../lib/utils/uuid';
 
 interface ResourceStorage {
   [resourceType: string]: {
-    [resourceId: string]: Condition | Patient | MedicationRequest | Organization | FhirLocation | Practitioner | Procedure
+    [resourceId: string]: Condition | Patient | MedicationRequest | Organization | FhirLocation | Practitioner | Procedure | Encounter
   }
 }
 
@@ -81,6 +81,7 @@ function placeholderR4Patient(resourceStorage: ResourceStorage): ResourceStorage
 // this model is based on FHIR401 Resource Condition - http://hl7.org/fhir/R4/condition.html
 function resourceCreateConditionToR4Condition(resourceStorage: ResourceStorage, resourceCreateCondition: ResourceCreateCondition): ResourceStorage {
   resourceStorage['Condition'] = resourceStorage['Condition'] || {}
+  resourceStorage['Encounter'] = resourceStorage['Encounter'] || {}
 
   let note = []
   if (resourceCreateCondition.description) {
@@ -157,6 +158,36 @@ function resourceCreateProcedureToR4Procedure(resourceStorage: ResourceStorage, 
     note: note,
   } as Procedure
   resourceStorage['Procedure'][procedureResource.id] = procedureResource
+
+  let encounterResource = {
+    resourceType: 'Encounter',
+    id: uuidV4(),
+    status: "finished",
+    subject: {
+      reference: `urn:uuid:${findPatient(resourceStorage).id}` //Patient
+    },
+    participant: [
+      {
+        individual: {
+          reference: `urn:uuid:${resourceCreateProcedure.performer}` //Practitioner
+        }
+      }
+    ],
+    period: {
+      start: `${new Date(resourceCreateProcedure.whendone.year, resourceCreateProcedure.whendone.month-1,resourceCreateProcedure.whendone.day).toISOString()}`,
+      end: `${new Date(resourceCreateProcedure.whendone.year, resourceCreateProcedure.whendone.month-1,resourceCreateProcedure.whendone.day).toISOString()}`,
+    },
+    reasonReference: [
+      {
+        reference: `urn:uuid:${findCondition(resourceStorage).id}` //Condition
+      }
+    ],
+    serviceProvider: {
+      reference: `urn:uuid:${resourceCreateProcedure.location}` //Organization
+    }
+  } as Encounter
+  resourceStorage['Encounter'][encounterResource.id] = encounterResource
+
   return resourceStorage
 }
 
@@ -309,8 +340,34 @@ function resourceCreateMedicationToR4MedicationRequest(resourceStorage: Resource
       },
     },
   } as MedicationRequest
-
   resourceStorage['MedicationRequest'][medicationRequestResource.id] = medicationRequestResource
+
+  let encounterResource = {
+    resourceType: 'Encounter',
+    id: uuidV4(),
+    status: "finished",
+    subject: {
+      reference: `urn:uuid:${findPatient(resourceStorage).id}` //Patient
+    },
+    participant: [
+      {
+        individual: {
+          reference: `urn:uuid:${resourceCreateMedication.requester}` //Practitioner
+        }
+      }
+    ],
+    period: {
+      start: `${new Date(resourceCreateMedication.started.year, resourceCreateMedication.started.month-1,resourceCreateMedication.started.day).toISOString()}`,
+      end: resourceCreateMedication.stopped ? `${new Date(resourceCreateMedication.stopped.year, resourceCreateMedication.stopped.month-1,resourceCreateMedication.stopped.day).toISOString()}` : null,
+    },
+    reasonReference: [
+      {
+        reference: `urn:uuid:${findCondition(resourceStorage).id}` //Condition
+      }
+    ],
+  } as Encounter
+  resourceStorage['Encounter'][encounterResource.id] = encounterResource
+
   return resourceStorage
 }
 
