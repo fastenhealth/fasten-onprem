@@ -690,6 +690,8 @@ export class NlmClinicalTableSearchService {
 
   //see https://lhcforms.nlm.nih.gov/phr.json
   //see https://build.fhir.org/valueset-provider-taxonomy.html
+  // ideally we'd use http://www.hl7.org/fhir/valueset-performer-role.html
+  // but the LHC api returns NUCC codes, not the SNOMED codes, which would be confusing.
   searchMedicalContactIndividualProfession(searchTerm: string): Observable<NlmSearchResults[]> {
     let searchOptions: NlmSearchResults[] = [
       {
@@ -1200,6 +1202,7 @@ export class NlmClinicalTableSearchService {
     return of(result)
   }
 
+  //https://www.devdays.com/wp-content/uploads/2021/12/Jim-Steel-FHIR-Terminology-Service-APIs-DevDays-2019-Redmond.pdf
   searchCountries(searchTerm: string): Observable<NlmSearchResults[]> {
 
     //https://tx.fhir.org/r4/ValueSet/$expand?_format=json&filter=Canada&url=http://hl7.org/fhir/ValueSet/iso3166-1-2
