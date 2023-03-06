@@ -85,6 +85,9 @@
                     <div *ngIf="debugMode" class="alert alert-warning">
                       <strong>Medication Status: {{medicationGroup.status}}</strong>
                     </div>
+                    <div class="tx-right">
+                      <span class="cursor-pointer" (click)="deleteMedication(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                    </div>
                     <div class="row row-sm">
                       <div class="col-lg-6">
                         <p class="mg-b-10">Medication name<span ngbTooltip="required" class="text-danger">*</span></p>
@@ -164,6 +167,9 @@
                     <div *ngIf="debugMode" class="alert alert-warning">
                       <strong>Procedure Status: {{procedureGroup.status}}</strong>
                     </div>
+                    <div class="tx-right">
+                      <span class="cursor-pointer" (click)="deleteProcedure(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                    </div>
                     <div class="row row-sm">
                       <div class="col-lg-8">
                         <p class="mg-b-10">Surgery or Implant<span ngbTooltip="required" class="text-danger">*</span></p>
@@ -232,6 +238,9 @@
 
                 <ng-container formArrayName="practitioners">
                   <div class="card mg-t-10 pd-20" [formGroup]="practitionerGroup" *ngFor="let practitionerGroup of practitioners.controls; let i = index">
+                    <div class="tx-right">
+                      <span class="cursor-pointer" (click)="deletePractitioner(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                    </div>
 
                     <div class="row row-sm">
                         <input formControlName="id" class="form-control" type="hidden">
@@ -296,6 +305,9 @@
 
                 <ng-container formArrayName="locations">
                   <div class="card mg-t-10 pd-20" [formGroup]="organizationGroup" *ngFor="let organizationGroup of organizations.controls; let i = index">
+                    <div class="tx-right">
+                      <span class="cursor-pointer" (click)="deleteOrganization(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                    </div>
 
                     <div class="row row-sm">
                       <input formControlName="id" class="form-control" type="hidden">
