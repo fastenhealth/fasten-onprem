@@ -7,6 +7,7 @@ import {CodingModel} from '../../lib/models/datatypes/coding-model';
 export interface NlmSearchResults {
   id: string
   text: string
+  subtext?: string //used for display purposes only
   parentAnswerCode?: string
   link?: string
   identifier?: CodingModel[]
@@ -1011,6 +1012,7 @@ export class NlmClinicalTableSearchService {
                 }
               }],
               text: item[1],
+              subtext: `${item[2]} - ${addr_practice.state}`,
               provider_type: {
                 id: item[4],
                 text: item[2],
@@ -1066,6 +1068,7 @@ export class NlmClinicalTableSearchService {
                 }
               }],
               text: item[1],
+              subtext: `${item[2]} - ${addr_practice.state}`,
               provider_type: {
                 id: item[4],
                 text: item[2],
