@@ -71,19 +71,18 @@
 
       <!-- Search -->
       <div class="row row-sm sticky-top pt-2" style="position:sticky;">
-        <div class="col-lg-4">
+        <div class="col-lg-8">
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text" id="search-prefix">Search</span>
             </div>
-            <input (keyup)="searchTermChanged($event)" type="text" class="form-control" placeholder="Search Term">
+            <input (keyup)="searchTermUpdate.next($event.target.value)" type="text" class="form-control" placeholder="Search Term">
+            <div class="input-group-append">
+              <span class="input-group-text">{{this.availableSourceList.length}} of {{this.totalAvailableSourceList}} results</span>
+            </div>
+
           </div><!-- input-group -->
         </div><!-- col -->
-<!--        <div class="col-lg-4">-->
-<!--          <div class="d-flex text-center">-->
-<!--            <small>{{this.availableSourceList.length}} of {{this.totalAvailableSourceList}} sources</small>-->
-<!--          </div>-->
-<!--        </div>-->
       </div>
 
 

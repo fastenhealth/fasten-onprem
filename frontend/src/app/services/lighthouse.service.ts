@@ -27,6 +27,9 @@ export class LighthouseService {
     if(scrollId){
       endpointUrl.searchParams.set('scroll_id', scrollId);
     }
+    if(searchTerm){
+      endpointUrl.searchParams.set('query', searchTerm);
+    }
 
     return this._httpClient.get<ResponseWrapper>(endpointUrl.toString())
       .pipe(

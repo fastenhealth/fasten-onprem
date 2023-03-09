@@ -10,8 +10,9 @@ import {Location} from '@angular/common';
 import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {environment} from '../../../environments/environment';
-import {forkJoin} from 'rxjs';
+import {BehaviorSubject, forkJoin, Subject} from 'rxjs';
 import {LighthouseSourceSearch} from '../../models/lighthouse/lighthouse-source-search';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 // If you dont import this angular will import the wrong "Location"
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
@@ -42,8 +43,9 @@ export class MedicalSourcesComponent implements OnInit {
 
   scrollId: string = ""
   scrollComplete: boolean = false
-  searchTerm: string = ""
+  searchTermUpdate = new BehaviorSubject<string>("");
   showHidden: boolean = false
+
   constructor(
     private lighthouseApi: LighthouseService,
     private fastenApi: FastenApiService,
@@ -91,6 +93,29 @@ export class MedicalSourcesComponent implements OnInit {
     }, err => {
       this.loading = false
     })
+
+
+    //register a callback for when the search term changes
+    this.searchTermUpdate
+      .pipe(
+        debounceTime(200),
+        distinctUntilChanged(),
+      )
+      .subscribe(value => {
+        console.log("search term changed:", value)
+
+        //reset available sources
+        this.availableSourceList = []
+        this.scrollId = ""
+        this.scrollComplete = false
+        this.totalAvailableSourceList = 0
+
+        this.lighthouseApi.findLighthouseSources(value, this.scrollId, this.showHidden)
+          .subscribe((results) => {
+            this.populateAvailableSourceList(results)
+          })
+      });
+
   }
 
   private populateAvailableSourceList(results: LighthouseSourceSearch): void {
@@ -113,29 +138,10 @@ export class MedicalSourcesComponent implements OnInit {
       return
     }
 
-    this.lighthouseApi.findLighthouseSources(this.searchTerm, this.scrollId, this.showHidden)
+    this.lighthouseApi.findLighthouseSources(this.searchTermUpdate.getValue(), this.scrollId, this.showHidden)
       .subscribe((results) => {
         this.populateAvailableSourceList(results)
       })
-  }
-
-  public searchTermChanged($event):void {
-    this.searchTerm = $event.target.value
-    console.log("search term changed:", )
-
-    // let searchResults
-    // if(this.searchTerm){
-    //   searchResults = this.searchIndex.search(this.searchTerm).map((result) => {
-    //     return result.item
-    //   })
-    // }
-    // else {
-    //   //emtpy search term, show all (original) values.
-    //   searchResults = this.searchIndex.getIndex().docs
-    // }
-    //
-    // this.availableSourceList = searchResults
-    // console.log(this.availableSourceList)
   }
 
   /**
