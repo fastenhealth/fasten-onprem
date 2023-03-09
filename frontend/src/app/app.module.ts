@@ -30,7 +30,7 @@ import { MedicalHistoryComponent } from './pages/medical-history/medical-history
 import { ReportLabsComponent } from './pages/report-labs/report-labs.component';
 import {PipesModule} from './pipes/pipes.module';
 import { ResourceCreatorComponent } from './pages/resource-creator/resource-creator.component';
-
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [
@@ -62,6 +62,7 @@ import { ResourceCreatorComponent } from './pages/resource-creator/resource-crea
     HighlightModule,
     MomentModule,
     PipesModule,
+    InfiniteScrollModule
   ],
   providers: [
     {

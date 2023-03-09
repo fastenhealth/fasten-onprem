@@ -87,18 +87,23 @@
       </div>
 
 
-      <div *ngIf="!loading else isLoadingTemplate" class="row row-sm">
+      <div *ngIf="!loading else isLoadingTemplate" class="row row-sm"
+           infiniteScroll
+           [infiniteScrollDistance]="2"
+           [infiniteScrollThrottle]="50"
+           (scrolled)="onScroll()"
+      >
         <div *ngFor="let sourceData of availableSourceList" (click)="connectHandler($event, sourceData.metadata.source_type)" class="col-sm-3 mg-b-20 px-3">
           <div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': sourceData.metadata.hidden}">
             <div class="card-body d-flex align-items-center">
-              <img style="max-height: 130px;" [src]="'assets/sources/'+sourceData.metadata.source_type+'.png'" [alt]="metadataSources[sourceData.metadata.source_type].display" class="img-fluid">
+              <img style="max-height: 130px;" [src]="'assets/sources/'+sourceData.metadata.source_type+'.png'" [alt]="sourceData.metadata.display" class="img-fluid">
               <div *ngIf="status[sourceData.metadata.source_type]" class="progress">
                 <div [style.width]="status[sourceData.metadata.source_type] == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
               </div>
             </div>
             <div class="card-footer text-center p-1" style="width:100%">
               <small class="tx-gray-700">
-                {{metadataSources[sourceData.metadata.source_type].display}}
+                {{sourceData.metadata.display}}
               </small>
             </div>
           </div>

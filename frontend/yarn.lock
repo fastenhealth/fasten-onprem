@@ -3869,11 +3869,6 @@ function-bind@^1.1.1:
   resolved "https://registry.npmjs.org/function-bind/-/function-bind-1.1.1.tgz#a56899d3ea3c9bab874bb9773b7c5ede92f4895d"
   integrity sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==
 
-fuse.js@^6.6.2:
-  version "6.6.2"
-  resolved "https://registry.npmjs.org/fuse.js/-/fuse.js-6.6.2.tgz#fe463fed4b98c0226ac3da2856a415576dc9a111"
-  integrity sha512-cJaJkxCCxC8qIIcPBF9yGxY0W/tVZS3uEISDxhYIdtk8OL93pe+6Zj7LjCqVV4dzbqcriOZ+kQ/NE4RXZHsIGA==
-
 gauge@^4.0.3:
   version "4.0.4"
   resolved "https://registry.npmjs.org/gauge/-/gauge-4.0.4.tgz#52ff0652f2bbf607a989793d53b751bef2328dce"
@@ -5290,6 +5285,13 @@ ngx-highlightjs@^7.0.1:
     highlight.js "^11.5.1"
     highlightjs-line-numbers.js "^2.8.0"
     tslib "^2.0.0"
+
+ngx-infinite-scroll@^14.0.0:
+  version "14.0.1"
+  resolved "https://registry.npmjs.org/ngx-infinite-scroll/-/ngx-infinite-scroll-14.0.1.tgz#037abd55c441300651d03bc64a69d3475cce7bf9"
+  integrity sha512-PlGL29d2PxNJTn6qdXs4Es0HlJTZ/ZqOVvFWECWm7mK2fN/q+q62s0iUQ7xRf76NuqoNovXvrjZ1zwLFT6c0Wg==
+  dependencies:
+    tslib "^2.3.0"
 
 ngx-moment@^6.0.2:
   version "6.0.2"

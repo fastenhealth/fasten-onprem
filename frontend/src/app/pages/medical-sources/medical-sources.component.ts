@@ -11,7 +11,7 @@ import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {environment} from '../../../environments/environment';
 import {forkJoin} from 'rxjs';
-import Fuse from 'fuse.js'
+import {LighthouseSourceSearch} from '../../models/lighthouse/lighthouse-source-search';
 // If you dont import this angular will import the wrong "Location"
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
@@ -32,8 +32,6 @@ export class MedicalSourcesComponent implements OnInit {
   environment_name = environment.environment_name
   status: { [name: string]: string } = {}
 
-  metadataSources: {[name:string]: MetadataSource} = {}
-
   connectedSourceList: SourceListItem[] = [] //source's are populated for this list
   availableSourceList: SourceListItem[] = []
   totalAvailableSourceList: number = 0
@@ -42,9 +40,10 @@ export class MedicalSourcesComponent implements OnInit {
   closeResult = '';
   modalSelectedSourceListItem:SourceListItem = null;
 
-  searchIndex = null
+  scrollId: string = ""
+  scrollComplete: boolean = false
   searchTerm: string = ""
-
+  showHidden: boolean = false
   constructor(
     private lighthouseApi: LighthouseService,
     private fastenApi: FastenApiService,
@@ -57,29 +56,20 @@ export class MedicalSourcesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true
-    forkJoin([this.lighthouseApi.getLighthouseSourceMetadataMap(false), this.fastenApi.getSources()]).subscribe(results => {
+    forkJoin([this.lighthouseApi.findLighthouseSources("", "", this.showHidden), this.fastenApi.getSources()]).subscribe(results => {
       this.loading = false
+
+      //handle connected sources sources
+      const connectedSources = results[1] as Source[]
+      forkJoin(connectedSources.map((source) => this.lighthouseApi.getLighthouseSource(source.source_type))).subscribe((connectedMetadata) => {
+        for(const ndx in connectedSources){
+          this.connectedSourceList.push({source: connectedSources[ndx], metadata: connectedMetadata[ndx]})
+        }
+      })
+
+
       //handle source metadata map response
-      this.metadataSources = results[0] as {[name:string]: MetadataSource}
-
-      //handle sources
-      const sourceList = results[1] as Source[]
-
-      for (const sourceType in this.metadataSources) {
-        let isConnected = false
-        for(const connectedSource of sourceList){
-          if(connectedSource.source_type == sourceType){
-            this.connectedSourceList.push({source: connectedSource, metadata: this.metadataSources[sourceType]})
-            isConnected = true
-            break
-          }
-        }
-
-        if(!isConnected){
-          //this source has not been found in the connected list, lets add it to the available list.
-          this.availableSourceList.push({metadata: this.metadataSources[sourceType]})
-        }
-      }
+      this.populateAvailableSourceList(results[0] as LighthouseSourceSearch)
 
 
       //check if we've just started connecting a "source_type"
@@ -97,55 +87,55 @@ export class MedicalSourcesComponent implements OnInit {
 
         this.callback(callbackSourceType).then(console.log)
       }
-      this.totalAvailableSourceList = this.availableSourceList.length
-
-      //setup Search
-      const options = {
-        // isCaseSensitive: false,
-        // includeScore: false,
-        // shouldSort: true,
-        // includeMatches: false,
-        findAllMatches: true,
-        // minMatchCharLength: 1,
-        // location: 0,
-        // threshold: 0.6,
-        // distance: 100,
-        // useExtendedSearch: false,
-        // ignoreLocation: false,
-        // ignoreFieldNorm: false,
-        // fieldNormWeight: 1,
-        keys: [
-          "metadata.display",
-          "metadata.category",
-          "metadata.source_type"
-        ]
-      };
-
-      this.searchIndex = new Fuse(this.availableSourceList, options);
-
 
     }, err => {
       this.loading = false
     })
   }
 
+  private populateAvailableSourceList(results: LighthouseSourceSearch): void {
+    this.totalAvailableSourceList = results.hits.total.value
+    if(results.hits.hits.length == 0){
+      this.scrollComplete = true
+      console.log("scroll complete")
+      return
+    }
+    this.scrollId = results._scroll_id
+    this.availableSourceList = this.availableSourceList.concat(results.hits.hits.map((result) => {
+      return {metadata: result._source}
+    }).filter((item) => {
+      return !this.connectedSourceList.find((connectedItem) => connectedItem.metadata.source_type == item.metadata.source_type)
+    }))
+  }
+
+  public onScroll(): void {
+    if(this.scrollComplete){
+      return
+    }
+
+    this.lighthouseApi.findLighthouseSources(this.searchTerm, this.scrollId, this.showHidden)
+      .subscribe((results) => {
+        this.populateAvailableSourceList(results)
+      })
+  }
+
   public searchTermChanged($event):void {
     this.searchTerm = $event.target.value
     console.log("search term changed:", )
 
-    let searchResults
-    if(this.searchTerm){
-      searchResults = this.searchIndex.search(this.searchTerm).map((result) => {
-        return result.item
-      })
-    }
-    else {
-      //emtpy search term, show all (original) values.
-      searchResults = this.searchIndex.getIndex().docs
-    }
-
-    this.availableSourceList = searchResults
-    console.log(this.availableSourceList)
+    // let searchResults
+    // if(this.searchTerm){
+    //   searchResults = this.searchIndex.search(this.searchTerm).map((result) => {
+    //     return result.item
+    //   })
+    // }
+    // else {
+    //   //emtpy search term, show all (original) values.
+    //   searchResults = this.searchIndex.getIndex().docs
+    // }
+    //
+    // this.availableSourceList = searchResults
+    // console.log(this.availableSourceList)
   }
 
   /**
