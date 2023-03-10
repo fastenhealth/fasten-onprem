@@ -218,7 +218,14 @@ export class MedicalSourcesComponent implements OnInit {
           console.log("NO PATIENT ID present, decoding jwt to extract patient")
           //const introspectionResp = await Oauth.introspectionRequest(as, client, payload.access_token)
           //console.log(introspectionResp)
-          payload.patient = this.jwtDecode(payload.id_token)["profile"].replace(/^(Patient\/)/,'')
+          let decodedIdToken = this.jwtDecode(payload.id_token)
+          //nextGen uses fhirUser instead of profile.
+          payload.patient = decodedIdToken["profile"] || decodedIdToken["fhirUser"]
+
+          if(payload.patient){
+            payload.patient = payload.patient.replace(/^(Patient\/)/,'')
+          }
+
         }
 
 

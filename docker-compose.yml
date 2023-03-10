@@ -1,16 +1,17 @@
 version: "3.9"
 services:
-  couchdb:
+  fasten:
+    # NOTE: only developers need to build Fasten from source
+    # For production, use the pre-built image from GitHub Packages
+    # ghcr.io/fastenhealth/fasten-onprem:main
     build:
       context: .
       dockerfile: Dockerfile
-#    environment:
-#      - COUCHDB_USER=admin
-#      - COUCHDB_PASSWORD=password
+      args:
+        - FASTEN_ENV=prod
+#        - FASTEN_ENV=sandbox
     ports:
       - "9090:8080"
-      - "5984:5984"
     volumes:
-      - ./.couchdb/data:/opt/couchdb/data
-      - ./.couchdb/config:/opt/couchdb/etc/local.d
+      - ./db:/opt/fasten/db
 #      - ./config.example.yaml:/opt/fasten/config/config.yaml
