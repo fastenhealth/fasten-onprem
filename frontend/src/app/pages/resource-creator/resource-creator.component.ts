@@ -74,6 +74,7 @@ export class ResourceCreatorComponent implements OnInit {
       procedures: new FormArray([]),
       practitioners: new FormArray([]),
       organizations: new FormArray([]),
+      attachments: new FormArray([]),
     });
 
     this.resetOrganizationForm()
@@ -212,6 +213,8 @@ export class ResourceCreatorComponent implements OnInit {
   newOrganizationTypeaheadForm: FormGroup
   newOrganizationForm: FormGroup //ResourceCreateOrganization
 
+  newAttachmentForm: FormGroup
+
   openPractitionerModal(content, formGroup?: AbstractControl, controlName?: string) {
     this.resetPractitionerForm()
     this.modalService.open(content, {
@@ -269,6 +272,33 @@ export class ResourceCreatorComponent implements OnInit {
     );
   }
 
+  openAttachmentModal(content, formGroup?: AbstractControl, controlName?: string) {
+    this.resetAttachmentForm()
+
+    this.modalService.open(content, {
+      ariaLabelledBy: 'modal-attachment',
+      beforeDismiss: () => {
+        console.log("validate Attachment form")
+        this.newAttachmentForm.markAllAsTouched()
+        return this.newAttachmentForm.valid
+      },
+    }).result.then(
+      () => {
+        console.log('Closed without saving');
+      },
+      () => {
+        console.log('Closing, saving form');
+        //add this to the list of organization
+        let result = this.newAttachmentForm.getRawValue()
+        result.id = uuidV4();
+        // this.addAttachment(result);
+        if(formGroup && controlName){
+          //set this practitioner to the current select box
+          formGroup.get(controlName).setValue(result.id);
+        }
+      },
+    );
+  }
 
   private resetPractitionerForm(){
     this.newPractitionerTypeaheadForm = new FormGroup({
@@ -373,6 +403,17 @@ export class ResourceCreatorComponent implements OnInit {
         zip: new FormControl(null),
         country: new FormControl(null),
       })
+    })
+
+  }
+
+  private resetAttachmentForm(){
+
+    this.newAttachmentForm = new FormGroup({
+      name: new FormControl(null, Validators.required),
+      category: new FormControl(null, Validators.required),
+      file_type: new FormControl(null, Validators.required),
+      file: new FormControl(null, Validators.required)
     })
 
   }

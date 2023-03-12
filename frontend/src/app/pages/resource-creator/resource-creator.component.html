@@ -377,7 +377,7 @@
                 </div><!-- row -->
                 <div class="row pt-2">
                   <div class="col-lg-4 col-md-3">
-                    <button disabled type="button" class="btn btn-outline-indigo btn-block">Add Note or Attachment</button>
+                    <button type="button" (click)="openAttachmentModal(attachmentCreateModal)" class="btn btn-outline-indigo btn-block">Create Attachment/Document</button>
                   </div>
                 </div>
               </div>
@@ -539,5 +539,47 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-az-primary" (click)="modal.dismiss()">Add Location</button>
+  </div>
+</ng-template>
+
+
+
+<ng-template #attachmentCreateModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-attachment">New Attachment</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.close()"><span aria-hidden="true">×</span></button>
+  </div>
+  <div class="modal-body">
+
+    <div *ngIf="debugMode" class="alert alert-warning">
+      <pre><code  [highlight]="newAttachmentForm.getRawValue() | json"></code></pre>
+      <strong>New Attachment Form Status: {{ newAttachmentForm.status }}</strong>
+    </div>
+
+    <div class="row row-sm">
+      <ng-container [formGroup]="newAttachmentForm">
+
+        <div class="col-12">
+          <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
+          <input formControlName="name" class="form-control" type="text">
+        </div><!-- col -->
+
+        <div class="col-6 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">Category<span ngbTooltip="required" class="text-danger">*</span></p>
+          <app-nlm-typeahead formControlName="category" searchType="AttachmentCategory" [debugMode]="debugMode"></app-nlm-typeahead>
+        </div><!-- col -->
+        <div class="col-6 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">File Type<span ngbTooltip="required" class="text-danger">*</span></p>
+          <app-nlm-typeahead formControlName="file_type" searchType="AttachmentFileType" [debugMode]="debugMode"></app-nlm-typeahead>
+        </div><!-- col -->
+        <div class="col-6 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">File<span ngbTooltip="required" class="text-danger">*</span></p>
+          <input formControlName="file" type="file">
+        </div><!-- col -->
+      </ng-container>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-az-primary" (click)="modal.dismiss()">Create Attachment</button>
   </div>
 </ng-template>
