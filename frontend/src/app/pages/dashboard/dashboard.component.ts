@@ -43,6 +43,7 @@ export class DashboardComponent implements OnInit {
       this.metadataSource = metadataSource
       this.metadataSource["manual"] = {
         "source_type": "manual",
+        "platform_type": "manual",
         "display": "Manual",
         "category": ["Manual"],
         "hidden": false,

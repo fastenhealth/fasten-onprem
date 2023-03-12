@@ -47,11 +47,10 @@ make backend-test
 
 # Start Development Environment
 
-To run Fasten from source, you'll need to create 3 separate processes:
+To run Fasten from source, you'll need to create 2 separate processes:
 
 - Angular Frontend
 - Go Backend
-- CouchDB Database
 
 First we'll create a development config file (`config.dev.yaml`)
 

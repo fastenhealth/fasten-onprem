@@ -9,6 +9,7 @@ import * as Oauth from '@panva/oauth4webapi';
 import {SourceState} from '../models/fasten/source-state';
 import {MetadataSource} from '../models/fasten/metadata-source';
 import {uuidV4} from '../../lib/utils/uuid';
+import {LighthouseSourceSearch} from '../models/lighthouse/lighthouse-source-search';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,27 @@ import {uuidV4} from '../../lib/utils/uuid';
 export class LighthouseService {
 
   constructor(private _httpClient: HttpClient) {
+  }
+
+  public findLighthouseSources(searchTerm: string, scrollId= "", showHidden = false): Observable<LighthouseSourceSearch> {
+    const endpointUrl = new URL(`${environment.lighthouse_api_endpoint_base}/list/search`);
+    if(showHidden){
+      endpointUrl.searchParams.set('show_hidden', 'true');
+    }
+    if(scrollId){
+      endpointUrl.searchParams.set('scroll_id', scrollId);
+    }
+    if(searchTerm){
+      endpointUrl.searchParams.set('query', searchTerm);
+    }
+
+    return this._httpClient.get<ResponseWrapper>(endpointUrl.toString())
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("Metadata RESPONSE", response)
+          return response.data as LighthouseSourceSearch
+        })
+      );
   }
 
   public getLighthouseSourceMetadataMap(showHidden = false): Observable<{[name: string]: MetadataSource}> {
