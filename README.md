@@ -10,6 +10,9 @@
 [![GitHub license](https://img.shields.io/github/license/fastenhealth/fasten-onprem?style=flat-square)](https://github.com/fastenhealth/fasten-onprem/blob/main/LICENSE.md)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/fastenhealth/fasten-onprem?style=flat-square)](https://github.com/fastenhealth/fasten-onprem/releases/latest)
 [![Discord Join](https://img.shields.io/badge/discord-join-blueviolet?style=flat-square&logo=discord)](https://discord.gg/Bykz6BAN8p)
+[![Request Providers](https://img.shields.io/static/v1?label=request+providers&message=form&color=orange&style=flat-square)](https://forms.gle/4oU8372y4KyM8DbdA)
+[![Join Mailing List](https://img.shields.io/static/v1?label=join&message=mailing+list&color=blue&style=flat-square)](https://forms.gle/SNsYX9BNMXB6TuTw6)
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/analogj?style=flat-square)](https://github.com/sponsors/AnalogJ/)
 
 **Fasten securely connects your healthcare providers together, creating a personal health record that never leaves your hands**
 
