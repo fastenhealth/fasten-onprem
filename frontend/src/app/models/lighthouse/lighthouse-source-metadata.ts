@@ -1,4 +1,7 @@
-export class LighthouseSourceMetadata {
+import {MetadataSource} from '../fasten/metadata-source';
+
+export class LighthouseSourceMetadata extends MetadataSource {
+
   authorization_endpoint: string
   token_endpoint: string
   introspection_endpoint: string
