@@ -1,6 +1,6 @@
 import {
   ResourceCreate,
-  ResourceCreateCondition, ResourceCreateMedication,
+  ResourceCreateCondition, ResourceCreateAttachment, ResourceCreateMedication,
   ResourceCreateOrganization, ResourceCreatePractitioner,
   ResourceCreateProcedure
 } from '../../models/fasten/resource_create';
@@ -12,13 +12,13 @@ import {
   BundleEntry,
   Bundle,
   Organization,
-  Practitioner, MedicationRequest, Patient, Encounter
+  Practitioner, MedicationRequest, Patient, Encounter, DocumentReference, Media, DiagnosticReport, Reference
 } from 'fhir/r4';
 import {uuidV4} from '../../../lib/utils/uuid';
 
 interface ResourceStorage {
   [resourceType: string]: {
-    [resourceId: string]: Condition | Patient | MedicationRequest | Organization | FhirLocation | Practitioner | Procedure | Encounter
+    [resourceId: string]: Condition | Patient | MedicationRequest | Organization | FhirLocation | Practitioner | Procedure | Encounter | DocumentReference | Media | DiagnosticReport
   }
 }
 
@@ -27,6 +27,17 @@ export function GenerateR4Bundle(resourceCreate: ResourceCreate): Bundle {
   let resourceStorage: ResourceStorage = {} //{"resourceType": {"resourceId": resourceData}}
   resourceStorage = placeholderR4Patient(resourceStorage)
   resourceStorage = resourceCreateConditionToR4Condition(resourceStorage, resourceCreate.condition)
+
+  for(let attachment of resourceCreate.attachments) {
+    if(attachment.file_type == 'application/dicom' || attachment.category.id == '18748-4') {
+      //Diagnostic imaging study (DiagnosticReport -> Media)
+      resourceStorage = resourceAttachmentToR4DiagnosticReport(resourceStorage, attachment)
+    }
+    else {
+      resourceStorage = resourceAttachmentToR4DocumentReference(resourceStorage, attachment)
+    }
+
+  }
   for(let organization of resourceCreate.organizations) {
     resourceStorage = resourceCreateOrganizationToR4Organization(resourceStorage, organization)
   }
@@ -39,6 +50,12 @@ export function GenerateR4Bundle(resourceCreate: ResourceCreate): Bundle {
   for(let procedure of resourceCreate.procedures) {
     resourceStorage = resourceCreateProcedureToR4Procedure(resourceStorage, procedure)
   }
+
+
+  //DocumentReference  -> (Optional) Binary
+  //DiagnosticReport -> Media
+  //ImagingStudy
+  //ImagingSelection
 
   console.log("POPULATED RESOURCE STORAGE",  resourceStorage)
 
@@ -182,6 +199,11 @@ function resourceCreateProcedureToR4Procedure(resourceStorage: ResourceStorage, 
         reference: `urn:uuid:${findCondition(resourceStorage).id}` //Condition
       }
     ],
+    report: (resourceCreateProcedure.attachments || []).map(attachment => {
+      return {
+        reference: `urn:uuid:${attachment.id}` //DocumentReference or DiagnosticReport
+      }
+    }),
     performer: [
       {
         actor: {
@@ -311,7 +333,7 @@ function resourceCreatePractitionerToR4Practitioner(resourceStorage: ResourceSto
   return resourceStorage
 }
 
-// this model is based on FHIR401 Resource Medication - http://hl7.org/fhir/R4/medication.html
+// this model is based on FHIR401 Resource Medication - https://www.hl7.org/fhir/R4/MedicationRequest.html
 function resourceCreateMedicationToR4MedicationRequest(resourceStorage: ResourceStorage, resourceCreateMedication: ResourceCreateMedication): ResourceStorage {
   resourceStorage['MedicationRequest'] = resourceStorage['MedicationRequest'] || {}
 
@@ -362,6 +384,11 @@ function resourceCreateMedicationToR4MedicationRequest(resourceStorage: Resource
     requester: {
       reference: `urn:uuid:${resourceCreateMedication.requester}` // Practitioner
     },
+    supportingInformation: (resourceCreateMedication.attachments || []).map((attachment) => {
+      return {
+        reference: `urn:uuid:${attachment.id}` //DocumentReference or DiagnosticReport
+      }
+    }),
     reasonReference: [
       {
         reference: `urn:uuid:${findCondition(resourceStorage).id}` //Condition
@@ -383,6 +410,96 @@ function resourceCreateMedicationToR4MedicationRequest(resourceStorage: Resource
 
   return resourceStorage
 }
+
+function resourceAttachmentToR4DocumentReference(resourceStorage: ResourceStorage, resourceAttachment: ResourceCreateAttachment): ResourceStorage {
+
+  resourceStorage['DocumentReference'] = resourceStorage['DocumentReference'] || {}
+
+  let documentReferenceResource = {
+    id: resourceAttachment.id,
+    resourceType: 'DocumentReference',
+    status: 'current',
+    type: {
+      coding: resourceAttachment.category.identifier || [],
+      display: resourceAttachment.category.text,
+    },
+    subject: {
+      reference: `urn:uuid:${findPatient(resourceStorage).id}` //Patient
+    },
+    content: [
+      {
+        attachment: {
+          contentType: resourceAttachment.file_type,
+          data: resourceAttachment.file_content,
+          title: resourceAttachment.name,
+        }
+      }
+    ],
+    context: [
+      {
+        related: [
+          {
+            reference: `urn:uuid:${findCondition(resourceStorage).id}` //Condition
+          }
+        ]
+      }
+    ]
+    // date: `${new Date(resourceDocumentReference.date.year,resourceDocumentReference.date.month-1,resourceDocumentReference.date.day).toISOString()}`,
+  } as DocumentReference
+  resourceStorage['DocumentReference'][documentReferenceResource.id] = documentReferenceResource
+
+  //TODO create Binary object?
+
+  return resourceStorage
+}
+
+function resourceAttachmentToR4DiagnosticReport(resourceStorage: ResourceStorage, resourceAttachment: ResourceCreateAttachment): ResourceStorage {
+  resourceStorage['Media'] = resourceStorage['Media'] || {}
+
+  let mediaResource = {
+    id: uuidV4(),
+    resourceType: 'Media',
+    status: 'completed',
+    type: {
+      coding: resourceAttachment.category.identifier || [],
+      display: resourceAttachment.category.text,
+    },
+    subject: {
+      reference: `urn:uuid:${findPatient(resourceStorage).id}` //Patient
+    },
+    content: {
+      contentType: resourceAttachment.file_type,
+      data: resourceAttachment.file_content,
+      title: resourceAttachment.name,
+    },
+
+  } as Media
+  resourceStorage['Media'][mediaResource.id] = mediaResource
+
+  resourceStorage['DiagnosticReport'] = resourceStorage['DiagnosticReport'] || {}
+  let diagnosticReportResource = {
+    id: resourceAttachment.id,
+    resourceType: 'DiagnosticReport',
+    status: 'final',
+    code: {
+      coding: resourceAttachment.category.identifier || [],
+    },
+    subject: {
+      reference: `urn:uuid:${findPatient(resourceStorage).id}` //Patient
+    },
+    media: [
+      {
+        link: {
+          reference: `urn:uuid:${mediaResource.id}` //Media
+        }
+      },
+    ],
+  } as DiagnosticReport
+  resourceStorage['DiagnosticReport'][diagnosticReportResource.id] = diagnosticReportResource
+
+  return resourceStorage
+}
+
 
 function findCondition(resourceStorage: ResourceStorage): Condition {
   let [conditionId] = Object.keys(resourceStorage['Condition'])

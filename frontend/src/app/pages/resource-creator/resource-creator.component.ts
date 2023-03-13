@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
-  ResourceCreateDocumentReference,
+  ResourceCreateAttachment,
   ResourceCreateOrganization,
   ResourceCreatePractitioner,
 } from '../../models/fasten/resource_create';
@@ -97,6 +97,7 @@ export class ResourceCreatorComponent implements OnInit {
       whystopped: new FormControl(null),
       requester: new FormControl(null, Validators.required),
       instructions: new FormControl(null),
+      attachments: new FormArray([]),
     });
 
     medicationGroup.get("data").valueChanges.subscribe(val => {
@@ -120,7 +121,8 @@ export class ResourceCreatorComponent implements OnInit {
       whendone: new FormControl(null, Validators.required),
       performer: new FormControl(null),
       location: new FormControl(null),
-      comment: new FormControl('')
+      comment: new FormControl(''),
+      attachments: new FormArray([]),
     });
 
     this.procedures.push(procedureGroup);
@@ -187,7 +189,7 @@ export class ResourceCreatorComponent implements OnInit {
     return this.form.controls["attachments"] as FormArray;
   }
 
-  addAttachment(attachment: ResourceCreateDocumentReference){
+  addAttachment(attachment: ResourceCreateAttachment){
     const attachmentGroup = new FormGroup({
       id: new FormControl(attachment.id, Validators.required),
       name: new FormControl(attachment.name, Validators.required),
@@ -195,6 +197,7 @@ export class ResourceCreatorComponent implements OnInit {
       file_type: new FormControl(attachment.file_type, Validators.required),
       file_name: new FormControl(attachment.file_name, Validators.required),
       file_content: new FormControl(attachment.file_content, Validators.required),
+      file_size: new FormControl(attachment.file_size, Validators.required),
     });
 
     this.attachments.push(attachmentGroup);
@@ -291,7 +294,7 @@ export class ResourceCreatorComponent implements OnInit {
     );
   }
 
-  openAttachmentModal(content, formGroup?: AbstractControl, controlName?: string) {
+  openAttachmentModal(content, formGroup?: AbstractControl, arrayControlName?: string) {
     this.resetAttachmentForm()
 
     this.modalService.open(content, {
@@ -311,9 +314,16 @@ export class ResourceCreatorComponent implements OnInit {
         let result = this.newAttachmentForm.getRawValue()
         result.id = uuidV4();
         this.addAttachment(result);
-        if(formGroup && controlName){
-          //set this practitioner to the current select box
-          formGroup.get(controlName).setValue(result.id);
+        if(formGroup && arrayControlName){
+          //add this attachment id to the current FormArray
+          (formGroup.get(arrayControlName) as FormArray).push(new FormControl({
+            id: result.id,
+            name:result.name,
+            file_type: result.file_type,
+            file_name: result.file_name,
+            file_size: result.file_size,
+            category: result.category
+          }))
         }
       },
     );
@@ -433,7 +443,8 @@ export class ResourceCreatorComponent implements OnInit {
       category: new FormControl(null, Validators.required),
       file_type: new FormControl(null, Validators.required),
       file_name: new FormControl(null, Validators.required),
-      file_content: new FormControl(null, Validators.required)
+      file_content: new FormControl(null, Validators.required),
+      file_size: new FormControl(null),
     })
   }
   onAttachmentFileChange($event){
@@ -448,6 +459,7 @@ export class ResourceCreatorComponent implements OnInit {
       };
       reader.readAsDataURL(fileInput.files[0]);
       this.newAttachmentForm.get('file_name').setValue(fileInput.files[0].name)
+      this.newAttachmentForm.get('file_size').setValue(fileInput.files[0].size)
     }
   }
 

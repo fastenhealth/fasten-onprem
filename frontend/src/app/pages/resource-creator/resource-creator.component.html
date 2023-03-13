@@ -134,6 +134,25 @@
                         <textarea formControlName="instructions" rows="3" class="form-control" placeholder="Textarea"></textarea>
                       </div><!-- col -->
                     </div><!-- row -->
+                    <div class="row row-sm mg-t-20" formGroupName="attachments">
+                      <div class="col-lg-4 mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Attachments</p>
+
+                        <select class="form-control">
+                          <option value="" hidden selected>Select Attachment</option>
+                          <option value="" (click)="openAttachmentModal(attachmentCreateModal, medicationGroup, 'attachments')">New Attachment</option>
+                          <optgroup *ngIf="attachments.controls.length" class="divider"></optgroup>
+                          <option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">
+                            {{attachment.value.name}} ({{attachment.value.file_name}})
+                          </option>
+                        </select>
+
+                        <ul class="list-group" >
+                          <li *ngFor="let attachment of medicationGroup.get('attachments').getRawValue()" class="list-group-item">{{attachment.name}} ({{attachment.file_name}})</li>
+                        </ul>
+
+                      </div><!-- col -->
+                    </div>
                   </div>
                 </ng-container>
                 <div class="row pt-2">
@@ -206,6 +225,25 @@
                         <textarea formControlName="comment" class="form-control" placeholder="Input box" rows="3"></textarea>
                       </div><!-- col -->
                     </div><!-- row -->
+                    <div class="row row-sm mg-t-20" formGroupName="attachments">
+                      <div class="col-lg-4 mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Attachments</p>
+
+                        <select class="form-control">
+                          <option value="" hidden selected>Select Attachment</option>
+                          <option value="" (click)="openAttachmentModal(attachmentCreateModal, procedureGroup, 'attachments')">New Attachment</option>
+                          <optgroup *ngIf="attachments.controls.length" class="divider"></optgroup>
+                          <option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">
+                            {{attachment.value.name}} ({{attachment.value.file_name}})
+                          </option>
+                        </select>
+
+                        <ul class="list-group" >
+                          <li *ngFor="let attachment of procedureGroup.get('attachments').getRawValue()" class="list-group-item">{{attachment.name}} ({{attachment.file_name}})</li>
+                        </ul>
+
+                      </div><!-- col -->
+                    </div>
                   </div>
                 </ng-container>
 
@@ -384,7 +422,7 @@
                       </div><!-- col -->
                       <div class="col-lg mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">File Type</p>
-                        <app-nlm-typeahead formControlName="file_type" searchType="AttachmentFileType" [debugMode]="debugMode"></app-nlm-typeahead>
+                        <input readonly class="form-control" formControlName="file_type"/>
                       </div><!-- col -->
                     </div><!-- row -->
 

@@ -129,7 +129,8 @@ export interface ResourceCreate {
   "medications": ResourceCreateMedication[],
   "procedures": ResourceCreateProcedure[],
   "practitioners": ResourceCreatePractitioner[],
-  "organizations": ResourceCreateOrganization[]
+  "organizations": ResourceCreateOrganization[],
+  "attachments": ResourceCreateAttachment[],
 }
 
 export interface ResourceCreateCondition {
@@ -155,6 +156,7 @@ export interface ResourceCreateMedication {
   "whystopped": NlmSearchResults
   "requester": string,
   "instructions": string
+  "attachments": ResourceCreateAttachment[],
 }
 
 export interface ResourceCreateProcedure {
@@ -162,7 +164,8 @@ export interface ResourceCreateProcedure {
   "whendone": ResourceCreateDate,
   "comment": string,
   "performer": string,
-  "location": string
+  "location": string,
+  "attachments": ResourceCreateAttachment[],
 }
 
 export interface ResourceCreatePractitioner {
@@ -187,14 +190,15 @@ export interface ResourceCreateOrganization {
   "address": Address,
 }
 
-export interface ResourceCreateDocumentReference {
+export interface ResourceCreateAttachment {
   "id"?: string,
   "identifier": CodingModel[]
   "name": string,
   "category": NlmSearchResults,
   "file_type": string,
   "file_name": string,
-  "file_content": File,
+  "file_content": string,
+  "file_size": number,
 }
 
 
