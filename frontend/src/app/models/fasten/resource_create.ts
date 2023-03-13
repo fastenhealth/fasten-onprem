@@ -187,6 +187,17 @@ export interface ResourceCreateOrganization {
   "address": Address,
 }
 
+export interface ResourceCreateDocumentReference {
+  "id"?: string,
+  "identifier": CodingModel[]
+  "name": string,
+  "category": NlmSearchResults,
+  "file_type": string,
+  "file_name": string,
+  "file_content": File,
+}
+
+
 export interface Address {
   line1?: string
   line2?: string

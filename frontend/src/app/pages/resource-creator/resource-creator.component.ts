@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
+  ResourceCreateDocumentReference,
   ResourceCreateOrganization,
   ResourceCreatePractitioner,
 } from '../../models/fasten/resource_create';
@@ -182,7 +183,25 @@ export class ResourceCreatorComponent implements OnInit {
     this.organizations.removeAt(index);
   }
 
+  get attachments(): FormArray {
+    return this.form.controls["attachments"] as FormArray;
+  }
 
+  addAttachment(attachment: ResourceCreateDocumentReference){
+    const attachmentGroup = new FormGroup({
+      id: new FormControl(attachment.id, Validators.required),
+      name: new FormControl(attachment.name, Validators.required),
+      category: new FormControl(attachment.category, Validators.required),
+      file_type: new FormControl(attachment.file_type, Validators.required),
+      file_name: new FormControl(attachment.file_name, Validators.required),
+      file_content: new FormControl(attachment.file_content, Validators.required),
+    });
+
+    this.attachments.push(attachmentGroup);
+  }
+  deleteAttachment(index: number) {
+    this.attachments.removeAt(index);
+  }
 
 
   onSubmit() {
@@ -291,7 +310,7 @@ export class ResourceCreatorComponent implements OnInit {
         //add this to the list of organization
         let result = this.newAttachmentForm.getRawValue()
         result.id = uuidV4();
-        // this.addAttachment(result);
+        this.addAttachment(result);
         if(formGroup && controlName){
           //set this practitioner to the current select box
           formGroup.get(controlName).setValue(result.id);
@@ -413,8 +432,23 @@ export class ResourceCreatorComponent implements OnInit {
       name: new FormControl(null, Validators.required),
       category: new FormControl(null, Validators.required),
       file_type: new FormControl(null, Validators.required),
-      file: new FormControl(null, Validators.required)
+      file_name: new FormControl(null, Validators.required),
+      file_content: new FormControl(null, Validators.required)
     })
-
   }
+  onAttachmentFileChange($event){
+    console.log("onAttachmentFileChange")
+    let fileInput = $event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files[0]) {
+      let reader = new FileReader();
+      reader.onloadend = () => {
+        // use a regex to remove data url part
+        const base64String = (reader.result as string).replace('data:', '').replace(/^.+,/, '');
+        this.newAttachmentForm.get('file_content').setValue(base64String)
+      };
+      reader.readAsDataURL(fileInput.files[0]);
+      this.newAttachmentForm.get('file_name').setValue(fileInput.files[0].name)
+    }
+  }
+
 }

@@ -364,17 +364,36 @@
                 </div>
               </div>
               <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['attachments']" class="card-body">
-                <div class="row row-sm">
-                  <div class="col-lg">
-                    <p class="mg-b-10">Name</p>
-                    <input disabled class="form-control" placeholder="Input box" type="text">
-                  </div><!-- col -->
-                  <div class="col-lg mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Type</p>
-                    <input disabled class="form-control" placeholder="Input box" type="text">
-                  </div><!-- col -->
 
-                </div><!-- row -->
+                <ng-container formArrayName="locations">
+                  <div class="card mg-t-10 pd-20" [formGroup]="attachmentGroup" *ngFor="let attachmentGroup of attachments.controls; let i = index">
+                    <div class="tx-right">
+                      <span class="cursor-pointer" (click)="deleteAttachment(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                    </div>
+
+                    <div class="row row-sm">
+                      <input formControlName="id" class="form-control" type="hidden">
+
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
+                        <input formControlName="name" readonly class="form-control" placeholder="Input box" type="text">
+                      </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Category</p>
+                        <app-nlm-typeahead formControlName="category" searchType="AttachmentCategory" [debugMode]="debugMode"></app-nlm-typeahead>
+                      </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">File Type</p>
+                        <app-nlm-typeahead formControlName="file_type" searchType="AttachmentFileType" [debugMode]="debugMode"></app-nlm-typeahead>
+                      </div><!-- col -->
+                    </div><!-- row -->
+
+                  </div>
+                </ng-container>
+
+
+
+
                 <div class="row pt-2">
                   <div class="col-lg-4 col-md-3">
                     <button type="button" (click)="openAttachmentModal(attachmentCreateModal)" class="btn btn-outline-indigo btn-block">Create Attachment/Document</button>
@@ -572,9 +591,12 @@
           <p class="mg-b-10">File Type<span ngbTooltip="required" class="text-danger">*</span></p>
           <app-nlm-typeahead formControlName="file_type" searchType="AttachmentFileType" [debugMode]="debugMode"></app-nlm-typeahead>
         </div><!-- col -->
-        <div class="col-6 mg-t-10 mg-lg-t-0">
+        <div class="col-12 mg-t-10 mg-lg-t-0">
           <p class="mg-b-10">File<span ngbTooltip="required" class="text-danger">*</span></p>
-          <input formControlName="file" type="file">
+        </div><!-- col -->
+        <div class="col-6 mg-t-10 mg-lg-t-0 mg-l-10">
+          <label for="customFile" class="custom-file-label">{{newAttachmentForm.get('file_name').value || 'Choose file'}}</label>
+          <input id="customFile" (change)="onAttachmentFileChange($event)" class="custom-file-input" formControlName="file_name" type="file">
         </div><!-- col -->
       </ng-container>
     </div>
