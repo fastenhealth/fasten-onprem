@@ -31,6 +31,7 @@ import { ReportLabsComponent } from './pages/report-labs/report-labs.component';
 import {PipesModule} from './pipes/pipes.module';
 import { ResourceCreatorComponent } from './pages/resource-creator/resource-creator.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     HighlightModule,
     MomentModule,
     PipesModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    NgSelectModule
   ],
   providers: [
     {
