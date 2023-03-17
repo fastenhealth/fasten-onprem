@@ -81,13 +81,20 @@ export class MedicalSourcesComponent implements OnInit {
 
         //move this source from available to connected (with a progress bar)
         //remove item from available sources list, add to connected sources.
-        let sourcesInProgress = this.availableSourceList.splice(this.availableSourceList.findIndex((item) => item.metadata.source_type == callbackSourceType), 1);
+        let inProgressAvailableIndex = this.availableSourceList.findIndex((item) => item.metadata.source_type == callbackSourceType)
+        if(inProgressAvailableIndex > -1){
+          let sourcesInProgress = this.availableSourceList.splice(inProgressAvailableIndex, 1);
+
+        }
 
         //the structure of "availableSourceList" vs "connectedSourceList" sources is slightly different,
         //connectedSourceList contains a "source" field. The this.fastenApi.createSource() call in the callback function will set it.
-        this.connectedSourceList.push(...sourcesInProgress)
-
-        this.callback(callbackSourceType).then(console.log)
+        this.lighthouseApi.getLighthouseSource(callbackSourceType)
+          .then((metadata) => {
+            this.connectedSourceList.push({metadata: metadata})
+            return this.callback(callbackSourceType)
+          })
+          .then(console.log)
       }
 
     }, err => {
