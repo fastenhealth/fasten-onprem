@@ -197,6 +197,10 @@ ng-select.ng-select-form-control {
   }
 }
 
-
-
-
+//ngTypeAhead
+app-nlm-typeahead {
+  .dropdown-menu.show {
+    max-height: 350px;
+    overflow-y: scroll;
+  }
+}

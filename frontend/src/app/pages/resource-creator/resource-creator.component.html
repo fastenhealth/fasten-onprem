@@ -269,6 +269,9 @@
 
                 <ng-container formArrayName="practitioners">
                   <div class="card mg-t-10 pd-20" [formGroup]="practitionerGroup" *ngFor="let practitionerGroup of practitioners.controls; let i = index">
+                    <div *ngIf="debugMode" class="alert alert-warning">
+                      <strong>Practitioner Status: {{practitionerGroup.status}}</strong>
+                    </div>
                     <div class="tx-right">
                       <span class="cursor-pointer" (click)="deletePractitioner(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
                     </div>
@@ -336,6 +339,9 @@
 
                 <ng-container formArrayName="locations">
                   <div class="card mg-t-10 pd-20" [formGroup]="organizationGroup" *ngFor="let organizationGroup of organizations.controls; let i = index">
+                    <div *ngIf="debugMode" class="alert alert-warning">
+                      <strong>Organization Status: {{organizationGroup.status}}</strong>
+                    </div>
                     <div class="tx-right">
                       <span class="cursor-pointer" (click)="deleteOrganization(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
                     </div>
@@ -398,6 +404,9 @@
 
                 <ng-container formArrayName="locations">
                   <div class="card mg-t-10 pd-20" [formGroup]="attachmentGroup" *ngFor="let attachmentGroup of attachments.controls; let i = index">
+                    <div *ngIf="debugMode" class="alert alert-warning">
+                      <strong>Attachment Status: {{attachmentGroup.status}}</strong>
+                    </div>
                     <div class="tx-right">
                       <span class="cursor-pointer" (click)="deleteAttachment(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
                     </div>

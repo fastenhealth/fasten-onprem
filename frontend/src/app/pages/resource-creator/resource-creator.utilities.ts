@@ -29,7 +29,11 @@ export function GenerateR4Bundle(resourceCreate: ResourceCreate): Bundle {
   resourceStorage = resourceCreateConditionToR4Condition(resourceStorage, resourceCreate.condition)
 
   for(let attachment of resourceCreate.attachments) {
-    if(attachment.file_type == 'application/dicom' || attachment.category.id == '18748-4') {
+    if(attachment.file_type == 'application/dicom' ||
+      attachment.category.id == '18726-0' || //Radiology studies (set)
+      attachment.category.id == '27897-8' || //	Neuromuscular electrophysiology studies (set)
+      attachment.category.id == '18748-4' // 	Diagnostic imaging study
+    ) {
       //Diagnostic imaging study (DiagnosticReport -> Media)
       resourceStorage = resourceAttachmentToR4DiagnosticReport(resourceStorage, attachment)
     }
@@ -199,9 +203,9 @@ function resourceCreateProcedureToR4Procedure(resourceStorage: ResourceStorage, 
         reference: `urn:uuid:${findCondition(resourceStorage).id}` //Condition
       }
     ],
-    report: (resourceCreateProcedure.attachments || []).map(attachment => {
+    report: (resourceCreateProcedure.attachments || []).map(attachmentId => {
       return {
-        reference: `urn:uuid:${attachment.id}` //DocumentReference or DiagnosticReport
+        reference: `urn:uuid:${attachmentId}` //DocumentReference or DiagnosticReport
       }
     }),
     performer: [
@@ -384,9 +388,9 @@ function resourceCreateMedicationToR4MedicationRequest(resourceStorage: Resource
     requester: {
       reference: `urn:uuid:${resourceCreateMedication.requester}` // Practitioner
     },
-    supportingInformation: (resourceCreateMedication.attachments || []).map((attachment) => {
+    supportingInformation: (resourceCreateMedication.attachments || []).map((attachmentId) => {
       return {
-        reference: `urn:uuid:${attachment.id}` //DocumentReference or DiagnosticReport
+        reference: `urn:uuid:${attachmentId}` //DocumentReference or DiagnosticReport
       }
     }),
     reasonReference: [
@@ -419,10 +423,13 @@ function resourceAttachmentToR4DocumentReference(resourceStorage: ResourceStorag
     id: resourceAttachment.id,
     resourceType: 'DocumentReference',
     status: 'current',
-    type: {
-      coding: resourceAttachment.category.identifier || [],
-      display: resourceAttachment.category.text,
-    },
+    category: [
+      {
+        coding: resourceAttachment.category.identifier || [],
+        text: resourceAttachment.category.text,
+      }
+    ],
+    // description: resourceAttachment.description,
     subject: {
       reference: `urn:uuid:${findPatient(resourceStorage).id}` //Patient
     },
@@ -472,7 +479,6 @@ function resourceAttachmentToR4DiagnosticReport(resourceStorage: ResourceStorage
       data: resourceAttachment.file_content,
       title: resourceAttachment.name,
     },
-
   } as Media
   resourceStorage['Media'][mediaResource.id] = mediaResource
 

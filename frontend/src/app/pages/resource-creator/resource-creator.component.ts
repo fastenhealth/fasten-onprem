@@ -197,7 +197,7 @@ export class ResourceCreatorComponent implements OnInit {
       file_type: new FormControl(attachment.file_type, Validators.required),
       file_name: new FormControl(attachment.file_name, Validators.required),
       file_content: new FormControl(attachment.file_content, Validators.required),
-      file_size: new FormControl(attachment.file_size, Validators.required),
+      file_size: new FormControl(attachment.file_size),
     });
 
     this.attachments.push(attachmentGroup);
