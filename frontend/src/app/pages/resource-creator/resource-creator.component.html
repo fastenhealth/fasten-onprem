@@ -144,7 +144,7 @@
                         </button>
                       </div>
                       <div class="col-11">
-                        <ng-select [readonly]="!attachments.controls.length" appendTo="body" formControlName="attachments" placeholder="Select Attachment" [multiple]="true" [hideSelected]="true">
+                        <ng-select class="ng-select-form-control" [readonly]="!attachments.controls.length" appendTo="body" formControlName="attachments" placeholder="Select Attachment" [multiple]="true" [hideSelected]="true">
                           <ng-option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">{{attachment.value.name}} ({{attachment.value.file_name}})</ng-option>
                         </ng-select>
                       </div>
@@ -232,7 +232,7 @@
                         </button>
                       </div>
                       <div class="col-11">
-                        <ng-select [readonly]="!attachments.controls.length" formControlName="attachments" placeholder="Select Attachment" [multiple]="true" [hideSelected]="true">
+                        <ng-select class="ng-select-form-control" [readonly]="!attachments.controls.length" formControlName="attachments" placeholder="Select Attachment" [multiple]="true" [hideSelected]="true">
                           <ng-option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">{{attachment.value.name}} ({{attachment.value.file_name}})</ng-option>
                         </ng-select>
                       </div>
