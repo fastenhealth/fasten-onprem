@@ -6,7 +6,7 @@
         {{conditionDisplayModel?.sort_title ? conditionDisplayModel?.sort_title : (conditionGroup | fhirPath: "Condition.code.text.first()":"Condition.code.coding.display.first()")}}
       </div>
       <div class="col-6">
-        {{conditionDisplayModel?.onset_datetime | date }} <span *ngIf="conditionDisplayModel.abatement_datetime">- {{conditionDisplayModel.abatement_datetime | date}}</span>
+        {{conditionDisplayModel?.onset_datetime | date }} <span *ngIf="conditionDisplayModel?.abatement_datetime">- {{conditionDisplayModel.abatement_datetime | date}}</span>
       </div>
     </div>
   </div><!-- card-header -->

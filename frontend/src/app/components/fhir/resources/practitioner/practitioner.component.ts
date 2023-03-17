@@ -53,14 +53,14 @@ export class PractitionerComponent implements OnInit, FhirResourceComponentInter
     //   enabled: !!this.displayModel.telecom,
     // },
   ];
-    for(let idCoding of this.displayModel.identifier){
+    for(let idCoding of (this.displayModel?.identifier || [])){
       this.tableData.push({
         label: `Identifier (${idCoding.system})`,
         data: idCoding.display || idCoding.value,
         enabled: true,
       })
     }
-    for(let telecom of this.displayModel.telecom){
+    for(let telecom of (this.displayModel?.telecom || [])){
       this.tableData.push({
         label: telecom.system,
         data: telecom.value,

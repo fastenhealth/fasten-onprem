@@ -66,6 +66,10 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    if(!this.conditionGroup){
+      return
+    }
+
     //add resources to the lookup table, ensure uniqueness.
     this.conditionDisplayModel = this.recExtractResources(this.conditionGroup)
 
