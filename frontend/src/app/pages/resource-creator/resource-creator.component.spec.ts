@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ResourceCreatorComponent } from './resource-creator.component';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+import {NgbCollapseModule, NgbDatepickerModule} from '@ng-bootstrap/ng-bootstrap';
 
 describe('ResourceCreatorComponent', () => {
   let component: ResourceCreatorComponent;
@@ -8,6 +11,7 @@ describe('ResourceCreatorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule, RouterTestingModule, NgbDatepickerModule, NgbCollapseModule],
       declarations: [ ResourceCreatorComponent ]
     })
     .compileComponents();
