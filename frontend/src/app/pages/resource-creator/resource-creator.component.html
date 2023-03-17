@@ -134,24 +134,20 @@
                         <textarea formControlName="instructions" rows="3" class="form-control" placeholder="Textarea"></textarea>
                       </div><!-- col -->
                     </div><!-- row -->
-                    <div class="row row-sm mg-t-20" formGroupName="attachments">
-                      <div class="col-lg-4 mg-t-10 mg-lg-t-0">
+                    <div class="row row-sm mg-t-20">
+                      <div class="col-12 mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">Attachments</p>
-
-                        <select class="form-control">
-                          <option value="" hidden selected>Select Attachment</option>
-                          <option value="" (click)="openAttachmentModal(attachmentCreateModal, medicationGroup, 'attachments')">New Attachment</option>
-                          <optgroup *ngIf="attachments.controls.length" class="divider"></optgroup>
-                          <option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">
-                            {{attachment.value.name}} ({{attachment.value.file_name}})
-                          </option>
-                        </select>
-
-                        <ul class="list-group" >
-                          <li *ngFor="let attachment of medicationGroup.get('attachments').getRawValue()" class="list-group-item">{{attachment.name}} ({{attachment.file_name}})</li>
-                        </ul>
-
                       </div><!-- col -->
+                      <div class="col-1">
+                        <button type="button" (click)="openAttachmentModal(attachmentCreateModal, medicationGroup, 'attachments')" class="btn btn-indigo btn-with-icon">
+                          <i class="fas fa-paperclip"></i> Add
+                        </button>
+                      </div>
+                      <div class="col-11">
+                        <ng-select [readonly]="!attachments.controls.length" appendTo="body" formControlName="attachments" placeholder="Select Attachment" [multiple]="true" [hideSelected]="true">
+                          <ng-option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">{{attachment.value.name}} ({{attachment.value.file_name}})</ng-option>
+                        </ng-select>
+                      </div>
                     </div>
                   </div>
                 </ng-container>
@@ -225,24 +221,21 @@
                         <textarea formControlName="comment" class="form-control" placeholder="Input box" rows="3"></textarea>
                       </div><!-- col -->
                     </div><!-- row -->
-                    <div class="row row-sm mg-t-20" formGroupName="attachments">
-                      <div class="col-lg-4 mg-t-10 mg-lg-t-0">
+                    <div class="row row-sm mg-t-20">
+                      <div class="col-12 mg-t-10 mg-lg-t-0">
                         <p class="mg-b-10">Attachments</p>
-
-                        <select class="form-control">
-                          <option value="" hidden selected>Select Attachment</option>
-                          <option value="" (click)="openAttachmentModal(attachmentCreateModal, procedureGroup, 'attachments')">New Attachment</option>
-                          <optgroup *ngIf="attachments.controls.length" class="divider"></optgroup>
-                          <option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">
-                            {{attachment.value.name}} ({{attachment.value.file_name}})
-                          </option>
-                        </select>
-
-                        <ul class="list-group" >
-                          <li *ngFor="let attachment of procedureGroup.get('attachments').getRawValue()" class="list-group-item">{{attachment.name}} ({{attachment.file_name}})</li>
-                        </ul>
-
                       </div><!-- col -->
+
+                      <div class="col-1">
+                        <button type="button" (click)="openAttachmentModal(attachmentCreateModal, procedureGroup, 'attachments')" class="btn btn-indigo btn-with-icon">
+                          <i class="fas fa-paperclip"></i> Add
+                        </button>
+                      </div>
+                      <div class="col-11">
+                        <ng-select [readonly]="!attachments.controls.length" formControlName="attachments" placeholder="Select Attachment" [multiple]="true" [hideSelected]="true">
+                          <ng-option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">{{attachment.value.name}} ({{attachment.value.file_name}})</ng-option>
+                        </ng-select>
+                      </div>
                     </div>
                   </div>
                 </ng-container>

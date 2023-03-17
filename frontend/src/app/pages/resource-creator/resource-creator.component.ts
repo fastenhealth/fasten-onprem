@@ -97,7 +97,7 @@ export class ResourceCreatorComponent implements OnInit {
       whystopped: new FormControl(null),
       requester: new FormControl(null, Validators.required),
       instructions: new FormControl(null),
-      attachments: new FormArray([]),
+      attachments: new FormControl([]),
     });
 
     medicationGroup.get("data").valueChanges.subscribe(val => {
@@ -122,7 +122,7 @@ export class ResourceCreatorComponent implements OnInit {
       performer: new FormControl(null),
       location: new FormControl(null),
       comment: new FormControl(''),
-      attachments: new FormArray([]),
+      attachments: new FormControl([]),
     });
 
     this.procedures.push(procedureGroup);
@@ -294,7 +294,7 @@ export class ResourceCreatorComponent implements OnInit {
     );
   }
 
-  openAttachmentModal(content, formGroup?: AbstractControl, arrayControlName?: string) {
+  openAttachmentModal(content, formGroup?: AbstractControl, controlName?: string) {
     this.resetAttachmentForm()
 
     this.modalService.open(content, {
@@ -314,16 +314,13 @@ export class ResourceCreatorComponent implements OnInit {
         let result = this.newAttachmentForm.getRawValue()
         result.id = uuidV4();
         this.addAttachment(result);
-        if(formGroup && arrayControlName){
+
+        if(formGroup && controlName){
+
           //add this attachment id to the current FormArray
-          (formGroup.get(arrayControlName) as FormArray).push(new FormControl({
-            id: result.id,
-            name:result.name,
-            file_type: result.file_type,
-            file_name: result.file_name,
-            file_size: result.file_size,
-            category: result.category
-          }))
+          let controlArrayVal = formGroup.get(controlName).getRawValue();
+          controlArrayVal.push(result.id)
+          formGroup.get(controlName).setValue(controlArrayVal);
         }
       },
     );
@@ -462,5 +459,6 @@ export class ResourceCreatorComponent implements OnInit {
       this.newAttachmentForm.get('file_size').setValue(fileInput.files[0].size)
     }
   }
+
 
 }
