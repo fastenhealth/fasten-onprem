@@ -64,6 +64,7 @@ import { DiagnosticReportComponent } from './fhir/resources/diagnostic-report/di
 import { PractitionerComponent } from './fhir/resources/practitioner/practitioner.component';
 import {PipesModule} from '../pipes/pipes.module';
 import { NlmTypeaheadComponent } from './nlm-typeahead/nlm-typeahead.component';
+import { DocumentReferenceComponent } from './fhir/resources/document-reference/document-reference.component';
 
 @NgModule({
   imports: [
@@ -136,6 +137,7 @@ import { NlmTypeaheadComponent } from './nlm-typeahead/nlm-typeahead.component';
     DiagnosticReportComponent,
     PractitionerComponent,
     NlmTypeaheadComponent,
+    DocumentReferenceComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -186,7 +188,8 @@ import { NlmTypeaheadComponent } from './nlm-typeahead/nlm-typeahead.component';
         ProcedureComponent,
         DiagnosticReportComponent,
         PractitionerComponent,
-        NlmTypeaheadComponent
+        NlmTypeaheadComponent,
+        DocumentReferenceComponent,
     ]
 })
 
