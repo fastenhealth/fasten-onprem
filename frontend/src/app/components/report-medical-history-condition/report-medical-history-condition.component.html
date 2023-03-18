@@ -117,6 +117,19 @@
               </ul>
             </div>
 
+            <div *ngIf="encounter?.related_resources?.DocumentReference as documentReferences" class="col-12 mt-2 mb-2">
+              <strong>Attachments:</strong>
+              <ul>
+                <li class="cursor-pointer" [ngbPopover]="documentReferencePopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let documentReference of documentReferences">
+                  {{documentReference.sort_title}}
+
+                  <ng-template #documentReferencePopoverContent>
+                    <fhir-resource [displayModel]="documentReference"></fhir-resource>
+                  </ng-template>
+                </li>
+              </ul>
+            </div>
+
             <div *ngIf="encounter?.related_resources?.Device as devices" class="col-12 mt-2 mb-2">
               <strong>Device:</strong>
               <ul>
