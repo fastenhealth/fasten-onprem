@@ -2,6 +2,7 @@
   displayModel?.content_type == 'application/pdf' ? showPdf :
   displayModel?.content_type == 'text/markdown' ? showMarkdown :
   displayModel?.content_type == 'text/plain' ? showText :
+  displayModel?.content_type == 'application/dicom' ? showDicom :
   (displayModel?.content_type == 'text/html' || displayModel?.content_type == 'application/html') ? showHtml :
   (displayModel?.content_type == 'application/xml' || displayModel?.content_type == 'application/json') ? showHighlight :
   (displayModel?.content_type == 'image/jpeg' || displayModel?.content_type == 'image/png') ? showImg :
@@ -25,6 +26,9 @@
 </ng-template>
 <ng-template #showText>
   <fhir-binary-text [displayModel]="displayModel"></fhir-binary-text>
+</ng-template>
+<ng-template #showDicom>
+  <fhir-dicom [displayModel]="displayModel"></fhir-dicom>
 </ng-template>
 <ng-template #showEmpty>
   Unknown Binary content type {{displayModel?.content_type}}

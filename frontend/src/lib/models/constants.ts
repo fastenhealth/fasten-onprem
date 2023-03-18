@@ -16,6 +16,7 @@ export enum ResourceType {
   Goal = "Goal",
   Immunization = "Immunization",
   Location = "Location",
+  Media = "Media",
   Medication = "Medication",
   MedicationDispense = "MedicationDispense",
   MedicationRequest = "MedicationRequest",

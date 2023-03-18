@@ -1,0 +1,53 @@
+<div id="dwv">
+<!--  <mat-progress-bar mode="determinate" value="{{ loadProgress }}"></mat-progress-bar>-->
+<!--  <div class="button-row">-->
+<!--    <mat-button-toggle-group name="tool" [disabled]="!dataLoaded">-->
+<!--      <mat-button-toggle value="{{ tool }}" color="primary"-->
+<!--                         *ngFor="let tool of toolNames"-->
+<!--                         title="{{ tool }}"-->
+<!--                         (click)="onChangeTool(tool)"-->
+<!--                         [disabled]="!dataLoaded || !canRunTool(tool)">-->
+<!--        <mat-icon>{{ getToolIcon(tool) }}</mat-icon>-->
+<!--      </mat-button-toggle>-->
+<!--    </mat-button-toggle-group>-->
+
+<!--    <mat-button-toggle-group name="reset" [disabled]="!dataLoaded"-->
+<!--                             (change)="onSingleToogleChange($event)">-->
+<!--      <mat-button-toggle color="primary"-->
+<!--                         title="Reset"-->
+<!--                         (click)="onReset()">-->
+<!--        <mat-icon>refresh</mat-icon>-->
+<!--      </mat-button-toggle>-->
+<!--    </mat-button-toggle-group>-->
+
+<!--    <mat-button-toggle-group name="reset" [disabled]="!dataLoaded"-->
+<!--                             (change)="onSingleToogleChange($event)">-->
+<!--      <mat-button-toggle color="primary"-->
+<!--                         title="Toggle Orientation"-->
+<!--                         (click)="toggleOrientation()">-->
+<!--        <mat-icon>cameraswitch</mat-icon>-->
+<!--      </mat-button-toggle>-->
+<!--    </mat-button-toggle-group>-->
+
+<!--    <mat-button-toggle-group name="tags" [disabled]="!dataLoaded"-->
+<!--                             (change)="onSingleToogleChange($event)">-->
+<!--      <mat-button-toggle color="primary"-->
+<!--                         title="Tags"-->
+<!--                         (click)="openTagsDialog()">-->
+<!--        <mat-icon>library_books</mat-icon>-->
+<!--      </mat-button-toggle>-->
+<!--    </mat-button-toggle-group>-->
+<!--  </div>-->
+  <div id="layerGroup0" class="layerGroup">
+    <div id="dropBox"></div>
+  </div>
+  <div class="legend mat-small">
+    <p>Powered by
+      <a href="https://github.com/ivmartel/dwv">dwv</a>
+      {{ versions.dwv }}
+      and
+      <a href="https://github.com/angular/angular">Angular</a>
+      {{ versions.angular }}
+    </p>
+  </div>
+</div>

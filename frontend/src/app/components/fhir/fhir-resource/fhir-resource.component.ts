@@ -24,6 +24,7 @@ import {ProcedureComponent} from '../resources/procedure/procedure.component';
 import {DiagnosticReportComponent} from '../resources/diagnostic-report/diagnostic-report.component';
 import {PractitionerComponent} from '../resources/practitioner/practitioner.component';
 import {DocumentReferenceComponent} from '../resources/document-reference/document-reference.component';
+import {MediaComponent} from '../resources/media/media.component';
 
 @Component({
   selector: 'fhir-resource',
@@ -117,6 +118,9 @@ export class FhirResourceComponent implements OnInit, OnChanges {
       // }
       case "Immunization": {
         return ImmunizationComponent;
+      }
+      case "Media": {
+        return MediaComponent;
       }
       case "Medication": {
         return MedicationComponent;

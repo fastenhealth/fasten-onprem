@@ -26,6 +26,7 @@ import {FastenOptions} from './fasten/fasten-options';
 import {FastenDisplayModel} from './fasten/fasten-display-model';
 import {MedicationRequestModel} from './resources/medication-request-model';
 import {BinaryModel} from './resources/binary-model';
+import {MediaModel} from './resources/media-model';
 
 // import {BinaryModel} from './resources/binary-model';
 
@@ -92,6 +93,9 @@ export function fhirModelFactory(modelResourceType: ResourceType, fhirResourceWr
       break
     case "Location":
       resourceModel = new LocationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+      break
+    case "Media":
+      resourceModel = new MediaModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
     case "Medication":
       resourceModel = new MedicationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)

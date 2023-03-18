@@ -36,6 +36,7 @@
     "asmcrypto.js": "^2.3.2",
     "bootstrap": "^4.4.1",
     "chart.js": "2.9.4",
+    "dwv": "^0.31.0",
     "fhirpath": "^3.3.0",
     "humanize-duration": "^3.27.3",
     "idb": "^7.1.0",
