@@ -1250,7 +1250,7 @@ export class NlmClinicalTableSearchService {
         text: "Document - JSON"
       },
       {
-        id: "text/markdown; charset=UTF-8",
+        id: "text/markdown",
         text: "Document - Markdown"
       },
       {
@@ -1274,7 +1274,7 @@ export class NlmClinicalTableSearchService {
         text: "Image - JPEG"
       },
       {
-        id: "image/plain",
+        id: "text/plain",
         text: "Document - Plain Text"
       },
 

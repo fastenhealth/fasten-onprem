@@ -1,8 +1,10 @@
 <ng-container [ngTemplateOutlet]="
   displayModel?.content_type == 'application/pdf' ? showPdf :
-  displayModel?.content_type == 'image/jpeg' ? showImg :
+  displayModel?.content_type == 'text/markdown' ? showMarkdown :
+  displayModel?.content_type == 'text/plain' ? showText :
   (displayModel?.content_type == 'text/html' || displayModel?.content_type == 'application/html') ? showHtml :
-  (displayModel?.content_type == 'application/xml' || displayModel?.content_type == 'application/json') ? showText :
+  (displayModel?.content_type == 'application/xml' || displayModel?.content_type == 'application/json') ? showHighlight :
+  (displayModel?.content_type == 'image/jpeg' || displayModel?.content_type == 'image/png') ? showImg :
   showEmpty
 "></ng-container>
 
@@ -14,6 +16,12 @@
 </ng-template>
 <ng-template #showHtml>
   <fhir-html [displayModel]="displayModel"></fhir-html>
+</ng-template>
+<ng-template #showMarkdown>
+  <fhir-markdown [displayModel]="displayModel"></fhir-markdown>
+</ng-template>
+<ng-template #showHighlight>
+  <pre><code [languages]="['json', 'xml']" [highlight]="displayModel | json"></code></pre>
 </ng-template>
 <ng-template #showText>
   <fhir-binary-text [displayModel]="displayModel"></fhir-binary-text>
