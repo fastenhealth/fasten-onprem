@@ -5,22 +5,20 @@ import {ReferenceModel} from '../datatypes/reference-model';
 import {CodingModel} from '../datatypes/coding-model';
 import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
+import {Attachment} from 'fhir/r4';
+import {BinaryModel} from './binary-model';
 
 export class DocumentReferenceModel extends FastenDisplayModel {
 
   description: string | undefined
   status: string | undefined
+  category: CodableConceptModel | undefined
   doc_status: string | undefined
   type_coding: CodingModel | undefined
   class_coding: CodingModel | undefined
   created_at: string | undefined
   security_label_coding: CodingModel | undefined
-  content: {
-    url: string
-    isUrlBinaryResourceReference: boolean
-    size: string
-    formatCoding: CodingModel
-  } | undefined
+  content: BinaryModel[] | undefined
   context: {
     eventCoding: CodingModel
     facilityTypeCoding: CodingModel
@@ -79,47 +77,12 @@ export class DocumentReferenceModel extends FastenDisplayModel {
   };
 
   contentDTO(fhirResource: any, fhirVersion: fhirVersions){
-    this.content = _.get(fhirResource, 'content', []).map((item:any) => {
-      const attachmentUrl = _.get(item, 'attachment.url');
-      let url = attachmentUrl;
-      let isUrlBinaryResourceReference = false;
-
-      // Check if URL ends with "/Binary/someId". If so, swap the url for this reference, and change the flag to render different component.
-      // For now raw link to the resource won't open properly, so it's better to show more valuable info for the user.
-      const regex = /\/(Binary\/[\w-]+$)/gm;
-      // @ts-ignore
-      const matches = Array.from(attachmentUrl.matchAll(regex), m => m[1]);
-      if (matches.length > 0) {
-        url = matches[0];
-        isUrlBinaryResourceReference = true;
-      }
-
-      const size = _.get(item, 'attachment.size');
-
-      let formatCoding = null;
-      switch (fhirVersion) {
-        case fhirVersions.DSTU2: {
-          formatCoding = _.get(item, 'format[0]');
-          break;
-        }
-        case fhirVersions.STU3: {
-          formatCoding = _.get(item, 'format');
-          break;
-        }
-        case fhirVersions.R4: {
-          formatCoding = _.get(item, 'format');
-          break;
-        }
-        default:
-          throw Error('Unrecognized the fhir version property type.');
-      }
-
-      return {
-        url,
-        isUrlBinaryResourceReference,
-        size,
-        formatCoding,
-      };
+    console.log('INSIDE CONTENTDTO', fhirResource)
+    this.category = new CodableConceptModel(_.get(fhirResource, 'category[0]') || {});
+    this.content = _.get(fhirResource, 'content', []).map((content: any) => {
+      const attachment: Attachment = _.get(content, 'attachment');
+      const binaryModel = new BinaryModel(attachment, fhirVersion);
+      return binaryModel;
     })
   };
 
@@ -127,19 +90,19 @@ export class DocumentReferenceModel extends FastenDisplayModel {
     switch (fhirVersion) {
       case fhirVersions.DSTU2: {
         this.commonDTO(fhirResource)
-        this.contentDTO(fhirVersion, fhirResource)
+        this.contentDTO(fhirResource,fhirVersion)
         this.dstu2DTO(fhirResource)
         return
       }
       case fhirVersions.STU3: {
         this.commonDTO(fhirResource)
-        this.contentDTO(fhirVersion, fhirResource)
+        this.contentDTO(fhirResource,fhirVersion)
         this.stu3DTO(fhirResource)
         return
       }
       case fhirVersions.R4: {
         this.commonDTO(fhirResource)
-        this.contentDTO(fhirVersion, fhirResource)
+        this.contentDTO(fhirResource,fhirVersion)
         this.r4DTO(fhirResource)
         return
       }

@@ -188,3 +188,19 @@ select > optgroup > .divider {
 }
 
 
+// ng-select/select2 styles
+
+ng-select.ng-select-form-control {
+  .ng-select-container {
+    border-radius: 0px;
+    height: 38px;
+  }
+}
+
+//ngTypeAhead
+app-nlm-typeahead {
+  .dropdown-menu.show {
+    max-height: 350px;
+    overflow-y: scroll;
+  }
+}

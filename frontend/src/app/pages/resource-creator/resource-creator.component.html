@@ -134,6 +134,21 @@
                         <textarea formControlName="instructions" rows="3" class="form-control" placeholder="Textarea"></textarea>
                       </div><!-- col -->
                     </div><!-- row -->
+                    <div class="row row-sm mg-t-20">
+                      <div class="col-12 mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Attachments</p>
+                      </div><!-- col -->
+                      <div class="col-1">
+                        <button type="button" (click)="openAttachmentModal(attachmentCreateModal, medicationGroup, 'attachments')" class="btn btn-indigo btn-with-icon">
+                          <i class="fas fa-paperclip"></i> Add
+                        </button>
+                      </div>
+                      <div class="col-11">
+                        <ng-select class="ng-select-form-control" [readonly]="!attachments.controls.length" appendTo="body" formControlName="attachments" placeholder="Select Attachment" [multiple]="true" [hideSelected]="true">
+                          <ng-option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">{{attachment.value.name}} ({{attachment.value.file_name}})</ng-option>
+                        </ng-select>
+                      </div>
+                    </div>
                   </div>
                 </ng-container>
                 <div class="row pt-2">
@@ -206,6 +221,22 @@
                         <textarea formControlName="comment" class="form-control" placeholder="Input box" rows="3"></textarea>
                       </div><!-- col -->
                     </div><!-- row -->
+                    <div class="row row-sm mg-t-20">
+                      <div class="col-12 mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Attachments</p>
+                      </div><!-- col -->
+
+                      <div class="col-1">
+                        <button type="button" (click)="openAttachmentModal(attachmentCreateModal, procedureGroup, 'attachments')" class="btn btn-indigo btn-with-icon">
+                          <i class="fas fa-paperclip"></i> Add
+                        </button>
+                      </div>
+                      <div class="col-11">
+                        <ng-select class="ng-select-form-control" [readonly]="!attachments.controls.length" formControlName="attachments" placeholder="Select Attachment" [multiple]="true" [hideSelected]="true">
+                          <ng-option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">{{attachment.value.name}} ({{attachment.value.file_name}})</ng-option>
+                        </ng-select>
+                      </div>
+                    </div>
                   </div>
                 </ng-container>
 
@@ -238,6 +269,9 @@
 
                 <ng-container formArrayName="practitioners">
                   <div class="card mg-t-10 pd-20" [formGroup]="practitionerGroup" *ngFor="let practitionerGroup of practitioners.controls; let i = index">
+                    <div *ngIf="debugMode" class="alert alert-warning">
+                      <strong>Practitioner Status: {{practitionerGroup.status}}</strong>
+                    </div>
                     <div class="tx-right">
                       <span class="cursor-pointer" (click)="deletePractitioner(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
                     </div>
@@ -305,6 +339,9 @@
 
                 <ng-container formArrayName="locations">
                   <div class="card mg-t-10 pd-20" [formGroup]="organizationGroup" *ngFor="let organizationGroup of organizations.controls; let i = index">
+                    <div *ngIf="debugMode" class="alert alert-warning">
+                      <strong>Organization Status: {{organizationGroup.status}}</strong>
+                    </div>
                     <div class="tx-right">
                       <span class="cursor-pointer" (click)="deleteOrganization(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
                     </div>
@@ -364,20 +401,42 @@
                 </div>
               </div>
               <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['attachments']" class="card-body">
-                <div class="row row-sm">
-                  <div class="col-lg">
-                    <p class="mg-b-10">Name</p>
-                    <input disabled class="form-control" placeholder="Input box" type="text">
-                  </div><!-- col -->
-                  <div class="col-lg mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Type</p>
-                    <input disabled class="form-control" placeholder="Input box" type="text">
-                  </div><!-- col -->
 
-                </div><!-- row -->
+                <ng-container formArrayName="locations">
+                  <div class="card mg-t-10 pd-20" [formGroup]="attachmentGroup" *ngFor="let attachmentGroup of attachments.controls; let i = index">
+                    <div *ngIf="debugMode" class="alert alert-warning">
+                      <strong>Attachment Status: {{attachmentGroup.status}}</strong>
+                    </div>
+                    <div class="tx-right">
+                      <span class="cursor-pointer" (click)="deleteAttachment(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                    </div>
+
+                    <div class="row row-sm">
+                      <input formControlName="id" class="form-control" type="hidden">
+
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
+                        <input formControlName="name" readonly class="form-control" placeholder="Input box" type="text">
+                      </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">Category</p>
+                        <app-nlm-typeahead formControlName="category" searchType="AttachmentCategory" [debugMode]="debugMode"></app-nlm-typeahead>
+                      </div><!-- col -->
+                      <div class="col-lg mg-t-10 mg-lg-t-0">
+                        <p class="mg-b-10">File Type</p>
+                        <input readonly class="form-control" formControlName="file_type"/>
+                      </div><!-- col -->
+                    </div><!-- row -->
+
+                  </div>
+                </ng-container>
+
+
+
+
                 <div class="row pt-2">
                   <div class="col-lg-4 col-md-3">
-                    <button disabled type="button" class="btn btn-outline-indigo btn-block">Add Note or Attachment</button>
+                    <button type="button" (click)="openAttachmentModal(attachmentCreateModal)" class="btn btn-outline-indigo btn-block">Create Attachment/Document</button>
                   </div>
                 </div>
               </div>
@@ -539,5 +598,50 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-az-primary" (click)="modal.dismiss()">Add Location</button>
+  </div>
+</ng-template>
+
+
+
+<ng-template #attachmentCreateModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-attachment">New Attachment</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.close()"><span aria-hidden="true">×</span></button>
+  </div>
+  <div class="modal-body">
+
+    <div *ngIf="debugMode" class="alert alert-warning">
+      <pre><code  [highlight]="newAttachmentForm.getRawValue() | json"></code></pre>
+      <strong>New Attachment Form Status: {{ newAttachmentForm.status }}</strong>
+    </div>
+
+    <div class="row row-sm">
+      <ng-container [formGroup]="newAttachmentForm">
+
+        <div class="col-12">
+          <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
+          <input formControlName="name" class="form-control" type="text">
+        </div><!-- col -->
+
+        <div class="col-6 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">Category<span ngbTooltip="required" class="text-danger">*</span></p>
+          <app-nlm-typeahead formControlName="category" searchType="AttachmentCategory" [debugMode]="debugMode"></app-nlm-typeahead>
+        </div><!-- col -->
+        <div class="col-6 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">File Type<span ngbTooltip="required" class="text-danger">*</span></p>
+          <app-nlm-typeahead formControlName="file_type" searchType="AttachmentFileType" [debugMode]="debugMode"></app-nlm-typeahead>
+        </div><!-- col -->
+        <div class="col-12 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">File<span ngbTooltip="required" class="text-danger">*</span></p>
+        </div><!-- col -->
+        <div class="col-6 mg-t-10 mg-lg-t-0 mg-l-10">
+          <label for="customFile" class="custom-file-label">{{newAttachmentForm.get('file_name').value || 'Choose file'}}</label>
+          <input id="customFile" (change)="onAttachmentFileChange($event)" class="custom-file-input" formControlName="file_name" type="file">
+        </div><!-- col -->
+      </ng-container>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-az-primary" (click)="modal.dismiss()">Create Attachment</button>
   </div>
 </ng-template>

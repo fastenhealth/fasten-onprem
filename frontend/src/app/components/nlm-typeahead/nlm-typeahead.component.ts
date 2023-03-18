@@ -22,6 +22,8 @@ export enum NlmSearchType {
   Vaccine = 'Vaccine',
 
   Countries = 'Countries',
+  AttachmentFileType = 'AttachmentFileType',
+  AttachmentCategory = 'AttachmentCategory',
   PrePopulated = 'PrePopulated'
 
 }
@@ -78,6 +80,17 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
       case NlmSearchType.AllergyReaction:
         searchOpFn = this.nlmClinicalTableSearchService.searchAllergyReaction
         this.openOnFocus = true
+        break
+      case NlmSearchType.AttachmentFileType:
+        searchOpFn = this.nlmClinicalTableSearchService.searchAttachmentFileType
+        this.openOnFocus = true
+        this.idResult = true
+        this.editable = false
+        break
+      case NlmSearchType.AttachmentCategory:
+        searchOpFn = this.nlmClinicalTableSearchService.searchAttachmentCategory
+        this.openOnFocus = true
+        this.editable = false
         break
       case NlmSearchType.Condition:
         searchOpFn = this.nlmClinicalTableSearchService.searchCondition

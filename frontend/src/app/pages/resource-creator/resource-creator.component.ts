@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
+  ResourceCreateAttachment,
   ResourceCreateOrganization,
   ResourceCreatePractitioner,
 } from '../../models/fasten/resource_create';
@@ -74,6 +75,7 @@ export class ResourceCreatorComponent implements OnInit {
       procedures: new FormArray([]),
       practitioners: new FormArray([]),
       organizations: new FormArray([]),
+      attachments: new FormArray([]),
     });
 
     this.resetOrganizationForm()
@@ -95,6 +97,7 @@ export class ResourceCreatorComponent implements OnInit {
       whystopped: new FormControl(null),
       requester: new FormControl(null, Validators.required),
       instructions: new FormControl(null),
+      attachments: new FormControl([]),
     });
 
     medicationGroup.get("data").valueChanges.subscribe(val => {
@@ -118,7 +121,8 @@ export class ResourceCreatorComponent implements OnInit {
       whendone: new FormControl(null, Validators.required),
       performer: new FormControl(null),
       location: new FormControl(null),
-      comment: new FormControl('')
+      comment: new FormControl(''),
+      attachments: new FormControl([]),
     });
 
     this.procedures.push(procedureGroup);
@@ -181,7 +185,26 @@ export class ResourceCreatorComponent implements OnInit {
     this.organizations.removeAt(index);
   }
 
+  get attachments(): FormArray {
+    return this.form.controls["attachments"] as FormArray;
+  }
 
+  addAttachment(attachment: ResourceCreateAttachment){
+    const attachmentGroup = new FormGroup({
+      id: new FormControl(attachment.id, Validators.required),
+      name: new FormControl(attachment.name, Validators.required),
+      category: new FormControl(attachment.category, Validators.required),
+      file_type: new FormControl(attachment.file_type, Validators.required),
+      file_name: new FormControl(attachment.file_name, Validators.required),
+      file_content: new FormControl(attachment.file_content, Validators.required),
+      file_size: new FormControl(attachment.file_size),
+    });
+
+    this.attachments.push(attachmentGroup);
+  }
+  deleteAttachment(index: number) {
+    this.attachments.removeAt(index);
+  }
 
 
   onSubmit() {
@@ -211,6 +234,8 @@ export class ResourceCreatorComponent implements OnInit {
 
   newOrganizationTypeaheadForm: FormGroup
   newOrganizationForm: FormGroup //ResourceCreateOrganization
+
+  newAttachmentForm: FormGroup
 
   openPractitionerModal(content, formGroup?: AbstractControl, controlName?: string) {
     this.resetPractitionerForm()
@@ -269,6 +294,37 @@ export class ResourceCreatorComponent implements OnInit {
     );
   }
 
+  openAttachmentModal(content, formGroup?: AbstractControl, controlName?: string) {
+    this.resetAttachmentForm()
+
+    this.modalService.open(content, {
+      ariaLabelledBy: 'modal-attachment',
+      beforeDismiss: () => {
+        console.log("validate Attachment form")
+        this.newAttachmentForm.markAllAsTouched()
+        return this.newAttachmentForm.valid
+      },
+    }).result.then(
+      () => {
+        console.log('Closed without saving');
+      },
+      () => {
+        console.log('Closing, saving form');
+        //add this to the list of organization
+        let result = this.newAttachmentForm.getRawValue()
+        result.id = uuidV4();
+        this.addAttachment(result);
+
+        if(formGroup && controlName){
+
+          //add this attachment id to the current FormArray
+          let controlArrayVal = formGroup.get(controlName).getRawValue();
+          controlArrayVal.push(result.id)
+          formGroup.get(controlName).setValue(controlArrayVal);
+        }
+      },
+    );
+  }
 
   private resetPractitionerForm(){
     this.newPractitionerTypeaheadForm = new FormGroup({
@@ -376,4 +432,33 @@ export class ResourceCreatorComponent implements OnInit {
     })
 
   }
+
+  private resetAttachmentForm(){
+
+    this.newAttachmentForm = new FormGroup({
+      name: new FormControl(null, Validators.required),
+      category: new FormControl(null, Validators.required),
+      file_type: new FormControl(null, Validators.required),
+      file_name: new FormControl(null, Validators.required),
+      file_content: new FormControl(null, Validators.required),
+      file_size: new FormControl(null),
+    })
+  }
+  onAttachmentFileChange($event){
+    console.log("onAttachmentFileChange")
+    let fileInput = $event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files[0]) {
+      let reader = new FileReader();
+      reader.onloadend = () => {
+        // use a regex to remove data url part
+        const base64String = (reader.result as string).replace('data:', '').replace(/^.+,/, '');
+        this.newAttachmentForm.get('file_content').setValue(base64String)
+      };
+      reader.readAsDataURL(fileInput.files[0]);
+      this.newAttachmentForm.get('file_name').setValue(fileInput.files[0].name)
+      this.newAttachmentForm.get('file_size').setValue(fileInput.files[0].size)
+    }
+  }
+
+
 }

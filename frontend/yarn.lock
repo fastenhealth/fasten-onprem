@@ -1500,6 +1500,13 @@
   dependencies:
     tslib "^2.1.0"
 
+"@ng-select/ng-select@9.1.0":
+  version "9.1.0"
+  resolved "https://registry.npmjs.org/@ng-select/ng-select/-/ng-select-9.1.0.tgz#c400ea3e90c4dd2e7966e830fcf7d025ea0343fa"
+  integrity sha512-vxSRD2d84H39eqtTJaethlpQ+xkJUU8epQNUr3yPiah23z8MBCqSDE1t0chxi+rXJz7+xoC9qFa1aYnUVFan4w==
+  dependencies:
+    tslib "^2.3.1"
+
 "@ngtools/webpack@14.2.10":
   version "14.2.10"
   resolved "https://registry.npmjs.org/@ngtools/webpack/-/webpack-14.2.10.tgz#d33ff1147d01bd1f5d936a3d1744c81a28e2ca6a"
@@ -7215,6 +7222,11 @@ tslib@^2.0.0, tslib@^2.1.0, tslib@^2.3.0, tslib@^2.4.0:
   version "2.4.1"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.4.1.tgz#0d0bfbaac2880b91e22df0768e55be9753a5b17e"
   integrity sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==
+
+tslib@^2.3.1:
+  version "2.5.0"
+  resolved "https://registry.npmjs.org/tslib/-/tslib-2.5.0.tgz#42bfed86f5787aeb41d031866c8f402429e0fddf"
+  integrity sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==
 
 tslint@~6.1.0:
   version "6.1.3"

@@ -1242,4 +1242,247 @@ export class NlmClinicalTableSearchService {
       );
   }
 
+
+  searchAttachmentFileType(searchTerm: string): Observable<NlmSearchResults[]> {
+    let searchOptions: NlmSearchResults[] = [
+      {
+        id: "application/json",
+        text: "Document - JSON"
+      },
+      {
+        id: "text/markdown",
+        text: "Document - Markdown"
+      },
+      {
+        id: "application/pdf",
+        text: "Document - PDF"
+      },
+      {
+        id: "application/dicom",
+        text: "Image - DICOM"
+      },
+      {
+        id: "text/csv",
+        text: "Document - CSV"
+      },
+      {
+        id: "image/png",
+        text: "Image - PNG"
+      },
+      {
+        id: "image/jpeg",
+        text: "Image - JPEG"
+      },
+      {
+        id: "text/plain",
+        text: "Document - Plain Text"
+      },
+
+    ]
+    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    return of(result)
+  }
+
+  //https://build.fhir.org/valueset-referenced-item-category.html
+  searchAttachmentCategory(searchTerm: string): Observable<NlmSearchResults[]> {
+
+
+    //https://tx.fhir.org/r4/ValueSet/$expand?_format=json&filter=Referral&url=http://hl7.org/fhir/ValueSet/document-classcodes
+    let queryParams = {
+      '_format': 'json',
+      'filter':searchTerm,
+      'url': 'http://hl7.org/fhir/ValueSet/document-classcodes'
+    }
+
+    return this._httpClient.get<any>(`https://tx.fhir.org/r4/ValueSet/$expand`, {params: queryParams})
+      .pipe(
+        map((response) => {
+
+          return (response.expansion.contains || []).map((valueSetItem):NlmSearchResults => {
+            return {
+              id: valueSetItem.code,
+              identifier: [valueSetItem],
+              text: valueSetItem.display,
+            }
+          })
+        })
+      )
+
+    // let searchOptions: NlmSearchResults[] = [
+    //   {
+    //     id: "image",
+    //     identifier: [{
+    //       code: "image",
+    //       display: "Image",
+    //       system: "http://terminology.hl7.org/CodeSystem/media-category"
+    //     }],
+    //     text: "Image"
+    //   },
+    //   {
+    //     id: "11485-0",
+    //     identifier: [{
+    //       code: "11485-0",
+    //       display: "Anesthesia records",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Anesthesia records"
+    //   },
+    //   {
+    //     id: "11488-4",
+    //     identifier: [{
+    //       code: "11488-4",
+    //       display: "Consult note",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Consult note"
+    //   },
+    //   {
+    //     id: "11490-0",
+    //     identifier: [{
+    //       code: "11490-0",
+    //       display: "Physician Discharge summary",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Physician Discharge summary"
+    //   },
+    //   {
+    //     id: "11502-2",
+    //     identifier: [{
+    //       code: "11502-2",
+    //       display: "Laboratory report",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Laboratory report"
+    //   },
+    //   {
+    //     id: "11504-8",
+    //     identifier: [{
+    //       code: "11504-8",
+    //       display: "Surgical operation note",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Surgical operation note"
+    //   },
+    //   {
+    //     id: "11506-3",
+    //     identifier: [{
+    //       code: "11506-3",
+    //       display: "Progress note",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Progress note"
+    //   },
+    //   {
+    //     id: "11505-5",
+    //     identifier: [{
+    //       code: "11505-5",
+    //       display: "Physician procedure note",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Physician procedure note"
+    //   },
+    //   {
+    //     id: "11524-6",
+    //     identifier: [{
+    //       code: "11524-6",
+    //       display: "EKG study",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "EKG study"
+    //   },
+    //   {
+    //     id: "11526-1",
+    //     identifier: [{
+    //       code: "11526-1",
+    //       display: "Pathology study",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Pathology study"
+    //   },
+    //   {
+    //     id: "11527-9",
+    //     identifier: [{
+    //       code: "11527-9",
+    //       display: "Psychiatry study",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Psychiatry study"
+    //   },
+    //   {
+    //     id: "11543-6",
+    //     identifier: [{
+    //       code: "11543-6",
+    //       display: "Nursery records",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Nursery records"
+    //   },
+    //   {
+    //     id: "11543-6",
+    //     identifier: [{
+    //       code: "11543-6",
+    //       display: "Nursery records",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Nursery records"
+    //   },
+    //   {
+    //     id: "15508-5",
+    //     identifier: [{
+    //       code: "15508-5",
+    //       display: "Labor and delivery records",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Labor and delivery records"
+    //   },
+    //   {
+    //     id: "18682-5",
+    //     identifier: [{
+    //       code: "18682-5",
+    //       display: "Ambulance records",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Ambulance records"
+    //   },
+    //   {
+    //     id: "18748-4",
+    //     identifier: [{
+    //       code: "18748-4",
+    //       display: "Diagnostic imaging study",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Diagnostic imaging study"
+    //   },
+    //   {
+    //     id: "18761-7",
+    //     identifier: [{
+    //       code: "18761-7",
+    //       display: "Transfer summary note",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Transfer summary note"
+    //   },
+    //   {
+    //     id: "18776-5",
+    //     identifier: [{
+    //       code: "18776-5",
+    //       display: "Plan of care note",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Plan of care note"
+    //   },
+    //   {
+    //     id: "18776-5",
+    //     identifier: [{
+    //       code: "18776-5",
+    //       display: "Plan of care note",
+    //       system: "http://loinc.org"
+    //     }],
+    //     text: "Plan of care note"
+    //   }
+    // ]
+    // let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    // return of(result)
+  }
+
 }
