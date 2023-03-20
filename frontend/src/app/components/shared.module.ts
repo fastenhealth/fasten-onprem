@@ -65,6 +65,7 @@ import { PractitionerComponent } from './fhir/resources/practitioner/practitione
 import {PipesModule} from '../pipes/pipes.module';
 import { NlmTypeaheadComponent } from './nlm-typeahead/nlm-typeahead.component';
 import { DocumentReferenceComponent } from './fhir/resources/document-reference/document-reference.component';
+import { GlossaryLookupComponent } from './glossary-lookup/glossary-lookup.component';
 
 @NgModule({
   imports: [
@@ -138,6 +139,7 @@ import { DocumentReferenceComponent } from './fhir/resources/document-reference/
     PractitionerComponent,
     NlmTypeaheadComponent,
     DocumentReferenceComponent,
+    GlossaryLookupComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -190,6 +192,7 @@ import { DocumentReferenceComponent } from './fhir/resources/document-reference/
         PractitionerComponent,
         NlmTypeaheadComponent,
         DocumentReferenceComponent,
+      GlossaryLookupComponent
     ]
 })
 

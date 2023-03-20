@@ -14,6 +14,7 @@ import {AuthService} from './auth.service';
 import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
 import {environment} from '../../environments/environment';
 import {ResourceAssociation} from '../models/fasten/resource_association';
+import {ValueSet} from 'fhir/r4';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,24 @@ import {ResourceAssociation} from '../models/fasten/resource_association';
 export class FastenApiService {
 
   constructor(private _httpClient: HttpClient,  private router: Router, private authService: AuthService) {
+  }
+
+  /*
+  TERMINOLOGY SERVER/GLOSSARY ENDPOINTS
+  */
+  getGlossarySearchByCode(code: string, codeSystem: string): Observable<ValueSet> {
+
+    const endpointUrl = new URL(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/glossary/code`);
+    endpointUrl.searchParams.set('code', code);
+    endpointUrl.searchParams.set('code_system', codeSystem);
+
+    return this._httpClient.get<any>(endpointUrl.toString())
+      .pipe(
+        map((response: ValueSet) => {
+          console.log("Glossary RESPONSE", response)
+          return response
+        })
+      );
   }
 
 
