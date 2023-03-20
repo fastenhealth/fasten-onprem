@@ -22,9 +22,9 @@ export class GlossaryLookupComponent implements OnInit {
   ngOnInit(): void {
     this.fastenApi.getGlossarySearchByCode(this.code, this.codeSystem).subscribe(result => {
       console.log(result)
-      this.url  = result.url
-      this.source = result.publisher
-      this.description = this.sanitized.bypassSecurityTrustHtml(result.description)
+      this.url  = result?.url
+      this.source = result?.publisher
+      this.description = this.sanitized.bypassSecurityTrustHtml(result?.description)
       // this.description = result.description
     })
   }

@@ -48,7 +48,7 @@
       </div>
       <div class="col-6 bg-gray-100">
         <div class="row">
-          <div class="col-12 mt-3">
+          <div *ngIf="observationCode" class="col-12 mt-3">
             <app-glossary-lookup [code]="observationCode" [codeSystem]="'http://loinc.org'"></app-glossary-lookup>
           </div>
 
