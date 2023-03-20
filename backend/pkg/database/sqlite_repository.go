@@ -57,14 +57,14 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	}
 	globalLogger.Infof("Successfully connected to fasten sqlite db: %s\n", appConfig.GetString("database.location"))
 
-	deviceRepo := SqliteRepository{
+	fastenRepo := SqliteRepository{
 		AppConfig:  appConfig,
 		Logger:     globalLogger,
 		GormClient: database,
 	}
 
 	//TODO: automigrate for now
-	err = deviceRepo.Migrate()
+	err = fastenRepo.Migrate()
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 		return nil, fmt.Errorf("Failed to create admin user! - %v", err)
 	}
 
-	return &deviceRepo, nil
+	return &fastenRepo, nil
 }
 
 type SqliteRepository struct {
@@ -91,6 +91,7 @@ func (sr *SqliteRepository) Migrate() error {
 		&models.User{},
 		&models.SourceCredential{},
 		&models.ResourceFhir{},
+		&models.Glossary{},
 	)
 	if err != nil {
 		return fmt.Errorf("Failed to automigrate! - %v", err)
@@ -138,6 +139,24 @@ func (sr *SqliteRepository) GetCurrentUser(ctx context.Context) (*models.User, e
 	}
 
 	return &currentUser, nil
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Glossary
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (sr *SqliteRepository) CreateGlossaryEntry(ctx context.Context, glossaryEntry *models.Glossary) error {
+	record := sr.GormClient.Create(glossaryEntry)
+	if record.Error != nil {
+		return record.Error
+	}
+	return nil
+}
+
+func (sr *SqliteRepository) GetGlossaryEntry(ctx context.Context, code string, codeSystem string) (*models.Glossary, error) {
+	var foundGlossaryEntry models.Glossary
+	result := sr.GormClient.Where(models.Glossary{Code: code, CodeSystem: codeSystem}).First(&foundGlossaryEntry)
+	return &foundGlossaryEntry, result.Error
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

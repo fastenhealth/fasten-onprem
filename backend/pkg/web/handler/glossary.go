@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/fastenhealth/gofhir-models/fhir401"
 	"github.com/gin-gonic/gin"
@@ -47,7 +48,7 @@ func FindCodeSystem(codeSystem string) (string, error) {
 // NOTE: max requests is 100/min
 func GlossarySearchByCode(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
-	//databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	codeSystemId, err := FindCodeSystem(c.Query("code_system"))
 	if err != nil {
@@ -56,6 +57,31 @@ func GlossarySearchByCode(c *gin.Context) {
 			"success": false,
 			"error":   err.Error(),
 		})
+		return
+	}
+	if c.Query("code") == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "code is required",
+		})
+		return
+	}
+
+	//Check if the code is in the DB cache
+	foundGlossaryEntry, err := databaseRepo.GetGlossaryEntry(c, c.Query("code"), codeSystemId)
+	if err == nil {
+		//found in DB cache
+		logger.Debugf("Found code (%s %s) in DB cache", c.Query("code"), codeSystemId)
+		dateStr := foundGlossaryEntry.UpdatedAt.Format(time.RFC3339)
+		valueSet := fhir401.ValueSet{
+			Title:       &foundGlossaryEntry.Title,
+			Url:         &foundGlossaryEntry.Url,
+			Description: &foundGlossaryEntry.Description,
+			Date:        &dateStr,
+			Publisher:   &foundGlossaryEntry.Publisher,
+		}
+
+		c.JSON(http.StatusOK, valueSet)
 		return
 	}
 
@@ -98,15 +124,6 @@ func GlossarySearchByCode(c *gin.Context) {
 		return
 	}
 
-	//store in DB cache
-
-	//sourceCred, err := databaseRepo.GetSource(c, c.Param("sourceId"))
-	//if err != nil {
-	//	logger.Errorln("An error occurred while retrieving source credential", err)
-	//	c.JSON(http.StatusInternalServerError, gin.H{"success": false})
-	//	return
-	//}
-
 	if len(response.Feed.Entry) == 0 {
 		c.JSON(http.StatusOK, gin.H{"success": false, "error": "No results found"})
 		return
@@ -121,6 +138,20 @@ func GlossarySearchByCode(c *gin.Context) {
 			Date:        &dateStr,
 			Publisher:   &response.Feed.Author.Name.Value,
 		}
+
+		//store in DB cache (ignore errors)
+		databaseRepo.CreateGlossaryEntry(c, &models.Glossary{
+			ModelBase: models.ModelBase{
+				CreatedAt: foundEntry.Updated.Value,
+				UpdatedAt: foundEntry.Updated.Value,
+			},
+			Code:        c.Query("code"),
+			CodeSystem:  codeSystemId,
+			Publisher:   response.Feed.Author.Name.Value,
+			Title:       foundEntry.Title.Value,
+			Url:         foundEntry.Link[0].Href,
+			Description: foundEntry.Summary.Value,
+		})
 
 		c.JSON(http.StatusOK, valueSet)
 	}

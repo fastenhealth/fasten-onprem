@@ -34,6 +34,9 @@ type DatabaseRepository interface {
 	GetSourceSummary(context.Context, string) (*models.SourceSummary, error)
 	GetSources(context.Context) ([]models.SourceCredential, error)
 
-	//used by Client
+	CreateGlossaryEntry(ctx context.Context, glossaryEntry *models.Glossary) error
+	GetGlossaryEntry(ctx context.Context, code string, codeSystem string) (*models.Glossary, error)
+
+	//used by fasten-sources Clients
 	UpsertRawResource(ctx context.Context, sourceCredentials sourcePkg.SourceCredential, rawResource sourcePkg.RawResourceFhir) (bool, error)
 }
