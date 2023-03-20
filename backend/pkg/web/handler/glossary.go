@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
@@ -9,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -69,7 +71,19 @@ func GlossarySearchByCode(c *gin.Context) {
 	}
 
 	// Send the HTTP GET request to the API and retrieve the response
-	resp, err := http.Get(medlinePlusConnectEndpoint + "?" + params.Encode())
+	//TODO: when using IPV6 to communicate with MedlinePlus, we're getting timeouts. Force IPV4
+	var (
+		zeroDialer net.Dialer
+		httpClient = &http.Client{
+			Timeout: 10 * time.Second,
+		}
+	)
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	transport.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
+		return zeroDialer.DialContext(ctx, "tcp4", addr)
+	}
+	httpClient.Transport = transport
+	resp, err := httpClient.Get(medlinePlusConnectEndpoint + "?" + params.Encode())
 	if err != nil {
 		fmt.Println("Error sending request:", err)
 		return

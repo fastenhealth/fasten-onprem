@@ -25,6 +25,7 @@ export class GlossaryLookupComponent implements OnInit {
       this.url  = result.url
       this.source = result.publisher
       this.description = this.sanitized.bypassSecurityTrustHtml(result.description)
+      // this.description = result.description
     })
   }
 
