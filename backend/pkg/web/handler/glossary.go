@@ -24,6 +24,7 @@ func FindCodeSystem(codeSystem string) (string, error) {
 	//https://terminology.hl7.org/external_terminologies.html
 	codeSystemIds := map[string]string{
 		"http://hl7.org/fhir/sid/icd-10-cm":            "2.16.840.1.113883.6.90",
+		"http://hl7.org/fhir/sid/icd-10":               "2.16.840.1.113883.6.90",
 		"http://terminology.hl7.org/CodeSystem/icd9cm": "2.16.840.1.113883.6.103",
 		"http://snomed.info/sct":                       "2.16.840.1.113883.6.96",
 		"http://www.nlm.nih.gov/research/umls/rxnorm":  "2.16.840.1.113883.6.88",
