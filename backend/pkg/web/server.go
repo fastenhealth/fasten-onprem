@@ -46,6 +46,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 			//r.Any("/database/*proxyPath", handler.CouchDBProxy)
 			//r.GET("/cors/*proxyPath", handler.CORSProxy)
 			//r.OPTIONS("/cors/*proxyPath", handler.CORSProxy)
+			api.GET("/glossary/code", handler.GlossarySearchByCode)
 
 			secure := api.Group("/secure").Use(middleware.RequireAuth())
 			{
@@ -61,6 +62,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 				secure.GET("/resource/graph", handler.GetResourceFhirGraph)
 				secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
 				secure.POST("/resource/composition", handler.CreateResourceComposition)
+
 			}
 
 			if ae.Config.GetBool("web.allow_unsafe_endpoints") {
