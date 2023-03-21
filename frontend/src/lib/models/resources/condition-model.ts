@@ -8,6 +8,9 @@ import {FastenOptions} from '../fasten/fasten-options';
 export class ConditionModel extends FastenDisplayModel {
 
   code_text: string | undefined
+  code_id: string | undefined
+  code_system: string | undefined
+
   severity_text: string | undefined
   has_asserter: boolean | undefined
   asserter: ReferenceModel | undefined
@@ -31,6 +34,8 @@ export class ConditionModel extends FastenDisplayModel {
       _.get(fhirResource, 'code.coding.0.display') ||
       _.get(fhirResource, 'code.text') ||
       _.get(fhirResource, 'code.coding.0.code');
+    this.code_id = _.get(fhirResource, 'code.coding.0.code')
+    this.code_system = _.get(fhirResource, 'code.coding.0.system')
     this.severity_text =
       _.get(fhirResource, 'severity.coding.0.display') ||
       _.get(fhirResource, 'severity.text');

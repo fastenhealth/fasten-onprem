@@ -32,11 +32,9 @@
           </ng-container>
 
 
-          <div *ngIf="conditionDisplayModel" class="col-12  mt-3 mb-2">
-            <p class="tx-indigo">Initial Presentation</p>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            </p>
+          <div *ngIf="conditionDisplayModel.code_id && conditionDisplayModel.code_system" class="col-12  mt-3 mb-2">
+            <p class="tx-indigo">Definition</p>
+            <app-glossary-lookup [code]="conditionDisplayModel.code_id" [codeSystem]="conditionDisplayModel.code_system"></app-glossary-lookup>
           </div>
 
         </div>

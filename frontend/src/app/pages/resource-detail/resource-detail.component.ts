@@ -13,6 +13,8 @@ import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-mode
 })
 export class ResourceDetailComponent implements OnInit {
   loading: boolean = false
+  debugMode = false;
+
 
   sourceId: string = ""
   sourceName: string = ""
