@@ -8,14 +8,22 @@
         <span>{{resource?.source_resource_id}}</span>
       </div>
 
-      <ng-container *ngIf="displayModel">
-        <fhir-resource [displayModel]="displayModel" [showDetails]="false"></fhir-resource>
-      </ng-container>
-      <ng-container *ngIf="resource else isLoadingTemplate">
-        <pre><code  [highlight]="resource.resource_raw | json"></code></pre>
-      </ng-container>
+      <ng-container *ngIf="!loading else isLoadingTemplate">
 
+        <fhir-resource *ngIf="displayModel else noDisplayModel" [displayModel]="displayModel" [showDetails]="false"></fhir-resource>
 
+        <ng-template #noDisplayModel>
+          <p> An error occurred while parsing FHIR resource </p>
+        </ng-template>
+
+        <div class="alert alert-warning" role="alert">
+          Enable Debug mode: <input type="checkbox" [(ngModel)]="debugMode"/>
+        </div>
+
+        <ng-container *ngIf="resource && debugMode">
+          <pre><code  [highlight]="resource.resource_raw | json"></code></pre>
+        </ng-container>
+      </ng-container>
       <ng-template #isLoadingTemplate>
         <div class="row">
           <div class="col-12">
