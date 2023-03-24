@@ -140,9 +140,12 @@ export class DicomComponent implements OnInit {
     // dwv.utils.loadFromUri(window.location.href, this.dwvApp);
 
     //Load from Input file
-    this.dwvApp.loadFiles([new File([
+    let files = [new File([
       new Blob([this.displayModel.content])
-    ], "dicom.dcm")]);
+    ], "dicom.dcm", {type: "application/dicom"})]
+    console.log("LOADED FILE FROM RESOURCE", files)
+
+    this.dwvApp.loadFiles(files);
 
   }
 
@@ -290,4 +293,10 @@ export class DicomComponent implements OnInit {
   //   this.dwvApp.loadFiles(event.dataTransfer.files);
   // }
 
+  onFileChange(event) {
+    console.log("onFileChange");
+    console.log(event);
+    console.log(event.target.files);
+    this.dwvApp.loadFiles(event.target.files);
+  }
 }
