@@ -140,6 +140,7 @@ export class DicomComponent implements OnInit {
     // dwv.utils.loadFromUri(window.location.href, this.dwvApp);
 
     //Load from Input file
+    //TODO: THIS IS BROKEN. FIX IT
     let files = [new File([
       new Blob([this.displayModel.content])
     ], "dicom.dcm", {type: "application/dicom"})]
@@ -294,6 +295,7 @@ export class DicomComponent implements OnInit {
   // }
 
   onFileChange(event) {
+    //TODO: This works correctly, but it's not the right way to do it (we should load from resource)
     console.log("onFileChange");
     console.log(event);
     console.log(event.target.files);

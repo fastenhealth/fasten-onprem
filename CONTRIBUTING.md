@@ -77,6 +77,7 @@ Next we'll start the processes described above:
 
 # In terminal #1, run the following
 cd frontend 
+yarn install
 yarn dist -- -c [sandbox|prod]
 # eg. yarn dist -- -c prod
 
