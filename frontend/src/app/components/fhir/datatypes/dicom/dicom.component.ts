@@ -142,7 +142,7 @@ export class DicomComponent implements OnInit {
     //Load from Input file
     //TODO: THIS IS BROKEN. FIX IT
     let files = [new File([
-      new Blob([this.displayModel.content])
+      this.dataBase64toBlob(this.displayModel.data, "application/dicom")
     ], "dicom.dcm", {type: "application/dicom"})]
     console.log("LOADED FILE FROM RESOURCE", files)
 
@@ -300,5 +300,19 @@ export class DicomComponent implements OnInit {
     console.log(event);
     console.log(event.target.files);
     this.dwvApp.loadFiles(event.target.files);
+  }
+
+  dataBase64toBlob(base64Data, contentType) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    var byteString = atob(base64Data);
+
+    // write the bytes of the string to an ArrayBuffer
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: contentType });
   }
 }
