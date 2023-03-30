@@ -12,13 +12,13 @@ import {
   BundleEntry,
   Bundle,
   Organization,
-  Practitioner, MedicationRequest, Patient, Encounter, DocumentReference, Media, DiagnosticReport, Reference
+  Practitioner, MedicationRequest, Patient, Encounter, DocumentReference, Media, DiagnosticReport, Reference, Binary
 } from 'fhir/r4';
 import {uuidV4} from '../../../lib/utils/uuid';
 
 interface ResourceStorage {
   [resourceType: string]: {
-    [resourceId: string]: Condition | Patient | MedicationRequest | Organization | FhirLocation | Practitioner | Procedure | Encounter | DocumentReference | Media | DiagnosticReport
+    [resourceId: string]: Condition | Patient | MedicationRequest | Organization | FhirLocation | Practitioner | Procedure | Encounter | DocumentReference | Media | DiagnosticReport | Binary
   }
 }
 
@@ -416,6 +416,15 @@ function resourceCreateMedicationToR4MedicationRequest(resourceStorage: Resource
 }
 
 function resourceAttachmentToR4DocumentReference(resourceStorage: ResourceStorage, resourceAttachment: ResourceCreateAttachment): ResourceStorage {
+  resourceStorage['Binary'] = resourceStorage['Binary'] || {}
+  let binaryResource = {
+    id: uuidV4(),
+    resourceType: 'Binary',
+    contentType: resourceAttachment.file_type,
+    data: resourceAttachment.file_content,
+  } as Binary
+  resourceStorage['Binary'][binaryResource.id] = binaryResource
+
 
   resourceStorage['DocumentReference'] = resourceStorage['DocumentReference'] || {}
 
@@ -437,7 +446,7 @@ function resourceAttachmentToR4DocumentReference(resourceStorage: ResourceStorag
       {
         attachment: {
           contentType: resourceAttachment.file_type,
-          data: resourceAttachment.file_content,
+          url: `urn:uuid:${binaryResource.id}`, //Binary
           title: resourceAttachment.name,
         }
       }
@@ -455,12 +464,19 @@ function resourceAttachmentToR4DocumentReference(resourceStorage: ResourceStorag
   } as DocumentReference
   resourceStorage['DocumentReference'][documentReferenceResource.id] = documentReferenceResource
 
-  //TODO create Binary object?
-
   return resourceStorage
 }
 
 function resourceAttachmentToR4DiagnosticReport(resourceStorage: ResourceStorage, resourceAttachment: ResourceCreateAttachment): ResourceStorage {
+  resourceStorage['Binary'] = resourceStorage['Binary'] || {}
+  let binaryResource = {
+    id: uuidV4(),
+    resourceType: 'Binary',
+    contentType: resourceAttachment.file_type,
+    data: resourceAttachment.file_content,
+  } as Binary
+  resourceStorage['Binary'][binaryResource.id] = binaryResource
+
   resourceStorage['Media'] = resourceStorage['Media'] || {}
 
   let mediaResource = {
@@ -476,7 +492,7 @@ function resourceAttachmentToR4DiagnosticReport(resourceStorage: ResourceStorage
     },
     content: {
       contentType: resourceAttachment.file_type,
-      data: resourceAttachment.file_content,
+      url: `urn:uuid:${binaryResource.id}`, //Binary,
       title: resourceAttachment.name,
     },
   } as Media
