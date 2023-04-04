@@ -1,4 +1,14 @@
-<ng-container [ngTemplateOutlet]="
+<div *ngIf="loading">
+  <div class="text-center mg-b-20">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+</div>
+
+
+
+<ng-container *ngIf="!loading" [ngTemplateOutlet]="
   displayModel?.content_type == 'application/pdf' ? showPdf :
   displayModel?.content_type == 'text/markdown' ? showMarkdown :
   displayModel?.content_type == 'text/plain' ? showText :

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, TemplateRef} from '@angular/core';
 import * as dwv from 'dwv';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { VERSION } from '@angular/core';
@@ -24,7 +24,10 @@ dwv.image.decoderScripts = {
 export class DicomComponent implements OnInit {
   @Input() displayModel: BinaryModel
 
-  public versions: any;
+  public loadProgress = 0;
+  public dataLoaded = false;
+
+
   public tools = {
     Scroll: {},
     ZoomAndPan: {},
@@ -33,28 +36,20 @@ export class DicomComponent implements OnInit {
       options: ['Ruler']
     }
   };
-  public toolNames: string[] = Object.keys(this.tools);
-  public selectedTool = 'Select Tool';
-  public loadProgress = 0;
-  public dataLoaded = false;
+  selectedTool = 'Scroll';
 
   private dwvApp: any;
   private metaData: any[];
+  visibleMetaData: any[] = [] //for pagination usage
 
   private orientation: string;
 
-  // drop box class name
-  private dropboxDivId = 'dropBox';
-  private dropboxClassName = 'dropBox';
-  private borderClassName = 'dropBoxBorder';
-  private hoverClassName = 'hover';
+  tagsPage = 1;
+  tagsPageSize = 10;
+  // tagsCollectionSize = this.metadata.length;
+  // countries: Country[];
 
-  constructor(private modalService: NgbModal) {
-    this.versions = {
-      dwv: dwv.getVersion(),
-      angular: VERSION.full
-    };
-  }
+  constructor(private modalService: NgbModal) {}
 
   ngOnInit() {
     // create app
@@ -140,7 +135,6 @@ export class DicomComponent implements OnInit {
     // dwv.utils.loadFromUri(window.location.href, this.dwvApp);
 
     //Load from Input file
-    //TODO: THIS IS BROKEN. FIX IT
     let files = [new File([
       this.dataBase64toBlob(this.displayModel.data, "application/dicom")
     ], "dicom.dcm", {type: "application/dicom"})]
@@ -148,26 +142,6 @@ export class DicomComponent implements OnInit {
 
     this.dwvApp.loadFiles(files);
 
-  }
-
-  /**
-   * Get the icon of a tool.
-   *
-   * @param tool The tool name.
-   * @returns The associated icon string.
-   */
-  getToolIcon = (tool: string) => {
-    let res: string;
-    if (tool === 'Scroll') {
-      res = 'menu';
-    } else if (tool === 'ZoomAndPan') {
-      res = 'search';
-    } else if (tool === 'WindowLevel') {
-      res = 'contrast';
-    } else if (tool === 'Draw') {
-      res = 'straighten';
-    }
-    return res;
   }
 
   /**
@@ -200,16 +174,6 @@ export class DicomComponent implements OnInit {
       res = true;
     }
     return res;
-  }
-
-  /**
-   * For toogle button to not get selected.
-   *
-   * @param event The toogle change.
-   */
-  onSingleToogleChange = (event) => {
-    // unset value -> do not select button
-    event.source.buttonToggleGroup.value = '';
   }
 
   /**
@@ -266,42 +230,21 @@ export class DicomComponent implements OnInit {
   /**
    * Open the DICOM tags dialog.
    */
-  openTagsDialog = () => {
-    console.log("OPEN TAGS DIALOG, NOT IMPLEMENTED YET");
-    // this.modalService.open(TagsDialogComponent,
-    //   {
-    //     width: '80%',
-    //     height: '90%',
-    //     data: {
-    //       title: 'DICOM Tags',
-    //       value: this.metaData
-    //     }
-    //   }
-    // );
+  openTagsModal(template: TemplateRef<any>) {
+    this.refreshTags();
+    this.modalService.open(template, { size: 'lg', ariaLabelledBy: 'modal-basic-title' });
   }
 
-  // drag and drop [begin] -----------------------------------------------------
-
-
-  //TODO:
-  // /**
-  //  * Handle a drop event.
-  //  * @param event The event to handle.
-  //  */
-  // private onDrop = (event: DragEvent) => {
-  //   this.defaultHandleDragEvent(event);
-  //   // load files
-  //   this.dwvApp.loadFiles(event.dataTransfer.files);
-  // }
-
-  onFileChange(event) {
-    //TODO: This works correctly, but it's not the right way to do it (we should load from resource)
-    console.log("onFileChange");
-    console.log(event);
-    console.log(event.target.files);
-    this.dwvApp.loadFiles(event.target.files);
+  refreshTags() {
+    //TODO: if tag.value is a array, content should be json encoded
+    this.visibleMetaData = this.metaData.map((tag, i) => ({ id: i + 1, ...tag })).slice(
+      (this.tagsPage - 1) * this.tagsPageSize,
+      (this.tagsPage - 1) * this.tagsPageSize + this.tagsPageSize,
+    );
   }
 
+
+  //This function is used to convert base64 binary data to a blob
   dataBase64toBlob(base64Data, contentType) {
     // convert base64 to raw binary data held in a string
     // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this

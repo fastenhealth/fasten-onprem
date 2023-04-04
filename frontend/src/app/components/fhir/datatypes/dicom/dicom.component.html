@@ -11,49 +11,68 @@
 <!--      </mat-button-toggle>-->
 <!--    </mat-button-toggle-group>-->
 
-<!--    <mat-button-toggle-group name="reset" [disabled]="!dataLoaded"-->
-<!--                             (change)="onSingleToogleChange($event)">-->
-<!--      <mat-button-toggle color="primary"-->
-<!--                         title="Reset"-->
-<!--                         (click)="onReset()">-->
-<!--        <mat-icon>refresh</mat-icon>-->
-<!--      </mat-button-toggle>-->
-<!--    </mat-button-toggle-group>-->
+  <div class="row">
+    <div class="col text-center">
+      <div class="btn-group" role="group" aria-label="Basic example">
+        <button ngbTooltip="scroll layers" type="button" (click)="onChangeTool('Scroll')" class="btn btn-secondary pd-x-25" [class.active]="selectedTool == 'Scroll'"><i class="fas fa-bars"></i></button>
+        <button ngbTooltip="zoom and pan" type="button" (click)="onChangeTool('ZoomAndPan')" class="btn btn-secondary pd-x-25" [class.active]="selectedTool == 'ZoomAndPan'"><i class="fas fa-search"></i></button>
+        <button ngbTooltip="change brightness" type="button" (click)="onChangeTool('WindowLevel')" class="btn btn-secondary pd-x-25" [class.active]="selectedTool == 'WindowLevel'"><i class="fas fa-adjust"></i></button>
+        <button ngbTooltip="add measurements" type="button" (click)="onChangeTool('Draw')" class="btn btn-secondary pd-x-25" [class.active]="selectedTool == 'Draw'"><i class="fas fa-edit"></i></button>
+      </div>
 
-<!--    <mat-button-toggle-group name="reset" [disabled]="!dataLoaded"-->
-<!--                             (change)="onSingleToogleChange($event)">-->
-<!--      <mat-button-toggle color="primary"-->
-<!--                         title="Toggle Orientation"-->
-<!--                         (click)="toggleOrientation()">-->
-<!--        <mat-icon>cameraswitch</mat-icon>-->
-<!--      </mat-button-toggle>-->
-<!--    </mat-button-toggle-group>-->
+      <div class="btn-group" role="group" aria-label="Basic example">
+        <button ngbTooltip="toggle orientation" type="button" (click)="toggleOrientation()" class="btn btn-secondary pd-x-25"><i class="fas fa-compress"></i></button>
+      </div>
 
-<!--    <mat-button-toggle-group name="tags" [disabled]="!dataLoaded"-->
-<!--                             (change)="onSingleToogleChange($event)">-->
-<!--      <mat-button-toggle color="primary"-->
-<!--                         title="Tags"-->
-<!--                         (click)="openTagsDialog()">-->
-<!--        <mat-icon>library_books</mat-icon>-->
-<!--      </mat-button-toggle>-->
-<!--    </mat-button-toggle-group>-->
-<!--  </div>-->
-
-  <div class="input">
-    <label for="fileinput">Input:</label>
-    <input (change)="onFileChange($event)" type="file" id="fileinput" multiple>
+      <div class="btn-group" role="group" aria-label="Info">
+        <button ngbTooltip="show info" type="button" (click)="openTagsModal(tagsModal)" class="btn btn-secondary pd-x-25"><i class="fas fa-info"></i></button>
+      </div>
+    </div>
   </div>
 
   <div id="layerGroup0" class="layerGroup">
     <div id="dropBox"></div>
   </div>
-  <div class="legend mat-small">
-    <p>Powered by
-      <a href="https://github.com/ivmartel/dwv">dwv</a>
-      {{ versions.dwv }}
-      and
-      <a href="https://github.com/angular/angular">Angular</a>
-      {{ versions.angular }}
-    </p>
-  </div>
 </div>
+
+
+<ng-template #tagsModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">DICOM tags</h4>
+
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="table-responsive">
+      <table class="table table-striped mg-b-0">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let row of visibleMetaData">
+          <th scope="row">{{row.id}}</th>
+          <td>{{row.name}}</td>
+          <td>{{row.value}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <ngb-pagination
+      class="mr-auto"
+      [collectionSize]="this.metaData.length"
+      [(page)]="tagsPage"
+      [pageSize]="tagsPageSize"
+      (pageChange)="refreshTags()"
+    >
+    </ngb-pagination>
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Close click')">Close</button>
+  </div>
+</ng-template>
