@@ -1,10 +1,10 @@
 import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {CodableConceptModel} from '../datatypes/codable-concept-model';
 import {ReferenceModel} from '../datatypes/reference-model';
-import {BinaryModel} from './binary-model';
 import {fhirVersions, ResourceType} from '../constants';
 import {FastenOptions} from '../fasten/fasten-options';
 import * as _ from "lodash";
+import {AttachmentModel} from '../datatypes/attachment-model';
 
 
 export class MediaModel extends FastenDisplayModel {
@@ -16,7 +16,7 @@ export class MediaModel extends FastenDisplayModel {
   height: number
   width: number
   description: string
-  content: BinaryModel
+  content: AttachmentModel
 
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
@@ -31,6 +31,6 @@ export class MediaModel extends FastenDisplayModel {
     this.height = _.get(fhirResource, 'height');
     this.width = _.get(fhirResource, 'width');
     this.description = _.get(fhirResource, 'note');
-    this.content = new BinaryModel(_.get(fhirResource, 'content'));
+    this.content = new AttachmentModel(_.get(fhirResource, 'content'));
   }
 }

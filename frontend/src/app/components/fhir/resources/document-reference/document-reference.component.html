@@ -16,7 +16,7 @@
     <fhir-ui-table [displayModel]="displayModel" [tableData]="tableData"></fhir-ui-table>
 
     <div *ngIf="!showDetails">
-      <fhir-binary *ngFor="let binaryModel of displayModel.content" [displayModel]="binaryModel"></fhir-binary>
+      <fhir-binary *ngFor="let attachmentModel of displayModel.content" [attachmentModel]="attachmentModel" [attachmentSourceId]="displayModel?.source_id" ></fhir-binary>
     </div>
   </div>
   <div *ngIf="showDetails" class="card-footer">

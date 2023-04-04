@@ -7,6 +7,7 @@ import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
 import {Attachment} from 'fhir/r4';
 import {BinaryModel} from './binary-model';
+import {AttachmentModel} from '../datatypes/attachment-model';
 
 export class DocumentReferenceModel extends FastenDisplayModel {
 
@@ -18,7 +19,7 @@ export class DocumentReferenceModel extends FastenDisplayModel {
   class_coding: CodingModel | undefined
   created_at: string | undefined
   security_label_coding: CodingModel | undefined
-  content: BinaryModel[] | undefined
+  content: AttachmentModel[] | undefined
   context: {
     eventCoding: CodingModel
     facilityTypeCoding: CodingModel
@@ -81,8 +82,8 @@ export class DocumentReferenceModel extends FastenDisplayModel {
     this.category = new CodableConceptModel(_.get(fhirResource, 'category[0]') || {});
     this.content = _.get(fhirResource, 'content', []).map((content: any) => {
       const attachment: Attachment = _.get(content, 'attachment');
-      const binaryModel = new BinaryModel(attachment, fhirVersion);
-      return binaryModel;
+      const attachmentModel = new AttachmentModel(attachment);
+      return attachmentModel;
     })
   };
 

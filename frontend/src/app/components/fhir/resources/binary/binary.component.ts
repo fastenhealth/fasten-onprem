@@ -2,6 +2,8 @@ import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {BinaryModel} from '../../../../../lib/models/resources/binary-model';
 import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
 import {Router} from '@angular/router';
+import {AttachmentModel} from '../../../../../lib/models/datatypes/attachment-model';
+import {FastenApiService} from '../../../../services/fasten-api.service';
 
 @Component({
   selector: 'fhir-binary',
@@ -12,12 +14,21 @@ export class BinaryComponent implements OnInit, FhirResourceComponentInterface {
   @Input() displayModel: BinaryModel
   @Input() showDetails: boolean = true
 
-  constructor(public changeRef: ChangeDetectorRef, public router: Router) {}
+  @Input() attachmentSourceId: string
+  @Input() attachmentModel: AttachmentModel //can only have attachmentModel or binaryModel, not both.
+
+  constructor(public changeRef: ChangeDetectorRef, public router: Router, public fastenApi: FastenApiService) {}
 
   ngOnInit(): void {
+    if(!this.displayModel && this.attachmentSourceId && this.attachmentModel){
+      this.fastenApi.getBinaryModel(this.attachmentSourceId, this.attachmentModel)
+        .subscribe((binaryModel: BinaryModel) => {
+          this.displayModel = binaryModel
+          this.markForCheck()
+        })
+    }
   }
   markForCheck(){
     this.changeRef.markForCheck()
   }
-
 }
