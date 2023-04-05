@@ -133,12 +133,13 @@ export class DicomComponent implements OnInit {
 
     // possible load from location
     // dwv.utils.loadFromUri(window.location.href, this.dwvApp);
-
+    if(!this.displayModel) {
+      return;
+    }
     //Load from Input file
     let files = [new File([
       this.dataBase64toBlob(this.displayModel.data, "application/dicom")
     ], "dicom.dcm", {type: "application/dicom"})]
-    console.log("LOADED FILE FROM RESOURCE", files)
 
     this.dwvApp.loadFiles(files);
 
