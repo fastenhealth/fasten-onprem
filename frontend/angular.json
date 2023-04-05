@@ -27,13 +27,19 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/dwv/decoders/",
+                "output": "/assets/dwv/decoders/"
+              },
             ],
             "styles": [
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/@panva/oauth4webapi/build/index.js"
+              "node_modules/@panva/oauth4webapi/build/index.js",
+
             ]
           },
           "configurations": {
@@ -55,7 +61,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumError": "10mb"
                 },
                 {
                   "type": "anyComponentStyle",

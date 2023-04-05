@@ -2,7 +2,7 @@ import { DocumentReferenceModel } from './document-reference-model';
 import {AdverseEventModel} from './adverse-event-model';
 import {CodableConceptModel} from '../datatypes/codable-concept-model';
 import * as example1Fixture from "../../fixtures/r4/resources/documentReference/example1.json"
-import {BinaryModel} from './binary-model';
+import {AttachmentModel} from '../datatypes/attachment-model';
 
 
 describe('DocumentReferenceModel', () => {
@@ -29,7 +29,7 @@ describe('DocumentReferenceModel', () => {
           ]
         })
       expected.content = [
-        new BinaryModel({
+        new AttachmentModel({
           "contentType": "application/hl7-v3+xml",
           "language": "en-US",
           "url": "http://example.org/xds/mhd/Binary/07a6483f-732b-461e-86b6-edb665c45510",

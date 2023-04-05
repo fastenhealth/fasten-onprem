@@ -3273,6 +3273,15 @@ domutils@^2.8.0:
     domelementtype "^2.2.0"
     domhandler "^4.2.0"
 
+dwv@^0.31.0:
+  version "0.31.0"
+  resolved "https://registry.npmjs.org/dwv/-/dwv-0.31.0.tgz#c9777291774d49225ba0c1b8020d104f09312ebf"
+  integrity sha512-c/9cmBdPHtH2l2YEacMLdkqpzXTx0rfcof70ujvR2XhDC/IVgGuXUkM1+ZJKvfFyQowditTciif938ib3SB9vQ==
+  dependencies:
+    jszip "~3.7.0"
+    konva "~8.3.0"
+    magic-wand-tool "~1.1.7"
+
 ecc-jsbn@~0.1.1:
   version "0.1.2"
   resolved "https://registry.npmjs.org/ecc-jsbn/-/ecc-jsbn-0.1.2.tgz#3a83a904e54353287874c564b7549386849a98c9"
@@ -4743,6 +4752,16 @@ jszip@^3.1.3:
     readable-stream "~2.3.6"
     setimmediate "^1.0.5"
 
+jszip@~3.7.0:
+  version "3.7.1"
+  resolved "https://registry.npmjs.org/jszip/-/jszip-3.7.1.tgz#bd63401221c15625a1228c556ca8a68da6fda3d9"
+  integrity sha512-ghL0tz1XG9ZEmRMcEN2vt7xabrDdqHHeykgARpmZ0BiIctWxM47Vt63ZO2dnp4QYt/xJVLLy5Zv1l/xRdh2byg==
+  dependencies:
+    lie "~3.3.0"
+    pako "~1.0.2"
+    readable-stream "~2.3.6"
+    set-immediate-shim "~1.0.1"
+
 karma-chrome-launcher@~3.1.0:
   version "3.1.1"
   resolved "https://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-3.1.1.tgz#baca9cc071b1562a1db241827257bfe5cab597ea"
@@ -4831,6 +4850,11 @@ klona@^2.0.4, klona@^2.0.5:
   version "2.0.6"
   resolved "https://registry.npmjs.org/klona/-/klona-2.0.6.tgz#85bffbf819c03b2f53270412420a4555ef882e22"
   integrity sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==
+
+konva@~8.3.0:
+  version "8.3.14"
+  resolved "https://registry.npmjs.org/konva/-/konva-8.3.14.tgz#691ecb6f4568c58818359af369f03e7438ea3640"
+  integrity sha512-6I/TZppgY3Frs//AvZ87YVQLFxLywitb8wLS3qMM+Ih9e4QcB5Yy8br6eq7DdUzxPdbsYTz1FQBHzNxs08M1Tw==
 
 less-loader@11.0.0:
   version "11.0.0"
@@ -4972,6 +4996,11 @@ magic-string@^0.26.0:
   integrity sha512-hX9XH3ziStPoPhJxLq1syWuZMxbDvGNbVchfrdCtanC7D13888bMFow61x8axrx+GfHLtVeAx2kxL7tTGRl+Ow==
   dependencies:
     sourcemap-codec "^1.4.8"
+
+magic-wand-tool@~1.1.7:
+  version "1.1.7"
+  resolved "https://registry.npmjs.org/magic-wand-tool/-/magic-wand-tool-1.1.7.tgz#c1d49c5f26307bec06eb8c6ac51e03fff5b9d61b"
+  integrity sha512-S4rHzCs/bAp7nhQGKeg+McWuqrdyZKpnu8Ahd8AU7NzuLTm/Hh8tkpv1tW91Kmm59foIrXzip1d+P9NDoyxrZA==
 
 make-dir@^2.1.0:
   version "2.1.0"
@@ -6697,6 +6726,11 @@ set-blocking@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/set-blocking/-/set-blocking-2.0.0.tgz#045f9782d011ae9a6803ddd382b24392b3d890f7"
   integrity sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw==
+
+set-immediate-shim@~1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/set-immediate-shim/-/set-immediate-shim-1.0.1.tgz#4b2b1b27eb808a9f8dcc481a58e5e56f599f3f61"
+  integrity sha512-Li5AOqrZWCVA2n5kryzEmqai6bKSIvpz5oUJHPVj6+dsbD3X1ixtsY5tEnsaNpH3pFAHmG8eIHUrtEtohrg+UQ==
 
 setimmediate@^1.0.5:
   version "1.0.5"

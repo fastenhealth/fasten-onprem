@@ -16,6 +16,8 @@ describe('ConditionModel', () => {
     it('should parse example1.json', () => {
       // let fixture = require("../../fixtures/r4/resources/condition/example1.json")
       let expected = new ConditionModel({})
+      expected.code_id = '39065001'
+      expected.code_system = 'http://snomed.info/sct'
       expected.code_text = 'Burn of ear'
       expected.severity_text = 'Severe'
       // expected.hasAsserter: boolean | undefined
@@ -55,6 +57,8 @@ describe('ConditionModel', () => {
     it('should parse example3.json', () => {
       let expected = new ConditionModel({})
       expected.code_text = 'Fever'
+      expected.code_id = '386661006'
+      expected.code_system = 'http://snomed.info/sct'
       expected.severity_text = 'Mild'
       expected.has_asserter = true
       expected.asserter = { reference: 'Practitioner/f201' }

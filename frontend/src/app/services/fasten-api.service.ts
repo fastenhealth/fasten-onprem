@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import { Router } from '@angular/router';
 import {map} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
@@ -15,6 +15,8 @@ import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
 import {environment} from '../../environments/environment';
 import {ResourceAssociation} from '../models/fasten/resource_association';
 import {ValueSet} from 'fhir/r4';
+import {AttachmentModel} from '../../lib/models/datatypes/attachment-model';
+import {BinaryModel} from '../../lib/models/resources/binary-model';
 
 @Injectable({
   providedIn: 'root'
@@ -180,4 +182,35 @@ export class FastenApiService {
         })
       );
   }
+
+  getBinaryModel(sourceId: string, attachmentModel: AttachmentModel): Observable<BinaryModel> {
+    if(attachmentModel.url && !attachmentModel.data){
+      //this attachment model is a refernce to a Binary model, we need to download it first.
+
+      let binaryResourceId = attachmentModel.url
+
+      //strip out the urn prefix (if this is an embedded id, eg. urn:uuid:2a35e080-c5f7-4dde-b0cf-8210505708f1)
+      let urnPrefix = "urn:uuid:";
+      if (binaryResourceId.startsWith(urnPrefix)) {
+        // PREFIX is exactly at the beginning
+        binaryResourceId = binaryResourceId.slice(urnPrefix.length);
+      }
+
+      //TODO: this is a naiive solution.
+      //assumes that this is a relative or absolutie url in the following format:
+      // 'Binary/xxx-xxx-xxx-xxx'
+      // 'https://www.example.com/R4/path/Binary/xxx-xx-x-xx'
+      let urlParts = binaryResourceId.split("Binary/");
+      binaryResourceId = urlParts[urlParts.length - 1];
+
+      return this.getResourceBySourceId(sourceId, binaryResourceId).pipe(
+        map((resourceFhir: ResourceFhir) => {
+          return new BinaryModel(resourceFhir.resource_raw)
+        })
+      )
+    } else {
+      return of(new BinaryModel(attachmentModel));
+    }
+  }
+
 }

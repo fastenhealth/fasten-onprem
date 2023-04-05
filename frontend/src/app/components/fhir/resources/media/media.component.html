@@ -1,8 +1,8 @@
 <div class="card card-fhir-resource" >
   <div class="card-header" (click)="isCollapsed = ! isCollapsed">
     <div>
-      <h6 class="card-title">{{displayModel?.category?.text}}</h6>
-      <p class="card-text tx-gray-400" *ngIf="displayModel?.created_at"><strong>Created at</strong> {{displayModel?.created_at | date}}</p>
+      <h6 class="card-title">{{displayModel?.sort_title}}</h6>
+<!--      <p class="card-text tx-gray-400" *ngIf="displayModel?.created_at"><strong>Created at</strong> {{displayModel?.created_at | date}}</p>-->
     </div>
     <fhir-ui-badge class="float-right" [status]="displayModel?.status">{{displayModel?.status}}</fhir-ui-badge>
     <!--    <div class="btn-group">-->
@@ -16,7 +16,7 @@
     <fhir-ui-table [displayModel]="displayModel" [tableData]="tableData"></fhir-ui-table>
 
     <div *ngIf="!showDetails">
-      <fhir-binary *ngFor="let attachmentModel of displayModel.content" [attachmentModel]="attachmentModel" [attachmentSourceId]="displayModel?.source_id" ></fhir-binary>
+      <fhir-binary [attachmentModel]="displayModel.content" [attachmentSourceId]="displayModel?.source_id"></fhir-binary>
     </div>
   </div>
   <div *ngIf="showDetails" class="card-footer">

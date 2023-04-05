@@ -537,7 +537,8 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context) ([]*m
 		graph.DFS(g, vertexId, func(relatedVertexId string) bool {
 			relatedResourceFhir, _ := g.Vertex(relatedVertexId)
 			//skip the current resource if it's referenced in this list.
-			if vertexId != resourceVertexId(relatedResourceFhir) {
+			//also skip the current resource if its a Binary resource (which is a special case)
+			if vertexId != resourceVertexId(relatedResourceFhir) && relatedResourceFhir.SourceResourceType != "Binary" {
 				resource.RelatedResourceFhir = append(resource.RelatedResourceFhir, relatedResourceFhir)
 			}
 			return false
