@@ -159,7 +159,11 @@ export class LighthouseService {
       //use a placeholder client_secret (the actual secret is stored in Lighthouse)
       client.client_secret = "placeholder"
       client.token_endpoint_auth_method = "client_secret_basic"
-      codeVerifier = "placeholder"
+      if(sourceMetadata.code_challenge_methods_supported.length > 0){
+        codeVerifier = expectedSourceStateInfo.code_verifier
+      } else {
+        codeVerifier = "placeholder"
+      }
     }
 
     const as = {

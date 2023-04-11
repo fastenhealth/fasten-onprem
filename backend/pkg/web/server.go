@@ -80,7 +80,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 				ae.Logger.Warningln("***UNSAFE***")
 				unsafe := api.Group("/unsafe")
 				{
-					//http://localhost:9090/api/raw/test@test.com/436d7277-ad56-41ce-9823-44e353d1b3f6/Patient/smart-1288992
+					//http://localhost:9090/api/unsafe/testuser1/3508f8cf-6eb9-4e4b-8174-dd69a493a2b4/Patient/smart-1288992
 					unsafe.GET("/:username/:sourceId/*path", handler.UnsafeRequestSource)
 					unsafe.GET("/:username/graph/:graphType", handler.UnsafeResourceGraph)
 
