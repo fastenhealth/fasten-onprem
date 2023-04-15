@@ -43,7 +43,7 @@ jobs:
           version_bump_type: ${{ github.event.inputs.version_bump_type }}
           version_metadata_path: ${{ github.event.inputs.version_metadata_path }}
         env:
-          GITHUB_TOKEN: ${{ secrets.PACKAGR_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #          GITHUB_TOKEN: ${{ steps.packagr-token.outputs.token }}
 #      - name: Test
 #        run: |
@@ -52,7 +52,7 @@ jobs:
         id: commit
         uses: packagrio/action-releasr-go@master
         env:
-          GITHUB_TOKEN: ${{ secrets.PACKAGR_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #          GITHUB_TOKEN: ${{ steps.packagr-token.outputs.token }}
         with:
           version_metadata_path: ${{ github.event.inputs.version_metadata_path }}
@@ -61,7 +61,7 @@ jobs:
         uses: packagrio/action-publishr-go@master
         env:
           # This is necessary in order to push a commit to the repo
-          GITHUB_TOKEN: ${{ secrets.PACKAGR_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #          GITHUB_TOKEN: ${{ steps.packagr-token.outputs.token }}
         with:
           version_metadata_path: ${{ github.event.inputs.version_metadata_path }}
