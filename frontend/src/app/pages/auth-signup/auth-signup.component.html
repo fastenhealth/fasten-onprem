@@ -21,7 +21,7 @@
       <form (ngSubmit)="signupSubmit()" #userForm="ngForm">
 
         <div class="form-group">
-          <label>Firstname &amp; Lastname</label>
+          <label>Your name</label>
           <input [(ngModel)]="newUser.full_name" name="full_name" #full_name="ngModel" required minlength="2" type="text" class="form-control" placeholder="Enter your firstname and lastname">
 
           <div *ngIf="full_name.invalid && (full_name.dirty || full_name.touched)" class="alert alert-danger">
