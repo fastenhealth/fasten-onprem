@@ -43,7 +43,7 @@ RUN mkdir -p /opt/fasten/db \
 #########################################################################################################
 FROM gcr.io/distroless/static-debian11
 
-
+EXPOSE 8080
 WORKDIR /opt/fasten/
 COPY --from=backend-build  /opt/fasten/ /opt/fasten/
 COPY --from=frontend-build /usr/src/fastenhealth/dist /opt/fasten/web
