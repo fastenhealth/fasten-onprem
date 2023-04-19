@@ -97,7 +97,9 @@ func GetResourceFhirGraph(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
-	conditionResourceList, encounterResourceList, err := databaseRepo.GetFlattenedResourceGraph(c)
+	graphType := strings.Trim(c.Param("graphType"), "/")
+
+	conditionResourceList, encounterResourceList, err := databaseRepo.GetFlattenedResourceGraph(c, pkg.ResourceGraphType(graphType))
 	if err != nil {
 		logger.Errorln("An error occurred while retrieving list of resources", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
