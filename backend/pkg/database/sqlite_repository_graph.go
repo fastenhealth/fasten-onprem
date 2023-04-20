@@ -8,22 +8,23 @@ import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/utils"
 	"golang.org/x/exp/slices"
+	"log"
 	"strings"
 )
 
 // Retrieve a list of all fhir resources (vertex), and a list of all associations (edge)
 // Generate a graph
 // return list of root nodes, and their flattened related resources.
-func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType) ([]*models.ResourceFhir, []*models.ResourceFhir, error) {
+func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType) (map[string][]*models.ResourceFhir, error) {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
-		return nil, nil, currentUserErr
+		return nil, currentUserErr
 	}
 
 	// Get list of all resources
 	wrappedResourceModels, err := sr.ListResources(ctx, models.ListResourceQueryOptions{})
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	// Get list of all (non-reciprocal) relationships
@@ -37,7 +38,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 		}).
 		Scan(&relatedResourceRelationships)
 	if result.Error != nil {
-		return nil, nil, result.Error
+		return nil, result.Error
 	}
 
 	//Generate Graph
@@ -50,7 +51,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 			&wrappedResourceModels[ndx],
 		)
 		if err != nil {
-			return nil, nil, fmt.Errorf("an error occurred while adding vertex: %v", err)
+			return nil, fmt.Errorf("an error occurred while adding vertex: %v", err)
 		}
 	}
 
@@ -87,7 +88,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 	//	}
 	adjacencyMap, err := g.AdjacencyMap()
 	if err != nil {
-		return nil, nil, fmt.Errorf("error while generating AdjacencyMap: %v", err)
+		return nil, fmt.Errorf("error while generating AdjacencyMap: %v", err)
 	}
 
 	// For a directed graph, PredecessorMap is the complement of AdjacencyMap. This is because in a directed graph, only
@@ -96,14 +97,15 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 	// ie. "empty" verticies in this map are "root" nodes.
 	predecessorMap, err := g.PredecessorMap()
 	if err != nil {
-		return nil, nil, fmt.Errorf("error while generating PredecessorMap: %v", err)
+		return nil, fmt.Errorf("error while generating PredecessorMap: %v", err)
 	}
 
 	// Doing this in one massive function, because passing graph by reference is difficult due to generics.
 
-	// Step 1: use predecessorMap to find all "root" encounters and conditions. store those nodes in their respective lists.
-	encounterList := []*models.ResourceFhir{}
-	conditionList := []*models.ResourceFhir{}
+	// Step 1: use predecessorMap to find all "root" resources (eg. MedicalHistory - encounters and conditions). store those nodes in their respective lists.
+	resourceListDictionary := map[string][]*models.ResourceFhir{}
+	sources, _, sourceFlattenLevel := getSourcesAndSinksForGraphType(graphType)
+
 	for vertexId, val := range predecessorMap {
 
 		if len(val) != 0 {
@@ -114,14 +116,32 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 		resource, err := g.Vertex(vertexId)
 		if err != nil {
 			//could not find this vertex in graph, ignoring
+			log.Printf("could not find vertex in graph: %v", err)
 			continue
 		}
 
-		if strings.ToLower(resource.SourceResourceType) == "condition" || strings.ToLower(resource.SourceResourceType) == strings.ToLower(pkg.FhirResourceTypeComposition) {
-			conditionList = append(conditionList, resource)
-		} else if strings.ToLower(resource.SourceResourceType) == "encounter" {
-			encounterList = append(encounterList, resource)
+		//check if this "root" node (which has no predecessors) is a valid source type
+		foundSourceType := ""
+		foundSourceLevel := -1
+		for ndx, sourceResourceTypes := range sources {
+			log.Printf("testing resourceType: %s", resource.SourceResourceType)
+
+			if slices.Contains(sourceResourceTypes, strings.ToLower(resource.SourceResourceType)) {
+				foundSourceType = resource.SourceResourceType
+				foundSourceLevel = ndx
+				break
+			}
 		}
+
+		if foundSourceLevel == -1 {
+			continue //skip this resource, it is not a valid source type
+		}
+
+		if _, ok := resourceListDictionary[foundSourceType]; !ok {
+			resourceListDictionary[foundSourceType] = []*models.ResourceFhir{}
+		}
+
+		resourceListDictionary[foundSourceType] = append(resourceListDictionary[foundSourceType], resource)
 	}
 
 	// Step 2: define a function. When given a resource, should find all related resources, flatten the heirarchy and set the RelatedResourceFhir list
@@ -144,35 +164,47 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 		})
 	}
 
-	// Step 3: populate related resources for each encounter, flattened
-	for ndx, _ := range encounterList {
-		// this is a "root" encounter, which is not related to any condition, we should add it to the Unknown encounters list
-		flattenRelatedResourcesFn(encounterList[ndx])
+	for resourceType, _ := range resourceListDictionary {
+		sourceFlatten, sourceFlattenOk := sourceFlattenLevel[strings.ToLower(resourceType)]
 
-		//sort all related resources (by date, desc)
-		encounterList[ndx].RelatedResourceFhir = utils.SortResourcePtrListByDate(encounterList[ndx].RelatedResourceFhir)
+		if sourceFlattenOk && sourceFlatten == true {
+			//if flatten is set to true, we want to flatten the graph. This is usually for non primary source types (eg. Encounter is a source type, but Condition is the primary source type)
 
-	}
+			// Step 3: populate related resources for each encounter, flattened
+			for ndx, _ := range resourceListDictionary[resourceType] {
+				// this is a "root" encounter, which is not related to any condition, we should add it to the Unknown encounters list
+				flattenRelatedResourcesFn(resourceListDictionary[resourceType][ndx])
 
-	// Step 4: find all encounters referenced by the root conditions, populate them, then add them to the condition as RelatedResourceFhir
-	for ndx, _ := range conditionList {
-		// this is a "root" condition,
+				//sort all related resources (by date, desc)
+				resourceListDictionary[resourceType][ndx].RelatedResourceFhir = utils.SortResourcePtrListByDate(resourceListDictionary[resourceType][ndx].RelatedResourceFhir)
+			}
+		} else {
+			// if flatten is set to false, we want to preserve the top relationships in the graph heirarchy. This is usually for primary source types (eg. Condition is the primary source type)
+			// we want to ensure context is preserved, so we will flatten the graph futher down in the heirarchy
 
-		conditionList[ndx].RelatedResourceFhir = []*models.ResourceFhir{}
-		vertexId := resourceVertexId(conditionList[ndx])
-		for relatedVertexId, _ := range adjacencyMap[vertexId] {
-			relatedResourceFhir, _ := g.Vertex(relatedVertexId)
-			flattenRelatedResourcesFn(relatedResourceFhir)
-			conditionList[ndx].RelatedResourceFhir = append(conditionList[ndx].RelatedResourceFhir, relatedResourceFhir)
+			// Step 4: find all encounters referenced by the root conditions, populate them, then add them to the condition as RelatedResourceFhir
+			for ndx, _ := range resourceListDictionary[resourceType] {
+				// this is a "root" condition,
+
+				resourceListDictionary[resourceType][ndx].RelatedResourceFhir = []*models.ResourceFhir{}
+				vertexId := resourceVertexId(resourceListDictionary[resourceType][ndx])
+				for relatedVertexId, _ := range adjacencyMap[vertexId] {
+					relatedResourceFhir, _ := g.Vertex(relatedVertexId)
+					flattenRelatedResourcesFn(relatedResourceFhir)
+					resourceListDictionary[resourceType][ndx].RelatedResourceFhir = append(resourceListDictionary[resourceType][ndx].RelatedResourceFhir, relatedResourceFhir)
+				}
+
+				//sort all related resources (by date, desc)
+				resourceListDictionary[resourceType][ndx].RelatedResourceFhir = utils.SortResourcePtrListByDate(resourceListDictionary[resourceType][ndx].RelatedResourceFhir)
+			}
 		}
 
-		//sort all related resources (by date, desc)
-		conditionList[ndx].RelatedResourceFhir = utils.SortResourcePtrListByDate(conditionList[ndx].RelatedResourceFhir)
+		resourceListDictionary[resourceType] = utils.SortResourcePtrListByDate(resourceListDictionary[resourceType])
 	}
 
-	conditionList = utils.SortResourcePtrListByDate(conditionList)
-	encounterList = utils.SortResourcePtrListByDate(encounterList)
-	return conditionList, encounterList, nil
+	// Step 5: return the populated resource list dictionary
+
+	return resourceListDictionary, nil
 }
 
 //We need to support the following types of graphs:
@@ -187,20 +219,7 @@ func (sr *SqliteRepository) PopulateGraphTypeReciprocalRelationships(graphType p
 	reciprocalRelationships := []models.RelatedResource{}
 
 	//prioritized lists of sources and sinks for the graph. We will use these to determine which resources are "root" nodes.
-	var sources [][]string
-	var sinks [][]string
-
-	switch graphType {
-	case pkg.ResourceGraphTypeMedicalHistory:
-		sources = [][]string{
-			{"condition", "composition"},
-			{"encounter"},
-		}
-		sinks = [][]string{
-			{"location", "device", "organization", "practitioner", "medication", "patient"}, //resources that are shared across multiple conditions
-			{"binary"},
-		}
-	}
+	sources, sinks, _ := getSourcesAndSinksForGraphType(graphType)
 
 	for _, relationship := range relationships {
 
@@ -273,6 +292,38 @@ func (sr *SqliteRepository) PopulateGraphTypeReciprocalRelationships(graphType p
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utilities
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func getSourcesAndSinksForGraphType(graphType pkg.ResourceGraphType) ([][]string, [][]string, map[string]bool) {
+	var sources [][]string
+	var sinks [][]string
+	var sourceFlattenRelated map[string]bool
+	switch graphType {
+	case pkg.ResourceGraphTypeMedicalHistory:
+		sources = [][]string{
+			{"condition", "composition"},
+			{"encounter"},
+		}
+		sinks = [][]string{
+			{"location", "device", "organization", "practitioner", "medication", "patient"}, //resources that are shared across multiple conditions
+			{"binary"},
+		}
+		sourceFlattenRelated = map[string]bool{
+			"encounter": true,
+		}
+		break
+	case pkg.ResourceGraphTypeAddressBook:
+		sources = [][]string{
+			{"practitioner", "organization"},
+			{"practitionerrole", "careteam", "location"},
+		}
+		sinks = [][]string{
+			{"condition", "composition"}, //resources that are shared across multiple practitioners
+			{"encounter", "medication", "patient"},
+		}
+		sourceFlattenRelated = map[string]bool{}
+	}
+	return sources, sinks, sourceFlattenRelated
+}
 
 //source resource types are resources that are at the root of the graph, nothing may reference them directly
 // loop though the list of source resource types, and see if the checkResourceType is one of them
