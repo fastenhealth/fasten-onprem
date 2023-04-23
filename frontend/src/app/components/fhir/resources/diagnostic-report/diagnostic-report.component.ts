@@ -12,6 +12,10 @@ import {DiagnosticReportModel} from '../../../../../lib/models/resources/diagnos
 export class DiagnosticReportComponent implements OnInit, FhirResourceComponentInterface {
   @Input() displayModel: DiagnosticReportModel
   @Input() showDetails: boolean = true
+  //these are used to populate the description of the resource. May not be available for all resources
+  resourceCode?: string;
+  resourceCodeSystem?: string;
+
   isCollapsed: boolean = false
   tableData: TableRowItem[] = []
 
@@ -19,6 +23,9 @@ export class DiagnosticReportComponent implements OnInit, FhirResourceComponentI
 
 
   ngOnInit(): void {
+    this.resourceCode = this.displayModel?.code_coding?.[0]?.code
+    this.resourceCodeSystem = this.displayModel?.code_coding?.[0]?.system
+
     this.tableData = [
       {
         label: 'Issued',

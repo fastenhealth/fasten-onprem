@@ -12,6 +12,7 @@ export class DiagnosticReportModel extends FastenDisplayModel {
   status: string | undefined
   effective_datetime: string | undefined
   category_coding: CodingModel[] | undefined
+  code_coding: CodingModel[] | undefined
   has_category_coding: boolean | undefined
   has_performer: boolean | undefined
   conclusion: string | undefined
@@ -32,6 +33,7 @@ export class DiagnosticReportModel extends FastenDisplayModel {
     this.status = _.get(fhirResource, 'status', '');
     this.effective_datetime = _.get(fhirResource, 'effectiveDateTime');
     this.category_coding = _.get(fhirResource, 'category.coding');
+    this.code_coding = _.get(fhirResource, 'code.coding');
     this.has_category_coding = Array.isArray(this.category_coding);
     this.conclusion = _.get(fhirResource, 'conclusion');
     this.issued = _.get(fhirResource, 'issued');
