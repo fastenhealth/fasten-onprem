@@ -12,6 +12,11 @@ import {ProcedureModel} from '../../../../../lib/models/resources/procedure-mode
 export class ProcedureComponent implements OnInit, FhirResourceComponentInterface {
   @Input() displayModel: ProcedureModel | null
   @Input() showDetails: boolean = true
+
+  //these are used to populate the description of the resource. May not be available for all resources
+  resourceCode?: string;
+  resourceCodeSystem?: string;
+
   isCollapsed: boolean = false
 
   tableData: TableRowItem[] = []
@@ -19,6 +24,15 @@ export class ProcedureComponent implements OnInit, FhirResourceComponentInterfac
   constructor(public changeRef: ChangeDetectorRef, public router: Router) {}
 
   ngOnInit(): void {
+
+    //medline only supports CPT procedure codes - "http://www.ama-assn.org/go/cpt", "2.16.840.1.113883.6.12"
+    for(let coding of this.displayModel?.coding ?? []){
+      if(coding.system == "http://www.ama-assn.org/go/cpt" ||  coding.system == "2.16.840.1.113883.6.12"){
+        this.resourceCode = coding.code
+        this.resourceCodeSystem = coding.system
+        break
+      }
+    }
 
     this.tableData = [
       {

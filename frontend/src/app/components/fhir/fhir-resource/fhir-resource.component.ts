@@ -28,7 +28,7 @@ import {MediaComponent} from '../resources/media/media.component';
 
 @Component({
   selector: 'fhir-resource',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './fhir-resource.component.html',
   styleUrls: ['./fhir-resource.component.scss']
 })

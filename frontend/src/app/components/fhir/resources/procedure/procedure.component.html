@@ -12,10 +12,14 @@
     <!--    </div>-->
   </div>
   <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed" class="card-body">
-    <p class="az-content-text mg-b-20">An action that is or was performed on or for a patient, practitioner, device, organization, or location. For example, this can be a physical intervention on a patient like an operation, or less invasive like long term services, counseling, or hypnotherapy.</p>
+    <p class="az-content-text mg-b-20" *ngIf="!(resourceCode && resourceCodeSystem); else lookupCode">An action that is or was performed on or for a patient, practitioner, device, organization, or location. For example, this can be a physical intervention on a patient like an operation, or less invasive like long term services, counseling, or hypnotherapy.</p>
     <fhir-ui-table [displayModel]="displayModel" [tableData]="tableData"></fhir-ui-table>
   </div>
   <div *ngIf="showDetails" class="card-footer">
     <a class="float-right" routerLink="/source/{{displayModel?.source_id}}/resource/{{displayModel?.source_resource_id}}">details</a>
   </div>
 </div>
+
+<ng-template #lookupCode>
+  <app-glossary-lookup class="az-content-text mg-b-20" [code]="resourceCode" [codeSystem]="resourceCodeSystem"></app-glossary-lookup>
+</ng-template>
