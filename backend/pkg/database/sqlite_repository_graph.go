@@ -317,7 +317,7 @@ func getSourcesAndSinksForGraphType(graphType pkg.ResourceGraphType) ([][]string
 			{"practitionerrole", "careteam", "location"},
 		}
 		sinks = [][]string{
-			{"condition", "composition"}, //resources that are shared across multiple practitioners
+			{"condition", "composition", "explanationofbenefits"}, //resources that are shared across multiple practitioners
 			{"encounter", "medication", "patient"},
 		}
 		sourceFlattenRelated = map[string]bool{}

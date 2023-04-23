@@ -30,8 +30,8 @@ export class MedicalHistoryComponent implements OnInit {
     this.loading = true
     this.fastenApi.getResourceGraph().subscribe(results => {
       this.loading = false
-      this.conditions = results["Condition"]
-      this.unassigned_encounters = results["Encounter"]
+      this.conditions = results["Condition"] || []
+      this.unassigned_encounters = results["Encounter"] || []
 
       //populate a lookup table with all resources
       for(let condition of this.conditions){
