@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	sourcePkg "github.com/fastenhealth/fasten-sources/clients/models"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 )
 
@@ -24,7 +25,7 @@ type DatabaseRepository interface {
 	GetPatientForSources(ctx context.Context) ([]models.ResourceFhir, error)
 	AddResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error
 	RemoveResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error
-	GetFlattenedResourceGraph(ctx context.Context) ([]*models.ResourceFhir, []*models.ResourceFhir, error)
+	GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType) (map[string][]*models.ResourceFhir, error)
 	AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceFhir) error
 	//UpsertProfile(context.Context, *models.Profile) error
 	//UpsertOrganziation(context.Context, *models.Organization) error

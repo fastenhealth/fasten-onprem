@@ -59,7 +59,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 				secure.POST("/source/:sourceId/sync", handler.SourceSync)
 				secure.GET("/source/:sourceId/summary", handler.GetSourceSummary)
 				secure.GET("/resource/fhir", handler.ListResourceFhir)
-				secure.GET("/resource/graph", handler.GetResourceFhirGraph)
+				secure.GET("/resource/graph/:graphType", handler.GetResourceFhirGraph)
 				secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
 				secure.POST("/resource/composition", handler.CreateResourceComposition)
 
@@ -82,7 +82,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 				{
 					//http://localhost:9090/api/raw/test@test.com/436d7277-ad56-41ce-9823-44e353d1b3f6/Patient/smart-1288992
 					unsafe.GET("/:username/:sourceId/*path", handler.UnsafeRequestSource)
-					unsafe.GET("/:username/graph", handler.UnsafeResourceGraph)
+					unsafe.GET("/:username/graph/:graphType", handler.UnsafeResourceGraph)
 
 				}
 			}

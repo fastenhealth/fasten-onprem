@@ -1,5 +1,7 @@
 package pkg
 
+type ResourceGraphType string
+
 const (
 	ContextKeyTypeConfig   string = "CONFIG"
 	ContextKeyTypeDatabase string = "REPOSITORY"
@@ -9,4 +11,9 @@ const (
 	ContextKeyTypeAuthToken    string = "AUTH_TOKEN"
 
 	FhirResourceTypeComposition string = "Composition"
+
+	ResourceGraphTypeMedicalHistory ResourceGraphType = "MedicalHistory"
+	ResourceGraphTypeAddressBook    ResourceGraphType = "AddressBook"
+	ResourceGraphTypeMedications    ResourceGraphType = "Medications"
+	ResourceGraphTypeBillingReport  ResourceGraphType = "BillingReport"
 )
