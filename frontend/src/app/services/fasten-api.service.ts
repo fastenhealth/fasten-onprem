@@ -148,8 +148,12 @@ export class FastenApiService {
       );
   }
 
-  getResourceGraph(): Observable<{[resourceType: string]: ResourceFhir[]}> {
-    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/graph`)
+  getResourceGraph(graphType?: string): Observable<{[resourceType: string]: ResourceFhir[]}> {
+    if(!graphType){
+      graphType = "MedicalHistory"
+    }
+
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/graph/${graphType}`)
       .pipe(
         map((response: ResponseWrapper) => {
           console.log("RESPONSE", response)
