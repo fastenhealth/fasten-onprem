@@ -12,6 +12,7 @@ import {DiagnosticReportModel} from '../../../lib/models/resources/diagnostic-re
 import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
 import * as _ from "lodash";
 import {ConditionModel} from '../../../lib/models/resources/condition-model';
+import {RecResourceRelatedDisplayModel} from '../../../lib/utils/resource_related_display_model';
 
 @Component({
   selector: 'app-report-medical-history-condition',
@@ -71,7 +72,9 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
     }
 
     //add resources to the lookup table, ensure uniqueness.
-    this.conditionDisplayModel = this.recExtractResources(this.conditionGroup)
+    let result = RecResourceRelatedDisplayModel(this.conditionGroup)
+    this.resourcesLookup = result.resourcesLookup
+    this.conditionDisplayModel = result.displayModel
 
     let involvedInCareMap: {[resource_id: string]: {displayName: string, role?: string, email?: string}} = {}
 
@@ -136,44 +139,6 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
     for(let resourceId in involvedInCareMap){
       this.involvedInCare.push(involvedInCareMap[resourceId])
     }
-  }
-
-  /*
-  This function flattens all resources
-   */
-  recExtractResources(resource: ResourceFhir): FastenDisplayModel{
-    let resourceId = this.genResourceId(resource)
-    let resourceDisplayModel: FastenDisplayModel = this.resourcesLookup[resourceId]
-
-    //ensure display model is populated
-    if(!resourceDisplayModel){
-      try{
-        resourceDisplayModel = fhirModelFactory(resource?.source_resource_type as ResourceType, resource)
-        this.resourcesLookup[resourceId] = resourceDisplayModel
-      }catch(e){
-        console.error(e) //failed to parse a model
-        return null
-      }
-
-    }
-
-    if(!resource.related_resources){
-      return resourceDisplayModel
-    } else {
-      for(let relatedResource of resource.related_resources){
-        resourceDisplayModel.related_resources[relatedResource.source_resource_type] = resourceDisplayModel.related_resources[relatedResource.source_resource_type] || []
-
-        let relatedResourceDisplayModel = this.recExtractResources(relatedResource)
-        if(relatedResourceDisplayModel){
-          resourceDisplayModel.related_resources[relatedResource.source_resource_type].push(relatedResourceDisplayModel)
-        }
-      }
-    }
-    return resourceDisplayModel
-  }
-
-  genResourceId(relatedResource: ResourceFhir): string {
-    return `/source/${relatedResource?.source_id}/resource/${relatedResource?.source_resource_type}/${relatedResource?.source_resource_id}`
   }
 
 }

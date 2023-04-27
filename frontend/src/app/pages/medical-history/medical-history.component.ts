@@ -16,6 +16,7 @@ export class MedicalHistoryComponent implements OnInit {
 
   closeResult = '';
   conditions: ResourceFhir[] = []
+  explanationOfBenefits: ResourceFhir[] = []
 
   unassigned_encounters: ResourceFhir[] = []
   resourceLookup: {[name: string]: ResourceFhir} = {}
@@ -32,6 +33,7 @@ export class MedicalHistoryComponent implements OnInit {
       this.loading = false
       this.conditions = [].concat(results["Condition"] || [], results["Composition"] || [])
       this.unassigned_encounters = results["Encounter"] || []
+      this.explanationOfBenefits = results["ExplanationOfBenefit"] || []
 
       //populate a lookup table with all resources
       for(let condition of this.conditions){
