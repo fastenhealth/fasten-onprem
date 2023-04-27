@@ -67,6 +67,7 @@ export class SourceDetailComponent implements OnInit {
   }
   getPatientAge(){
     var msInYear = 365 * 24 * 60 * 60 * 1000;
+    if (getPatientDOB() == null) { return -1; }
     var age = Date.now() - getPatientDOB();
     return Math.floor(age / msInYear);
   }
