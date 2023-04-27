@@ -66,9 +66,12 @@ export class SourceDetailComponent implements OnInit {
     return getPath(this.selectedPatient?.resource_raw, 'birthDate')
   }
   getPatientAge(){
+    // Can return NaN or a valid integer
     var msInYear = 365 * 24 * 60 * 60 * 1000;
-    if (getPatientDOB() == null) { return -1; }
-    var age = Date.now() - getPatientDOB();
+    var patientDOB = getPatientDOB();
+    if (patientDOB == null) { return NaN; }
+    if (typeof patientDOB === 'string') { patientDOB = Date.parse(patientDOB); }
+    var age = Date.now() - patientDOB;
     return Math.floor(age / msInYear);
   }
   getPatientPhone(){
