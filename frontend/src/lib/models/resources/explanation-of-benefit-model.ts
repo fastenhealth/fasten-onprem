@@ -27,25 +27,34 @@ export class ExplanationOfBenefitModel extends FastenDisplayModel {
   insurance: any[] | undefined
   total: { category: CodableConceptModel, amount: any }[] | undefined
   hasTotal: boolean | undefined
-  diagnosis: any[] | undefined
+  diagnosis: {
+    sequence: number,
+    diagnosisCodeableConcept: CodableConceptModel,
+  }[] | undefined
   hasDiagnosis: boolean | undefined
   supportingInfo: any[] | undefined
   hasSupportingInfo: boolean | undefined
   items: any[] | undefined
   hasItems: boolean | undefined
   payment: any[] | undefined
-  billablePeriod: any[] | undefined
+  billablePeriod: { start: string, end: string }[] | undefined
   identifier: any[] | undefined
   outcome: string | undefined
-  careTeam: any[] | undefined
+  careTeam: {
+    provider: ReferenceModel,
+    role: {
+      coding: CodingModel[]
+    }
+  }[] | undefined
   hasCareTeam: boolean | undefined
   payeeType: CodableConceptModel | undefined
   payeeParty: ReferenceModel | undefined
   related: any[] | undefined
+  procedure: { date: string, procedureCodeableConcept: CodableConceptModel}[] | undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
-    this.source_resource_type = ResourceType.Encounter
+    this.source_resource_type = ResourceType.ExplanationOfBenefit
     this.resourceDTO(fhirResource, fhirVersion || fhirVersions.R4);
   }
 

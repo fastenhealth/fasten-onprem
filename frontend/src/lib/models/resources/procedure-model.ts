@@ -16,7 +16,7 @@ export class ProcedureModel extends FastenDisplayModel {
   performed_period_end: string|undefined;
   has_performed_period: boolean|undefined;
   has_coding: boolean|undefined;
-  coding: string|undefined;
+  coding: CodingModel|undefined;
   category: string|undefined;
   location_reference: string|undefined;
   has_performer_data: boolean|undefined;

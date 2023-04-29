@@ -9,12 +9,13 @@ import {ResourceType} from '../models/constants';
 
 // This function takes a ResourceFhir object, then recursively converts it, and its related resources, into FastenDisplayModel objects.
 export function RecResourceRelatedDisplayModel(resource: ResourceFhir, resourcesLookup?: {[name:string]: FastenDisplayModel}): {displayModel: FastenDisplayModel, resourcesLookup: {[name:string]: FastenDisplayModel}} {
-  let resourceId = GenResourceId(resource)
-  let resourceDisplayModel: FastenDisplayModel = resourcesLookup[resourceId]
-
   if(!resourcesLookup){
     resourcesLookup = {}
   }
+  let resourceId = GenResourceId(resource)
+  let resourceDisplayModel: FastenDisplayModel = resourcesLookup[resourceId]
+
+
 
   //ensure display model is populated
   if(!resourceDisplayModel){
@@ -23,7 +24,7 @@ export function RecResourceRelatedDisplayModel(resource: ResourceFhir, resources
       resourcesLookup[resourceId] = resourceDisplayModel
     }catch(e){
       console.error(e) //failed to parse a model
-      return null
+      return {displayModel: null, resourcesLookup}
     }
 
   }

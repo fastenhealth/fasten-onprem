@@ -13,6 +13,7 @@ export enum ResourceType {
   DiagnosticReport = "DiagnosticReport",
   DocumentReference = "DocumentReference",
   Encounter = "Encounter",
+  ExplanationOfBenefit = "ExplanationOfBenefit",
   Goal = "Goal",
   Immunization = "Immunization",
   Location = "Location",
