@@ -12,6 +12,7 @@ import {DiagnosticReportModel} from '../../../lib/models/resources/diagnostic-re
 import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
 import * as _ from "lodash";
 import {ConditionModel} from '../../../lib/models/resources/condition-model';
+import {CodingModel} from '../../../lib/models/datatypes/coding-model';
 
 @Component({
   selector: 'app-report-medical-history-condition',
@@ -99,7 +100,7 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
 
           let telecomEmails =_.find(practitionerModel.telecom, {"system": "email"})
           let email = _.get(telecomEmails, '[0].value')
-          let qualification = _.find(practitionerModel.qualification, {"system": "http://nucc.org/provider-taxonomy"})
+          let qualification = _.find(practitionerModel.qualification, {"system": "http://nucc.org/provider-taxonomy"}) as CodingModel
 
           involvedInCareMap[id] = _.mergeWith(
             {},
