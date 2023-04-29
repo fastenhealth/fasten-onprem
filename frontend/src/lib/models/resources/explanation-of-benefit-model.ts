@@ -50,7 +50,7 @@ export class ExplanationOfBenefitModel extends FastenDisplayModel {
   payeeType: CodableConceptModel | undefined
   payeeParty: ReferenceModel | undefined
   related: any[] | undefined
-  procedure: { date: string, procedureCodeableConcept: CodableConceptModel}[] | undefined
+  procedures: { date: string, procedureCodeableConcept: CodableConceptModel}[] | undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
@@ -108,6 +108,7 @@ export class ExplanationOfBenefitModel extends FastenDisplayModel {
     this.hasServices = Array.isArray(this.services) && this.services.length > 0;
     this.information = _.get(fhirResource, 'supportingInfo', []);
     this.hasInformation = Array.isArray(this.information) && this.information.length > 0;
+    this.procedures = _.get(fhirResource, 'procedure', []);
 
     // Person can have multiple insurances, but one with focal = true is used to judge this claim
     let insuranceList = _.get(fhirResource, 'insurance', []);
