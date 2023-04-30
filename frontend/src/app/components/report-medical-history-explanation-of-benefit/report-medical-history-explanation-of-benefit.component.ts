@@ -77,7 +77,7 @@ export class ReportMedicalHistoryExplanationOfBenefitComponent implements OnInit
     this.eobDisplayModel.procedures?.forEach((procedure) => {
       let procedureModel = new ProcedureModel({})
       procedureModel.performed_datetime = procedure.date
-      procedureModel.coding = procedure.procedureCodeableConcept.coding?.[0]
+      procedureModel.coding = procedure.procedureCodeableConcept.coding
       procedureModel.display = procedure.procedureCodeableConcept.text || procedure.procedureCodeableConcept.coding?.[0]?.display
       this.procedures.push(procedureModel)
     })
