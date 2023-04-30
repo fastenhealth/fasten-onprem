@@ -32,6 +32,7 @@ import {PipesModule} from './pipes/pipes.module';
 import { ResourceCreatorComponent } from './pages/resource-creator/resource-creator.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NgSelectModule } from '@ng-select/ng-select';
+import {StatusModule} from './components/status/status.module';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     BrowserModule,
     FontAwesomeModule,
     SharedModule,
+    StatusModule,
     AppRoutingModule,
     HttpClientModule,
     NgbModule,

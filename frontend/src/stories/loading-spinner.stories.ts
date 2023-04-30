@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import {LoadingSpinnerComponent} from '../app/components/loading-spinner/loading-spinner.component';
+import {LoadingSpinnerComponent} from '../app/components/status/loading-spinner/loading-spinner.component';
+import {StatusModule} from '../app/components/status/status.module';
+import {applicationConfig, moduleMetadata} from '@storybook/angular';
+import {importProvidersFrom} from '@angular/core';
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<LoadingSpinnerComponent> = {
@@ -7,11 +10,11 @@ const meta: Meta<LoadingSpinnerComponent> = {
   component: LoadingSpinnerComponent,
   decorators: [
     // moduleMetadata({
-    //   imports: [AppModule]
+    //   imports: [StatusModule]
     // })
-    // applicationConfig({
-    //   providers: [importProvidersFrom(AppModule)],
-    // }),
+    applicationConfig({
+      providers: [importProvidersFrom(StatusModule)],
+    }),
   ],
   tags: ['autodocs'],
   render: (args: LoadingSpinnerComponent) => ({
