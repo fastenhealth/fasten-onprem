@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/angular';
-import {LoadingSpinnerComponent} from '../app/components/loading-spinner/loading-spinner.component';
+import {LoadingSpinnerComponent} from './loading-spinner.component';
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<LoadingSpinnerComponent> = {

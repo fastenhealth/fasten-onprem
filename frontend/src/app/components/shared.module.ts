@@ -84,6 +84,9 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     ChartsModule,
     HighlightModule,
     PipesModule,
+
+    //standalone components
+    LoadingSpinnerComponent,
   ],
   declarations: [
     ComponentsSidebarComponent,
@@ -120,7 +123,6 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     ReportMedicalHistoryEditorComponent,
     ReportMedicalHistoryConditionComponent,
     ReportLabsObservationComponent,
-    LoadingSpinnerComponent,
     BinaryComponent,
     PdfComponent,
     ImgComponent,
@@ -182,7 +184,6 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
         ReportMedicalHistoryConditionComponent,
         ReportMedicalHistoryExplanationOfBenefitComponent,
         ReportLabsObservationComponent,
-        LoadingSpinnerComponent,
         BinaryComponent,
         FhirResourceComponent,
         FhirResourceOutletDirective,
@@ -199,6 +200,9 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
         PractitionerComponent,
         NlmTypeaheadComponent,
         DocumentReferenceComponent,
+
+      //standalone components
+      LoadingSpinnerComponent,
       GlossaryLookupComponent
     ]
 })
