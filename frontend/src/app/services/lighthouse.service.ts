@@ -86,11 +86,11 @@ export class LighthouseService {
     }
 
     //this is for providers that support CORS and PKCE (public client auth)
-    if(!lighthouseSource.confidential){
+    if(!lighthouseSource.confidential || lighthouseSource.code_challenge_methods_supported.length > 0){
       // https://github.com/panva/oauth4webapi/blob/8eba19eac408bdec5c1fe8abac2710c50bfadcc3/examples/public.ts
       const codeVerifier = Oauth.generateRandomCodeVerifier();
       const codeChallenge = await Oauth.calculatePKCECodeChallenge(codeVerifier);
-      const codeChallengeMethod = lighthouseSource.code_challenge_methods_supported[0]; // 'S256'
+      const codeChallengeMethod = lighthouseSource.code_challenge_methods_supported[0] || 'S256'
 
       sourceStateInfo.code_verifier = codeVerifier
       sourceStateInfo.code_challenge = codeChallenge
@@ -159,7 +159,11 @@ export class LighthouseService {
       //use a placeholder client_secret (the actual secret is stored in Lighthouse)
       client.client_secret = "placeholder"
       client.token_endpoint_auth_method = "client_secret_basic"
-      codeVerifier = "placeholder"
+      if(sourceMetadata.code_challenge_methods_supported.length > 0){
+        codeVerifier = expectedSourceStateInfo.code_verifier
+      } else {
+        codeVerifier = "placeholder"
+      }
     }
 
     const as = {

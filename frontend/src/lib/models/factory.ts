@@ -27,6 +27,7 @@ import {FastenDisplayModel} from './fasten/fasten-display-model';
 import {MedicationRequestModel} from './resources/medication-request-model';
 import {BinaryModel} from './resources/binary-model';
 import {MediaModel} from './resources/media-model';
+import {ExplanationOfBenefitModel} from './resources/explanation-of-benefit-model';
 
 // import {BinaryModel} from './resources/binary-model';
 
@@ -34,124 +35,124 @@ export function fhirModelFactory(modelResourceType: ResourceType, fhirResourceWr
 
   let resourceModel: FastenDisplayModel
   switch (modelResourceType) {
-    case "AdverseEvent":
+    case ResourceType.AdverseEvent:
       resourceModel = new AdverseEventModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "AllergyIntolerance":
+    case ResourceType.AllergyIntolerance:
       resourceModel = new AllergyIntoleranceModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "Appointment":
+    case ResourceType.Appointment:
       resourceModel = new AppointmentModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "Binary":
+    case ResourceType.Binary:
       resourceModel = new BinaryModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "CarePlan":
+    case ResourceType.CarePlan:
       resourceModel = new CarePlanModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "CareTeam":
+    case ResourceType.CareTeam:
       resourceModel = new CareTeamModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    // case "Claim":
+    // case ResourceType.Claim:
     //   resourceModel = new ClaimModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
-    // case "ClaimResponse":
+    // case ResourceType.ClaimResponse:
     //   resourceModel = new ClaimResponseModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
-    case "Condition":
+    case ResourceType.Condition:
       resourceModel = new ConditionModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "Composition":
+    case ResourceType.Composition:
       resourceModel = new ConditionModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    // case "Coverage":
+    // case ResourceType.Coverage":
     //   resourceModel = new CoverageModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
-    case "Device":
+    case ResourceType.Device:
       resourceModel = new DeviceModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "DiagnosticReport":
+    case ResourceType.DiagnosticReport:
       resourceModel = new DiagnosticReportModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "DocumentReference":
+    case ResourceType.DocumentReference:
       resourceModel = new DocumentReferenceModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "Encounter":
+    case ResourceType.Encounter:
       resourceModel = new EncounterModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    // case "ExplanationOfBenefit":
-    //   resourceModel = new ExplanationOfBenefitModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
-    // break
-    // case "FamilyMemberHistory":
+    case ResourceType.ExplanationOfBenefit:
+      resourceModel = new ExplanationOfBenefitModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
+    break
+    // case ResourceType.FamilyMemberHistory:
     //   resourceModel = new FamilyMemberHistoryModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     //break
-    case "Goal":
+    case ResourceType.Goal:
       resourceModel = new GoalModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "Immunization":
+    case ResourceType.Immunization:
       resourceModel = new ImmunizationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "Location":
+    case ResourceType.Location:
       resourceModel = new LocationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "Media":
+    case ResourceType.Media:
       resourceModel = new MediaModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "Medication":
+    case ResourceType.Medication:
       resourceModel = new MedicationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    // case "MedicationAdministration":
+    // case ResourceType.MedicationAdministration:
     //   resourceModel = new MedicationAdministrationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
-    case "MedicationDispense":
+    case ResourceType.MedicationDispense:
       resourceModel = new MedicationDispenseModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    // case "MedicationKnowledge":
+    // case ResourceType.MedicationKnowledge:
     //   resourceModel = new MedicationKnowledgeModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
-    // case "MedicationOrder":
+    // case ResourceType.MedicationOrder:
     //   resourceModel = new MedicationOrderModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
-    case "MedicationRequest":
+    case ResourceType.MedicationRequest:
       resourceModel = new MedicationRequestModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     break
-    // case "MedicationStatement":
+    // case ResourceType.MedicationStatement:
     //   resourceModel = new MedicationStatementModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
-    case "Observation":
+    case ResourceType.Observation:
       resourceModel = new ObservationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "Organization":
+    case ResourceType.Organization:
       resourceModel = new OrganizationModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "Patient":
+    case ResourceType.Patient:
       resourceModel = new PatientModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "Practitioner":
+    case ResourceType.Practitioner:
       resourceModel = new PractitionerModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "PractitionerRole":
+    case ResourceType.PractitionerRole:
       resourceModel = new PractitionerRoleModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "Procedure":
+    case ResourceType.Procedure:
       resourceModel = new ProcedureModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    // case "Questionnaire":
+    // case ResourceType.Questionnaire:
     //   resourceModel = new QuestionnaireModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
-    // case "QuestionnaireResponse":
+    // case ResourceType.QuestionnaireResponse:
     //   resourceModel = new QuestionnaireResponseModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
-    // case "ReferralRequest":
+    // case ResourceType.ReferralRequest:
     //   resourceModel = new ReferralRequestModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
-    case "RelatedPerson":
+    case ResourceType.RelatedPerson:
       resourceModel = new RelatedPersonModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    case "ResearchStudy":
+    case ResourceType.ResearchStudy:
       resourceModel = new ResearchStudyModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
       break
-    // case "ResourceCategory":
+    // case ResourceType.ResourceCategory:
     //   resourceModel = new ResourceCategoryModel(fhirResourceWrapper.resource_raw, fhirVersion, fastenOptions)
     // break
     default: {

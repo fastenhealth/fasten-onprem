@@ -5,7 +5,7 @@
       <!-- Header Row -->
       <report-header [reportHeaderTitle]="'Medical History'" [reportHeaderSubTitle]="'Organized by conditions, describes the scope and breadth of medical care'"></report-header>
 
-      <ng-container [ngTemplateOutlet]="loading ? isLoadingTemplate : (conditions.length == 0 && unassigned_encounters.length == 0) ? emptyReport : report"></ng-container>
+      <ng-container [ngTemplateOutlet]="loading ? isLoadingTemplate : (conditions.length == 0 && unassigned_encounters.length == 0 && explanationOfBenefits.length == 0) ? emptyReport : report"></ng-container>
 
       <ng-template #report>
         <!-- Editor Button -->
@@ -33,6 +33,7 @@
 
         <!-- Condition List -->
         <app-report-medical-history-condition *ngFor="let condition of conditions; let i = index" [conditionGroup]="condition"></app-report-medical-history-condition>
+        <app-report-medical-history-explanation-of-benefit *ngFor="let eob of explanationOfBenefits; let i = index" [explanationOfBenefitGroup]="eob"></app-report-medical-history-explanation-of-benefit>
       </ng-template>
 
       <ng-template #emptyReport>

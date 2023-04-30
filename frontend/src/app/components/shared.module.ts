@@ -68,6 +68,7 @@ import { DocumentReferenceComponent } from './fhir/resources/document-reference/
 import { DicomComponent } from './fhir/datatypes/dicom/dicom.component';
 import { MediaComponent } from './fhir/resources/media/media.component';
 import { GlossaryLookupComponent } from './glossary-lookup/glossary-lookup.component';
+import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medical-history-explanation-of-benefit/report-medical-history-explanation-of-benefit.component';
 
 @NgModule({
   imports: [
@@ -144,6 +145,7 @@ import { GlossaryLookupComponent } from './glossary-lookup/glossary-lookup.compo
     GlossaryLookupComponent,
     DicomComponent,
     MediaComponent,
+    ReportMedicalHistoryExplanationOfBenefitComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -178,6 +180,7 @@ import { GlossaryLookupComponent } from './glossary-lookup/glossary-lookup.compo
         ReportHeaderComponent,
         ReportMedicalHistoryEditorComponent,
         ReportMedicalHistoryConditionComponent,
+        ReportMedicalHistoryExplanationOfBenefitComponent,
         ReportLabsObservationComponent,
         LoadingSpinnerComponent,
         BinaryComponent,
