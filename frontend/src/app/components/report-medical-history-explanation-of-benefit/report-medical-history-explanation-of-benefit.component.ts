@@ -111,7 +111,7 @@ export class ReportMedicalHistoryExplanationOfBenefitComponent implements OnInit
 
           let telecomEmails = _.find(practitionerModel.telecom, {"system": "email"})
           let email = _.get(telecomEmails, '[0].value')
-          let qualification = _.find(practitionerModel.qualification, {"system": "http://nucc.org/provider-taxonomy"})
+          let qualification = _.find(practitionerModel.qualification, {"system": "http://nucc.org/provider-taxonomy"}) as CodingModel
 
           involvedInCareMap[id] = _.mergeWith(
             {},
