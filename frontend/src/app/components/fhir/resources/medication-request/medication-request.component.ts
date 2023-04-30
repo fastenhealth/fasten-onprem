@@ -12,6 +12,10 @@ import {MedicationRequestModel} from '../../../../../lib/models/resources/medica
 export class MedicationRequestComponent implements OnInit, FhirResourceComponentInterface {
   @Input() displayModel: MedicationRequestModel | null
   @Input() showDetails: boolean = true
+  //these are used to populate the description of the resource. May not be available for all resources
+  resourceCode?: string;
+  resourceCodeSystem?: string;
+
   isCollapsed: boolean = false
 
   tableData: TableRowItem[] = []
@@ -19,6 +23,9 @@ export class MedicationRequestComponent implements OnInit, FhirResourceComponent
   constructor(public changeRef: ChangeDetectorRef, public router: Router) {}
 
   ngOnInit(): void {
+
+    this.resourceCode = this.displayModel?.medication_codeable_concept?.code
+    this.resourceCodeSystem = this.displayModel?.medication_codeable_concept?.system
 
     this.tableData = [
       {

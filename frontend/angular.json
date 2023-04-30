@@ -23,7 +23,10 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "allowedCommonJsDependencies": ["chart.js", "highlight.js"],
+            "allowedCommonJsDependencies": [
+              "chart.js",
+              "highlight.js"
+            ],
             "aot": true,
             "assets": [
               "src/favicon.ico",
@@ -32,14 +35,13 @@
                 "glob": "**/*",
                 "input": "./node_modules/dwv/decoders/",
                 "output": "/assets/dwv/decoders/"
-              },
+              }
             ],
             "styles": [
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/@panva/oauth4webapi/build/index.js",
-
+              "node_modules/@panva/oauth4webapi/build/index.js"
             ]
           },
           "configurations": {
@@ -125,7 +127,6 @@
                 }
               ]
             }
-
           }
         },
         "serve": {
@@ -192,6 +193,36 @@
             "prod": {
               "devServerTarget": "fastenhealth:serve:prod"
             }
+          }
+        },
+        "storybook": {
+          "builder": "@storybook/angular:start-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "browserTarget": "fastenhealth:build",
+            "compodoc": true,
+            "compodocArgs": [
+              "-e",
+              "json",
+              "-d",
+              "."
+            ],
+            "port": 6006
+          }
+        },
+        "build-storybook": {
+          "builder": "@storybook/angular:build-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "browserTarget": "fastenhealth:build",
+            "compodoc": true,
+            "compodocArgs": [
+              "-e",
+              "json",
+              "-d",
+              "."
+            ],
+            "outputDir": "storybook-static"
           }
         }
       }

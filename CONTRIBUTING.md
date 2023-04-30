@@ -227,3 +227,9 @@ curl -X POST http://localhost:9090/api/auth/signin -H 'Content-Type: application
 curl -H "Authorization: Bearer ${JWT_TOKEN_HERE}" http://localhost:5984/_session
 
 ```
+
+
+# Run Component Storybook
+```bash
+ng run fastenhealth:storybook
+```
