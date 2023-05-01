@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-
 @Component({
+  standalone: true,
   selector: 'fhir-ui-badge',
   templateUrl: './badge.component.html',
   styleUrls: ['./badge.component.scss']

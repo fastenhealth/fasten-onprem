@@ -1,9 +1,14 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {TableRowItem} from './table-row-item';
-import {BinaryModel} from '../../../../../lib/models/resources/binary-model';
 import {FastenDisplayModel} from '../../../../../lib/models/fasten/fasten-display-model';
+import {CommonModule} from "@angular/common";
+import {CodingComponent} from "../../datatypes/coding/coding.component";
+import {Router, RouterModule} from "@angular/router";
 
 @Component({
+  standalone: true,
+  imports: [CommonModule, CodingComponent, RouterModule],
+  providers: [RouterModule],
   selector: 'fhir-ui-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss']

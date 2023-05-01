@@ -8,10 +8,10 @@ import {CommonModule} from "@angular/common";
 @Component({
   standalone: true,
   imports: [LoadingSpinnerComponent, CommonModule],
+  providers: [FastenApiService, AuthService],
   selector: 'app-glossary-lookup',
   templateUrl: './glossary-lookup.component.html',
   styleUrls: ['./glossary-lookup.component.scss'],
-  providers: [FastenApiService, AuthService],
 })
 export class GlossaryLookupComponent implements OnInit {
 
