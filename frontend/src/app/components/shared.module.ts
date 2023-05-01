@@ -87,6 +87,7 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
 
     //standalone components
     LoadingSpinnerComponent,
+    GlossaryLookupComponent,
   ],
   declarations: [
     ComponentsSidebarComponent,
@@ -144,7 +145,6 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     PractitionerComponent,
     NlmTypeaheadComponent,
     DocumentReferenceComponent,
-    GlossaryLookupComponent,
     DicomComponent,
     MediaComponent,
     ReportMedicalHistoryExplanationOfBenefitComponent,
