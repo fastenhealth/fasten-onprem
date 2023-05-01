@@ -4,8 +4,34 @@ import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-
 import {Router} from '@angular/router';
 import {AttachmentModel} from '../../../../../lib/models/datatypes/attachment-model';
 import {FastenApiService} from '../../../../services/fasten-api.service';
+import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
+import {CommonModule} from "@angular/common";
+import {BadgeComponent} from "../../common/badge/badge.component";
+import {TableComponent} from "../../common/table/table.component";
+import {PdfComponent} from "../../datatypes/pdf/pdf.component";
+import {ImgComponent} from "../../datatypes/img/img.component";
+import {HtmlComponent} from "../../datatypes/html/html.component";
+import {MarkdownComponent} from "../../datatypes/markdown/markdown.component";
+import {BinaryTextComponent} from "../../datatypes/binary-text/binary-text.component";
+import {DicomComponent} from "../../datatypes/dicom/dicom.component";
+import {HighlightModule} from "ngx-highlightjs";
+import {HttpClient, HttpClientModule} from "@angular/common/http";
+import {AuthService} from "../../../../services/auth.service";
 
 @Component({
+  standalone: true,
+  imports: [
+    NgbCollapseModule,
+    CommonModule,
+    PdfComponent,
+    ImgComponent,
+    HtmlComponent,
+    MarkdownComponent,
+    BinaryTextComponent,
+    DicomComponent,
+    HighlightModule,
+  ],
+  providers: [FastenApiService, AuthService],
   selector: 'fhir-binary',
   templateUrl: './binary.component.html',
   styleUrls: ['./binary.component.scss']

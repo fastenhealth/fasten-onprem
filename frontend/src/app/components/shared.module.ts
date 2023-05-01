@@ -103,6 +103,7 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     PdfComponent,
     MarkdownComponent,
     DicomComponent,
+    BinaryComponent,
 
   ],
   declarations: [
@@ -140,7 +141,6 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     ReportMedicalHistoryEditorComponent,
     ReportMedicalHistoryConditionComponent,
     ReportLabsObservationComponent,
-    BinaryComponent,
 
     FhirResourceComponent,
     FhirResourceOutletDirective,
@@ -210,6 +210,7 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
       PractitionerComponent,
       ProcedureComponent,
       ImmunizationComponent,
+      BinaryComponent,
 
     ]
 })
