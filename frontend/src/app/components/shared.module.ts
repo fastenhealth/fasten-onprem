@@ -95,6 +95,8 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     MedicationComponent,
     MedicationRequestComponent,
     PractitionerComponent,
+    ProcedureComponent,
+    ImmunizationComponent,
 
 
   ],
@@ -142,8 +144,6 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     FhirResourceComponent,
     FhirResourceOutletDirective,
     FallbackComponent,
-    ImmunizationComponent,
-    ProcedureComponent,
     DiagnosticReportComponent,
     NlmTypeaheadComponent,
     DocumentReferenceComponent,
@@ -208,6 +208,9 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
       MedicationComponent,
       MedicationRequestComponent,
       PractitionerComponent,
+      ProcedureComponent,
+      ImmunizationComponent,
+
     ]
 })
 

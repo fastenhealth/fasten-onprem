@@ -4,8 +4,14 @@ import {Router} from '@angular/router';
 import {ImmunizationModel} from '../../../../../lib/models/resources/immunization-model';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import * as _ from "lodash";
+import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
+import {CommonModule} from "@angular/common";
+import {BadgeComponent} from "../../common/badge/badge.component";
+import {TableComponent} from "../../common/table/table.component";
 
 @Component({
+  standalone: true,
+  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent],
   selector: 'fhir-immunization',
   templateUrl: './immunization.component.html',
   styleUrls: ['./immunization.component.scss']

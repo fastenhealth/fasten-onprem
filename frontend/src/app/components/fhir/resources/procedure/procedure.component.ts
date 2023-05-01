@@ -3,8 +3,14 @@ import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router} from '@angular/router';
 import {ProcedureModel} from '../../../../../lib/models/resources/procedure-model';
+import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
+import {CommonModule} from "@angular/common";
+import {BadgeComponent} from "../../common/badge/badge.component";
+import {TableComponent} from "../../common/table/table.component";
 
 @Component({
+  standalone: true,
+  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent],
   selector: 'fhir-procedure',
   templateUrl: './procedure.component.html',
   styleUrls: ['./procedure.component.scss']
