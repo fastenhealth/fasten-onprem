@@ -93,6 +93,9 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     CodingComponent,
     AllergyIntoleranceComponent,
     MedicationComponent,
+    MedicationRequestComponent,
+    PractitionerComponent,
+
 
   ],
   declarations: [
@@ -140,10 +143,8 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     FhirResourceOutletDirective,
     FallbackComponent,
     ImmunizationComponent,
-    MedicationRequestComponent,
     ProcedureComponent,
     DiagnosticReportComponent,
-    PractitionerComponent,
     NlmTypeaheadComponent,
     DocumentReferenceComponent,
     DicomComponent,
@@ -205,7 +206,8 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
       GlossaryLookupComponent,
       AllergyIntoleranceComponent,
       MedicationComponent,
-
+      MedicationRequestComponent,
+      PractitionerComponent,
     ]
 })
 
