@@ -92,6 +92,7 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     TableComponent,
     CodingComponent,
     AllergyIntoleranceComponent,
+    MedicationComponent,
 
   ],
   declarations: [
@@ -139,7 +140,6 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     FhirResourceOutletDirective,
     FallbackComponent,
     ImmunizationComponent,
-    MedicationComponent,
     MedicationRequestComponent,
     ProcedureComponent,
     DiagnosticReportComponent,
@@ -190,10 +190,6 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
         FhirResourceOutletDirective,
         FallbackComponent,
         ImmunizationComponent,
-        BadgeComponent,
-        TableComponent,
-        CodingComponent,
-        MedicationComponent,
         MedicationRequestComponent,
         ProcedureComponent,
         DiagnosticReportComponent,
@@ -202,9 +198,13 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
         DocumentReferenceComponent,
 
       //standalone components
+      BadgeComponent,
+      TableComponent,
+      CodingComponent,
       LoadingSpinnerComponent,
       GlossaryLookupComponent,
       AllergyIntoleranceComponent,
+      MedicationComponent,
 
     ]
 })
