@@ -207,6 +207,13 @@
               "-d",
               "."
             ],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "./node_modules/dwv/decoders/",
+                "output": "/assets/dwv/decoders/"
+              }
+            ],
             "port": 6006
           }
         },

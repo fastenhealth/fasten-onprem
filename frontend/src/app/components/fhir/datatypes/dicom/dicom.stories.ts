@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import {fhirVersions} from "../../../../../lib/models/constants";
-import R4Example1Json from "../../../../../lib/fixtures/r4/resources/binary/examplePdf.json";
+import R4Example1Json from "../../../../../lib/fixtures/r4/resources/binary/exampleDicom.json";
 import {BinaryModel} from "../../../../../lib/models/resources/binary-model";
-import {PdfComponent} from "./pdf.component";
+import {DicomComponent} from "./dicom.component";
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
-const meta: Meta<PdfComponent> = {
-  title: 'Fhir/Datatypes/Pdf',
-  component: PdfComponent,
+const meta: Meta<DicomComponent> = {
+  title: 'Fhir/Datatypes/Dicom',
+  component: DicomComponent,
   decorators: [
     // moduleMetadata({
     //   imports: [AppModule]
@@ -17,7 +17,7 @@ const meta: Meta<PdfComponent> = {
     // }),
   ],
   tags: ['autodocs'],
-  render: (args: PdfComponent) => ({
+  render: (args: DicomComponent) => ({
     props: {
       backgroundColor: null,
       ...args,
@@ -31,7 +31,7 @@ const meta: Meta<PdfComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<PdfComponent>;
+type Story = StoryObj<DicomComponent>;
 
 // More on writing stories with args: https://storybook.js.org/docs/angular/writing-stories/args
 let aiDisplayModel1 =  new BinaryModel(R4Example1Json, fhirVersions.R4)

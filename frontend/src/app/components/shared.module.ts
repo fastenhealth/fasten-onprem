@@ -102,6 +102,7 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     ImgComponent,
     PdfComponent,
     MarkdownComponent,
+    DicomComponent,
 
   ],
   declarations: [
@@ -147,7 +148,6 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     DiagnosticReportComponent,
     NlmTypeaheadComponent,
     DocumentReferenceComponent,
-    DicomComponent,
     MediaComponent,
     ReportMedicalHistoryExplanationOfBenefitComponent,
   ],
