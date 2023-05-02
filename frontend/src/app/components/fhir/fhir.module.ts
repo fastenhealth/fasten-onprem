@@ -1,7 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { RouterModule } from '@angular/router';
-import {BrowserModule} from '@angular/platform-browser';
 import {NgbCollapseModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { MomentModule } from 'ngx-moment';
 import { ChartsModule } from 'ng2-charts';
@@ -35,7 +35,7 @@ import {HighlightModule} from 'ngx-highlightjs';
 @NgModule({
   imports: [
     RouterModule,
-    BrowserModule,
+    CommonModule,
     NgxDatatableModule,
     NgbModule,
     NgbCollapseModule,
