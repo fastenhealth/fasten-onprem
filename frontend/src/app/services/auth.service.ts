@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {User} from '../models/fasten/user';
 import {environment} from '../../environments/environment';
@@ -9,6 +9,7 @@ import {SourceState} from '../models/fasten/source-state';
 import * as jose from 'jose';
 import {UserRegisteredClaims} from '../models/fasten/user-registered-claims';
 import {uuidV4} from '../../lib/utils/uuid';
+import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class AuthService {
 
   FASTEN_JWT_LOCALSTORAGE_KEY = 'token';
 
-  constructor(private _httpClient: HttpClient) {
+  constructor(@Inject(HTTP_CLIENT_TOKEN) private _httpClient: HttpClient) {
   }
 
   //Third-party JWT auth, used by Fasten Cloud

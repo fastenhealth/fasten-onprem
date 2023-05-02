@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import {HttpClientModule, HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -32,6 +32,7 @@ import {PipesModule} from './pipes/pipes.module';
 import { ResourceCreatorComponent } from './pages/resource-creator/resource-creator.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NgSelectModule } from '@ng-select/ng-select';
+import {HTTP_CLIENT_TOKEN} from "./dependency-injection";
 
 @NgModule({
   declarations: [
@@ -67,6 +68,10 @@ import { NgSelectModule } from '@ng-select/ng-select';
     NgSelectModule
   ],
   providers: [
+    {
+      provide: HTTP_CLIENT_TOKEN,
+      useClass: HttpClient,
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptorService,

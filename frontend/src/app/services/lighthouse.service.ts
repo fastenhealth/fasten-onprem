@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
@@ -10,13 +10,14 @@ import {SourceState} from '../models/fasten/source-state';
 import {MetadataSource} from '../models/fasten/metadata-source';
 import {uuidV4} from '../../lib/utils/uuid';
 import {LighthouseSourceSearch} from '../models/lighthouse/lighthouse-source-search';
+import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
 
 @Injectable({
   providedIn: 'root'
 })
 export class LighthouseService {
 
-  constructor(private _httpClient: HttpClient) {
+  constructor(@Inject(HTTP_CLIENT_TOKEN) private _httpClient: HttpClient) {
   }
 
   public findLighthouseSources(searchTerm: string, scrollId= "", showHidden = false): Observable<LighthouseSourceSearch> {
