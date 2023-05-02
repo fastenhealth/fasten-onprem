@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {versionInfo} from '../../../environments/versions';
 
 @Component({
   selector: 'app-footer',
@@ -6,8 +7,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./footer.component.scss']
 })
 export class FooterComponent implements OnInit {
+  appVersion: string;
 
-  constructor() { }
+  constructor() {
+    this.appVersion = versionInfo.version
+  }
 
   ngOnInit() {
   }
