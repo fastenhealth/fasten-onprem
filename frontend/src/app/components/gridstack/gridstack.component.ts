@@ -10,6 +10,7 @@ import { takeUntil } from 'rxjs/operators';
 import { GridHTMLElement, GridItemHTMLElement, GridStack, GridStackNode, GridStackOptions, GridStackWidget } from 'gridstack';
 
 import { GridItemCompHTMLElement, GridstackItemComponent } from './gridstack-item.component';
+import {CommonModule} from '@angular/common';
 
 /** events handlers emitters signature for different events */
 export type eventCB = {event: Event};
@@ -26,6 +27,8 @@ export interface GridCompHTMLElement extends GridHTMLElement {
  * HTML Component Wrapper for gridstack, in combination with GridstackItemComponent for the items
  */
 @Component({
+  standalone: true,
+  imports: [CommonModule, GridstackItemComponent],
   selector: 'gridstack',
   template: `
     <!-- content to show when when grid is empty, like instructions on how to add widgets -->

@@ -204,3 +204,13 @@ app-nlm-typeahead {
     overflow-y: scroll;
   }
 }
+
+//Gridster drag-and-drop dashboard
+.grid-stack-item.ui-draggable.ui-resizable {
+  //this item is in "editable mode"
+  .grid-stack-item-content {
+    border: 2px dashed grey;
+    padding:5px;
+    border-radius: 10px;
+  }
+}

@@ -33,6 +33,7 @@ import { ResourceCreatorComponent } from './pages/resource-creator/resource-crea
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NgSelectModule } from '@ng-select/ng-select';
 import {HTTP_CLIENT_TOKEN} from "./dependency-injection";
+import {WidgetsModule} from './widgets/widgets.module';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import {HTTP_CLIENT_TOKEN} from "./dependency-injection";
     MomentModule,
     PipesModule,
     InfiniteScrollModule,
-    NgSelectModule
+    NgSelectModule,
+    WidgetsModule
   ],
   providers: [
     {

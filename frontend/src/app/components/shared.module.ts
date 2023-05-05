@@ -69,6 +69,8 @@ import { DicomComponent } from './fhir/datatypes/dicom/dicom.component';
 import { MediaComponent } from './fhir/resources/media/media.component';
 import { GlossaryLookupComponent } from './glossary-lookup/glossary-lookup.component';
 import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medical-history-explanation-of-benefit/report-medical-history-explanation-of-benefit.component';
+import {GridstackComponent} from './gridstack/gridstack.component';
+import {GridstackItemComponent} from './gridstack/gridstack-item.component';
 
 @NgModule({
   imports: [
@@ -104,6 +106,8 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
     MarkdownComponent,
     DicomComponent,
     BinaryComponent,
+    GridstackComponent,
+    GridstackItemComponent,
 
   ],
   declarations: [
@@ -211,6 +215,8 @@ import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medi
       ProcedureComponent,
       ImmunizationComponent,
       BinaryComponent,
+      GridstackComponent,
+      GridstackItemComponent,
 
     ]
 })
