@@ -4,6 +4,8 @@ import { DashboardComponent } from './dashboard.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {RouterModule} from '@angular/router';
+import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
+import {HttpClient} from '@angular/common/http';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
@@ -12,7 +14,13 @@ describe('DashboardComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule, RouterModule],
-      declarations: [ DashboardComponent ]
+      declarations: [ DashboardComponent ],
+      providers: [
+        {
+          provide: HTTP_CLIENT_TOKEN,
+          useClass: HttpClient,
+        },
+      ]
     })
     .compileComponents();
   }));

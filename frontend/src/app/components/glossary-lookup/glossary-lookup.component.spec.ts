@@ -3,6 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GlossaryLookupComponent } from './glossary-lookup.component';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {of} from 'rxjs';
+import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
+import {HttpClient} from '@angular/common/http';
 
 describe('GlossaryLookupComponent', () => {
   let component: GlossaryLookupComponent;
@@ -14,10 +16,12 @@ describe('GlossaryLookupComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [ GlossaryLookupComponent ],
-      providers: [{
-        provide: FastenApiService,
-        useValue: mockedFastenApiService
-      }]
+      providers: [
+        {
+          provide: FastenApiService,
+          useValue: mockedFastenApiService
+        }
+      ]
     })
     .compileComponents();
     mockedFastenApiService.getGlossarySearchByCode.and.returnValue(of({

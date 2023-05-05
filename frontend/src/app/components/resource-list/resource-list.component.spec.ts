@@ -4,6 +4,8 @@ import { ResourceListComponent } from './resource-list.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {ResourceListOutletDirective} from './resource-list-outlet.directive';
 import {FastenApiService} from '../../services/fasten-api.service';
+import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
+import {HttpClient} from '@angular/common/http';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;
@@ -13,7 +15,13 @@ describe('ResourceListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [ ResourceListComponent, ResourceListOutletDirective ],
-      providers: [FastenApiService]
+      providers: [
+        FastenApiService,
+        {
+          provide: HTTP_CLIENT_TOKEN,
+          useClass: HttpClient,
+        },
+      ]
     })
     .compileComponents();
 

@@ -4,6 +4,8 @@ import { BinaryComponent } from './binary.component';
 import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
 import {FastenApiService} from '../../../../services/fasten-api.service';
 import {RouterTestingModule} from '@angular/router/testing';
+import {HTTP_CLIENT_TOKEN} from '../../../../dependency-injection';
+import {HttpClient} from '@angular/common/http';
 
 describe('BinaryComponent', () => {
   let component: BinaryComponent;
