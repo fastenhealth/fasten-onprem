@@ -3,6 +3,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GlossaryLookupComponent } from './glossary-lookup.component';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {of} from 'rxjs';
+import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
+import {HttpClient} from '@angular/common/http';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('GlossaryLookupComponent', () => {
   let component: GlossaryLookupComponent;
@@ -13,11 +16,17 @@ describe('GlossaryLookupComponent', () => {
     mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['getGlossarySearchByCode'])
 
     await TestBed.configureTestingModule({
-      declarations: [ GlossaryLookupComponent ],
-      providers: [{
-        provide: FastenApiService,
-        useValue: mockedFastenApiService
-      }]
+      imports: [ GlossaryLookupComponent, HttpClientTestingModule ],
+      providers: [
+        {
+          provide: FastenApiService,
+          useValue: mockedFastenApiService
+        },
+        {
+          provide: HTTP_CLIENT_TOKEN,
+          useClass: HttpClient,
+        },
+      ]
     })
     .compileComponents();
     mockedFastenApiService.getGlossarySearchByCode.and.returnValue(of({

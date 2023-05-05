@@ -3,8 +3,14 @@ import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router} from '@angular/router';
 import {MedicationModel} from '../../../../../lib/models/resources/medication-model';
+import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
+import {CommonModule} from "@angular/common";
+import {BadgeComponent} from "../../common/badge/badge.component";
+import {TableComponent} from "../../common/table/table.component";
 
 @Component({
+  standalone: true,
+  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent],
   selector: 'fhir-medication',
   templateUrl: './medication.component.html',
   styleUrls: ['./medication.component.scss']

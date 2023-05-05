@@ -8,7 +8,7 @@ describe('BinaryTextComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BinaryTextComponent ]
+      imports: [ BinaryTextComponent ]
     })
     .compileComponents();
 

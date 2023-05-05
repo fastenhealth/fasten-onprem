@@ -39,7 +39,7 @@ func FindCodeSystem(codeSystem string) (string, error) {
 	if codeSystemId, ok := codeSystemIds[codeSystem]; ok {
 		return codeSystemId, nil
 	} else {
-		return "", fmt.Errorf("Code System not found")
+		return "", fmt.Errorf("Code System not found: %s", codeSystem)
 	}
 
 }

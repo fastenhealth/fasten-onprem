@@ -301,10 +301,10 @@ func getSourcesAndSinksForGraphType(graphType pkg.ResourceGraphType) ([][]string
 	case pkg.ResourceGraphTypeMedicalHistory:
 		sources = [][]string{
 			{"condition", "composition"},
-			{"encounter"},
+			{"encounter", "explanationofbenefit"},
 		}
 		sinks = [][]string{
-			{"location", "device", "organization", "practitioner", "medication", "patient"}, //resources that are shared across multiple conditions
+			{"location", "device", "organization", "practitioner", "medication", "patient", "coverage"}, //resources that are shared across multiple conditions
 			{"binary"},
 		}
 		sourceFlattenRelated = map[string]bool{

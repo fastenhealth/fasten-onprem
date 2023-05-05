@@ -68,6 +68,9 @@ import { DocumentReferenceComponent } from './fhir/resources/document-reference/
 import { DicomComponent } from './fhir/datatypes/dicom/dicom.component';
 import { MediaComponent } from './fhir/resources/media/media.component';
 import { GlossaryLookupComponent } from './glossary-lookup/glossary-lookup.component';
+import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medical-history-explanation-of-benefit/report-medical-history-explanation-of-benefit.component';
+import {GridstackComponent} from './gridstack/gridstack.component';
+import {GridstackItemComponent} from './gridstack/gridstack-item.component';
 
 @NgModule({
   imports: [
@@ -83,6 +86,29 @@ import { GlossaryLookupComponent } from './glossary-lookup/glossary-lookup.compo
     ChartsModule,
     HighlightModule,
     PipesModule,
+
+    //standalone components
+    LoadingSpinnerComponent,
+    GlossaryLookupComponent,
+    BadgeComponent,
+    TableComponent,
+    CodingComponent,
+    AllergyIntoleranceComponent,
+    MedicationComponent,
+    MedicationRequestComponent,
+    PractitionerComponent,
+    ProcedureComponent,
+    ImmunizationComponent,
+    BinaryTextComponent,
+    HtmlComponent,
+    ImgComponent,
+    PdfComponent,
+    MarkdownComponent,
+    DicomComponent,
+    BinaryComponent,
+    GridstackComponent,
+    GridstackItemComponent,
+
   ],
   declarations: [
     ComponentsSidebarComponent,
@@ -119,31 +145,15 @@ import { GlossaryLookupComponent } from './glossary-lookup/glossary-lookup.compo
     ReportMedicalHistoryEditorComponent,
     ReportMedicalHistoryConditionComponent,
     ReportLabsObservationComponent,
-    LoadingSpinnerComponent,
-    BinaryComponent,
-    PdfComponent,
-    ImgComponent,
-    BinaryTextComponent,
-    MarkdownComponent,
-    HtmlComponent,
+
     FhirResourceComponent,
     FhirResourceOutletDirective,
     FallbackComponent,
-    ImmunizationComponent,
-    BadgeComponent,
-    TableComponent,
-    CodingComponent,
-    AllergyIntoleranceComponent,
-    MedicationComponent,
-    MedicationRequestComponent,
-    ProcedureComponent,
     DiagnosticReportComponent,
-    PractitionerComponent,
     NlmTypeaheadComponent,
     DocumentReferenceComponent,
-    GlossaryLookupComponent,
-    DicomComponent,
     MediaComponent,
+    ReportMedicalHistoryExplanationOfBenefitComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -178,25 +188,36 @@ import { GlossaryLookupComponent } from './glossary-lookup/glossary-lookup.compo
         ReportHeaderComponent,
         ReportMedicalHistoryEditorComponent,
         ReportMedicalHistoryConditionComponent,
+        ReportMedicalHistoryExplanationOfBenefitComponent,
         ReportLabsObservationComponent,
-        LoadingSpinnerComponent,
         BinaryComponent,
         FhirResourceComponent,
         FhirResourceOutletDirective,
         FallbackComponent,
         ImmunizationComponent,
-        BadgeComponent,
-        TableComponent,
-        CodingComponent,
-        AllergyIntoleranceComponent,
-        MedicationComponent,
         MedicationRequestComponent,
         ProcedureComponent,
         DiagnosticReportComponent,
         PractitionerComponent,
         NlmTypeaheadComponent,
         DocumentReferenceComponent,
-      GlossaryLookupComponent
+
+      //standalone components
+      BadgeComponent,
+      TableComponent,
+      CodingComponent,
+      LoadingSpinnerComponent,
+      GlossaryLookupComponent,
+      AllergyIntoleranceComponent,
+      MedicationComponent,
+      MedicationRequestComponent,
+      PractitionerComponent,
+      ProcedureComponent,
+      ImmunizationComponent,
+      BinaryComponent,
+      GridstackComponent,
+      GridstackItemComponent,
+
     ]
 })
 

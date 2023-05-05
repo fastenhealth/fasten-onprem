@@ -4,6 +4,8 @@ import { SourceDetailComponent } from './source-detail.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {ActivatedRoute, convertToParamMap, RouterModule} from '@angular/router';
+import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
+import {HttpClient} from '@angular/common/http';
 
 describe('SourceDetailComponent', () => {
   let component: SourceDetailComponent;
@@ -17,7 +19,11 @@ describe('SourceDetailComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {snapshot: {paramMap: convertToParamMap( { 'source_id': 'b64.c291cmNlOmF0aGVuYTphLTgwMDAwLkUtMTQ1NDU' } )}}
-        }
+        },
+        {
+          provide: HTTP_CLIENT_TOKEN,
+          useClass: HttpClient,
+        },
       ]
     })
     .compileComponents();

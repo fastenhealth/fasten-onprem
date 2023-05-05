@@ -31,165 +31,77 @@
         </nav>
 
         <nav class="nav">
-          <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-save"></i> Save Report</a>
-          <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-file-pdf"></i> Export to PDF</a>
-          <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-envelope"></i>Send to Email</a>
-          <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="fas fa-ellipsis-h"></i></a>
+          <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-save"></i> Export</a>
+          <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-file-pdf"></i> Create</a>
+          <a class="nav-link" (click)="toggleEditableGrid()"><i class="fas fa-edit"></i> Edit </a>
+          <a class="nav-link"><i class="fas fa-ellipsis"></i></a>
         </nav>
       </div>
 
-      <!-- Summary Cards -->
-      <div class="row row-sm">
-        <div class="col-md-4 col-lg-4 mg-b-20 mg-md-b-0 mg-lg-b-20">
-          <div class="card card-dashboard-five">
-            <div class="card-header">
-              <h6 class="card-title">Medical Records</h6>
-              <span class="card-text">Summary of medical encounters and records stored in Fasten</span>
-            </div><!-- card-header -->
-            <div class="card-body row row-sm">
-              <div class="col-6 d-sm-flex align-items-center">
-                <div class="card-chart bg-primary">
-                  <canvas baseChart class="w-50" [chartType]="'bar'" [datasets]="acquisitionOneChartData" [labels]="acquisitionOneChartLabels" [options]="acquisitionOneChartOptions" [colors]="acquisitionOneChartColors"></canvas>
-                </div>
-                <div>
-                  <label>Encounters</label>
-                  <h4>{{encounterCount}}</h4>
-                </div>
-              </div><!-- col -->
-              <div class="col-6 d-sm-flex align-items-center">
-                <div class="card-chart bg-purple">
-                  <canvas baseChart class="w-50" [chartType]="'bar'" [datasets]="acquisitionTwoChartData" [labels]="acquisitionTwoChartLabels" [options]="acquisitionTwoChartOptions" [colors]="acquisitionTwoChartColors"></canvas>
-                </div>
-                <div>
-                  <label>All Records</label>
-                  <h4>{{recordsCount}}</h4>
-                </div>
-              </div><!-- col -->
-            </div><!-- card-body -->
-          </div><!-- card-dashboard-five -->
-        </div><!-- col -->
-        <div class="col-md-4 col-lg-4">
-          <div class="card card-dashboard-five">
-            <div class="card-header">
-              <h6 class="card-title">Sources</h6>
-              <span class="card-text"> A source is a medical provider, hospital or insurance company that Fasten can import your data from</span>
-            </div><!-- card-header -->
-            <div class="card-body row row-sm">
-              <div class="col-6">
-                <div class="d-flex align-items-center">
-                  <div class="mg-b-10 mg-sm-b-0 mg-sm-r-10 wd-50">
-                    <canvas baseChart [chartType]="'doughnut'" [datasets]="sessionsChartOneData" [labels]="sessionsChartOneLabels" [options]="sessionsChartOneOptions" height="45"></canvas>
-                  </div>
-                  <div>
-                    <label>Sources</label>
-                    <h4>{{sources.length}}</h4>
-                  </div>
-                </div>
-              </div><!-- col -->
-              <div class="col-6 d-flex align-items-center">
-                <div class="d-flex align-items-center">
-                  <div class="mg-b-10 mg-sm-b-0 mg-sm-r-10 wd-50">
-                    <canvas baseChart [chartType]="'doughnut'" [datasets]="sessionsChartTwoData" [labels]="sessionsChartTwoLabels" [options]="sessionsChartTwoOptions" height="45"></canvas>
-                  </div>
-                  <div>
-                    <label>Updates</label>
-                    <h4>19</h4>
-                  </div>
-                </div>
-              </div><!-- col -->
-            </div><!-- card-body -->
-          </div><!-- card-dashboard-five -->
-        </div><!-- col -->
-      </div><!-- row -->
+      <div class="row mt-5 mb-3">
+        <div class="col-12">
 
-      <div *ngIf="!loading else isLoadingTemplate" class="card card-dashboard-seven">
-        <div class="card-header">
-          <div class="row row-sm">
-            <div class="col-6 col-md-4 col-xl">
-              <div class="media">
-                <div ><fa-icon [icon]="['fas', 'calendar']"></fa-icon></div>
-                <div class="media-body"><label >Start Date</label>
-                  <div class="date"><span >Sept 01, 2018</span>
-                    <a ngbTooltip="not yet implemented"><fa-icon [icon]="['fas', 'caret-down']"></fa-icon></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-6 col-md-4 col-xl">
-              <div class="media">
-                <div ><fa-icon [icon]="['fas', 'calendar']"></fa-icon></div>
-                <div class="media-body"><label >End Date</label>
-                  <div class="date"><span >Sept 30, 2018</span><a ngbTooltip="not yet implemented"><fa-icon [icon]="['fas', 'caret-down']"></fa-icon></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-6 col-md-4 col-xl mg-t-15 mg-md-t-0">
-              <div class="media">
-                <div ><fa-icon [icon]="['fas', 'hospital']"></fa-icon></div>
-                <div class="media-body"><label >Source Type</label>
-                  <div class="date"><span >All</span><a ngbTooltip="not yet implemented"><fa-icon [icon]="['fas', 'caret-down']"></fa-icon></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+          <div class="alert alert-warning" role="alert">
+            <strong>Warning!</strong> Fasten Health is in the process of implementing a customizable widget based dashboard.
+            <br/>
+            <ul>
+              <li>Users will be able to add, remove, and re-organize widgets on their dashboard.</li>
+              <li>Users will be able to create multiple dashboards, and switch between them.</li>
+              <li>Users will be able to share their dashboards with other users.</li>
+            </ul>
+            <br/>
+            <strong>This functionality is not yet available</strong>, but this example dashboard below will give you a sense of what this may look like. This dashboard only contains placeholder data.
           </div>
-        </div>
-        <div class="card-body">
-          <div *ngIf="sources.length; else emptyDashboard" class="table-responsive">
-            <table class="table mg-b-0">
-              <tbody>
-              <tr *ngFor="let source of sources" (click)="selectSource(source)" class="alert cursor-pointer" role="alert">
-                <td class="align-middle">
-                  <div class="media">
-                    <img [src]="'assets/sources/'+source.source_type+'.png'"
-                         alt="{{source.source_type}}"
-                         class="mr-3"
-                         style="width:100px;">
-                    <div class="media-body">
-                      <h5>{{metadataSource[source.source_type]?.display}}</h5>
-                      <p>
-                        {{getPatientSummary(patientForSource[source.id]?.resource_raw)}}
-                      </p>
-
-                    </div>
-                  </div>
-                </td>
-                <td class="align-middle"><p><small class="tx-gray-600">status:</small><br/> {{isActive(source)}}</p></td>
-                <td class="align-middle"><p><small class="tx-gray-600">last updated:</small><br/> <span [ngbTooltip]="source.updated_at | date">{{source.updated_at | amTimeAgo}}</span></p></td>
-                <td class="align-middle"><p><small class="tx-gray-600">expires:</small><br/> <span [ngbTooltip]="source.expires_at | amFromUnix | date">{{source.expires_at | amFromUnix | amTimeAgo}}</span></p></td>
-                <td class="align-middle"><p><i class="fas fa-chevron-right"></i></td>
-              </tr>
-              </tbody>
-            </table>
-          </div><!-- table-responsive -->
-
-          <ng-template #emptyDashboard>
-            <div class="modal-body tx-center pd-y-20 pd-x-20">
-              <h4 class="tx-purple mg-b-20">No Sources Connected!</h4>
-              <p class="mg-b-20 mg-x-20">
-                Fasten securely connects your healthcare providers together, creating a single location to access your entire medical history.
-              </p>
-              <p class="mg-b-20 mg-x-20">
-                Click below to add a new healthcare provider to Fasten.
-              </p>
-              <button [routerLink]="'/sources'" type="button" class="btn btn-purple pd-x-25">Add Source</button>
-            </div><!-- modal-body -->
-          </ng-template>
-
-
-
         </div>
       </div>
 
-      <ng-template #isLoadingTemplate>
-        <div class="row">
-          <div class="col-12">
-            <app-loading-spinner [loadingTitle]="'Please wait, loading sources...'"></app-loading-spinner>
-          </div>
-        </div>
-      </ng-template>
+      <gridstack id="gridstack" #gridComp [options]="gridOptions">
+        <gridstack-item class="grid-stack-item" gs-w="8" gs-h="5" gs-x="0" gs-y="0">
+          <app-complex-line-widget></app-complex-line-widget>
+        </gridstack-item>
+
+
+        <gridstack-item class="grid-stack-item" gs-w="2" gs-h="2" gs-x="8" gs-y="0">
+          <app-simple-line-chart-widget></app-simple-line-chart-widget>
+        </gridstack-item>
+
+        <gridstack-item class="grid-stack-item" gs-w="2" gs-h="2" gs-x="10" gs-y="0">
+          <app-simple-line-chart-widget></app-simple-line-chart-widget>
+        </gridstack-item>
+
+        <gridstack-item class="grid-stack-item" gs-w="4" gs-h="3" gs-x="8" gs-y="2">
+          <app-grouped-bar-chart-widget></app-grouped-bar-chart-widget>
+        </gridstack-item>
+
+        <gridstack-item class="grid-stack-item" gs-w="4" gs-h="5" gs-x="0" gs-y="5">
+          <app-patient-vitals-widget></app-patient-vitals-widget>
+        </gridstack-item>
+
+        <gridstack-item class="grid-stack-item" gs-w="8" gs-h="5" gs-x="4" gs-y="5">
+          <app-donut-chart-widget></app-donut-chart-widget>
+        </gridstack-item>
+
+        <gridstack-item class="grid-stack-item" gs-w="4" gs-h="2" gs-x="0" gs-y="10">
+          <app-dual-gauges-widget></app-dual-gauges-widget>
+        </gridstack-item>
+
+        <gridstack-item class="grid-stack-item" gs-w="8" gs-h="4" gs-x="4" gs-y="10">
+          <app-table-widget></app-table-widget>
+        </gridstack-item>
+
+
+        <gridstack-item *ngFor="let item of dashboardItems" class="grid-stack-item"
+                        [attr.gs-w]="item.width"
+                        [attr.gs-h]="item.height"
+                        [attr.gs-x]="item.x"
+                        [attr.gs-y]="item.y"
+                        [attr.gs-min-w]="item.minWidth"
+                        [attr.gs-min-h]="item.minHeight"
+        >
+          <app-dashboard-widget [widgetConfig]="item"></app-dashboard-widget>
+        </gridstack-item>
+      </gridstack>
+
 
     </div><!-- az-content-body -->
   </div>

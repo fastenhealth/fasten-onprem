@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import { Router } from '@angular/router';
@@ -17,13 +17,14 @@ import {ResourceAssociation} from '../models/fasten/resource_association';
 import {ValueSet} from 'fhir/r4';
 import {AttachmentModel} from '../../lib/models/datatypes/attachment-model';
 import {BinaryModel} from '../../lib/models/resources/binary-model';
+import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
 
 @Injectable({
   providedIn: 'root'
 })
 export class FastenApiService {
 
-  constructor(private _httpClient: HttpClient,  private router: Router, private authService: AuthService) {
+  constructor(@Inject(HTTP_CLIENT_TOKEN) private _httpClient: HttpClient,  private router: Router, private authService: AuthService) {
   }
 
   /*

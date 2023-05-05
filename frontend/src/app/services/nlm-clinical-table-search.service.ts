@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {CodingModel} from '../../lib/models/datatypes/coding-model';
+import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
 
 export interface NlmSearchResults {
   id: string
@@ -40,7 +41,7 @@ export class NlmClinicalTableSearchService {
 
 
   //TODO: these endpoints should be proxied via the Fasten server
-  constructor(private _httpClient: HttpClient) {
+  constructor(@Inject(HTTP_CLIENT_TOKEN) private _httpClient: HttpClient) {
   }
 
 

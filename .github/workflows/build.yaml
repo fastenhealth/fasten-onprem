@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: "Populate frontend version information"
+        run: "cd frontend && ./git.version.sh"
       - name: Set up depot.dev multi-arch runner
         uses: depot/setup-action@v1
       # Login against a Docker registry except on PR

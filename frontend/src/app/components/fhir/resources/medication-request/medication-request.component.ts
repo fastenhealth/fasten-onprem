@@ -3,8 +3,14 @@ import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router} from '@angular/router';
 import {MedicationRequestModel} from '../../../../../lib/models/resources/medication-request-model';
+import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
+import {CommonModule} from "@angular/common";
+import {BadgeComponent} from "../../common/badge/badge.component";
+import {TableComponent} from "../../common/table/table.component";
 
 @Component({
+  standalone: true,
+  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent],
   selector: 'fhir-medication-request',
   templateUrl: './medication-request.component.html',
   styleUrls: ['./medication-request.component.scss']
@@ -12,6 +18,10 @@ import {MedicationRequestModel} from '../../../../../lib/models/resources/medica
 export class MedicationRequestComponent implements OnInit, FhirResourceComponentInterface {
   @Input() displayModel: MedicationRequestModel | null
   @Input() showDetails: boolean = true
+  //these are used to populate the description of the resource. May not be available for all resources
+  resourceCode?: string;
+  resourceCodeSystem?: string;
+
   isCollapsed: boolean = false
 
   tableData: TableRowItem[] = []
@@ -19,6 +29,9 @@ export class MedicationRequestComponent implements OnInit, FhirResourceComponent
   constructor(public changeRef: ChangeDetectorRef, public router: Router) {}
 
   ngOnInit(): void {
+
+    this.resourceCode = this.displayModel?.medication_codeable_concept?.code
+    this.resourceCodeSystem = this.displayModel?.medication_codeable_concept?.system
 
     this.tableData = [
       {

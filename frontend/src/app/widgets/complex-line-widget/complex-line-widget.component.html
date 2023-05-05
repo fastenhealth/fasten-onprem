@@ -1,0 +1,37 @@
+<div class="card card-dashboard-one h-100">
+  <div class="card-header">
+    <div>
+      <h6 class="card-title">Diabetes Tracking</h6>
+      <p class="card-text">Track key metrics for your chronic disease (eg. Diabetes)</p>
+    </div>
+    <div class="btn-group">
+      <button class="btn active">Day</button>
+      <button class="btn">Week</button>
+      <button class="btn">Month</button>
+    </div>
+  </div><!-- card-header -->
+  <div class="card-body">
+    <div class="card-body-top">
+      <div>
+        <label class="mg-b-0">Blood Glucose PP</label>
+        <h2>140 mg/dl</h2>
+      </div>
+      <div>
+        <label class="mg-b-0">Blood Glucose Fasting</label>
+        <h2>140 mg/dl</h2>
+      </div>
+      <div>
+        <label class="mg-b-0">Calories Consumed</label>
+        <h2>1400 kCal</h2>
+      </div>
+      <div>
+        <label class="mg-b-0">Calories Burned</label>
+        <h2>840 kCal</h2>
+      </div>
+    </div><!-- card-body-top -->
+    <div class="page-view-chart-wrapper">
+      <canvas baseChart [chartType]="'line'" [datasets]="pageViewChartData" [labels]="pageViewChartLabels" [options]="pageViewChartOptions" [colors]="pageViewChartColors"></canvas>
+    </div>
+    <!-- flot-chart-wrapper -->
+  </div><!-- card-body -->
+</div><!-- card -->

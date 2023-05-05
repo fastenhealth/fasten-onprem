@@ -4,8 +4,14 @@ import {ImmunizationModel} from '../../../../../lib/models/resources/immunizatio
 import {TableRowItem} from '../../common/table/table-row-item';
 import {Router} from '@angular/router';
 import {PractitionerModel} from '../../../../../lib/models/resources/practitioner-model';
+import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
+import {CommonModule} from "@angular/common";
+import {BadgeComponent} from "../../common/badge/badge.component";
+import {TableComponent} from "../../common/table/table.component";
 
 @Component({
+  standalone: true,
+  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent],
   selector: 'app-practitioner',
   templateUrl: './practitioner.component.html',
   styleUrls: ['./practitioner.component.scss']

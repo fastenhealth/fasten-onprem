@@ -62,18 +62,25 @@ export class SourceDetailComponent implements OnInit {
       telecom => telecom.system === 'email',
     )[0]?.value
   }
-  getPatientDOB(){
+  getPatientDOB(): string | number {
     return getPath(this.selectedPatient?.resource_raw, 'birthDate')
-
+  }
+  getPatientAge(){
+    // Can return NaN or a valid integer
+    var msInYear = 365 * 24 * 60 * 60 * 1000;
+    var patientDOB = this.getPatientDOB();
+    if (patientDOB == null) { return NaN; }
+    if (typeof patientDOB === 'string') {
+      patientDOB = Date.parse(patientDOB);
+    }
+    var age = Date.now() - patientDOB;
+    return Math.floor(age / msInYear);
   }
   getPatientPhone(){
     // @ts-ignore
     return (this.selectedPatient?.resource_raw?.telecom || []).filter(
       telecom => telecom.system === 'phone',
     )[0]?.value
-  }
-  getPatientAge(){
-    return ''
   }
   getPatientAddress(){
     const line = getPath(this.selectedPatient?.resource_raw, 'address.0.line')

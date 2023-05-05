@@ -21,6 +21,9 @@ describe('DiagnosticReportModel', () => {
         { system: 'http://snomed.info/sct', code: '252275004', display: 'Haematology test' },
         { system: 'http://hl7.org/fhir/v2/0074', code: 'HM' }
       ]
+      expected.code_coding =  [
+        { system: 'http://loinc.org', code: '58410-2', display: 'Complete blood count (hemogram) panel - Blood by Automated count' }
+      ]
       expected.has_category_coding = true
       expected.has_performer = true
       expected.conclusion = 'Core lab'

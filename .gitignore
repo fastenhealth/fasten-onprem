@@ -60,3 +60,4 @@ test.go
 /.couchdb
 
 config.dev.yaml
+.cache/

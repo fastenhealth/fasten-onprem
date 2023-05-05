@@ -10,8 +10,7 @@ describe('ProcedureComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProcedureComponent ],
-      imports: [NgbCollapseModule],
+      imports: [ProcedureComponent, NgbCollapseModule],
       providers: [RouterTestingModule]
 
     })

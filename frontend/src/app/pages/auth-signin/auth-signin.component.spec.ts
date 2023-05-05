@@ -5,6 +5,8 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {RouterModule} from '@angular/router';
 import {FormsModule} from '@angular/forms';
+import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
+import {HttpClient} from '@angular/common/http';
 
 describe('AuthSigninComponent', () => {
   let component: AuthSigninComponent;
@@ -14,6 +16,12 @@ describe('AuthSigninComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ AuthSigninComponent ],
       imports: [HttpClientTestingModule, FormsModule, RouterTestingModule],
+      providers: [
+        {
+          provide: HTTP_CLIENT_TOKEN,
+          useClass: HttpClient,
+        },
+      ]
     })
     .compileComponents();
 
