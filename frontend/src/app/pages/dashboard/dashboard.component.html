@@ -38,7 +38,24 @@
         </nav>
       </div>
 
-      <gridstack #gridComp [options]="gridOptions">
+      <div class="row mt-5 mb-3">
+        <div class="col-12">
+
+          <div class="alert alert-warning" role="alert">
+            <strong>Warning!</strong> Fasten Health is in the process of implementing a customizable widget based dashboard.
+            <br/>
+            <ul>
+              <li>Users will be able to add, remove, and re-organize widgets on their dashboard.</li>
+              <li>Users will be able to create multiple dashboards, and switch between them.</li>
+              <li>Users will be able to share their dashboards with other users.</li>
+            </ul>
+            <br/>
+            <strong>This functionality is not yet available</strong>, but this example dashboard below will give you a sense of what this may look like.
+          </div>
+        </div>
+      </div>
+
+      <gridstack id="gridstack" #gridComp [options]="gridOptions">
         <gridstack-item class="grid-stack-item" gs-w="8" gs-h="5" gs-x="0" gs-y="0">
           <app-complex-line-widget></app-complex-line-widget>
         </gridstack-item>
