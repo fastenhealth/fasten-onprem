@@ -8,7 +8,7 @@ describe('PatientVitalsWidgetComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PatientVitalsWidgetComponent ]
+      imports: [ PatientVitalsWidgetComponent ]
     })
     .compileComponents();
 

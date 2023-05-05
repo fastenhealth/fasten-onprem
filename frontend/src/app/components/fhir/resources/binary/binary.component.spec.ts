@@ -14,8 +14,7 @@ describe('BinaryComponent', () => {
     mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['getBinaryModel'])
 
     await TestBed.configureTestingModule({
-      declarations: [ BinaryComponent ],
-      imports: [NgbCollapseModule, RouterTestingModule],
+      imports: [BinaryComponent, NgbCollapseModule, RouterTestingModule],
       providers: [{
         provide: FastenApiService,
         useValue: mockedFastenApiService

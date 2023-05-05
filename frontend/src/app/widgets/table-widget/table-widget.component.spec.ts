@@ -8,7 +8,7 @@ describe('TableWidgetComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TableWidgetComponent ]
+      imports: [ TableWidgetComponent ]
     })
     .compileComponents();
 

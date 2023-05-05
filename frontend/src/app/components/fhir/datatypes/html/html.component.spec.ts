@@ -8,7 +8,7 @@ describe('HtmlComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HtmlComponent ]
+      imports: [ HtmlComponent ]
     })
     .compileComponents();
 

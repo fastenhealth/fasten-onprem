@@ -8,7 +8,7 @@ describe('ComplexLineWidgetComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ComplexLineWidgetComponent ]
+      imports: [ ComplexLineWidgetComponent ]
     })
     .compileComponents();
 

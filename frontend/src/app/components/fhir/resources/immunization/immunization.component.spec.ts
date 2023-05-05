@@ -9,8 +9,7 @@ describe('ImmunizationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ImmunizationComponent ],
-      imports: [NgbCollapseModule]
+      imports: [ImmunizationComponent, NgbCollapseModule]
 
     })
     .compileComponents();

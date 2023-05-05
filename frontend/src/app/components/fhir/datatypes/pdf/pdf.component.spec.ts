@@ -8,7 +8,7 @@ describe('PdfComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PdfComponent ]
+      imports: [ PdfComponent ]
     })
     .compileComponents();
 

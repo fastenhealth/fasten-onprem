@@ -8,7 +8,7 @@ describe('DicomComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DicomComponent ]
+      imports: [ DicomComponent ]
     })
     .compileComponents();
 

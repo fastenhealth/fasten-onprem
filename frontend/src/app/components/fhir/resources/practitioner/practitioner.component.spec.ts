@@ -9,8 +9,7 @@ describe('PractitionerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PractitionerComponent ],
-      imports: [NgbCollapseModule]
+      imports: [PractitionerComponent, NgbCollapseModule]
 
     })
     .compileComponents();

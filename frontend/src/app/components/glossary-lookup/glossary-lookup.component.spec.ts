@@ -13,7 +13,7 @@ describe('GlossaryLookupComponent', () => {
     mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['getGlossarySearchByCode'])
 
     await TestBed.configureTestingModule({
-      declarations: [ GlossaryLookupComponent ],
+      imports: [ GlossaryLookupComponent ],
       providers: [{
         provide: FastenApiService,
         useValue: mockedFastenApiService

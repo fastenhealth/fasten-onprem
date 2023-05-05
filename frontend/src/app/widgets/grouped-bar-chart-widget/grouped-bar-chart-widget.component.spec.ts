@@ -8,7 +8,7 @@ describe('GroupedBarChartWidgetComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GroupedBarChartWidgetComponent ]
+      imports: [ GroupedBarChartWidgetComponent ]
     })
     .compileComponents();
 

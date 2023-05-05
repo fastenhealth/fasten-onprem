@@ -8,7 +8,7 @@ describe('DonutChartWidgetComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DonutChartWidgetComponent ]
+      imports: [ DonutChartWidgetComponent ]
     })
     .compileComponents();
 

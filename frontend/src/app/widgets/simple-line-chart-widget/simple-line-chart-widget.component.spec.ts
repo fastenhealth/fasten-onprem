@@ -8,7 +8,7 @@ describe('SimpleLineChartWidgetComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SimpleLineChartWidgetComponent ]
+      imports: [ SimpleLineChartWidgetComponent ]
     })
     .compileComponents();
 

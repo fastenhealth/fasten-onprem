@@ -8,7 +8,7 @@ describe('DualGaugesWidgetComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DualGaugesWidgetComponent ]
+      imports: [ DualGaugesWidgetComponent ]
     })
     .compileComponents();
 
