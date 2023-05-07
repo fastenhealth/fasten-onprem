@@ -18,4 +18,20 @@ export class LighthouseSourceSearch {
       _source: MetadataSource;
     }[];
   };
+  aggregations: {
+    by_platform_type: {
+      sum_other_doc_count: number;
+      buckets: {
+        key: string;
+        doc_count: number;
+      }[]
+    },
+    by_category: {
+      sum_other_doc_count: number;
+      buckets: {
+        key: string;
+        doc_count: number;
+      }[]
+    }
+  }
 }
