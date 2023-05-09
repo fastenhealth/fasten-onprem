@@ -74,7 +74,6 @@ export class MedicalSourcesComponent implements OnInit {
     private lighthouseApi: LighthouseService,
     private fastenApi: FastenApiService,
     private activatedRoute: ActivatedRoute,
-    private router: Router,
     private location: Location,
     private toastService: ToastService,
     private filterService: MedicalSourcesFilterService,
@@ -83,13 +82,6 @@ export class MedicalSourcesComponent implements OnInit {
 
   ngOnInit(): void {
 
-    //changing the form, should change the URL, BUT NOT do a query
-    this.filterForm.valueChanges.pipe(debounceTime(100)).subscribe(val => {
-      console.log("FILTER FORM CHANGED:", val, this.filterService.toQueryParams())
-
-      // change the browser url whenever the filter is updated.
-      this.updateBrowserUrl(this.filterService.toQueryParams())
-    })
 
     //TODO: handle Callbacks from the source connect window
     const callbackSourceType = this.activatedRoute.snapshot.paramMap.get('source_type')
@@ -112,6 +104,7 @@ export class MedicalSourcesComponent implements OnInit {
           this.availableSourceList = []
           this.resultLimits.totalItems = 0
           this.resultLimits.scrollComplete = false
+          this.filterService.resetControl("categories")
           // this.filterService.filterForm.setControl("categories", this.{: {}}, { emitEvent: false})
 
           //update the form with data from route (don't emit a new patch event), then submit query
@@ -189,11 +182,6 @@ export class MedicalSourcesComponent implements OnInit {
         }
       });
 
-  }
-
-  updateBrowserUrl(queryParams: {[name: string]: string}){
-    console.log("update the browser url with query params data", queryParams)
-    this.router.navigate(['/sources'], { queryParams: queryParams })
   }
 
   private querySources(filter?: MedicalSourcesFilter): Observable<LighthouseSourceSearch> {
