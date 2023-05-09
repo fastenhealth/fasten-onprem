@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {debounceTime} from 'rxjs/operators';
+import {Router} from '@angular/router';
 
 
 export class MedicalSourcesFilter {
@@ -25,7 +27,28 @@ export class MedicalSourcesFilterService {
     showHidden: [false],
   })
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router,
+  ) {
+
+    //changing the form, should change the URL, BUT NOT do a query
+    this.filterForm.valueChanges.pipe(debounceTime(100)).subscribe(val => {
+      console.log("FILTER FORM CHANGED:", val, this.toQueryParams())
+
+      // change the browser url whenever the filter is updated.
+      this.updateBrowserUrl(this.toQueryParams())
+    })
+  }
+
+  updateBrowserUrl(queryParams: {[name: string]: string}){
+    console.log("update the browser url with query params data", queryParams)
+    this.router.navigate(['/sources'], { queryParams: queryParams })
+  }
+
+  resetControl(controlName: string){
+    this.filterForm.get(controlName).reset();
+  }
 
   //parse angular query string parameters
   parseQueryParams(queryParams: {[name:string]:string}){
