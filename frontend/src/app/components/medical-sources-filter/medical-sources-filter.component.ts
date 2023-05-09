@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {
+  LighthouseSourceSearchAggregation,
+} from '../../models/lighthouse/lighthouse-source-search';
+import {MedicalSourcesFilterService} from '../../services/medical-sources-filter.service';
 
 @Component({
   selector: 'app-medical-sources-filter',
@@ -7,9 +11,24 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MedicalSourcesFilterComponent implements OnInit {
 
-  constructor() { }
+  @Input() categories: LighthouseSourceSearchAggregation = {buckets: [], sum_other_doc_count: 0}
+  @Input() platformTypes: LighthouseSourceSearchAggregation = {buckets: [], sum_other_doc_count: 0}
+
+  constructor(
+    public filterService: MedicalSourcesFilterService,
+  ) { }
 
   ngOnInit(): void {
+
+  }
+
+  categorySelected(category: string){
+    console.log("SELECTED CATEGORY", category)
+    this.filterService.filterForm.patchValue({'categories': {[category]: true}})
+  }
+
+  bucketDocCount(aggregationData: LighthouseSourceSearchAggregation, key): number {
+    return aggregationData?.buckets?.find(bucket => bucket.key === key)?.doc_count
   }
 
 }

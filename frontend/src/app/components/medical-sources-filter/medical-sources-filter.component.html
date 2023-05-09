@@ -1,4 +1,4 @@
-<div class="az-content-left az-content-left-components sticky-top" style="position:sticky;">
+<div [formGroup]="filterService.filterForm" class="az-content-left az-content-left-components sticky-top" style="position:sticky;">
   <div class="component-item">
     <label>Connected</label>
     <nav class="nav flex-column">
@@ -6,12 +6,16 @@
       <a ngbTooltip="not yet implemented" routerLinkActive="active" class="nav-link">Manual</a>
     </nav>
     <label>Categories</label>
-    <nav class="nav flex-column">
-      <a ngbTooltip="not yet implemented" routerLinkActive="active" class="nav-link">Hospital Networks/Clinics</a>
-      <a ngbTooltip="not yet implemented" routerLinkActive="active" class="nav-link">Pharmacies</a>
-      <a ngbTooltip="not yet implemented" routerLinkActive="active" class="nav-link">Insurers</a>
-      <a ngbTooltip="not yet implemented" routerLinkActive="active" class="nav-link">Laboratories</a>
-      <a ngbTooltip="not yet implemented" routerLinkActive="active" class="nav-link">Wearables</a>
+    <nav formGroupName="categories" class="nav flex-column">
+
+      <div *ngFor="let category of filterService.filterForm.get('categories').value | keyvalue " class="switch-container">
+        <label class="switch text-nowrap">
+          <input type="checkbox" [formControlName]="category.key" [value]="category.value">
+          <span class="switch-button"></span><span class="category-label truncate  pl-1 pr-1">{{category.key | medicalSourcesCategoryLookup}}</span>
+          <span *ngIf="!filterService.filterForm.get('categories').get(category.key).value" class="badge badge-primary mr-1">{{bucketDocCount(categories, category.key)}}</span>
+        </label>
+
+      </div>
     </nav>
 
     <label>Industry</label>

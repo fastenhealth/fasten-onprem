@@ -1,6 +1,6 @@
 <div class="az-content">
   <div class="container">
-    <app-medical-sources-filter></app-medical-sources-filter>
+    <app-medical-sources-filter [categories]="resultLimits.categoryBuckets" [platformTypes]="resultLimits.platformTypesBuckets"></app-medical-sources-filter>
     <div class="az-content-body pd-lg-l-40 d-flex flex-column">
       <div class="az-content-breadcrumb">
         <span>Medical Sources</span>
@@ -23,29 +23,8 @@
         </span>
       </div>
 
+      <app-medical-sources-connected></app-medical-sources-connected>
 
-      <h2 class="az-content-title">Connected Sources</h2>
-
-      <div *ngIf="!loading else isLoadingTemplate" class="row">
-        <div *ngFor="let sourceInfo of connectedSourceList" class="col-sm-3 mg-b-20 px-3">
-          <div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer">
-            <div (click)="openModal(contentModalRef, sourceInfo)" class="card-body">
-
-              <div class="h-100 d-flex align-items-center">
-                <img [src]="'assets/sources/'+(sourceInfo.metadata.brand_logo ? sourceInfo.metadata.brand_logo : sourceInfo.metadata.source_type+'.png')" [alt]="sourceInfo?.metadata.display" class="img-fluid">
-              </div>
-              <div *ngIf="status[sourceInfo.metadata?.source_type]" class="progress">
-                <div [style.width]="status[sourceInfo?.metadata?.source_type] == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
-              </div>
-            </div>
-            <div class="card-footer text-center p-1" style="width:100%">
-              <small class="tx-gray-700">
-                {{sourceInfo?.metadata.display}}
-              </small>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <h2 class="az-content-title mg-t-40">Medical Record Sources</h2>
 
@@ -76,9 +55,9 @@
             <div class="input-group-prepend">
               <span class="input-group-text" id="search-prefix">Search</span>
             </div>
-            <input (keyup)="searchTermUpdate.next($event.target.value)" type="text" class="form-control" placeholder="Search Term">
+            <input [ngModel]="searchTermUpdate | async" (keyup)="searchTermUpdate.next($event.target.value)" type="text" class="form-control" placeholder="Search Term">
             <div class="input-group-append">
-              <span class="input-group-text">{{this.availableSourceList.length}} of {{this.totalAvailableSourceList}} results</span>
+              <span class="input-group-text">{{this.availableSourceList.length}} of {{this.resultLimits.totalItems}} results</span>
             </div>
 
           </div><!-- input-group -->
@@ -86,7 +65,7 @@
       </div>
 
 
-      <div *ngIf="!loading else isLoadingTemplate" class="row row-sm"
+      <div *ngIf="!loading || availableSourceList.length > 0 else isLoadingTemplate" class="row row-sm"
            infiniteScroll
            [infiniteScrollDistance]="2"
            [infiniteScrollThrottle]="50"
@@ -115,32 +94,6 @@
     </div><!-- az-content-body -->
   </div><!-- container -->
 </div><!-- az-content -->
-
-<ng-template #contentModalRef let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">{{modalSelectedSourceListItem?.metadata["display"]}}</h4>
-    <button type="button" class="btn btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">×</span>
-    </button>
-  </div>
-
-  <div class="modal-body">
-    <h6>Manage Source</h6>
-    <p>Existing connections can be "Synced", "Reconnected" or "Deleted"</p>
-    <ul>
-      <li><p><strong>Sync</strong> - Download all resources from this healthcare provider, storing them securely in Fasten</p></li>
-      <li><p><strong>Reconnect</strong> - If your healthcare connection has expired, you can use this button to reconnect</p></li>
-      <li><p><strong>Delete</strong> - Delete all resources for this healthcare provider. This will ONLY effect data stored in Fasten</p></li>
-    </ul>
-  </div>
-
-  <div class="modal-footer">
-    <button (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>
-    <button (click)="connectHandler($event, modalSelectedSourceListItem.source['source_type'])" type="button" class="btn btn-outline-light">Reconnect</button>
-    <button type="button" class="btn btn-outline-danger">Delete</button>
-    <button (click)="modal.dismiss('Close click')" type="button" class="btn btn-outline-light">Close</button>
-  </div>
-</ng-template>
 
 <ng-template #isLoadingTemplate>
   <div class="row">

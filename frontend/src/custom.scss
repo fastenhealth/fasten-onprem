@@ -214,3 +214,23 @@ app-nlm-typeahead {
     border-radius: 10px;
   }
 }
+
+//Medical Source Filter
+.category-label {
+  font-weight: 400
+}
+
+app-medical-sources-filter > .az-content-left-components {
+  overflow: hidden;
+  -webkit-transition: width 0.2s ease-in-out;
+  -moz-transition: width 0.2s ease-in-out;
+  -o-transition: width 0.2s ease-in-out;
+  transition: width 0.2s ease-in-out;
+}
+app-medical-sources-filter > .az-content-left-components:hover{
+  width: 100%;
+  -webkit-transition: width 0.2s ease-in-out;
+  -moz-transition: width 0.2s ease-in-out;
+  -o-transition: width 0.2s ease-in-out;
+  transition: width 0.2s ease-in-out;
+}
