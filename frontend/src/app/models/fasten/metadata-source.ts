@@ -1,8 +1,12 @@
 export class MetadataSource {
-  platform_type: string
+  aliases?: string[]
   brand_logo?: string
-  source_type: string
-  display: string
   category: string[]
+  display: string
   hidden: boolean
+  identifiers?: {[name:string]: string}
+  patient_access_description?: string
+  patient_access_url?: string
+  platform_type: string
+  source_type: string
 }

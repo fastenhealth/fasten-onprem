@@ -215,13 +215,20 @@ app-nlm-typeahead {
   }
 }
 
+//Medical Source Page
+.modal-header-media-image {
+  max-height: 50px;
+  max-width: 100px;
+}
+
+
 //Medical Source Filter
 .category-label {
   font-weight: 400
 }
 
 app-medical-sources-filter > .az-content-left-components {
-  overflow: hidden;
+  overflow-x: hidden;
   -webkit-transition: width 0.2s ease-in-out;
   -moz-transition: width 0.2s ease-in-out;
   -o-transition: width 0.2s ease-in-out;
