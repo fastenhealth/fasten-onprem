@@ -43,7 +43,7 @@ export class MedicalSourcesComponent implements OnInit {
 
   availableSourceList: SourceListItem[] = []
   searchTermUpdate = new BehaviorSubject<string>("");
-  status: { [name: string]: string } = {}
+  status: { [name: string]: undefined | "token" | "authorize" } = {}
 
   //aggregation/filter data & limits
   globalLimits: {
@@ -68,7 +68,12 @@ export class MedicalSourcesComponent implements OnInit {
 
 
   //source of truth for current state
+  //TODO: see if we can remove this without breaking search/filtering
   filterForm = this.filterService.filterForm;
+
+  //modal
+  modalSelectedSourceListItem:SourceListItem = null;
+  modalCloseResult = '';
 
   constructor(
     private lighthouseApi: LighthouseService,
@@ -77,7 +82,7 @@ export class MedicalSourcesComponent implements OnInit {
     private location: Location,
     private toastService: ToastService,
     private filterService: MedicalSourcesFilterService,
-
+    private modalService: NgbModal,
   ) { }
 
   ngOnInit(): void {
@@ -210,7 +215,7 @@ export class MedicalSourcesComponent implements OnInit {
       }))
 
       //change the current Page (but don't cause a new query)
-      if(wrapper.hits.hits.length == 0){
+      if(!wrapper?.hits || !wrapper?.hits || wrapper?.hits?.hits?.length == 0){
         console.log("SCROLL_COMPLETE!@@@@@@@@")
         this.resultLimits.scrollComplete = true;
       } else {
@@ -223,33 +228,33 @@ export class MedicalSourcesComponent implements OnInit {
         // }))
 
 
+        if(wrapper.aggregations){
+          this.resultLimits.platformTypesBuckets = wrapper.aggregations.by_platform_type;
+          this.resultLimits.categoryBuckets = wrapper.aggregations.by_category;
+          var currentCategories = this.filterForm.get('categories').value;
+          this.resultLimits.categoryBuckets.buckets.forEach((bucketData) => {
+            if(!currentCategories.hasOwnProperty(bucketData.key)){
+              (this.filterForm.get('categories') as FormGroup).addControl(bucketData.key, new FormControl(false))
+            }
+          })
 
-        this.resultLimits.platformTypesBuckets = wrapper.aggregations.by_platform_type;
-        this.resultLimits.categoryBuckets = wrapper.aggregations.by_category;
+          //
+          // this.resultLimits.categoryBuckets.forEach((bucketData) => {
+          //   if(!this.globalLimits.categories.some((category) => { return category.id === bucketData.key})){
+          //     this.globalLimits.categories.push({
+          //       id: bucketData.key,
+          //       name: bucketData.key,
+          //       group: 'custom'
+          //     })
+          //   }
+          // })
 
+          // const fileTypes = <FormGroup>this.filterForm.get('fileTypes');
+          // fileTypes.forEach((option: any) => {
+          //   checkboxes.addControl(option.title, new FormControl(true));
+          // });
+        }
 
-
-        var currentCategories = this.filterForm.get('categories').value;
-        this.resultLimits.categoryBuckets.buckets.forEach((bucketData) => {
-          if(!currentCategories.hasOwnProperty(bucketData.key)){
-            (this.filterForm.get('categories') as FormGroup).addControl(bucketData.key, new FormControl(false))
-          }
-        })
-        //
-        // this.resultLimits.categoryBuckets.forEach((bucketData) => {
-        //   if(!this.globalLimits.categories.some((category) => { return category.id === bucketData.key})){
-        //     this.globalLimits.categories.push({
-        //       id: bucketData.key,
-        //       name: bucketData.key,
-        //       group: 'custom'
-        //     })
-        //   }
-        // })
-
-        // const fileTypes = <FormGroup>this.filterForm.get('fileTypes');
-        // fileTypes.forEach((option: any) => {
-        //   checkboxes.addControl(option.title, new FormControl(true));
-        // });
         this.loading = false
       },
       error => {
@@ -264,6 +269,10 @@ export class MedicalSourcesComponent implements OnInit {
     return searchObservable;
   }
 
+
+  public onScroll(): void {
+    this.querySources()
+  }
 
   //OLD FUNCTIONS
   //
@@ -284,32 +293,49 @@ export class MedicalSourcesComponent implements OnInit {
   //   }))
   // }
   //
-  public onScroll(): void {
-    console.log("TODO: SCROLL, TRIGGER update")
-    this.querySources()
-  }
+
 
   // /**
-  //  * after pressing the logo (connectHandler button), this function will generate an authorize url for this source, and redirec the user.
+  //  * after pressing the logo (connectModalHandler button), this function will display a modal with information about the source
   //  * @param $event
   //  * @param sourceType
   //  */
-  public connectHandler($event: MouseEvent, sourceType: string):void {
+  public connectModalHandler(contentModalRef, sourceListItem: SourceListItem) :void {
     console.log("TODO: connect Handler")
-  //   ($event.currentTarget as HTMLButtonElement).disabled = true;
-  //   this.status[sourceType] = "authorize"
-  //
-  //   this.lighthouseApi.getLighthouseSource(sourceType)
-  //     .then(async (sourceMetadata: LighthouseSourceMetadata) => {
-  //       console.log(sourceMetadata);
-  //       let authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceType, sourceMetadata)
-  //
-  //       console.log('authorize url:', authorizationUrl.toString());
-  //       // redirect to lighthouse with uri's
-  //       this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceType, sourceMetadata.redirect_uri)
-  //
-  //     });
+
+
+    this.modalSelectedSourceListItem = sourceListItem
+    this.modalService.open(contentModalRef, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      this.modalSelectedSourceListItem = null
+      this.modalCloseResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.modalSelectedSourceListItem = null
+    });
   }
+
+  // /**
+  //  * after pressing the connect button in the Modal, this function will generate an authorize url for this source, and redirec the user.
+  //  * @param $event
+  //  * @param sourceType
+  //  */
+  public connectHandler($event, sourceListItem: SourceListItem): void {
+
+    ($event.currentTarget as HTMLButtonElement).disabled = true;
+    this.status[sourceListItem.metadata.source_type] = "authorize"
+
+    let sourceType = sourceListItem.metadata.source_type
+    this.lighthouseApi.getLighthouseSource(sourceType)
+      .then(async (sourceMetadata: LighthouseSourceMetadata) => {
+        console.log(sourceMetadata);
+        let authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceType, sourceMetadata)
+
+        console.log('authorize url:', authorizationUrl.toString());
+        // redirect to lighthouse with uri's
+        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceType, sourceMetadata.redirect_uri)
+      });
+  }
+
+
   //
   // /**
   //  * if the user is redirected to this page from the lighthouse, we'll need to process the "code" to retrieve the access token & refresh token.

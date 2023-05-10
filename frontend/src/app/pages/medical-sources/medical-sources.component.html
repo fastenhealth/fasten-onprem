@@ -71,21 +71,13 @@
            [infiniteScrollThrottle]="50"
            (scrolled)="onScroll()"
       >
-        <div *ngFor="let sourceData of availableSourceList" (click)="connectHandler($event, sourceData.metadata.source_type)" class="col-sm-3 mg-b-20 px-3">
-          <div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': sourceData.metadata.hidden}">
-            <div class="card-body d-flex align-items-center">
-              <img style="max-height: 130px;" [src]="'assets/sources/'+(sourceData.metadata.brand_logo ? sourceData.metadata.brand_logo : sourceData.metadata.source_type+'.png')" [alt]="sourceData.metadata.display" class="img-fluid">
-              <div *ngIf="status[sourceData.metadata.source_type]" class="progress">
-                <div [style.width]="status[sourceData.metadata.source_type] == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
-              </div>
-            </div>
-            <div class="card-footer text-center p-1" style="width:100%">
-              <small class="tx-gray-700">
-                {{sourceData.metadata.display}}
-              </small>
-            </div>
-          </div>
-        </div>
+
+        <app-medical-sources-card class="col-sm-3 mg-b-20 px-3"
+          *ngFor="let sourceData of availableSourceList"
+          [sourceInfo]="sourceData"
+          [status]="status[sourceData.metadata.source_type]"
+          (onClick)="connectModalHandler(contentModalRef, $event)"
+        ></app-medical-sources-card>
 
       </div><!-- row -->
 
@@ -94,6 +86,61 @@
     </div><!-- az-content-body -->
   </div><!-- container -->
 </div><!-- az-content -->
+
+
+<ng-template #contentModalRef let-modal>
+
+  <div class="modal-header">
+    <div class="media">
+      <img class="modal-header-media-image mg-sm-r-20 mg-b-20 mg-sm-b-0" [src]="'assets/sources/'+(modalSelectedSourceListItem?.metadata.brand_logo ? modalSelectedSourceListItem?.metadata?.brand_logo : modalSelectedSourceListItem?.metadata?.source_type+'.png')" [alt]="modalSelectedSourceListItem?.metadata?.display">
+      <div class="media-body">
+        <h6>{{modalSelectedSourceListItem?.metadata.display}}</h6>
+        <a *ngIf="modalSelectedSourceListItem?.metadata.patient_access_url"
+           [href]="modalSelectedSourceListItem.metadata?.patient_access_url"
+            target="_blank"
+           class="mg-b-0">{{modalSelectedSourceListItem?.metadata.patient_access_url}}</a>
+      </div><!-- media-body -->
+    </div><!-- media -->
+    <button type="button" class="btn btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <h6>Connect Source</h6>
+    <p>Would you like to connect this healthcare institution with Fasten Health? You will be redirected to their patient portal,
+      where you can authenticate and select data to import into Fasten Health.
+    </p>
+    <p>
+      If the data about this institution is missing or incorrect, you can <a class="link" href="https://docs.google.com/spreadsheets/d/1ZSgwfd7kwxSnimk4yofIFcR8ZMUls0zi9SZpRiOJBx0/edit?usp=sharing">click here</a> to submit a correction.
+    </p>
+
+    <ng-container *ngIf="modalSelectedSourceListItem?.metadata?.category?.length > 0 || modalSelectedSourceListItem?.metadata?.patient_access_description">
+      <hr/>
+      <ng-container *ngIf="modalSelectedSourceListItem?.metadata?.patient_access_description">
+        <h6>About this Source</h6>
+        <p >{{modalSelectedSourceListItem?.metadata?.patient_access_description}}</p>
+      </ng-container>
+      <ng-container *ngIf="modalSelectedSourceListItem?.metadata?.category?.length > 0">
+        <h6>Categories</h6>
+        <ul>
+          <li *ngFor="let cat of modalSelectedSourceListItem?.metadata?.category">{{cat | medicalSourcesCategoryLookup}}</li>
+        </ul>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <div class="modal-footer">
+<!--    <button (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>-->
+    <!--    <button (click)="connectHandler($event, modalSelectedSourceListItem.source['source_type'])" type="button" class="btn btn-outline-light">Reconnect</button>-->
+    <button type="button" (click)="connectHandler($event, modalSelectedSourceListItem)" class="btn btn-indigo">
+      <span *ngIf="status[modalSelectedSourceListItem?.metadata?.source_type] == 'authorize'" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      Connect
+    </button>
+    <button (click)="modal.dismiss('Close click')" type="button" class="btn btn-outline-light">Close</button>
+  </div>
+</ng-template>
+
 
 <ng-template #isLoadingTemplate>
   <div class="row">
