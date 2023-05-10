@@ -13,7 +13,7 @@ import {LighthouseService} from '../../services/lighthouse.service';
 })
 export class MedicalSourcesConnectedComponent implements OnInit {
   loading: boolean = false
-  status: { [name: string]: string } = {}
+  status: { [name: string]:  undefined | "token" | "authorize" } = {}
 
   modalSelectedSourceListItem:SourceListItem = null;
   modalCloseResult = '';

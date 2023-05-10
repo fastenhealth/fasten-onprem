@@ -74,6 +74,7 @@ import {GridstackItemComponent} from './gridstack/gridstack-item.component';
 import { MedicalSourcesFilterComponent } from './medical-sources-filter/medical-sources-filter.component';
 import { MedicalSourcesConnectedComponent } from './medical-sources-connected/medical-sources-connected.component';
 import { MedicalSourcesCategoryLookupPipe } from './medical-sources-filter/medical-sources-category-lookup.pipe';
+import { MedicalSourcesCardComponent } from './medical-sources-card/medical-sources-card.component';
 
 @NgModule({
   imports: [
@@ -160,6 +161,7 @@ import { MedicalSourcesCategoryLookupPipe } from './medical-sources-filter/medic
     MedicalSourcesFilterComponent,
     MedicalSourcesConnectedComponent,
     MedicalSourcesCategoryLookupPipe,
+    MedicalSourcesCardComponent,
   ],
   exports: [
     BinaryComponent,
@@ -208,6 +210,8 @@ import { MedicalSourcesCategoryLookupPipe } from './medical-sources-filter/medic
     ResourceListOutletDirective,
     ToastComponent,
     UtilitiesSidebarComponent,
+    MedicalSourcesCardComponent,
+    MedicalSourcesConnectedComponent,
 
     //standalone components
     BadgeComponent,
@@ -224,7 +228,7 @@ import { MedicalSourcesCategoryLookupPipe } from './medical-sources-filter/medic
     BinaryComponent,
     GridstackComponent,
     GridstackItemComponent,
-    MedicalSourcesConnectedComponent,
+    MedicalSourcesCategoryLookupPipe,
 
   ]
 })

@@ -1,24 +1,13 @@
 <h2 class="az-content-title">Connected Sources</h2>
 
 <div *ngIf="!loading else isLoadingTemplate" class="row">
-  <div *ngFor="let sourceInfo of connectedSourceList" class="col-sm-3 mg-b-20 px-3">
-    <div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer">
-      <div (click)="openModal(contentModalRef, sourceInfo)" class="card-body">
 
-        <div class="h-100 d-flex align-items-center">
-          <img [src]="'assets/sources/'+(sourceInfo.metadata.brand_logo ? sourceInfo.metadata.brand_logo : sourceInfo.metadata.source_type+'.png')" [alt]="sourceInfo?.metadata.display" class="img-fluid">
-        </div>
-        <div *ngIf="status[sourceInfo.metadata?.source_type]" class="progress">
-          <div [style.width]="status[sourceInfo?.metadata?.source_type] == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
-        </div>
-      </div>
-      <div class="card-footer text-center p-1" style="width:100%">
-        <small class="tx-gray-700">
-          {{sourceInfo?.metadata.display}}
-        </small>
-      </div>
-    </div>
-  </div>
+  <app-medical-sources-card class="col-sm-3 mg-b-20 px-3"
+                            *ngFor="let sourceData of connectedSourceList"
+                            [sourceInfo]="sourceData"
+                            [status]="status[sourceData.metadata.source_type]"
+                            (onClick)="openModal(contentModalRef, $event)"
+  ></app-medical-sources-card>
 </div>
 
 
@@ -43,7 +32,7 @@
   <div class="modal-footer">
     <button (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>
 <!--    <button (click)="connectHandler($event, modalSelectedSourceListItem.source['source_type'])" type="button" class="btn btn-outline-light">Reconnect</button>-->
-    <button type="button" class="btn btn-outline-danger">Delete</button>
+    <button type="button" class="btn disabled btn-outline-danger">Delete</button>
     <button (click)="modal.dismiss('Close click')" type="button" class="btn btn-outline-light">Close</button>
   </div>
 </ng-template>

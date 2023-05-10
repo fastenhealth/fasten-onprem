@@ -1,0 +1,16 @@
+<div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer">
+  <div (click)="onCardClick()" class="card-body">
+
+    <div class="h-100 d-flex align-items-center">
+      <img [src]="'assets/sources/'+(sourceInfo?.metadata.brand_logo ? sourceInfo?.metadata?.brand_logo : sourceInfo?.metadata?.source_type+'.png')" [alt]="sourceInfo?.metadata?.display" class="img-fluid">
+    </div>
+    <div *ngIf="status" class="progress">
+      <div [style.width]="status == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
+    </div>
+  </div>
+  <div class="card-footer text-center p-1" style="width:100%">
+    <small class="tx-gray-700">
+      {{sourceInfo?.metadata.display}}
+    </small>
+  </div>
+</div>
