@@ -7,15 +7,16 @@ import {MetadataSource} from '../../models/fasten/metadata-source';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute} from '@angular/router';
 import {environment} from '../../../environments/environment';
-import {BehaviorSubject, forkJoin, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, forkJoin, Observable, of, Subject} from 'rxjs';
 import {
   LighthouseSourceSearch,
   LighthouseSourceSearchAggregation,
   LighthouseSourceSearchResult
 } from '../../models/lighthouse/lighthouse-source-search';
-import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, pairwise, startWith} from 'rxjs/operators';
 import {MedicalSourcesFilter, MedicalSourcesFilterService} from '../../services/medical-sources-filter.service';
 import {FormControl, FormGroup} from '@angular/forms';
+import * as _ from 'lodash';
 // If you dont import this angular will import the wrong "Location"
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
@@ -78,7 +79,22 @@ export class MedicalSourcesComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private filterService: MedicalSourcesFilterService,
     private modalService: NgbModal,
-  ) { }
+  ) {
+    this.filterService.filterChanges.subscribe((filterInfo) => {
+
+      console.log("medical-sources - filterChanges", filterInfo)
+
+      //this function should only trigger when there's a change to the filter values -- which requires a new query
+      this.availableSourceList = []
+      this.resultLimits.totalItems = 0
+      this.resultLimits.scrollComplete = false
+
+      //update the form with data from route (don't emit a new patch event), then submit query
+      this.querySources(filterInfo?.filter).subscribe(null, null, () => {
+        console.log("querySources() complete")
+      })
+    })
+  }
 
   ngOnInit(): void {
 
@@ -92,33 +108,12 @@ export class MedicalSourcesComponent implements OnInit {
       if(inProgressAvailableIndex > -1){
         let sourcesInProgress = this.availableSourceList.splice(inProgressAvailableIndex, 1);
       }
-
     }
     //we're not in a callback redirect, lets load the sources
     if(this.activatedRoute.snapshot.queryParams['query']){
      this.searchTermUpdate.next(this.activatedRoute.snapshot.queryParams['query'])
     }
 
-
-    //changing the route should trigger a query
-    this.activatedRoute.queryParams
-      .subscribe(params => {
-        console.log("QUERY PARAMS CHANGED ON ROUTE", params); // {order: "popular"}
-        var updatedForm = this.filterService.parseQueryParams(params);
-
-        //this is a "breaking change" to the filter values, causing a reset and a new query
-        this.availableSourceList = []
-        this.resultLimits.totalItems = 0
-        this.resultLimits.scrollComplete = false
-        this.filterService.resetControl("categories")
-        // this.filterService.filterForm.setControl("categories", this.{: {}}, { emitEvent: false})
-
-        //update the form with data from route (don't emit a new patch event), then submit query
-        var searchObservable = this.querySources(this.filterService.toMedicalSourcesFilter(updatedForm));
-        searchObservable.subscribe(null, null, () => {
-          this.filterForm.patchValue(updatedForm, { emitEvent: false});
-        })
-      });
 
     //register a callback for when the search box content changes
     this.searchTermUpdate
@@ -137,8 +132,10 @@ export class MedicalSourcesComponent implements OnInit {
   }
 
   private querySources(filter?: MedicalSourcesFilter): Observable<LighthouseSourceSearch> {
+    console.log("querySources()", filter)
     if(this.loading){
-      return
+      console.log("already loading, ignoring querySources()")
+      return of(null)
     }
     //TODO: pass filter to function.
     // this.location.replaceState('/dashboard','', this.filter)
@@ -161,11 +158,12 @@ export class MedicalSourcesComponent implements OnInit {
         return {metadata: result._source}
       }))
 
-      //change the current Page (but don't cause a new query)
-      if(!wrapper?.hits || !wrapper?.hits || wrapper?.hits?.hits?.length == 0){
+      //check if scroll is complete.
+      if(!wrapper?.hits || !wrapper?.hits?.hits || wrapper?.hits?.hits?.length == 0 || wrapper?.hits?.total?.value == wrapper?.hits?.hits?.length){
         console.log("SCROLL_COMPLETE!@@@@@@@@")
         this.resultLimits.scrollComplete = true;
       } else {
+        //change the current Page (but don't cause a new query)
         console.log("SETTING NEXT SORT KEY:", wrapper.hits.hits[wrapper.hits.hits.length - 1].sort.join(','))
         this.filterService.filterForm.patchValue({searchAfter: wrapper.hits.hits[wrapper.hits.hits.length - 1].sort.join(",")}, {emitEvent: false})
       }
@@ -218,7 +216,9 @@ export class MedicalSourcesComponent implements OnInit {
 
 
   public onScroll(): void {
-    this.querySources()
+    if(!this.resultLimits.scrollComplete) {
+      this.querySources()
+    }
   }
 
   //OLD FUNCTIONS
