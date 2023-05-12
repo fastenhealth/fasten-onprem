@@ -98,7 +98,7 @@
         <a *ngIf="modalSelectedSourceListItem?.metadata.patient_access_url"
            [href]="modalSelectedSourceListItem.metadata?.patient_access_url"
             target="_blank"
-           class="mg-b-0">{{modalSelectedSourceListItem?.metadata.patient_access_url}}</a>
+           class="mg-b-0">{{modalSelectedSourceListItem?.metadata.patient_access_url | shortDomain}}</a>
       </div><!-- media-body -->
     </div><!-- media -->
     <button type="button" class="btn btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
