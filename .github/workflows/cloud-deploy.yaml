@@ -24,7 +24,7 @@ jobs:
           go-version: '1.18.3'
       - run: go version
       - run: |
-          make frontend-dep
+          make dep-frontend
           cd frontend
           yarn run build -- --configuration cloud_sandbox --output-path=../dist
 

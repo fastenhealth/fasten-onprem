@@ -1,4 +1,4 @@
-<div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer">
+<div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': sourceInfo?.metadata?.hidden}">
   <div (click)="onCardClick()" class="card-body">
 
     <div class="h-100 d-flex align-items-center">

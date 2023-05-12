@@ -5,7 +5,7 @@
 # General
 ########################################################################################################################
 .PHONY: test
-test: backend-test frontend-test
+test: test-backend test-frontend
 
 .PHONY: serve-frontend
 serve-frontend:
@@ -24,52 +24,52 @@ serve-backend:
 # Backend
 ########################################################################################################################
 
-.PHONY: backend-clean
-backend-clean:
+.PHONY: clean-backend
+clean-backend:
 	go clean
 
-.PHONY: backend-dep
-backend-dep:
+.PHONY: dep-backend
+dep-backend:
 	go mod vendor
 
-.PHONY: backend-test
-backend-test: backend-dep
+.PHONY: test-backend
+test-backend: dep-backend
 	go vet ./...
 	go test -v ./...
 
-.PHONY: backend-test-coverage
-backend-test-coverage: backend-dep
+.PHONY: test-backend-coverage
+test-backend-coverage: dep-backend
 	go test -coverprofile=backend-coverage.txt -covermode=atomic -v ./...
 
 ########################################################################################################################
 # Frontend
 ########################################################################################################################
-.PHONY: frontend-dep
-frontend-dep:
+.PHONY: dep-frontend
+dep-frontend:
 	cd frontend
 	yarn install --frozen-lockfile
 
-.PHONY: frontend-build-sandbox
-frontend-build-sandbox: frontend-dep
+.PHONY: build-frontend-sandbox
+build-frontend-sandbox: dep-frontend
 	cd frontend
 	yarn run build -- --configuration sandbox --output-path=../dist
 
-.PHONY: frontend-build-prod
-frontend-build-prod: frontend-dep
+.PHONY: build-frontend-prod
+build-frontend-prod: dep-frontend
 	cd frontend
 	yarn run build -- --configuration prod --output-path=../dist
 
-.PHONY: frontend-test
+.PHONY: test-frontend
 # reduce logging, disable angular-cli analytics for ci environment
-frontend-test: frontend-dep
+test-frontend: dep-frontend
 	cd frontend && npx ng test --watch=false
 
-.PHONY: frontend-test-coverage
+.PHONY: test-frontend-coverage
 # reduce logging, disable angular-cli analytics for ci environment
-frontend-test-coverage: frontend-dep
+test-frontend-coverage: dep-frontend
 	cd frontend && npx ng test --watch=false --code-coverage
 
-.PHONY: frontend-test-coverage-ci
+.PHONY: test-frontend-coverage-ci
 # reduce logging, disable angular-cli analytics for ci environment
-frontend-test-coverage-ci: frontend-dep
+test-frontend-coverage-ci: dep-frontend
 	cd frontend && npx ng test --watch=false --code-coverage --browsers=ChromeHeadlessCI

@@ -39,10 +39,10 @@ Before making changes to Fasten, you'll want to run the test suites to ensure th
 make test
 
 # if you only want to run the frontend tests (Angular), you can run:
-make frontend-test
+make test-frontend
 
 # alternatively, if you only care about backend (Go) tests, you can run:
-make backend-test
+make test-backend
 ```
 
 # Start Development Environment

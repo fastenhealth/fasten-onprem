@@ -21,7 +21,7 @@ jobs:
           node-version: 18.x
       - name: Test Frontend
         run: |
-          make frontend-test-coverage
+          make test-frontend-coverage
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
@@ -41,7 +41,7 @@ jobs:
         run: |
           go install github.com/golang/mock/mockgen@v1.6.0
           go generate ./...
-          make backend-test-coverage
+          make test-backend-coverage
           CGO_ENABLED=0 go build -buildvcs=false ./backend/cmd/fasten/
       - name: Upload coverage
         uses: actions/upload-artifact@v3
