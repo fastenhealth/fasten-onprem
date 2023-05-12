@@ -8,17 +8,15 @@
 test: backend-test frontend-test
 
 .PHONY: serve-frontend
-serve-web:
-	cd frontend
-	yarn dist -- -c sandbox
+serve-frontend:
+	cd frontend && yarn dist -- -c sandbox
 
 .PHONY: serve-frontend-prod
-serve-web:
-	cd frontend
-	yarn dist -- -c prod
+serve-frontend-prod:
+	cd frontend && yarn dist -- -c prod
 
 .PHONY: serve-backend
-serve-web:
+serve-backend:
 	go run backend/cmd/fasten/fasten.go start --config ./config.dev.yaml --debug
 
 

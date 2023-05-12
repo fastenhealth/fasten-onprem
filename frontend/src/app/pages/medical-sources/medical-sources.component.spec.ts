@@ -5,6 +5,7 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
 import {HttpClient} from '@angular/common/http';
+import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 describe('MedicalSourcesComponent', () => {
   let component: MedicalSourcesComponent;
@@ -13,7 +14,7 @@ describe('MedicalSourcesComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ MedicalSourcesComponent ],
-      imports: [HttpClientTestingModule, RouterTestingModule],
+      imports: [HttpClientTestingModule, RouterTestingModule, FormsModule, ReactiveFormsModule],
       providers: [
         {
           provide: HTTP_CLIENT_TOKEN,
