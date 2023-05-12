@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MedicalSourcesFilterComponent } from './medical-sources-filter.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 describe('MedicalSourcesFilterComponent', () => {
   let component: MedicalSourcesFilterComponent;
@@ -8,6 +9,7 @@ describe('MedicalSourcesFilterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [FormsModule, ReactiveFormsModule],
       declarations: [ MedicalSourcesFilterComponent ]
     })
     .compileComponents();
