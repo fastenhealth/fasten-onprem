@@ -4,6 +4,8 @@ on:
   pull_request:
     branches:
       - main
+      - sandbox
+      - beta
   push:
     branches: [ main, beta ]
     # Publish semver tags as releases.
