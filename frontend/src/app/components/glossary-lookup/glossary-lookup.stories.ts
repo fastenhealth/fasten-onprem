@@ -81,23 +81,6 @@ const meta: Meta<GlossaryLookupComponent> = {
 export default meta;
 type Story = StoryObj<GlossaryLookupComponent>;
 
-// More on writing stories with args: https://storybook.js.org/docs/angular/writing-stories/args
-export const Empty: Story = {
-};
-
-export const PlainText: Story = {
-  args: {
-    code: "36955009",
-    codeSystem: "2.16.840.1.113883.6.96"
-  },
-  parameters: {
-    httpClientResp: {
-      url: "https://www.nidcr.nih.gov/health-info/taste-disorders/more-info?utm_source=medlineplus-connect&utm_medium=website&utm_campaign=mlp-connect",
-      publisher: "U.S. National Library of Medicine",
-      description: "Problems with the sense of taste can have a big impact on life. Taste stimulates the desire to eat and therefore plays a key role in nutrition. The sense of taste also helps keep us healthy by helping us detect spoiled food or drinks.",
-    }
-  }
-};
 
 export const Html: Story = {
   args: {
@@ -156,6 +139,24 @@ export const Html: Story = {
         "<li>Song Y, Huang Z, Kang Y, Lin Z, Lu P, Cai Z,  Cao Y, ZHuX. Clinical Usefulness and Prognostic Value of Red Cell Distribution Width in Colorectal Cancer. Biomed Res Int [Internet]. 2018 Dec [cited 2019 Jan 27]; 2018 Article ID, 9858943. Available from: <a href=\"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6311266\" target=\"bibliowin\">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6311266</a></li>\n" +
         "<li>Thame M, Grandison Y, Mason K Higgs D, Morris J, Serjeant B, Serjeant G. The red cell distribution width in sickle cell disease—is it of clinical value? International Journal of Laboratory Hematology [Internet]. 1991 Sep [cited 2017 Jan 24]; 13 (3): 229-237. Available from: <a href=\"http://onlinelibrary.wiley.com/wol1/doi/10.1111/j.1365-2257.1991.tb00277.x/abstract\" target=\"bibliowin\">http://onlinelibrary.wiley.com/wol1/doi/10.1111/j.1365-2257.1991.tb00277.x/abstract</a></li>\n" +
         "</ol>",
+    }
+  }
+};
+
+// More on writing stories with args: https://storybook.js.org/docs/angular/writing-stories/args
+export const Empty: Story = {
+};
+
+export const PlainText: Story = {
+  args: {
+    code: "36955009",
+    codeSystem: "2.16.840.1.113883.6.96"
+  },
+  parameters: {
+    httpClientResp: {
+      url: "https://www.nidcr.nih.gov/health-info/taste-disorders/more-info?utm_source=medlineplus-connect&utm_medium=website&utm_campaign=mlp-connect",
+      publisher: "U.S. National Library of Medicine",
+      description: "Problems with the sense of taste can have a big impact on life. Taste stimulates the desire to eat and therefore plays a key role in nutrition. The sense of taste also helps keep us healthy by helping us detect spoiled food or drinks.",
     }
   }
 };
