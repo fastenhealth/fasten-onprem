@@ -149,7 +149,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           grant_types_supported: sourceMetadata.grant_types_supported,
           response_types_supported: sourceMetadata.response_types_supported,
           aud: sourceMetadata.aud,
-          code_challenge_methods_supported: sourceMetadata.code_challenge_methods_supported,
+          code_challenge_methods_supported: sourceMetadata.code_challenge_methods_supported || [],
           confidential: sourceMetadata.confidential,
           cors_relay_required: sourceMetadata.cors_relay_required,
 
