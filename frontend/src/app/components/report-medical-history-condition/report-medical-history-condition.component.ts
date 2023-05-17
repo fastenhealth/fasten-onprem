@@ -58,7 +58,7 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
   //lookup table for all resources
   resourcesLookup: {[name:string]: FastenDisplayModel} = {}
 
-  involvedInCare: {displayName: string, role?: string, email?: string}[] = []
+  involvedInCare: {displayName: string, role?: string, email?: string, displayModel?: FastenDisplayModel}[] = []
   encounters: EncounterModel[] = []
   // medications: {[encounterResourceId: string]: MedicationModel[]} = {}
   // procedures: {[encounterResourceId: string]: ProcedureModel[]} = {}
@@ -112,6 +112,7 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
               displayName: practitionerModel.name?.family && practitionerModel.name?.given ? `${practitionerModel.name?.family }, ${practitionerModel.name?.given}` : practitionerModel.name?.text,
               role: qualification?.display || practitionerModel.name?.prefix || practitionerModel.name?.suffix,
               email: email,
+              displayModel: resource
             },
           )
 

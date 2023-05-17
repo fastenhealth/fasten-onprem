@@ -32,7 +32,7 @@ export class ReportMedicalHistoryExplanationOfBenefitComponent implements OnInit
   condition: CodingModel
 
   //EOB embeds multiple resource type references
-  involvedInCare: {displayName: string, role?: string, email?: string}[] = []
+  involvedInCare: {displayName: string, role?: string, email?: string, displayModel?: FastenDisplayModel}[] = []
   locations: LocationModel[] = []
   encounters: EncounterModel[] = []
   medications: {[resourceId: string]: MedicationModel[]} = {}
@@ -120,6 +120,7 @@ export class ReportMedicalHistoryExplanationOfBenefitComponent implements OnInit
               displayName: practitionerModel.name?.family && practitionerModel.name?.given ? `${practitionerModel.name?.family }, ${practitionerModel.name?.given}` : practitionerModel.name?.text,
               role: qualification?.display || practitionerModel.name?.prefix || practitionerModel.name?.suffix,
               email: email,
+              displayModel: resource,
             },
           )
 

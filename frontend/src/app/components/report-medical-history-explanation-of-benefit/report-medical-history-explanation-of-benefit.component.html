@@ -22,13 +22,18 @@
             <p>Involved in Care</p>
           </div>
           <ng-container *ngFor="let practitioner of involvedInCare">
-            <div class="col-6">
+            <div class="col-6"  [ngClass]="{'cursor-pointer': !!practitioner.displayModel}" [disablePopover]="!!!practitioner.displayModel" [ngbPopover]="practitionerPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover">
               <strong>{{practitioner.displayName}}</strong>
             </div>
-            <div class="col-6">
+            <div class="col-6"  [ngClass]="{'cursor-pointer': !!practitioner.displayModel}" [disablePopover]="!!!practitioner.displayModel" [ngbPopover]="practitionerPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover">
               {{practitioner.role}}
               <!-- TODO: add email address link here -->
             </div>
+
+            <ng-template #practitionerPopoverContent>
+              <fhir-resource [displayModel]="practitioner.displayModel"></fhir-resource>
+            </ng-template>
+
           </ng-container>
 
 
