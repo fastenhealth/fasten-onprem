@@ -18,6 +18,8 @@ import {ValueSet} from 'fhir/r4';
 import {AttachmentModel} from '../../lib/models/datatypes/attachment-model';
 import {BinaryModel} from '../../lib/models/resources/binary-model';
 import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
+import {DashboardWidgetQuery} from '../models/widget/dashboard-widget-query';
+import * as fhirpath from 'fhirpath';
 
 @Injectable({
   providedIn: 'root'
@@ -149,6 +151,34 @@ export class FastenApiService {
       );
   }
 
+  //TODO: add caching here, we dont want the same query to be run multiple times whne loading the dashboard.
+  // we should also add a way to invalidate the cache when a source is synced
+  queryResources(query?: DashboardWidgetQuery): Observable<any[]> {
+
+
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/query`, query)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("RESPONSE", response)
+
+          //TODO: eventually do filtering in backend, however until sql-on-fhir project is completed, we'll be doing it here
+          //it's less preformant, but it's a temporary solution
+          let results = []
+          if(!response.data || !response.data.length){
+            return results
+          }
+          for(let queryResults of response.data){
+            results.push(queryResults
+              .filter((resource: ResourceFhir) => this.fhirPathFilterQueryFn(query)(resource))
+              .map((resource: ResourceFhir) => this.fhirPathMapQueryFn(query)(resource))
+            )
+          }
+
+          return results as any[]
+        })
+      );
+  }
+
   getResourceGraph(graphType?: string): Observable<{[resourceType: string]: ResourceFhir[]}> {
     if(!graphType){
       graphType = "MedicalHistory"
@@ -217,5 +247,72 @@ export class FastenApiService {
       return of(new BinaryModel(attachmentModel));
     }
   }
+
+  //private methods
+
+
+  // This function will convert DashboardWidgetQuery.where filters into a FHIRPath query strings
+  // ie. `name.where(given='Jim')` will be converted to `Patient.name.where(given='Jim')`
+  // fhirpath.evaluate(this.patient.resource_raw, "Patient.name.where(given='Jim')")
+  fhirPathFilterQueryFn(query: DashboardWidgetQuery): (rawResource: any) => boolean {
+    let wherePathFilters = query.where.map((whereFQL: string) => {
+      return `${query.from}.${whereFQL}`
+    })
+
+    return function(rawResource: any): boolean {
+      return wherePathFilters.every((wherePathFilter: string) => {
+        let results = fhirpath.evaluate(rawResource, wherePathFilter)
+        return results.length > 0 && results[0] !== false
+      })
+    }
+  }
+
+  // This function will convert DashboardWidgetQuery.select filters into a FHIRPath query strings and return the results
+  // as a map (keyed by the select alias)
+  // ie. `name.where(given='Jim')` will be converted to `Patient.name.where(given='Jim')`
+  // ie. `name.where(given='Jim') as GivenName` will be converted to `Patient.name.where(given='Jim')` and be stored in the returned map as GivenName`
+  // the returned map will always contain a `id` key, which will be the resource id and a `resourceType` key, which will be the resource type
+
+  fhirPathMapQueryFn(query: DashboardWidgetQuery): (rawResource: any) => { [name:string]: string | string[] | any }  {
+    let selectPathFilters: { [name:string]: string } = query.select.reduce((selectAliasMap, selectPathFilter): { [name:string]: string } => {
+      let alias = selectPathFilter
+      let selectPath = selectPathFilter
+      if(selectPathFilter.indexOf(" as ") > -1){
+        let selectPathFilterParts = selectPathFilter.split(" as ")
+        selectPath = selectPathFilterParts[0] as string
+        alias = selectPathFilterParts[1] as string
+      } else if(selectPathFilter.indexOf(" AS ") > -1){
+        let selectPathFilterParts = selectPathFilter.split(" AS ")
+        selectPath = selectPathFilterParts[0] as string
+        alias = selectPathFilterParts[1] as string
+      }
+
+      if(selectPath == '*'){
+        selectAliasMap[alias] = selectPath
+      } else {
+        selectAliasMap[alias] = `${query.from}.${selectPath}`
+      }
+
+      return selectAliasMap
+    }, {})
+
+    console.log(selectPathFilters)
+    return function(rawResource: any):{ [name:string]: string | string[] | any } {
+      let results = {}
+      for(let alias in selectPathFilters){
+        let selectPathFilter = selectPathFilters[alias]
+        if(selectPathFilter == '*'){
+          results[alias] = rawResource
+        } else {
+          results[alias] = fhirpath.evaluate(rawResource, selectPathFilter)
+        }
+      }
+
+      results["id"] = rawResource.id
+      results["resourceType"] = rawResource.resourceType
+      return results
+    }
+  }
+
 
 }

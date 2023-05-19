@@ -11,6 +11,29 @@ import (
 	"strings"
 )
 
+func QueryResourceFhir(c *gin.Context) {
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	var query models.QueryResource
+	if err := c.ShouldBindJSON(&query); err != nil {
+		logger.Errorln("An error occurred while parsing queries", err)
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
+	}
+
+	queryResults, err := databaseRepo.QueryResources(c, query)
+	if err != nil {
+		logger.Errorln("An error occurred while creating resource group (composition)", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	//sort by date
+	queryResults = utils.SortResourceListByDate(queryResults)
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": queryResults})
+}
+
 func ListResourceFhir(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)

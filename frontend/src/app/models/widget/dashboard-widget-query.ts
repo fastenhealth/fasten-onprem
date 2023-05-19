@@ -1,5 +1,5 @@
 export class DashboardWidgetQuery {
-  use: string
+  use?: string
   select: string[]
   from: string
   where: string[]
