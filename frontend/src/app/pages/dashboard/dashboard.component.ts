@@ -32,6 +32,29 @@ export class DashboardComponent implements OnInit {
 
   metadataSource: { [name: string]: MetadataSource }
 
+  heightWidgetConfig: DashboardWidgetConfig = {
+    description_text: '',
+    height: 0,
+    item_type: undefined,
+    queries: [
+      //https://healthedata1.github.io/IG-Sampler/Observation-example.html
+      {
+        q: {
+          // use?: string
+          select: ["valueQuantity.value as data"],
+          from: "Observation",
+          where: [
+            "(code.coding.where(system = 'http://loinc.org' and code = '29463-7') | code.coding.where(system = 'http://loinc.org' and code = '3141-9')).exists()"
+          ]
+        }
+      }
+    ],
+    schema_version: 0,
+    title_text: 'Custom Height',
+    width: 0,
+    id: "1"
+  }
+
   @ViewChild(GridstackComponent) gridComp?: GridstackComponent;
 
   constructor(
@@ -44,6 +67,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true
+
 
     forkJoin([this.fastenApi.getSummary(), this.lighthouseApi.getLighthouseSourceMetadataMap(false)]).subscribe(results => {
       this.loading = false

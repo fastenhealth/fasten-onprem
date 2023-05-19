@@ -11,10 +11,10 @@ export class DashboardWidgetConfig {
 
   queries:  {
     q: DashboardWidgetQuery,
-    "aggregator": "avg",
-    "conditional_formats": [],
-    "type": "line",
-    "style": {
+    aggregator?: string,
+    conditional_formats?: [],
+    type?: "line",
+    style?: {
       "palette": "grey" | "pastel" | "light" | "default"
     }
   }[]

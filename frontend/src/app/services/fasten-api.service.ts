@@ -163,18 +163,18 @@ export class FastenApiService {
 
           //TODO: eventually do filtering in backend, however until sql-on-fhir project is completed, we'll be doing it here
           //it's less preformant, but it's a temporary solution
-          let results = []
           if(!response.data || !response.data.length){
-            return results
+            console.log("NO QUERY DATA FOUND")
+            return []
           }
-          for(let queryResults of response.data){
-            results.push(queryResults
-              .filter((resource: ResourceFhir) => this.fhirPathFilterQueryFn(query)(resource))
-              .map((resource: ResourceFhir) => this.fhirPathMapQueryFn(query)(resource))
-            )
-          }
+          return response.data
+            .filter((resource: ResourceFhir) => {
+              return this.fhirPathFilterQueryFn(query)(resource.resource_raw)
+            })
+            .map((resource: ResourceFhir) => {
+              return this.fhirPathMapQueryFn(query)(resource.resource_raw)
+            })
 
-          return results as any[]
         })
       );
   }
@@ -256,8 +256,10 @@ export class FastenApiService {
   // fhirpath.evaluate(this.patient.resource_raw, "Patient.name.where(given='Jim')")
   fhirPathFilterQueryFn(query: DashboardWidgetQuery): (rawResource: any) => boolean {
     let wherePathFilters = query.where.map((whereFQL: string) => {
-      return `${query.from}.${whereFQL}`
+      return whereFQL
     })
+
+    // console.log("WHERE PATH FILTERS", wherePathFilters)
 
     return function(rawResource: any): boolean {
       return wherePathFilters.every((wherePathFilter: string) => {
@@ -287,11 +289,12 @@ export class FastenApiService {
         alias = selectPathFilterParts[1] as string
       }
 
-      if(selectPath == '*'){
-        selectAliasMap[alias] = selectPath
-      } else {
-        selectAliasMap[alias] = `${query.from}.${selectPath}`
-      }
+      selectAliasMap[alias] = selectPath
+      // if(selectPath == '*'){
+      //   selectAliasMap[alias] = selectPath
+      // } else {
+      //   selectAliasMap[alias] = `${query.from}.${selectPath}`
+      // }
 
       return selectAliasMap
     }, {})
