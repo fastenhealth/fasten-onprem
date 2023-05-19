@@ -1,9 +1,9 @@
 /**
- * gridstack-item.component.ts 7.3.0
+ * gridstack-item.component.ts 8.1.1
  * Copyright (c) 2022 Alain Dumesny - see GridStack root license
  */
 
-import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild, ViewContainerRef, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild, ViewContainerRef, OnDestroy } from '@angular/core';
 import { GridItemHTMLElement, GridStackNode } from 'gridstack';
 import {CommonModule} from '@angular/common';
 
@@ -21,16 +21,17 @@ export interface GridItemCompHTMLElement extends GridItemHTMLElement {
   selector: 'gridstack-item',
   template: `
     <div class="grid-stack-item-content">
-      <!-- this is where you would create the right component based on some internal type or id. doing .content for demo purpose -->
-      {{options.content}}
-      <ng-content></ng-content>
-      <!-- where dynamic items go (like sub-grids) -->
+      <!-- where dynamic items go based on component types, or sub-grids, etc...) -->
       <ng-template #container></ng-template>
+      <!-- any static (defined in dom) content goes here -->
+      <ng-content></ng-content>
+      <!-- fallback HTML content from GridStackWidget content field if used instead -->
+      {{options.content}}
     </div>`,
   styles: [`
     :host { display: block; }
   `],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush, // IFF you want to optimize and control when ChangeDetection needs to happen...
 })
 export class GridstackItemComponent implements OnDestroy {
 
@@ -44,8 +45,7 @@ export class GridstackItemComponent implements OnDestroy {
       this.el.gridstackNode.grid.update(this.el, val);
     } else {
       // store our custom element in options so we can update it and not re-create a generic div!
-      val.el = this.el;
-      this._options = val;
+      this._options = {...val, el: this.el};
     }
   }
   /** return the latest grid options (from GS once built, otherwise initial values) */
