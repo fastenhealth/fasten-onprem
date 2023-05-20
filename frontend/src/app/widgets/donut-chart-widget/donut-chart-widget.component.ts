@@ -4,7 +4,7 @@ import {ChartsModule} from 'ng2-charts';
 @Component({
   standalone: true,
   imports: [ChartsModule],
-  selector: 'app-donut-chart-widget',
+  selector: 'donut-chart-widget',
   templateUrl: './donut-chart-widget.component.html',
   styleUrls: ['./donut-chart-widget.component.scss']
 })

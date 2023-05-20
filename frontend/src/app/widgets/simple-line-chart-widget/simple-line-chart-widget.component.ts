@@ -2,29 +2,24 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ChartsModule} from 'ng2-charts';
 import {DashboardWidgetConfig} from '../../models/widget/dashboard-widget-config';
 import {FastenApiService} from '../../services/fasten-api.service';
+import {DashboardWidgetComponent} from '../dashboard-widget/dashboard-widget.component';
 
 @Component({
   standalone: true,
   imports: [ChartsModule],
-  selector: 'app-simple-line-chart-widget',
+  selector: 'simple-line-chart-widget',
   templateUrl: './simple-line-chart-widget.component.html',
   styleUrls: ['./simple-line-chart-widget.component.scss']
 })
-export class SimpleLineChartWidgetComponent implements OnInit {
+export class SimpleLineChartWidgetComponent extends DashboardWidgetComponent implements OnInit {
 
-  @Input() widgetConfig: DashboardWidgetConfig;
-
-  constructor(private fastenApi: FastenApiService) { }
-
-  chartLabels: string[] = [];
-  chartData: {
-    label: string,
-    data: number[],
-    borderWidth: number,
-    fill: boolean,
-  }[] = []
+  constructor(public fastenApi: FastenApiService) {
+    super(fastenApi)
+  }
 
   ngOnInit(): void {
+    super.ngOnInit()
+
     if(!this.widgetConfig) {
       this.widgetConfig = new DashboardWidgetConfig()
       this.widgetConfig.title_text = "Weight"
@@ -36,30 +31,7 @@ export class SimpleLineChartWidgetComponent implements OnInit {
         borderWidth: 2,
         fill: true
       }];
-    } else {
-      this.fastenApi.queryResources(this.widgetConfig.queries[0].q).subscribe((results) => {
-        console.log("QUERY RESULTS", results)
-        this.chartLabels = []
-        let chartData = []
-        for(let result of results){
-          this.chartLabels.push((result?.label || result?.timestamp || result?.id))
-
-          chartData.push(...(result?.data || []))
-        }
-
-        console.log("CHART DATA", chartData)
-        console.log("CHART Labels", this.chartLabels)
-        this.chartData = [{
-          label: this.widgetConfig?.title_text,
-          data: chartData,
-          // data: [27.2, 29.9, 18.2, 14, 12.7, 11, 13.7, 9.7, 12.6, 50],
-          borderWidth: 2,
-          fill: true
-        }];
-
-      })
     }
-
   }
 
 

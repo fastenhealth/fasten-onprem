@@ -11,6 +11,16 @@ import { GridHTMLElement, GridItemHTMLElement, GridStack, GridStackNode, GridSta
 
 import { GridItemCompHTMLElement, GridstackItemComponent } from './gridstack-item.component';
 import {CommonModule} from '@angular/common';
+import {WidgetsModule} from '../../widgets/widgets.module';
+import {ComplexLineWidgetComponent} from '../../widgets/complex-line-widget/complex-line-widget.component';
+import {DashboardWidgetComponent} from '../../widgets/dashboard-widget/dashboard-widget.component';
+import {DonutChartWidgetComponent} from '../../widgets/donut-chart-widget/donut-chart-widget.component';
+import {DualGaugesWidgetComponent} from '../../widgets/dual-gauges-widget/dual-gauges-widget.component';
+import {GroupedBarChartWidgetComponent} from '../../widgets/grouped-bar-chart-widget/grouped-bar-chart-widget.component';
+import {PatientVitalsWidgetComponent} from '../../widgets/patient-vitals-widget/patient-vitals-widget.component';
+import {SimpleLineChartWidgetComponent} from '../../widgets/simple-line-chart-widget/simple-line-chart-widget.component';
+import {TableWidgetComponent} from '../../widgets/table-widget/table-widget.component';
+import {DashboardWidgetComponentInterface} from '../../widgets/dashboard-widget-component-interface';
 
 /** events handlers emitters signature for different events */
 export type eventCB = {event: Event};
@@ -21,6 +31,7 @@ export type droppedCB = {event: Event, previousNode: GridStackNode, newNode: Gri
 /** extends to store Ng Component selector, instead/inAddition to content */
 export interface NgGridStackWidget extends GridStackWidget {
   type?: string; // component type to create as content
+  widgetConfig?: any;
 }
 export interface NgGridStackNode extends GridStackNode {
   type?: string; // component type to create as content
@@ -43,7 +54,7 @@ export type SelectorToType = {[key: string]: Type<Object>};
  */
 @Component({
   standalone: true,
-  imports: [CommonModule, GridstackItemComponent],
+  imports: [CommonModule, GridstackItemComponent, WidgetsModule],
   selector: 'gridstack',
   template: `
     <!-- content to show when when grid is empty, like instructions on how to add widgets -->
@@ -124,6 +135,22 @@ export class GridstackComponent implements OnInit, AfterContentInit, OnDestroy {
     // private readonly cd: ChangeDetectorRef,
     private readonly elementRef: ElementRef<GridCompHTMLElement>,
   ) {
+
+    // register all our dynamic components created in the grid
+    GridstackComponent.addComponentToSelectorType([
+      ComplexLineWidgetComponent,
+      DashboardWidgetComponent,
+      DonutChartWidgetComponent,
+      DualGaugesWidgetComponent,
+      GroupedBarChartWidgetComponent,
+      PatientVitalsWidgetComponent,
+      SimpleLineChartWidgetComponent,
+      TableWidgetComponent,
+    ]);
+    // set globally our method to create the right widget type
+    GridStack.addRemoveCB = gsCreateNgComponents;
+    GridStack.saveCB = gsSaveAdditionalNgInfo;
+
     this.el._gridComp = this;
   }
 
@@ -226,7 +253,12 @@ export function gsCreateNgComponents(host: GridCompHTMLElement | HTMLElement, w:
     const selector = (w as NgGridStackWidget).type;
     const type = selector ? GridstackComponent.selectorToType[selector] : undefined;
     if (!w.subGridOpts && type) {
-      gridItem?.container?.createComponent(type);
+      let componentRef = gridItem?.container?.createComponent<DashboardWidgetComponentInterface>(type as Type<DashboardWidgetComponentInterface>);
+      let widgetConfig = (w as NgGridStackWidget)?.widgetConfig
+      if(widgetConfig){
+        componentRef.instance.widgetConfig = widgetConfig
+      }
+      // componentRef.instance.markForCheck()
     }
 
     return gridItem?.el;

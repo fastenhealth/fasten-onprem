@@ -4,7 +4,7 @@ import {ChartsModule} from 'ng2-charts';
 @Component({
   standalone: true,
   imports: [ChartsModule],
-  selector: 'app-grouped-bar-chart-widget',
+  selector: 'grouped-bar-chart-widget',
   templateUrl: './grouped-bar-chart-widget.component.html',
   styleUrls: ['./grouped-bar-chart-widget.component.scss']
 })

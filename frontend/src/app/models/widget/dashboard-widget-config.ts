@@ -1,10 +1,8 @@
 import {DashboardWidgetQuery} from './dashboard-widget-query';
 
 export class DashboardWidgetConfig {
-  schema_version: number //increment this number when the config schema changes, not controlled by user.
   id: string
-  item_type: "bar_chart" | "bubble_chart" | "doughnut_chart" | "line_chart" | "pie_chart" | "scatter_chart" | "calendar" | "striped_table" | "basic_table"
-
+  item_type: "complex-line-widget" | "donut-chart-widget" | "dual-gauges-widget" | "grouped-bar-chart-widget" | "patient-vitals-widget" | "simple-line-chart-widget" | "table-widget"
 
   title_text: string
   description_text: string
@@ -21,8 +19,8 @@ export class DashboardWidgetConfig {
 
 
   //used for display purposes within the Dashboard, not for the actual chart
-  minWidth?: number
-  minHeight?: number
+  // minWidth?: number
+  // minHeight?: number
   width: number
   height: number
   x?: number

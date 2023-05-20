@@ -4,7 +4,7 @@ import {ChartsModule} from 'ng2-charts';
 @Component({
   standalone: true,
   imports: [ChartsModule],
-  selector: 'app-dual-gauges-widget',
+  selector: 'dual-gauges-widget',
   templateUrl: './dual-gauges-widget.component.html',
   styleUrls: ['./dual-gauges-widget.component.scss']
 })

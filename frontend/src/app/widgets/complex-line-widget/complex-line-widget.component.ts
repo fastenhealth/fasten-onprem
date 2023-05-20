@@ -4,7 +4,7 @@ import {ChartsModule} from 'ng2-charts';
 @Component({
   standalone: true,
   imports: [ChartsModule],
-  selector: 'app-complex-line-widget',
+  selector: 'complex-line-widget',
   templateUrl: './complex-line-widget.component.html',
   styleUrls: ['./complex-line-widget.component.scss']
 })

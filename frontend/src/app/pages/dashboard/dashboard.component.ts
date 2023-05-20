@@ -8,9 +8,11 @@ import {FastenApiService} from '../../services/fasten-api.service';
 import {Summary} from '../../models/fasten/summary';
 import {LighthouseService} from '../../services/lighthouse.service';
 import { GridStack, GridStackOptions, GridStackWidget } from 'gridstack';
-import { GridstackComponent } from '../../components/gridstack/gridstack.component';
+import {GridstackComponent, NgGridStackOptions} from '../../components/gridstack/gridstack.component';
 import {DashboardWidgetComponent} from '../../widgets/dashboard-widget/dashboard-widget.component';
 import {DashboardWidgetConfig} from '../../models/widget/dashboard-widget-config';
+import exampleDashboardConfig from "./example_dashboard.json";
+import {DashboardConfig} from '../../models/widget/dashboard-config';
 
 
 // unique ids sets for each item for correct ngFor updating
@@ -31,29 +33,6 @@ export class DashboardComponent implements OnInit {
   patientForSource: {[name: string]: ResourceFhir} = {}
 
   metadataSource: { [name: string]: MetadataSource }
-
-  heightWidgetConfig: DashboardWidgetConfig = {
-    description_text: '',
-    height: 0,
-    item_type: undefined,
-    queries: [
-      //https://healthedata1.github.io/IG-Sampler/Observation-example.html
-      {
-        q: {
-          // use?: string
-          select: ["valueQuantity.value as data"],
-          from: "Observation",
-          where: [
-            "(code.coding.where(system = 'http://loinc.org' and code = '29463-7') | code.coding.where(system = 'http://loinc.org' and code = '3141-9')).exists()"
-          ]
-        }
-      }
-    ],
-    schema_version: 0,
-    title_text: 'Custom Height',
-    width: 0,
-    id: "1"
-  }
 
   @ViewChild(GridstackComponent) gridComp?: GridstackComponent;
 
@@ -102,6 +81,17 @@ export class DashboardComponent implements OnInit {
     });
 
 
+    (exampleDashboardConfig as DashboardConfig).widgets.forEach((widgetConfig) => {
+      this.gridOptions.children.push({
+        x: widgetConfig.x,
+        y: widgetConfig.y,
+        w: widgetConfig.width,
+        h: widgetConfig.height,
+        type: widgetConfig.item_type,
+        widgetConfig: widgetConfig.item_type == "simple-line-chart-widget" ? widgetConfig : undefined,
+      })
+    })
+
   }
 
   selectSource(selectedSource: Source){
@@ -131,7 +121,8 @@ export class DashboardComponent implements OnInit {
 
   public gridEditDisabled = true;
 
-  public gridOptions: GridStackOptions = {
+
+  public gridOptions: NgGridStackOptions = {
     margin: 5,
     float: false,
     minRow: 1,
@@ -141,11 +132,7 @@ export class DashboardComponent implements OnInit {
     //these 2 options can be used to enable/disable editability
     // disableDrag: true,
     // disableResize: true
-    // children: [
-    //   // {x: 0, y: 0, minW: 2},
-    //   // {x: 1, y: 1},
-    //   // {x: 2, y: 2},
-    // ],
+    children: [],
   }
 
   public toggleEditableGrid() {
@@ -156,51 +143,23 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  public dashboardItems: DashboardWidgetConfig[] = []
   /**
    * TEST dynamic grid operations - uses grid API directly (since we don't track structure that gets out of sync)
    */
-  public add(gridComp: GridstackComponent) {
-    // TODO: BUG the content doesn't appear until widget is moved around (or another created). Need to force
-    // angular detection changes...
-    // gridComp.grid?.addWidget({x:3, y:0, w:2, content:`item ${ids}`, id:String(ids++)});
-
-    this.dashboardItems.push({x:3, y:0, width:4, height:3, id:String(ids++)} as DashboardWidgetConfig)
-
-    // this.makeWidget(gridComp);
-  }
-  public delete(gridComp: GridstackComponent) {
-    gridComp.grid?.removeWidget(gridComp.grid.engine.nodes[0]?.el!);
-  }
-  public modify(gridComp: GridstackComponent) {
-    gridComp.grid?.update(gridComp.grid.engine.nodes[0]?.el!, {w:3})
-  }
-  public newLayout(gridComp: GridstackComponent) {
-    this.dashboardItems = [
-      {x:0, y:0, id:'1', width:4, height: 4, item_type: "calendar"}, // new size/constrain
-      {x:4, y:0, id:'2', width:4, height: 4, item_type: "basic_table"},
-      {x:8, y:0, id:'3', width:3, height: 3, item_type: "line_chart"}, // delete item
-      {x:3, y:5, w:2, width:4, height:3}, // new item
-    ]  as DashboardWidgetConfig[];
-  }
-
-
+  // public add(gridComp: GridstackComponent) {
+  //   // TODO: BUG the content doesn't appear until widget is moved around (or another created). Need to force
+  //   // angular detection changes...
+  //   // gridComp.grid?.addWidget({x:3, y:0, w:2, content:`item ${ids}`, id:String(ids++)});
   //
-  // getRootNodeFromParsedComponent(component: any) {
-  //   const componentFactory =
-  //     this.componentFactoryResolver.resolveComponentFactory(component);
-  //   let ref = this.vcRef?.createComponent(componentFactory);
+  //   this.dashboardItems.push({x:3, y:0, width:4, height:3, id:String(ids++)} as DashboardWidgetConfig)
   //
-  //   const hostView = <EmbeddedViewRef<any>>ref?.hostView;
-  //   return hostView.rootNodes[0];
+  //   // this.makeWidget(gridComp);
   // }
-  //
-  // makeWidget(gridComp: GridstackComponent) {
-  //   console.log('called makeWidget');
-  //
-  //   gridComp.grid?.el.appendChild(
-  //     this.getRootNodeFromParsedComponent(DashboardItemComponent)
-  //   );
-  //   gridComp.grid?.makeWidget('#widget1');
+  // public delete(gridComp: GridstackComponent) {
+  //   gridComp.grid?.removeWidget(gridComp.grid.engine.nodes[0]?.el!);
   // }
+  // public modify(gridComp: GridstackComponent) {
+  //   gridComp.grid?.update(gridComp.grid.engine.nodes[0]?.el!, {w:3})
+  // }
+
 }
