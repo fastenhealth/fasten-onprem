@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {ChartsModule} from 'ng2-charts';
+import {NgChartsModule} from 'ng2-charts';
 
 @Component({
   standalone: true,
-  imports: [ChartsModule],
+  imports: [NgChartsModule],
   selector: 'table-widget',
   templateUrl: './table-widget.component.html',
   styleUrls: ['./table-widget.component.scss']

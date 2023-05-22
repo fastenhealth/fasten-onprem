@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {ChartsModule} from 'ng2-charts';
+import {NgChartsModule} from 'ng2-charts';
 
 @Component({
   standalone: true,
-  imports: [ChartsModule],
+  imports: [NgChartsModule],
   selector: 'dual-gauges-widget',
   templateUrl: './dual-gauges-widget.component.html',
   styleUrls: ['./dual-gauges-widget.component.scss']
@@ -28,8 +28,10 @@ export class DualGaugesWidgetComponent implements OnInit {
     cutoutPercentage: 78,
     maintainAspectRatio: false,
     responsive: true,
-    legend: {
-      display: false,
+    plugins: {
+      legend: {
+        display: false,
+      }
     },
     animation: {
       animateScale: true,
@@ -49,8 +51,10 @@ export class DualGaugesWidgetComponent implements OnInit {
     cutoutPercentage: 78,
     maintainAspectRatio: false,
     responsive: true,
-    legend: {
-      display: false,
+    plugins: {
+      legend: {
+        display: false,
+      }
     },
     animation: {
       animateScale: true,

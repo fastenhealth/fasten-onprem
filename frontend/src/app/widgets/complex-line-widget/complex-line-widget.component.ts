@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {ChartsModule} from 'ng2-charts';
+import {NgChartsModule} from 'ng2-charts';
+import {ChartConfiguration} from 'chart.js';
 
 @Component({
   standalone: true,
-  imports: [ChartsModule],
+  imports: [NgChartsModule],
   selector: 'complex-line-widget',
   templateUrl: './complex-line-widget.component.html',
   styleUrls: ['./complex-line-widget.component.scss']
@@ -21,7 +22,9 @@ export class ComplexLineWidgetComponent implements OnInit {
       7.9, 5.02, 2.8, 6.8, 6.2, 9.8, 9.3, 11.9, 10, 9, 6, 4.5, 2.7, 4.3, 3.6, 4.2, 2, 1.4, 3.7, 1.5, 5.7, 4.9, 1, 4.7, 6.3, 4.2, 5.1, 5.2, 3.8, 8.2, 7.2, 6.5, 1.7, 11.4, 10.5, 3.8, 4.7, 8.5, 10.2, 11, 15.6, 19.7, 18.1, 13.5, 12, 7.5, 3.7, 9.7, 9.2, 13.4, 18.4, 22.4, 18.7, 15.2, 14.5, 14.4, 12, 13.7, 13.3, 15.4,
       15.8, 17.7, 14.3, 10.6, 12.7, 14.7, 18.6, 22.9, 18, 22.8, 23.8, 27.1, 24.7, 20, 22.7, 20.9, 16.6, 15.1, 13.1, 10.7, 11.4, 13.1, 10.1, 9.2, 9.2, 10.3, 15.2, 12.5, 14, 18.2, 16.3, 17.7, 18.9, 15.3, 18.1, 16.3, 14.8, 10 ],
     borderWidth: 2,
-    fill: true
+    fill: true,
+    backgroundColor: 'rgba(255, 255, 255, 1)',
+    borderColor: 'rgb(0, 123, 255)'
   },
     {
       label: 'Current week',
@@ -29,8 +32,10 @@ export class ComplexLineWidgetComponent implements OnInit {
         30.5, 25.7, 28.2, 28.4, 30, 32.1, 32.9, 37.6, 35.2, 39.1, 41.3, 41.4, 43.7, 39.4, 39.2, 43.8, 42.4, 43.6, 38.7 , 43.5, 41.8, 44.8, 46.1, 47.6, 49, 46.4, 51.2, 50.1, 53.6, 56, 52.7, 56.6, 60.2, 58.3, 56.5, 55.7, 54.7, 54.2, 58.6, 57, 60.5, 57.6, 56.1, 55.1, 54.3, 52.3, 54.5, 54.1, 51.9, 51.1, 46.3, 48.3,
         45.8, 48.2, 43.3, 45.8, 43.4, 41.3, 40.9, 38.4, 40.1, 44.8, 44, 41.4, 37.8, 39.2, 35.2, 32.1, 35.6, 38, 37.9, 38.7, 37.4, 37.5, 33.1, 35, 33.1, 31.8, 29.1, 31.9, 34.3, 32.9, 33.1, 37.1, 32.6, 36.9, 35.9, 38.1, 42.5, 41.5, 45.5, 46.3, 45.7, 45.4, 42.5, 44.4, 39.7, 44.7],
       borderWidth: 2,
-      fill: true
-    }];
+      fill: true,
+      backgroundColor: 'rgba(86, 11, 208, .05)',
+      borderColor: 'rgb(86, 11, 208)',
+    }] as ChartConfiguration<'line'>['data']['datasets']
 
   pageViewChartLabels = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49',
     '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '60', '61', '62', '63', '64', '65', '66', '67', '68', '69', '70', '71', '72', '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '83', '84', '85', '86', '87', '88', '89', '90', '91', '92', '93', '94', '95', '96', '97', '98', '99',
@@ -41,7 +46,7 @@ export class ComplexLineWidgetComponent implements OnInit {
     responsive: true,
     maintainAspectRatio: false,
     scales: {
-      yAxes: [{
+      y: {
         display: true,
         gridLines: {
           drawBorder: false,
@@ -58,8 +63,8 @@ export class ComplexLineWidgetComponent implements OnInit {
           stepSize: 32,
           padding: 10,
         }
-      }],
-      xAxes: [{
+      },
+      x: {
         display: false,
         position: 'bottom',
         gridLines: {
@@ -73,10 +78,12 @@ export class ComplexLineWidgetComponent implements OnInit {
           fontColor: "#a7afb7",
           padding: 10,
         }
-      }],
+      },
     },
-    legend: {
-      display: false,
+    plugins: {
+      legend: {
+        display: false,
+      }
     },
     elements: {
       point: {
@@ -89,26 +96,5 @@ export class ComplexLineWidgetComponent implements OnInit {
     tooltips: {
       backgroundColor: 'rgba(2, 171, 254, 1)',
     },
-  };
-
-  pageViewChartColors = [
-    {
-      backgroundColor: [
-        'rgba(255, 255, 255, 1)',
-      ],
-      borderColor: [
-        'rgb(0, 123, 255)'
-      ]
-    },
-    {
-      backgroundColor: [
-        'rgba(86, 11, 208, .05)',
-      ],
-      borderColor: [
-        'rgb(86, 11, 208)'
-      ],
-    }
-  ];
-
-
+  } as ChartConfiguration<'line'>['options']
 }

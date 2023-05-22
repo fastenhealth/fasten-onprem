@@ -1,15 +1,16 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ChartOptions} from 'chart.js';
+import {ChartConfiguration, ChartDataset, ChartOptions} from 'chart.js';
 import {DashboardWidgetConfig} from '../../models/widget/dashboard-widget-config';
-import {ChartsModule} from 'ng2-charts';
+import {NgChartsModule} from 'ng2-charts';
 import {CommonModule} from '@angular/common';
 import {NgbDatepickerModule} from '@ng-bootstrap/ng-bootstrap';
 import {DashboardWidgetComponentInterface} from '../dashboard-widget-component-interface';
 import {FastenApiService} from '../../services/fasten-api.service';
+import {forkJoin} from 'rxjs';
 
 @Component({
   standalone: true,
-  imports: [ChartsModule, CommonModule, NgbDatepickerModule],
+  imports: [NgChartsModule, CommonModule, NgbDatepickerModule],
   selector: 'app-dashboard-widget',
   templateUrl: './dashboard-widget.component.html',
   styleUrls: ['./dashboard-widget.component.scss'],
@@ -19,15 +20,24 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
   @Input() widgetConfig: DashboardWidgetConfig;
   loading: boolean = false;
 
-  chartData: {
-    label: string,
-    data: number[],
-    borderWidth: number,
-    fill: boolean,
-  }[] = [];
+  // chartData: {
+  //   label: string,
+  //   clip?: number |object,
+  //   order?: number,
+  //   stack?: string,
+  //   data: any[],
+  //   parsing?: {
+  //     yAxisKey?: string,
+  //     xAxisKey?: string,
+  //     key?: string,
+  //   }
+  //   // borderWidth: number,
+  //   // fill: boolean,
+  // }[] = [];
+  chartData: ChartConfiguration<'line'>['data']['datasets'] = [];
   chartLabels: string[] = [];
-  chartOptions: any;
-  chartColors: any;
+  chartOptions: ChartOptions = {}
+  // chartColors: any;
 
   constructor(public fastenApi: FastenApiService) { }
 
@@ -35,25 +45,29 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
     if(!this.widgetConfig) {
       return
     }
-    this.fastenApi.queryResources(this.widgetConfig.queries[0].q).subscribe((results) => {
-      console.log("QUERY RESULTS", results)
-      this.chartLabels = []
-      let chartData = []
-      for(let result of results){
-        this.chartLabels.push((result?.label || result?.timestamp || result?.id))
 
-        chartData.push(...(result?.data || []))
+    forkJoin(this.widgetConfig.queries.map(query => { return this.fastenApi.queryResources(query.q)})).subscribe((queryResults) => {
+      this.chartData = []
+
+      for (let queryResult of queryResults) {
+        console.log("QUERY RESULTS", queryResult)
+        this.chartLabels = []
+        for(let result of queryResult){
+          this.chartLabels.push((result?.label || result?.timestamp || result?.id))
+        }
+
+        console.log("CHART Labels", this.chartLabels)
+
+        this.chartData.push({
+          label: this.widgetConfig?.title_text,
+          data: queryResult.map(row => {row.data = 40; return row}),
+          // data: [27.2, 29.9, 18.2, 14, 12.7, 11, 13.7, 9.7, 12.6, 50],
+          // borderWidth: 2,
+          // fill: true
+        });
       }
 
-      console.log("CHART DATA", chartData)
-      console.log("CHART Labels", this.chartLabels)
-      this.chartData = [{
-        label: this.widgetConfig?.title_text,
-        data: chartData,
-        // data: [27.2, 29.9, 18.2, 14, 12.7, 11, 13.7, 9.7, 12.6, 50],
-        borderWidth: 2,
-        fill: true
-      }];
+
 
     })
   }

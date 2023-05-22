@@ -8,7 +8,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { MedicalSourcesComponent } from './pages/medical-sources/medical-sources.component';
-import { ChartsModule } from 'ng2-charts';
+import { NgChartsModule } from 'ng2-charts';
 import {SharedModule} from './components/shared.module';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome'
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -60,7 +60,7 @@ import {WidgetsModule} from './widgets/widgets.module';
     AppRoutingModule,
     HttpClientModule,
     NgbModule,
-    ChartsModule,
+    NgChartsModule,
     NgxDropzoneModule,
     HighlightModule,
     MomentModule,

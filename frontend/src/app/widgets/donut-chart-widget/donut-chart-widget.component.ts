@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {ChartsModule} from 'ng2-charts';
+import {NgChartsModule} from 'ng2-charts';
+import {ChartConfiguration} from 'chart.js';
 
 @Component({
   standalone: true,
-  imports: [ChartsModule],
+  imports: [NgChartsModule],
   selector: 'donut-chart-widget',
   templateUrl: './donut-chart-widget.component.html',
   styleUrls: ['./donut-chart-widget.component.scss']
@@ -19,21 +20,23 @@ export class DonutChartWidgetComponent implements OnInit {
   sessionsByChannelChartData = [{
     data: [25,20,30,15,10],
     backgroundColor: ['#6f42c1', '#007bff','#17a2b8','#00cccc','#adb2bd'],
-  }];
+  }] as ChartConfiguration<'doughnut'>['data']['datasets']
 
   sessionsByChannelChartLabels: ['Search', 'Email', 'Referral', 'Social', 'Other'];
   sessionsByChannelChartOptions = {
     cutoutPercentage: 50,
     maintainAspectRatio: false,
     responsive: true,
-    legend: {
-      display: false,
+    plugins: {
+      legend: {
+        display: false,
+      }
     },
     animation: {
       animateScale: true,
       animateRotate: true
     }
-  };
+  } as ChartConfiguration<'doughnut'>['options']
 
 
   // Sessions by channel doughnut chart
@@ -41,15 +44,17 @@ export class DonutChartWidgetComponent implements OnInit {
     data: [40,60],
     backgroundColor: ['#007bff', '#cad0e8'],
     borderColor: ['#007bff', '#cad0e8'],
-  }];
+  }]
 
   sessionsChartOneLabels: ['Search', 'Email'];
   sessionsChartOneOptions = {
     cutoutPercentage: 78,
     maintainAspectRatio: false,
     responsive: true,
-    legend: {
-      display: false,
+    plugins: {
+      legend: {
+        display: false,
+      }
     },
     animation: {
       animateScale: true,
@@ -69,8 +74,10 @@ export class DonutChartWidgetComponent implements OnInit {
     cutoutPercentage: 78,
     maintainAspectRatio: false,
     responsive: true,
-    legend: {
-      display: false,
+    plugins: {
+      legend: {
+        display: false,
+      }
     },
     animation: {
       animateScale: true,

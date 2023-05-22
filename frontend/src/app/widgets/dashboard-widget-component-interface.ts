@@ -7,7 +7,7 @@ export interface DashboardWidgetComponentInterface {
   chartData: any;
   chartLabels: any;
   chartOptions: any;
-  chartColors: any;
+  // chartColors: any;
 
   // markForCheck()
 }
