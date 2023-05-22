@@ -15,9 +15,9 @@ import {ChartConfiguration, ChartDataset, ChartOptions} from 'chart.js';
 export class SimpleLineChartWidgetComponent extends DashboardWidgetComponent implements OnInit {
 
   ngOnInit(): void {
-    // super.ngOnInit()
+    super.ngOnInit()
 
-    // if(!this.widgetConfig) {
+    if(!this.widgetConfig) {
       this.widgetConfig = new DashboardWidgetConfig()
       this.widgetConfig.title_text = "Weight"
 
@@ -54,7 +54,7 @@ export class SimpleLineChartWidgetComponent extends DashboardWidgetComponent imp
         //   yAxisKey: 'data'
         // },
       }] as unknown as ChartConfiguration<'line'>['data']['datasets']
-    // }
+    }
   }
 
 

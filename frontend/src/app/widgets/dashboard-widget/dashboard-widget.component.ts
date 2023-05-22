@@ -60,7 +60,7 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
 
         this.chartData.push({
           label: this.widgetConfig?.title_text,
-          data: queryResult.map(row => {row.data = 40; return row}),
+          data: queryResult //.map(row => {row.data = 40; return row}),
           // data: [27.2, 29.9, 18.2, 14, 12.7, 11, 13.7, 9.7, 12.6, 50],
           // borderWidth: 2,
           // fill: true
