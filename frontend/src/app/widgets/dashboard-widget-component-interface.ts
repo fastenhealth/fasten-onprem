@@ -4,7 +4,7 @@ export interface DashboardWidgetComponentInterface {
   widgetConfig: DashboardWidgetConfig;
   loading: boolean;
 
-  chartData: any;
+  chartDatasets: any;
   chartLabels: any;
   chartOptions: any;
   // chartColors: any;

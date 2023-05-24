@@ -7,6 +7,7 @@ import {NgbDatepickerModule} from '@ng-bootstrap/ng-bootstrap';
 import {DashboardWidgetComponentInterface} from '../dashboard-widget-component-interface';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {forkJoin} from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -20,6 +21,7 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
   @Input() widgetConfig: DashboardWidgetConfig;
   loading: boolean = false;
 
+  chartDatasetsSubject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([])
   // chartData: {
   //   label: string,
   //   clip?: number |object,
@@ -34,7 +36,7 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
   //   // borderWidth: number,
   //   // fill: boolean,
   // }[] = [];
-  chartData: ChartConfiguration<'line'>['data']['datasets'] = [];
+  chartDatasets: ChartConfiguration<'line'>['data']['datasets'] = [];
   chartLabels: string[] = [];
   chartOptions: ChartOptions = {}
   // chartColors: any;
@@ -47,7 +49,7 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
     }
 
     forkJoin(this.widgetConfig.queries.map(query => { return this.fastenApi.queryResources(query.q)})).subscribe((queryResults) => {
-      this.chartData = []
+      this.chartDatasets = []
 
       for (let queryResult of queryResults) {
         console.log("QUERY RESULTS", queryResult)
@@ -58,7 +60,7 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
 
         console.log("CHART Labels", this.chartLabels)
 
-        this.chartData.push({
+        this.chartDatasets.push({
           label: this.widgetConfig?.title_text,
           data: queryResult //.map(row => {row.data = 40; return row}),
           // data: [27.2, 29.9, 18.2, 14, 12.7, 11, 13.7, 9.7, 12.6, 50],
@@ -67,7 +69,8 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
         });
       }
 
-
+      //push datasets for non-query components
+      this.chartDatasetsSubject.next(queryResults)
 
     })
   }

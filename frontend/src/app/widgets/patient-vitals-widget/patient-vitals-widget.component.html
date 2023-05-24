@@ -1,52 +1,16 @@
 <div class="card card-dashboard-pageviews h-100">
   <div class="card-header">
     <h6 class="card-title">Patient Vitals</h6>
-    <p class="card-text">John Doe | 33 | Male</p>
+    <p class="card-text">{{name}} | {{age}} | {{gender | titlecase}}</p>
   </div><!-- card-header -->
   <div class="card-body">
-    <div class="az-list-item">
+    <div *ngFor="let vitalSignData of vitalSigns" class="az-list-item">
       <div>
-        <h6>Height</h6>
-        <span>Nov 12, 2021</span>
+        <h6>{{vitalSignData.display}}</h6>
+        <span>{{vitalSignData.date | amDateFormat:'LL'}}</span>
       </div>
       <div>
-        <h6 class="tx-primary">5"5'</h6>
-      </div>
-    </div><!-- list-group-item -->
-    <div class="az-list-item">
-      <div>
-        <h6>Weight</h6>
-        <span>Nov 12, 2021</span>
-      </div>
-      <div>
-        <h6 class="tx-primary">65 kg</h6>
-      </div>
-    </div><!-- list-group-item -->
-    <div class="az-list-item">
-      <div>
-        <h6>BMI</h6>
-        <span>Nov 12, 2021</span>
-      </div>
-      <div>
-        <h6 class="tx-primary">28.9 kg/m2</h6>
-      </div>
-    </div><!-- list-group-item -->
-    <div class="az-list-item">
-      <div>
-        <h6>Blood Pressure</h6>
-        <span>March 1, 2022</span>
-      </div>
-      <div>
-        <h6 class="tx-primary">123/80</h6>
-      </div>
-    </div><!-- list-group-item -->
-    <div class="az-list-item">
-      <div>
-        <h6>Pulse</h6>
-        <span>March 1, 2022</span>
-      </div>
-      <div>
-        <h6 class="tx-primary">123 BPM</h6>
+        <h6 class="tx-primary">{{vitalSignData.value | number:'1.1-2'}} {{vitalSignData.unit}}</h6>
       </div>
     </div><!-- list-group-item -->
   </div><!-- card-body -->

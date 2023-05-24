@@ -299,7 +299,7 @@ export class FastenApiService {
       return selectAliasMap
     }, {})
 
-    console.log(selectPathFilters)
+    // console.log(selectPathFilters)
     return function(rawResource: any):{ [name:string]: string | string[] | any } {
       let results = {}
       for(let alias in selectPathFilters){

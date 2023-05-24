@@ -26,7 +26,7 @@
           "select": ["valueQuantity.value as data"],
           "from": "Observation",
           "where": [
-            "(code.coding.where(system = 'http://loinc.org' and code = '29463-7') | code.coding.where(system = 'http://loinc.org' and code = '3141-9')).exists()"
+            "(code.coding.where(system = 'http://loinc.org' and code = '29463-7') | code.coding.where(system = 'http://loinc.org' and code = '3141-9') | code.coding.where(system = 'http://snomed.info/sct' and code = '27113001')).exists()"
           ]
         }
       }]
