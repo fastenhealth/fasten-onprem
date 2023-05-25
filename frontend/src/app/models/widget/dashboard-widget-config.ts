@@ -11,10 +11,17 @@ export class DashboardWidgetConfig {
     q: DashboardWidgetQuery,
     aggregator?: string,
     conditional_formats?: [],
-    type?: "line",
-    style?: {
-      "palette": "grey" | "pastel" | "light" | "default"
+    dataset_options?: {
+      label?: string,
+      borderWidth?: number,
+      borderColor?: string,
+      fill?: boolean,
+      backgroundColor?: string,
     }
+    // type?: "line",
+    // style?: {
+    //   "palette": "grey" | "pastel" | "light" | "default"
+    // }
   }[]
 
 
@@ -25,4 +32,6 @@ export class DashboardWidgetConfig {
   height: number
   x?: number
   y?: number
+
+  parsing?: {xAxisKey?: string, yAxisKey?: string} | {[name:string]: string}
 }

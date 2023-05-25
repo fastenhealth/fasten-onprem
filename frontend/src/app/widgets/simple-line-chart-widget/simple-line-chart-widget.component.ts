@@ -16,6 +16,7 @@ export class SimpleLineChartWidgetComponent extends DashboardWidgetComponent imp
 
   ngOnInit(): void {
     super.ngOnInit()
+    this.chartOptions.parsing = this.widgetConfig?.parsing
 
     //TODO: remove this
     if(!this.widgetConfig) {
@@ -111,11 +112,6 @@ export class SimpleLineChartWidgetComponent extends DashboardWidgetComponent imp
     borderColor:  'rgb(0, 204, 212)',
     borderWidth: 2,
     fill: true,
-
-    parsing: {
-      xAxisKey: 'id',
-      yAxisKey: 'data'
-    }
   } as ChartConfiguration<'line'>['options']
 
 }

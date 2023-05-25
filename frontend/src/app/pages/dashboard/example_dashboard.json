@@ -29,7 +29,11 @@
             "(code.coding.where(system = 'http://loinc.org' and code = '29463-7') | code.coding.where(system = 'http://loinc.org' and code = '3141-9') | code.coding.where(system = 'http://snomed.info/sct' and code = '27113001')).exists()"
           ]
         }
-      }]
+      }],
+      "parsing": {
+        "xAxisKey": "id",
+        "yAxisKey": "data"
+      }
     },
     {
       "title_text": "Height",
@@ -47,16 +51,53 @@
             "code.coding.where(system = 'http://loinc.org' and code = '8302-2').exists()"
           ]
         }
-      }]
+      }],
+      "parsing": {
+        "xAxisKey": "id",
+        "yAxisKey": "data"
+      }
     },
     {
       "title_text": "Blood Pressure",
-      "description_text": "",
+      "description_text": "How much pressure your blood is exerting against your artery walls when the heart beats",
       "x": 8,
       "y": 2,
       "width": 4,
       "height": 3,
-      "item_type": "grouped-bar-chart-widget"
+      "item_type": "grouped-bar-chart-widget",
+      "queries": [
+        {
+          "q": {
+            "select": [
+              "component.where(code.coding.system = 'http://loinc.org' and code.coding.code = '8462-4').valueQuantity.value as data"
+            ],
+            "from": "Observation",
+            "where": [
+              "(component.code.coding.where(system = 'http://loinc.org' and code = '8462-4')).exists()"
+            ]
+          },
+          "dataset_options": {
+            "label": "Diastolic"
+          }
+        },
+        {
+          "q": {
+            "select": [
+              "component.where(code.coding.system = 'http://loinc.org' and code.coding.code = '8480-6').valueQuantity.value as data"
+            ],
+            "from": "Observation",
+            "where": [
+              "(component.code.coding.where(system = 'http://loinc.org' and code = '8480-6')).exists()"
+            ]
+          },
+          "dataset_options": {
+            "label": "Systolic"
+          }
+        }],
+      "parsing": {
+        "xAxisKey": "id",
+        "yAxisKey": "data"
+      }
     },
     {
       "title_text": "Patient Vitals",
@@ -104,7 +145,13 @@
           "from": "Encounter",
           "where": []
         }
-      }]
+      }],
+      "parsing": {
+        "Id": "id",
+        "Institution": "institution",
+        "Reason": "reason",
+        "Provider": "provider"
+      }
     }
   ]
 }

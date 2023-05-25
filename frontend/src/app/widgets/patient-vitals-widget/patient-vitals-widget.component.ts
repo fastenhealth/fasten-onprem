@@ -107,7 +107,7 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
 
           let foundDate = observation.date?.[0] || ""
           let existingDate = vitalSignCodeLookupEntry.date || ""
-          console.log("OBSERVATION!!!!!!", foundCode, foundDate, observation)
+          // console.log("OBSERVATION!!!!!!", foundCode, foundDate, observation)
           if(foundDate > existingDate){
             vitalSignCodeLookupEntry.date = foundDate
 
@@ -130,7 +130,7 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
 
               let foundDate = observation.date?.[0] || ""
               let existingDate = vitalSignCodeLookupEntry.date || ""
-              console.log("OBSERVATION!!!!!!", foundComponentCode, foundDate, observation)
+              // console.log("OBSERVATION!!!!!!", foundComponentCode, foundDate, observation)
               if(foundDate > existingDate){
                 vitalSignCodeLookupEntry.date = foundDate
 

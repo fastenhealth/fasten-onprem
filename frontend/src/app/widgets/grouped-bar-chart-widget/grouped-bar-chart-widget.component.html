@@ -1,12 +1,12 @@
 <div class="card card-dashboard-three h-100">
   <div class="card-header">
-    <p>Blood Pressure</p>
+    <p>{{widgetConfig.title_text}}</p>
     <h6>120/80 <small class="tx-success"><i class="icon ion-md-arrow-up"></i>mmHg</small></h6>
-    <small>How much pressure your blood is exerting against your artery walls when the heart beats</small>
+    <small>{{widgetConfig.description_text}}</small>
   </div><!-- card-header -->
   <div class="card-body d-flex flex-column">
     <div class="sessions-chart-wrapper mt-auto mx-auto">
-      <canvas baseChart [type]="'bar'" [datasets]="sessionsChartData" [labels]="sessionsChartLabels" [options]="sessionsChartOptions"></canvas>
+      <canvas baseChart [type]="'bar'" [datasets]="chartDatasets" [labels]="chartLabels" [options]="chartOptions"></canvas>
     </div><!-- chart-wrapper -->
   </div>
 </div>

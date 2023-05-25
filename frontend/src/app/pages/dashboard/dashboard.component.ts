@@ -88,7 +88,7 @@ export class DashboardComponent implements OnInit {
         w: widgetConfig.width,
         h: widgetConfig.height,
         type: widgetConfig.item_type,
-        widgetConfig: widgetConfig.item_type == "simple-line-chart-widget" ? widgetConfig : undefined,
+        widgetConfig: !!widgetConfig?.queries?.length ? widgetConfig : undefined,
       })
     })
 

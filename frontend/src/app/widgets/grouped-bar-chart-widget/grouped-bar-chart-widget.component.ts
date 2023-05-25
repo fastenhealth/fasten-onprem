@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {NgChartsModule} from 'ng2-charts';
 import {ChartConfiguration} from 'chart.js';
+import {DashboardWidgetComponent} from '../dashboard-widget/dashboard-widget.component';
 
 @Component({
   standalone: true,
@@ -9,34 +10,23 @@ import {ChartConfiguration} from 'chart.js';
   templateUrl: './grouped-bar-chart-widget.component.html',
   styleUrls: ['./grouped-bar-chart-widget.component.scss']
 })
-export class GroupedBarChartWidgetComponent implements OnInit {
-
-  constructor() { }
+export class GroupedBarChartWidgetComponent extends DashboardWidgetComponent implements OnInit {
 
   ngOnInit(): void {
+    this.chartDatasetsDefaults = [{
+      borderWidth: 1,
+      backgroundColor: '#560bd0'
+    }, {
+      borderWidth: 1,
+      backgroundColor: '#cad0e8'
+    }]
+
+    super.ngOnInit()
+    this.chartOptions.parsing = this.widgetConfig?.parsing
   }
 
-  sessionsChartData = [
-    {
-      label: '# of Votes',
-      data: [2, 4, 10, 20, 45, 40, 35, 18],
-      borderWidth: 1,
-      // fill: false,
-      backgroundColor: '#560bd0'
-    },
-    {
-      label: '# of Rate',
-      data: [3, 6, 15, 35, 50, 45, 35, 25],
-      borderWidth: 1,
-      // fill: false,
-      backgroundColor: '#cad0e8'
-    }
-  ] as ChartConfiguration<'bar'>['data']['datasets']
-
-  sessionsChartLabels = [0,1,2,3,4,5,6,7];
-
-  sessionsChartOptions = {
-
+  chartOptions = {
+    borderWidth: 1,
     responsive:true,
     maintainAspectRatio:false,
     scales: {
@@ -74,6 +64,6 @@ export class GroupedBarChartWidgetComponent implements OnInit {
       point: {
         radius: 0
       }
-    }
+    },
   } as ChartConfiguration<'bar'>['options']
 }
