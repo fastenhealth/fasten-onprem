@@ -1,58 +1,11 @@
 <div class="card card-dashboard-four h-100">
   <div class="card-header">
-    <h6 class="card-title">Records by Healthcare Institution</h6>
+    <h6 class="card-title">{{widgetConfig?.title_text}}</h6>
   </div><!-- card-header -->
   <div class="card-body row">
-    <div class="col-md-6 d-flex align-items-center">
+    <div class="col-md-12 d-flex align-items-center">
       <div class="chart">
-        <canvas baseChart [type]="'doughnut'" [datasets]="sessionsByChannelChartData" [labels]="sessionsByChannelChartLabels" [options]="sessionsByChannelChartOptions" height="210"></canvas>
-      </div>
-    </div><!-- col -->
-    <div class="col-md-6 col-lg-5 mg-lg-l-auto mg-t-20 mg-md-t-0">
-      <div class="az-traffic-detail-item">
-        <div>
-          <span>Aetna</span>
-          <span>1,320 <span>(25%)</span></span>
-        </div>
-        <div class="progress">
-          <div class="progress-bar bg-purple wd-25p" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-        </div><!-- progress -->
-      </div>
-      <div class="az-traffic-detail-item">
-        <div>
-          <span>Cerner</span>
-          <span>987 <span>(20%)</span></span>
-        </div>
-        <div class="progress">
-          <div class="progress-bar bg-primary wd-20p" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-        </div><!-- progress -->
-      </div>
-      <div class="az-traffic-detail-item">
-        <div>
-          <span>OneMedical</span>
-          <span>2,010 <span>(30%)</span></span>
-        </div>
-        <div class="progress">
-          <div class="progress-bar bg-info wd-30p" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
-        </div><!-- progress -->
-      </div>
-      <div class="az-traffic-detail-item">
-        <div>
-          <span>Delta Dental</span>
-          <span>654 <span>(15%)</span></span>
-        </div>
-        <div class="progress">
-          <div class="progress-bar bg-teal wd-15p" role="progressbar" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
-        </div><!-- progress -->
-      </div>
-      <div class="az-traffic-detail-item">
-        <div>
-          <span>Humana</span>
-          <span>400 <span>(10%)</span></span>
-        </div>
-        <div class="progress">
-          <div class="progress-bar bg-gray-500 wd-10p" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-        </div><!-- progress -->
+        <canvas baseChart [type]="'doughnut'" [datasets]="chartDatasets" [labels]="chartLabels" [options]="chartOptions" height="210"></canvas>
       </div>
     </div><!-- col -->
   </div><!-- card-body -->

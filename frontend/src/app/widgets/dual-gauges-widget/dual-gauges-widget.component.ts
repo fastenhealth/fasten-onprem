@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {NgChartsModule} from 'ng2-charts';
+import {CommonModule} from '@angular/common';
 
 @Component({
   standalone: true,
-  imports: [NgChartsModule],
+  imports: [NgChartsModule,CommonModule],
   selector: 'dual-gauges-widget',
   templateUrl: './dual-gauges-widget.component.html',
   styleUrls: ['./dual-gauges-widget.component.scss']

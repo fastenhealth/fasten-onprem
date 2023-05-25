@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {NgChartsModule} from 'ng2-charts';
 import {ChartConfiguration} from 'chart.js';
+import {CommonModule} from '@angular/common';
 
 @Component({
   standalone: true,
-  imports: [NgChartsModule],
+  imports: [NgChartsModule, CommonModule],
   selector: 'complex-line-widget',
   templateUrl: './complex-line-widget.component.html',
   styleUrls: ['./complex-line-widget.component.scss']

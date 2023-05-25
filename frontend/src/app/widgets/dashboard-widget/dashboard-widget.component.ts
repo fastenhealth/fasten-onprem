@@ -59,7 +59,7 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
         console.log("QUERY RESULTS", queryResult)
         this.chartLabels = []
         for(let result of queryResult){
-          this.chartLabels.push((result?.label || result?.timestamp || result?.id))
+          this.chartLabels.push((result?.[this.widgetConfig?.parsing?.label] ||  result?.label || result?.timestamp || result?.id))
         }
 
         console.log("CHART Labels", this.chartLabels)

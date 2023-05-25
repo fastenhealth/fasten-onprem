@@ -1,4 +1,5 @@
 import {DashboardWidgetQuery} from './dashboard-widget-query';
+import * as _ from 'lodash';
 
 export class DashboardWidgetConfig {
   id: string
@@ -9,7 +10,6 @@ export class DashboardWidgetConfig {
 
   queries:  {
     q: DashboardWidgetQuery,
-    aggregator?: string,
     conditional_formats?: [],
     dataset_options?: {
       label?: string,
@@ -33,5 +33,5 @@ export class DashboardWidgetConfig {
   x?: number
   y?: number
 
-  parsing?: {xAxisKey?: string, yAxisKey?: string} | {[name:string]: string}
+  parsing?: {label?: string, xAxisKey?: string, yAxisKey?: string} | {[name:string]: string}
 }

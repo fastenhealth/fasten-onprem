@@ -1,35 +1,49 @@
 import { Component, OnInit } from '@angular/core';
 import {NgChartsModule} from 'ng2-charts';
 import {ChartConfiguration} from 'chart.js';
+import {DashboardWidgetComponent} from '../dashboard-widget/dashboard-widget.component';
+import {CommonModule} from '@angular/common';
 
 @Component({
   standalone: true,
-  imports: [NgChartsModule],
+  imports: [NgChartsModule, CommonModule],
   selector: 'donut-chart-widget',
   templateUrl: './donut-chart-widget.component.html',
   styleUrls: ['./donut-chart-widget.component.scss']
 })
-export class DonutChartWidgetComponent implements OnInit {
+export class DonutChartWidgetComponent extends DashboardWidgetComponent implements OnInit {
 
-  constructor() { }
+  doughnutChartDatasets: ChartConfiguration<'doughnut'>['data']['datasets'] = [];
 
   ngOnInit(): void {
+    this.chartDatasetsDefaults = [{
+      backgroundColor: ['#6f42c1', '#007bff','#17a2b8','#00cccc','#adb2bd'],
+    }]
+    super.ngOnInit()
+    this.chartOptions.parsing = this.widgetConfig?.parsing
+    // this.chartDatasetsSubject.subscribe(this.processQueryResults.bind(this))
   }
 
-  // Sessions by channel doughnut chart
-  sessionsByChannelChartData = [{
-    data: [25,20,30,15,10],
-    backgroundColor: ['#6f42c1', '#007bff','#17a2b8','#00cccc','#adb2bd'],
-  }] as ChartConfiguration<'doughnut'>['data']['datasets']
+  // processQueryResults(queryResults: any[]) {
+  //   if(!queryResults || queryResults.length < 1){
+  //     return
+  //   }
+  // }
 
-  sessionsByChannelChartLabels: ['Search', 'Email', 'Referral', 'Social', 'Other'];
-  sessionsByChannelChartOptions = {
+  // Sessions by channel doughnut chart
+  // chartData = [{
+  //   data: [25,20,30,15,10],
+  // }] as ChartConfiguration<'doughnut'>['data']['datasets']
+
+  // chartLabels: ['Search', 'Email', 'Referral', 'Social', 'Other'];
+  chartOptions = {
     cutoutPercentage: 50,
     maintainAspectRatio: false,
     responsive: true,
     plugins: {
       legend: {
-        display: false,
+        display: true,
+        position: 'right'
       }
     },
     animation: {
@@ -37,53 +51,5 @@ export class DonutChartWidgetComponent implements OnInit {
       animateRotate: true
     }
   } as ChartConfiguration<'doughnut'>['options']
-
-
-  // Sessions by channel doughnut chart
-  sessionsChartOneData = [{
-    data: [40,60],
-    backgroundColor: ['#007bff', '#cad0e8'],
-    borderColor: ['#007bff', '#cad0e8'],
-  }]
-
-  sessionsChartOneLabels: ['Search', 'Email'];
-  sessionsChartOneOptions = {
-    cutoutPercentage: 78,
-    maintainAspectRatio: false,
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      }
-    },
-    animation: {
-      animateScale: true,
-      animateRotate: true
-    }
-  };
-
-  // Sessions by channel doughnut chart
-  sessionsChartTwoData = [{
-    data: [25,75],
-    backgroundColor: ['#00cccc', '#cad0e8'],
-    borderColor: ['#00cccc', '#cad0e8']
-  }];
-
-  sessionsChartTwoLabels: ['Search', 'Email'];
-  sessionsChartTwoOptions = {
-    cutoutPercentage: 78,
-    maintainAspectRatio: false,
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      }
-    },
-    animation: {
-      animateScale: true,
-      animateRotate: true
-    }
-  };
-
 
 }

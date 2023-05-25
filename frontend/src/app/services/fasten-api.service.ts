@@ -20,6 +20,7 @@ import {BinaryModel} from '../../lib/models/resources/binary-model';
 import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
 import {DashboardWidgetQuery} from '../models/widget/dashboard-widget-query';
 import * as fhirpath from 'fhirpath';
+import _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -167,7 +168,7 @@ export class FastenApiService {
             console.log("NO QUERY DATA FOUND")
             return []
           }
-          return response.data
+          let results = response.data
             .filter((resource: ResourceFhir) => {
               return this.fhirPathFilterQueryFn(query)(resource.resource_raw)
             })
@@ -175,6 +176,22 @@ export class FastenApiService {
               return this.fhirPathMapQueryFn(query)(resource.resource_raw)
             })
 
+          if(query.aggregation_type){
+            switch (query.aggregation_type) {
+              case "countBy":
+
+                return Object.entries(_[query.aggregation_type](results, ...(query.aggregation_params || []))).map(pair => {
+                  return {key: pair[0], value: pair[1]}
+                })
+
+                break;
+              default:
+                throw new Error("unsupported aggregation type")
+            }
+          }
+          else {
+            return results
+          }
         })
       );
   }

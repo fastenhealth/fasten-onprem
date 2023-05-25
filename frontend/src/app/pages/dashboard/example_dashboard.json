@@ -109,13 +109,27 @@
       "item_type": "patient-vitals-widget"
     },
     {
-      "title_text": "Records by Healthcare Institution",
+      "title_text": "Records by Type",
       "description_text": "",
       "x": 4,
       "y": 5,
       "width": 8,
       "height": 5,
-      "item_type": "donut-chart-widget"
+      "item_type": "donut-chart-widget",
+      "queries": [{
+        "q": {
+          "select": [],
+          "from": "",
+          "where": [],
+
+          "aggregation_params":["resourceType"],
+          "aggregation_type":"countBy"
+        }
+      }],
+      "parsing": {
+        "label": "key",
+        "key": "value"
+      }
     },
     {
       "title_text": "Compliance",
