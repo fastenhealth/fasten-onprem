@@ -1,28 +1,17 @@
 <div class="card card-dashboard-five">
   <div class="card-header">
-    <h6 class="card-title">Compliance</h6>
-    <span class="card-text">Use to track important healthcare and medical tasks.</span>
+    <h6 class="card-title">{{widgetConfig.title_text}}</h6>
+    <span class="card-text">{{widgetConfig.description_text}}</span>
   </div><!-- card-header -->
   <div class="card-body row row-sm">
-    <div class="col-6">
+    <div *ngFor="let chartDataset of chartDatasets; index as ndx" class="col-6">
       <div class="d-flex align-items-center">
         <div class="mg-b-10 mg-sm-b-0 mg-sm-r-10 wd-50">
-          <canvas baseChart [type]="'doughnut'" [datasets]="sessionsChartOneData" [labels]="sessionsChartOneLabels" [options]="sessionsChartOneOptions" height="45"></canvas>
+          <canvas baseChart [type]="'doughnut'" [datasets]="[chartDataset]" [labels]="chartLabels" [options]="chartOptions" height="45"></canvas>
         </div>
         <div>
-          <label>Vaccinations</label>
+          <label>{{chartDataset.label}}</label>
           <h4>3</h4>
-        </div>
-      </div>
-    </div><!-- col -->
-    <div class="col-6 d-flex align-items-center">
-      <div class="d-flex align-items-center">
-        <div class="mg-b-10 mg-sm-b-0 mg-sm-r-10 wd-50">
-          <canvas baseChart [type]="'doughnut'" [datasets]="sessionsChartTwoData" [labels]="sessionsChartTwoLabels" [options]="sessionsChartTwoOptions" height="45"></canvas>
-        </div>
-        <div>
-          <label>Followups</label>
-          <h4>5</h4>
         </div>
       </div>
     </div><!-- col -->

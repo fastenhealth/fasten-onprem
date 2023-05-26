@@ -56,13 +56,19 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
 
       for (let queryNdx in queryResults) {
         let queryResult = queryResults[queryNdx]
-        console.log("QUERY RESULTS", queryResult)
+        console.log(`QUERY RESULTS FOR ${this.widgetConfig.title_text}`, queryResult)
         this.chartLabels = []
+        // console.log(`CHART LABELS BEFORE ${this.widgetConfig.title_text}`, this.chartLabels)
         for(let result of queryResult){
-          this.chartLabels.push((result?.[this.widgetConfig?.parsing?.label] ||  result?.label || result?.timestamp || result?.id))
+          let label = (result?.[this.widgetConfig?.parsing?.label] ||  result?.label || result?.timestamp || result?.id || '')
+          // if(Array.isArray(label)){
+          //   this.chartLabels.push(...label)
+          // } else {
+            this.chartLabels.push(label)
+          // }
         }
 
-        console.log("CHART Labels", this.chartLabels)
+        console.log(`CHART LABELS FOR ${this.widgetConfig.title_text}`, this.chartLabels)
 
         this.chartDatasets.push(_.extend(
           this.chartDatasetsDefaults?.[queryNdx] || {},

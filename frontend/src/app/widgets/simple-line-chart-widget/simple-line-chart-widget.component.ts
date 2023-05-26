@@ -15,6 +15,11 @@ import {CommonModule} from '@angular/common';
 })
 export class SimpleLineChartWidgetComponent extends DashboardWidgetComponent implements OnInit {
 
+  constructor(public fastenApi: FastenApiService) {
+    super(fastenApi);
+  }
+
+
   ngOnInit(): void {
     super.ngOnInit()
     this.chartOptions.parsing = this.widgetConfig?.parsing

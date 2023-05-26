@@ -23,7 +23,10 @@
       "item_type": "simple-line-chart-widget",
       "queries": [{
         "q": {
-          "select": ["valueQuantity.value as data"],
+          "select": [
+            "valueQuantity.value as data",
+            "(effectiveDateTime | issued).first() as label"
+          ],
           "from": "Observation",
           "where": [
             "(code.coding.where(system = 'http://loinc.org' and code = '29463-7') | code.coding.where(system = 'http://loinc.org' and code = '3141-9') | code.coding.where(system = 'http://snomed.info/sct' and code = '27113001')).exists()"
@@ -31,7 +34,7 @@
         }
       }],
       "parsing": {
-        "xAxisKey": "id",
+        "xAxisKey": "label",
         "yAxisKey": "data"
       }
     },
@@ -45,7 +48,10 @@
       "item_type": "simple-line-chart-widget",
       "queries": [{
         "q": {
-          "select": ["valueQuantity.value as data"],
+          "select": [
+            "valueQuantity.value as data",
+            "(effectiveDateTime | issued).first() as label"
+          ],
           "from": "Observation",
           "where": [
             "code.coding.where(system = 'http://loinc.org' and code = '8302-2').exists()"
@@ -53,7 +59,7 @@
         }
       }],
       "parsing": {
-        "xAxisKey": "id",
+        "xAxisKey": "label",
         "yAxisKey": "data"
       }
     },
@@ -138,7 +144,37 @@
       "y": 10,
       "width": 4,
       "height": 2,
-      "item_type": "dual-gauges-widget"
+      "item_type": "dual-gauges-widget",
+      "queries": [{
+        "dataset_options": {
+          "label": "Vaccines"
+        },
+        "q": {
+          "select": [],
+          "from": "Immunization",
+          "where": [],
+
+          "aggregation_params":["resourceType"],
+          "aggregation_type":"countBy"
+        }
+      },
+        {
+          "dataset_options": {
+            "label": "Claims"
+          },
+          "q": {
+            "select": [],
+            "from": "Claim",
+            "where": [],
+
+            "aggregation_params":["resourceType"],
+            "aggregation_type":"countBy"
+          }
+        }],
+      "parsing": {
+        "label": "key",
+        "key": "value"
+      }
     },
     {
       "title_text": "Recent Encounters",
