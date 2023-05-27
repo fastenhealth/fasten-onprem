@@ -85,4 +85,23 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
     })
   }
 
+  getLastDatasetValue(dataset: ChartDataset<'line'>): string {
+    let lastItem = dataset?.data?.splice(-1) || ''
+    let valueKey = this.chartOptions?.parsing?.['yAxisKey'] || dataset?.parsing?.['key']
+    console.log('current', lastItem, valueKey)
+
+    if(typeof lastItem === 'string'){
+      console.log('lastItem-string', lastItem)
+      return lastItem
+    } else if(Array.isArray(lastItem)){
+
+      return _.flatten(lastItem?.[0]?.[valueKey])?.[0] as string
+    } else if(typeof lastItem === 'object'){
+      console.log('lastItem-object', lastItem?.[valueKey])
+      return lastItem?.[valueKey]
+    } else {
+      return lastItem
+    }
+  }
+
 }

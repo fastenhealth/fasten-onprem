@@ -6,7 +6,7 @@
   "widgets": [
     {
       "title_text": "Diabetes Tracking",
-      "description_text": "Track key metrics for your chronic disease (eg. Diabetes)",
+      "description_text": "Track key metrics for your chronic disease (eg. Diabetes). The data within this widget is not reflective of your health record, and is only present for demonstrational purposes.",
       "x": 0,
       "y": 0,
       "width": 8,
