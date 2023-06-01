@@ -4,6 +4,7 @@ import { PatientVitalsWidgetComponent } from './patient-vitals-widget.component'
 import {FastenApiService} from '../../services/fasten-api.service';
 import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
 import {HttpClient} from '@angular/common/http';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('PatientVitalsWidgetComponent', () => {
   let component: PatientVitalsWidgetComponent;
@@ -14,7 +15,7 @@ describe('PatientVitalsWidgetComponent', () => {
     mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['queryResources'])
 
     await TestBed.configureTestingModule({
-      imports: [ PatientVitalsWidgetComponent ],
+      imports: [ PatientVitalsWidgetComponent, RouterTestingModule ],
       providers: [
         {
           provide: FastenApiService,
