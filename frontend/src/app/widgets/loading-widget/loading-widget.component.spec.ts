@@ -8,7 +8,7 @@ describe('LoadingWidgetComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LoadingWidgetComponent ]
+      imports: [ LoadingWidgetComponent ]
     })
     .compileComponents();
 
