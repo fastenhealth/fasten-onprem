@@ -1,18 +1,30 @@
-<div class="card card-table-one">
-  <h6 class="card-title">{{widgetConfig.title_text}}</h6>
-  <p class="az-content-text mg-b-20">{{widgetConfig.description_text}}</p>
-  <div class="table-responsive">
-    <table *ngIf="rows.length" class="table">
-      <thead>
-      <tr>
-        <th *ngFor="let col of headers">{{col}}</th>
-      </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let row of rows">
-          <td *ngFor="let col of row">{{col}}</td>
+<ng-container [ngTemplateOutlet]="loading ? showLoading : (!loading && isEmpty) ? showEmpty : showChart"></ng-container>
+
+<ng-template #showLoading>
+  <loading-widget></loading-widget>
+</ng-template>
+
+<ng-template #showEmpty>
+  <empty-widget></empty-widget>
+</ng-template>
+
+<ng-template #showChart>
+  <div class="card card-table-one">
+    <h6 class="card-title">{{widgetConfig.title_text}}</h6>
+    <p class="az-content-text mg-b-20">{{widgetConfig.description_text}}</p>
+    <div class="table-responsive">
+      <table *ngIf="rows.length" class="table">
+        <thead>
+        <tr>
+          <th *ngFor="let col of headers">{{col}}</th>
         </tr>
-      </tbody>
-    </table>
-  </div><!-- table-responsive -->
-</div><!-- card -->
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of rows">
+            <td *ngFor="let col of row">{{col}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div><!-- table-responsive -->
+  </div>
+</ng-template><!-- card -->

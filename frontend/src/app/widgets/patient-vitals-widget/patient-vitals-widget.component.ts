@@ -7,9 +7,11 @@ import moment from "moment";
 import {CommonModule} from '@angular/common';
 import fhirpath from 'fhirpath';
 import {MomentModule} from 'ngx-moment';
+import {LoadingWidgetComponent} from '../loading-widget/loading-widget.component';
+import {EmptyWidgetComponent} from '../empty-widget/empty-widget.component';
 @Component({
   standalone: true,
-  imports: [NgChartsModule, CommonModule, MomentModule],
+  imports: [NgChartsModule, CommonModule, MomentModule, LoadingWidgetComponent, EmptyWidgetComponent],
   selector: 'patient-vitals-widget',
   templateUrl: './patient-vitals-widget.component.html',
   styleUrls: ['./patient-vitals-widget.component.scss']

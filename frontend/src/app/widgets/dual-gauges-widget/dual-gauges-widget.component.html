@@ -1,19 +1,31 @@
-<div class="card card-dashboard-five">
-  <div class="card-header">
-    <h6 class="card-title">{{widgetConfig.title_text}}</h6>
-    <span class="card-text">{{widgetConfig.description_text}}</span>
-  </div><!-- card-header -->
-  <div class="card-body row row-sm">
-    <div *ngFor="let chartDataset of chartDatasets; index as ndx" class="col-6">
-      <div class="d-flex align-items-center">
-        <div class="mg-b-10 mg-sm-b-0 mg-sm-r-10 wd-50">
-          <canvas baseChart [type]="'doughnut'" [datasets]="[chartDataset]" [labels]="chartLabels" [options]="chartOptions" height="45"></canvas>
+<ng-container [ngTemplateOutlet]="loading ? showLoading : (!loading && isEmpty) ? showEmpty : showChart"></ng-container>
+
+<ng-template #showLoading>
+  <loading-widget></loading-widget>
+</ng-template>
+
+<ng-template #showEmpty>
+  <empty-widget></empty-widget>
+</ng-template>
+
+<ng-template #showChart>
+  <div class="card card-dashboard-five">
+    <div class="card-header">
+      <h6 class="card-title">{{widgetConfig.title_text}}</h6>
+      <span class="card-text">{{widgetConfig.description_text}}</span>
+    </div><!-- card-header -->
+    <div class="card-body row row-sm">
+      <div *ngFor="let chartDataset of chartDatasets; index as ndx" class="col-6">
+        <div class="d-flex align-items-center">
+          <div class="mg-b-10 mg-sm-b-0 mg-sm-r-10 wd-50">
+            <canvas baseChart [type]="'doughnut'" [datasets]="[chartDataset]" [labels]="chartLabels" [options]="chartOptions" height="45"></canvas>
+          </div>
+          <div>
+            <label>{{chartDataset.label}}</label>
+            <h4>3</h4>
+          </div>
         </div>
-        <div>
-          <label>{{chartDataset.label}}</label>
-          <h4>3</h4>
-        </div>
-      </div>
-    </div><!-- col -->
-  </div><!-- card-body -->
-</div><!-- card-dashboard-five -->
+      </div><!-- col -->
+    </div><!-- card-body -->
+  </div>
+</ng-template><!-- card-dashboard-five -->

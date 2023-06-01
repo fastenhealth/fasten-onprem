@@ -7,6 +7,8 @@ import {GroupedBarChartWidgetComponent} from './grouped-bar-chart-widget/grouped
 import {PatientVitalsWidgetComponent} from './patient-vitals-widget/patient-vitals-widget.component';
 import {SimpleLineChartWidgetComponent} from './simple-line-chart-widget/simple-line-chart-widget.component';
 import {TableWidgetComponent} from './table-widget/table-widget.component';
+import { LoadingWidgetComponent } from './loading-widget/loading-widget.component';
+import { EmptyWidgetComponent } from './empty-widget/empty-widget.component';
 @NgModule({
   imports: [
 
@@ -19,6 +21,9 @@ import {TableWidgetComponent} from './table-widget/table-widget.component';
     PatientVitalsWidgetComponent,
     SimpleLineChartWidgetComponent,
     TableWidgetComponent,
+    LoadingWidgetComponent,
+    EmptyWidgetComponent
+
   ],
   declarations: [],
   exports: [
@@ -31,6 +36,9 @@ import {TableWidgetComponent} from './table-widget/table-widget.component';
     PatientVitalsWidgetComponent,
     SimpleLineChartWidgetComponent,
     TableWidgetComponent,
+    LoadingWidgetComponent,
+    EmptyWidgetComponent
+
   ]
 })
 

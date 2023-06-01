@@ -3,10 +3,12 @@ import {NgChartsModule} from 'ng2-charts';
 import {ChartConfiguration} from 'chart.js';
 import {DashboardWidgetComponent} from '../dashboard-widget/dashboard-widget.component';
 import {CommonModule} from '@angular/common';
+import {LoadingWidgetComponent} from '../loading-widget/loading-widget.component';
+import {EmptyWidgetComponent} from '../empty-widget/empty-widget.component';
 
 @Component({
   standalone: true,
-  imports: [NgChartsModule, CommonModule],
+  imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
   selector: 'grouped-bar-chart-widget',
   templateUrl: './grouped-bar-chart-widget.component.html',
   styleUrls: ['./grouped-bar-chart-widget.component.scss']

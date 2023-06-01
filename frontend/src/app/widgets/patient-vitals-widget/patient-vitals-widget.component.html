@@ -1,17 +1,29 @@
-<div class="card card-dashboard-pageviews h-100">
-  <div class="card-header">
-    <h6 class="card-title">Patient Vitals</h6>
-    <p class="card-text">{{name}} | {{age}} | {{gender | titlecase}}</p>
-  </div><!-- card-header -->
-  <div class="card-body">
-    <div *ngFor="let vitalSignData of vitalSigns" class="az-list-item">
-      <div>
-        <h6>{{vitalSignData.display}}</h6>
-        <span>{{vitalSignData.date | amDateFormat:'LL'}}</span>
-      </div>
-      <div>
-        <h6 class="tx-primary">{{vitalSignData.value | number:'1.1-2'}} {{vitalSignData.unit}}</h6>
-      </div>
-    </div><!-- list-group-item -->
-  </div><!-- card-body -->
-</div><!-- card -->
+<ng-container [ngTemplateOutlet]="loading ? showLoading : (!loading && isEmpty) ? showEmpty : showChart"></ng-container>
+
+<ng-template #showLoading>
+  <loading-widget></loading-widget>
+</ng-template>
+
+<ng-template #showEmpty>
+  <empty-widget></empty-widget>
+</ng-template>
+
+<ng-template #showChart>
+  <div class="card card-dashboard-pageviews h-100">
+    <div class="card-header">
+      <h6 class="card-title">Patient Vitals</h6>
+      <p class="card-text">{{name}} | {{age}} | {{gender | titlecase}}</p>
+    </div><!-- card-header -->
+    <div class="card-body">
+      <div *ngFor="let vitalSignData of vitalSigns" class="az-list-item">
+        <div>
+          <h6>{{vitalSignData.display}}</h6>
+          <span>{{vitalSignData.date | amDateFormat:'LL'}}</span>
+        </div>
+        <div>
+          <h6 class="tx-primary">{{vitalSignData.value | number:'1.1-2'}} {{vitalSignData.unit}}</h6>
+        </div>
+      </div><!-- list-group-item -->
+    </div><!-- card-body -->
+  </div>
+</ng-template><!-- card -->

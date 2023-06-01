@@ -1,12 +1,24 @@
-<div class="card card-dashboard-three h-100">
-  <div class="card-header">
-    <p>{{widgetConfig.title_text}}</p>
-    <h6>120/80 <small class="tx-success"><i class="icon ion-md-arrow-up"></i>mmHg</small></h6>
-    <small>{{widgetConfig.description_text}}</small>
-  </div><!-- card-header -->
-  <div class="card-body d-flex flex-column">
-    <div class="sessions-chart-wrapper mt-auto mx-auto">
-      <canvas baseChart [type]="'bar'" [datasets]="chartDatasets" [labels]="chartLabels" [options]="chartOptions"></canvas>
-    </div><!-- chart-wrapper -->
+<ng-container [ngTemplateOutlet]="loading ? showLoading : (!loading && isEmpty) ? showEmpty : showChart"></ng-container>
+
+<ng-template #showLoading>
+  <loading-widget></loading-widget>
+</ng-template>
+
+<ng-template #showEmpty>
+  <empty-widget></empty-widget>
+</ng-template>
+
+<ng-template #showChart>
+  <div class="card card-dashboard-three h-100">
+    <div class="card-header">
+      <p>{{widgetConfig.title_text}}</p>
+      <h6>120/80 <small class="tx-success"><i class="icon ion-md-arrow-up"></i>mmHg</small></h6>
+      <small>{{widgetConfig.description_text}}</small>
+    </div><!-- card-header -->
+    <div class="card-body d-flex flex-column">
+      <div class="sessions-chart-wrapper mt-auto mx-auto">
+        <canvas baseChart [type]="'bar'" [datasets]="chartDatasets" [labels]="chartLabels" [options]="chartOptions"></canvas>
+      </div><!-- chart-wrapper -->
+    </div>
   </div>
-</div>
+</ng-template>

@@ -1,12 +1,23 @@
-<div class="card card-dashboard-four h-100">
-  <div class="card-header">
-    <h6 class="card-title">{{widgetConfig?.title_text}}</h6>
-  </div><!-- card-header -->
-  <div class="card-body row">
-    <div class="col-md-12 d-flex align-items-center">
-      <div class="chart">
-        <canvas baseChart [type]="'doughnut'" [datasets]="chartDatasets" [labels]="chartLabels" [options]="chartOptions" height="210"></canvas>
-      </div>
-    </div><!-- col -->
-  </div><!-- card-body -->
-</div><!-- card-dashboard-four -->
+<ng-container [ngTemplateOutlet]="loading ? showLoading : (!loading && isEmpty) ? showEmpty : showChart"></ng-container>
+<ng-template #showChart>
+  <div class="card card-dashboard-four h-100">
+    <div class="card-header">
+      <h6 class="card-title">{{widgetConfig?.title_text}}</h6>
+    </div><!-- card-header -->
+    <div class="card-body row">
+      <div class="col-md-12 d-flex align-items-center">
+        <div class="chart">
+          <canvas baseChart [type]="'doughnut'" [datasets]="chartDatasets" [labels]="chartLabels" [options]="chartOptions" height="210"></canvas>
+        </div>
+      </div><!-- col -->
+    </div><!-- card-body -->
+  </div>
+</ng-template>
+
+<ng-template #showLoading>
+  <loading-widget></loading-widget>
+</ng-template>
+
+<ng-template #showEmpty>
+  <empty-widget></empty-widget>
+</ng-template>

@@ -5,10 +5,12 @@ import {FastenApiService} from '../../services/fasten-api.service';
 import {DashboardWidgetComponent} from '../dashboard-widget/dashboard-widget.component';
 import {ChartConfiguration, ChartDataset, ChartOptions} from 'chart.js';
 import {CommonModule} from '@angular/common';
+import {LoadingWidgetComponent} from '../loading-widget/loading-widget.component';
+import {EmptyWidgetComponent} from '../empty-widget/empty-widget.component';
 
 @Component({
   standalone: true,
-  imports: [NgChartsModule, CommonModule],
+  imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
   selector: 'simple-line-chart-widget',
   templateUrl: './simple-line-chart-widget.component.html',
   styleUrls: ['./simple-line-chart-widget.component.scss']

@@ -9,10 +9,11 @@ import {FastenApiService} from '../../services/fasten-api.service';
 import {forkJoin} from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import * as _ from 'lodash';
+import {LoadingWidgetComponent} from '../loading-widget/loading-widget.component';
 
 @Component({
   standalone: true,
-  imports: [NgChartsModule, CommonModule, NgbDatepickerModule],
+  imports: [NgChartsModule, CommonModule, NgbDatepickerModule, LoadingWidgetComponent],
   selector: 'app-dashboard-widget',
   templateUrl: './dashboard-widget.component.html',
   styleUrls: ['./dashboard-widget.component.scss'],
@@ -20,8 +21,8 @@ import * as _ from 'lodash';
 export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponentInterface {
 
   @Input() widgetConfig: DashboardWidgetConfig;
-  loading: boolean = false;
-
+  loading: boolean = true;
+  isEmpty: boolean = true;
 
   chartDatasetsSubject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([])
   // chartData: {
@@ -44,13 +45,15 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
   chartOptions: ChartOptions = {}
   // chartColors: any;
 
-  constructor(public fastenApi: FastenApiService) { }
+  constructor(public fastenApi: FastenApiService) {
+    this.loading = true
+  }
 
   ngOnInit(): void {
     if(!this.widgetConfig) {
       return
     }
-
+    this.loading = true
     forkJoin(this.widgetConfig.queries.map(query => { return this.fastenApi.queryResources(query.q)})).subscribe((queryResults) => {
       this.chartDatasets = []
 
@@ -64,6 +67,7 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
           // if(Array.isArray(label)){
           //   this.chartLabels.push(...label)
           // } else {
+            this.isEmpty = false
             this.chartLabels.push(label)
           // }
         }
@@ -81,7 +85,10 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
 
       //push datasets for non-query components
       this.chartDatasetsSubject.next(queryResults)
+      this.loading = false
 
+    }, (error) => {
+      this.loading = false
     })
   }
 
