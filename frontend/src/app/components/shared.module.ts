@@ -39,7 +39,7 @@ import { ReportMedicalHistoryEditorComponent } from './report-medical-history-ed
 import { TreeModule } from '@circlon/angular-tree-component';
 import { ReportMedicalHistoryConditionComponent } from './report-medical-history-condition/report-medical-history-condition.component';
 import { ReportLabsObservationComponent } from './report-labs-observation/report-labs-observation.component';
-import { ChartsModule } from 'ng2-charts';
+import { NgChartsModule } from 'ng2-charts';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { BinaryComponent } from './fhir/resources/binary/binary.component';
@@ -87,7 +87,7 @@ import { MedicalSourcesCardComponent } from './medical-sources-card/medical-sour
     ReactiveFormsModule,
     MomentModule,
     TreeModule,
-    ChartsModule,
+    NgChartsModule,
     HighlightModule,
     PipesModule,
 

@@ -304,6 +304,13 @@ func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceM
 	}
 }
 
+func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) ([]models.ResourceFhir, error) {
+	//todo, until we actually parse the select statement, we will just return all resources based on "from"
+	return sr.ListResources(ctx, models.ListResourceQueryOptions{
+		SourceResourceType: query.From,
+	})
+}
+
 func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceFhir, error) {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {

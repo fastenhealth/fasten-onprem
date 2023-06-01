@@ -21,6 +21,7 @@ type DatabaseRepository interface {
 
 	GetResourceBySourceType(context.Context, string, string) (*models.ResourceFhir, error)
 	GetResourceBySourceId(context.Context, string, string) (*models.ResourceFhir, error)
+	QueryResources(context.Context, models.QueryResource) ([]models.ResourceFhir, error)
 	ListResources(context.Context, models.ListResourceQueryOptions) ([]models.ResourceFhir, error)
 	GetPatientForSources(ctx context.Context) ([]models.ResourceFhir, error)
 	AddResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error
