@@ -1,0 +1,88 @@
+{
+  "title": "TaskGroup",
+  "name": "taskgroup",
+  "version": "4.3.1",
+  "description": "Group together synchronous and asynchronous tasks and execute them with support for concurrency, naming, and nesting.",
+  "homepage": "https://github.com/bevry/taskgroup",
+  "license": "MIT",
+  "badges": {
+    "list": [
+      "travisci",
+      "npmversion",
+      "npmdownloads",
+      "daviddm",
+      "daviddmdev",
+      "---",
+      "slackin",
+      "patreon",
+      "gratipay",
+      "flattr",
+      "paypal",
+      "bitcoin",
+      "wishlist"
+    ],
+    "config": {
+      "patreonUsername": "bevry",
+      "gratipayUsername": "bevry",
+      "flattrCode": "344188/balupton-on-Flattr",
+      "paypalButtonID": "QB8GQPZAH84N6",
+      "bitcoinURL": "https://bevry.me/bitcoin",
+      "wishlistURL": "https://bevry.me/wishlist",
+      "slackinURL": "https://slack.bevry.me"
+    }
+  },
+  "keywords": [
+    "flow",
+    "control",
+    "async",
+    "sync",
+    "tasks",
+    "batch",
+    "concurrency"
+  ],
+  "author": "2013+ Bevry Pty Ltd <us@bevry.me> (http://bevry.me), 2011+ Benjamin Lupton <b@lupton.cc> (http://balupton.com)",
+  "maintainers": [
+    "Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+  ],
+  "contributors": [
+    "Benjamin Lupton <b@lupton.cc> (http://balupton.com)",
+    "crito <crito@cryptodrunks.net> (https://github.com/crito)",
+    "Peter Flannery (https://github.com/pflannery)",
+    "Sean Fridman <mail@seanfridman.com> (http://seanfridman.com)"
+  ],
+  "bugs": {
+    "url": "https://github.com/bevry/taskgroup/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/bevry/taskgroup.git"
+  },
+  "browsers": true,
+  "engines": {
+    "node": ">=0.8"
+  },
+  "dependencies": {
+    "ambi": "^2.2.0",
+    "csextends": "^1.0.3"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.9.1",
+    "joe": "^1.6.0",
+    "joe-reporter-console": "^1.2.1",
+    "assert-helpers": "^1.0.0",
+    "projectz": "^1.0.0",
+    "biscotto": "^2.3.1",
+    "safeps": "^2.2.12"
+  },
+  "directories": {
+    "lib": "./out/lib"
+  },
+  "scripts": {
+    "test": "node ./out/test/taskgroup-test.js"
+  },
+  "main": "./out/lib/taskgroup.js",
+  "cakeConfiguration": {
+    "COFFEE_SRC_PATH": "src",
+    "BISCOTTO_SRC_PATH": "src"
+  }
+}

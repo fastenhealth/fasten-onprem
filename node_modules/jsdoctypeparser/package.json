@@ -1,0 +1,47 @@
+{
+  "name": "jsdoctypeparser",
+  "description": "Strict JsDoc type expression parser.",
+  "version": "1.2.0",
+  "author": "Kuniwak <orga.chem.job@gmail.com>",
+  "keywords": [
+    "jsdoc",
+    "type expression",
+    "parser"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Kuniwak/jsdoctypeparser.git"
+  },
+  "bugs": {
+    "mail": "orga.chem.job@gmail.com",
+    "url": "https://github.com/Kuniwak/jsdoctypeparser/issues"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "main": "lib/index.js",
+  "scripts": {
+    "prepublidh": "npm run build",
+    "pretest": "npm run lint",
+    "test": "mocha test",
+
+    "lint": "eslint lib test && jscs lib test",
+    "build": "gulp build"
+  },
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "benchmark": "~1.0.0",
+    "chai": "^2.2.0",
+    "eslint": "^0.20.0",
+    "gulp": "^3.8.11",
+    "gulp-notify": "^2.2.0",
+    "gulp-peg": "^0.1.2",
+    "gulp-plumber": "^0.6.6",
+    "jscs": "^1.13.1",
+    "mocha": "^2.2.4"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^3.7.0"
+  }
+}

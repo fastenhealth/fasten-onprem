@@ -1,0 +1,36 @@
+{
+  "author": "JT <jt@gosquared.com>",
+  "name": "docker",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^1.4.0",
+    "commander": "^2.9.0",
+    "css": "^2.2.1",
+    "dox": "^0.8.0",
+    "ejs": "^2.3.3",
+    "extend": "^3.0.0",
+    "highlight.js": "^9.3.0",
+    "less": "^2.5.1",
+    "markdown-it": "^6.0.1",
+    "mkdirp": "^0.5.1",
+    "repeating": "^2.0.1",
+    "strip-indent": "^2.0.0",
+    "toc": "^0.4.0",
+    "watchr": "^2.4.13"
+  },
+  "bin": {
+    "docker": "./docker",
+    "docker.js": "./docker"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "description": "Static documentation generator based on docco",
+  "homepage": "http://jbt.github.com/docker",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jbt/docker.git"
+  },
+  "main": "./src/docker.js"
+}

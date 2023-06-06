@@ -1,0 +1,118 @@
+{
+  "name": "ambi",
+  "version": "2.5.0",
+  "description": "Execute a function ambidextrously (normalizes the differences between synchronous and asynchronous functions). Useful for treating synchronous functions as asynchronous functions (like supporting both synchronous and asynchronous event definitions automatically).",
+  "homepage": "https://github.com/bevry/ambi",
+  "license": "MIT",
+  "keywords": [
+    "sync",
+    "async",
+    "fire",
+    "exec",
+    "execute",
+    "ambidextrous",
+    "flow"
+  ],
+  "badges": {
+    "list": [
+      "travisci",
+      "npmversion",
+      "npmdownloads",
+      "daviddm",
+      "daviddmdev",
+      "---",
+      "slackin",
+      "patreon",
+      "gratipay",
+      "flattr",
+      "paypal",
+      "bitcoin",
+      "wishlist"
+    ],
+    "config": {
+      "patreonUsername": "bevry",
+      "gratipayUsername": "bevry",
+      "flattrUsername": "balupton",
+      "paypalURL": "https://bevry.me/paypal",
+      "bitcoinURL": "https://bevry.me/bitcoin",
+      "wishlistURL": "https://bevry.me/wishlist",
+      "slackinURL": "https://slack.bevry.me"
+    }
+  },
+  "author": "2013+ Bevry Pty Ltd <us@bevry.me> (http://bevry.me), 2011-2012 Benjamin Lupton <b@lupton.cc> (http://balupton.com)",
+  "maintainers": [
+    "Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+  ],
+  "contributors": [
+    "Benjamin Lupton <b@lupton.cc> (http://balupton.com)",
+    "Sean Fridman <mail@seanfridman.com> (http://seanfridman.com)",
+    "Benjamin Lupton (https://balupton.com)"
+  ],
+  "bugs": {
+    "url": "https://github.com/bevry/ambi/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/bevry/ambi.git"
+  },
+  "engines": {
+    "node": ">=0.12"
+  },
+  "editions": [
+    {
+      "description": "Source + ESNext + Require",
+      "entry": "source/index.js",
+      "directory": "source",
+      "syntaxes": [
+        "javascript",
+        "esnext",
+        "require",
+        "const",
+        "let",
+        "rest",
+        "spread"
+      ]
+    },
+    {
+      "description": "Babel Compiled + ES2015 + Require",
+      "entry": "es2015/index.js",
+      "directory": "es2015",
+      "syntaxes": [
+        "javascript",
+        "es2015",
+        "require"
+      ]
+    }
+  ],
+  "main": "index.js",
+  "browser": "es2015/index.js",
+  "scripts": {
+    "setup": "npm install",
+    "clean": "rm -Rf ./docs ./es2015",
+    "compile": "npm run compile:es2015",
+    "compile:es2015": "babel ./source --out-dir ./es2015 --presets es2015",
+    "meta": "npm run meta:projectz",
+    "meta:projectz": "projectz compile",
+    "prepare": "npm run compile && npm run test && npm run meta",
+    "release": "npm run prepare && npm run release:publish && npm run release:tag && npm run release:push",
+    "release:publish": "npm publish",
+    "release:tag": "git tag v$npm_package_version -a",
+    "release:push": "git push origin master && git push origin --tags",
+    "pretest": "npm run test:eslint",
+    "test:eslint": "eslint ./source",
+    "test": "node --harmony -e \"require('editions').requirePackage(process.cwd(), require, 'test.js')\""
+  },
+  "dependencies": {
+    "editions": "^1.1.1",
+    "typechecker": "^4.3.0"
+  },
+  "devDependencies": {
+    "assert-helpers": "^4.2.0",
+    "babel-cli": "^6.8.0",
+    "babel-preset-es2015": "^6.6.0",
+    "eslint": "^2.10.0",
+    "joe": "^1.6.0",
+    "joe-reporter-console": "^1.2.1",
+    "projectz": "^1.1.5"
+  }
+}

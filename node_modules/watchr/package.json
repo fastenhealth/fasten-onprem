@@ -1,0 +1,123 @@
+{
+  "name": "watchr",
+  "version": "2.6.0",
+  "description": "Better file system watching for Node.js",
+  "homepage": "https://github.com/bevry/watchr",
+  "license": "MIT",
+  "keywords": [
+    "watching",
+    "watch",
+    "fswatcher",
+    "watchfile",
+    "fs"
+  ],
+  "badges": {
+    "list": [
+      "travisci",
+      "npmversion",
+      "npmdownloads",
+      "daviddm",
+      "daviddmdev",
+      "---",
+      "slackin",
+      "patreon",
+      "gratipay",
+      "flattr",
+      "paypal",
+      "bitcoin",
+      "wishlist"
+    ],
+    "config": {
+      "patreonUsername": "bevry",
+      "gratipayUsername": "bevry",
+      "flattrUsername": "balupton",
+      "paypalURL": "https://bevry.me/paypal",
+      "bitcoinURL": "https://bevry.me/bitcoin",
+      "wishlistURL": "https://bevry.me/wishlist",
+      "slackinURL": "https://slack.bevry.me"
+    }
+  },
+  "author": "2012+ Bevry Pty Ltd <us@bevry.me> (http://bevry.me), 2011 Benjamin Lupton <b@lupton.cc> (http://balupton.com)",
+  "maintainers": [
+    "Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+  ],
+  "contributors": [
+    "Benjamin Lupton <b@lupton.cc> (http://balupton.com)",
+    "Aaron O'Mullan <aaron@gitbook.com> (http://www.gitbook.com)",
+    "Adam Sanderson <netghost@gmail.com> (monkeyandcrow.com)",
+    "Casey Foster (http://ca.sey.me)",
+    "Fredrik Norén (https://github.com/FredrikNoren)",
+    "Robson Roberto Souza Peixoto <robsonpeixoto@gmail.com> (https://github.com/robsonpeixoto)",
+    "Stuart Knightley (http://stuartk.com/)",
+    "David Byrd (http://digitalocean.com)"
+  ],
+  "bugs": {
+    "url": "https://github.com/bevry/watchr/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/bevry/watchr.git"
+  },
+  "engines": {
+    "node": ">=0.12"
+  },
+  "editions": [
+    {
+      "description": "Source + CoffeeScript + Require",
+      "entry": "src/lib/getmac.coffee",
+      "directory": "src",
+      "syntaxes": [
+        "coffeescript",
+        "require"
+      ]
+    },
+    {
+      "description": "CoffeeScript Compiled JavaScript + ES5 + Require",
+      "entry": "es5/lib/getmac.js",
+      "directory": "es5",
+      "syntaxes": [
+        "javascript",
+        "es5",
+        "require"
+      ]
+    }
+  ],
+  "main": "es5/lib/watchr.js",
+  "bin": {
+    "watchr": "bin/watchr"
+  },
+  "scripts": {
+    "setup": "npm install",
+    "compile": "npm run compile:coffeescript",
+    "compile:coffeescript": "coffee -bco ./es5 ./src",
+    "meta": "npm run meta:projectz",
+    "meta:projectz": "projectz compile",
+    "prepare": "npm run compile && npm run test && npm run meta",
+    "release": "npm run prepare && npm run release:publish && npm run release:tag && npm run release:push",
+    "release:publish": "npm publish",
+    "release:tag": "git tag v$npm_package_version -a",
+    "release:push": "git push origin master && git push origin --tags",
+    "pretest": "npm run test:coffeelint",
+    "test:coffeelint": "coffeelint ./src",
+    "test": "node --harmony ./es5/test/watchr-test.js"
+  },
+  "dependencies": {
+    "scandirectory": "^2.5.0",
+    "typechecker": "^4.3.0",
+    "extendr": "^3.2.2",
+    "eachr": "^3.2.0",
+    "safefs": "^4.1.0",
+    "taskgroup": "^5.0.1",
+    "ignorefs": "^1.1.1",
+    "extract-opts": "^3.3.1"
+  },
+  "devDependencies": {
+    "bal-util": "^2.5.1",
+    "coffee-script": "^1.10.0",
+    "coffeelint": "^1.15.7",
+    "joe": "^1.8.0",
+    "joe-reporter-console": "^1.2.1",
+    "projectz": "^1.1.6",
+    "rimraf": "^2.5.3"
+  }
+}

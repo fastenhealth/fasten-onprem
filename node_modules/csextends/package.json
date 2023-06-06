@@ -1,0 +1,111 @@
+{
+  "title": "Coffee-Script Extends",
+  "name": "csextends",
+  "version": "1.2.0",
+  "description": "Use the Coffee-Script extends keyword outside of Coffee-Script. Useful for easily extending existing existing classes, e.g. `require('csextends')(klass, extensions)`, and for providing your module consumers with an easy way to extend your classes, i.e. `Backbone.Model.extend(extensions)`.",
+  "homepage": "https://github.com/bevry/csextends",
+  "license": "MIT",
+  "keywords": [
+    "backbone",
+    "class",
+    "coffeescript",
+    "javascript"
+  ],
+  "badges": {
+    "list": [
+      "travisci",
+      "npmversion",
+      "npmdownloads",
+      "daviddm",
+      "daviddmdev",
+      "---",
+      "patreon",
+      "opencollective",
+      "flattr",
+      "paypal",
+      "bitcoin",
+      "wishlist",
+      "---",
+      "slackin"
+    ],
+    "config": {
+      "patreonUsername": "bevry",
+      "opencollectiveUsername": "bevry",
+      "flattrUsername": "balupton",
+      "paypalURL": "https://bevry.me/paypal",
+      "bitcoinURL": "https://bevry.me/bitcoin",
+      "wishlistURL": "https://bevry.me/wishlist",
+      "slackinURL": "https://slack.bevry.me"
+    }
+  },
+  "author": "2013+ Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
+  "maintainers": [
+    "Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+  ],
+  "contributors": [
+    "Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+  ],
+  "bugs": {
+    "url": "https://github.com/bevry/csextends/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bevry/csextends.git"
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
+  "editions": [
+    {
+      "description": "Source + CoffeeScript + Require",
+      "directory": "source",
+      "entry": "index.coffee",
+      "syntaxes": [
+        "coffeescript",
+        "require"
+      ]
+    },
+    {
+      "description": "CoffeeScript Compiled + ES5 + Require",
+      "directory": "es5",
+      "entry": "index.js",
+      "syntaxes": [
+        "javascript",
+        "es5",
+        "require"
+      ]
+    }
+  ],
+  "main": "es5/index.js",
+  "browser": "es5/index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "assert-helpers": "^4.5.1",
+    "coffeescript": "^1.12.7",
+    "coffeelint": "^2.1.0",
+    "joe": "^2.0.2",
+    "joe-reporter-console": "^2.0.1",
+    "projectz": "^1.4.0"
+  },
+  "scripts": {
+    "our:setup": "npm run our:setup:npm",
+    "our:setup:npm": "npm install",
+    "our:clean": "rm -Rf ./docs ./es2015 ./es5 ./out",
+    "our:compile": "npm run our:compile:coffee",
+    "our:compile:coffee": "coffee -bco ./es5 ./source",
+    "our:meta": "npm run our:meta:projectz",
+    "our:meta:projectz": "projectz compile",
+    "our:verify": "npm run our:verify:coffeelint",
+    "our:verify:coffeelint": "coffeelint ./source",
+    "our:test": "npm run our:verify && npm test",
+    "our:release": "npm run our:release:prepare && npm run our:release:check && npm run our:release:tag && npm run our:release:push",
+    "our:release:prepare": "npm run our:clean && npm run our:compile && npm run our:test && npm run our:meta",
+    "our:release:check": "npm run our:release:check:changelog && npm run our:release:check:dirty",
+    "our:release:check:changelog": "cat ./HISTORY.md | grep v$npm_package_version || (echo add a changelog entry for v$npm_package_version && exit -1)",
+    "our:release:check:dirty": "git diff --exit-code",
+    "our:release:tag": "export MESSAGE=$(cat ./HISTORY.md | sed -n \"/## v$npm_package_version/,/##/p\" | sed 's/## //' | awk 'NR>1{print buf}{buf = $0}') && test \"$MESSAGE\" || (echo 'proper changelog entry not found' && exit -1) && git tag v$npm_package_version -am \"$MESSAGE\"",
+    "our:release:push": "git push origin master && git push origin --tags",
+    "test": "node --harmony es5/test.js --joe-reporter=console"
+  },
+  "browsers": true
+}
