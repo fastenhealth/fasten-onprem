@@ -72,8 +72,8 @@ There are 2 flavors of Fasten:
 
 Run the following commands to download and start the Fasten docker container.
 ```
-docker pull ghcr.io/fastenhealth/fasten-onprem:main 
-docker run --rm -p 9090:8080 ghcr.io/fastenhealth/fasten-onprem:main 
+sudo docker pull ghcr.io/fastenhealth/fasten-onprem:main 
+sudo docker run --rm -p 9090:8080 ghcr.io/fastenhealth/fasten-onprem:main 
 ```
 
 Next, open a browser to `http://localhost:9090`
