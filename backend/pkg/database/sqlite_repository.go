@@ -8,6 +8,7 @@ import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	databaseModel "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models/database"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/glebarez/sqlite"
@@ -15,6 +16,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
+	"log"
 	"net/url"
 	"strings"
 )
@@ -63,6 +65,12 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 
 	//TODO: automigrate for now
 	err = fastenRepo.Migrate()
+	if err != nil {
+		return nil, err
+	}
+
+	//automigrate Fhir Database
+	err = databaseModel.Migrate(fastenRepo.GormClient)
 	if err != nil {
 		return nil, err
 	}
@@ -278,6 +286,23 @@ func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceM
 	wrappedResourceModel.RelatedResourceFhir = nil
 	cachedResourceRaw := wrappedResourceModel.ResourceRaw
 
+	//TODO: fully migrate to the new code
+	sr.Logger.Infof("NEW CODE -- insert FHIRResource (%v) %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID)
+	wrappedFhirResourceModel, err := databaseModel.NewFhirResourceModelByType(wrappedResourceModel.SourceResourceType)
+	if err != nil {
+		return false, err
+	}
+	wrappedFhirResourceModel.SetOriginBase(wrappedResourceModel.OriginBase)
+	err = wrappedFhirResourceModel.PopulateAndExtractSearchParameters(json.RawMessage(wrappedResourceModel.ResourceRaw))
+	if err != nil {
+		log.Fatalf("========================> AN ERROR OCCURED WHILE EXTRACTING: %v", err)
+	}
+	_ = sr.GormClient.WithContext(ctx).Where(models.OriginBase{
+		SourceID:           wrappedFhirResourceModel.GetSourceID(),
+		SourceResourceID:   wrappedFhirResourceModel.GetSourceResourceID(),
+		SourceResourceType: wrappedFhirResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
+	}).Omit("RelatedResourceFhir.*").FirstOrCreate(wrappedFhirResourceModel)
+
 	sr.Logger.Infof("insert/update (%v) %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID)
 
 	createResult := sr.GormClient.WithContext(ctx).Where(models.OriginBase{
@@ -302,13 +327,6 @@ func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceM
 		//resource was created
 		return createResult.RowsAffected > 0, createResult.Error
 	}
-}
-
-func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) ([]models.ResourceFhir, error) {
-	//todo, until we actually parse the select statement, we will just return all resources based on "from"
-	return sr.ListResources(ctx, models.ListResourceQueryOptions{
-		SourceResourceType: query.From,
-	})
 }
 
 func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceFhir, error) {
