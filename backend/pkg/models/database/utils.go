@@ -125,3 +125,8 @@ func NewFhirResourceModelByType(resourceType string) (IFhirResourceModel, error)
 		return nil, fmt.Errorf("Invalid resource type: %s", resourceType)
 	}
 }
+
+// Returns a slice of all allowed resource types
+func GetAllowedResourceTypes() []string {
+	return []string{"AdverseEvent", "AllergyIntolerance", "Appointment", "Binary", "CarePlan", "CareTeam", "Claim", "ClaimResponse", "Condition", "Coverage", "CoverageEligibilityRequest", "CoverageEligibilityResponse", "Device", "DeviceRequest", "DiagnosticReport", "DocumentManifest", "DocumentReference", "Encounter", "Endpoint", "EnrollmentRequest", "EnrollmentResponse", "ExplanationOfBenefit", "FamilyMemberHistory", "Goal", "ImagingStudy", "Immunization", "InsurancePlan", "Location", "Media", "Medication", "MedicationAdministration", "MedicationDispense", "MedicationRequest", "MedicationStatement", "NutritionOrder", "Observation", "Organization", "OrganizationAffiliation", "Patient", "Person", "PractitionerRole", "Practitioner", "Procedure", "Provenance", "Questionnaire", "QuestionnaireResponse", "RelatedPerson", "ServiceRequest", "Specimen", "VisionPrescription"}
+}

@@ -299,6 +299,11 @@ func main() {
 
 		})
 
+		file.Comment("TableName overrides the table name from fhir_observations (pluralized) to `fhir_observation`. https://gorm.io/docs/conventions.html#TableName")
+		file.Func().Call(jen.Id("s").Op("*").Id(structName)).Id("TableName").Params().Params(jen.String()).BlockFunc(func(g *jen.Group) {
+			g.Return(jen.Lit(strcase.ToSnake(structName)))
+		})
+
 		// Save the generated Go code to a file
 		filename := fmt.Sprintf("%s.go", strcase.ToSnake(structName))
 		fmt.Printf("Generated Go struct for %s: %s\n", structName, filename)
@@ -361,6 +366,16 @@ func main() {
 				d.Return(jen.Nil(), jen.Qual("fmt", "Errorf").Call(jen.Lit("Invalid resource type: %s"), jen.Id("resourceType")))
 			})
 		})
+	})
+
+	//A function which returns all allowed resource types
+	utilsFile.Comment("Returns a slice of all allowed resource types")
+	utilsFile.Func().Id("GetAllowedResourceTypes").Params().Params(jen.Index().String()).BlockFunc(func(g *jen.Group) {
+		g.Return(jen.Index().String().ValuesFunc(func(g *jen.Group) {
+			for _, resourceName := range AllowedResources {
+				g.Lit(resourceName)
+			}
+		}))
 	})
 
 	// Save the generated Go code to a file

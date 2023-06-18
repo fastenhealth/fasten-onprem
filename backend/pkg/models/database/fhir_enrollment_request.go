@@ -140,3 +140,8 @@ func (s *FhirEnrollmentRequest) PopulateAndExtractSearchParameters(rawResource j
 	}
 	return nil
 }
+
+// TableName overrides the table name from fhir_observations (pluralized) to `fhir_observation`. https://gorm.io/docs/conventions.html#TableName
+func (s *FhirEnrollmentRequest) TableName() string {
+	return "fhir_enrollment_request"
+}

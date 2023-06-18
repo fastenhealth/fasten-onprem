@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	databaseModel "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models/database"
+	"github.com/iancoleman/strcase"
 	"golang.org/x/exp/maps"
-	"sort"
+	"golang.org/x/exp/slices"
 	"strconv"
 	"strings"
 	"time"
@@ -26,8 +27,14 @@ const (
 	SearchParameterTypeSpecial   SearchParameterType = "special"
 )
 
+const TABLE_ALIAS = "fhir"
+
 func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) (interface{}, error) {
 	//todo, until we actually parse the select statement, we will just return all resources based on "from"
+
+	if !slices.Contains(databaseModel.GetAllowedResourceTypes(), query.From) {
+		return nil, fmt.Errorf("invalid resource type %s", query.From)
+	}
 
 	//find the associated Gorm Model for this query
 	queryModel, err := databaseModel.NewFhirResourceModelByType(query.From)
@@ -35,8 +42,10 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 		return nil, err
 	}
 
+	//this would be unsafe as the user controls the query.From value, however we've validated it is a valid resource type above
+	fromClauses := []string{fmt.Sprintf("%s as %s", strcase.ToSnake("Fhir"+query.From), TABLE_ALIAS)}
 	whereClauses := []string{}
-	namedParameters := map[string]interface{}{}
+	whereNamedParameters := map[string]interface{}{}
 
 	//find the FHIR search types associated with each where clause. Any unknown parameters will be ignored.
 	searchCodeToTypeLookup := queryModel.GetSearchParameters()
@@ -56,7 +65,15 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 		}
 		//add generated where clause to the list, and add the named parameters to the map of existing named parameters
 		whereClauses = append(whereClauses, whereClause)
-		maps.Copy(namedParameters, clauseNamedParameters)
+		maps.Copy(whereNamedParameters, clauseNamedParameters)
+
+		fromClause, err := SearchCodeToFromClause(searchParameter, searchParameterValue)
+		if err != nil {
+			return nil, err
+		}
+		if len(fromClause) > 0 {
+			fromClauses = append(fromClauses, fromClause)
+		}
 	}
 
 	//for safety, we will always add/override the current user_id to the where clause. This is to ensure that the user doesnt attempt to override this value in their own where clause
@@ -64,11 +81,11 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 	if currentUserErr != nil {
 		return nil, currentUserErr
 	}
-	namedParameters["user_id"] = currentUser.ID.String()
+	whereNamedParameters["user_id"] = currentUser.ID.String()
 	whereClauses = append(whereClauses, "user_id = @user_id")
 
 	results := []map[string]interface{}{}
-	clientResp := sr.GormClient.Where(strings.Join(whereClauses, " AND "), namedParameters).Model(queryModel).Find(&results)
+	clientResp := sr.GormClient.Where(strings.Join(whereClauses, " AND "), whereNamedParameters).Table(strings.Join(fromClauses, ", ")).Find(&results)
 
 	return results, clientResp.Error
 }
@@ -207,6 +224,9 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 	}
 
 	//parse the searchCode and searchCodeValue to determine the correct where clause
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//SIMPLE SEARCH PARAMETERS
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	switch searchParam.Type {
 	case SearchParameterTypeNumber, SearchParameterTypeDate:
 
@@ -245,36 +265,38 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		} else if searchParam.Modifier == "above" {
 			return "", nil, fmt.Errorf("search modifier 'above' not supported for search parameter type %s (%s=%s)", searchParam.Type, searchParam.Name, searchParamValue.Value)
 		}
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//COMPLEX SEARCH PARAMETERS
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	case SearchParameterTypeQuantity:
 
 		//setup the clause
 		var clause string
 		if searchParamValue.Prefix == "" || searchParamValue.Prefix == "eq" {
-			clause = fmt.Sprintf("%s = @%s", searchParam.Name, searchParam.Name)
+			clause = fmt.Sprintf("%sJson.value ->> '$.value' = @%s", searchParam.Name, searchParam.Name)
 		} else if searchParamValue.Prefix == "lt" || searchParamValue.Prefix == "eb" {
-			clause = fmt.Sprintf("%s < @%s", searchParam.Name, searchParam.Name)
+			clause = fmt.Sprintf("%sJson.value ->> '$.value' < @%s", searchParam.Name, searchParam.Name)
 		} else if searchParamValue.Prefix == "le" {
-			clause = fmt.Sprintf("%s <= @%s", searchParam.Name, searchParam.Name)
+			clause = fmt.Sprintf("%sJson.value ->> '$.value' <= @%s", searchParam.Name, searchParam.Name)
 		} else if searchParamValue.Prefix == "gt" || searchParamValue.Prefix == "sa" {
-			clause = fmt.Sprintf("%s > @%s", searchParam.Name, searchParam.Name)
+			clause = fmt.Sprintf("%sJson.value ->> '$.value' > @%s", searchParam.Name, searchParam.Name)
 		} else if searchParamValue.Prefix == "ge" {
-			clause = fmt.Sprintf("%s >= @%s", searchParam.Name, searchParam.Name)
+			clause = fmt.Sprintf("%sJson.value ->> '$.value' >= @%s", searchParam.Name, searchParam.Name)
 		} else if searchParamValue.Prefix == "ne" {
-			clause = fmt.Sprintf("%s <> @%s", searchParam.Name, searchParam.Name)
+			clause = fmt.Sprintf("%sJson.value ->> '$.value' <> @%s", searchParam.Name, searchParam.Name)
 		} else if searchParamValue.Prefix == "ap" {
 			return "", nil, fmt.Errorf("search modifier 'ap' not supported for search parameter type %s (%s=%s)", searchParam.Type, searchParam.Name, searchParamValue.Value)
 		}
 
 		//append the code and/or system clauses (if required)
 		//this looks like unnecessary code, however its required to ensure consistent tests
-		keys := make([]string, 0, len(searchParamValue.SecondaryValues))
-		for k := range searchParamValue.SecondaryValues {
-			keys = append(keys, k)
-		}
-		sort.Strings(keys)
+		allowedSecondaryKeys := []string{"code", "system"}
 
-		for _, k := range keys {
-			clause += fmt.Sprintf(` AND %s = @%s`, k, k)
+		for _, k := range allowedSecondaryKeys {
+			namedParameterKey := fmt.Sprintf("%s%s", searchParam.Name, strings.Title(k))
+			if _, ok := searchParamValue.SecondaryValues[namedParameterKey]; ok {
+				clause += fmt.Sprintf(` AND %sJson.value ->> '$.%s' = @%s`, searchParam.Name, k, namedParameterKey)
+			}
 		}
 
 		return clause, searchClauseNamedParams, nil
@@ -282,4 +304,18 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		return "", nil, fmt.Errorf("search parameter type %s not supported", searchParam.Type)
 	}
 	return "", searchClauseNamedParams, nil
+}
+
+func SearchCodeToFromClause(searchParam SearchParameter, searchParamValue SearchParameterValue) (string, error) {
+	//complex search parameters (e.g. token, reference, quantities, special) require the use of `json_*` FROM clauses
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//COMPLEX SEARCH PARAMETERS
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	switch searchParam.Type {
+	case SearchParameterTypeQuantity:
+		//setup the clause
+		return fmt.Sprintf("json_each(%s.%s) as %sJson", TABLE_ALIAS, searchParam.Name, searchParam.Name), nil
+	}
+	return "", nil
 }

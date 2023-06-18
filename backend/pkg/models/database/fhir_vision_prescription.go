@@ -209,3 +209,8 @@ func (s *FhirVisionPrescription) PopulateAndExtractSearchParameters(rawResource 
 	}
 	return nil
 }
+
+// TableName overrides the table name from fhir_observations (pluralized) to `fhir_observation`. https://gorm.io/docs/conventions.html#TableName
+func (s *FhirVisionPrescription) TableName() string {
+	return "fhir_vision_prescription"
+}
