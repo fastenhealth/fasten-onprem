@@ -159,15 +159,38 @@ func (s *FhirPractitionerRole) PopulateAndExtractSearchParameters(rawResource js
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Service
-	serviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.healthcareService'))")
-	if err == nil && serviceResult.String() != "undefined" {
-		s.Service = []byte(serviceResult.String())
+	// extracting Active
+	activeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.active'))")
+	if err == nil && activeResult.String() != "undefined" {
+		s.Active = []byte(activeResult.String())
 	}
-	// extracting Specialty
-	specialtyResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.specialty'))")
-	if err == nil && specialtyResult.String() != "undefined" {
-		s.Specialty = []byte(specialtyResult.String())
+	// extracting Date
+	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'PractitionerRole.period')[0]")
+	if err == nil && dateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, dateResult.String())
+		if err == nil {
+			s.Date = t
+		}
+	}
+	// extracting Email
+	emailResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom.where(system='email') | Person.telecom.where(system='email') | Practitioner.telecom.where(system='email') | PractitionerRole.telecom.where(system='email') | RelatedPerson.telecom.where(system='email')'))")
+	if err == nil && emailResult.String() != "undefined" {
+		s.Email = []byte(emailResult.String())
+	}
+	// extracting Endpoint
+	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.endpoint'))")
+	if err == nil && endpointResult.String() != "undefined" {
+		s.Endpoint = []byte(endpointResult.String())
+	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
 	}
 	// extracting LastUpdated
 	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
@@ -177,20 +200,15 @@ func (s *FhirPractitionerRole) PopulateAndExtractSearchParameters(rawResource js
 			s.LastUpdated = t
 		}
 	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
+	// extracting Location
+	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.location'))")
+	if err == nil && locationResult.String() != "undefined" {
+		s.Location = []byte(locationResult.String())
 	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting Email
-	emailResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom.where(system='email') | Person.telecom.where(system='email') | Practitioner.telecom.where(system='email') | PractitionerRole.telecom.where(system='email') | RelatedPerson.telecom.where(system='email')'))")
-	if err == nil && emailResult.String() != "undefined" {
-		s.Email = []byte(emailResult.String())
+	// extracting Organization
+	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.organization'))")
+	if err == nil && organizationResult.String() != "undefined" {
+		s.Organization = []byte(organizationResult.String())
 	}
 	// extracting Phone
 	phoneResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom.where(system='phone') | Person.telecom.where(system='phone') | Practitioner.telecom.where(system='phone') | PractitionerRole.telecom.where(system='phone') | RelatedPerson.telecom.where(system='phone')'))")
@@ -207,53 +225,35 @@ func (s *FhirPractitionerRole) PopulateAndExtractSearchParameters(rawResource js
 	if err == nil && profileResult.String() != "undefined" {
 		s.Profile = []byte(profileResult.String())
 	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
 	// extracting Role
 	roleResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.code'))")
 	if err == nil && roleResult.String() != "undefined" {
 		s.Role = []byte(roleResult.String())
 	}
+	// extracting Service
+	serviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.healthcareService'))")
+	if err == nil && serviceResult.String() != "undefined" {
+		s.Service = []byte(serviceResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Specialty
+	specialtyResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.specialty'))")
+	if err == nil && specialtyResult.String() != "undefined" {
+		s.Specialty = []byte(specialtyResult.String())
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
 	// extracting Telecom
 	telecomResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom | Person.telecom | Practitioner.telecom | PractitionerRole.telecom | RelatedPerson.telecom'))")
 	if err == nil && telecomResult.String() != "undefined" {
 		s.Telecom = []byte(telecomResult.String())
-	}
-	// extracting Date
-	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'PractitionerRole.period')[0]")
-	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
-			s.Date = t
-		}
-	}
-	// extracting Endpoint
-	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.endpoint'))")
-	if err == nil && endpointResult.String() != "undefined" {
-		s.Endpoint = []byte(endpointResult.String())
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
-	// extracting Location
-	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.location'))")
-	if err == nil && locationResult.String() != "undefined" {
-		s.Location = []byte(locationResult.String())
-	}
-	// extracting Organization
-	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.organization'))")
-	if err == nil && organizationResult.String() != "undefined" {
-		s.Organization = []byte(organizationResult.String())
-	}
-	// extracting Active
-	activeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.active'))")
-	if err == nil && activeResult.String() != "undefined" {
-		s.Active = []byte(activeResult.String())
 	}
 	return nil
 }

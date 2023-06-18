@@ -100,15 +100,28 @@ func (s *FhirEnrollmentRequest) PopulateAndExtractSearchParameters(rawResource j
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
 	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
 	if err == nil && sourceUriResult.String() != "undefined" {
 		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
 	}
 	// extracting Status
 	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'EnrollmentRequest.status'))")
@@ -120,23 +133,10 @@ func (s *FhirEnrollmentRequest) PopulateAndExtractSearchParameters(rawResource j
 	if err == nil && subjectResult.String() != "undefined" {
 		s.Subject = []byte(subjectResult.String())
 	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
 	}
 	return nil
 }

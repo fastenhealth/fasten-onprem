@@ -131,20 +131,10 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(rawResource json.R
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Location
-	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.location'))")
-	if err == nil && locationResult.String() != "undefined" {
-		s.Location = []byte(locationResult.String())
-	}
-	// extracting Severity
-	severityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.severity'))")
-	if err == nil && severityResult.String() != "undefined" {
-		s.Severity = []byte(severityResult.String())
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
+	// extracting Actuality
+	actualityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.actuality'))")
+	if err == nil && actualityResult.String() != "undefined" {
+		s.Actuality = []byte(actualityResult.String())
 	}
 	// extracting Category
 	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.category'))")
@@ -159,30 +149,15 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(rawResource json.R
 			s.Date = t
 		}
 	}
-	// extracting Resultingcondition
-	resultingconditionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.resultingCondition'))")
-	if err == nil && resultingconditionResult.String() != "undefined" {
-		s.Resultingcondition = []byte(resultingconditionResult.String())
+	// extracting Event
+	eventResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.event'))")
+	if err == nil && eventResult.String() != "undefined" {
+		s.Event = []byte(eventResult.String())
 	}
-	// extracting Substance
-	substanceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.suspectEntity.instance'))")
-	if err == nil && substanceResult.String() != "undefined" {
-		s.Substance = []byte(substanceResult.String())
-	}
-	// extracting Actuality
-	actualityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.actuality'))")
-	if err == nil && actualityResult.String() != "undefined" {
-		s.Actuality = []byte(actualityResult.String())
-	}
-	// extracting Recorder
-	recorderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.recorder'))")
-	if err == nil && recorderResult.String() != "undefined" {
-		s.Recorder = []byte(recorderResult.String())
-	}
-	// extracting Study
-	studyResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.study'))")
-	if err == nil && studyResult.String() != "undefined" {
-		s.Study = []byte(studyResult.String())
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
 	}
 	// extracting LastUpdated
 	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
@@ -192,35 +167,60 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(rawResource json.R
 			s.LastUpdated = t
 		}
 	}
+	// extracting Location
+	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.location'))")
+	if err == nil && locationResult.String() != "undefined" {
+		s.Location = []byte(locationResult.String())
+	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
 		s.Profile = []byte(profileResult.String())
 	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
+	// extracting Recorder
+	recorderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.recorder'))")
+	if err == nil && recorderResult.String() != "undefined" {
+		s.Recorder = []byte(recorderResult.String())
 	}
-	// extracting Event
-	eventResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.event'))")
-	if err == nil && eventResult.String() != "undefined" {
-		s.Event = []byte(eventResult.String())
+	// extracting Resultingcondition
+	resultingconditionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.resultingCondition'))")
+	if err == nil && resultingconditionResult.String() != "undefined" {
+		s.Resultingcondition = []byte(resultingconditionResult.String())
 	}
 	// extracting Seriousness
 	seriousnessResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.seriousness'))")
 	if err == nil && seriousnessResult.String() != "undefined" {
 		s.Seriousness = []byte(seriousnessResult.String())
 	}
+	// extracting Severity
+	severityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.severity'))")
+	if err == nil && severityResult.String() != "undefined" {
+		s.Severity = []byte(severityResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Study
+	studyResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.study'))")
+	if err == nil && studyResult.String() != "undefined" {
+		s.Study = []byte(studyResult.String())
+	}
 	// extracting Subject
 	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.subject'))")
 	if err == nil && subjectResult.String() != "undefined" {
 		s.Subject = []byte(subjectResult.String())
 	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
+	// extracting Substance
+	substanceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.suspectEntity.instance'))")
+	if err == nil && substanceResult.String() != "undefined" {
+		s.Substance = []byte(substanceResult.String())
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
 	}
 	return nil
 }

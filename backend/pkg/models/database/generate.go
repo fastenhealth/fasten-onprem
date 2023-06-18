@@ -158,17 +158,18 @@ func main() {
 			file.HeaderComment(line)
 		}
 
+		// Generate fields for search parameters. Make sure they are in a sorted order, otherwise the generated code will be different each time.
+		keys := make([]string, 0, len(fieldMap))
+		for k, _ := range fieldMap {
+			keys = append(keys, k)
+		}
+
 		// Generate struct declaration
 		structName := "Fhir" + strings.Title(resourceName)
 		file.Type().Id(structName).StructFunc(func(g *jen.Group) {
 			//Add the OriginBase embedded struct
 			g.Qual("github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models", "OriginBase")
 
-			// Generate fields for search parameters. Make sure they are in a sorted order, otherwise the generated code will be different each time.
-			keys := make([]string, 0, len(fieldMap))
-			for k, _ := range fieldMap {
-				keys = append(keys, k)
-			}
 			sort.Strings(keys)
 			for _, fieldName := range keys {
 				fieldInfo := fieldMap[fieldName]
@@ -198,7 +199,8 @@ func main() {
 		//create an instance function that returns a map of all fields and their types
 		file.Func().Call(jen.Id("s").Op("*").Id(structName)).Id("GetSearchParameters").Params().Params(jen.Map(jen.String()).String()).BlockFunc(func(g *jen.Group) {
 			g.Id("searchParameters").Op(":=").Map(jen.String()).String().Values(jen.DictFunc(func(d jen.Dict) {
-				for fieldName, fieldInfo := range fieldMap {
+				for _, fieldName := range keys {
+					fieldInfo := fieldMap[fieldName]
 					fieldNameLowerCamel := strcase.ToLowerCamel(fieldName)
 					d[jen.Lit(fieldNameLowerCamel)] = jen.Lit(fieldInfo.FieldType)
 				}
@@ -244,7 +246,8 @@ func main() {
 			})
 
 			g.Comment("execute the fhirpath expression for each search parameter")
-			for fieldName, fieldInfo := range fieldMap {
+			for _, fieldName := range keys {
+				fieldInfo := fieldMap[fieldName]
 				//skip any empty fhirpath expressions, we cant extract anything
 				if len(fieldInfo.FHIRPathExpression) == 0 {
 					continue

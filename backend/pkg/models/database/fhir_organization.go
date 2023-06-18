@@ -131,6 +131,21 @@ func (s *FhirOrganization) PopulateAndExtractSearchParameters(rawResource json.R
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
+	// extracting Active
+	activeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Organization.active'))")
+	if err == nil && activeResult.String() != "undefined" {
+		s.Active = []byte(activeResult.String())
+	}
+	// extracting Address
+	addressResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Organization.address')[0]")
+	if err == nil && addressResult.String() != "undefined" {
+		s.Address = addressResult.String()
+	}
+	// extracting AddressCity
+	addressCityResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Organization.address.city')[0]")
+	if err == nil && addressCityResult.String() != "undefined" {
+		s.AddressCity = addressCityResult.String()
+	}
 	// extracting AddressCountry
 	addressCountryResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Organization.address.country')[0]")
 	if err == nil && addressCountryResult.String() != "undefined" {
@@ -141,25 +156,30 @@ func (s *FhirOrganization) PopulateAndExtractSearchParameters(rawResource json.R
 	if err == nil && addressPostalcodeResult.String() != "undefined" {
 		s.AddressPostalcode = addressPostalcodeResult.String()
 	}
+	// extracting AddressState
+	addressStateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Organization.address.state')[0]")
+	if err == nil && addressStateResult.String() != "undefined" {
+		s.AddressState = addressStateResult.String()
+	}
 	// extracting AddressUse
 	addressUseResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Organization.address.use'))")
 	if err == nil && addressUseResult.String() != "undefined" {
 		s.AddressUse = []byte(addressUseResult.String())
 	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting AddressCity
-	addressCityResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Organization.address.city')[0]")
-	if err == nil && addressCityResult.String() != "undefined" {
-		s.AddressCity = addressCityResult.String()
+	// extracting Endpoint
+	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Organization.endpoint'))")
+	if err == nil && endpointResult.String() != "undefined" {
+		s.Endpoint = []byte(endpointResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Organization.identifier'))")
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
 	}
 	// extracting LastUpdated
 	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
@@ -169,30 +189,10 @@ func (s *FhirOrganization) PopulateAndExtractSearchParameters(rawResource json.R
 			s.LastUpdated = t
 		}
 	}
-	// extracting Address
-	addressResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Organization.address')[0]")
-	if err == nil && addressResult.String() != "undefined" {
-		s.Address = addressResult.String()
-	}
 	// extracting Name
 	nameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Organization.name | Organization.alias')[0]")
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = nameResult.String()
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting Endpoint
-	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Organization.endpoint'))")
-	if err == nil && endpointResult.String() != "undefined" {
-		s.Endpoint = []byte(endpointResult.String())
-	}
-	// extracting AddressState
-	addressStateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Organization.address.state')[0]")
-	if err == nil && addressStateResult.String() != "undefined" {
-		s.AddressState = addressStateResult.String()
 	}
 	// extracting Partof
 	partofResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Organization.partOf'))")
@@ -204,20 +204,20 @@ func (s *FhirOrganization) PopulateAndExtractSearchParameters(rawResource json.R
 	if err == nil && phoneticResult.String() != "undefined" {
 		s.Phonetic = phoneticResult.String()
 	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())
-	}
-	// extracting Active
-	activeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Organization.active'))")
-	if err == nil && activeResult.String() != "undefined" {
-		s.Active = []byte(activeResult.String())
 	}
 	return nil
 }

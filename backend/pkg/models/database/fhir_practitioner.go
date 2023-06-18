@@ -241,71 +241,6 @@ func (s *FhirPractitioner) PopulateAndExtractSearchParameters(rawResource json.R
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting AddressUse
-	addressUseResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.address.use | Person.address.use | Practitioner.address.use | RelatedPerson.address.use'))")
-	if err == nil && addressUseResult.String() != "undefined" {
-		s.AddressUse = []byte(addressUseResult.String())
-	}
-	// extracting Communication
-	communicationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Practitioner.communication'))")
-	if err == nil && communicationResult.String() != "undefined" {
-		s.Communication = []byte(communicationResult.String())
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Practitioner.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
-	// extracting Name
-	nameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Practitioner.name')[0]")
-	if err == nil && nameResult.String() != "undefined" {
-		s.Name = nameResult.String()
-	}
-	// extracting AddressCity
-	addressCityResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address.city | Person.address.city | Practitioner.address.city | RelatedPerson.address.city')[0]")
-	if err == nil && addressCityResult.String() != "undefined" {
-		s.AddressCity = addressCityResult.String()
-	}
-	// extracting Email
-	emailResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom.where(system='email') | Person.telecom.where(system='email') | Practitioner.telecom.where(system='email') | PractitionerRole.telecom.where(system='email') | RelatedPerson.telecom.where(system='email')'))")
-	if err == nil && emailResult.String() != "undefined" {
-		s.Email = []byte(emailResult.String())
-	}
-	// extracting Family
-	familyResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.name.family | Practitioner.name.family')[0]")
-	if err == nil && familyResult.String() != "undefined" {
-		s.Family = familyResult.String()
-	}
-	// extracting Gender
-	genderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.gender | Person.gender | Practitioner.gender | RelatedPerson.gender'))")
-	if err == nil && genderResult.String() != "undefined" {
-		s.Gender = []byte(genderResult.String())
-	}
-	// extracting Phonetic
-	phoneticResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.name | Person.name | Practitioner.name | RelatedPerson.name')[0]")
-	if err == nil && phoneticResult.String() != "undefined" {
-		s.Phonetic = phoneticResult.String()
-	}
-	// extracting Given
-	givenResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.name.given | Practitioner.name.given')[0]")
-	if err == nil && givenResult.String() != "undefined" {
-		s.Given = givenResult.String()
-	}
-	// extracting Phone
-	phoneResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom.where(system='phone') | Person.telecom.where(system='phone') | Practitioner.telecom.where(system='phone') | PractitionerRole.telecom.where(system='phone') | RelatedPerson.telecom.where(system='phone')'))")
-	if err == nil && phoneResult.String() != "undefined" {
-		s.Phone = []byte(phoneResult.String())
-	}
-	// extracting Telecom
-	telecomResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom | Person.telecom | Practitioner.telecom | PractitionerRole.telecom | RelatedPerson.telecom'))")
-	if err == nil && telecomResult.String() != "undefined" {
-		s.Telecom = []byte(telecomResult.String())
-	}
 	// extracting Active
 	activeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Practitioner.active'))")
 	if err == nil && activeResult.String() != "undefined" {
@@ -315,6 +250,11 @@ func (s *FhirPractitioner) PopulateAndExtractSearchParameters(rawResource json.R
 	addressResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address | Person.address | Practitioner.address | RelatedPerson.address')[0]")
 	if err == nil && addressResult.String() != "undefined" {
 		s.Address = addressResult.String()
+	}
+	// extracting AddressCity
+	addressCityResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address.city | Person.address.city | Practitioner.address.city | RelatedPerson.address.city')[0]")
+	if err == nil && addressCityResult.String() != "undefined" {
+		s.AddressCity = addressCityResult.String()
 	}
 	// extracting AddressCountry
 	addressCountryResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address.country | Person.address.country | Practitioner.address.country | RelatedPerson.address.country')[0]")
@@ -331,6 +271,46 @@ func (s *FhirPractitioner) PopulateAndExtractSearchParameters(rawResource json.R
 	if err == nil && addressStateResult.String() != "undefined" {
 		s.AddressState = addressStateResult.String()
 	}
+	// extracting AddressUse
+	addressUseResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.address.use | Person.address.use | Practitioner.address.use | RelatedPerson.address.use'))")
+	if err == nil && addressUseResult.String() != "undefined" {
+		s.AddressUse = []byte(addressUseResult.String())
+	}
+	// extracting Communication
+	communicationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Practitioner.communication'))")
+	if err == nil && communicationResult.String() != "undefined" {
+		s.Communication = []byte(communicationResult.String())
+	}
+	// extracting Email
+	emailResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom.where(system='email') | Person.telecom.where(system='email') | Practitioner.telecom.where(system='email') | PractitionerRole.telecom.where(system='email') | RelatedPerson.telecom.where(system='email')'))")
+	if err == nil && emailResult.String() != "undefined" {
+		s.Email = []byte(emailResult.String())
+	}
+	// extracting Family
+	familyResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.name.family | Practitioner.name.family')[0]")
+	if err == nil && familyResult.String() != "undefined" {
+		s.Family = familyResult.String()
+	}
+	// extracting Gender
+	genderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.gender | Person.gender | Practitioner.gender | RelatedPerson.gender'))")
+	if err == nil && genderResult.String() != "undefined" {
+		s.Gender = []byte(genderResult.String())
+	}
+	// extracting Given
+	givenResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.name.given | Practitioner.name.given')[0]")
+	if err == nil && givenResult.String() != "undefined" {
+		s.Given = givenResult.String()
+	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Practitioner.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
 	// extracting LastUpdated
 	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
 	if err == nil && lastUpdatedResult.String() != "undefined" {
@@ -339,10 +319,20 @@ func (s *FhirPractitioner) PopulateAndExtractSearchParameters(rawResource json.R
 			s.LastUpdated = t
 		}
 	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
+	// extracting Name
+	nameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Practitioner.name')[0]")
+	if err == nil && nameResult.String() != "undefined" {
+		s.Name = nameResult.String()
+	}
+	// extracting Phone
+	phoneResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom.where(system='phone') | Person.telecom.where(system='phone') | Practitioner.telecom.where(system='phone') | PractitionerRole.telecom.where(system='phone') | RelatedPerson.telecom.where(system='phone')'))")
+	if err == nil && phoneResult.String() != "undefined" {
+		s.Phone = []byte(phoneResult.String())
+	}
+	// extracting Phonetic
+	phoneticResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.name | Person.name | Practitioner.name | RelatedPerson.name')[0]")
+	if err == nil && phoneticResult.String() != "undefined" {
+		s.Phonetic = phoneticResult.String()
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
@@ -353,6 +343,16 @@ func (s *FhirPractitioner) PopulateAndExtractSearchParameters(rawResource json.R
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
 	if err == nil && sourceUriResult.String() != "undefined" {
 		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting Telecom
+	telecomResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom | Person.telecom | Practitioner.telecom | PractitionerRole.telecom | RelatedPerson.telecom'))")
+	if err == nil && telecomResult.String() != "undefined" {
+		s.Telecom = []byte(telecomResult.String())
 	}
 	return nil
 }

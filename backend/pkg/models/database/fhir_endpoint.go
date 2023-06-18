@@ -107,6 +107,21 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(rawResource json.RawMe
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
+	// extracting ConnectionType
+	connectionTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.connectionType'))")
+	if err == nil && connectionTypeResult.String() != "undefined" {
+		s.ConnectionType = []byte(connectionTypeResult.String())
+	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
 	// extracting LastUpdated
 	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
 	if err == nil && lastUpdatedResult.String() != "undefined" {
@@ -115,55 +130,40 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(rawResource json.RawMe
 			s.LastUpdated = t
 		}
 	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
-	// extracting PayloadType
-	payloadTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.payloadType'))")
-	if err == nil && payloadTypeResult.String() != "undefined" {
-		s.PayloadType = []byte(payloadTypeResult.String())
-	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
+	// extracting Name
+	nameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Endpoint.name')[0]")
+	if err == nil && nameResult.String() != "undefined" {
+		s.Name = nameResult.String()
 	}
 	// extracting Organization
 	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.managingOrganization'))")
 	if err == nil && organizationResult.String() != "undefined" {
 		s.Organization = []byte(organizationResult.String())
 	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
+	// extracting PayloadType
+	payloadTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.payloadType'))")
+	if err == nil && payloadTypeResult.String() != "undefined" {
+		s.PayloadType = []byte(payloadTypeResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
 		s.Profile = []byte(profileResult.String())
 	}
-	// extracting Name
-	nameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Endpoint.name')[0]")
-	if err == nil && nameResult.String() != "undefined" {
-		s.Name = nameResult.String()
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
 	}
-	// extracting ConnectionType
-	connectionTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.connectionType'))")
-	if err == nil && connectionTypeResult.String() != "undefined" {
-		s.ConnectionType = []byte(connectionTypeResult.String())
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
 	}
 	return nil
 }

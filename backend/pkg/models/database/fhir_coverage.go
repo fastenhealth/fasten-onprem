@@ -119,55 +119,35 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(rawResource json.RawMe
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
-	// extracting Payor
-	payorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.payor'))")
-	if err == nil && payorResult.String() != "undefined" {
-		s.Payor = []byte(payorResult.String())
-	}
-	// extracting ClassValue
-	classValueResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Coverage.class.value')[0]")
-	if err == nil && classValueResult.String() != "undefined" {
-		s.ClassValue = classValueResult.String()
-	}
 	// extracting Beneficiary
 	beneficiaryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.beneficiary'))")
 	if err == nil && beneficiaryResult.String() != "undefined" {
 		s.Beneficiary = []byte(beneficiaryResult.String())
-	}
-	// extracting PolicyHolder
-	policyHolderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.policyHolder'))")
-	if err == nil && policyHolderResult.String() != "undefined" {
-		s.PolicyHolder = []byte(policyHolderResult.String())
-	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
 	}
 	// extracting ClassType
 	classTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.class.type'))")
 	if err == nil && classTypeResult.String() != "undefined" {
 		s.ClassType = []byte(classTypeResult.String())
 	}
-	// extracting Subscriber
-	subscriberResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.subscriber'))")
-	if err == nil && subscriberResult.String() != "undefined" {
-		s.Subscriber = []byte(subscriberResult.String())
+	// extracting ClassValue
+	classValueResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Coverage.class.value')[0]")
+	if err == nil && classValueResult.String() != "undefined" {
+		s.ClassValue = classValueResult.String()
+	}
+	// extracting Dependent
+	dependentResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Coverage.dependent')[0]")
+	if err == nil && dependentResult.String() != "undefined" {
+		s.Dependent = dependentResult.String()
+	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
 	}
 	// extracting LastUpdated
 	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
@@ -177,20 +157,40 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(rawResource json.RawMe
 			s.LastUpdated = t
 		}
 	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
+	// extracting Payor
+	payorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.payor'))")
+	if err == nil && payorResult.String() != "undefined" {
+		s.Payor = []byte(payorResult.String())
+	}
+	// extracting PolicyHolder
+	policyHolderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.policyHolder'))")
+	if err == nil && policyHolderResult.String() != "undefined" {
+		s.PolicyHolder = []byte(policyHolderResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
 		s.Profile = []byte(profileResult.String())
 	}
-	// extracting Dependent
-	dependentResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Coverage.dependent')[0]")
-	if err == nil && dependentResult.String() != "undefined" {
-		s.Dependent = dependentResult.String()
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
+	}
+	// extracting Subscriber
+	subscriberResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.subscriber'))")
+	if err == nil && subscriberResult.String() != "undefined" {
+		s.Subscriber = []byte(subscriberResult.String())
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
 	}
 	return nil
 }

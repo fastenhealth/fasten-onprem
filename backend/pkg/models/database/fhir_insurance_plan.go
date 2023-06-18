@@ -140,11 +140,6 @@ func (s *FhirInsurancePlan) PopulateAndExtractSearchParameters(rawResource json.
 	if err == nil && addressResult.String() != "undefined" {
 		s.Address = addressResult.String()
 	}
-	// extracting AdministeredBy
-	administeredByResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.administeredBy'))")
-	if err == nil && administeredByResult.String() != "undefined" {
-		s.AdministeredBy = []byte(administeredByResult.String())
-	}
 	// extracting AddressCity
 	addressCityResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.city')[0]")
 	if err == nil && addressCityResult.String() != "undefined" {
@@ -154,39 +149,6 @@ func (s *FhirInsurancePlan) PopulateAndExtractSearchParameters(rawResource json.
 	addressCountryResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.country')[0]")
 	if err == nil && addressCountryResult.String() != "undefined" {
 		s.AddressCountry = addressCountryResult.String()
-	}
-	// extracting AddressUse
-	addressUseResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.use'))")
-	if err == nil && addressUseResult.String() != "undefined" {
-		s.AddressUse = []byte(addressUseResult.String())
-	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting Phonetic
-	phoneticResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'InsurancePlan.name')[0]")
-	if err == nil && phoneticResult.String() != "undefined" {
-		s.Phonetic = phoneticResult.String()
-	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
 	}
 	// extracting AddressPostalcode
 	addressPostalcodeResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.postalCode')[0]")
@@ -198,6 +160,16 @@ func (s *FhirInsurancePlan) PopulateAndExtractSearchParameters(rawResource json.
 	if err == nil && addressStateResult.String() != "undefined" {
 		s.AddressState = addressStateResult.String()
 	}
+	// extracting AddressUse
+	addressUseResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.use'))")
+	if err == nil && addressUseResult.String() != "undefined" {
+		s.AddressUse = []byte(addressUseResult.String())
+	}
+	// extracting AdministeredBy
+	administeredByResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.administeredBy'))")
+	if err == nil && administeredByResult.String() != "undefined" {
+		s.AdministeredBy = []byte(administeredByResult.String())
+	}
 	// extracting Endpoint
 	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.endpoint'))")
 	if err == nil && endpointResult.String() != "undefined" {
@@ -207,6 +179,19 @@ func (s *FhirInsurancePlan) PopulateAndExtractSearchParameters(rawResource json.
 	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.identifier'))")
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
 	}
 	// extracting Name
 	nameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'name | alias')[0]")
@@ -218,10 +203,25 @@ func (s *FhirInsurancePlan) PopulateAndExtractSearchParameters(rawResource json.
 	if err == nil && ownedByResult.String() != "undefined" {
 		s.OwnedBy = []byte(ownedByResult.String())
 	}
+	// extracting Phonetic
+	phoneticResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'InsurancePlan.name')[0]")
+	if err == nil && phoneticResult.String() != "undefined" {
+		s.Phonetic = phoneticResult.String()
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
 	if err == nil && sourceUriResult.String() != "undefined" {
 		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")

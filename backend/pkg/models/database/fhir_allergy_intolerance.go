@@ -209,61 +209,20 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(rawResource 
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting ClinicalStatus
-	clinicalStatusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.clinicalStatus'))")
-	if err == nil && clinicalStatusResult.String() != "undefined" {
-		s.ClinicalStatus = []byte(clinicalStatusResult.String())
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
-	// extracting Onset
-	onsetResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.onset')[0]")
-	if err == nil && onsetResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, onsetResult.String())
-		if err == nil {
-			s.Onset = t
-		}
-	}
-	// extracting Severity
-	severityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.severity'))")
-	if err == nil && severityResult.String() != "undefined" {
-		s.Severity = []byte(severityResult.String())
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
 	// extracting Asserter
 	asserterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.asserter'))")
 	if err == nil && asserterResult.String() != "undefined" {
 		s.Asserter = []byte(asserterResult.String())
 	}
-	// extracting Date
-	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrencedateTime) | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrencedateTime) | SupplyRequest.authoredOn')[0]")
-	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
-			s.Date = t
-		}
+	// extracting Category
+	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.category'))")
+	if err == nil && categoryResult.String() != "undefined" {
+		s.Category = []byte(categoryResult.String())
 	}
-	// extracting Recorder
-	recorderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recorder'))")
-	if err == nil && recorderResult.String() != "undefined" {
-		s.Recorder = []byte(recorderResult.String())
-	}
-	// extracting VerificationStatus
-	verificationStatusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.verificationStatus'))")
-	if err == nil && verificationStatusResult.String() != "undefined" {
-		s.VerificationStatus = []byte(verificationStatusResult.String())
+	// extracting ClinicalStatus
+	clinicalStatusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.clinicalStatus'))")
+	if err == nil && clinicalStatusResult.String() != "undefined" {
+		s.ClinicalStatus = []byte(clinicalStatusResult.String())
 	}
 	// extracting Code
 	codeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.codeCodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicationCodeableConcept) | (MedicationDispense.medicationCodeableConcept) | (MedicationRequest.medicationCodeableConcept) | (MedicationStatement.medicationCodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code'))")
@@ -275,25 +234,31 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(rawResource 
 	if err == nil && criticalityResult.String() != "undefined" {
 		s.Criticality = []byte(criticalityResult.String())
 	}
-	// extracting Manifestation
-	manifestationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.manifestation'))")
-	if err == nil && manifestationResult.String() != "undefined" {
-		s.Manifestation = []byte(manifestationResult.String())
+	// extracting Date
+	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrencedateTime) | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrencedateTime) | SupplyRequest.authoredOn')[0]")
+	if err == nil && dateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, dateResult.String())
+		if err == nil {
+			s.Date = t
+		}
 	}
-	// extracting Route
-	routeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.exposureRoute'))")
-	if err == nil && routeResult.String() != "undefined" {
-		s.Route = []byte(routeResult.String())
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
 	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
 	}
-	// extracting Category
-	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.category'))")
-	if err == nil && categoryResult.String() != "undefined" {
-		s.Category = []byte(categoryResult.String())
+	// extracting LastDate
+	lastDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.lastOccurrence')[0]")
+	if err == nil && lastDateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastDateResult.String())
+		if err == nil {
+			s.LastDate = t
+		}
 	}
 	// extracting LastUpdated
 	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
@@ -303,18 +268,53 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(rawResource 
 			s.LastUpdated = t
 		}
 	}
+	// extracting Manifestation
+	manifestationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.manifestation'))")
+	if err == nil && manifestationResult.String() != "undefined" {
+		s.Manifestation = []byte(manifestationResult.String())
+	}
+	// extracting Onset
+	onsetResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.onset')[0]")
+	if err == nil && onsetResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, onsetResult.String())
+		if err == nil {
+			s.Onset = t
+		}
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting Recorder
+	recorderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recorder'))")
+	if err == nil && recorderResult.String() != "undefined" {
+		s.Recorder = []byte(recorderResult.String())
+	}
+	// extracting Route
+	routeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.exposureRoute'))")
+	if err == nil && routeResult.String() != "undefined" {
+		s.Route = []byte(routeResult.String())
+	}
+	// extracting Severity
+	severityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.severity'))")
+	if err == nil && severityResult.String() != "undefined" {
+		s.Severity = []byte(severityResult.String())
+	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
 	if err == nil && sourceUriResult.String() != "undefined" {
 		s.SourceUri = sourceUriResult.String()
 	}
-	// extracting LastDate
-	lastDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.lastOccurrence')[0]")
-	if err == nil && lastDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastDateResult.String())
-		if err == nil {
-			s.LastDate = t
-		}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting VerificationStatus
+	verificationStatusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.verificationStatus'))")
+	if err == nil && verificationStatusResult.String() != "undefined" {
+		s.VerificationStatus = []byte(verificationStatusResult.String())
 	}
 	return nil
 }
