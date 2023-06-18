@@ -132,12 +132,86 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(rawResource json.R
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Actuality
-	actualityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.actuality'))")
+	actualityResult, err := vm.RunString(` 
+							ActualityResult = window.fhirpath.evaluate(fhirResource, 'AdverseEvent.actuality')
+							ActualityProcessed = ActualityResult.reduce((accumulator, currentValue) => {
+								if (currentValue.coding) {
+									//CodeableConcept
+									currentValue.coding.map((coding) => {
+										accumulator.push({
+											"code": coding.code,	
+											"system": coding.system,
+											"text": currentValue.text
+										})
+									})
+								} else if (currentValue.value) {
+									//ContactPoint, Identifier
+									accumulator.push({
+										"code": currentValue.value,
+										"system": currentValue.system,
+										"text": currentValue.type?.text
+									})
+								} else if (currentValue.code) {
+									//Coding
+									accumulator.push({
+										"code": currentValue.code,
+										"system": currentValue.system,
+										"text": currentValue.display
+									})
+								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
+									//string, boolean
+									accumulator.push({
+										"code": currentValue,
+									})
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(ActualityProcessed)
+						 `)
 	if err == nil && actualityResult.String() != "undefined" {
 		s.Actuality = []byte(actualityResult.String())
 	}
 	// extracting Category
-	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.category'))")
+	categoryResult, err := vm.RunString(` 
+							CategoryResult = window.fhirpath.evaluate(fhirResource, 'AdverseEvent.category')
+							CategoryProcessed = CategoryResult.reduce((accumulator, currentValue) => {
+								if (currentValue.coding) {
+									//CodeableConcept
+									currentValue.coding.map((coding) => {
+										accumulator.push({
+											"code": coding.code,	
+											"system": coding.system,
+											"text": currentValue.text
+										})
+									})
+								} else if (currentValue.value) {
+									//ContactPoint, Identifier
+									accumulator.push({
+										"code": currentValue.value,
+										"system": currentValue.system,
+										"text": currentValue.type?.text
+									})
+								} else if (currentValue.code) {
+									//Coding
+									accumulator.push({
+										"code": currentValue.code,
+										"system": currentValue.system,
+										"text": currentValue.display
+									})
+								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
+									//string, boolean
+									accumulator.push({
+										"code": currentValue,
+									})
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(CategoryProcessed)
+						 `)
 	if err == nil && categoryResult.String() != "undefined" {
 		s.Category = []byte(categoryResult.String())
 	}
@@ -150,12 +224,86 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(rawResource json.R
 		}
 	}
 	// extracting Event
-	eventResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.event'))")
+	eventResult, err := vm.RunString(` 
+							EventResult = window.fhirpath.evaluate(fhirResource, 'AdverseEvent.event')
+							EventProcessed = EventResult.reduce((accumulator, currentValue) => {
+								if (currentValue.coding) {
+									//CodeableConcept
+									currentValue.coding.map((coding) => {
+										accumulator.push({
+											"code": coding.code,	
+											"system": coding.system,
+											"text": currentValue.text
+										})
+									})
+								} else if (currentValue.value) {
+									//ContactPoint, Identifier
+									accumulator.push({
+										"code": currentValue.value,
+										"system": currentValue.system,
+										"text": currentValue.type?.text
+									})
+								} else if (currentValue.code) {
+									//Coding
+									accumulator.push({
+										"code": currentValue.code,
+										"system": currentValue.system,
+										"text": currentValue.display
+									})
+								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
+									//string, boolean
+									accumulator.push({
+										"code": currentValue,
+									})
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(EventProcessed)
+						 `)
 	if err == nil && eventResult.String() != "undefined" {
 		s.Event = []byte(eventResult.String())
 	}
 	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	languageResult, err := vm.RunString(` 
+							LanguageResult = window.fhirpath.evaluate(fhirResource, 'Resource.language')
+							LanguageProcessed = LanguageResult.reduce((accumulator, currentValue) => {
+								if (currentValue.coding) {
+									//CodeableConcept
+									currentValue.coding.map((coding) => {
+										accumulator.push({
+											"code": coding.code,	
+											"system": coding.system,
+											"text": currentValue.text
+										})
+									})
+								} else if (currentValue.value) {
+									//ContactPoint, Identifier
+									accumulator.push({
+										"code": currentValue.value,
+										"system": currentValue.system,
+										"text": currentValue.type?.text
+									})
+								} else if (currentValue.code) {
+									//Coding
+									accumulator.push({
+										"code": currentValue.code,
+										"system": currentValue.system,
+										"text": currentValue.display
+									})
+								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
+									//string, boolean
+									accumulator.push({
+										"code": currentValue,
+									})
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(LanguageProcessed)
+						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
 	}
@@ -188,12 +336,86 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(rawResource json.R
 		s.Resultingcondition = []byte(resultingconditionResult.String())
 	}
 	// extracting Seriousness
-	seriousnessResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.seriousness'))")
+	seriousnessResult, err := vm.RunString(` 
+							SeriousnessResult = window.fhirpath.evaluate(fhirResource, 'AdverseEvent.seriousness')
+							SeriousnessProcessed = SeriousnessResult.reduce((accumulator, currentValue) => {
+								if (currentValue.coding) {
+									//CodeableConcept
+									currentValue.coding.map((coding) => {
+										accumulator.push({
+											"code": coding.code,	
+											"system": coding.system,
+											"text": currentValue.text
+										})
+									})
+								} else if (currentValue.value) {
+									//ContactPoint, Identifier
+									accumulator.push({
+										"code": currentValue.value,
+										"system": currentValue.system,
+										"text": currentValue.type?.text
+									})
+								} else if (currentValue.code) {
+									//Coding
+									accumulator.push({
+										"code": currentValue.code,
+										"system": currentValue.system,
+										"text": currentValue.display
+									})
+								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
+									//string, boolean
+									accumulator.push({
+										"code": currentValue,
+									})
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(SeriousnessProcessed)
+						 `)
 	if err == nil && seriousnessResult.String() != "undefined" {
 		s.Seriousness = []byte(seriousnessResult.String())
 	}
 	// extracting Severity
-	severityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.severity'))")
+	severityResult, err := vm.RunString(` 
+							SeverityResult = window.fhirpath.evaluate(fhirResource, 'AdverseEvent.severity')
+							SeverityProcessed = SeverityResult.reduce((accumulator, currentValue) => {
+								if (currentValue.coding) {
+									//CodeableConcept
+									currentValue.coding.map((coding) => {
+										accumulator.push({
+											"code": coding.code,	
+											"system": coding.system,
+											"text": currentValue.text
+										})
+									})
+								} else if (currentValue.value) {
+									//ContactPoint, Identifier
+									accumulator.push({
+										"code": currentValue.value,
+										"system": currentValue.system,
+										"text": currentValue.type?.text
+									})
+								} else if (currentValue.code) {
+									//Coding
+									accumulator.push({
+										"code": currentValue.code,
+										"system": currentValue.system,
+										"text": currentValue.display
+									})
+								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
+									//string, boolean
+									accumulator.push({
+										"code": currentValue,
+									})
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(SeverityProcessed)
+						 `)
 	if err == nil && severityResult.String() != "undefined" {
 		s.Severity = []byte(severityResult.String())
 	}
@@ -218,7 +440,44 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(rawResource json.R
 		s.Substance = []byte(substanceResult.String())
 	}
 	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	tagResult, err := vm.RunString(` 
+							TagResult = window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag')
+							TagProcessed = TagResult.reduce((accumulator, currentValue) => {
+								if (currentValue.coding) {
+									//CodeableConcept
+									currentValue.coding.map((coding) => {
+										accumulator.push({
+											"code": coding.code,	
+											"system": coding.system,
+											"text": currentValue.text
+										})
+									})
+								} else if (currentValue.value) {
+									//ContactPoint, Identifier
+									accumulator.push({
+										"code": currentValue.value,
+										"system": currentValue.system,
+										"text": currentValue.type?.text
+									})
+								} else if (currentValue.code) {
+									//Coding
+									accumulator.push({
+										"code": currentValue.code,
+										"system": currentValue.system,
+										"text": currentValue.display
+									})
+								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
+									//string, boolean
+									accumulator.push({
+										"code": currentValue,
+									})
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(TagProcessed)
+						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())
 	}

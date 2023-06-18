@@ -282,6 +282,45 @@ func main() {
 						script += "[0]"
 						//"Don't JSON.stringfy simple types"
 						r.Lit(script)
+					} else if fieldInfo.FieldType == "token" {
+						r.Op("`").Id(fmt.Sprintf(`
+							%sResult = %s
+							%sProcessed = %sResult.reduce((accumulator, currentValue) => {
+								if (currentValue.coding) {
+									//CodeableConcept
+									currentValue.coding.map((coding) => {
+										accumulator.push({
+											"code": coding.code,	
+											"system": coding.system,
+											"text": currentValue.text
+										})
+									})
+								} else if (currentValue.value) {
+									//ContactPoint, Identifier
+									accumulator.push({
+										"code": currentValue.value,
+										"system": currentValue.system,
+										"text": currentValue.type?.text
+									})
+								} else if (currentValue.code) {
+									//Coding
+									accumulator.push({
+										"code": currentValue.code,
+										"system": currentValue.system,
+										"text": currentValue.display
+									})
+								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
+									//string, boolean
+									accumulator.push({
+										"code": currentValue,
+									})
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(%sProcessed)
+						`, fieldName, script, fieldName, fieldName, fieldName)).Op("`")
 					} else {
 						r.Lit(fmt.Sprintf(`JSON.stringify(%s)`, script))
 					}
