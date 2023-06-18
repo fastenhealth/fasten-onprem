@@ -32,6 +32,7 @@ const TABLE_ALIAS = "fhir"
 func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) (interface{}, error) {
 	//todo, until we actually parse the select statement, we will just return all resources based on "from"
 
+	//SECURITY: this is required to ensure that only valid resource types are queried (since it's controlled by the user)
 	if !slices.Contains(databaseModel.GetAllowedResourceTypes(), query.From) {
 		return nil, fmt.Errorf("invalid resource type %s", query.From)
 	}
@@ -42,7 +43,7 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 		return nil, err
 	}
 
-	//this would be unsafe as the user controls the query.From value, however we've validated it is a valid resource type above
+	//SECURITY: this would be unsafe as the user controls the query.From value, however we've validated it is a valid resource type above
 	fromClauses := []string{fmt.Sprintf("%s as %s", strcase.ToSnake("Fhir"+query.From), TABLE_ALIAS)}
 	whereClauses := []string{}
 	whereNamedParameters := map[string]interface{}{}
@@ -57,6 +58,12 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 		searchParameterValue, err := ProcessSearchParameterValue(searchParameter, searchParamCodeValue)
 		if err != nil {
 			return nil, err
+		}
+
+		if searchParameter.Type == SearchParameterTypeToken && len(query.Where) > 1 {
+			//token query is incredibly complicated, and we cannot support multiple token queries at the same time.
+			//TODO: this constraint should be fixed in the future.
+			return nil, fmt.Errorf("token search parameter %s cannot be used with other search parameters", searchParameter.Name)
 		}
 
 		whereClause, clauseNamedParameters, err := SearchCodeToWhereClause(searchParameter, searchParameterValue)
@@ -76,7 +83,7 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 		}
 	}
 
-	//for safety, we will always add/override the current user_id to the where clause. This is to ensure that the user doesnt attempt to override this value in their own where clause
+	//SECURITY: for safety, we will always add/override the current user_id to the where clause. This is to ensure that the user doesnt attempt to override this value in their own where clause
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
 		return nil, currentUserErr
@@ -124,6 +131,12 @@ func ProcessSearchParameter(searchCodeWithModifier string, searchParamTypeLookup
 	} else {
 		searchParameter.Type = SearchParameterType(searchParamTypeStr)
 	}
+
+	//if this is a token search parameter with a modifier, we need to throw an error
+	if searchParameter.Type == SearchParameterTypeToken && len(searchParameter.Modifier) > 0 {
+		return searchParameter, fmt.Errorf("token search parameter %s cannot have a modifier", searchParameter.Name)
+	}
+
 	return searchParameter, nil
 }
 
@@ -273,6 +286,7 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		//setup the clause
 		var clause string
 		if searchParamValue.Prefix == "" || searchParamValue.Prefix == "eq" {
+			//TODO: when no prefix is specified, we need to search using BETWEEN (+/- 0.05)
 			clause = fmt.Sprintf("%sJson.value ->> '$.value' = @%s", searchParam.Name, searchParam.Name)
 		} else if searchParamValue.Prefix == "lt" || searchParamValue.Prefix == "eb" {
 			clause = fmt.Sprintf("%sJson.value ->> '$.value' < @%s", searchParam.Name, searchParam.Name)
@@ -300,7 +314,52 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		}
 
 		return clause, searchClauseNamedParams, nil
-	case SearchParameterTypeToken, SearchParameterTypeReference:
+	case SearchParameterTypeToken:
+		//unfortunately we don't know the datatype of this token, so we need to check all possible datatypes
+		// - Coding - https://hl7.org/fhir/r4/datatypes.html#Coding
+		// - Identifier - https://hl7.org/fhir/r4/datatypes.html#Identifier
+		// - ContactPoint - https://hl7.org/fhir/r4/datatypes.html#ContactPoint
+		// - CodeableConcept - https://hl7.org/fhir/r4/datatypes.html#CodeableConcept
+
+		//TODO: we should support these as well.
+		// - code - https://hl7.org/fhir/r4/datatypes.html#code
+		// - boolean - https://hl7.org/fhir/r4/datatypes.html#boolean
+		// - uri - https://hl7.org/fhir/r4/datatypes.html#uri
+		// - string - https://hl7.org/fhir/r4/datatypes.html#string
+
+		//theres's only one secondary key we care about (System), so we can just check for that
+		namedParameterSystemKey := fmt.Sprintf("%sSystem", searchParam.Name)
+		clauses := []string{}
+
+		//Coding clause
+		codingClause := fmt.Sprintf("%sJson.value ->> '$.code' = @%s", searchParam.Name, searchParam.Name)
+		if _, ok := searchParamValue.SecondaryValues[namedParameterSystemKey]; ok {
+			codingClause += fmt.Sprintf(` AND %sJson.value ->> '$.system' = @%s`, searchParam.Name, namedParameterSystemKey)
+		}
+		clauses = append(clauses, codingClause)
+
+		//Identifier clause
+		identifierClause := fmt.Sprintf("%sJson.value ->> '$.value' = @%s", searchParam.Name, searchParam.Name)
+		if _, ok := searchParamValue.SecondaryValues[namedParameterSystemKey]; ok {
+			identifierClause += fmt.Sprintf(` AND %sJson.value ->> '$.system' = @%s`, searchParam.Name, namedParameterSystemKey)
+		}
+		clauses = append(clauses, identifierClause)
+
+		//ContactPoint clause
+		contactPointClause := fmt.Sprintf("%sJson.value ->> '$.value' = @%s", searchParam.Name, searchParam.Name)
+		//no system for contact point
+		clauses = append(clauses, contactPointClause)
+
+		//CodeableConcept clause (this is the most complicated, as it has a nested coding)
+		codeableConceptClause := fmt.Sprintf("%sCodeableConceptJson.value ->> '$.code' = @%s", searchParam.Name, searchParam.Name)
+		if _, ok := searchParamValue.SecondaryValues[namedParameterSystemKey]; ok {
+			codeableConceptClause += fmt.Sprintf(` AND %sCodeableConceptJson.value ->> '$.system' = @%s`, searchParam.Name, namedParameterSystemKey)
+		}
+		clauses = append(clauses, codeableConceptClause)
+		//SECURITY: double (( and )) are required to prevent SQL injection/user_id clause being ignored.
+		return fmt.Sprintf("((%s))", strings.Join(clauses, ") OR (")), searchClauseNamedParams, nil
+
+	case SearchParameterTypeReference:
 		return "", nil, fmt.Errorf("search parameter type %s not supported", searchParam.Type)
 	}
 	return "", searchClauseNamedParams, nil
@@ -316,6 +375,12 @@ func SearchCodeToFromClause(searchParam SearchParameter, searchParamValue Search
 	case SearchParameterTypeQuantity:
 		//setup the clause
 		return fmt.Sprintf("json_each(%s.%s) as %sJson", TABLE_ALIAS, searchParam.Name, searchParam.Name), nil
+	case SearchParameterTypeToken:
+		//unfortunately we don't know the datatype of this token, so we need to check multiple possible datatypes
+		return fmt.Sprintf("json_each(%s.%s) as %sJson, json_each(json_extract(%sJson.value, '$.coding')) as %sCodeableConceptJson",
+			TABLE_ALIAS, searchParam.Name, searchParam.Name,
+			searchParam.Name, searchParam.Name,
+		), nil
 	}
 	return "", nil
 }

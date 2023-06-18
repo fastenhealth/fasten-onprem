@@ -27,6 +27,8 @@ func TestProcessSearchParameter(t *testing.T) {
 		{"given:exact", map[string]string{"given": "string"}, SearchParameter{Type: "string", Name: "given", Modifier: "exact"}, false},
 		{"url:below", map[string]string{"url": "string"}, SearchParameter{Type: "string", Name: "url", Modifier: "below"}, false},
 		{"url:above", map[string]string{"url": "string"}, SearchParameter{Type: "string", Name: "url", Modifier: "above"}, false},
+
+		{"display:text", map[string]string{"display": "token"}, SearchParameter{}, true},
 	}
 
 	//test && assert
@@ -141,6 +143,15 @@ func TestSearchCodeToWhereClause(t *testing.T) {
 		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, SearchParameterValue{Value: float64(5.4), Prefix: "le", SecondaryValues: map[string]interface{}{"valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}}, "valueQuantityJson.value ->> '$.value' <= @valueQuantity AND valueQuantityJson.value ->> '$.code' = @valueQuantityCode AND valueQuantityJson.value ->> '$.system' = @valueQuantitySystem", map[string]interface{}{"valueQuantity": float64(5.4), "valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}, false},
 		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, SearchParameterValue{Value: float64(5.4), Prefix: "ap", SecondaryValues: map[string]interface{}{"valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}}, "", map[string]interface{}{}, true}, //ap modifier not supported
 		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, SearchParameterValue{Value: float64(5.4), Prefix: "ne", SecondaryValues: map[string]interface{}{"valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}}, "valueQuantityJson.value ->> '$.value' <> @valueQuantity AND valueQuantityJson.value ->> '$.code' = @valueQuantityCode AND valueQuantityJson.value ->> '$.system' = @valueQuantitySystem", map[string]interface{}{"valueQuantity": float64(5.4), "valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}, false},
+
+		//{SearchParameter{Type: "token", Name: "code", Modifier: ""}, "http://acme.org/conditions/codes|ha125", SearchParameterValue{Value: "ha125", Prefix: "", SecondaryValues: map[string]interface{}{"codeSystem": "http://acme.org/conditions/codes"}}, false},
+		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, SearchParameterValue{Value: "ha125", Prefix: "", SecondaryValues: map[string]interface{}{"codeSystem": "http://acme.org/conditions/codes"}}, "(codeJson.value ->> '$.code' = @code AND codeJson.value ->> '$.system' = @codeSystem) OR (codeJson.value ->> '$.value' = @code AND codeJson.value ->> '$.system' = @codeSystem) OR (codeJson.value ->> '$.value' = @code) OR (codeCodeableConceptJson.value ->> '$.code' = @code AND codeCodeableConceptJson.value ->> '$.system' = @codeSystem)", map[string]interface{}{"code": "ha125", "codeSystem": "http://acme.org/conditions/codes"}, false},
+
+		//{SearchParameter{Type: "token", Name: "code", Modifier: ""}, "ha125", SearchParameterValue{Value: "ha125", Prefix: "", SecondaryValues: map[string]interface{}{}}, false},
+		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, SearchParameterValue{Value: "ha125", Prefix: "", SecondaryValues: map[string]interface{}{}}, "(codeJson.value ->> '$.code' = @code) OR (codeJson.value ->> '$.value' = @code) OR (codeJson.value ->> '$.value' = @code) OR (codeCodeableConceptJson.value ->> '$.code' = @code)", map[string]interface{}{"code": "ha125"}, false},
+
+		//{SearchParameter{Type: "token", Name: "identifier", Modifier: "otype"}, "http://terminology.hl7.org/CodeSystem/v2-0203|MR|446053", SearchParameterValue{Value: "MR|446053", Prefix: "", SecondaryValues: map[string]interface{}{"identifierSystem": "http://terminology.hl7.org/CodeSystem/v2-0203"}}, false},
+		{SearchParameter{Type: "token", Name: "identifier", Modifier: "otype"}, SearchParameterValue{Value: "MR|446053", Prefix: "", SecondaryValues: map[string]interface{}{"identifierSystem": "http://terminology.hl7.org/CodeSystem/v2-0203"}}, "(identifierJson.value ->> '$.code' = @identifier AND identifierJson.value ->> '$.system' = @identifierSystem) OR (identifierJson.value ->> '$.value' = @identifier AND identifierJson.value ->> '$.system' = @identifierSystem) OR (identifierJson.value ->> '$.value' = @identifier) OR (identifierCodeableConceptJson.value ->> '$.code' = @identifier AND identifierCodeableConceptJson.value ->> '$.system' = @identifierSystem)", map[string]interface{}{"identifier": "MR|446053", "identifierSystem": "http://terminology.hl7.org/CodeSystem/v2-0203"}, false},
 	}
 
 	//test && assert
@@ -156,3 +167,6 @@ func TestSearchCodeToWhereClause(t *testing.T) {
 	}
 
 }
+
+//TODO
+//func TestSearchCodeToFromClause(t *testing.T) {}
