@@ -216,71 +216,30 @@ func (s *FhirDeviceRequest) PopulateAndExtractSearchParameters(rawResource json.
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
 	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
 	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
+	// extracting GroupIdentifier
+	groupIdentifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.groupIdentifier'))")
+	if err == nil && groupIdentifierResult.String() != "undefined" {
+		s.GroupIdentifier = []byte(groupIdentifierResult.String())
 	}
-	// extracting AuthoredOn
-	authoredOnResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DeviceRequest.authoredOn')[0]")
-	if err == nil && authoredOnResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, authoredOnResult.String())
-		if err == nil {
-			s.AuthoredOn = t
-		}
-	}
-	// extracting Device
-	deviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(DeviceRequest.codeReference)'))")
-	if err == nil && deviceResult.String() != "undefined" {
-		s.Device = []byte(deviceResult.String())
-	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
-	}
-	// extracting InstantiatesUri
-	instantiatesUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DeviceRequest.instantiatesUri')[0]")
-	if err == nil && instantiatesUriResult.String() != "undefined" {
-		s.InstantiatesUri = instantiatesUriResult.String()
-	}
-	// extracting Insurance
-	insuranceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.insurance'))")
-	if err == nil && insuranceResult.String() != "undefined" {
-		s.Insurance = []byte(insuranceResult.String())
-	}
-	// extracting Intent
-	intentResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.intent'))")
-	if err == nil && intentResult.String() != "undefined" {
-		s.Intent = []byte(intentResult.String())
-	}
-	// extracting Requester
-	requesterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.requester'))")
-	if err == nil && requesterResult.String() != "undefined" {
-		s.Requester = []byte(requesterResult.String())
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Encounter
 	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter.where(resolve() is Encounter) | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | ServiceRequest.encounter | VisionPrescription.encounter'))")
 	if err == nil && encounterResult.String() != "undefined" {
 		s.Encounter = []byte(encounterResult.String())
-	}
-	// extracting BasedOn
-	basedOnResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.basedOn'))")
-	if err == nil && basedOnResult.String() != "undefined" {
-		s.BasedOn = []byte(basedOnResult.String())
 	}
 	// extracting EventDate
 	eventDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(DeviceRequest.occurrencedateTime) | (DeviceRequest.occurrencePeriod)')[0]")
@@ -295,45 +254,86 @@ func (s *FhirDeviceRequest) PopulateAndExtractSearchParameters(rawResource json.
 	if err == nil && instantiatesCanonicalResult.String() != "undefined" {
 		s.InstantiatesCanonical = []byte(instantiatesCanonicalResult.String())
 	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting Subject
-	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.subject'))")
-	if err == nil && subjectResult.String() != "undefined" {
-		s.Subject = []byte(subjectResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
+	// extracting Insurance
+	insuranceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.insurance'))")
+	if err == nil && insuranceResult.String() != "undefined" {
+		s.Insurance = []byte(insuranceResult.String())
 	}
 	// extracting Code
 	codeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.codeCodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicationCodeableConcept) | (MedicationDispense.medicationCodeableConcept) | (MedicationRequest.medicationCodeableConcept) | (MedicationStatement.medicationCodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code'))")
 	if err == nil && codeResult.String() != "undefined" {
 		s.Code = []byte(codeResult.String())
 	}
-	// extracting GroupIdentifier
-	groupIdentifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.groupIdentifier'))")
-	if err == nil && groupIdentifierResult.String() != "undefined" {
-		s.GroupIdentifier = []byte(groupIdentifierResult.String())
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting PriorRequest
+	priorRequestResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.priorRequest'))")
+	if err == nil && priorRequestResult.String() != "undefined" {
+		s.PriorRequest = []byte(priorRequestResult.String())
+	}
+	// extracting Requester
+	requesterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.requester'))")
+	if err == nil && requesterResult.String() != "undefined" {
+		s.Requester = []byte(requesterResult.String())
+	}
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
+	}
+	// extracting Subject
+	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.subject'))")
+	if err == nil && subjectResult.String() != "undefined" {
+		s.Subject = []byte(subjectResult.String())
+	}
+	// extracting Device
+	deviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(DeviceRequest.codeReference)'))")
+	if err == nil && deviceResult.String() != "undefined" {
+		s.Device = []byte(deviceResult.String())
+	}
+	// extracting Intent
+	intentResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.intent'))")
+	if err == nil && intentResult.String() != "undefined" {
+		s.Intent = []byte(intentResult.String())
+	}
+	// extracting InstantiatesUri
+	instantiatesUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DeviceRequest.instantiatesUri')[0]")
+	if err == nil && instantiatesUriResult.String() != "undefined" {
+		s.InstantiatesUri = instantiatesUriResult.String()
 	}
 	// extracting Performer
 	performerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.performer'))")
 	if err == nil && performerResult.String() != "undefined" {
 		s.Performer = []byte(performerResult.String())
 	}
-	// extracting PriorRequest
-	priorRequestResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.priorRequest'))")
-	if err == nil && priorRequestResult.String() != "undefined" {
-		s.PriorRequest = []byte(priorRequestResult.String())
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
+	// extracting AuthoredOn
+	authoredOnResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DeviceRequest.authoredOn')[0]")
+	if err == nil && authoredOnResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, authoredOnResult.String())
+		if err == nil {
+			s.AuthoredOn = t
+		}
+	}
+	// extracting BasedOn
+	basedOnResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DeviceRequest.basedOn'))")
+	if err == nil && basedOnResult.String() != "undefined" {
+		s.BasedOn = []byte(basedOnResult.String())
 	}
 	return nil
 }

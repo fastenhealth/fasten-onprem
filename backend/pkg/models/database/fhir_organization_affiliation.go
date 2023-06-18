@@ -139,20 +139,48 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(rawReso
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
-	// extracting ParticipatingOrganization
-	participatingOrganizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.participatingOrganization'))")
-	if err == nil && participatingOrganizationResult.String() != "undefined" {
-		s.ParticipatingOrganization = []byte(participatingOrganizationResult.String())
+	// extracting Email
+	emailResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.telecom.where(system='email')'))")
+	if err == nil && emailResult.String() != "undefined" {
+		s.Email = []byte(emailResult.String())
 	}
 	// extracting Phone
 	phoneResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.telecom.where(system='phone')'))")
 	if err == nil && phoneResult.String() != "undefined" {
 		s.Phone = []byte(phoneResult.String())
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
+	}
+	// extracting Service
+	serviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.healthcareService'))")
+	if err == nil && serviceResult.String() != "undefined" {
+		s.Service = []byte(serviceResult.String())
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting Network
+	networkResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.network'))")
+	if err == nil && networkResult.String() != "undefined" {
+		s.Network = []byte(networkResult.String())
 	}
 	// extracting PrimaryOrganization
 	primaryOrganizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.organization'))")
@@ -164,28 +192,25 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(rawReso
 	if err == nil && roleResult.String() != "undefined" {
 		s.Role = []byte(roleResult.String())
 	}
+	// extracting ParticipatingOrganization
+	participatingOrganizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.participatingOrganization'))")
+	if err == nil && participatingOrganizationResult.String() != "undefined" {
+		s.ParticipatingOrganization = []byte(participatingOrganizationResult.String())
+	}
 	// extracting Telecom
 	telecomResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.telecom'))")
 	if err == nil && telecomResult.String() != "undefined" {
 		s.Telecom = []byte(telecomResult.String())
 	}
-	// extracting Date
-	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.period')[0]")
-	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
-			s.Date = t
-		}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
 	}
-	// extracting Email
-	emailResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.telecom.where(system='email')'))")
-	if err == nil && emailResult.String() != "undefined" {
-		s.Email = []byte(emailResult.String())
-	}
-	// extracting Endpoint
-	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.endpoint'))")
-	if err == nil && endpointResult.String() != "undefined" {
-		s.Endpoint = []byte(endpointResult.String())
+	// extracting Location
+	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.location'))")
+	if err == nil && locationResult.String() != "undefined" {
+		s.Location = []byte(locationResult.String())
 	}
 	// extracting Specialty
 	specialtyResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.specialty'))")
@@ -197,48 +222,23 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(rawReso
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
 	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
 	// extracting Active
 	activeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.active'))")
 	if err == nil && activeResult.String() != "undefined" {
 		s.Active = []byte(activeResult.String())
 	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+	// extracting Date
+	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.period')[0]")
+	if err == nil && dateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.Date = t
 		}
 	}
-	// extracting Location
-	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.location'))")
-	if err == nil && locationResult.String() != "undefined" {
-		s.Location = []byte(locationResult.String())
-	}
-	// extracting Network
-	networkResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.network'))")
-	if err == nil && networkResult.String() != "undefined" {
-		s.Network = []byte(networkResult.String())
-	}
-	// extracting Service
-	serviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.healthcareService'))")
-	if err == nil && serviceResult.String() != "undefined" {
-		s.Service = []byte(serviceResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
+	// extracting Endpoint
+	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.endpoint'))")
+	if err == nil && endpointResult.String() != "undefined" {
+		s.Endpoint = []byte(endpointResult.String())
 	}
 	return nil
 }

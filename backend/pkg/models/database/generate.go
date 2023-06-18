@@ -166,7 +166,7 @@ func main() {
 
 			// Generate fields for search parameters. Make sure they are in a sorted order, otherwise the generated code will be different each time.
 			keys := make([]string, 0, len(fieldMap))
-			for k := range fieldMap {
+			for k, _ := range fieldMap {
 				keys = append(keys, k)
 			}
 			sort.Strings(keys)

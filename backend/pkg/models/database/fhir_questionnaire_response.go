@@ -123,35 +123,25 @@ func (s *FhirQuestionnaireResponse) PopulateAndExtractSearchParameters(rawResour
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting PartOf
-	partOfResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.partOf'))")
-	if err == nil && partOfResult.String() != "undefined" {
-		s.PartOf = []byte(partOfResult.String())
-	}
-	// extracting Author
-	authorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.author'))")
-	if err == nil && authorResult.String() != "undefined" {
-		s.Author = []byte(authorResult.String())
-	}
-	// extracting Source
-	sourceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.source'))")
-	if err == nil && sourceResult.String() != "undefined" {
-		s.Source = []byte(sourceResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
 	// extracting BasedOn
 	basedOnResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.basedOn'))")
 	if err == nil && basedOnResult.String() != "undefined" {
 		s.BasedOn = []byte(basedOnResult.String())
 	}
+	// extracting Encounter
+	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.encounter'))")
+	if err == nil && encounterResult.String() != "undefined" {
+		s.Encounter = []byte(encounterResult.String())
+	}
 	// extracting Subject
 	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.subject'))")
 	if err == nil && subjectResult.String() != "undefined" {
 		s.Subject = []byte(subjectResult.String())
+	}
+	// extracting Source
+	sourceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.source'))")
+	if err == nil && sourceResult.String() != "undefined" {
+		s.Source = []byte(sourceResult.String())
 	}
 	// extracting LastUpdated
 	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
@@ -161,15 +151,30 @@ func (s *FhirQuestionnaireResponse) PopulateAndExtractSearchParameters(rawResour
 			s.LastUpdated = t
 		}
 	}
+	// extracting Author
+	authorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.author'))")
+	if err == nil && authorResult.String() != "undefined" {
+		s.Author = []byte(authorResult.String())
+	}
+	// extracting PartOf
+	partOfResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.partOf'))")
+	if err == nil && partOfResult.String() != "undefined" {
+		s.PartOf = []byte(partOfResult.String())
+	}
+	// extracting Questionnaire
+	questionnaireResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.questionnaire'))")
+	if err == nil && questionnaireResult.String() != "undefined" {
+		s.Questionnaire = []byte(questionnaireResult.String())
+	}
 	// extracting Language
 	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
 	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Authored
 	authoredResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.authored')[0]")
@@ -184,25 +189,20 @@ func (s *FhirQuestionnaireResponse) PopulateAndExtractSearchParameters(rawResour
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
 	}
-	// extracting Questionnaire
-	questionnaireResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.questionnaire'))")
-	if err == nil && questionnaireResult.String() != "undefined" {
-		s.Questionnaire = []byte(questionnaireResult.String())
-	}
 	// extracting Status
 	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.status'))")
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
 	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
 	}
-	// extracting Encounter
-	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.encounter'))")
-	if err == nil && encounterResult.String() != "undefined" {
-		s.Encounter = []byte(encounterResult.String())
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
 	}
 	return nil
 }

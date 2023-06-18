@@ -213,43 +213,15 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(rawResource json.RawM
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting AbatementString
-	abatementStringResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.abatement.as(string)')[0]")
-	if err == nil && abatementStringResult.String() != "undefined" {
-		s.AbatementString = abatementStringResult.String()
-	}
-	// extracting BodySite
-	bodySiteResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.bodySite'))")
-	if err == nil && bodySiteResult.String() != "undefined" {
-		s.BodySite = []byte(bodySiteResult.String())
-	}
-	// extracting ClinicalStatus
-	clinicalStatusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.clinicalStatus'))")
-	if err == nil && clinicalStatusResult.String() != "undefined" {
-		s.ClinicalStatus = []byte(clinicalStatusResult.String())
-	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
 	// extracting Category
 	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.category'))")
 	if err == nil && categoryResult.String() != "undefined" {
 		s.Category = []byte(categoryResult.String())
+	}
+	// extracting Severity
+	severityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.severity'))")
+	if err == nil && severityResult.String() != "undefined" {
+		s.Severity = []byte(severityResult.String())
 	}
 	// extracting Subject
 	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.subject'))")
@@ -271,38 +243,28 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(rawResource json.RawM
 	if err == nil && abatementAgeResult.String() != "undefined" {
 		s.AbatementAge = []byte(abatementAgeResult.String())
 	}
-	// extracting Severity
-	severityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.severity'))")
-	if err == nil && severityResult.String() != "undefined" {
-		s.Severity = []byte(severityResult.String())
+	// extracting AbatementDate
+	abatementDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.abatement.as(dateTime) | Condition.abatement.as(Period)')[0]")
+	if err == nil && abatementDateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, abatementDateResult.String())
+		if err == nil {
+			s.AbatementDate = t
+		}
 	}
 	// extracting Asserter
 	asserterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.asserter'))")
 	if err == nil && asserterResult.String() != "undefined" {
 		s.Asserter = []byte(asserterResult.String())
 	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
+	// extracting ClinicalStatus
+	clinicalStatusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.clinicalStatus'))")
+	if err == nil && clinicalStatusResult.String() != "undefined" {
+		s.ClinicalStatus = []byte(clinicalStatusResult.String())
 	}
-	// extracting Code
-	codeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.codeCodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicationCodeableConcept) | (MedicationDispense.medicationCodeableConcept) | (MedicationRequest.medicationCodeableConcept) | (MedicationStatement.medicationCodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code'))")
-	if err == nil && codeResult.String() != "undefined" {
-		s.Code = []byte(codeResult.String())
-	}
-	// extracting OnsetAge
-	onsetAgeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.onset.as(Age) | Condition.onset.as(Range)'))")
-	if err == nil && onsetAgeResult.String() != "undefined" {
-		s.OnsetAge = []byte(onsetAgeResult.String())
-	}
-	// extracting OnsetDate
-	onsetDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.onset.as(dateTime) | Condition.onset.as(Period)')[0]")
-	if err == nil && onsetDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, onsetDateResult.String())
-		if err == nil {
-			s.OnsetDate = t
-		}
+	// extracting Encounter
+	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.encounter'))")
+	if err == nil && encounterResult.String() != "undefined" {
+		s.Encounter = []byte(encounterResult.String())
 	}
 	// extracting OnsetInfo
 	onsetInfoResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.onset.as(string)')[0]")
@@ -314,28 +276,71 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(rawResource json.RawM
 	if err == nil && verificationStatusResult.String() != "undefined" {
 		s.VerificationStatus = []byte(verificationStatusResult.String())
 	}
-	// extracting AbatementDate
-	abatementDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.abatement.as(dateTime) | Condition.abatement.as(Period)')[0]")
-	if err == nil && abatementDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, abatementDateResult.String())
+	// extracting EvidenceDetail
+	evidenceDetailResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.evidence.detail'))")
+	if err == nil && evidenceDetailResult.String() != "undefined" {
+		s.EvidenceDetail = []byte(evidenceDetailResult.String())
+	}
+	// extracting OnsetAge
+	onsetAgeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.onset.as(Age) | Condition.onset.as(Range)'))")
+	if err == nil && onsetAgeResult.String() != "undefined" {
+		s.OnsetAge = []byte(onsetAgeResult.String())
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.AbatementDate = t
+			s.LastUpdated = t
 		}
 	}
-	// extracting Encounter
-	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.encounter'))")
-	if err == nil && encounterResult.String() != "undefined" {
-		s.Encounter = []byte(encounterResult.String())
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting BodySite
+	bodySiteResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.bodySite'))")
+	if err == nil && bodySiteResult.String() != "undefined" {
+		s.BodySite = []byte(bodySiteResult.String())
 	}
 	// extracting Evidence
 	evidenceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.evidence.code'))")
 	if err == nil && evidenceResult.String() != "undefined" {
 		s.Evidence = []byte(evidenceResult.String())
 	}
-	// extracting EvidenceDetail
-	evidenceDetailResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.evidence.detail'))")
-	if err == nil && evidenceDetailResult.String() != "undefined" {
-		s.EvidenceDetail = []byte(evidenceDetailResult.String())
+	// extracting Stage
+	stageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.stage.summary'))")
+	if err == nil && stageResult.String() != "undefined" {
+		s.Stage = []byte(stageResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Code
+	codeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.codeCodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicationCodeableConcept) | (MedicationDispense.medicationCodeableConcept) | (MedicationRequest.medicationCodeableConcept) | (MedicationStatement.medicationCodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code'))")
+	if err == nil && codeResult.String() != "undefined" {
+		s.Code = []byte(codeResult.String())
+	}
+	// extracting AbatementString
+	abatementStringResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.abatement.as(string)')[0]")
+	if err == nil && abatementStringResult.String() != "undefined" {
+		s.AbatementString = abatementStringResult.String()
+	}
+	// extracting OnsetDate
+	onsetDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.onset.as(dateTime) | Condition.onset.as(Period)')[0]")
+	if err == nil && onsetDateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, onsetDateResult.String())
+		if err == nil {
+			s.OnsetDate = t
+		}
 	}
 	// extracting RecordedDate
 	recordedDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.recordedDate')[0]")
@@ -344,11 +349,6 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(rawResource json.RawM
 		if err == nil {
 			s.RecordedDate = t
 		}
-	}
-	// extracting Stage
-	stageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.stage.summary'))")
-	if err == nil && stageResult.String() != "undefined" {
-		s.Stage = []byte(stageResult.String())
 	}
 	return nil
 }

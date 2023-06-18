@@ -123,15 +123,15 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(rawResource json.RawMess
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Model
-	modelResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.modelNumber')[0]")
-	if err == nil && modelResult.String() != "undefined" {
-		s.Model = modelResult.String()
-	}
 	// extracting Organization
 	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Device.owner'))")
 	if err == nil && organizationResult.String() != "undefined" {
 		s.Organization = []byte(organizationResult.String())
+	}
+	// extracting UdiDi
+	udiDiResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.udiCarrier.deviceIdentifier')[0]")
+	if err == nil && udiDiResult.String() != "undefined" {
+		s.UdiDi = udiDiResult.String()
 	}
 	// extracting Url
 	urlResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.url')[0]")
@@ -143,6 +143,16 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(rawResource json.RawMess
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
 	}
+	// extracting Manufacturer
+	manufacturerResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.manufacturer')[0]")
+	if err == nil && manufacturerResult.String() != "undefined" {
+		s.Manufacturer = manufacturerResult.String()
+	}
+	// extracting Model
+	modelResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.modelNumber')[0]")
+	if err == nil && modelResult.String() != "undefined" {
+		s.Model = modelResult.String()
+	}
 	// extracting Location
 	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Device.location'))")
 	if err == nil && locationResult.String() != "undefined" {
@@ -153,28 +163,25 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(rawResource json.RawMess
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
 	}
-	// extracting UdiCarrier
-	udiCarrierResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.udiCarrier.carrierHRF')[0]")
-	if err == nil && udiCarrierResult.String() != "undefined" {
-		s.UdiCarrier = udiCarrierResult.String()
-	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
-	}
-	// extracting Manufacturer
-	manufacturerResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.manufacturer')[0]")
-	if err == nil && manufacturerResult.String() != "undefined" {
-		s.Manufacturer = manufacturerResult.String()
+	// extracting DeviceName
+	deviceNameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.deviceName.name | Device.type.coding.display | Device.type.text')[0]")
+	if err == nil && deviceNameResult.String() != "undefined" {
+		s.DeviceName = deviceNameResult.String()
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Device.identifier'))")
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting UdiCarrier
+	udiCarrierResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.udiCarrier.carrierHRF')[0]")
+	if err == nil && udiCarrierResult.String() != "undefined" {
+		s.UdiCarrier = udiCarrierResult.String()
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
@@ -186,20 +193,13 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(rawResource json.RawMess
 	if err == nil && sourceUriResult.String() != "undefined" {
 		s.SourceUri = sourceUriResult.String()
 	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting DeviceName
-	deviceNameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.deviceName.name | Device.type.coding.display | Device.type.text')[0]")
-	if err == nil && deviceNameResult.String() != "undefined" {
-		s.DeviceName = deviceNameResult.String()
-	}
-	// extracting UdiDi
-	udiDiResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.udiCarrier.deviceIdentifier')[0]")
-	if err == nil && udiDiResult.String() != "undefined" {
-		s.UdiDi = udiDiResult.String()
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
 	}
 	return nil
 }

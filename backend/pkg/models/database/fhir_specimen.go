@@ -123,26 +123,6 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(rawResource json.RawMe
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Container
-	containerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.container.type'))")
-	if err == nil && containerResult.String() != "undefined" {
-		s.Container = []byte(containerResult.String())
-	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
 	// extracting Collected
 	collectedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Specimen.collection.collected')[0]")
 	if err == nil && collectedResult.String() != "undefined" {
@@ -151,10 +131,15 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(rawResource json.RawMe
 			s.Collected = t
 		}
 	}
-	// extracting Parent
-	parentResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.parent'))")
-	if err == nil && parentResult.String() != "undefined" {
-		s.Parent = []byte(parentResult.String())
+	// extracting Collector
+	collectorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.collection.collector'))")
+	if err == nil && collectorResult.String() != "undefined" {
+		s.Collector = []byte(collectorResult.String())
+	}
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
 	}
 	// extracting LastUpdated
 	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
@@ -163,16 +148,6 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(rawResource json.RawMe
 		if err == nil {
 			s.LastUpdated = t
 		}
-	}
-	// extracting Subject
-	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.subject'))")
-	if err == nil && subjectResult.String() != "undefined" {
-		s.Subject = []byte(subjectResult.String())
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
@@ -184,25 +159,50 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(rawResource json.RawMe
 	if err == nil && bodysiteResult.String() != "undefined" {
 		s.Bodysite = []byte(bodysiteResult.String())
 	}
-	// extracting Collector
-	collectorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.collection.collector'))")
-	if err == nil && collectorResult.String() != "undefined" {
-		s.Collector = []byte(collectorResult.String())
-	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.identifier'))")
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting Subject
+	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.subject'))")
+	if err == nil && subjectResult.String() != "undefined" {
+		s.Subject = []byte(subjectResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Accession
 	accessionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.accessionIdentifier'))")
 	if err == nil && accessionResult.String() != "undefined" {
 		s.Accession = []byte(accessionResult.String())
 	}
+	// extracting Container
+	containerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.container.type'))")
+	if err == nil && containerResult.String() != "undefined" {
+		s.Container = []byte(containerResult.String())
+	}
 	// extracting ContainerId
 	containerIdResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.container.identifier'))")
 	if err == nil && containerIdResult.String() != "undefined" {
 		s.ContainerId = []byte(containerIdResult.String())
+	}
+	// extracting Parent
+	parentResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.parent'))")
+	if err == nil && parentResult.String() != "undefined" {
+		s.Parent = []byte(parentResult.String())
 	}
 	return nil
 }

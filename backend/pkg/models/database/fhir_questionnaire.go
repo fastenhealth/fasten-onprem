@@ -151,20 +151,23 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(rawResource json.
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Context
-	contextResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Questionnaire.useContext.valueCodeableConcept)'))")
-	if err == nil && contextResult.String() != "undefined" {
-		s.Context = []byte(contextResult.String())
+	// extracting Code
+	codeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.item.code'))")
+	if err == nil && codeResult.String() != "undefined" {
+		s.Code = []byte(codeResult.String())
 	}
-	// extracting ContextQuantity
-	contextQuantityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Questionnaire.useContext.valueQuantity) | (Questionnaire.useContext.valueRange)'))")
-	if err == nil && contextQuantityResult.String() != "undefined" {
-		s.ContextQuantity = []byte(contextQuantityResult.String())
+	// extracting Description
+	descriptionResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.description')[0]")
+	if err == nil && descriptionResult.String() != "undefined" {
+		s.Description = descriptionResult.String()
 	}
-	// extracting Url
-	urlResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.url')[0]")
-	if err == nil && urlResult.String() != "undefined" {
-		s.Url = urlResult.String()
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
@@ -176,6 +179,31 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(rawResource json.
 	if err == nil && sourceUriResult.String() != "undefined" {
 		s.SourceUri = sourceUriResult.String()
 	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting Name
+	nameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.name')[0]")
+	if err == nil && nameResult.String() != "undefined" {
+		s.Name = nameResult.String()
+	}
+	// extracting Title
+	titleResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.title')[0]")
+	if err == nil && titleResult.String() != "undefined" {
+		s.Title = titleResult.String()
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
+	// extracting ContextQuantity
+	contextQuantityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Questionnaire.useContext.valueQuantity) | (Questionnaire.useContext.valueRange)'))")
+	if err == nil && contextQuantityResult.String() != "undefined" {
+		s.ContextQuantity = []byte(contextQuantityResult.String())
+	}
 	// extracting ContextType
 	contextTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.useContext.code'))")
 	if err == nil && contextTypeResult.String() != "undefined" {
@@ -186,41 +214,30 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(rawResource json.
 	if err == nil && definitionResult.String() != "undefined" {
 		s.Definition = definitionResult.String()
 	}
-	// extracting Effective
-	effectiveResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.effectivePeriod')[0]")
-	if err == nil && effectiveResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, effectiveResult.String())
-		if err == nil {
-			s.Effective = t
-		}
-	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.identifier'))")
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
 	}
-	// extracting SubjectType
-	subjectTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.subjectType'))")
-	if err == nil && subjectTypeResult.String() != "undefined" {
-		s.SubjectType = []byte(subjectTypeResult.String())
+	// extracting Jurisdiction
+	jurisdictionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.jurisdiction'))")
+	if err == nil && jurisdictionResult.String() != "undefined" {
+		s.Jurisdiction = []byte(jurisdictionResult.String())
 	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
+	// extracting Version
+	versionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.version'))")
+	if err == nil && versionResult.String() != "undefined" {
+		s.Version = []byte(versionResult.String())
 	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
+	// extracting Url
+	urlResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.url')[0]")
+	if err == nil && urlResult.String() != "undefined" {
+		s.Url = urlResult.String()
 	}
-	// extracting Code
-	codeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.item.code'))")
-	if err == nil && codeResult.String() != "undefined" {
-		s.Code = []byte(codeResult.String())
+	// extracting Context
+	contextResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Questionnaire.useContext.valueCodeableConcept)'))")
+	if err == nil && contextResult.String() != "undefined" {
+		s.Context = []byte(contextResult.String())
 	}
 	// extracting Date
 	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.date')[0]")
@@ -230,45 +247,28 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(rawResource json.
 			s.Date = t
 		}
 	}
-	// extracting Description
-	descriptionResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.description')[0]")
-	if err == nil && descriptionResult.String() != "undefined" {
-		s.Description = descriptionResult.String()
-	}
-	// extracting Name
-	nameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.name')[0]")
-	if err == nil && nameResult.String() != "undefined" {
-		s.Name = nameResult.String()
-	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
-	}
-	// extracting Jurisdiction
-	jurisdictionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.jurisdiction'))")
-	if err == nil && jurisdictionResult.String() != "undefined" {
-		s.Jurisdiction = []byte(jurisdictionResult.String())
+	// extracting Effective
+	effectiveResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.effectivePeriod')[0]")
+	if err == nil && effectiveResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, effectiveResult.String())
+		if err == nil {
+			s.Effective = t
+		}
 	}
 	// extracting Publisher
 	publisherResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.publisher')[0]")
 	if err == nil && publisherResult.String() != "undefined" {
 		s.Publisher = publisherResult.String()
 	}
-	// extracting Title
-	titleResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.title')[0]")
-	if err == nil && titleResult.String() != "undefined" {
-		s.Title = titleResult.String()
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
 	}
-	// extracting Version
-	versionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.version'))")
-	if err == nil && versionResult.String() != "undefined" {
-		s.Version = []byte(versionResult.String())
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
+	// extracting SubjectType
+	subjectTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.subjectType'))")
+	if err == nil && subjectTypeResult.String() != "undefined" {
+		s.SubjectType = []byte(subjectTypeResult.String())
 	}
 	return nil
 }
