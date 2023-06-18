@@ -315,49 +315,40 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 
 		return fmt.Sprintf("(%s)", clause), searchClauseNamedParams, nil
 	case SearchParameterTypeToken:
-		//unfortunately we don't know the datatype of this token, so we need to check all possible datatypes
+		//unfortunately we don't know the datatype of this token, however, we're already preprocessed this field in backend/pkg/models/database/generate.go
+		// all of the following datatypes will be stored in a JSON object with the following structure:
+		// {
+		//   "system": "http://example.com",
+		//   "code": "example-code",
+		//   "text": "example display"
+		// }
+		// primitive datatypes will not have a system or text, just a code (e.g. "code": true or "code": "http://www.example.com")
+		//
 		// - Coding - https://hl7.org/fhir/r4/datatypes.html#Coding
 		// - Identifier - https://hl7.org/fhir/r4/datatypes.html#Identifier
 		// - ContactPoint - https://hl7.org/fhir/r4/datatypes.html#ContactPoint
 		// - CodeableConcept - https://hl7.org/fhir/r4/datatypes.html#CodeableConcept
-
-		//TODO: we should support these as well.
 		// - code - https://hl7.org/fhir/r4/datatypes.html#code
 		// - boolean - https://hl7.org/fhir/r4/datatypes.html#boolean
 		// - uri - https://hl7.org/fhir/r4/datatypes.html#uri
 		// - string - https://hl7.org/fhir/r4/datatypes.html#string
 
-		//theres's only one secondary key we care about (System), so we can just check for that
-		namedParameterSystemKey := fmt.Sprintf("%sSystem", searchParam.Name)
-		clauses := []string{}
+		//TODO: support ":text" modifier
 
-		//Coding clause
-		codingClause := fmt.Sprintf("%sJson.value ->> '$.code' = @%s", searchParam.Name, searchParam.Name)
-		if _, ok := searchParamValue.SecondaryValues[namedParameterSystemKey]; ok {
-			codingClause += fmt.Sprintf(` AND %sJson.value ->> '$.system' = @%s`, searchParam.Name, namedParameterSystemKey)
+		//setup the clause
+		clause := fmt.Sprintf("%sJson.value ->> '$.code' = @%s", searchParam.Name, searchParam.Name)
+
+		//append the code and/or system clauses (if required)
+		//this looks like unnecessary code, however its required to ensure consistent tests
+		allowedSecondaryKeys := []string{"system"}
+
+		for _, k := range allowedSecondaryKeys {
+			namedParameterKey := fmt.Sprintf("%s%s", searchParam.Name, strings.Title(k))
+			if _, ok := searchParamValue.SecondaryValues[namedParameterKey]; ok {
+				clause += fmt.Sprintf(` AND %sJson.value ->> '$.%s' = @%s`, searchParam.Name, k, namedParameterKey)
+			}
 		}
-		clauses = append(clauses, codingClause)
-
-		//Identifier clause
-		identifierClause := fmt.Sprintf("%sJson.value ->> '$.value' = @%s", searchParam.Name, searchParam.Name)
-		if _, ok := searchParamValue.SecondaryValues[namedParameterSystemKey]; ok {
-			identifierClause += fmt.Sprintf(` AND %sJson.value ->> '$.system' = @%s`, searchParam.Name, namedParameterSystemKey)
-		}
-		clauses = append(clauses, identifierClause)
-
-		//ContactPoint clause
-		contactPointClause := fmt.Sprintf("%sJson.value ->> '$.value' = @%s", searchParam.Name, searchParam.Name)
-		//no system for contact point
-		clauses = append(clauses, contactPointClause)
-
-		//CodeableConcept clause (this is the most complicated, as it has a nested coding)
-		codeableConceptClause := fmt.Sprintf("%sCodeableConceptJson.value ->> '$.code' = @%s", searchParam.Name, searchParam.Name)
-		if _, ok := searchParamValue.SecondaryValues[namedParameterSystemKey]; ok {
-			codeableConceptClause += fmt.Sprintf(` AND %sCodeableConceptJson.value ->> '$.system' = @%s`, searchParam.Name, namedParameterSystemKey)
-		}
-		clauses = append(clauses, codeableConceptClause)
-		//SECURITY: double (( and )) are required to prevent SQL injection/user_id clause being ignored.
-		return fmt.Sprintf("((%s))", strings.Join(clauses, ") OR (")), searchClauseNamedParams, nil
+		return fmt.Sprintf("(%s)", clause), searchClauseNamedParams, nil
 
 	case SearchParameterTypeReference:
 		return "", nil, fmt.Errorf("search parameter type %s not supported", searchParam.Type)
@@ -372,15 +363,9 @@ func SearchCodeToFromClause(searchParam SearchParameter, searchParamValue Search
 	//COMPLEX SEARCH PARAMETERS
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	switch searchParam.Type {
-	case SearchParameterTypeQuantity:
+	case SearchParameterTypeQuantity, SearchParameterTypeToken:
 		//setup the clause
 		return fmt.Sprintf("json_each(%s.%s) as %sJson", TABLE_ALIAS, searchParam.Name, searchParam.Name), nil
-	case SearchParameterTypeToken:
-		//unfortunately we don't know the datatype of this token, so we need to check multiple possible datatypes
-		return fmt.Sprintf("json_each(%s.%s) as %sJson, json_each(json_extract(%sJson.value, '$.coding')) as %sCodeableConceptJson",
-			TABLE_ALIAS, searchParam.Name, searchParam.Name,
-			searchParam.Name, searchParam.Name,
-		), nil
 	}
 	return "", nil
 }
