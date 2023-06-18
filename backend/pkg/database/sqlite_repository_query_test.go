@@ -164,4 +164,28 @@ func TestSearchCodeToWhereClause(t *testing.T) {
 }
 
 //TODO
-//func TestSearchCodeToFromClause(t *testing.T) {}
+func TestSearchCodeToFromClause(t *testing.T) {
+	//setup
+	var searchCodeToFromClauseTests = []struct {
+		searchParameter SearchParameter
+		searchValue     SearchParameterValue
+		expectedClause  string
+		expectedError   bool
+	}{
+		{SearchParameter{Type: "number", Name: "probability", Modifier: ""}, SearchParameterValue{}, "", false},
+		{SearchParameter{Type: "date", Name: "issueDate", Modifier: ""}, SearchParameterValue{}, "", false},
+		{SearchParameter{Type: "token", Name: "hello", Modifier: ""}, SearchParameterValue{}, "json_each(fhir.hello) as helloJson", false},
+	}
+
+	//test && assert
+	for ndx, tt := range searchCodeToFromClauseTests {
+		actualClause, actualErr := SearchCodeToFromClause(tt.searchParameter, tt.searchValue)
+		if tt.expectedError {
+			require.Error(t, actualErr, "Expected error but got none for searchCodeToFromClauseTests[%d] %s=%s", ndx, tt.searchParameter.Name, tt.searchValue.Value)
+		} else {
+			require.NoError(t, actualErr, "Expected no error but got one for searchCodeToFromClauseTests[%d] %s=%s", ndx, tt.searchParameter.Name, tt.searchValue.Value)
+			require.Equal(t, tt.expectedClause, actualClause)
+		}
+	}
+
+}
