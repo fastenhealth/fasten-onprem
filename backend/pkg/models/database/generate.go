@@ -11,6 +11,7 @@ import (
 	"golang.org/x/exp/slices"
 	"io/ioutil"
 	"log"
+	"sort"
 	"strings"
 )
 
@@ -163,10 +164,15 @@ func main() {
 			//Add the OriginBase embedded struct
 			g.Qual("github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models", "OriginBase")
 
-			// Generate fields for search parameters
-			for fieldName, fieldInfo := range fieldMap {
+			// Generate fields for search parameters. Make sure they are in a sorted order, otherwise the generated code will be different each time.
+			keys := make([]string, 0, len(fieldMap))
+			for k := range fieldMap {
+				keys = append(keys, k)
+			}
+			sort.Strings(keys)
+			for _, fieldName := range keys {
+				fieldInfo := fieldMap[fieldName]
 
-				//TODO: sort keys alphabetically
 				g.Comment(fieldInfo.Description)
 				g.Comment(fmt.Sprintf("https://hl7.org/fhir/r4/search.html#%s", fieldInfo.FieldType))
 				golangFieldType := mapFieldType(fieldInfo.FieldType)
@@ -255,9 +261,11 @@ func main() {
 					script := fmt.Sprintf("window.fhirpath.evaluate(fhirResource, '%s')", fieldInfo.FHIRPathExpression)
 					if isSimpleFieldType(fieldInfo.FieldType) {
 						script += "[0]"
+						//"Don't JSON.stringfy simple types"
+						r.Lit(script)
+					} else {
+						r.Lit(fmt.Sprintf(`JSON.stringify(%s)`, script))
 					}
-
-					r.Lit(fmt.Sprintf(`JSON.stringify(%s)`, script))
 				})
 				g.If(jen.Err().Op("==").Nil().Op("&&").Id(fieldNameVar).Dot("String").Call().Op("!=").Lit("undefined")).BlockFunc(func(i *jen.Group) {
 					switch fieldInfo.FieldType {

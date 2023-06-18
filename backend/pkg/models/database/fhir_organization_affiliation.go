@@ -17,69 +17,69 @@ type FhirOrganizationAffiliation struct {
 	// Whether this organization affiliation record is in active use
 	// https://hl7.org/fhir/r4/search.html#token
 	Active datatypes.JSON `gorm:"column:active;type:text;serializer:json" json:"active,omitempty"`
+	// The period during which the participatingOrganization is affiliated with the primary organization
+	// https://hl7.org/fhir/r4/search.html#date
+	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
 	// A value in an email contact
 	// https://hl7.org/fhir/r4/search.html#token
 	Email datatypes.JSON `gorm:"column:email;type:text;serializer:json" json:"email,omitempty"`
 	// Technical endpoints providing access to services operated for this role
 	// https://hl7.org/fhir/r4/search.html#reference
 	Endpoint datatypes.JSON `gorm:"column:endpoint;type:text;serializer:json" json:"endpoint,omitempty"`
-	// The value in any kind of contact
-	// https://hl7.org/fhir/r4/search.html#token
-	Telecom datatypes.JSON `gorm:"column:telecom;type:text;serializer:json" json:"telecom,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
-	// The location(s) at which the role occurs
-	// https://hl7.org/fhir/r4/search.html#reference
-	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
-	// Healthcare services provided through the role
-	// https://hl7.org/fhir/r4/search.html#reference
-	Service datatypes.JSON `gorm:"column:service;type:text;serializer:json" json:"service,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
-	// Definition of the role the participatingOrganization plays
-	// https://hl7.org/fhir/r4/search.html#token
-	Role datatypes.JSON `gorm:"column:role;type:text;serializer:json" json:"role,omitempty"`
-	// Specific specialty of the participatingOrganization in the context of the role
-	// https://hl7.org/fhir/r4/search.html#token
-	Specialty datatypes.JSON `gorm:"column:specialty;type:text;serializer:json" json:"specialty,omitempty"`
-	// The period during which the participatingOrganization is affiliated with the primary organization
-	// https://hl7.org/fhir/r4/search.html#date
-	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
 	// An organization affiliation's Identifier
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
+	// Language of the resource content
+	// https://hl7.org/fhir/r4/search.html#token
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// The location(s) at which the role occurs
+	// https://hl7.org/fhir/r4/search.html#reference
+	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
 	// Health insurance provider network in which the participatingOrganization provides the role's services (if defined) at the indicated locations (if defined)
 	// https://hl7.org/fhir/r4/search.html#reference
 	Network datatypes.JSON `gorm:"column:network;type:text;serializer:json" json:"network,omitempty"`
+	// The organization that provides services to the primary organization
+	// https://hl7.org/fhir/r4/search.html#reference
+	ParticipatingOrganization datatypes.JSON `gorm:"column:participatingOrganization;type:text;serializer:json" json:"participatingOrganization,omitempty"`
 	// A value in a phone contact
 	// https://hl7.org/fhir/r4/search.html#token
 	Phone datatypes.JSON `gorm:"column:phone;type:text;serializer:json" json:"phone,omitempty"`
 	// The organization that receives the services from the participating organization
 	// https://hl7.org/fhir/r4/search.html#reference
 	PrimaryOrganization datatypes.JSON `gorm:"column:primaryOrganization;type:text;serializer:json" json:"primaryOrganization,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// The organization that provides services to the primary organization
-	// https://hl7.org/fhir/r4/search.html#reference
-	ParticipatingOrganization datatypes.JSON `gorm:"column:participatingOrganization;type:text;serializer:json" json:"participatingOrganization,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// Language of the resource content
-	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// Definition of the role the participatingOrganization plays
+	// https://hl7.org/fhir/r4/search.html#token
+	Role datatypes.JSON `gorm:"column:role;type:text;serializer:json" json:"role,omitempty"`
+	// Healthcare services provided through the role
+	// https://hl7.org/fhir/r4/search.html#reference
+	Service datatypes.JSON `gorm:"column:service;type:text;serializer:json" json:"service,omitempty"`
 	// Identifies where the resource comes from
 	// https://hl7.org/fhir/r4/search.html#uri
 	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
+	// Specific specialty of the participatingOrganization in the context of the role
+	// https://hl7.org/fhir/r4/search.html#token
+	Specialty datatypes.JSON `gorm:"column:specialty;type:text;serializer:json" json:"specialty,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// The value in any kind of contact
+	// https://hl7.org/fhir/r4/search.html#token
+	Telecom datatypes.JSON `gorm:"column:telecom;type:text;serializer:json" json:"telecom,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
 func (s *FhirOrganizationAffiliation) SetOriginBase(originBase models.OriginBase) {
@@ -139,28 +139,15 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(rawReso
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Specialty
-	specialtyResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.specialty'))")
-	if err == nil && specialtyResult.String() != "undefined" {
-		s.Specialty = []byte(specialtyResult.String())
-	}
-	// extracting Date
-	dateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.period')[0])")
-	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
-			s.Date = t
-		}
-	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.identifier'))")
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
 	}
-	// extracting Network
-	networkResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.network'))")
-	if err == nil && networkResult.String() != "undefined" {
-		s.Network = []byte(networkResult.String())
+	// extracting ParticipatingOrganization
+	participatingOrganizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.participatingOrganization'))")
+	if err == nil && participatingOrganizationResult.String() != "undefined" {
+		s.ParticipatingOrganization = []byte(participatingOrganizationResult.String())
 	}
 	// extracting Phone
 	phoneResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.telecom.where(system='phone')'))")
@@ -177,38 +164,18 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(rawReso
 	if err == nil && roleResult.String() != "undefined" {
 		s.Role = []byte(roleResult.String())
 	}
-	// extracting ParticipatingOrganization
-	participatingOrganizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.participatingOrganization'))")
-	if err == nil && participatingOrganizationResult.String() != "undefined" {
-		s.ParticipatingOrganization = []byte(participatingOrganizationResult.String())
+	// extracting Telecom
+	telecomResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.telecom'))")
+	if err == nil && telecomResult.String() != "undefined" {
+		s.Telecom = []byte(telecomResult.String())
 	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+	// extracting Date
+	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.period')[0]")
+	if err == nil && dateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.Date = t
 		}
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Active
-	activeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.active'))")
-	if err == nil && activeResult.String() != "undefined" {
-		s.Active = []byte(activeResult.String())
 	}
 	// extracting Email
 	emailResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.telecom.where(system='email')'))")
@@ -220,20 +187,53 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(rawReso
 	if err == nil && endpointResult.String() != "undefined" {
 		s.Endpoint = []byte(endpointResult.String())
 	}
-	// extracting Telecom
-	telecomResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.telecom'))")
-	if err == nil && telecomResult.String() != "undefined" {
-		s.Telecom = []byte(telecomResult.String())
+	// extracting Specialty
+	specialtyResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.specialty'))")
+	if err == nil && specialtyResult.String() != "undefined" {
+		s.Specialty = []byte(specialtyResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting Active
+	activeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.active'))")
+	if err == nil && activeResult.String() != "undefined" {
+		s.Active = []byte(activeResult.String())
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
 	}
 	// extracting Location
 	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.location'))")
 	if err == nil && locationResult.String() != "undefined" {
 		s.Location = []byte(locationResult.String())
 	}
+	// extracting Network
+	networkResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.network'))")
+	if err == nil && networkResult.String() != "undefined" {
+		s.Network = []byte(networkResult.String())
+	}
 	// extracting Service
 	serviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.healthcareService'))")
 	if err == nil && serviceResult.String() != "undefined" {
 		s.Service = []byte(serviceResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")

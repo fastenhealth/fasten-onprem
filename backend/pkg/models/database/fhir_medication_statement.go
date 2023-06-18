@@ -14,18 +14,35 @@ import (
 
 type FhirMedicationStatement struct {
 	models.OriginBase
-	// Returns statements that are part of another event.
-	// https://hl7.org/fhir/r4/search.html#reference
-	PartOf datatypes.JSON `gorm:"column:partOf;type:text;serializer:json" json:"partOf,omitempty"`
-	// Who or where the information in the statement came from
-	// https://hl7.org/fhir/r4/search.html#reference
-	Source datatypes.JSON `gorm:"column:source;type:text;serializer:json" json:"source,omitempty"`
-	// Tags applied to this resource
+	// Returns statements of this category of medicationstatement
 	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Category datatypes.JSON `gorm:"column:category;type:text;serializer:json" json:"category,omitempty"`
+	/*
+	   Multiple Resources:
+
+	   * [AllergyIntolerance](allergyintolerance.html): Code that identifies the allergy or intolerance
+	   * [Condition](condition.html): Code for the condition
+	   * [DeviceRequest](devicerequest.html): Code for what is being requested/ordered
+	   * [DiagnosticReport](diagnosticreport.html): The code for the report, as opposed to codes for the atomic results, which are the names on the observation resource referred to from the result
+	   * [FamilyMemberHistory](familymemberhistory.html): A search by a condition code
+	   * [List](list.html): What the purpose of this list is
+	   * [Medication](medication.html): Returns medications for a specific code
+	   * [MedicationAdministration](medicationadministration.html): Return administrations of this medication code
+	   * [MedicationDispense](medicationdispense.html): Returns dispenses of this medicine code
+	   * [MedicationRequest](medicationrequest.html): Return prescriptions of this medication code
+	   * [MedicationStatement](medicationstatement.html): Return statements of this medication code
+	   * [Observation](observation.html): The code of the observation type
+	   * [Procedure](procedure.html): A code to identify a  procedure
+	   * [ServiceRequest](servicerequest.html): What is being requested/ordered
+	*/
+	// https://hl7.org/fhir/r4/search.html#token
+	Code datatypes.JSON `gorm:"column:code;type:text;serializer:json" json:"code,omitempty"`
+	// Returns statements for a specific context (episode or episode of Care).
+	// https://hl7.org/fhir/r4/search.html#reference
+	Context datatypes.JSON `gorm:"column:context;type:text;serializer:json" json:"context,omitempty"`
+	// Date when patient was taking (or not taking) the medication
+	// https://hl7.org/fhir/r4/search.html#date
+	Effective time.Time `gorm:"column:effective;type:datetime" json:"effective,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -62,15 +79,34 @@ type FhirMedicationStatement struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
-	// Returns statements for a specific context (episode or episode of Care).
-	// https://hl7.org/fhir/r4/search.html#reference
-	Context datatypes.JSON `gorm:"column:context;type:text;serializer:json" json:"context,omitempty"`
-	// The identity of a patient, animal or group to list statements for
-	// https://hl7.org/fhir/r4/search.html#reference
-	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
+	// Language of the resource content
+	// https://hl7.org/fhir/r4/search.html#token
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
 	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	/*
+	   Multiple Resources:
+
+	   * [MedicationAdministration](medicationadministration.html): Return administrations of this medication resource
+	   * [MedicationDispense](medicationdispense.html): Returns dispenses of this medicine resource
+	   * [MedicationRequest](medicationrequest.html): Return prescriptions for this medication reference
+	   * [MedicationStatement](medicationstatement.html): Return statements of this medication reference
+	*/
+	// https://hl7.org/fhir/r4/search.html#reference
+	Medication datatypes.JSON `gorm:"column:medication;type:text;serializer:json" json:"medication,omitempty"`
+	// Returns statements that are part of another event.
+	// https://hl7.org/fhir/r4/search.html#reference
+	PartOf datatypes.JSON `gorm:"column:partOf;type:text;serializer:json" json:"partOf,omitempty"`
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// Who or where the information in the statement came from
+	// https://hl7.org/fhir/r4/search.html#reference
+	Source datatypes.JSON `gorm:"column:source;type:text;serializer:json" json:"source,omitempty"`
 	// Identifies where the resource comes from
 	// https://hl7.org/fhir/r4/search.html#uri
 	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
@@ -84,54 +120,18 @@ type FhirMedicationStatement struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
-	// Date when patient was taking (or not taking) the medication
-	// https://hl7.org/fhir/r4/search.html#date
-	Effective time.Time `gorm:"column:effective;type:datetime" json:"effective,omitempty"`
-	/*
-	   Multiple Resources:
-
-	   * [MedicationAdministration](medicationadministration.html): Return administrations of this medication resource
-	   * [MedicationDispense](medicationdispense.html): Returns dispenses of this medicine resource
-	   * [MedicationRequest](medicationrequest.html): Return prescriptions for this medication reference
-	   * [MedicationStatement](medicationstatement.html): Return statements of this medication reference
-	*/
+	// The identity of a patient, animal or group to list statements for
 	// https://hl7.org/fhir/r4/search.html#reference
-	Medication datatypes.JSON `gorm:"column:medication;type:text;serializer:json" json:"medication,omitempty"`
-	// Profiles this resource claims to conform to
-	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// Language of the resource content
+	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
+	// Tags applied to this resource
 	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
-	/*
-	   Multiple Resources:
-
-	   * [AllergyIntolerance](allergyintolerance.html): Code that identifies the allergy or intolerance
-	   * [Condition](condition.html): Code for the condition
-	   * [DeviceRequest](devicerequest.html): Code for what is being requested/ordered
-	   * [DiagnosticReport](diagnosticreport.html): The code for the report, as opposed to codes for the atomic results, which are the names on the observation resource referred to from the result
-	   * [FamilyMemberHistory](familymemberhistory.html): A search by a condition code
-	   * [List](list.html): What the purpose of this list is
-	   * [Medication](medication.html): Returns medications for a specific code
-	   * [MedicationAdministration](medicationadministration.html): Return administrations of this medication code
-	   * [MedicationDispense](medicationdispense.html): Returns dispenses of this medicine code
-	   * [MedicationRequest](medicationrequest.html): Return prescriptions of this medication code
-	   * [MedicationStatement](medicationstatement.html): Return statements of this medication code
-	   * [Observation](observation.html): The code of the observation type
-	   * [Procedure](procedure.html): A code to identify a  procedure
-	   * [ServiceRequest](servicerequest.html): What is being requested/ordered
-	*/
-	// https://hl7.org/fhir/r4/search.html#token
-	Code datatypes.JSON `gorm:"column:code;type:text;serializer:json" json:"code,omitempty"`
-	// Returns statements of this category of medicationstatement
-	// https://hl7.org/fhir/r4/search.html#token
-	Category datatypes.JSON `gorm:"column:category;type:text;serializer:json" json:"category,omitempty"`
 }
 
 func (s *FhirMedicationStatement) SetOriginBase(originBase models.OriginBase) {
@@ -192,15 +192,20 @@ func (s *FhirMedicationStatement) PopulateAndExtractSearchParameters(rawResource
 	if err == nil && codeResult.String() != "undefined" {
 		s.Code = []byte(codeResult.String())
 	}
-	// extracting Category
-	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationStatement.category'))")
-	if err == nil && categoryResult.String() != "undefined" {
-		s.Category = []byte(categoryResult.String())
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationAdministration.status | MedicationDispense.status | MedicationRequest.status | MedicationStatement.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
 	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
+	// extracting Context
+	contextResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationStatement.context'))")
+	if err == nil && contextResult.String() != "undefined" {
+		s.Context = []byte(contextResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
@@ -212,33 +217,18 @@ func (s *FhirMedicationStatement) PopulateAndExtractSearchParameters(rawResource
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
 	}
-	// extracting Context
-	contextResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationStatement.context'))")
-	if err == nil && contextResult.String() != "undefined" {
-		s.Context = []byte(contextResult.String())
+	// extracting Medication
+	medicationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(MedicationAdministration.medicationReference) | (MedicationDispense.medicationReference) | (MedicationRequest.medicationReference) | (MedicationStatement.medicationReference)'))")
+	if err == nil && medicationResult.String() != "undefined" {
+		s.Medication = []byte(medicationResult.String())
 	}
-	// extracting PartOf
-	partOfResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationStatement.partOf'))")
-	if err == nil && partOfResult.String() != "undefined" {
-		s.PartOf = []byte(partOfResult.String())
-	}
-	// extracting Source
-	sourceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationStatement.informationSource'))")
-	if err == nil && sourceResult.String() != "undefined" {
-		s.Source = []byte(sourceResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationAdministration.status | MedicationDispense.status | MedicationRequest.status | MedicationStatement.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
+	// extracting Category
+	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationStatement.category'))")
+	if err == nil && categoryResult.String() != "undefined" {
+		s.Category = []byte(categoryResult.String())
 	}
 	// extracting Effective
-	effectiveResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationStatement.effective')[0])")
+	effectiveResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'MedicationStatement.effective')[0]")
 	if err == nil && effectiveResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, effectiveResult.String())
 		if err == nil {
@@ -250,23 +240,33 @@ func (s *FhirMedicationStatement) PopulateAndExtractSearchParameters(rawResource
 	if err == nil && subjectResult.String() != "undefined" {
 		s.Subject = []byte(subjectResult.String())
 	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
-	}
-	// extracting Medication
-	medicationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(MedicationAdministration.medicationReference) | (MedicationDispense.medicationReference) | (MedicationRequest.medicationReference) | (MedicationStatement.medicationReference)'))")
-	if err == nil && medicationResult.String() != "undefined" {
-		s.Medication = []byte(medicationResult.String())
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
 		s.Profile = []byte(profileResult.String())
+	}
+	// extracting Source
+	sourceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationStatement.informationSource'))")
+	if err == nil && sourceResult.String() != "undefined" {
+		s.Source = []byte(sourceResult.String())
+	}
+	// extracting PartOf
+	partOfResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationStatement.partOf'))")
+	if err == nil && partOfResult.String() != "undefined" {
+		s.PartOf = []byte(partOfResult.String())
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
 	}
 	return nil
 }

@@ -20,57 +20,57 @@ type FhirMedia struct {
 	// When Media was collected
 	// https://hl7.org/fhir/r4/search.html#date
 	Created time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
+	// Observing Device
+	// https://hl7.org/fhir/r4/search.html#reference
+	Device datatypes.JSON `gorm:"column:device;type:text;serializer:json" json:"device,omitempty"`
+	// Encounter associated with media
+	// https://hl7.org/fhir/r4/search.html#reference
+	Encounter datatypes.JSON `gorm:"column:encounter;type:text;serializer:json" json:"encounter,omitempty"`
+	// Identifier(s) for the image
+	// https://hl7.org/fhir/r4/search.html#token
+	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
+	// Language of the resource content
+	// https://hl7.org/fhir/r4/search.html#token
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// The type of acquisition equipment/process
+	// https://hl7.org/fhir/r4/search.html#token
+	Modality datatypes.JSON `gorm:"column:modality;type:text;serializer:json" json:"modality,omitempty"`
 	// The person who generated the image
 	// https://hl7.org/fhir/r4/search.html#reference
 	Operator datatypes.JSON `gorm:"column:operator;type:text;serializer:json" json:"operator,omitempty"`
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// Observed body part
+	// https://hl7.org/fhir/r4/search.html#token
+	Site datatypes.JSON `gorm:"column:site;type:text;serializer:json" json:"site,omitempty"`
+	// Identifies where the resource comes from
+	// https://hl7.org/fhir/r4/search.html#uri
+	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// preparation | in-progress | not-done | on-hold | stopped | completed | entered-in-error | unknown
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
 	// Who/What this Media is a record of
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
-	// Imaging view, e.g. Lateral or Antero-posterior
-	// https://hl7.org/fhir/r4/search.html#token
-	View datatypes.JSON `gorm:"column:view;type:text;serializer:json" json:"view,omitempty"`
 	// Tags applied to this resource
 	// https://hl7.org/fhir/r4/search.html#token
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
 	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// Identifier(s) for the image
-	// https://hl7.org/fhir/r4/search.html#token
-	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
-	// Encounter associated with media
-	// https://hl7.org/fhir/r4/search.html#reference
-	Encounter datatypes.JSON `gorm:"column:encounter;type:text;serializer:json" json:"encounter,omitempty"`
-	// The type of acquisition equipment/process
+	// Imaging view, e.g. Lateral or Antero-posterior
 	// https://hl7.org/fhir/r4/search.html#token
-	Modality datatypes.JSON `gorm:"column:modality;type:text;serializer:json" json:"modality,omitempty"`
-	// Observed body part
-	// https://hl7.org/fhir/r4/search.html#token
-	Site datatypes.JSON `gorm:"column:site;type:text;serializer:json" json:"site,omitempty"`
-	// Profiles this resource claims to conform to
-	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
-	// Observing Device
-	// https://hl7.org/fhir/r4/search.html#reference
-	Device datatypes.JSON `gorm:"column:device;type:text;serializer:json" json:"device,omitempty"`
-	// Language of the resource content
-	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	View datatypes.JSON `gorm:"column:view;type:text;serializer:json" json:"view,omitempty"`
 }
 
 func (s *FhirMedia) SetOriginBase(originBase models.OriginBase) {
@@ -127,33 +127,51 @@ func (s *FhirMedia) PopulateAndExtractSearchParameters(rawResource json.RawMessa
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Subject
-	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.subject'))")
-	if err == nil && subjectResult.String() != "undefined" {
-		s.Subject = []byte(subjectResult.String())
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
 	}
-	// extracting View
-	viewResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.view'))")
-	if err == nil && viewResult.String() != "undefined" {
-		s.View = []byte(viewResult.String())
+	// extracting Site
+	siteResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.bodySite'))")
+	if err == nil && siteResult.String() != "undefined" {
+		s.Site = []byte(siteResult.String())
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())
 	}
-	// extracting BasedOn
-	basedOnResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.basedOn'))")
-	if err == nil && basedOnResult.String() != "undefined" {
-		s.BasedOn = []byte(basedOnResult.String())
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Created
-	createdResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.created')[0])")
+	createdResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Media.created')[0]")
 	if err == nil && createdResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, createdResult.String())
 		if err == nil {
 			s.Created = t
 		}
+	}
+	// extracting Device
+	deviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.device'))")
+	if err == nil && deviceResult.String() != "undefined" {
+		s.Device = []byte(deviceResult.String())
+	}
+	// extracting Encounter
+	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.encounter'))")
+	if err == nil && encounterResult.String() != "undefined" {
+		s.Encounter = []byte(encounterResult.String())
 	}
 	// extracting Operator
 	operatorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.operator'))")
@@ -165,48 +183,30 @@ func (s *FhirMedia) PopulateAndExtractSearchParameters(rawResource json.RawMessa
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
 	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
+	// extracting View
+	viewResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.view'))")
+	if err == nil && viewResult.String() != "undefined" {
+		s.View = []byte(viewResult.String())
 	}
 	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
 	if err == nil && sourceUriResult.String() != "undefined" {
 		s.SourceUri = sourceUriResult.String()
 	}
-	// extracting Encounter
-	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.encounter'))")
-	if err == nil && encounterResult.String() != "undefined" {
-		s.Encounter = []byte(encounterResult.String())
+	// extracting BasedOn
+	basedOnResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.basedOn'))")
+	if err == nil && basedOnResult.String() != "undefined" {
+		s.BasedOn = []byte(basedOnResult.String())
 	}
 	// extracting Modality
 	modalityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.modality'))")
 	if err == nil && modalityResult.String() != "undefined" {
 		s.Modality = []byte(modalityResult.String())
 	}
-	// extracting Site
-	siteResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.bodySite'))")
-	if err == nil && siteResult.String() != "undefined" {
-		s.Site = []byte(siteResult.String())
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting Device
-	deviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.device'))")
-	if err == nil && deviceResult.String() != "undefined" {
-		s.Device = []byte(deviceResult.String())
+	// extracting Subject
+	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Media.subject'))")
+	if err == nil && subjectResult.String() != "undefined" {
+		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Language
 	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")

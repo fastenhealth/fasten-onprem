@@ -14,54 +14,48 @@ import (
 
 type FhirAdverseEvent struct {
 	models.OriginBase
-	// Type of the event itself in relation to the subject
-	// https://hl7.org/fhir/r4/search.html#token
-	Event datatypes.JSON `gorm:"column:event;type:text;serializer:json" json:"event,omitempty"`
-	// Location where adverse event occurred
-	// https://hl7.org/fhir/r4/search.html#reference
-	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// actual | potential
 	// https://hl7.org/fhir/r4/search.html#token
 	Actuality datatypes.JSON `gorm:"column:actuality;type:text;serializer:json" json:"actuality,omitempty"`
-	// When the event occurred
-	// https://hl7.org/fhir/r4/search.html#date
-	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
-	// Seriousness of the event
-	// https://hl7.org/fhir/r4/search.html#token
-	Seriousness datatypes.JSON `gorm:"column:seriousness;type:text;serializer:json" json:"seriousness,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
 	// product-problem | product-quality | product-use-error | wrong-dose | incorrect-prescribing-information | wrong-technique | wrong-route-of-administration | wrong-rate | wrong-duration | wrong-time | expired-drug | medical-device-use-error | problem-different-manufacturer | unsafe-physical-environment
 	// https://hl7.org/fhir/r4/search.html#token
 	Category datatypes.JSON `gorm:"column:category;type:text;serializer:json" json:"category,omitempty"`
+	// When the event occurred
+	// https://hl7.org/fhir/r4/search.html#date
+	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	// Type of the event itself in relation to the subject
+	// https://hl7.org/fhir/r4/search.html#token
+	Event datatypes.JSON `gorm:"column:event;type:text;serializer:json" json:"event,omitempty"`
+	// Language of the resource content
+	// https://hl7.org/fhir/r4/search.html#token
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// Location where adverse event occurred
+	// https://hl7.org/fhir/r4/search.html#reference
+	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
 	// Who recorded the adverse event
 	// https://hl7.org/fhir/r4/search.html#reference
 	Recorder datatypes.JSON `gorm:"column:recorder;type:text;serializer:json" json:"recorder,omitempty"`
 	// Effect on the subject due to this event
 	// https://hl7.org/fhir/r4/search.html#reference
 	Resultingcondition datatypes.JSON `gorm:"column:resultingcondition;type:text;serializer:json" json:"resultingcondition,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// Language of the resource content
+	// Seriousness of the event
 	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
-	// Profiles this resource claims to conform to
-	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	Seriousness datatypes.JSON `gorm:"column:seriousness;type:text;serializer:json" json:"seriousness,omitempty"`
 	// mild | moderate | severe
 	// https://hl7.org/fhir/r4/search.html#token
 	Severity datatypes.JSON `gorm:"column:severity;type:text;serializer:json" json:"severity,omitempty"`
+	// Identifies where the resource comes from
+	// https://hl7.org/fhir/r4/search.html#uri
+	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// AdverseEvent.study
 	// https://hl7.org/fhir/r4/search.html#reference
 	Study datatypes.JSON `gorm:"column:study;type:text;serializer:json" json:"study,omitempty"`
@@ -71,9 +65,15 @@ type FhirAdverseEvent struct {
 	// Refers to the specific entity that caused the adverse event
 	// https://hl7.org/fhir/r4/search.html#reference
 	Substance datatypes.JSON `gorm:"column:substance;type:text;serializer:json" json:"substance,omitempty"`
-	// The raw resource content in JSON format
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
 func (s *FhirAdverseEvent) SetOriginBase(originBase models.OriginBase) {
@@ -131,58 +131,81 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(rawResource json.R
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
 		s.Profile = []byte(profileResult.String())
-	}
-	// extracting Category
-	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.category'))")
-	if err == nil && categoryResult.String() != "undefined" {
-		s.Category = []byte(categoryResult.String())
-	}
-	// extracting Recorder
-	recorderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.recorder'))")
-	if err == nil && recorderResult.String() != "undefined" {
-		s.Recorder = []byte(recorderResult.String())
 	}
 	// extracting Resultingcondition
 	resultingconditionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.resultingCondition'))")
 	if err == nil && resultingconditionResult.String() != "undefined" {
 		s.Resultingcondition = []byte(resultingconditionResult.String())
 	}
+	// extracting Seriousness
+	seriousnessResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.seriousness'))")
+	if err == nil && seriousnessResult.String() != "undefined" {
+		s.Seriousness = []byte(seriousnessResult.String())
+	}
 	// extracting Substance
 	substanceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.suspectEntity.instance'))")
 	if err == nil && substanceResult.String() != "undefined" {
 		s.Substance = []byte(substanceResult.String())
+	}
+	// extracting Actuality
+	actualityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.actuality'))")
+	if err == nil && actualityResult.String() != "undefined" {
+		s.Actuality = []byte(actualityResult.String())
+	}
+	// extracting Recorder
+	recorderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.recorder'))")
+	if err == nil && recorderResult.String() != "undefined" {
+		s.Recorder = []byte(recorderResult.String())
+	}
+	// extracting Subject
+	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.subject'))")
+	if err == nil && subjectResult.String() != "undefined" {
+		s.Subject = []byte(subjectResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
+	// extracting Category
+	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.category'))")
+	if err == nil && categoryResult.String() != "undefined" {
+		s.Category = []byte(categoryResult.String())
+	}
+	// extracting Date
+	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AdverseEvent.date')[0]")
+	if err == nil && dateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, dateResult.String())
+		if err == nil {
+			s.Date = t
+		}
 	}
 	// extracting Severity
 	severityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.severity'))")
 	if err == nil && severityResult.String() != "undefined" {
 		s.Severity = []byte(severityResult.String())
 	}
-	// extracting Study
-	studyResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.study'))")
-	if err == nil && studyResult.String() != "undefined" {
-		s.Study = []byte(studyResult.String())
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
 	}
-	// extracting Subject
-	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.subject'))")
-	if err == nil && subjectResult.String() != "undefined" {
-		s.Subject = []byte(subjectResult.String())
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
 	}
 	// extracting Event
 	eventResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.event'))")
@@ -194,33 +217,10 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(rawResource json.R
 	if err == nil && locationResult.String() != "undefined" {
 		s.Location = []byte(locationResult.String())
 	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting Actuality
-	actualityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.actuality'))")
-	if err == nil && actualityResult.String() != "undefined" {
-		s.Actuality = []byte(actualityResult.String())
-	}
-	// extracting Date
-	dateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.date')[0])")
-	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
-			s.Date = t
-		}
-	}
-	// extracting Seriousness
-	seriousnessResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.seriousness'))")
-	if err == nil && seriousnessResult.String() != "undefined" {
-		s.Seriousness = []byte(seriousnessResult.String())
+	// extracting Study
+	studyResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.study'))")
+	if err == nil && studyResult.String() != "undefined" {
+		s.Study = []byte(studyResult.String())
 	}
 	return nil
 }

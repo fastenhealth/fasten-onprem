@@ -14,78 +14,78 @@ import (
 
 type FhirAppointment struct {
 	models.OriginBase
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
 	// Any one of the individuals participating in the appointment
 	// https://hl7.org/fhir/r4/search.html#reference
 	Actor datatypes.JSON `gorm:"column:actor;type:text;serializer:json" json:"actor,omitempty"`
+	// The style of appointment or patient that has been booked in the slot (not service type)
+	// https://hl7.org/fhir/r4/search.html#token
+	AppointmentType datatypes.JSON `gorm:"column:appointmentType;type:text;serializer:json" json:"appointmentType,omitempty"`
+	// The service request this appointment is allocated to assess
+	// https://hl7.org/fhir/r4/search.html#reference
+	BasedOn datatypes.JSON `gorm:"column:basedOn;type:text;serializer:json" json:"basedOn,omitempty"`
 	// Appointment date/time.
 	// https://hl7.org/fhir/r4/search.html#date
 	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	// An Identifier of the Appointment
+	// https://hl7.org/fhir/r4/search.html#token
+	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
+	// Language of the resource content
+	// https://hl7.org/fhir/r4/search.html#token
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// This location is listed in the participants of the appointment
+	// https://hl7.org/fhir/r4/search.html#reference
+	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
 	// The Participation status of the subject, or other participant on the appointment. Can be used to locate participants that have not responded to meeting requests.
 	// https://hl7.org/fhir/r4/search.html#token
 	PartStatus datatypes.JSON `gorm:"column:partStatus;type:text;serializer:json" json:"partStatus,omitempty"`
 	// One of the individuals of the appointment is this practitioner
 	// https://hl7.org/fhir/r4/search.html#reference
 	Practitioner datatypes.JSON `gorm:"column:practitioner;type:text;serializer:json" json:"practitioner,omitempty"`
-	// The specific service that is to be performed during this appointment
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// Coded reason this appointment is scheduled
 	// https://hl7.org/fhir/r4/search.html#token
-	ServiceType datatypes.JSON `gorm:"column:serviceType;type:text;serializer:json" json:"serviceType,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// The style of appointment or patient that has been booked in the slot (not service type)
-	// https://hl7.org/fhir/r4/search.html#token
-	AppointmentType datatypes.JSON `gorm:"column:appointmentType;type:text;serializer:json" json:"appointmentType,omitempty"`
+	ReasonCode datatypes.JSON `gorm:"column:reasonCode;type:text;serializer:json" json:"reasonCode,omitempty"`
 	// Reason the appointment is to take place (resource)
 	// https://hl7.org/fhir/r4/search.html#reference
 	ReasonReference datatypes.JSON `gorm:"column:reasonReference;type:text;serializer:json" json:"reasonReference,omitempty"`
 	// A broad categorization of the service that is to be performed during this appointment
 	// https://hl7.org/fhir/r4/search.html#token
 	ServiceCategory datatypes.JSON `gorm:"column:serviceCategory;type:text;serializer:json" json:"serviceCategory,omitempty"`
+	// The specific service that is to be performed during this appointment
+	// https://hl7.org/fhir/r4/search.html#token
+	ServiceType datatypes.JSON `gorm:"column:serviceType;type:text;serializer:json" json:"serviceType,omitempty"`
 	// The slots that this appointment is filling
 	// https://hl7.org/fhir/r4/search.html#reference
 	Slot datatypes.JSON `gorm:"column:slot;type:text;serializer:json" json:"slot,omitempty"`
-	// The overall status of the appointment
-	// https://hl7.org/fhir/r4/search.html#token
-	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
-	// Profiles this resource claims to conform to
-	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
 	// Identifies where the resource comes from
 	// https://hl7.org/fhir/r4/search.html#uri
 	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
-	// The service request this appointment is allocated to assess
-	// https://hl7.org/fhir/r4/search.html#reference
-	BasedOn datatypes.JSON `gorm:"column:basedOn;type:text;serializer:json" json:"basedOn,omitempty"`
-	// An Identifier of the Appointment
-	// https://hl7.org/fhir/r4/search.html#token
-	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
-	// Coded reason this appointment is scheduled
-	// https://hl7.org/fhir/r4/search.html#token
-	ReasonCode datatypes.JSON `gorm:"column:reasonCode;type:text;serializer:json" json:"reasonCode,omitempty"`
-	// Additional information to support the appointment
-	// https://hl7.org/fhir/r4/search.html#reference
-	SupportingInfo datatypes.JSON `gorm:"column:supportingInfo;type:text;serializer:json" json:"supportingInfo,omitempty"`
-	// Language of the resource content
-	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
-	// This location is listed in the participants of the appointment
-	// https://hl7.org/fhir/r4/search.html#reference
-	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
 	// The specialty of a practitioner that would be required to perform the service requested in this appointment
 	// https://hl7.org/fhir/r4/search.html#token
 	Specialty datatypes.JSON `gorm:"column:specialty;type:text;serializer:json" json:"specialty,omitempty"`
+	// The overall status of the appointment
+	// https://hl7.org/fhir/r4/search.html#token
+	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
+	// Additional information to support the appointment
+	// https://hl7.org/fhir/r4/search.html#reference
+	SupportingInfo datatypes.JSON `gorm:"column:supportingInfo;type:text;serializer:json" json:"supportingInfo,omitempty"`
 	// Tags applied to this resource
 	// https://hl7.org/fhir/r4/search.html#token
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
 func (s *FhirAppointment) SetOriginBase(originBase models.OriginBase) {
@@ -147,25 +147,48 @@ func (s *FhirAppointment) PopulateAndExtractSearchParameters(rawResource json.Ra
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
+	// extracting PartStatus
+	partStatusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.participant.status'))")
+	if err == nil && partStatusResult.String() != "undefined" {
+		s.PartStatus = []byte(partStatusResult.String())
+	}
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
 	// extracting BasedOn
 	basedOnResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.basedOn'))")
 	if err == nil && basedOnResult.String() != "undefined" {
 		s.BasedOn = []byte(basedOnResult.String())
 	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
+	// extracting Location
+	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.participant.actor.where(resolve() is Location)'))")
+	if err == nil && locationResult.String() != "undefined" {
+		s.Location = []byte(locationResult.String())
 	}
-	// extracting ReasonCode
-	reasonCodeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.reasonCode'))")
-	if err == nil && reasonCodeResult.String() != "undefined" {
-		s.ReasonCode = []byte(reasonCodeResult.String())
+	// extracting ServiceType
+	serviceTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.serviceType'))")
+	if err == nil && serviceTypeResult.String() != "undefined" {
+		s.ServiceType = []byte(serviceTypeResult.String())
 	}
-	// extracting SupportingInfo
-	supportingInfoResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.supportingInformation'))")
-	if err == nil && supportingInfoResult.String() != "undefined" {
-		s.SupportingInfo = []byte(supportingInfoResult.String())
+	// extracting Specialty
+	specialtyResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.specialty'))")
+	if err == nil && specialtyResult.String() != "undefined" {
+		s.Specialty = []byte(specialtyResult.String())
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
 	}
 	// extracting Language
 	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
@@ -177,86 +200,63 @@ func (s *FhirAppointment) PopulateAndExtractSearchParameters(rawResource json.Ra
 	if err == nil && profileResult.String() != "undefined" {
 		s.Profile = []byte(profileResult.String())
 	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Location
-	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.participant.actor.where(resolve() is Location)'))")
-	if err == nil && locationResult.String() != "undefined" {
-		s.Location = []byte(locationResult.String())
-	}
-	// extracting Specialty
-	specialtyResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.specialty'))")
-	if err == nil && specialtyResult.String() != "undefined" {
-		s.Specialty = []byte(specialtyResult.String())
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
 	// extracting Actor
 	actorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.participant.actor'))")
 	if err == nil && actorResult.String() != "undefined" {
 		s.Actor = []byte(actorResult.String())
-	}
-	// extracting Date
-	dateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.start')[0])")
-	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
-			s.Date = t
-		}
-	}
-	// extracting PartStatus
-	partStatusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.participant.status'))")
-	if err == nil && partStatusResult.String() != "undefined" {
-		s.PartStatus = []byte(partStatusResult.String())
-	}
-	// extracting Practitioner
-	practitionerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.participant.actor.where(resolve() is Practitioner)'))")
-	if err == nil && practitionerResult.String() != "undefined" {
-		s.Practitioner = []byte(practitionerResult.String())
-	}
-	// extracting ServiceType
-	serviceTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.serviceType'))")
-	if err == nil && serviceTypeResult.String() != "undefined" {
-		s.ServiceType = []byte(serviceTypeResult.String())
-	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
-	}
-	// extracting AppointmentType
-	appointmentTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.appointmentType'))")
-	if err == nil && appointmentTypeResult.String() != "undefined" {
-		s.AppointmentType = []byte(appointmentTypeResult.String())
-	}
-	// extracting ReasonReference
-	reasonReferenceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.reasonReference'))")
-	if err == nil && reasonReferenceResult.String() != "undefined" {
-		s.ReasonReference = []byte(reasonReferenceResult.String())
 	}
 	// extracting ServiceCategory
 	serviceCategoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.serviceCategory'))")
 	if err == nil && serviceCategoryResult.String() != "undefined" {
 		s.ServiceCategory = []byte(serviceCategoryResult.String())
 	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting ReasonCode
+	reasonCodeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.reasonCode'))")
+	if err == nil && reasonCodeResult.String() != "undefined" {
+		s.ReasonCode = []byte(reasonCodeResult.String())
+	}
+	// extracting ReasonReference
+	reasonReferenceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.reasonReference'))")
+	if err == nil && reasonReferenceResult.String() != "undefined" {
+		s.ReasonReference = []byte(reasonReferenceResult.String())
+	}
 	// extracting Slot
 	slotResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.slot'))")
 	if err == nil && slotResult.String() != "undefined" {
 		s.Slot = []byte(slotResult.String())
 	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
+	// extracting SupportingInfo
+	supportingInfoResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.supportingInformation'))")
+	if err == nil && supportingInfoResult.String() != "undefined" {
+		s.SupportingInfo = []byte(supportingInfoResult.String())
+	}
+	// extracting AppointmentType
+	appointmentTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.appointmentType'))")
+	if err == nil && appointmentTypeResult.String() != "undefined" {
+		s.AppointmentType = []byte(appointmentTypeResult.String())
+	}
+	// extracting Date
+	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Appointment.start')[0]")
+	if err == nil && dateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, dateResult.String())
+		if err == nil {
+			s.Date = t
+		}
+	}
+	// extracting Practitioner
+	practitionerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Appointment.participant.actor.where(resolve() is Practitioner)'))")
+	if err == nil && practitionerResult.String() != "undefined" {
+		s.Practitioner = []byte(practitionerResult.String())
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
 	}
 	return nil
 }

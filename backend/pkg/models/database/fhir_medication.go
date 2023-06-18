@@ -34,42 +34,6 @@ type FhirMedication struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#token
 	Code datatypes.JSON `gorm:"column:code;type:text;serializer:json" json:"code,omitempty"`
-	// Returns medications for this ingredient code
-	// https://hl7.org/fhir/r4/search.html#token
-	IngredientCode datatypes.JSON `gorm:"column:ingredientCode;type:text;serializer:json" json:"ingredientCode,omitempty"`
-	// Language of the resource content
-	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
-	// Returns medications made or sold for this manufacturer
-	// https://hl7.org/fhir/r4/search.html#reference
-	Manufacturer datatypes.JSON `gorm:"column:manufacturer;type:text;serializer:json" json:"manufacturer,omitempty"`
-	// Returns medications for this status
-	// https://hl7.org/fhir/r4/search.html#token
-	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// Profiles this resource claims to conform to
-	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
-	// Returns medications for this ingredient reference
-	// https://hl7.org/fhir/r4/search.html#reference
-	Ingredient datatypes.JSON `gorm:"column:ingredient;type:text;serializer:json" json:"ingredient,omitempty"`
-	// Returns medications in a batch with this lot number
-	// https://hl7.org/fhir/r4/search.html#token
-	LotNumber datatypes.JSON `gorm:"column:lotNumber;type:text;serializer:json" json:"lotNumber,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
 	// Returns medications in a batch with this expiration date
 	// https://hl7.org/fhir/r4/search.html#date
 	ExpirationDate time.Time `gorm:"column:expirationDate;type:datetime" json:"expirationDate,omitempty"`
@@ -79,9 +43,45 @@ type FhirMedication struct {
 	// Returns medications with this external identifier
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
+	// Returns medications for this ingredient reference
+	// https://hl7.org/fhir/r4/search.html#reference
+	Ingredient datatypes.JSON `gorm:"column:ingredient;type:text;serializer:json" json:"ingredient,omitempty"`
+	// Returns medications for this ingredient code
+	// https://hl7.org/fhir/r4/search.html#token
+	IngredientCode datatypes.JSON `gorm:"column:ingredientCode;type:text;serializer:json" json:"ingredientCode,omitempty"`
+	// Language of the resource content
+	// https://hl7.org/fhir/r4/search.html#token
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// Returns medications in a batch with this lot number
+	// https://hl7.org/fhir/r4/search.html#token
+	LotNumber datatypes.JSON `gorm:"column:lotNumber;type:text;serializer:json" json:"lotNumber,omitempty"`
+	// Returns medications made or sold for this manufacturer
+	// https://hl7.org/fhir/r4/search.html#reference
+	Manufacturer datatypes.JSON `gorm:"column:manufacturer;type:text;serializer:json" json:"manufacturer,omitempty"`
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
 	// The raw resource content in JSON format
 	// https://hl7.org/fhir/r4/search.html#special
 	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// Identifies where the resource comes from
+	// https://hl7.org/fhir/r4/search.html#uri
+	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
+	// Returns medications for this status
+	// https://hl7.org/fhir/r4/search.html#token
+	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
 func (s *FhirMedication) SetOriginBase(originBase models.OriginBase) {
@@ -136,6 +136,34 @@ func (s *FhirMedication) PopulateAndExtractSearchParameters(rawResource json.Raw
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Medication.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting Manufacturer
+	manufacturerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Medication.manufacturer'))")
+	if err == nil && manufacturerResult.String() != "undefined" {
+		s.Manufacturer = []byte(manufacturerResult.String())
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting ExpirationDate
+	expirationDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Medication.batch.expirationDate')[0]")
+	if err == nil && expirationDateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, expirationDateResult.String())
+		if err == nil {
+			s.ExpirationDate = t
+		}
+	}
 	// extracting Ingredient
 	ingredientResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Medication.ingredient.itemReference)'))")
 	if err == nil && ingredientResult.String() != "undefined" {
@@ -146,28 +174,18 @@ func (s *FhirMedication) PopulateAndExtractSearchParameters(rawResource json.Raw
 	if err == nil && lotNumberResult.String() != "undefined" {
 		s.LotNumber = []byte(lotNumberResult.String())
 	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting ExpirationDate
-	expirationDateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Medication.batch.expirationDate')[0])")
-	if err == nil && expirationDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, expirationDateResult.String())
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.ExpirationDate = t
+			s.LastUpdated = t
 		}
 	}
-	// extracting Form
-	formResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Medication.form'))")
-	if err == nil && formResult.String() != "undefined" {
-		s.Form = []byte(formResult.String())
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Medication.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Code
 	codeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.codeCodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicationCodeableConcept) | (MedicationDispense.medicationCodeableConcept) | (MedicationRequest.medicationCodeableConcept) | (MedicationStatement.medicationCodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code'))")
@@ -179,38 +197,20 @@ func (s *FhirMedication) PopulateAndExtractSearchParameters(rawResource json.Raw
 	if err == nil && ingredientCodeResult.String() != "undefined" {
 		s.IngredientCode = []byte(ingredientCodeResult.String())
 	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Manufacturer
-	manufacturerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Medication.manufacturer'))")
-	if err == nil && manufacturerResult.String() != "undefined" {
-		s.Manufacturer = []byte(manufacturerResult.String())
-	}
 	// extracting Status
 	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Medication.status'))")
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
 	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
+	// extracting Form
+	formResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Medication.form'))")
+	if err == nil && formResult.String() != "undefined" {
+		s.Form = []byte(formResult.String())
 	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
 	}
 	return nil
 }

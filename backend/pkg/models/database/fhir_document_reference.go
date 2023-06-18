@@ -14,30 +14,54 @@ import (
 
 type FhirDocumentReference struct {
 	models.OriginBase
-	// Main clinical acts documented
-	// https://hl7.org/fhir/r4/search.html#token
-	Event datatypes.JSON `gorm:"column:event;type:text;serializer:json" json:"event,omitempty"`
-	// Mime type of the content, with charset etc.
-	// https://hl7.org/fhir/r4/search.html#token
-	Contenttype datatypes.JSON `gorm:"column:contenttype;type:text;serializer:json" json:"contenttype,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// Profiles this resource claims to conform to
+	// Who/what authenticated the document
 	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	Authenticator datatypes.JSON `gorm:"column:authenticator;type:text;serializer:json" json:"authenticator,omitempty"`
+	// Who and/or what authored the document
+	// https://hl7.org/fhir/r4/search.html#reference
+	Author datatypes.JSON `gorm:"column:author;type:text;serializer:json" json:"author,omitempty"`
 	// Categorization of document
 	// https://hl7.org/fhir/r4/search.html#token
 	Category datatypes.JSON `gorm:"column:category;type:text;serializer:json" json:"category,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// Mime type of the content, with charset etc.
+	// https://hl7.org/fhir/r4/search.html#token
+	Contenttype datatypes.JSON `gorm:"column:contenttype;type:text;serializer:json" json:"contenttype,omitempty"`
 	// Organization which maintains the document
 	// https://hl7.org/fhir/r4/search.html#reference
 	Custodian datatypes.JSON `gorm:"column:custodian;type:text;serializer:json" json:"custodian,omitempty"`
-	// Additional details about where the content was created (e.g. clinical specialty)
+	// When this document reference was created
+	// https://hl7.org/fhir/r4/search.html#date
+	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	// Human-readable description
+	// https://hl7.org/fhir/r4/search.html#string
+	Description string `gorm:"column:description;type:text" json:"description,omitempty"`
+	/*
+	   Multiple Resources:
+
+	   * [Composition](composition.html): Context of the Composition
+	   * [DeviceRequest](devicerequest.html): Encounter during which request was created
+	   * [DiagnosticReport](diagnosticreport.html): The Encounter when the order was made
+	   * [DocumentReference](documentreference.html): Context of the document  content
+	   * [Flag](flag.html): Alert relevant during encounter
+	   * [List](list.html): Context in which list created
+	   * [NutritionOrder](nutritionorder.html): Return nutrition orders with this encounter identifier
+	   * [Observation](observation.html): Encounter related to the observation
+	   * [Procedure](procedure.html): Encounter created as part of
+	   * [RiskAssessment](riskassessment.html): Where was assessment performed?
+	   * [ServiceRequest](servicerequest.html): An encounter in which this request is made
+	   * [VisionPrescription](visionprescription.html): Return prescriptions with this encounter identifier
+	*/
+	// https://hl7.org/fhir/r4/search.html#reference
+	Encounter datatypes.JSON `gorm:"column:encounter;type:text;serializer:json" json:"encounter,omitempty"`
+	// Main clinical acts documented
 	// https://hl7.org/fhir/r4/search.html#token
-	Setting datatypes.JSON `gorm:"column:setting;type:text;serializer:json" json:"setting,omitempty"`
+	Event datatypes.JSON `gorm:"column:event;type:text;serializer:json" json:"event,omitempty"`
+	// Kind of facility where patient was seen
+	// https://hl7.org/fhir/r4/search.html#token
+	Facility datatypes.JSON `gorm:"column:facility;type:text;serializer:json" json:"facility,omitempty"`
+	// Format/content rules for the document
+	// https://hl7.org/fhir/r4/search.html#token
+	Format datatypes.JSON `gorm:"column:format;type:text;serializer:json" json:"format,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -74,81 +98,57 @@ type FhirDocumentReference struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
-	// Who/what is the subject of the document
-	// https://hl7.org/fhir/r4/search.html#reference
-	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
-	// Document security-tags
+	// Language of the resource content
 	// https://hl7.org/fhir/r4/search.html#token
-	SecurityLabel datatypes.JSON `gorm:"column:securityLabel;type:text;serializer:json" json:"securityLabel,omitempty"`
-	// Human-readable description
-	// https://hl7.org/fhir/r4/search.html#string
-	Description string `gorm:"column:description;type:text" json:"description,omitempty"`
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// Uri where the data can be found
 	// https://hl7.org/fhir/r4/search.html#uri
 	Location string `gorm:"column:location;type:text" json:"location,omitempty"`
 	// Time of service that is being documented
 	// https://hl7.org/fhir/r4/search.html#date
 	Period time.Time `gorm:"column:period;type:datetime" json:"period,omitempty"`
-	// Who/what authenticated the document
+	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
-	Authenticator datatypes.JSON `gorm:"column:authenticator;type:text;serializer:json" json:"authenticator,omitempty"`
-	// When this document reference was created
-	// https://hl7.org/fhir/r4/search.html#date
-	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
 	// Related identifiers or resources
 	// https://hl7.org/fhir/r4/search.html#reference
 	Related datatypes.JSON `gorm:"column:related;type:text;serializer:json" json:"related,omitempty"`
-	/*
-	   Multiple Resources:
-
-	   * [Composition](composition.html): Context of the Composition
-	   * [DeviceRequest](devicerequest.html): Encounter during which request was created
-	   * [DiagnosticReport](diagnosticreport.html): The Encounter when the order was made
-	   * [DocumentReference](documentreference.html): Context of the document  content
-	   * [Flag](flag.html): Alert relevant during encounter
-	   * [List](list.html): Context in which list created
-	   * [NutritionOrder](nutritionorder.html): Return nutrition orders with this encounter identifier
-	   * [Observation](observation.html): Encounter related to the observation
-	   * [Procedure](procedure.html): Encounter created as part of
-	   * [RiskAssessment](riskassessment.html): Where was assessment performed?
-	   * [ServiceRequest](servicerequest.html): An encounter in which this request is made
-	   * [VisionPrescription](visionprescription.html): Return prescriptions with this encounter identifier
-	*/
-	// https://hl7.org/fhir/r4/search.html#reference
-	Encounter datatypes.JSON `gorm:"column:encounter;type:text;serializer:json" json:"encounter,omitempty"`
-	// Kind of facility where patient was seen
-	// https://hl7.org/fhir/r4/search.html#token
-	Facility datatypes.JSON `gorm:"column:facility;type:text;serializer:json" json:"facility,omitempty"`
-	// Format/content rules for the document
-	// https://hl7.org/fhir/r4/search.html#token
-	Format datatypes.JSON `gorm:"column:format;type:text;serializer:json" json:"format,omitempty"`
-	// Language of the resource content
-	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// Target of the relationship
 	// https://hl7.org/fhir/r4/search.html#reference
 	Relatesto datatypes.JSON `gorm:"column:relatesto;type:text;serializer:json" json:"relatesto,omitempty"`
 	// replaces | transforms | signs | appends
 	// https://hl7.org/fhir/r4/search.html#token
 	Relation datatypes.JSON `gorm:"column:relation;type:text;serializer:json" json:"relation,omitempty"`
-	// current | superseded | entered-in-error
+	// Document security-tags
 	// https://hl7.org/fhir/r4/search.html#token
-	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
+	SecurityLabel datatypes.JSON `gorm:"column:securityLabel;type:text;serializer:json" json:"securityLabel,omitempty"`
+	// Additional details about where the content was created (e.g. clinical specialty)
+	// https://hl7.org/fhir/r4/search.html#token
+	Setting datatypes.JSON `gorm:"column:setting;type:text;serializer:json" json:"setting,omitempty"`
 	// Identifies where the resource comes from
 	// https://hl7.org/fhir/r4/search.html#uri
 	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
-	// Who and/or what authored the document
+	// current | superseded | entered-in-error
+	// https://hl7.org/fhir/r4/search.html#token
+	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
+	// Who/what is the subject of the document
 	// https://hl7.org/fhir/r4/search.html#reference
-	Author datatypes.JSON `gorm:"column:author;type:text;serializer:json" json:"author,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
 	// Tags applied to this resource
 	// https://hl7.org/fhir/r4/search.html#token
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
 func (s *FhirDocumentReference) SetOriginBase(originBase models.OriginBase) {
@@ -215,30 +215,106 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(rawResource j
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Author
-	authorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.author'))")
-	if err == nil && authorResult.String() != "undefined" {
-		s.Author = []byte(authorResult.String())
+	// extracting Custodian
+	custodianResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.custodian'))")
+	if err == nil && custodianResult.String() != "undefined" {
+		s.Custodian = []byte(custodianResult.String())
 	}
 	// extracting Facility
 	facilityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.context.facilityType'))")
 	if err == nil && facilityResult.String() != "undefined" {
 		s.Facility = []byte(facilityResult.String())
 	}
+	// extracting Author
+	authorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.author'))")
+	if err == nil && authorResult.String() != "undefined" {
+		s.Author = []byte(authorResult.String())
+	}
+	// extracting Related
+	relatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.context.related'))")
+	if err == nil && relatedResult.String() != "undefined" {
+		s.Related = []byte(relatedResult.String())
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
 	// extracting Format
 	formatResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.content.format'))")
 	if err == nil && formatResult.String() != "undefined" {
 		s.Format = []byte(formatResult.String())
 	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
+	// extracting Category
+	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.category'))")
+	if err == nil && categoryResult.String() != "undefined" {
+		s.Category = []byte(categoryResult.String())
+	}
+	// extracting Setting
+	settingResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.context.practiceSetting'))")
+	if err == nil && settingResult.String() != "undefined" {
+		s.Setting = []byte(settingResult.String())
+	}
+	// extracting Authenticator
+	authenticatorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.authenticator'))")
+	if err == nil && authenticatorResult.String() != "undefined" {
+		s.Authenticator = []byte(authenticatorResult.String())
+	}
+	// extracting Event
+	eventResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.context.event'))")
+	if err == nil && eventResult.String() != "undefined" {
+		s.Event = []byte(eventResult.String())
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
+	}
+	// extracting Encounter
+	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter.where(resolve() is Encounter) | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | ServiceRequest.encounter | VisionPrescription.encounter'))")
+	if err == nil && encounterResult.String() != "undefined" {
+		s.Encounter = []byte(encounterResult.String())
+	}
+	// extracting Contenttype
+	contenttypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.content.attachment.contentType'))")
+	if err == nil && contenttypeResult.String() != "undefined" {
+		s.Contenttype = []byte(contenttypeResult.String())
+	}
+	// extracting Period
+	periodResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DocumentReference.context.period')[0]")
+	if err == nil && periodResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, periodResult.String())
+		if err == nil {
+			s.Period = t
+		}
+	}
+	// extracting SecurityLabel
+	securityLabelResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.securityLabel'))")
+	if err == nil && securityLabelResult.String() != "undefined" {
+		s.SecurityLabel = []byte(securityLabelResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
 	}
 	// extracting Relatesto
 	relatestoResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.relatesTo.target'))")
@@ -250,109 +326,33 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(rawResource j
 	if err == nil && relationResult.String() != "undefined" {
 		s.Relation = []byte(relationResult.String())
 	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting Event
-	eventResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.context.event'))")
-	if err == nil && eventResult.String() != "undefined" {
-		s.Event = []byte(eventResult.String())
-	}
-	// extracting Category
-	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.category'))")
-	if err == nil && categoryResult.String() != "undefined" {
-		s.Category = []byte(categoryResult.String())
-	}
-	// extracting Contenttype
-	contenttypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.content.attachment.contentType'))")
-	if err == nil && contenttypeResult.String() != "undefined" {
-		s.Contenttype = []byte(contenttypeResult.String())
-	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
-	// extracting Custodian
-	custodianResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.custodian'))")
-	if err == nil && custodianResult.String() != "undefined" {
-		s.Custodian = []byte(custodianResult.String())
-	}
-	// extracting Setting
-	settingResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.context.practiceSetting'))")
-	if err == nil && settingResult.String() != "undefined" {
-		s.Setting = []byte(settingResult.String())
-	}
-	// extracting SecurityLabel
-	securityLabelResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.securityLabel'))")
-	if err == nil && securityLabelResult.String() != "undefined" {
-		s.SecurityLabel = []byte(securityLabelResult.String())
-	}
 	// extracting Subject
 	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.subject'))")
 	if err == nil && subjectResult.String() != "undefined" {
 		s.Subject = []byte(subjectResult.String())
 	}
-	// extracting Authenticator
-	authenticatorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.authenticator'))")
-	if err == nil && authenticatorResult.String() != "undefined" {
-		s.Authenticator = []byte(authenticatorResult.String())
-	}
-	// extracting Description
-	descriptionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.description')[0])")
-	if err == nil && descriptionResult.String() != "undefined" {
-		s.Description = descriptionResult.String()
-	}
 	// extracting Location
-	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.content.attachment.url')[0])")
+	locationResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DocumentReference.content.attachment.url')[0]")
 	if err == nil && locationResult.String() != "undefined" {
 		s.Location = locationResult.String()
 	}
-	// extracting Period
-	periodResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.context.period')[0])")
-	if err == nil && periodResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, periodResult.String())
-		if err == nil {
-			s.Period = t
-		}
+	// extracting Description
+	descriptionResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DocumentReference.description')[0]")
+	if err == nil && descriptionResult.String() != "undefined" {
+		s.Description = descriptionResult.String()
 	}
-	// extracting Encounter
-	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter.where(resolve() is Encounter) | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | ServiceRequest.encounter | VisionPrescription.encounter'))")
-	if err == nil && encounterResult.String() != "undefined" {
-		s.Encounter = []byte(encounterResult.String())
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
 	}
 	// extracting Date
-	dateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.date')[0])")
+	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DocumentReference.date')[0]")
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
 			s.Date = t
 		}
-	}
-	// extracting Related
-	relatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.context.related'))")
-	if err == nil && relatedResult.String() != "undefined" {
-		s.Related = []byte(relatedResult.String())
 	}
 	return nil
 }

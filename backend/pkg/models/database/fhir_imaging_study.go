@@ -14,15 +14,21 @@ import (
 
 type FhirImagingStudy struct {
 	models.OriginBase
-	// When the study was started
-	// https://hl7.org/fhir/r4/search.html#date
-	Started time.Time `gorm:"column:started;type:datetime" json:"started,omitempty"`
-	// Who the study is about
+	// The order for the image
 	// https://hl7.org/fhir/r4/search.html#reference
-	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	Basedon datatypes.JSON `gorm:"column:basedon;type:text;serializer:json" json:"basedon,omitempty"`
+	// The body site studied
+	// https://hl7.org/fhir/r4/search.html#token
+	Bodysite datatypes.JSON `gorm:"column:bodysite;type:text;serializer:json" json:"bodysite,omitempty"`
+	// The type of the instance
+	// https://hl7.org/fhir/r4/search.html#token
+	DicomClass datatypes.JSON `gorm:"column:dicomClass;type:text;serializer:json" json:"dicomClass,omitempty"`
+	// The context of the study
+	// https://hl7.org/fhir/r4/search.html#reference
+	Encounter datatypes.JSON `gorm:"column:encounter;type:text;serializer:json" json:"encounter,omitempty"`
+	// The endpoint for the study or series
+	// https://hl7.org/fhir/r4/search.html#reference
+	Endpoint datatypes.JSON `gorm:"column:endpoint;type:text;serializer:json" json:"endpoint,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -59,66 +65,60 @@ type FhirImagingStudy struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
-	// The type of the instance
-	// https://hl7.org/fhir/r4/search.html#token
-	DicomClass datatypes.JSON `gorm:"column:dicomClass;type:text;serializer:json" json:"dicomClass,omitempty"`
-	// The modality of the series
-	// https://hl7.org/fhir/r4/search.html#token
-	Modality datatypes.JSON `gorm:"column:modality;type:text;serializer:json" json:"modality,omitempty"`
-	// The person who performed the study
-	// https://hl7.org/fhir/r4/search.html#reference
-	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`
-	// The reason for the study
-	// https://hl7.org/fhir/r4/search.html#token
-	Reason datatypes.JSON `gorm:"column:reason;type:text;serializer:json" json:"reason,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
-	// The body site studied
-	// https://hl7.org/fhir/r4/search.html#token
-	Bodysite datatypes.JSON `gorm:"column:bodysite;type:text;serializer:json" json:"bodysite,omitempty"`
 	// SOP Instance UID for an instance
 	// https://hl7.org/fhir/r4/search.html#token
 	Instance datatypes.JSON `gorm:"column:instance;type:text;serializer:json" json:"instance,omitempty"`
 	// Who interpreted the images
 	// https://hl7.org/fhir/r4/search.html#reference
 	Interpreter datatypes.JSON `gorm:"column:interpreter;type:text;serializer:json" json:"interpreter,omitempty"`
-	// DICOM Series Instance UID for a series
-	// https://hl7.org/fhir/r4/search.html#token
-	Series datatypes.JSON `gorm:"column:series;type:text;serializer:json" json:"series,omitempty"`
 	// Language of the resource content
 	// https://hl7.org/fhir/r4/search.html#token
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
-	// The order for the image
-	// https://hl7.org/fhir/r4/search.html#reference
-	Basedon datatypes.JSON `gorm:"column:basedon;type:text;serializer:json" json:"basedon,omitempty"`
-	// The context of the study
-	// https://hl7.org/fhir/r4/search.html#reference
-	Encounter datatypes.JSON `gorm:"column:encounter;type:text;serializer:json" json:"encounter,omitempty"`
-	// Profiles this resource claims to conform to
-	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// The endpoint for the study or series
-	// https://hl7.org/fhir/r4/search.html#reference
-	Endpoint datatypes.JSON `gorm:"column:endpoint;type:text;serializer:json" json:"endpoint,omitempty"`
-	// The referring physician
-	// https://hl7.org/fhir/r4/search.html#reference
-	Referrer datatypes.JSON `gorm:"column:referrer;type:text;serializer:json" json:"referrer,omitempty"`
-	// The status of the study
-	// https://hl7.org/fhir/r4/search.html#token
-	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
 	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// The modality of the series
+	// https://hl7.org/fhir/r4/search.html#token
+	Modality datatypes.JSON `gorm:"column:modality;type:text;serializer:json" json:"modality,omitempty"`
+	// The person who performed the study
+	// https://hl7.org/fhir/r4/search.html#reference
+	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// The reason for the study
+	// https://hl7.org/fhir/r4/search.html#token
+	Reason datatypes.JSON `gorm:"column:reason;type:text;serializer:json" json:"reason,omitempty"`
+	// The referring physician
+	// https://hl7.org/fhir/r4/search.html#reference
+	Referrer datatypes.JSON `gorm:"column:referrer;type:text;serializer:json" json:"referrer,omitempty"`
+	// DICOM Series Instance UID for a series
+	// https://hl7.org/fhir/r4/search.html#token
+	Series datatypes.JSON `gorm:"column:series;type:text;serializer:json" json:"series,omitempty"`
+	// Identifies where the resource comes from
+	// https://hl7.org/fhir/r4/search.html#uri
+	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
+	// When the study was started
+	// https://hl7.org/fhir/r4/search.html#date
+	Started time.Time `gorm:"column:started;type:datetime" json:"started,omitempty"`
+	// The status of the study
+	// https://hl7.org/fhir/r4/search.html#token
+	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
+	// Who the study is about
+	// https://hl7.org/fhir/r4/search.html#reference
+	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
 func (s *FhirImagingStudy) SetOriginBase(originBase models.OriginBase) {
@@ -180,55 +180,10 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(rawResource json.R
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Bodysite
-	bodysiteResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.series.bodySite'))")
-	if err == nil && bodysiteResult.String() != "undefined" {
-		s.Bodysite = []byte(bodysiteResult.String())
-	}
-	// extracting Instance
-	instanceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.series.instance.uid'))")
-	if err == nil && instanceResult.String() != "undefined" {
-		s.Instance = []byte(instanceResult.String())
-	}
-	// extracting Interpreter
-	interpreterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.interpreter'))")
-	if err == nil && interpreterResult.String() != "undefined" {
-		s.Interpreter = []byte(interpreterResult.String())
-	}
-	// extracting Series
-	seriesResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.series.uid'))")
-	if err == nil && seriesResult.String() != "undefined" {
-		s.Series = []byte(seriesResult.String())
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting Basedon
-	basedonResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.basedOn'))")
-	if err == nil && basedonResult.String() != "undefined" {
-		s.Basedon = []byte(basedonResult.String())
-	}
-	// extracting Encounter
-	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.encounter'))")
-	if err == nil && encounterResult.String() != "undefined" {
-		s.Encounter = []byte(encounterResult.String())
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
 	}
 	// extracting Endpoint
 	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.endpoint | ImagingStudy.series.endpoint'))")
@@ -240,28 +195,66 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(rawResource json.R
 	if err == nil && referrerResult.String() != "undefined" {
 		s.Referrer = []byte(referrerResult.String())
 	}
+	// extracting Started
+	startedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'ImagingStudy.started')[0]")
+	if err == nil && startedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, startedResult.String())
+		if err == nil {
+			s.Started = t
+		}
+	}
+	// extracting Basedon
+	basedonResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.basedOn'))")
+	if err == nil && basedonResult.String() != "undefined" {
+		s.Basedon = []byte(basedonResult.String())
+	}
+	// extracting Encounter
+	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.encounter'))")
+	if err == nil && encounterResult.String() != "undefined" {
+		s.Encounter = []byte(encounterResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Reason
+	reasonResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.reasonCode'))")
+	if err == nil && reasonResult.String() != "undefined" {
+		s.Reason = []byte(reasonResult.String())
+	}
 	// extracting Status
 	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.status'))")
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
 	}
+	// extracting Subject
+	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.subject'))")
+	if err == nil && subjectResult.String() != "undefined" {
+		s.Subject = []byte(subjectResult.String())
+	}
 	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
 			s.LastUpdated = t
 		}
 	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
 	// extracting DicomClass
 	dicomClassResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.series.instance.sopClass'))")
 	if err == nil && dicomClassResult.String() != "undefined" {
 		s.DicomClass = []byte(dicomClassResult.String())
+	}
+	// extracting Interpreter
+	interpreterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.interpreter'))")
+	if err == nil && interpreterResult.String() != "undefined" {
+		s.Interpreter = []byte(interpreterResult.String())
 	}
 	// extracting Modality
 	modalityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.series.modality'))")
@@ -273,23 +266,30 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(rawResource json.R
 	if err == nil && performerResult.String() != "undefined" {
 		s.Performer = []byte(performerResult.String())
 	}
-	// extracting Reason
-	reasonResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.reasonCode'))")
-	if err == nil && reasonResult.String() != "undefined" {
-		s.Reason = []byte(reasonResult.String())
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
 	}
-	// extracting Started
-	startedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.started')[0])")
-	if err == nil && startedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, startedResult.String())
-		if err == nil {
-			s.Started = t
-		}
+	// extracting Bodysite
+	bodysiteResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.series.bodySite'))")
+	if err == nil && bodysiteResult.String() != "undefined" {
+		s.Bodysite = []byte(bodysiteResult.String())
 	}
-	// extracting Subject
-	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.subject'))")
-	if err == nil && subjectResult.String() != "undefined" {
-		s.Subject = []byte(subjectResult.String())
+	// extracting Instance
+	instanceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.series.instance.uid'))")
+	if err == nil && instanceResult.String() != "undefined" {
+		s.Instance = []byte(instanceResult.String())
+	}
+	// extracting Series
+	seriesResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.series.uid'))")
+	if err == nil && seriesResult.String() != "undefined" {
+		s.Series = []byte(seriesResult.String())
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	return nil
 }

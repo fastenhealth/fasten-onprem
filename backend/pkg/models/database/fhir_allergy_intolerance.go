@@ -14,30 +14,38 @@ import (
 
 type FhirAllergyIntolerance struct {
 	models.OriginBase
-	// Profiles this resource claims to conform to
+	// Source of the information about the allergy
 	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	Asserter datatypes.JSON `gorm:"column:asserter;type:text;serializer:json" json:"asserter,omitempty"`
 	// food | medication | environment | biologic
 	// https://hl7.org/fhir/r4/search.html#token
 	Category datatypes.JSON `gorm:"column:category;type:text;serializer:json" json:"category,omitempty"`
 	// active | inactive | resolved
 	// https://hl7.org/fhir/r4/search.html#token
 	ClinicalStatus datatypes.JSON `gorm:"column:clinicalStatus;type:text;serializer:json" json:"clinicalStatus,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
-	// Source of the information about the allergy
-	// https://hl7.org/fhir/r4/search.html#reference
-	Asserter datatypes.JSON `gorm:"column:asserter;type:text;serializer:json" json:"asserter,omitempty"`
+	/*
+	   Multiple Resources:
+
+	   * [AllergyIntolerance](allergyintolerance.html): Code that identifies the allergy or intolerance
+	   * [Condition](condition.html): Code for the condition
+	   * [DeviceRequest](devicerequest.html): Code for what is being requested/ordered
+	   * [DiagnosticReport](diagnosticreport.html): The code for the report, as opposed to codes for the atomic results, which are the names on the observation resource referred to from the result
+	   * [FamilyMemberHistory](familymemberhistory.html): A search by a condition code
+	   * [List](list.html): What the purpose of this list is
+	   * [Medication](medication.html): Returns medications for a specific code
+	   * [MedicationAdministration](medicationadministration.html): Return administrations of this medication code
+	   * [MedicationDispense](medicationdispense.html): Returns dispenses of this medicine code
+	   * [MedicationRequest](medicationrequest.html): Return prescriptions of this medication code
+	   * [MedicationStatement](medicationstatement.html): Return statements of this medication code
+	   * [Observation](observation.html): The code of the observation type
+	   * [Procedure](procedure.html): A code to identify a  procedure
+	   * [ServiceRequest](servicerequest.html): What is being requested/ordered
+	*/
+	// https://hl7.org/fhir/r4/search.html#token
+	Code datatypes.JSON `gorm:"column:code;type:text;serializer:json" json:"code,omitempty"`
+	// low | high | unable-to-assess
+	// https://hl7.org/fhir/r4/search.html#token
+	Criticality datatypes.JSON `gorm:"column:criticality;type:text;serializer:json" json:"criticality,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -97,59 +105,51 @@ type FhirAllergyIntolerance struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
-	// mild | moderate | severe (of event as a whole)
-	// https://hl7.org/fhir/r4/search.html#token
-	Severity datatypes.JSON `gorm:"column:severity;type:text;serializer:json" json:"severity,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
-	/*
-	   Multiple Resources:
-
-	   * [AllergyIntolerance](allergyintolerance.html): Code that identifies the allergy or intolerance
-	   * [Condition](condition.html): Code for the condition
-	   * [DeviceRequest](devicerequest.html): Code for what is being requested/ordered
-	   * [DiagnosticReport](diagnosticreport.html): The code for the report, as opposed to codes for the atomic results, which are the names on the observation resource referred to from the result
-	   * [FamilyMemberHistory](familymemberhistory.html): A search by a condition code
-	   * [List](list.html): What the purpose of this list is
-	   * [Medication](medication.html): Returns medications for a specific code
-	   * [MedicationAdministration](medicationadministration.html): Return administrations of this medication code
-	   * [MedicationDispense](medicationdispense.html): Returns dispenses of this medicine code
-	   * [MedicationRequest](medicationrequest.html): Return prescriptions of this medication code
-	   * [MedicationStatement](medicationstatement.html): Return statements of this medication code
-	   * [Observation](observation.html): The code of the observation type
-	   * [Procedure](procedure.html): A code to identify a  procedure
-	   * [ServiceRequest](servicerequest.html): What is being requested/ordered
-	*/
-	// https://hl7.org/fhir/r4/search.html#token
-	Code datatypes.JSON `gorm:"column:code;type:text;serializer:json" json:"code,omitempty"`
-	// Date(/time) of last known occurrence of a reaction
-	// https://hl7.org/fhir/r4/search.html#date
-	LastDate time.Time `gorm:"column:lastDate;type:datetime" json:"lastDate,omitempty"`
-	// How the subject was exposed to the substance
-	// https://hl7.org/fhir/r4/search.html#token
-	Route datatypes.JSON `gorm:"column:route;type:text;serializer:json" json:"route,omitempty"`
-	// Who recorded the sensitivity
-	// https://hl7.org/fhir/r4/search.html#reference
-	Recorder datatypes.JSON `gorm:"column:recorder;type:text;serializer:json" json:"recorder,omitempty"`
-	// unconfirmed | confirmed | refuted | entered-in-error
-	// https://hl7.org/fhir/r4/search.html#token
-	VerificationStatus datatypes.JSON `gorm:"column:verificationStatus;type:text;serializer:json" json:"verificationStatus,omitempty"`
 	// Language of the resource content
 	// https://hl7.org/fhir/r4/search.html#token
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// low | high | unable-to-assess
-	// https://hl7.org/fhir/r4/search.html#token
-	Criticality datatypes.JSON `gorm:"column:criticality;type:text;serializer:json" json:"criticality,omitempty"`
+	// Date(/time) of last known occurrence of a reaction
+	// https://hl7.org/fhir/r4/search.html#date
+	LastDate time.Time `gorm:"column:lastDate;type:datetime" json:"lastDate,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// Clinical symptoms/signs associated with the Event
 	// https://hl7.org/fhir/r4/search.html#token
 	Manifestation datatypes.JSON `gorm:"column:manifestation;type:text;serializer:json" json:"manifestation,omitempty"`
 	// Date(/time) when manifestations showed
 	// https://hl7.org/fhir/r4/search.html#date
 	Onset time.Time `gorm:"column:onset;type:datetime" json:"onset,omitempty"`
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// Who recorded the sensitivity
+	// https://hl7.org/fhir/r4/search.html#reference
+	Recorder datatypes.JSON `gorm:"column:recorder;type:text;serializer:json" json:"recorder,omitempty"`
+	// How the subject was exposed to the substance
+	// https://hl7.org/fhir/r4/search.html#token
+	Route datatypes.JSON `gorm:"column:route;type:text;serializer:json" json:"route,omitempty"`
+	// mild | moderate | severe (of event as a whole)
+	// https://hl7.org/fhir/r4/search.html#token
+	Severity datatypes.JSON `gorm:"column:severity;type:text;serializer:json" json:"severity,omitempty"`
+	// Identifies where the resource comes from
+	// https://hl7.org/fhir/r4/search.html#uri
+	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// unconfirmed | confirmed | refuted | entered-in-error
+	// https://hl7.org/fhir/r4/search.html#token
+	VerificationStatus datatypes.JSON `gorm:"column:verificationStatus;type:text;serializer:json" json:"verificationStatus,omitempty"`
 }
 
 func (s *FhirAllergyIntolerance) SetOriginBase(originBase models.OriginBase) {
@@ -209,84 +209,10 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(rawResource 
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Category
-	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.category'))")
-	if err == nil && categoryResult.String() != "undefined" {
-		s.Category = []byte(categoryResult.String())
-	}
 	// extracting ClinicalStatus
 	clinicalStatusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.clinicalStatus'))")
 	if err == nil && clinicalStatusResult.String() != "undefined" {
 		s.ClinicalStatus = []byte(clinicalStatusResult.String())
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting Asserter
-	asserterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.asserter'))")
-	if err == nil && asserterResult.String() != "undefined" {
-		s.Asserter = []byte(asserterResult.String())
-	}
-	// extracting Date
-	dateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrencedateTime) | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrencedateTime) | SupplyRequest.authoredOn')[0])")
-	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
-			s.Date = t
-		}
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Code
-	codeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.codeCodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicationCodeableConcept) | (MedicationDispense.medicationCodeableConcept) | (MedicationRequest.medicationCodeableConcept) | (MedicationStatement.medicationCodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code'))")
-	if err == nil && codeResult.String() != "undefined" {
-		s.Code = []byte(codeResult.String())
-	}
-	// extracting LastDate
-	lastDateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.lastOccurrence')[0])")
-	if err == nil && lastDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastDateResult.String())
-		if err == nil {
-			s.LastDate = t
-		}
-	}
-	// extracting Route
-	routeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.exposureRoute'))")
-	if err == nil && routeResult.String() != "undefined" {
-		s.Route = []byte(routeResult.String())
-	}
-	// extracting Severity
-	severityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.severity'))")
-	if err == nil && severityResult.String() != "undefined" {
-		s.Severity = []byte(severityResult.String())
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting Criticality
-	criticalityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.criticality'))")
-	if err == nil && criticalityResult.String() != "undefined" {
-		s.Criticality = []byte(criticalityResult.String())
 	}
 	// extracting Manifestation
 	manifestationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.manifestation'))")
@@ -294,17 +220,52 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(rawResource 
 		s.Manifestation = []byte(manifestationResult.String())
 	}
 	// extracting Onset
-	onsetResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.onset')[0])")
+	onsetResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.onset')[0]")
 	if err == nil && onsetResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, onsetResult.String())
 		if err == nil {
 			s.Onset = t
 		}
 	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting Asserter
+	asserterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.asserter'))")
+	if err == nil && asserterResult.String() != "undefined" {
+		s.Asserter = []byte(asserterResult.String())
+	}
+	// extracting Category
+	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.category'))")
+	if err == nil && categoryResult.String() != "undefined" {
+		s.Category = []byte(categoryResult.String())
+	}
 	// extracting Recorder
 	recorderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recorder'))")
 	if err == nil && recorderResult.String() != "undefined" {
 		s.Recorder = []byte(recorderResult.String())
+	}
+	// extracting Route
+	routeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.exposureRoute'))")
+	if err == nil && routeResult.String() != "undefined" {
+		s.Route = []byte(routeResult.String())
+	}
+	// extracting Criticality
+	criticalityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.criticality'))")
+	if err == nil && criticalityResult.String() != "undefined" {
+		s.Criticality = []byte(criticalityResult.String())
+	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
 	}
 	// extracting VerificationStatus
 	verificationStatusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.verificationStatus'))")
@@ -315,6 +276,45 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(rawResource 
 	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Code
+	codeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Condition.code | (DeviceRequest.codeCodeableConcept) | DiagnosticReport.code | FamilyMemberHistory.condition.code | List.code | Medication.code | (MedicationAdministration.medicationCodeableConcept) | (MedicationDispense.medicationCodeableConcept) | (MedicationRequest.medicationCodeableConcept) | (MedicationStatement.medicationCodeableConcept) | Observation.code | Procedure.code | ServiceRequest.code'))")
+	if err == nil && codeResult.String() != "undefined" {
+		s.Code = []byte(codeResult.String())
+	}
+	// extracting Date
+	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrencedateTime) | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrencedateTime) | SupplyRequest.authoredOn')[0]")
+	if err == nil && dateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, dateResult.String())
+		if err == nil {
+			s.Date = t
+		}
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
+	}
+	// extracting LastDate
+	lastDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.lastOccurrence')[0]")
+	if err == nil && lastDateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastDateResult.String())
+		if err == nil {
+			s.LastDate = t
+		}
+	}
+	// extracting Severity
+	severityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.reaction.severity'))")
+	if err == nil && severityResult.String() != "undefined" {
+		s.Severity = []byte(severityResult.String())
 	}
 	return nil
 }

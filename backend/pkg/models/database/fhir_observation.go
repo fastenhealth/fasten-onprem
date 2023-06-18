@@ -14,54 +14,12 @@ import (
 
 type FhirObservation struct {
 	models.OriginBase
-	// The subject that the observation is about
-	// https://hl7.org/fhir/r4/search.html#reference
-	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
-	/*
-	   Multiple Resources:
-
-	   * [Composition](composition.html): Context of the Composition
-	   * [DeviceRequest](devicerequest.html): Encounter during which request was created
-	   * [DiagnosticReport](diagnosticreport.html): The Encounter when the order was made
-	   * [DocumentReference](documentreference.html): Context of the document  content
-	   * [Flag](flag.html): Alert relevant during encounter
-	   * [List](list.html): Context in which list created
-	   * [NutritionOrder](nutritionorder.html): Return nutrition orders with this encounter identifier
-	   * [Observation](observation.html): Encounter related to the observation
-	   * [Procedure](procedure.html): Encounter created as part of
-	   * [RiskAssessment](riskassessment.html): Where was assessment performed?
-	   * [ServiceRequest](servicerequest.html): An encounter in which this request is made
-	   * [VisionPrescription](visionprescription.html): Return prescriptions with this encounter identifier
-	*/
-	// https://hl7.org/fhir/r4/search.html#reference
-	Encounter datatypes.JSON `gorm:"column:encounter;type:text;serializer:json" json:"encounter,omitempty"`
-	// The code of the observation type or component type
-	// https://hl7.org/fhir/r4/search.html#token
-	ComboCode datatypes.JSON `gorm:"column:comboCode;type:text;serializer:json" json:"comboCode,omitempty"`
-	// The reason why the expected value in the element Observation.value[x] or Observation.component.value[x] is missing.
-	// https://hl7.org/fhir/r4/search.html#token
-	ComboDataAbsentReason datatypes.JSON `gorm:"column:comboDataAbsentReason;type:text;serializer:json" json:"comboDataAbsentReason,omitempty"`
-	// The value or component value of the observation, if the value is a CodeableConcept
-	// https://hl7.org/fhir/r4/search.html#token
-	ComboValueConcept datatypes.JSON `gorm:"column:comboValueConcept;type:text;serializer:json" json:"comboValueConcept,omitempty"`
 	// Reference to the service request.
 	// https://hl7.org/fhir/r4/search.html#reference
 	BasedOn datatypes.JSON `gorm:"column:basedOn;type:text;serializer:json" json:"basedOn,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// The value of the observation, if the value is a CodeableConcept
+	// The classification of the type of observation
 	// https://hl7.org/fhir/r4/search.html#token
-	ValueConcept datatypes.JSON `gorm:"column:valueConcept;type:text;serializer:json" json:"valueConcept,omitempty"`
-	// Profiles this resource claims to conform to
-	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	Category datatypes.JSON `gorm:"column:category;type:text;serializer:json" json:"category,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -82,18 +40,33 @@ type FhirObservation struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#token
 	Code datatypes.JSON `gorm:"column:code;type:text;serializer:json" json:"code,omitempty"`
-	// The Device that generated the observation data.
-	// https://hl7.org/fhir/r4/search.html#reference
-	Device datatypes.JSON `gorm:"column:device;type:text;serializer:json" json:"device,omitempty"`
-	// The method used for the observation
+	// The code of the observation type or component type
 	// https://hl7.org/fhir/r4/search.html#token
-	Method datatypes.JSON `gorm:"column:method;type:text;serializer:json" json:"method,omitempty"`
-	// Specimen used for this observation
-	// https://hl7.org/fhir/r4/search.html#reference
-	Specimen datatypes.JSON `gorm:"column:specimen;type:text;serializer:json" json:"specimen,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	ComboCode datatypes.JSON `gorm:"column:comboCode;type:text;serializer:json" json:"comboCode,omitempty"`
+	// The reason why the expected value in the element Observation.value[x] or Observation.component.value[x] is missing.
+	// https://hl7.org/fhir/r4/search.html#token
+	ComboDataAbsentReason datatypes.JSON `gorm:"column:comboDataAbsentReason;type:text;serializer:json" json:"comboDataAbsentReason,omitempty"`
+	// The value or component value of the observation, if the value is a CodeableConcept
+	// https://hl7.org/fhir/r4/search.html#token
+	ComboValueConcept datatypes.JSON `gorm:"column:comboValueConcept;type:text;serializer:json" json:"comboValueConcept,omitempty"`
+	// The value or component value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)
+	// https://hl7.org/fhir/r4/search.html#quantity
+	ComboValueQuantity datatypes.JSON `gorm:"column:comboValueQuantity;type:text;serializer:json" json:"comboValueQuantity,omitempty"`
+	// The component code of the observation type
+	// https://hl7.org/fhir/r4/search.html#token
+	ComponentCode datatypes.JSON `gorm:"column:componentCode;type:text;serializer:json" json:"componentCode,omitempty"`
+	// The reason why the expected value in the element Observation.component.value[x] is missing.
+	// https://hl7.org/fhir/r4/search.html#token
+	ComponentDataAbsentReason datatypes.JSON `gorm:"column:componentDataAbsentReason;type:text;serializer:json" json:"componentDataAbsentReason,omitempty"`
+	// The value of the component observation, if the value is a CodeableConcept
+	// https://hl7.org/fhir/r4/search.html#token
+	ComponentValueConcept datatypes.JSON `gorm:"column:componentValueConcept;type:text;serializer:json" json:"componentValueConcept,omitempty"`
+	// The value of the component observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)
+	// https://hl7.org/fhir/r4/search.html#quantity
+	ComponentValueQuantity datatypes.JSON `gorm:"column:componentValueQuantity;type:text;serializer:json" json:"componentValueQuantity,omitempty"`
+	// The reason why the expected value in the element Observation.value[x] is missing.
+	// https://hl7.org/fhir/r4/search.html#token
+	DataAbsentReason datatypes.JSON `gorm:"column:dataAbsentReason;type:text;serializer:json" json:"dataAbsentReason,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -117,24 +90,36 @@ type FhirObservation struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
 	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
-	// The component code of the observation type
-	// https://hl7.org/fhir/r4/search.html#token
-	ComponentCode datatypes.JSON `gorm:"column:componentCode;type:text;serializer:json" json:"componentCode,omitempty"`
-	// The status of the observation
-	// https://hl7.org/fhir/r4/search.html#token
-	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
-	// The value of the observation, if the value is a date or period of time
-	// https://hl7.org/fhir/r4/search.html#date
-	ValueDate time.Time `gorm:"column:valueDate;type:datetime" json:"valueDate,omitempty"`
-	// The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)
-	// https://hl7.org/fhir/r4/search.html#quantity
-	ValueQuantity datatypes.JSON `gorm:"column:valueQuantity;type:text;serializer:json" json:"valueQuantity,omitempty"`
-	// Language of the resource content
-	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// Related measurements the observation is made from
+	// https://hl7.org/fhir/r4/search.html#reference
+	DerivedFrom datatypes.JSON `gorm:"column:derivedFrom;type:text;serializer:json" json:"derivedFrom,omitempty"`
+	// The Device that generated the observation data.
+	// https://hl7.org/fhir/r4/search.html#reference
+	Device datatypes.JSON `gorm:"column:device;type:text;serializer:json" json:"device,omitempty"`
+	/*
+	   Multiple Resources:
+
+	   * [Composition](composition.html): Context of the Composition
+	   * [DeviceRequest](devicerequest.html): Encounter during which request was created
+	   * [DiagnosticReport](diagnosticreport.html): The Encounter when the order was made
+	   * [DocumentReference](documentreference.html): Context of the document  content
+	   * [Flag](flag.html): Alert relevant during encounter
+	   * [List](list.html): Context in which list created
+	   * [NutritionOrder](nutritionorder.html): Return nutrition orders with this encounter identifier
+	   * [Observation](observation.html): Encounter related to the observation
+	   * [Procedure](procedure.html): Encounter created as part of
+	   * [RiskAssessment](riskassessment.html): Where was assessment performed?
+	   * [ServiceRequest](servicerequest.html): An encounter in which this request is made
+	   * [VisionPrescription](visionprescription.html): Return prescriptions with this encounter identifier
+	*/
+	// https://hl7.org/fhir/r4/search.html#reference
+	Encounter datatypes.JSON `gorm:"column:encounter;type:text;serializer:json" json:"encounter,omitempty"`
+	// The focus of an observation when the focus is not the patient of record.
+	// https://hl7.org/fhir/r4/search.html#reference
+	Focus datatypes.JSON `gorm:"column:focus;type:text;serializer:json" json:"focus,omitempty"`
+	// Related resource that belongs to the Observation group
+	// https://hl7.org/fhir/r4/search.html#reference
+	HasMember datatypes.JSON `gorm:"column:hasMember;type:text;serializer:json" json:"hasMember,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -171,45 +156,60 @@ type FhirObservation struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
-	// The value or component value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)
-	// https://hl7.org/fhir/r4/search.html#quantity
-	ComboValueQuantity datatypes.JSON `gorm:"column:comboValueQuantity;type:text;serializer:json" json:"comboValueQuantity,omitempty"`
-	// The value of the component observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)
-	// https://hl7.org/fhir/r4/search.html#quantity
-	ComponentValueQuantity datatypes.JSON `gorm:"column:componentValueQuantity;type:text;serializer:json" json:"componentValueQuantity,omitempty"`
-	// The reason why the expected value in the element Observation.value[x] is missing.
+	// Language of the resource content
 	// https://hl7.org/fhir/r4/search.html#token
-	DataAbsentReason datatypes.JSON `gorm:"column:dataAbsentReason;type:text;serializer:json" json:"dataAbsentReason,omitempty"`
-	// The classification of the type of observation
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// The method used for the observation
 	// https://hl7.org/fhir/r4/search.html#token
-	Category datatypes.JSON `gorm:"column:category;type:text;serializer:json" json:"category,omitempty"`
-	// Related measurements the observation is made from
-	// https://hl7.org/fhir/r4/search.html#reference
-	DerivedFrom datatypes.JSON `gorm:"column:derivedFrom;type:text;serializer:json" json:"derivedFrom,omitempty"`
-	// Related resource that belongs to the Observation group
-	// https://hl7.org/fhir/r4/search.html#reference
-	HasMember datatypes.JSON `gorm:"column:hasMember;type:text;serializer:json" json:"hasMember,omitempty"`
-	// The reason why the expected value in the element Observation.component.value[x] is missing.
-	// https://hl7.org/fhir/r4/search.html#token
-	ComponentDataAbsentReason datatypes.JSON `gorm:"column:componentDataAbsentReason;type:text;serializer:json" json:"componentDataAbsentReason,omitempty"`
-	// The value of the component observation, if the value is a CodeableConcept
-	// https://hl7.org/fhir/r4/search.html#token
-	ComponentValueConcept datatypes.JSON `gorm:"column:componentValueConcept;type:text;serializer:json" json:"componentValueConcept,omitempty"`
-	// The focus of an observation when the focus is not the patient of record.
-	// https://hl7.org/fhir/r4/search.html#reference
-	Focus datatypes.JSON `gorm:"column:focus;type:text;serializer:json" json:"focus,omitempty"`
-	// Who performed the observation
-	// https://hl7.org/fhir/r4/search.html#reference
-	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`
+	Method datatypes.JSON `gorm:"column:method;type:text;serializer:json" json:"method,omitempty"`
 	// Part of referenced event
 	// https://hl7.org/fhir/r4/search.html#reference
 	PartOf datatypes.JSON `gorm:"column:partOf;type:text;serializer:json" json:"partOf,omitempty"`
-	// The value of the observation, if the value is a string, and also searches in CodeableConcept.text
-	// https://hl7.org/fhir/r4/search.html#string
-	ValueString string `gorm:"column:valueString;type:text" json:"valueString,omitempty"`
+	// Who performed the observation
+	// https://hl7.org/fhir/r4/search.html#reference
+	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
 	// Identifies where the resource comes from
 	// https://hl7.org/fhir/r4/search.html#uri
 	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
+	// Specimen used for this observation
+	// https://hl7.org/fhir/r4/search.html#reference
+	Specimen datatypes.JSON `gorm:"column:specimen;type:text;serializer:json" json:"specimen,omitempty"`
+	// The status of the observation
+	// https://hl7.org/fhir/r4/search.html#token
+	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
+	// The subject that the observation is about
+	// https://hl7.org/fhir/r4/search.html#reference
+	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// The value of the observation, if the value is a CodeableConcept
+	// https://hl7.org/fhir/r4/search.html#token
+	ValueConcept datatypes.JSON `gorm:"column:valueConcept;type:text;serializer:json" json:"valueConcept,omitempty"`
+	// The value of the observation, if the value is a date or period of time
+	// https://hl7.org/fhir/r4/search.html#date
+	ValueDate time.Time `gorm:"column:valueDate;type:datetime" json:"valueDate,omitempty"`
+	// The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)
+	// https://hl7.org/fhir/r4/search.html#quantity
+	ValueQuantity datatypes.JSON `gorm:"column:valueQuantity;type:text;serializer:json" json:"valueQuantity,omitempty"`
+	// The value of the observation, if the value is a string, and also searches in CodeableConcept.text
+	// https://hl7.org/fhir/r4/search.html#string
+	ValueString string `gorm:"column:valueString;type:text" json:"valueString,omitempty"`
 }
 
 func (s *FhirObservation) SetOriginBase(originBase models.OriginBase) {
@@ -284,159 +284,133 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(rawResource json.Ra
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Date
-	dateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrencedateTime) | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrencedateTime) | SupplyRequest.authoredOn')[0])")
-	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
-			s.Date = t
-		}
-	}
 	// extracting ComponentCode
 	componentCodeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.component.code'))")
 	if err == nil && componentCodeResult.String() != "undefined" {
 		s.ComponentCode = []byte(componentCodeResult.String())
-	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
-	}
-	// extracting ValueDate
-	valueDateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Observation.valuedateTime) | (Observation.valuePeriod)')[0])")
-	if err == nil && valueDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, valueDateResult.String())
-		if err == nil {
-			s.ValueDate = t
-		}
-	}
-	// extracting ValueQuantity
-	valueQuantityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Observation.valueQuantity) | (Observation.valueSampledData)'))")
-	if err == nil && valueQuantityResult.String() != "undefined" {
-		s.ValueQuantity = []byte(valueQuantityResult.String())
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
-	// extracting ComboValueQuantity
-	comboValueQuantityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Observation.valueQuantity) | (Observation.valueSampledData) | (Observation.component.valueQuantity) | (Observation.component.valueSampledData)'))")
-	if err == nil && comboValueQuantityResult.String() != "undefined" {
-		s.ComboValueQuantity = []byte(comboValueQuantityResult.String())
 	}
 	// extracting ComponentValueQuantity
 	componentValueQuantityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Observation.component.valueQuantity) | (Observation.component.valueSampledData)'))")
 	if err == nil && componentValueQuantityResult.String() != "undefined" {
 		s.ComponentValueQuantity = []byte(componentValueQuantityResult.String())
 	}
-	// extracting DataAbsentReason
-	dataAbsentReasonResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.dataAbsentReason'))")
-	if err == nil && dataAbsentReasonResult.String() != "undefined" {
-		s.DataAbsentReason = []byte(dataAbsentReasonResult.String())
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
 	}
-	// extracting Category
-	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.category'))")
-	if err == nil && categoryResult.String() != "undefined" {
-		s.Category = []byte(categoryResult.String())
-	}
-	// extracting DerivedFrom
-	derivedFromResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.derivedFrom'))")
-	if err == nil && derivedFromResult.String() != "undefined" {
-		s.DerivedFrom = []byte(derivedFromResult.String())
-	}
-	// extracting HasMember
-	hasMemberResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.hasMember'))")
-	if err == nil && hasMemberResult.String() != "undefined" {
-		s.HasMember = []byte(hasMemberResult.String())
-	}
-	// extracting ComponentDataAbsentReason
-	componentDataAbsentReasonResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.component.dataAbsentReason'))")
-	if err == nil && componentDataAbsentReasonResult.String() != "undefined" {
-		s.ComponentDataAbsentReason = []byte(componentDataAbsentReasonResult.String())
-	}
-	// extracting ComponentValueConcept
-	componentValueConceptResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Observation.component.valueCodeableConcept)'))")
-	if err == nil && componentValueConceptResult.String() != "undefined" {
-		s.ComponentValueConcept = []byte(componentValueConceptResult.String())
-	}
-	// extracting Focus
-	focusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.focus'))")
-	if err == nil && focusResult.String() != "undefined" {
-		s.Focus = []byte(focusResult.String())
-	}
-	// extracting Performer
-	performerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.performer'))")
-	if err == nil && performerResult.String() != "undefined" {
-		s.Performer = []byte(performerResult.String())
-	}
-	// extracting PartOf
-	partOfResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.partOf'))")
-	if err == nil && partOfResult.String() != "undefined" {
-		s.PartOf = []byte(partOfResult.String())
-	}
-	// extracting ValueString
-	valueStringResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Observation.valuestring) | (Observation.valueCodeableConcept).text')[0])")
-	if err == nil && valueStringResult.String() != "undefined" {
-		s.ValueString = valueStringResult.String()
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Subject
-	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.subject'))")
-	if err == nil && subjectResult.String() != "undefined" {
-		s.Subject = []byte(subjectResult.String())
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting Encounter
-	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter.where(resolve() is Encounter) | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | ServiceRequest.encounter | VisionPrescription.encounter'))")
-	if err == nil && encounterResult.String() != "undefined" {
-		s.Encounter = []byte(encounterResult.String())
-	}
-	// extracting ComboCode
-	comboCodeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.code | Observation.component.code'))")
-	if err == nil && comboCodeResult.String() != "undefined" {
-		s.ComboCode = []byte(comboCodeResult.String())
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
 	}
 	// extracting ComboDataAbsentReason
 	comboDataAbsentReasonResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.dataAbsentReason | Observation.component.dataAbsentReason'))")
 	if err == nil && comboDataAbsentReasonResult.String() != "undefined" {
 		s.ComboDataAbsentReason = []byte(comboDataAbsentReasonResult.String())
 	}
-	// extracting ComboValueConcept
-	comboValueConceptResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Observation.valueCodeableConcept) | (Observation.component.valueCodeableConcept)'))")
-	if err == nil && comboValueConceptResult.String() != "undefined" {
-		s.ComboValueConcept = []byte(comboValueConceptResult.String())
+	// extracting ComboValueQuantity
+	comboValueQuantityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Observation.valueQuantity) | (Observation.valueSampledData) | (Observation.component.valueQuantity) | (Observation.component.valueSampledData)'))")
+	if err == nil && comboValueQuantityResult.String() != "undefined" {
+		s.ComboValueQuantity = []byte(comboValueQuantityResult.String())
+	}
+	// extracting ComponentDataAbsentReason
+	componentDataAbsentReasonResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.component.dataAbsentReason'))")
+	if err == nil && componentDataAbsentReasonResult.String() != "undefined" {
+		s.ComponentDataAbsentReason = []byte(componentDataAbsentReasonResult.String())
+	}
+	// extracting HasMember
+	hasMemberResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.hasMember'))")
+	if err == nil && hasMemberResult.String() != "undefined" {
+		s.HasMember = []byte(hasMemberResult.String())
+	}
+	// extracting Specimen
+	specimenResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.specimen'))")
+	if err == nil && specimenResult.String() != "undefined" {
+		s.Specimen = []byte(specimenResult.String())
+	}
+	// extracting ValueQuantity
+	valueQuantityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Observation.valueQuantity) | (Observation.valueSampledData)'))")
+	if err == nil && valueQuantityResult.String() != "undefined" {
+		s.ValueQuantity = []byte(valueQuantityResult.String())
+	}
+	// extracting Performer
+	performerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.performer'))")
+	if err == nil && performerResult.String() != "undefined" {
+		s.Performer = []byte(performerResult.String())
+	}
+	// extracting ValueConcept
+	valueConceptResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Observation.valueCodeableConcept)'))")
+	if err == nil && valueConceptResult.String() != "undefined" {
+		s.ValueConcept = []byte(valueConceptResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Encounter
+	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter.where(resolve() is Encounter) | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | ServiceRequest.encounter | VisionPrescription.encounter'))")
+	if err == nil && encounterResult.String() != "undefined" {
+		s.Encounter = []byte(encounterResult.String())
+	}
+	// extracting ComponentValueConcept
+	componentValueConceptResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Observation.component.valueCodeableConcept)'))")
+	if err == nil && componentValueConceptResult.String() != "undefined" {
+		s.ComponentValueConcept = []byte(componentValueConceptResult.String())
+	}
+	// extracting DataAbsentReason
+	dataAbsentReasonResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.dataAbsentReason'))")
+	if err == nil && dataAbsentReasonResult.String() != "undefined" {
+		s.DataAbsentReason = []byte(dataAbsentReasonResult.String())
+	}
+	// extracting Device
+	deviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.device'))")
+	if err == nil && deviceResult.String() != "undefined" {
+		s.Device = []byte(deviceResult.String())
+	}
+	// extracting Focus
+	focusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.focus'))")
+	if err == nil && focusResult.String() != "undefined" {
+		s.Focus = []byte(focusResult.String())
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
 	}
 	// extracting BasedOn
 	basedOnResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.basedOn'))")
 	if err == nil && basedOnResult.String() != "undefined" {
 		s.BasedOn = []byte(basedOnResult.String())
 	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+	// extracting Category
+	categoryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.category'))")
+	if err == nil && categoryResult.String() != "undefined" {
+		s.Category = []byte(categoryResult.String())
+	}
+	// extracting ComboCode
+	comboCodeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.code | Observation.component.code'))")
+	if err == nil && comboCodeResult.String() != "undefined" {
+		s.ComboCode = []byte(comboCodeResult.String())
+	}
+	// extracting ValueDate
+	valueDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Observation.valuedateTime) | (Observation.valuePeriod)')[0]")
+	if err == nil && valueDateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, valueDateResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.ValueDate = t
 		}
 	}
-	// extracting ValueConcept
-	valueConceptResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Observation.valueCodeableConcept)'))")
-	if err == nil && valueConceptResult.String() != "undefined" {
-		s.ValueConcept = []byte(valueConceptResult.String())
+	// extracting DerivedFrom
+	derivedFromResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.derivedFrom'))")
+	if err == nil && derivedFromResult.String() != "undefined" {
+		s.DerivedFrom = []byte(derivedFromResult.String())
+	}
+	// extracting PartOf
+	partOfResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.partOf'))")
+	if err == nil && partOfResult.String() != "undefined" {
+		s.PartOf = []byte(partOfResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
@@ -448,20 +422,46 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(rawResource json.Ra
 	if err == nil && codeResult.String() != "undefined" {
 		s.Code = []byte(codeResult.String())
 	}
-	// extracting Device
-	deviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.device'))")
-	if err == nil && deviceResult.String() != "undefined" {
-		s.Device = []byte(deviceResult.String())
+	// extracting Date
+	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrencedateTime) | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrencedateTime) | SupplyRequest.authoredOn')[0]")
+	if err == nil && dateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, dateResult.String())
+		if err == nil {
+			s.Date = t
+		}
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
+	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting ComboValueConcept
+	comboValueConceptResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Observation.valueCodeableConcept) | (Observation.component.valueCodeableConcept)'))")
+	if err == nil && comboValueConceptResult.String() != "undefined" {
+		s.ComboValueConcept = []byte(comboValueConceptResult.String())
 	}
 	// extracting Method
 	methodResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.method'))")
 	if err == nil && methodResult.String() != "undefined" {
 		s.Method = []byte(methodResult.String())
 	}
-	// extracting Specimen
-	specimenResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.specimen'))")
-	if err == nil && specimenResult.String() != "undefined" {
-		s.Specimen = []byte(specimenResult.String())
+	// extracting Subject
+	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Observation.subject'))")
+	if err == nil && subjectResult.String() != "undefined" {
+		s.Subject = []byte(subjectResult.String())
+	}
+	// extracting ValueString
+	valueStringResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Observation.valuestring) | (Observation.valueCodeableConcept).text')[0]")
+	if err == nil && valueStringResult.String() != "undefined" {
+		s.ValueString = valueStringResult.String()
 	}
 	return nil
 }

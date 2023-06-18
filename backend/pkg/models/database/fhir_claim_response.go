@@ -14,60 +14,60 @@ import (
 
 type FhirClaimResponse struct {
 	models.OriginBase
-	// The contents of the disposition message
-	// https://hl7.org/fhir/r4/search.html#string
-	Disposition string `gorm:"column:disposition;type:text" json:"disposition,omitempty"`
-	// The processing outcome
-	// https://hl7.org/fhir/r4/search.html#token
-	Outcome datatypes.JSON `gorm:"column:outcome;type:text;serializer:json" json:"outcome,omitempty"`
-	// The Provider of the claim
-	// https://hl7.org/fhir/r4/search.html#reference
-	Requestor datatypes.JSON `gorm:"column:requestor;type:text;serializer:json" json:"requestor,omitempty"`
-	// Language of the resource content
-	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
 	// The creation date
 	// https://hl7.org/fhir/r4/search.html#date
 	Created time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
-	// The status of the ClaimResponse
-	// https://hl7.org/fhir/r4/search.html#token
-	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// The contents of the disposition message
+	// https://hl7.org/fhir/r4/search.html#string
+	Disposition string `gorm:"column:disposition;type:text" json:"disposition,omitempty"`
 	// The identity of the ClaimResponse
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
 	// The organization which generated this resource
 	// https://hl7.org/fhir/r4/search.html#reference
 	Insurer datatypes.JSON `gorm:"column:insurer;type:text;serializer:json" json:"insurer,omitempty"`
+	// Language of the resource content
+	// https://hl7.org/fhir/r4/search.html#token
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// The processing outcome
+	// https://hl7.org/fhir/r4/search.html#token
+	Outcome datatypes.JSON `gorm:"column:outcome;type:text;serializer:json" json:"outcome,omitempty"`
 	// The expected payment date
 	// https://hl7.org/fhir/r4/search.html#date
 	PaymentDate time.Time `gorm:"column:paymentDate;type:datetime" json:"paymentDate,omitempty"`
-	// The claim reference
-	// https://hl7.org/fhir/r4/search.html#reference
-	Request datatypes.JSON `gorm:"column:request;type:text;serializer:json" json:"request,omitempty"`
-	// The type of claim
-	// https://hl7.org/fhir/r4/search.html#token
-	Use datatypes.JSON `gorm:"column:use;type:text;serializer:json" json:"use,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// The claim reference
+	// https://hl7.org/fhir/r4/search.html#reference
+	Request datatypes.JSON `gorm:"column:request;type:text;serializer:json" json:"request,omitempty"`
+	// The Provider of the claim
+	// https://hl7.org/fhir/r4/search.html#reference
+	Requestor datatypes.JSON `gorm:"column:requestor;type:text;serializer:json" json:"requestor,omitempty"`
 	// Identifies where the resource comes from
 	// https://hl7.org/fhir/r4/search.html#uri
 	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
+	// The status of the ClaimResponse
+	// https://hl7.org/fhir/r4/search.html#token
+	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
 	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// The type of claim
+	// https://hl7.org/fhir/r4/search.html#token
+	Use datatypes.JSON `gorm:"column:use;type:text;serializer:json" json:"use,omitempty"`
 }
 
 func (s *FhirClaimResponse) SetOriginBase(originBase models.OriginBase) {
@@ -123,66 +123,31 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(rawResource json.
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Disposition
-	dispositionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.disposition')[0])")
-	if err == nil && dispositionResult.String() != "undefined" {
-		s.Disposition = dispositionResult.String()
-	}
-	// extracting Outcome
-	outcomeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.outcome'))")
-	if err == nil && outcomeResult.String() != "undefined" {
-		s.Outcome = []byte(outcomeResult.String())
-	}
-	// extracting Requestor
-	requestorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.requestor'))")
-	if err == nil && requestorResult.String() != "undefined" {
-		s.Requestor = []byte(requestorResult.String())
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
-	// extracting Created
-	createdResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.created')[0])")
-	if err == nil && createdResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, createdResult.String())
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.Created = t
+			s.LastUpdated = t
 		}
-	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
 	}
 	// extracting Insurer
 	insurerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.insurer'))")
 	if err == nil && insurerResult.String() != "undefined" {
 		s.Insurer = []byte(insurerResult.String())
 	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
 	// extracting PaymentDate
-	paymentDateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.payment.date')[0])")
+	paymentDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'ClaimResponse.payment.date')[0]")
 	if err == nil && paymentDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, paymentDateResult.String())
 		if err == nil {
@@ -194,17 +159,52 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(rawResource json.
 	if err == nil && requestResult.String() != "undefined" {
 		s.Request = []byte(requestResult.String())
 	}
+	// extracting Requestor
+	requestorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.requestor'))")
+	if err == nil && requestorResult.String() != "undefined" {
+		s.Requestor = []byte(requestorResult.String())
+	}
+	// extracting Disposition
+	dispositionResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'ClaimResponse.disposition')[0]")
+	if err == nil && dispositionResult.String() != "undefined" {
+		s.Disposition = dispositionResult.String()
+	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting Outcome
+	outcomeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.outcome'))")
+	if err == nil && outcomeResult.String() != "undefined" {
+		s.Outcome = []byte(outcomeResult.String())
+	}
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
+	}
 	// extracting Use
 	useResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.use'))")
 	if err == nil && useResult.String() != "undefined" {
 		s.Use = []byte(useResult.String())
 	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting Created
+	createdResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'ClaimResponse.created')[0]")
+	if err == nil && createdResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, createdResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.Created = t
 		}
 	}
 	return nil

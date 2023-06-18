@@ -14,81 +14,81 @@ import (
 
 type FhirQuestionnaire struct {
 	models.OriginBase
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
-	// A quantity- or range-valued use context assigned to the questionnaire
-	// https://hl7.org/fhir/r4/search.html#quantity
-	ContextQuantity datatypes.JSON `gorm:"column:contextQuantity;type:text;serializer:json" json:"contextQuantity,omitempty"`
-	// ElementDefinition - details for the item
-	// https://hl7.org/fhir/r4/search.html#uri
-	Definition string `gorm:"column:definition;type:text" json:"definition,omitempty"`
-	// Name of the publisher of the questionnaire
-	// https://hl7.org/fhir/r4/search.html#string
-	Publisher string `gorm:"column:publisher;type:text" json:"publisher,omitempty"`
-	// The current status of the questionnaire
-	// https://hl7.org/fhir/r4/search.html#token
-	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
-	// The uri that identifies the questionnaire
-	// https://hl7.org/fhir/r4/search.html#uri
-	Url string `gorm:"column:url;type:text" json:"url,omitempty"`
-	// Profiles this resource claims to conform to
-	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
-	// Intended jurisdiction for the questionnaire
-	// https://hl7.org/fhir/r4/search.html#token
-	Jurisdiction datatypes.JSON `gorm:"column:jurisdiction;type:text;serializer:json" json:"jurisdiction,omitempty"`
-	// Computationally friendly name of the questionnaire
-	// https://hl7.org/fhir/r4/search.html#string
-	Name string `gorm:"column:name;type:text" json:"name,omitempty"`
-	// Resource that can be subject of QuestionnaireResponse
-	// https://hl7.org/fhir/r4/search.html#token
-	SubjectType datatypes.JSON `gorm:"column:subjectType;type:text;serializer:json" json:"subjectType,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// A code that corresponds to one of its items in the questionnaire
 	// https://hl7.org/fhir/r4/search.html#token
 	Code datatypes.JSON `gorm:"column:code;type:text;serializer:json" json:"code,omitempty"`
-	// A type of use context assigned to the questionnaire
-	// https://hl7.org/fhir/r4/search.html#token
-	ContextType datatypes.JSON `gorm:"column:contextType;type:text;serializer:json" json:"contextType,omitempty"`
-	// The description of the questionnaire
-	// https://hl7.org/fhir/r4/search.html#string
-	Description string `gorm:"column:description;type:text" json:"description,omitempty"`
-	// The human-friendly name of the questionnaire
-	// https://hl7.org/fhir/r4/search.html#string
-	Title string `gorm:"column:title;type:text" json:"title,omitempty"`
-	// The business version of the questionnaire
-	// https://hl7.org/fhir/r4/search.html#token
-	Version datatypes.JSON `gorm:"column:version;type:text;serializer:json" json:"version,omitempty"`
-	// Language of the resource content
-	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 	// A use context assigned to the questionnaire
 	// https://hl7.org/fhir/r4/search.html#token
 	Context datatypes.JSON `gorm:"column:context;type:text;serializer:json" json:"context,omitempty"`
+	// A quantity- or range-valued use context assigned to the questionnaire
+	// https://hl7.org/fhir/r4/search.html#quantity
+	ContextQuantity datatypes.JSON `gorm:"column:contextQuantity;type:text;serializer:json" json:"contextQuantity,omitempty"`
+	// A type of use context assigned to the questionnaire
+	// https://hl7.org/fhir/r4/search.html#token
+	ContextType datatypes.JSON `gorm:"column:contextType;type:text;serializer:json" json:"contextType,omitempty"`
 	// The questionnaire publication date
 	// https://hl7.org/fhir/r4/search.html#date
 	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	// ElementDefinition - details for the item
+	// https://hl7.org/fhir/r4/search.html#uri
+	Definition string `gorm:"column:definition;type:text" json:"definition,omitempty"`
+	// The description of the questionnaire
+	// https://hl7.org/fhir/r4/search.html#string
+	Description string `gorm:"column:description;type:text" json:"description,omitempty"`
 	// The time during which the questionnaire is intended to be in use
 	// https://hl7.org/fhir/r4/search.html#date
 	Effective time.Time `gorm:"column:effective;type:datetime" json:"effective,omitempty"`
 	// External identifier for the questionnaire
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
+	// Intended jurisdiction for the questionnaire
+	// https://hl7.org/fhir/r4/search.html#token
+	Jurisdiction datatypes.JSON `gorm:"column:jurisdiction;type:text;serializer:json" json:"jurisdiction,omitempty"`
+	// Language of the resource content
+	// https://hl7.org/fhir/r4/search.html#token
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// Computationally friendly name of the questionnaire
+	// https://hl7.org/fhir/r4/search.html#string
+	Name string `gorm:"column:name;type:text" json:"name,omitempty"`
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// Name of the publisher of the questionnaire
+	// https://hl7.org/fhir/r4/search.html#string
+	Publisher string `gorm:"column:publisher;type:text" json:"publisher,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// Identifies where the resource comes from
+	// https://hl7.org/fhir/r4/search.html#uri
+	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
+	// The current status of the questionnaire
+	// https://hl7.org/fhir/r4/search.html#token
+	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
+	// Resource that can be subject of QuestionnaireResponse
+	// https://hl7.org/fhir/r4/search.html#token
+	SubjectType datatypes.JSON `gorm:"column:subjectType;type:text;serializer:json" json:"subjectType,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// The human-friendly name of the questionnaire
+	// https://hl7.org/fhir/r4/search.html#string
+	Title string `gorm:"column:title;type:text" json:"title,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// The uri that identifies the questionnaire
+	// https://hl7.org/fhir/r4/search.html#uri
+	Url string `gorm:"column:url;type:text" json:"url,omitempty"`
+	// The business version of the questionnaire
+	// https://hl7.org/fhir/r4/search.html#token
+	Version datatypes.JSON `gorm:"column:version;type:text;serializer:json" json:"version,omitempty"`
 }
 
 func (s *FhirQuestionnaire) SetOriginBase(originBase models.OriginBase) {
@@ -151,15 +151,53 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(rawResource json.
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Jurisdiction
-	jurisdictionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.jurisdiction'))")
-	if err == nil && jurisdictionResult.String() != "undefined" {
-		s.Jurisdiction = []byte(jurisdictionResult.String())
+	// extracting Context
+	contextResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Questionnaire.useContext.valueCodeableConcept)'))")
+	if err == nil && contextResult.String() != "undefined" {
+		s.Context = []byte(contextResult.String())
 	}
-	// extracting Name
-	nameResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.name')[0])")
-	if err == nil && nameResult.String() != "undefined" {
-		s.Name = nameResult.String()
+	// extracting ContextQuantity
+	contextQuantityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Questionnaire.useContext.valueQuantity) | (Questionnaire.useContext.valueRange)'))")
+	if err == nil && contextQuantityResult.String() != "undefined" {
+		s.ContextQuantity = []byte(contextQuantityResult.String())
+	}
+	// extracting Url
+	urlResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.url')[0]")
+	if err == nil && urlResult.String() != "undefined" {
+		s.Url = urlResult.String()
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting ContextType
+	contextTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.useContext.code'))")
+	if err == nil && contextTypeResult.String() != "undefined" {
+		s.ContextType = []byte(contextTypeResult.String())
+	}
+	// extracting Definition
+	definitionResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.item.definition')[0]")
+	if err == nil && definitionResult.String() != "undefined" {
+		s.Definition = definitionResult.String()
+	}
+	// extracting Effective
+	effectiveResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.effectivePeriod')[0]")
+	if err == nil && effectiveResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, effectiveResult.String())
+		if err == nil {
+			s.Effective = t
+		}
+	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
 	}
 	// extracting SubjectType
 	subjectTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.subjectType'))")
@@ -167,30 +205,58 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(rawResource json.
 		s.SubjectType = []byte(subjectTypeResult.String())
 	}
 	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
 			s.LastUpdated = t
 		}
 	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
 	// extracting Code
 	codeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.item.code'))")
 	if err == nil && codeResult.String() != "undefined" {
 		s.Code = []byte(codeResult.String())
 	}
-	// extracting ContextType
-	contextTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.useContext.code'))")
-	if err == nil && contextTypeResult.String() != "undefined" {
-		s.ContextType = []byte(contextTypeResult.String())
+	// extracting Date
+	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.date')[0]")
+	if err == nil && dateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, dateResult.String())
+		if err == nil {
+			s.Date = t
+		}
 	}
 	// extracting Description
-	descriptionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.description')[0])")
+	descriptionResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.description')[0]")
 	if err == nil && descriptionResult.String() != "undefined" {
 		s.Description = descriptionResult.String()
 	}
+	// extracting Name
+	nameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.name')[0]")
+	if err == nil && nameResult.String() != "undefined" {
+		s.Name = nameResult.String()
+	}
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
+	}
+	// extracting Jurisdiction
+	jurisdictionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.jurisdiction'))")
+	if err == nil && jurisdictionResult.String() != "undefined" {
+		s.Jurisdiction = []byte(jurisdictionResult.String())
+	}
+	// extracting Publisher
+	publisherResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.publisher')[0]")
+	if err == nil && publisherResult.String() != "undefined" {
+		s.Publisher = publisherResult.String()
+	}
 	// extracting Title
-	titleResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.title')[0])")
+	titleResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Questionnaire.title')[0]")
 	if err == nil && titleResult.String() != "undefined" {
 		s.Title = titleResult.String()
 	}
@@ -203,72 +269,6 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(rawResource json.
 	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
-	}
-	// extracting Context
-	contextResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Questionnaire.useContext.valueCodeableConcept)'))")
-	if err == nil && contextResult.String() != "undefined" {
-		s.Context = []byte(contextResult.String())
-	}
-	// extracting Date
-	dateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.date')[0])")
-	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
-			s.Date = t
-		}
-	}
-	// extracting Effective
-	effectiveResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.effectivePeriod')[0])")
-	if err == nil && effectiveResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, effectiveResult.String())
-		if err == nil {
-			s.Effective = t
-		}
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
-	// extracting ContextQuantity
-	contextQuantityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Questionnaire.useContext.valueQuantity) | (Questionnaire.useContext.valueRange)'))")
-	if err == nil && contextQuantityResult.String() != "undefined" {
-		s.ContextQuantity = []byte(contextQuantityResult.String())
-	}
-	// extracting Definition
-	definitionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.item.definition')[0])")
-	if err == nil && definitionResult.String() != "undefined" {
-		s.Definition = definitionResult.String()
-	}
-	// extracting Publisher
-	publisherResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.publisher')[0])")
-	if err == nil && publisherResult.String() != "undefined" {
-		s.Publisher = publisherResult.String()
-	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
-	}
-	// extracting Url
-	urlResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Questionnaire.url')[0])")
-	if err == nil && urlResult.String() != "undefined" {
-		s.Url = urlResult.String()
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
 	}
 	return nil
 }

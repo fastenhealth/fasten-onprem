@@ -14,57 +14,57 @@ import (
 
 type FhirProvenance struct {
 	models.OriginBase
-	// What the agents role was
-	// https://hl7.org/fhir/r4/search.html#token
-	AgentRole datatypes.JSON `gorm:"column:agentRole;type:text;serializer:json" json:"agentRole,omitempty"`
-	// Indication of the reason the entity signed the object(s)
-	// https://hl7.org/fhir/r4/search.html#token
-	SignatureType datatypes.JSON `gorm:"column:signatureType;type:text;serializer:json" json:"signatureType,omitempty"`
-	// Language of the resource content
-	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
-	// Target Reference(s) (usually version specific)
-	// https://hl7.org/fhir/r4/search.html#reference
-	Target datatypes.JSON `gorm:"column:target;type:text;serializer:json" json:"target,omitempty"`
-	// When the activity occurred
-	// https://hl7.org/fhir/r4/search.html#date
-	When time.Time `gorm:"column:when;type:datetime" json:"when,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Who participated
 	// https://hl7.org/fhir/r4/search.html#reference
 	Agent datatypes.JSON `gorm:"column:agent;type:text;serializer:json" json:"agent,omitempty"`
+	// What the agents role was
+	// https://hl7.org/fhir/r4/search.html#token
+	AgentRole datatypes.JSON `gorm:"column:agentRole;type:text;serializer:json" json:"agentRole,omitempty"`
 	// How the agent participated
 	// https://hl7.org/fhir/r4/search.html#token
 	AgentType datatypes.JSON `gorm:"column:agentType;type:text;serializer:json" json:"agentType,omitempty"`
-	// Where the activity occurred, if relevant
-	// https://hl7.org/fhir/r4/search.html#reference
-	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
-	// When the activity was recorded / updated
-	// https://hl7.org/fhir/r4/search.html#date
-	Recorded time.Time `gorm:"column:recorded;type:datetime" json:"recorded,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
 	// Identity of entity
 	// https://hl7.org/fhir/r4/search.html#reference
 	Entity datatypes.JSON `gorm:"column:entity;type:text;serializer:json" json:"entity,omitempty"`
+	// Language of the resource content
+	// https://hl7.org/fhir/r4/search.html#token
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// Where the activity occurred, if relevant
+	// https://hl7.org/fhir/r4/search.html#reference
+	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// When the activity was recorded / updated
+	// https://hl7.org/fhir/r4/search.html#date
+	Recorded time.Time `gorm:"column:recorded;type:datetime" json:"recorded,omitempty"`
+	// Indication of the reason the entity signed the object(s)
+	// https://hl7.org/fhir/r4/search.html#token
+	SignatureType datatypes.JSON `gorm:"column:signatureType;type:text;serializer:json" json:"signatureType,omitempty"`
+	// Identifies where the resource comes from
+	// https://hl7.org/fhir/r4/search.html#uri
+	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Target Reference(s) (usually version specific)
+	// https://hl7.org/fhir/r4/search.html#reference
+	Target datatypes.JSON `gorm:"column:target;type:text;serializer:json" json:"target,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// When the activity occurred
+	// https://hl7.org/fhir/r4/search.html#date
+	When time.Time `gorm:"column:when;type:datetime" json:"when,omitempty"`
 }
 
 func (s *FhirProvenance) SetOriginBase(originBase models.OriginBase) {
@@ -119,49 +119,8 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(rawResource json.Raw
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting AgentRole
-	agentRoleResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.agent.role'))")
-	if err == nil && agentRoleResult.String() != "undefined" {
-		s.AgentRole = []byte(agentRoleResult.String())
-	}
-	// extracting SignatureType
-	signatureTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.signature.type'))")
-	if err == nil && signatureTypeResult.String() != "undefined" {
-		s.SignatureType = []byte(signatureTypeResult.String())
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Recorded
-	recordedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.recorded')[0])")
-	if err == nil && recordedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, recordedResult.String())
-		if err == nil {
-			s.Recorded = t
-		}
-	}
-	// extracting Target
-	targetResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.target'))")
-	if err == nil && targetResult.String() != "undefined" {
-		s.Target = []byte(targetResult.String())
-	}
-	// extracting When
-	whenResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Provenance.occurreddateTime)')[0])")
-	if err == nil && whenResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, whenResult.String())
-		if err == nil {
-			s.When = t
-		}
-	}
 	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
@@ -178,6 +137,57 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(rawResource json.Raw
 	if err == nil && agentResult.String() != "undefined" {
 		s.Agent = []byte(agentResult.String())
 	}
+	// extracting Entity
+	entityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.entity.what'))")
+	if err == nil && entityResult.String() != "undefined" {
+		s.Entity = []byte(entityResult.String())
+	}
+	// extracting When
+	whenResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Provenance.occurreddateTime)')[0]")
+	if err == nil && whenResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, whenResult.String())
+		if err == nil {
+			s.When = t
+		}
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting AgentRole
+	agentRoleResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.agent.role'))")
+	if err == nil && agentRoleResult.String() != "undefined" {
+		s.AgentRole = []byte(agentRoleResult.String())
+	}
+	// extracting Target
+	targetResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.target'))")
+	if err == nil && targetResult.String() != "undefined" {
+		s.Target = []byte(targetResult.String())
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting Recorded
+	recordedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Provenance.recorded')[0]")
+	if err == nil && recordedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, recordedResult.String())
+		if err == nil {
+			s.Recorded = t
+		}
+	}
+	// extracting SignatureType
+	signatureTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.signature.type'))")
+	if err == nil && signatureTypeResult.String() != "undefined" {
+		s.SignatureType = []byte(signatureTypeResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
 	// extracting AgentType
 	agentTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.agent.type'))")
 	if err == nil && agentTypeResult.String() != "undefined" {
@@ -187,16 +197,6 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(rawResource json.Raw
 	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.location'))")
 	if err == nil && locationResult.String() != "undefined" {
 		s.Location = []byte(locationResult.String())
-	}
-	// extracting Entity
-	entityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.entity.what'))")
-	if err == nil && entityResult.String() != "undefined" {
-		s.Entity = []byte(entityResult.String())
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	return nil
 }

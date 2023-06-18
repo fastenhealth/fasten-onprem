@@ -14,102 +14,9 @@ import (
 
 type FhirRelatedPerson struct {
 	models.OriginBase
-	/*
-	   Multiple Resources:
-
-	   * [Patient](patient.html): A country specified in an address
-	   * [Person](person.html): A country specified in an address
-	   * [Practitioner](practitioner.html): A country specified in an address
-	   * [RelatedPerson](relatedperson.html): A country specified in an address
-	*/
-	// https://hl7.org/fhir/r4/search.html#string
-	AddressCountry string `gorm:"column:addressCountry;type:text" json:"addressCountry,omitempty"`
-	/*
-	   Multiple Resources:
-
-	   * [Patient](patient.html): The patient's date of birth
-	   * [Person](person.html): The person's date of birth
-	   * [RelatedPerson](relatedperson.html): The Related Person's date of birth
-	*/
-	// https://hl7.org/fhir/r4/search.html#date
-	Birthdate time.Time `gorm:"column:birthdate;type:datetime" json:"birthdate,omitempty"`
-	// An Identifier of the RelatedPerson
+	// Indicates if the related person record is active
 	// https://hl7.org/fhir/r4/search.html#token
-	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
-	/*
-	   Multiple Resources:
-
-	   * [Patient](patient.html): Gender of the patient
-	   * [Person](person.html): The gender of the person
-	   * [Practitioner](practitioner.html): Gender of the practitioner
-	   * [RelatedPerson](relatedperson.html): Gender of the related person
-	*/
-	// https://hl7.org/fhir/r4/search.html#token
-	Gender datatypes.JSON `gorm:"column:gender;type:text;serializer:json" json:"gender,omitempty"`
-	/*
-	   Multiple Resources:
-
-	   * [Patient](patient.html): A value in a phone contact
-	   * [Person](person.html): A value in a phone contact
-	   * [Practitioner](practitioner.html): A value in a phone contact
-	   * [PractitionerRole](practitionerrole.html): A value in a phone contact
-	   * [RelatedPerson](relatedperson.html): A value in a phone contact
-	*/
-	// https://hl7.org/fhir/r4/search.html#token
-	Phone datatypes.JSON `gorm:"column:phone;type:text;serializer:json" json:"phone,omitempty"`
-	// Language of the resource content
-	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
-	/*
-	   Multiple Resources:
-
-	   * [Patient](patient.html): A use code specified in an address
-	   * [Person](person.html): A use code specified in an address
-	   * [Practitioner](practitioner.html): A use code specified in an address
-	   * [RelatedPerson](relatedperson.html): A use code specified in an address
-	*/
-	// https://hl7.org/fhir/r4/search.html#token
-	AddressUse datatypes.JSON `gorm:"column:addressUse;type:text;serializer:json" json:"addressUse,omitempty"`
-	/*
-	   Multiple Resources:
-
-	   * [Patient](patient.html): A value in an email contact
-	   * [Person](person.html): A value in an email contact
-	   * [Practitioner](practitioner.html): A value in an email contact
-	   * [PractitionerRole](practitionerrole.html): A value in an email contact
-	   * [RelatedPerson](relatedperson.html): A value in an email contact
-	*/
-	// https://hl7.org/fhir/r4/search.html#token
-	Email datatypes.JSON `gorm:"column:email;type:text;serializer:json" json:"email,omitempty"`
-	/*
-	   Multiple Resources:
-
-	   * [Patient](patient.html): The value in any kind of telecom details of the patient
-	   * [Person](person.html): The value in any kind of contact
-	   * [Practitioner](practitioner.html): The value in any kind of contact
-	   * [PractitionerRole](practitionerrole.html): The value in any kind of contact
-	   * [RelatedPerson](relatedperson.html): The value in any kind of contact
-	*/
-	// https://hl7.org/fhir/r4/search.html#token
-	Telecom datatypes.JSON `gorm:"column:telecom;type:text;serializer:json" json:"telecom,omitempty"`
-	// The relationship between the patient and the relatedperson
-	// https://hl7.org/fhir/r4/search.html#token
-	Relationship datatypes.JSON `gorm:"column:relationship;type:text;serializer:json" json:"relationship,omitempty"`
+	Active datatypes.JSON `gorm:"column:active;type:text;serializer:json" json:"active,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -133,6 +40,16 @@ type FhirRelatedPerson struct {
 	/*
 	   Multiple Resources:
 
+	   * [Patient](patient.html): A country specified in an address
+	   * [Person](person.html): A country specified in an address
+	   * [Practitioner](practitioner.html): A country specified in an address
+	   * [RelatedPerson](relatedperson.html): A country specified in an address
+	*/
+	// https://hl7.org/fhir/r4/search.html#string
+	AddressCountry string `gorm:"column:addressCountry;type:text" json:"addressCountry,omitempty"`
+	/*
+	   Multiple Resources:
+
 	   * [Patient](patient.html): A postalCode specified in an address
 	   * [Person](person.html): A postal code specified in an address
 	   * [Practitioner](practitioner.html): A postalCode specified in an address
@@ -150,12 +67,69 @@ type FhirRelatedPerson struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#string
 	AddressState string `gorm:"column:addressState;type:text" json:"addressState,omitempty"`
-	// Profiles this resource claims to conform to
-	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	/*
+	   Multiple Resources:
+
+	   * [Patient](patient.html): A use code specified in an address
+	   * [Person](person.html): A use code specified in an address
+	   * [Practitioner](practitioner.html): A use code specified in an address
+	   * [RelatedPerson](relatedperson.html): A use code specified in an address
+	*/
+	// https://hl7.org/fhir/r4/search.html#token
+	AddressUse datatypes.JSON `gorm:"column:addressUse;type:text;serializer:json" json:"addressUse,omitempty"`
+	/*
+	   Multiple Resources:
+
+	   * [Patient](patient.html): The patient's date of birth
+	   * [Person](person.html): The person's date of birth
+	   * [RelatedPerson](relatedperson.html): The Related Person's date of birth
+	*/
+	// https://hl7.org/fhir/r4/search.html#date
+	Birthdate time.Time `gorm:"column:birthdate;type:datetime" json:"birthdate,omitempty"`
+	/*
+	   Multiple Resources:
+
+	   * [Patient](patient.html): A value in an email contact
+	   * [Person](person.html): A value in an email contact
+	   * [Practitioner](practitioner.html): A value in an email contact
+	   * [PractitionerRole](practitionerrole.html): A value in an email contact
+	   * [RelatedPerson](relatedperson.html): A value in an email contact
+	*/
+	// https://hl7.org/fhir/r4/search.html#token
+	Email datatypes.JSON `gorm:"column:email;type:text;serializer:json" json:"email,omitempty"`
+	/*
+	   Multiple Resources:
+
+	   * [Patient](patient.html): Gender of the patient
+	   * [Person](person.html): The gender of the person
+	   * [Practitioner](practitioner.html): Gender of the practitioner
+	   * [RelatedPerson](relatedperson.html): Gender of the related person
+	*/
+	// https://hl7.org/fhir/r4/search.html#token
+	Gender datatypes.JSON `gorm:"column:gender;type:text;serializer:json" json:"gender,omitempty"`
+	// An Identifier of the RelatedPerson
+	// https://hl7.org/fhir/r4/search.html#token
+	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
+	// Language of the resource content
+	// https://hl7.org/fhir/r4/search.html#token
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// A server defined search that may match any of the string fields in the HumanName, including family, give, prefix, suffix, suffix, and/or text
+	// https://hl7.org/fhir/r4/search.html#string
+	Name string `gorm:"column:name;type:text" json:"name,omitempty"`
+	/*
+	   Multiple Resources:
+
+	   * [Patient](patient.html): A value in a phone contact
+	   * [Person](person.html): A value in a phone contact
+	   * [Practitioner](practitioner.html): A value in a phone contact
+	   * [PractitionerRole](practitionerrole.html): A value in a phone contact
+	   * [RelatedPerson](relatedperson.html): A value in a phone contact
+	*/
+	// https://hl7.org/fhir/r4/search.html#token
+	Phone datatypes.JSON `gorm:"column:phone;type:text;serializer:json" json:"phone,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -166,12 +140,38 @@ type FhirRelatedPerson struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#string
 	Phonetic string `gorm:"column:phonetic;type:text" json:"phonetic,omitempty"`
-	// Indicates if the related person record is active
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// The relationship between the patient and the relatedperson
 	// https://hl7.org/fhir/r4/search.html#token
-	Active datatypes.JSON `gorm:"column:active;type:text;serializer:json" json:"active,omitempty"`
-	// A server defined search that may match any of the string fields in the HumanName, including family, give, prefix, suffix, suffix, and/or text
+	Relationship datatypes.JSON `gorm:"column:relationship;type:text;serializer:json" json:"relationship,omitempty"`
+	// Identifies where the resource comes from
+	// https://hl7.org/fhir/r4/search.html#uri
+	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	/*
+	   Multiple Resources:
+
+	   * [Patient](patient.html): The value in any kind of telecom details of the patient
+	   * [Person](person.html): The value in any kind of contact
+	   * [Practitioner](practitioner.html): The value in any kind of contact
+	   * [PractitionerRole](practitionerrole.html): The value in any kind of contact
+	   * [RelatedPerson](relatedperson.html): The value in any kind of contact
+	*/
+	// https://hl7.org/fhir/r4/search.html#token
+	Telecom datatypes.JSON `gorm:"column:telecom;type:text;serializer:json" json:"telecom,omitempty"`
+	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
-	Name string `gorm:"column:name;type:text" json:"name,omitempty"`
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
 func (s *FhirRelatedPerson) SetOriginBase(originBase models.OriginBase) {
@@ -233,116 +233,116 @@ func (s *FhirRelatedPerson) PopulateAndExtractSearchParameters(rawResource json.
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting AddressCountry
-	addressCountryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.address.country | Person.address.country | Practitioner.address.country | RelatedPerson.address.country')[0])")
-	if err == nil && addressCountryResult.String() != "undefined" {
-		s.AddressCountry = addressCountryResult.String()
-	}
-	// extracting Birthdate
-	birthdateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.birthDate | Person.birthDate | RelatedPerson.birthDate')[0])")
-	if err == nil && birthdateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, birthdateResult.String())
-		if err == nil {
-			s.Birthdate = t
-		}
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'RelatedPerson.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting Gender
-	genderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.gender | Person.gender | Practitioner.gender | RelatedPerson.gender'))")
-	if err == nil && genderResult.String() != "undefined" {
-		s.Gender = []byte(genderResult.String())
-	}
-	// extracting Phone
-	phoneResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom.where(system='phone') | Person.telecom.where(system='phone') | Practitioner.telecom.where(system='phone') | PractitionerRole.telecom.where(system='phone') | RelatedPerson.telecom.where(system='phone')'))")
-	if err == nil && phoneResult.String() != "undefined" {
-		s.Phone = []byte(phoneResult.String())
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting AddressUse
-	addressUseResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.address.use | Person.address.use | Practitioner.address.use | RelatedPerson.address.use'))")
-	if err == nil && addressUseResult.String() != "undefined" {
-		s.AddressUse = []byte(addressUseResult.String())
-	}
-	// extracting Email
-	emailResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom.where(system='email') | Person.telecom.where(system='email') | Practitioner.telecom.where(system='email') | PractitionerRole.telecom.where(system='email') | RelatedPerson.telecom.where(system='email')'))")
-	if err == nil && emailResult.String() != "undefined" {
-		s.Email = []byte(emailResult.String())
-	}
-	// extracting Telecom
-	telecomResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom | Person.telecom | Practitioner.telecom | PractitionerRole.telecom | RelatedPerson.telecom'))")
-	if err == nil && telecomResult.String() != "undefined" {
-		s.Telecom = []byte(telecomResult.String())
-	}
-	// extracting Relationship
-	relationshipResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'RelatedPerson.relationship'))")
-	if err == nil && relationshipResult.String() != "undefined" {
-		s.Relationship = []byte(relationshipResult.String())
-	}
-	// extracting Address
-	addressResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.address | Person.address | Practitioner.address | RelatedPerson.address')[0])")
-	if err == nil && addressResult.String() != "undefined" {
-		s.Address = addressResult.String()
-	}
-	// extracting AddressCity
-	addressCityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.address.city | Person.address.city | Practitioner.address.city | RelatedPerson.address.city')[0])")
-	if err == nil && addressCityResult.String() != "undefined" {
-		s.AddressCity = addressCityResult.String()
-	}
-	// extracting AddressPostalcode
-	addressPostalcodeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.address.postalCode | Person.address.postalCode | Practitioner.address.postalCode | RelatedPerson.address.postalCode')[0])")
-	if err == nil && addressPostalcodeResult.String() != "undefined" {
-		s.AddressPostalcode = addressPostalcodeResult.String()
-	}
-	// extracting AddressState
-	addressStateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.address.state | Person.address.state | Practitioner.address.state | RelatedPerson.address.state')[0])")
-	if err == nil && addressStateResult.String() != "undefined" {
-		s.AddressState = addressStateResult.String()
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting Phonetic
-	phoneticResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.name | Person.name | Practitioner.name | RelatedPerson.name')[0])")
-	if err == nil && phoneticResult.String() != "undefined" {
-		s.Phonetic = phoneticResult.String()
-	}
 	// extracting Active
 	activeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'RelatedPerson.active'))")
 	if err == nil && activeResult.String() != "undefined" {
 		s.Active = []byte(activeResult.String())
 	}
 	// extracting Name
-	nameResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'RelatedPerson.name')[0])")
+	nameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'RelatedPerson.name')[0]")
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = nameResult.String()
+	}
+	// extracting Relationship
+	relationshipResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'RelatedPerson.relationship'))")
+	if err == nil && relationshipResult.String() != "undefined" {
+		s.Relationship = []byte(relationshipResult.String())
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
+	// extracting Address
+	addressResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address | Person.address | Practitioner.address | RelatedPerson.address')[0]")
+	if err == nil && addressResult.String() != "undefined" {
+		s.Address = addressResult.String()
+	}
+	// extracting AddressPostalcode
+	addressPostalcodeResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address.postalCode | Person.address.postalCode | Practitioner.address.postalCode | RelatedPerson.address.postalCode')[0]")
+	if err == nil && addressPostalcodeResult.String() != "undefined" {
+		s.AddressPostalcode = addressPostalcodeResult.String()
+	}
+	// extracting Phonetic
+	phoneticResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.name | Person.name | Practitioner.name | RelatedPerson.name')[0]")
+	if err == nil && phoneticResult.String() != "undefined" {
+		s.Phonetic = phoneticResult.String()
+	}
+	// extracting AddressUse
+	addressUseResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.address.use | Person.address.use | Practitioner.address.use | RelatedPerson.address.use'))")
+	if err == nil && addressUseResult.String() != "undefined" {
+		s.AddressUse = []byte(addressUseResult.String())
+	}
+	// extracting Birthdate
+	birthdateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.birthDate | Person.birthDate | RelatedPerson.birthDate')[0]")
+	if err == nil && birthdateResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, birthdateResult.String())
+		if err == nil {
+			s.Birthdate = t
+		}
+	}
+	// extracting Email
+	emailResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom.where(system='email') | Person.telecom.where(system='email') | Practitioner.telecom.where(system='email') | PractitionerRole.telecom.where(system='email') | RelatedPerson.telecom.where(system='email')'))")
+	if err == nil && emailResult.String() != "undefined" {
+		s.Email = []byte(emailResult.String())
+	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'RelatedPerson.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting AddressCity
+	addressCityResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address.city | Person.address.city | Practitioner.address.city | RelatedPerson.address.city')[0]")
+	if err == nil && addressCityResult.String() != "undefined" {
+		s.AddressCity = addressCityResult.String()
+	}
+	// extracting AddressCountry
+	addressCountryResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address.country | Person.address.country | Practitioner.address.country | RelatedPerson.address.country')[0]")
+	if err == nil && addressCountryResult.String() != "undefined" {
+		s.AddressCountry = addressCountryResult.String()
+	}
+	// extracting AddressState
+	addressStateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address.state | Person.address.state | Practitioner.address.state | RelatedPerson.address.state')[0]")
+	if err == nil && addressStateResult.String() != "undefined" {
+		s.AddressState = addressStateResult.String()
+	}
+	// extracting Gender
+	genderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.gender | Person.gender | Practitioner.gender | RelatedPerson.gender'))")
+	if err == nil && genderResult.String() != "undefined" {
+		s.Gender = []byte(genderResult.String())
+	}
+	// extracting Telecom
+	telecomResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom | Person.telecom | Practitioner.telecom | PractitionerRole.telecom | RelatedPerson.telecom'))")
+	if err == nil && telecomResult.String() != "undefined" {
+		s.Telecom = []byte(telecomResult.String())
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting Phone
+	phoneResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.telecom.where(system='phone') | Person.telecom.where(system='phone') | Practitioner.telecom.where(system='phone') | PractitionerRole.telecom.where(system='phone') | RelatedPerson.telecom.where(system='phone')'))")
+	if err == nil && phoneResult.String() != "undefined" {
+		s.Phone = []byte(phoneResult.String())
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
 	}
 	return nil
 }

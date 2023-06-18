@@ -14,45 +14,45 @@ import (
 
 type FhirEndpoint struct {
 	models.OriginBase
-	// The organization that is managing the endpoint
-	// https://hl7.org/fhir/r4/search.html#reference
-	Organization datatypes.JSON `gorm:"column:organization;type:text;serializer:json" json:"organization,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// Identifies this endpoint across multiple systems
-	// https://hl7.org/fhir/r4/search.html#token
-	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
-	// A name that this endpoint can be identified by
-	// https://hl7.org/fhir/r4/search.html#string
-	Name string `gorm:"column:name;type:text" json:"name,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
 	// Protocol/Profile/Standard to be used with this endpoint connection
 	// https://hl7.org/fhir/r4/search.html#token
 	ConnectionType datatypes.JSON `gorm:"column:connectionType;type:text;serializer:json" json:"connectionType,omitempty"`
+	// Identifies this endpoint across multiple systems
+	// https://hl7.org/fhir/r4/search.html#token
+	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
 	// Language of the resource content
 	// https://hl7.org/fhir/r4/search.html#token
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// A name that this endpoint can be identified by
+	// https://hl7.org/fhir/r4/search.html#string
+	Name string `gorm:"column:name;type:text" json:"name,omitempty"`
+	// The organization that is managing the endpoint
+	// https://hl7.org/fhir/r4/search.html#reference
+	Organization datatypes.JSON `gorm:"column:organization;type:text;serializer:json" json:"organization,omitempty"`
+	// The type of content that may be used at this endpoint (e.g. XDS Discharge summaries)
+	// https://hl7.org/fhir/r4/search.html#token
+	PayloadType datatypes.JSON `gorm:"column:payloadType;type:text;serializer:json" json:"payloadType,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
 	// The raw resource content in JSON format
 	// https://hl7.org/fhir/r4/search.html#special
 	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
-	// The type of content that may be used at this endpoint (e.g. XDS Discharge summaries)
-	// https://hl7.org/fhir/r4/search.html#token
-	PayloadType datatypes.JSON `gorm:"column:payloadType;type:text;serializer:json" json:"payloadType,omitempty"`
-	// The current status of the Endpoint (usually expected to be active)
-	// https://hl7.org/fhir/r4/search.html#token
-	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
 	// Identifies where the resource comes from
 	// https://hl7.org/fhir/r4/search.html#uri
 	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
+	// The current status of the Endpoint (usually expected to be active)
+	// https://hl7.org/fhir/r4/search.html#token
+	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -107,63 +107,63 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(rawResource json.RawMe
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Organization
-	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.managingOrganization'))")
-	if err == nil && organizationResult.String() != "undefined" {
-		s.Organization = []byte(organizationResult.String())
-	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.identifier'))")
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
 	}
-	// extracting Name
-	nameResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.name')[0])")
-	if err == nil && nameResult.String() != "undefined" {
-		s.Name = nameResult.String()
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting ConnectionType
-	connectionTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.connectionType'))")
-	if err == nil && connectionTypeResult.String() != "undefined" {
-		s.ConnectionType = []byte(connectionTypeResult.String())
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Language
 	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
 	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting PayloadType
-	payloadTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.payloadType'))")
-	if err == nil && payloadTypeResult.String() != "undefined" {
-		s.PayloadType = []byte(payloadTypeResult.String())
+	// extracting Organization
+	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.managingOrganization'))")
+	if err == nil && organizationResult.String() != "undefined" {
+		s.Organization = []byte(organizationResult.String())
 	}
 	// extracting Status
 	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.status'))")
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
 	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
+	// extracting PayloadType
+	payloadTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.payloadType'))")
+	if err == nil && payloadTypeResult.String() != "undefined" {
+		s.PayloadType = []byte(payloadTypeResult.String())
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
+	}
+	// extracting ConnectionType
+	connectionTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.connectionType'))")
+	if err == nil && connectionTypeResult.String() != "undefined" {
+		s.ConnectionType = []byte(connectionTypeResult.String())
+	}
+	// extracting Name
+	nameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Endpoint.name')[0]")
+	if err == nil && nameResult.String() != "undefined" {
+		s.Name = nameResult.String()
 	}
 	return nil
 }

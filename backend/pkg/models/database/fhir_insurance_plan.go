@@ -14,39 +14,24 @@ import (
 
 type FhirInsurancePlan struct {
 	models.OriginBase
-	// A country specified in an address
-	// https://hl7.org/fhir/r4/search.html#string
-	AddressCountry string `gorm:"column:addressCountry;type:text" json:"addressCountry,omitempty"`
-	// Profiles this resource claims to conform to
-	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// A city specified in an address
-	// https://hl7.org/fhir/r4/search.html#string
-	AddressCity string `gorm:"column:addressCity;type:text" json:"addressCity,omitempty"`
-	// A postal code specified in an address
-	// https://hl7.org/fhir/r4/search.html#string
-	AddressPostalcode string `gorm:"column:addressPostalcode;type:text" json:"addressPostalcode,omitempty"`
-	// A use code specified in an address
-	// https://hl7.org/fhir/r4/search.html#token
-	AddressUse datatypes.JSON `gorm:"column:addressUse;type:text;serializer:json" json:"addressUse,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// Language of the resource content
-	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
-	// A portion of the organization's name using some kind of phonetic matching algorithm
-	// https://hl7.org/fhir/r4/search.html#string
-	Phonetic string `gorm:"column:phonetic;type:text" json:"phonetic,omitempty"`
-	// Is the Organization record active
-	// https://hl7.org/fhir/r4/search.html#token
-	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
 	// A server defined search that may match any of the string fields in the Address, including line, city, district, state, country, postalCode, and/or text
 	// https://hl7.org/fhir/r4/search.html#string
 	Address string `gorm:"column:address;type:text" json:"address,omitempty"`
+	// A city specified in an address
+	// https://hl7.org/fhir/r4/search.html#string
+	AddressCity string `gorm:"column:addressCity;type:text" json:"addressCity,omitempty"`
+	// A country specified in an address
+	// https://hl7.org/fhir/r4/search.html#string
+	AddressCountry string `gorm:"column:addressCountry;type:text" json:"addressCountry,omitempty"`
+	// A postal code specified in an address
+	// https://hl7.org/fhir/r4/search.html#string
+	AddressPostalcode string `gorm:"column:addressPostalcode;type:text" json:"addressPostalcode,omitempty"`
 	// A state specified in an address
 	// https://hl7.org/fhir/r4/search.html#string
 	AddressState string `gorm:"column:addressState;type:text" json:"addressState,omitempty"`
+	// A use code specified in an address
+	// https://hl7.org/fhir/r4/search.html#token
+	AddressUse datatypes.JSON `gorm:"column:addressUse;type:text;serializer:json" json:"addressUse,omitempty"`
 	// Product administrator
 	// https://hl7.org/fhir/r4/search.html#reference
 	AdministeredBy datatypes.JSON `gorm:"column:administeredBy;type:text;serializer:json" json:"administeredBy,omitempty"`
@@ -56,27 +41,42 @@ type FhirInsurancePlan struct {
 	// Any identifier for the organization (not the accreditation issuer's identifier)
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
-	// An organization of which this organization forms a part
-	// https://hl7.org/fhir/r4/search.html#reference
-	OwnedBy datatypes.JSON `gorm:"column:ownedBy;type:text;serializer:json" json:"ownedBy,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// Language of the resource content
+	// https://hl7.org/fhir/r4/search.html#token
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// A portion of the organization's name or alias
 	// https://hl7.org/fhir/r4/search.html#string
 	Name string `gorm:"column:name;type:text" json:"name,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// An organization of which this organization forms a part
+	// https://hl7.org/fhir/r4/search.html#reference
+	OwnedBy datatypes.JSON `gorm:"column:ownedBy;type:text;serializer:json" json:"ownedBy,omitempty"`
+	// A portion of the organization's name using some kind of phonetic matching algorithm
+	// https://hl7.org/fhir/r4/search.html#string
+	Phonetic string `gorm:"column:phonetic;type:text" json:"phonetic,omitempty"`
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
 	// The raw resource content in JSON format
 	// https://hl7.org/fhir/r4/search.html#special
 	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// Identifies where the resource comes from
+	// https://hl7.org/fhir/r4/search.html#uri
+	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
+	// Is the Organization record active
+	// https://hl7.org/fhir/r4/search.html#token
+	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
 func (s *FhirInsurancePlan) SetOriginBase(originBase models.OriginBase) {
@@ -136,97 +136,97 @@ func (s *FhirInsurancePlan) PopulateAndExtractSearchParameters(rawResource json.
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Name
-	nameResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'name | alias')[0])")
+	nameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'name | alias')[0]")
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = nameResult.String()
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting AddressCountry
-	addressCountryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.country')[0])")
-	if err == nil && addressCountryResult.String() != "undefined" {
-		s.AddressCountry = addressCountryResult.String()
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
-	// extracting AddressCity
-	addressCityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.city')[0])")
-	if err == nil && addressCityResult.String() != "undefined" {
-		s.AddressCity = addressCityResult.String()
-	}
-	// extracting AddressPostalcode
-	addressPostalcodeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.postalCode')[0])")
-	if err == nil && addressPostalcodeResult.String() != "undefined" {
-		s.AddressPostalcode = addressPostalcodeResult.String()
-	}
-	// extracting AddressUse
-	addressUseResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.use'))")
-	if err == nil && addressUseResult.String() != "undefined" {
-		s.AddressUse = []byte(addressUseResult.String())
-	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
 	}
 	// extracting OwnedBy
 	ownedByResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.ownedBy'))")
 	if err == nil && ownedByResult.String() != "undefined" {
 		s.OwnedBy = []byte(ownedByResult.String())
 	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
+	}
+	// extracting AddressCountry
+	addressCountryResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.country')[0]")
+	if err == nil && addressCountryResult.String() != "undefined" {
+		s.AddressCountry = addressCountryResult.String()
+	}
+	// extracting AddressPostalcode
+	addressPostalcodeResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.postalCode')[0]")
+	if err == nil && addressPostalcodeResult.String() != "undefined" {
+		s.AddressPostalcode = addressPostalcodeResult.String()
+	}
+	// extracting AddressState
+	addressStateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.state')[0]")
+	if err == nil && addressStateResult.String() != "undefined" {
+		s.AddressState = addressStateResult.String()
+	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting AddressUse
+	addressUseResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.use'))")
+	if err == nil && addressUseResult.String() != "undefined" {
+		s.AddressUse = []byte(addressUseResult.String())
+	}
 	// extracting Phonetic
-	phoneticResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.name')[0])")
+	phoneticResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'InsurancePlan.name')[0]")
 	if err == nil && phoneticResult.String() != "undefined" {
 		s.Phonetic = phoneticResult.String()
 	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
-	}
 	// extracting Address
-	addressResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address')[0])")
+	addressResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address')[0]")
 	if err == nil && addressResult.String() != "undefined" {
 		s.Address = addressResult.String()
-	}
-	// extracting AddressState
-	addressStateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.state')[0])")
-	if err == nil && addressStateResult.String() != "undefined" {
-		s.AddressState = addressStateResult.String()
 	}
 	// extracting AdministeredBy
 	administeredByResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.administeredBy'))")
 	if err == nil && administeredByResult.String() != "undefined" {
 		s.AdministeredBy = []byte(administeredByResult.String())
 	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting AddressCity
+	addressCityResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'InsurancePlan.contact.address.city')[0]")
+	if err == nil && addressCityResult.String() != "undefined" {
+		s.AddressCity = addressCityResult.String()
+	}
 	// extracting Endpoint
 	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.endpoint'))")
 	if err == nil && endpointResult.String() != "undefined" {
 		s.Endpoint = []byte(endpointResult.String())
+	}
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
 	}
 	return nil
 }

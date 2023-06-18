@@ -17,6 +17,29 @@ type FhirImmunization struct {
 	/*
 	   Multiple Resources:
 
+	   * [AllergyIntolerance](allergyintolerance.html): Date first version of the resource instance was recorded
+	   * [CarePlan](careplan.html): Time period plan covers
+	   * [CareTeam](careteam.html): Time period team covers
+	   * [ClinicalImpression](clinicalimpression.html): When the assessment was documented
+	   * [Composition](composition.html): Composition editing time
+	   * [Consent](consent.html): When this Consent was created or indexed
+	   * [DiagnosticReport](diagnosticreport.html): The clinically relevant time of the report
+	   * [Encounter](encounter.html): A date within the period the Encounter lasted
+	   * [EpisodeOfCare](episodeofcare.html): The provided date search value falls within the episode of care's period
+	   * [FamilyMemberHistory](familymemberhistory.html): When history was recorded or last updated
+	   * [Flag](flag.html): Time period when flag is active
+	   * [Immunization](immunization.html): Vaccination  (non)-Administration Date
+	   * [List](list.html): When the list was prepared
+	   * [Observation](observation.html): Obtained date/time. If the obtained element is a period, a date that falls in the period
+	   * [Procedure](procedure.html): When the procedure was performed
+	   * [RiskAssessment](riskassessment.html): When was assessment made?
+	   * [SupplyRequest](supplyrequest.html): When the request was made
+	*/
+	// https://hl7.org/fhir/r4/search.html#date
+	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	/*
+	   Multiple Resources:
+
 	   * [AllergyIntolerance](allergyintolerance.html): External ids for this item
 	   * [CarePlan](careplan.html): External Ids for this plan
 	   * [CareTeam](careteam.html): External Ids for this team
@@ -50,92 +73,69 @@ type FhirImmunization struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
-	// When reaction started
-	// https://hl7.org/fhir/r4/search.html#date
-	ReactionDate time.Time `gorm:"column:reactionDate;type:datetime" json:"reactionDate,omitempty"`
 	// Language of the resource content
 	// https://hl7.org/fhir/r4/search.html#token
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
-	// Vaccine Manufacturer
-	// https://hl7.org/fhir/r4/search.html#reference
-	Manufacturer datatypes.JSON `gorm:"column:manufacturer;type:text;serializer:json" json:"manufacturer,omitempty"`
-	// Why immunization occurred
-	// https://hl7.org/fhir/r4/search.html#reference
-	ReasonReference datatypes.JSON `gorm:"column:reasonReference;type:text;serializer:json" json:"reasonReference,omitempty"`
-	// Profiles this resource claims to conform to
-	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
 	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	/*
-	   Multiple Resources:
-
-	   * [AllergyIntolerance](allergyintolerance.html): Date first version of the resource instance was recorded
-	   * [CarePlan](careplan.html): Time period plan covers
-	   * [CareTeam](careteam.html): Time period team covers
-	   * [ClinicalImpression](clinicalimpression.html): When the assessment was documented
-	   * [Composition](composition.html): Composition editing time
-	   * [Consent](consent.html): When this Consent was created or indexed
-	   * [DiagnosticReport](diagnosticreport.html): The clinically relevant time of the report
-	   * [Encounter](encounter.html): A date within the period the Encounter lasted
-	   * [EpisodeOfCare](episodeofcare.html): The provided date search value falls within the episode of care's period
-	   * [FamilyMemberHistory](familymemberhistory.html): When history was recorded or last updated
-	   * [Flag](flag.html): Time period when flag is active
-	   * [Immunization](immunization.html): Vaccination  (non)-Administration Date
-	   * [List](list.html): When the list was prepared
-	   * [Observation](observation.html): Obtained date/time. If the obtained element is a period, a date that falls in the period
-	   * [Procedure](procedure.html): When the procedure was performed
-	   * [RiskAssessment](riskassessment.html): When was assessment made?
-	   * [SupplyRequest](supplyrequest.html): When the request was made
-	*/
-	// https://hl7.org/fhir/r4/search.html#date
-	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
 	// The service delivery location or facility in which the vaccine was / was to be administered
 	// https://hl7.org/fhir/r4/search.html#reference
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
+	// Vaccine Lot Number
+	// https://hl7.org/fhir/r4/search.html#string
+	LotNumber string `gorm:"column:lotNumber;type:text" json:"lotNumber,omitempty"`
+	// Vaccine Manufacturer
+	// https://hl7.org/fhir/r4/search.html#reference
+	Manufacturer datatypes.JSON `gorm:"column:manufacturer;type:text;serializer:json" json:"manufacturer,omitempty"`
+	// The practitioner or organization who played a role in the vaccination
+	// https://hl7.org/fhir/r4/search.html#reference
+	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
 	// Additional information on reaction
 	// https://hl7.org/fhir/r4/search.html#reference
 	Reaction datatypes.JSON `gorm:"column:reaction;type:text;serializer:json" json:"reaction,omitempty"`
+	// When reaction started
+	// https://hl7.org/fhir/r4/search.html#date
+	ReactionDate time.Time `gorm:"column:reactionDate;type:datetime" json:"reactionDate,omitempty"`
 	// Reason why the vaccine was administered
 	// https://hl7.org/fhir/r4/search.html#token
 	ReasonCode datatypes.JSON `gorm:"column:reasonCode;type:text;serializer:json" json:"reasonCode,omitempty"`
+	// Why immunization occurred
+	// https://hl7.org/fhir/r4/search.html#reference
+	ReasonReference datatypes.JSON `gorm:"column:reasonReference;type:text;serializer:json" json:"reasonReference,omitempty"`
+	// The series being followed by the provider
+	// https://hl7.org/fhir/r4/search.html#string
+	Series string `gorm:"column:series;type:text" json:"series,omitempty"`
+	// Identifies where the resource comes from
+	// https://hl7.org/fhir/r4/search.html#uri
+	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Immunization event status
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
 	// Reason why the vaccine was not administered
 	// https://hl7.org/fhir/r4/search.html#token
 	StatusReason datatypes.JSON `gorm:"column:statusReason;type:text;serializer:json" json:"statusReason,omitempty"`
-	// The target disease the dose is being administered against
-	// https://hl7.org/fhir/r4/search.html#token
-	TargetDisease datatypes.JSON `gorm:"column:targetDisease;type:text;serializer:json" json:"targetDisease,omitempty"`
 	// Tags applied to this resource
 	// https://hl7.org/fhir/r4/search.html#token
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// The target disease the dose is being administered against
+	// https://hl7.org/fhir/r4/search.html#token
+	TargetDisease datatypes.JSON `gorm:"column:targetDisease;type:text;serializer:json" json:"targetDisease,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
 	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// Vaccine Lot Number
-	// https://hl7.org/fhir/r4/search.html#string
-	LotNumber string `gorm:"column:lotNumber;type:text" json:"lotNumber,omitempty"`
-	// The practitioner or organization who played a role in the vaccination
-	// https://hl7.org/fhir/r4/search.html#reference
-	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`
-	// The series being followed by the provider
-	// https://hl7.org/fhir/r4/search.html#string
-	Series string `gorm:"column:series;type:text" json:"series,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 	// Vaccine Product Administered
 	// https://hl7.org/fhir/r4/search.html#token
 	VaccineCode datatypes.JSON `gorm:"column:vaccineCode;type:text;serializer:json" json:"vaccineCode,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
 }
 
 func (s *FhirImmunization) SetOriginBase(originBase models.OriginBase) {
@@ -196,26 +196,6 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(rawResource json.R
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Manufacturer
-	manufacturerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.manufacturer'))")
-	if err == nil && manufacturerResult.String() != "undefined" {
-		s.Manufacturer = []byte(manufacturerResult.String())
-	}
-	// extracting ReasonReference
-	reasonReferenceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.reasonReference'))")
-	if err == nil && reasonReferenceResult.String() != "undefined" {
-		s.ReasonReference = []byte(reasonReferenceResult.String())
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting ReasonCode
-	reasonCodeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.reasonCode'))")
-	if err == nil && reasonCodeResult.String() != "undefined" {
-		s.ReasonCode = []byte(reasonCodeResult.String())
-	}
 	// extracting Status
 	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.status'))")
 	if err == nil && statusResult.String() != "undefined" {
@@ -226,54 +206,89 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(rawResource json.R
 	if err == nil && statusReasonResult.String() != "undefined" {
 		s.StatusReason = []byte(statusReasonResult.String())
 	}
-	// extracting TargetDisease
-	targetDiseaseResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.protocolApplied.targetDisease'))")
-	if err == nil && targetDiseaseResult.String() != "undefined" {
-		s.TargetDisease = []byte(targetDiseaseResult.String())
-	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
+	// extracting VaccineCode
+	vaccineCodeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.vaccineCode'))")
+	if err == nil && vaccineCodeResult.String() != "undefined" {
+		s.VaccineCode = []byte(vaccineCodeResult.String())
 	}
 	// extracting Date
-	dateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrencedateTime) | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrencedateTime) | SupplyRequest.authoredOn')[0])")
+	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrencedateTime) | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrencedateTime) | SupplyRequest.authoredOn')[0]")
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
 			s.Date = t
 		}
 	}
-	// extracting Location
-	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.location'))")
-	if err == nil && locationResult.String() != "undefined" {
-		s.Location = []byte(locationResult.String())
-	}
 	// extracting Reaction
 	reactionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.reaction.detail'))")
 	if err == nil && reactionResult.String() != "undefined" {
 		s.Reaction = []byte(reactionResult.String())
+	}
+	// extracting ReasonReference
+	reasonReferenceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.reasonReference'))")
+	if err == nil && reasonReferenceResult.String() != "undefined" {
+		s.ReasonReference = []byte(reasonReferenceResult.String())
+	}
+	// extracting Series
+	seriesResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Immunization.protocolApplied.series')[0]")
+	if err == nil && seriesResult.String() != "undefined" {
+		s.Series = seriesResult.String()
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())
 	}
-	// extracting VaccineCode
-	vaccineCodeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.vaccineCode'))")
-	if err == nil && vaccineCodeResult.String() != "undefined" {
-		s.VaccineCode = []byte(vaccineCodeResult.String())
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
 	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting Location
+	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.location'))")
+	if err == nil && locationResult.String() != "undefined" {
+		s.Location = []byte(locationResult.String())
+	}
+	// extracting Manufacturer
+	manufacturerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.manufacturer'))")
+	if err == nil && manufacturerResult.String() != "undefined" {
+		s.Manufacturer = []byte(manufacturerResult.String())
+	}
+	// extracting ReasonCode
+	reasonCodeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.reasonCode'))")
+	if err == nil && reasonCodeResult.String() != "undefined" {
+		s.ReasonCode = []byte(reasonCodeResult.String())
+	}
+	// extracting TargetDisease
+	targetDiseaseResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.protocolApplied.targetDisease'))")
+	if err == nil && targetDiseaseResult.String() != "undefined" {
+		s.TargetDisease = []byte(targetDiseaseResult.String())
 	}
 	// extracting LotNumber
-	lotNumberResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.lotNumber')[0])")
+	lotNumberResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Immunization.lotNumber')[0]")
 	if err == nil && lotNumberResult.String() != "undefined" {
 		s.LotNumber = lotNumberResult.String()
 	}
@@ -282,28 +297,13 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(rawResource json.R
 	if err == nil && performerResult.String() != "undefined" {
 		s.Performer = []byte(performerResult.String())
 	}
-	// extracting Series
-	seriesResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.protocolApplied.series')[0])")
-	if err == nil && seriesResult.String() != "undefined" {
-		s.Series = seriesResult.String()
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
 	// extracting ReactionDate
-	reactionDateResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.reaction.date')[0])")
+	reactionDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Immunization.reaction.date')[0]")
 	if err == nil && reactionDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, reactionDateResult.String())
 		if err == nil {
 			s.ReactionDate = t
 		}
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
 	}
 	return nil
 }

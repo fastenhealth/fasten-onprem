@@ -14,12 +14,15 @@ import (
 
 type FhirDocumentManifest struct {
 	models.OriginBase
-	// Profiles this resource claims to conform to
+	// Who and/or what authored the DocumentManifest
 	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// Text search against the narrative
+	Author datatypes.JSON `gorm:"column:author;type:text;serializer:json" json:"author,omitempty"`
+	// When this document manifest created
+	// https://hl7.org/fhir/r4/search.html#date
+	Created time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
+	// Human-readable description (title)
 	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Description string `gorm:"column:description;type:text" json:"description,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -56,54 +59,51 @@ type FhirDocumentManifest struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
-	// When this document manifest created
-	// https://hl7.org/fhir/r4/search.html#date
-	Created time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
-	// Human-readable description (title)
-	// https://hl7.org/fhir/r4/search.html#string
-	Description string `gorm:"column:description;type:text" json:"description,omitempty"`
-	// The source system/application/software
-	// https://hl7.org/fhir/r4/search.html#uri
-	Source string `gorm:"column:source;type:text" json:"source,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
-	// Who and/or what authored the DocumentManifest
-	// https://hl7.org/fhir/r4/search.html#reference
-	Author datatypes.JSON `gorm:"column:author;type:text;serializer:json" json:"author,omitempty"`
-	// Identifiers of things that are related
-	// https://hl7.org/fhir/r4/search.html#token
-	RelatedId datatypes.JSON `gorm:"column:relatedId;type:text;serializer:json" json:"relatedId,omitempty"`
-	// The subject of the set of documents
-	// https://hl7.org/fhir/r4/search.html#reference
-	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Items in manifest
 	// https://hl7.org/fhir/r4/search.html#reference
 	Item datatypes.JSON `gorm:"column:item;type:text;serializer:json" json:"item,omitempty"`
-	// Intended to get notified about this set of documents
-	// https://hl7.org/fhir/r4/search.html#reference
-	Recipient datatypes.JSON `gorm:"column:recipient;type:text;serializer:json" json:"recipient,omitempty"`
-	// current | superseded | entered-in-error
-	// https://hl7.org/fhir/r4/search.html#token
-	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
 	// Language of the resource content
 	// https://hl7.org/fhir/r4/search.html#token
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
 	// The raw resource content in JSON format
 	// https://hl7.org/fhir/r4/search.html#special
 	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// Intended to get notified about this set of documents
+	// https://hl7.org/fhir/r4/search.html#reference
+	Recipient datatypes.JSON `gorm:"column:recipient;type:text;serializer:json" json:"recipient,omitempty"`
+	// Identifiers of things that are related
+	// https://hl7.org/fhir/r4/search.html#token
+	RelatedId datatypes.JSON `gorm:"column:relatedId;type:text;serializer:json" json:"relatedId,omitempty"`
 	// Related Resource
 	// https://hl7.org/fhir/r4/search.html#reference
 	RelatedRef datatypes.JSON `gorm:"column:relatedRef;type:text;serializer:json" json:"relatedRef,omitempty"`
+	// The source system/application/software
+	// https://hl7.org/fhir/r4/search.html#uri
+	Source string `gorm:"column:source;type:text" json:"source,omitempty"`
+	// Identifies where the resource comes from
+	// https://hl7.org/fhir/r4/search.html#uri
+	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
+	// current | superseded | entered-in-error
+	// https://hl7.org/fhir/r4/search.html#token
+	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
+	// The subject of the set of documents
+	// https://hl7.org/fhir/r4/search.html#reference
+	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
 func (s *FhirDocumentManifest) SetOriginBase(originBase models.OriginBase) {
@@ -160,81 +160,61 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(rawResource js
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting RelatedRef
-	relatedRefResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.related.ref'))")
-	if err == nil && relatedRefResult.String() != "undefined" {
-		s.RelatedRef = []byte(relatedRefResult.String())
-	}
-	// extracting Description
-	descriptionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.description')[0])")
-	if err == nil && descriptionResult.String() != "undefined" {
-		s.Description = descriptionResult.String()
-	}
-	// extracting Source
-	sourceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.source')[0])")
-	if err == nil && sourceResult.String() != "undefined" {
-		s.Source = sourceResult.String()
-	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
-		if err == nil {
-			s.LastUpdated = t
-		}
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting Identifier
-	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
-	if err == nil && identifierResult.String() != "undefined" {
-		s.Identifier = []byte(identifierResult.String())
-	}
 	// extracting Created
-	createdResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.created')[0])")
+	createdResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DocumentManifest.created')[0]")
 	if err == nil && createdResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, createdResult.String())
 		if err == nil {
 			s.Created = t
 		}
 	}
-	// extracting RelatedId
-	relatedIdResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.related.identifier'))")
-	if err == nil && relatedIdResult.String() != "undefined" {
-		s.RelatedId = []byte(relatedIdResult.String())
+	// extracting Source
+	sourceResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DocumentManifest.source')[0]")
+	if err == nil && sourceResult.String() != "undefined" {
+		s.Source = sourceResult.String()
 	}
 	// extracting Subject
 	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.subject'))")
 	if err == nil && subjectResult.String() != "undefined" {
 		s.Subject = []byte(subjectResult.String())
 	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
 	}
 	// extracting Author
 	authorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.author'))")
 	if err == nil && authorResult.String() != "undefined" {
 		s.Author = []byte(authorResult.String())
 	}
-	// extracting Status
-	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.status'))")
-	if err == nil && statusResult.String() != "undefined" {
-		s.Status = []byte(statusResult.String())
+	// extracting RelatedId
+	relatedIdResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.related.identifier'))")
+	if err == nil && relatedIdResult.String() != "undefined" {
+		s.RelatedId = []byte(relatedIdResult.String())
 	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
+	// extracting RelatedRef
+	relatedRefResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.related.ref'))")
+	if err == nil && relatedRefResult.String() != "undefined" {
+		s.RelatedRef = []byte(relatedRefResult.String())
+	}
+	// extracting LastUpdated
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	if err == nil && lastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+		if err == nil {
+			s.LastUpdated = t
+		}
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Description
+	descriptionResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DocumentManifest.description')[0]")
+	if err == nil && descriptionResult.String() != "undefined" {
+		s.Description = descriptionResult.String()
 	}
 	// extracting Item
 	itemResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.content'))")
@@ -245,6 +225,26 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(rawResource js
 	recipientResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.recipient'))")
 	if err == nil && recipientResult.String() != "undefined" {
 		s.Recipient = []byte(recipientResult.String())
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting Identifier
+	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier'))")
+	if err == nil && identifierResult.String() != "undefined" {
+		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting Status
+	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.status'))")
+	if err == nil && statusResult.String() != "undefined" {
+		s.Status = []byte(statusResult.String())
 	}
 	return nil
 }

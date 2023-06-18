@@ -14,57 +14,57 @@ import (
 
 type FhirCoverage struct {
 	models.OriginBase
-	// Dependent number
-	// https://hl7.org/fhir/r4/search.html#string
-	Dependent string `gorm:"column:dependent;type:text" json:"dependent,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
-	// Profiles this resource claims to conform to
-	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Covered party
 	// https://hl7.org/fhir/r4/search.html#reference
 	Beneficiary datatypes.JSON `gorm:"column:beneficiary;type:text;serializer:json" json:"beneficiary,omitempty"`
 	// Coverage class (eg. plan, group)
 	// https://hl7.org/fhir/r4/search.html#token
 	ClassType datatypes.JSON `gorm:"column:classType;type:text;serializer:json" json:"classType,omitempty"`
-	// The primary identifier of the insured and the coverage
-	// https://hl7.org/fhir/r4/search.html#token
-	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
-	// Reference to the policyholder
-	// https://hl7.org/fhir/r4/search.html#reference
-	PolicyHolder datatypes.JSON `gorm:"column:policyHolder;type:text;serializer:json" json:"policyHolder,omitempty"`
-	// Language of the resource content
-	// https://hl7.org/fhir/r4/search.html#token
-	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
-	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
 	// Value of the class (eg. Plan number, group number)
 	// https://hl7.org/fhir/r4/search.html#string
 	ClassValue string `gorm:"column:classValue;type:text" json:"classValue,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// Dependent number
+	// https://hl7.org/fhir/r4/search.html#string
+	Dependent string `gorm:"column:dependent;type:text" json:"dependent,omitempty"`
+	// The primary identifier of the insured and the coverage
+	// https://hl7.org/fhir/r4/search.html#token
+	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
+	// Language of the resource content
+	// https://hl7.org/fhir/r4/search.html#token
+	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
+	// When the resource version last changed
+	// https://hl7.org/fhir/r4/search.html#date
+	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// The identity of the insurer or party paying for services
 	// https://hl7.org/fhir/r4/search.html#reference
 	Payor datatypes.JSON `gorm:"column:payor;type:text;serializer:json" json:"payor,omitempty"`
+	// Reference to the policyholder
+	// https://hl7.org/fhir/r4/search.html#reference
+	PolicyHolder datatypes.JSON `gorm:"column:policyHolder;type:text;serializer:json" json:"policyHolder,omitempty"`
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
+	// The raw resource content in JSON format
+	// https://hl7.org/fhir/r4/search.html#special
+	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
+	// Identifies where the resource comes from
+	// https://hl7.org/fhir/r4/search.html#uri
+	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// The status of the Coverage
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
 	// Reference to the subscriber
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subscriber datatypes.JSON `gorm:"column:subscriber;type:text;serializer:json" json:"subscriber,omitempty"`
-	// When the resource version last changed
-	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
+	// Text search against the narrative
+	// https://hl7.org/fhir/r4/search.html#string
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// A resource type filter
+	// https://hl7.org/fhir/r4/search.html#special
+	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
 func (s *FhirCoverage) SetOriginBase(originBase models.OriginBase) {
@@ -119,30 +119,15 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(rawResource json.RawMe
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
+	// extracting ClassValue
+	classValueResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Coverage.class.value')[0]")
+	if err == nil && classValueResult.String() != "undefined" {
+		s.ClassValue = classValueResult.String()
+	}
 	// extracting Dependent
-	dependentResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.dependent')[0])")
+	dependentResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Coverage.dependent')[0]")
 	if err == nil && dependentResult.String() != "undefined" {
 		s.Dependent = dependentResult.String()
-	}
-	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
-	// extracting Tag
-	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
-	// extracting Beneficiary
-	beneficiaryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.beneficiary'))")
-	if err == nil && beneficiaryResult.String() != "undefined" {
-		s.Beneficiary = []byte(beneficiaryResult.String())
-	}
-	// extracting ClassType
-	classTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.class.type'))")
-	if err == nil && classTypeResult.String() != "undefined" {
-		s.ClassType = []byte(classTypeResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.identifier'))")
@@ -153,26 +138,6 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(rawResource json.RawMe
 	policyHolderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.policyHolder'))")
 	if err == nil && policyHolderResult.String() != "undefined" {
 		s.PolicyHolder = []byte(policyHolderResult.String())
-	}
-	// extracting Language
-	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
-	if err == nil && languageResult.String() != "undefined" {
-		s.Language = []byte(languageResult.String())
-	}
-	// extracting ClassValue
-	classValueResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.class.value')[0])")
-	if err == nil && classValueResult.String() != "undefined" {
-		s.ClassValue = classValueResult.String()
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0])")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
-	}
-	// extracting Payor
-	payorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.payor'))")
-	if err == nil && payorResult.String() != "undefined" {
-		s.Payor = []byte(payorResult.String())
 	}
 	// extracting Status
 	statusResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.status'))")
@@ -185,12 +150,47 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(rawResource json.RawMe
 		s.Subscriber = []byte(subscriberResult.String())
 	}
 	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0])")
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
 			s.LastUpdated = t
 		}
+	}
+	// extracting Beneficiary
+	beneficiaryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.beneficiary'))")
+	if err == nil && beneficiaryResult.String() != "undefined" {
+		s.Beneficiary = []byte(beneficiaryResult.String())
+	}
+	// extracting Profile
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
+	}
+	// extracting SourceUri
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	if err == nil && sourceUriResult.String() != "undefined" {
+		s.SourceUri = sourceUriResult.String()
+	}
+	// extracting Payor
+	payorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.payor'))")
+	if err == nil && payorResult.String() != "undefined" {
+		s.Payor = []byte(payorResult.String())
+	}
+	// extracting Language
+	languageResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.language'))")
+	if err == nil && languageResult.String() != "undefined" {
+		s.Language = []byte(languageResult.String())
+	}
+	// extracting Tag
+	tagResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag'))")
+	if err == nil && tagResult.String() != "undefined" {
+		s.Tag = []byte(tagResult.String())
+	}
+	// extracting ClassType
+	classTypeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.class.type'))")
+	if err == nil && classTypeResult.String() != "undefined" {
+		s.ClassType = []byte(classTypeResult.String())
 	}
 	return nil
 }
