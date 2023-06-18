@@ -244,37 +244,37 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 	case SearchParameterTypeNumber, SearchParameterTypeDate:
 
 		if searchParamValue.Prefix == "" || searchParamValue.Prefix == "eq" {
-			return fmt.Sprintf("%s = @%s", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s = @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
 		} else if searchParamValue.Prefix == "lt" || searchParamValue.Prefix == "eb" {
-			return fmt.Sprintf("%s < @%s", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s < @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
 		} else if searchParamValue.Prefix == "le" {
-			return fmt.Sprintf("%s <= @%s", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s <= @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
 		} else if searchParamValue.Prefix == "gt" || searchParamValue.Prefix == "sa" {
-			return fmt.Sprintf("%s > @%s", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s > @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
 		} else if searchParamValue.Prefix == "ge" {
-			return fmt.Sprintf("%s >= @%s", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s >= @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
 		} else if searchParamValue.Prefix == "ne" {
-			return fmt.Sprintf("%s <> @%s", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s <> @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
 		} else if searchParam.Modifier == "ap" {
 			return "", nil, fmt.Errorf("search modifier 'ap' not supported for search parameter type %s (%s=%s)", searchParam.Type, searchParam.Name, searchParamValue.Value)
 		}
 	case SearchParameterTypeString:
 		if searchParam.Modifier == "" {
 			searchClauseNamedParams[searchParam.Name] = searchParamValue.Value.(string) + "%" // "eve" matches "Eve" and "Evelyn"
-			return fmt.Sprintf("%s LIKE @%s", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s LIKE @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
 		} else if searchParam.Modifier == "exact" {
 			// "eve" matches "eve" (not "Eve" or "EVE")
-			return fmt.Sprintf("%s = @%s", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s = @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
 		} else if searchParam.Modifier == "contains" {
 			searchClauseNamedParams[searchParam.Name] = "%" + searchParamValue.Value.(string) + "%" // "eve" matches "Eve", "Evelyn" and "Severine"
-			return fmt.Sprintf("%s LIKE @%s", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s LIKE @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
 		}
 	case SearchParameterTypeUri:
 		if searchParam.Modifier == "" {
-			return fmt.Sprintf("%s = @%s", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s = @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
 		} else if searchParam.Modifier == "below" {
 			searchClauseNamedParams[searchParam.Name] = searchParamValue.Value.(string) + "%" // column starts with "http://example.com"
-			return fmt.Sprintf("%s LIKE @%s", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s LIKE @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
 		} else if searchParam.Modifier == "above" {
 			return "", nil, fmt.Errorf("search modifier 'above' not supported for search parameter type %s (%s=%s)", searchParam.Type, searchParam.Name, searchParamValue.Value)
 		}
@@ -313,7 +313,7 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 			}
 		}
 
-		return clause, searchClauseNamedParams, nil
+		return fmt.Sprintf("(%s)", clause), searchClauseNamedParams, nil
 	case SearchParameterTypeToken:
 		//unfortunately we don't know the datatype of this token, so we need to check all possible datatypes
 		// - Coding - https://hl7.org/fhir/r4/datatypes.html#Coding
