@@ -24,12 +24,12 @@ func QueryResourceFhir(c *gin.Context) {
 
 	queryResults, err := databaseRepo.QueryResources(c, query)
 	if err != nil {
-		logger.Errorln("An error occurred while creating resource group (composition)", err)
+		logger.Errorln("An error occurred while querying resources", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
 	//sort by date
-	queryResults = utils.SortResourceListByDate(queryResults)
+	//queryResults = utils.SortResourceListByDate(queryResults)
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": queryResults})
 }

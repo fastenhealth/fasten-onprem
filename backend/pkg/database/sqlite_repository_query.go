@@ -1,7 +1,11 @@
 package database
 
 import (
+	"context"
 	"fmt"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	databaseModel "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models/database"
+	"golang.org/x/exp/maps"
 	"sort"
 	"strconv"
 	"strings"
@@ -22,21 +26,52 @@ const (
 	SearchParameterTypeSpecial   SearchParameterType = "special"
 )
 
-//func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) ([]databaseModel.IFhirResourceModel, error) {
-//	//todo, until we actually parse the select statement, we will just return all resources based on "from"
-//
-//	//find the associated Gorm Model for this query
-//	queryModel, err := databaseModel.NewFhirResourceModelByType(query.From)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	//find the FHIR search types associated with each where clause. Any unknown parameters will be ignored.
-//	searchCodeToTypeLookup := queryModel.GetSearchParameters()
-//	for searchParamCodeWithModifier, searchParamCodeValue := range query.Where {
-//
-//	}
-//}
+func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) (interface{}, error) {
+	//todo, until we actually parse the select statement, we will just return all resources based on "from"
+
+	//find the associated Gorm Model for this query
+	queryModel, err := databaseModel.NewFhirResourceModelByType(query.From)
+	if err != nil {
+		return nil, err
+	}
+
+	whereClauses := []string{}
+	namedParameters := map[string]interface{}{}
+
+	//find the FHIR search types associated with each where clause. Any unknown parameters will be ignored.
+	searchCodeToTypeLookup := queryModel.GetSearchParameters()
+	for searchParamCodeWithModifier, searchParamCodeValue := range query.Where {
+		searchParameter, err := ProcessSearchParameter(searchParamCodeWithModifier, searchCodeToTypeLookup)
+		if err != nil {
+			return nil, err
+		}
+		searchParameterValue, err := ProcessSearchParameterValue(searchParameter, searchParamCodeValue)
+		if err != nil {
+			return nil, err
+		}
+
+		whereClause, clauseNamedParameters, err := SearchCodeToWhereClause(searchParameter, searchParameterValue)
+		if err != nil {
+			return nil, err
+		}
+		//add generated where clause to the list, and add the named parameters to the map of existing named parameters
+		whereClauses = append(whereClauses, whereClause)
+		maps.Copy(namedParameters, clauseNamedParameters)
+	}
+
+	//for safety, we will always add/override the current user_id to the where clause. This is to ensure that the user doesnt attempt to override this value in their own where clause
+	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return nil, currentUserErr
+	}
+	namedParameters["user_id"] = currentUser.ID.String()
+	whereClauses = append(whereClauses, "user_id = @user_id")
+
+	results := []map[string]interface{}{}
+	clientResp := sr.GormClient.Where(strings.Join(whereClauses, " AND "), namedParameters).Model(queryModel).Find(&results)
+
+	return results, clientResp.Error
+}
 
 /// INTERNAL functionality. These functions are exported for testing, but are not available in the Interface
 
