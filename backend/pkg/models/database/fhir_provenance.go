@@ -191,7 +191,7 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(rawResource json.Raw
 		s.Target = []byte(targetResult.String())
 	}
 	// extracting When
-	whenResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Provenance.occurreddateTime)')[0]")
+	whenResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Provenance.occurredDateTime)')[0]")
 	if err == nil && whenResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, whenResult.String())
 		if err == nil {

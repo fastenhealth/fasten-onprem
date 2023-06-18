@@ -345,7 +345,7 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(rawResource json.Ra
 		s.DataAbsentReason = []byte(dataAbsentReasonResult.String())
 	}
 	// extracting Date
-	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrencedateTime) | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrencedateTime) | SupplyRequest.authoredOn')[0]")
+	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')[0]")
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
@@ -446,7 +446,7 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(rawResource json.Ra
 		s.ValueConcept = []byte(valueConceptResult.String())
 	}
 	// extracting ValueDate
-	valueDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Observation.valuedateTime) | (Observation.valuePeriod)')[0]")
+	valueDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Observation.valueDateTime) | (Observation.valuePeriod)')[0]")
 	if err == nil && valueDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, valueDateResult.String())
 		if err == nil {
@@ -459,7 +459,7 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(rawResource json.Ra
 		s.ValueQuantity = []byte(valueQuantityResult.String())
 	}
 	// extracting ValueString
-	valueStringResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Observation.valuestring) | (Observation.valueCodeableConcept).text')[0]")
+	valueStringResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Observation.valueString) | (Observation.valueCodeableConcept).text')[0]")
 	if err == nil && valueStringResult.String() != "undefined" {
 		s.ValueString = valueStringResult.String()
 	}

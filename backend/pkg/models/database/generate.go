@@ -252,7 +252,23 @@ func main() {
 				if len(fieldInfo.FHIRPathExpression) == 0 {
 					continue
 				} else {
-					//TODO: this is only required in Golang, not Javascript, figure out why
+					//TODO: "Observation.value as CodeableConcept" and other similar expressions do not work with goja in Golang, but do work in Javascript
+					// we're unsure why, but we can work around this by removing the " as " part of the expression, and instead use the fully qualified field name:
+					// "Observation.valueCodeableConcept" instead of "Observation.value as CodeableConcept"
+					// however, we cannot just remove the " As "string, as there are primitive types that start with a lowercase letter, and we need to uppercase the first letter
+					// https://www.hl7.org/fhir/R4/datatypes.html#CodeableConcept
+					// https://hl7.org/fhir/r4/formats.html#choice
+					// this is a very naive implementation, but it works for now
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as string", " as String")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as time", " as Time")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as date", " as Date")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as boolean", " as Boolean")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as url", " as Url")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as code", " as Code")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as integer", " as Integer")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as uri", " as Uri")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as decimal", " as Decimal")
+
 					//remove all " as " from the fhirpath expression, this does not work correctly with goja or otto
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as ", "")
 				}

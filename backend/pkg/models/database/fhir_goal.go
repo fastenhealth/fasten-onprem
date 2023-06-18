@@ -188,7 +188,7 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(rawResource json.RawMessag
 		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting StartDate
-	startDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Goal.startdate)')[0]")
+	startDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Goal.startDate)')[0]")
 	if err == nil && startDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, startDateResult.String())
 		if err == nil {
@@ -206,7 +206,7 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(rawResource json.RawMessag
 		s.Tag = []byte(tagResult.String())
 	}
 	// extracting TargetDate
-	targetDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Goal.target.duedate)')[0]")
+	targetDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Goal.target.dueDate)')[0]")
 	if err == nil && targetDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, targetDateResult.String())
 		if err == nil {

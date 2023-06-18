@@ -311,7 +311,7 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(rawResource json.RawMes
 		}
 	}
 	// extracting DeathDate
-	deathDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Patient.deceaseddateTime)')[0]")
+	deathDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Patient.deceasedDateTime)')[0]")
 	if err == nil && deathDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, deathDateResult.String())
 		if err == nil {

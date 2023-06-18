@@ -245,7 +245,7 @@ func (s *FhirDeviceRequest) PopulateAndExtractSearchParameters(rawResource json.
 		s.Encounter = []byte(encounterResult.String())
 	}
 	// extracting EventDate
-	eventDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(DeviceRequest.occurrencedateTime) | (DeviceRequest.occurrencePeriod)')[0]")
+	eventDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(DeviceRequest.occurrenceDateTime) | (DeviceRequest.occurrencePeriod)')[0]")
 	if err == nil && eventDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, eventDateResult.String())
 		if err == nil {
