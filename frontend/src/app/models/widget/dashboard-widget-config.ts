@@ -2,7 +2,7 @@ import {DashboardWidgetQuery} from './dashboard-widget-query';
 import * as _ from 'lodash';
 
 export class DashboardWidgetConfig {
-  id: string
+  id?: string
   item_type: "complex-line-widget" | "donut-chart-widget" | "dual-gauges-widget" | "grouped-bar-chart-widget" | "patient-vitals-widget" | "simple-line-chart-widget" | "table-widget"
 
   title_text: string

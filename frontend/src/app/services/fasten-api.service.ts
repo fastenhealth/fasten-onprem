@@ -169,10 +169,10 @@ export class FastenApiService {
             return []
           }
           let results = response.data
-            .filter((resource: ResourceFhir) => {
-              return this.fhirPathFilterQueryFn(query)(resource.resource_raw)
-            })
             .map((resource: ResourceFhir) => {
+              if (!resource.resource_raw) {
+                return null
+              }
               return this.fhirPathMapQueryFn(query)(resource.resource_raw)
             })
 
@@ -266,25 +266,6 @@ export class FastenApiService {
   }
 
   //private methods
-
-
-  // This function will convert DashboardWidgetQuery.where filters into a FHIRPath query strings
-  // ie. `name.where(given='Jim')` will be converted to `Patient.name.where(given='Jim')`
-  // fhirpath.evaluate(this.patient.resource_raw, "Patient.name.where(given='Jim')")
-  fhirPathFilterQueryFn(query: DashboardWidgetQuery): (rawResource: any) => boolean {
-    let wherePathFilters = query.where.map((whereFQL: string) => {
-      return whereFQL
-    })
-
-    // console.log("WHERE PATH FILTERS", wherePathFilters)
-
-    return function(rawResource: any): boolean {
-      return wherePathFilters.every((wherePathFilter: string) => {
-        let results = fhirpath.evaluate(rawResource, wherePathFilter)
-        return results.length > 0 && results[0] !== false
-      })
-    }
-  }
 
   // This function will convert DashboardWidgetQuery.select filters into a FHIRPath query strings and return the results
   // as a map (keyed by the select alias)

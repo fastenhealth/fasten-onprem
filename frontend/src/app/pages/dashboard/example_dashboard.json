@@ -28,9 +28,9 @@
             "(effectiveDateTime | issued).first() as label"
           ],
           "from": "Observation",
-          "where": [
-            "(code.coding.where(system = 'http://loinc.org' and code = '29463-7') | code.coding.where(system = 'http://loinc.org' and code = '3141-9') | code.coding.where(system = 'http://snomed.info/sct' and code = '27113001')).exists()"
-          ]
+          "where": {
+           "code": "http://loinc.org|29463-7,http://loinc.org|3141-9,http://snomed.info/sct|27113001"
+          }
         }
       }],
       "parsing": {
@@ -53,9 +53,9 @@
             "(effectiveDateTime | issued).first() as label"
           ],
           "from": "Observation",
-          "where": [
-            "code.coding.where(system = 'http://loinc.org' and code = '8302-2').exists()"
-          ]
+          "where": {
+            "code": "http://loinc.org|8302-2"
+          }
         }
       }],
       "parsing": {
@@ -78,9 +78,9 @@
               "component.where(code.coding.system = 'http://loinc.org' and code.coding.code = '8462-4').valueQuantity.value as data"
             ],
             "from": "Observation",
-            "where": [
-              "(component.code.coding.where(system = 'http://loinc.org' and code = '8462-4')).exists()"
-            ]
+            "where": {
+              "componentCode": "http://loinc.org|8462-4"
+            }
           },
           "dataset_options": {
             "label": "Diastolic"
@@ -92,9 +92,9 @@
               "component.where(code.coding.system = 'http://loinc.org' and code.coding.code = '8480-6').valueQuantity.value as data"
             ],
             "from": "Observation",
-            "where": [
-              "(component.code.coding.where(system = 'http://loinc.org' and code = '8480-6')).exists()"
-            ]
+            "where": {
+              "componentCode": "http://loinc.org|8480-6"
+            }
           },
           "dataset_options": {
             "label": "Systolic"
@@ -126,7 +126,7 @@
         "q": {
           "select": [],
           "from": "",
-          "where": [],
+          "where": {},
 
           "aggregation_params":["resourceType"],
           "aggregation_type":"countBy"
@@ -152,7 +152,7 @@
         "q": {
           "select": [],
           "from": "Immunization",
-          "where": [],
+          "where": {},
 
           "aggregation_params":["resourceType"],
           "aggregation_type":"countBy"
@@ -165,7 +165,7 @@
           "q": {
             "select": [],
             "from": "Claim",
-            "where": [],
+            "where": {},
 
             "aggregation_params":["resourceType"],
             "aggregation_type":"countBy"
@@ -193,7 +193,7 @@
             "participant.individual.display as provider"
           ],
           "from": "Encounter",
-          "where": []
+          "where": {}
         }
       }],
       "parsing": {
