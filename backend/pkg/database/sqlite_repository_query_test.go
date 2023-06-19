@@ -124,34 +124,35 @@ func TestSearchCodeToWhereClause(t *testing.T) {
 	var searchCodeToWhereClauseTests = []struct {
 		searchParameter     SearchParameter
 		searchValue         SearchParameterValue
+		searchLevelSuffix   string
 		expectedClause      string
 		expectedNamedParams map[string]interface{}
 		expectedError       bool
 	}{
-		{SearchParameter{Type: "number", Name: "probability", Modifier: ""}, SearchParameterValue{Value: float64(100), Prefix: "gt", SecondaryValues: map[string]interface{}{}}, "(probability > @probability)", map[string]interface{}{"probability": float64(100)}, false},
-		{SearchParameter{Type: "date", Name: "issueDate", Modifier: ""}, SearchParameterValue{Value: time.Date(2013, time.January, 14, 10, 0, 0, 0, time.UTC), Prefix: "lt", SecondaryValues: map[string]interface{}{}}, "(issueDate < @issueDate)", map[string]interface{}{"issueDate": time.Date(2013, time.January, 14, 10, 0, 0, 0, time.UTC)}, false},
+		{SearchParameter{Type: "number", Name: "probability", Modifier: ""}, SearchParameterValue{Value: float64(100), Prefix: "gt", SecondaryValues: map[string]interface{}{}}, "0_0", "(probability > @probability_0_0)", map[string]interface{}{"probability_0_0": float64(100)}, false},
+		{SearchParameter{Type: "date", Name: "issueDate", Modifier: ""}, SearchParameterValue{Value: time.Date(2013, time.January, 14, 10, 0, 0, 0, time.UTC), Prefix: "lt", SecondaryValues: map[string]interface{}{}}, "1_1", "(issueDate < @issueDate_1_1)", map[string]interface{}{"issueDate_1_1": time.Date(2013, time.January, 14, 10, 0, 0, 0, time.UTC)}, false},
 
-		{SearchParameter{Type: "string", Name: "given", Modifier: ""}, SearchParameterValue{Value: "eve", Prefix: "", SecondaryValues: map[string]interface{}{}}, "(given LIKE @given)", map[string]interface{}{"given": "eve%"}, false},
-		{SearchParameter{Type: "string", Name: "given", Modifier: "contains"}, SearchParameterValue{Value: "eve", Prefix: "", SecondaryValues: map[string]interface{}{}}, "(given LIKE @given)", map[string]interface{}{"given": "%eve%"}, false},
-		{SearchParameter{Type: "string", Name: "given", Modifier: "exact"}, SearchParameterValue{Value: "eve", Prefix: "", SecondaryValues: map[string]interface{}{}}, "(given = @given)", map[string]interface{}{"given": "eve"}, false},
+		{SearchParameter{Type: "string", Name: "given", Modifier: ""}, SearchParameterValue{Value: "eve", Prefix: "", SecondaryValues: map[string]interface{}{}}, "0_0", "(given LIKE @given_0_0)", map[string]interface{}{"given_0_0": "eve%"}, false},
+		{SearchParameter{Type: "string", Name: "given", Modifier: "contains"}, SearchParameterValue{Value: "eve", Prefix: "", SecondaryValues: map[string]interface{}{}}, "0_0", "(given LIKE @given_0_0)", map[string]interface{}{"given_0_0": "%eve%"}, false},
+		{SearchParameter{Type: "string", Name: "given", Modifier: "exact"}, SearchParameterValue{Value: "eve", Prefix: "", SecondaryValues: map[string]interface{}{}}, "0_0", "(given = @given_0_0)", map[string]interface{}{"given_0_0": "eve"}, false},
 
-		{SearchParameter{Type: "uri", Name: "url", Modifier: "below"}, SearchParameterValue{Value: "http://acme.org/fhir/", Prefix: "", SecondaryValues: map[string]interface{}{}}, "(url LIKE @url)", map[string]interface{}{"url": "http://acme.org/fhir/%"}, false},
-		{SearchParameter{Type: "uri", Name: "url", Modifier: "above"}, SearchParameterValue{Value: "http://acme.org/fhir/", Prefix: "", SecondaryValues: map[string]interface{}{}}, "", map[string]interface{}{}, true}, //above modifier not supported
+		{SearchParameter{Type: "uri", Name: "url", Modifier: "below"}, SearchParameterValue{Value: "http://acme.org/fhir/", Prefix: "", SecondaryValues: map[string]interface{}{}}, "0_0", "(url LIKE @url_0_0)", map[string]interface{}{"url_0_0": "http://acme.org/fhir/%"}, false},
+		{SearchParameter{Type: "uri", Name: "url", Modifier: "above"}, SearchParameterValue{Value: "http://acme.org/fhir/", Prefix: "", SecondaryValues: map[string]interface{}{}}, "0_0", "", map[string]interface{}{}, true}, //above modifier not supported
 
-		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, SearchParameterValue{Value: float64(5.4), Prefix: "", SecondaryValues: map[string]interface{}{"valueQuantityCode": "mg"}}, "(valueQuantityJson.value ->> '$.value' = @valueQuantity AND valueQuantityJson.value ->> '$.code' = @valueQuantityCode)", map[string]interface{}{"valueQuantity": float64(5.4), "valueQuantityCode": "mg"}, false},
-		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, SearchParameterValue{Value: float64(5.4), Prefix: "", SecondaryValues: map[string]interface{}{}}, "(valueQuantityJson.value ->> '$.value' = @valueQuantity)", map[string]interface{}{"valueQuantity": float64(5.4)}, false},
-		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, SearchParameterValue{Value: float64(5.4), Prefix: "le", SecondaryValues: map[string]interface{}{"valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}}, "(valueQuantityJson.value ->> '$.value' <= @valueQuantity AND valueQuantityJson.value ->> '$.code' = @valueQuantityCode AND valueQuantityJson.value ->> '$.system' = @valueQuantitySystem)", map[string]interface{}{"valueQuantity": float64(5.4), "valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}, false},
-		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, SearchParameterValue{Value: float64(5.4), Prefix: "ap", SecondaryValues: map[string]interface{}{"valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}}, "", map[string]interface{}{}, true}, //ap modifier not supported
-		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, SearchParameterValue{Value: float64(5.4), Prefix: "ne", SecondaryValues: map[string]interface{}{"valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}}, "(valueQuantityJson.value ->> '$.value' <> @valueQuantity AND valueQuantityJson.value ->> '$.code' = @valueQuantityCode AND valueQuantityJson.value ->> '$.system' = @valueQuantitySystem)", map[string]interface{}{"valueQuantity": float64(5.4), "valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}, false},
+		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, SearchParameterValue{Value: float64(5.4), Prefix: "", SecondaryValues: map[string]interface{}{"valueQuantityCode": "mg"}}, "0_0", "(valueQuantityJson.value ->> '$.value' = @valueQuantity_0_0 AND valueQuantityJson.value ->> '$.code' = @valueQuantityCode_0_0)", map[string]interface{}{"valueQuantity_0_0": float64(5.4), "valueQuantityCode_0_0": "mg"}, false},
+		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, SearchParameterValue{Value: float64(5.4), Prefix: "", SecondaryValues: map[string]interface{}{}}, "0_0", "(valueQuantityJson.value ->> '$.value' = @valueQuantity_0_0)", map[string]interface{}{"valueQuantity_0_0": float64(5.4)}, false},
+		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, SearchParameterValue{Value: float64(5.4), Prefix: "le", SecondaryValues: map[string]interface{}{"valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}}, "0_0", "(valueQuantityJson.value ->> '$.value' <= @valueQuantity_0_0 AND valueQuantityJson.value ->> '$.code' = @valueQuantityCode_0_0 AND valueQuantityJson.value ->> '$.system' = @valueQuantitySystem_0_0)", map[string]interface{}{"valueQuantity_0_0": float64(5.4), "valueQuantitySystem_0_0": "http://unitsofmeasure.org", "valueQuantityCode_0_0": "mg"}, false},
+		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, SearchParameterValue{Value: float64(5.4), Prefix: "ap", SecondaryValues: map[string]interface{}{"valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}}, "0_0", "", map[string]interface{}{}, true}, //ap modifier not supported
+		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, SearchParameterValue{Value: float64(5.4), Prefix: "ne", SecondaryValues: map[string]interface{}{"valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}}, "0_0", "(valueQuantityJson.value ->> '$.value' <> @valueQuantity_0_0 AND valueQuantityJson.value ->> '$.code' = @valueQuantityCode_0_0 AND valueQuantityJson.value ->> '$.system' = @valueQuantitySystem_0_0)", map[string]interface{}{"valueQuantity_0_0": float64(5.4), "valueQuantitySystem_0_0": "http://unitsofmeasure.org", "valueQuantityCode_0_0": "mg"}, false},
 
-		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, SearchParameterValue{Value: "ha125", Prefix: "", SecondaryValues: map[string]interface{}{"codeSystem": "http://acme.org/conditions/codes"}}, "(codeJson.value ->> '$.code' = @code AND codeJson.value ->> '$.system' = @codeSystem)", map[string]interface{}{"code": "ha125", "codeSystem": "http://acme.org/conditions/codes"}, false},
-		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, SearchParameterValue{Value: "ha125", Prefix: "", SecondaryValues: map[string]interface{}{}}, "(codeJson.value ->> '$.code' = @code)", map[string]interface{}{"code": "ha125"}, false},
-		{SearchParameter{Type: "token", Name: "identifier", Modifier: "otype"}, SearchParameterValue{Value: "MR|446053", Prefix: "", SecondaryValues: map[string]interface{}{"identifierSystem": "http://terminology.hl7.org/CodeSystem/v2-0203"}}, "(identifierJson.value ->> '$.code' = @identifier AND identifierJson.value ->> '$.system' = @identifierSystem)", map[string]interface{}{"identifier": "MR|446053", "identifierSystem": "http://terminology.hl7.org/CodeSystem/v2-0203"}, false},
+		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, SearchParameterValue{Value: "ha125", Prefix: "", SecondaryValues: map[string]interface{}{"codeSystem": "http://acme.org/conditions/codes"}}, "0_0", "(codeJson.value ->> '$.code' = @code_0_0 AND codeJson.value ->> '$.system' = @codeSystem_0_0)", map[string]interface{}{"code_0_0": "ha125", "codeSystem_0_0": "http://acme.org/conditions/codes"}, false},
+		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, SearchParameterValue{Value: "ha125", Prefix: "", SecondaryValues: map[string]interface{}{}}, "0_0", "(codeJson.value ->> '$.code' = @code_0_0)", map[string]interface{}{"code_0_0": "ha125"}, false},
+		{SearchParameter{Type: "token", Name: "identifier", Modifier: "otype"}, SearchParameterValue{Value: "MR|446053", Prefix: "", SecondaryValues: map[string]interface{}{"identifierSystem": "http://terminology.hl7.org/CodeSystem/v2-0203"}}, "0_0", "(identifierJson.value ->> '$.code' = @identifier_0_0 AND identifierJson.value ->> '$.system' = @identifierSystem_0_0)", map[string]interface{}{"identifier_0_0": "MR|446053", "identifierSystem_0_0": "http://terminology.hl7.org/CodeSystem/v2-0203"}, false},
 	}
 
 	//test && assert
 	for ndx, tt := range searchCodeToWhereClauseTests {
-		actualClause, actualNamedParams, actualErr := SearchCodeToWhereClause(tt.searchParameter, tt.searchValue)
+		actualClause, actualNamedParams, actualErr := SearchCodeToWhereClause(tt.searchParameter, tt.searchValue, tt.searchLevelSuffix)
 		if tt.expectedError {
 			require.Error(t, actualErr, "Expected error but got none for searchCodeToWhereClauseTests[%d] %s=%s", ndx, tt.searchParameter.Name, tt.searchValue.Value)
 		} else {
@@ -168,22 +169,21 @@ func TestSearchCodeToFromClause(t *testing.T) {
 	//setup
 	var searchCodeToFromClauseTests = []struct {
 		searchParameter SearchParameter
-		searchValue     SearchParameterValue
 		expectedClause  string
 		expectedError   bool
 	}{
-		{SearchParameter{Type: "number", Name: "probability", Modifier: ""}, SearchParameterValue{}, "", false},
-		{SearchParameter{Type: "date", Name: "issueDate", Modifier: ""}, SearchParameterValue{}, "", false},
-		{SearchParameter{Type: "token", Name: "hello", Modifier: ""}, SearchParameterValue{}, "json_each(fhir.hello) as helloJson", false},
+		{SearchParameter{Type: "number", Name: "probability", Modifier: ""}, "", false},
+		{SearchParameter{Type: "date", Name: "issueDate", Modifier: ""}, "", false},
+		{SearchParameter{Type: "token", Name: "hello", Modifier: ""}, "json_each(fhir.hello) as helloJson", false},
 	}
 
 	//test && assert
 	for ndx, tt := range searchCodeToFromClauseTests {
-		actualClause, actualErr := SearchCodeToFromClause(tt.searchParameter, tt.searchValue)
+		actualClause, actualErr := SearchCodeToFromClause(tt.searchParameter)
 		if tt.expectedError {
-			require.Error(t, actualErr, "Expected error but got none for searchCodeToFromClauseTests[%d] %s=%s", ndx, tt.searchParameter.Name, tt.searchValue.Value)
+			require.Error(t, actualErr, "Expected error but got none for searchCodeToFromClauseTests[%d] %s", ndx, tt.searchParameter.Name)
 		} else {
-			require.NoError(t, actualErr, "Expected no error but got one for searchCodeToFromClauseTests[%d] %s=%s", ndx, tt.searchParameter.Name, tt.searchValue.Value)
+			require.NoError(t, actualErr, "Expected no error but got one for searchCodeToFromClauseTests[%d] %s", ndx, tt.searchParameter.Name)
 			require.Equal(t, tt.expectedClause, actualClause)
 		}
 	}

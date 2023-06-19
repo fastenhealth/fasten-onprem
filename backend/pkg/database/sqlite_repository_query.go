@@ -50,25 +50,32 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 
 	//find the FHIR search types associated with each where clause. Any unknown parameters will be ignored.
 	searchCodeToTypeLookup := queryModel.GetSearchParameters()
-	for searchParamCodeWithModifier, searchParamCodeValue := range query.Where {
+	for searchParamCodeWithModifier, searchParamCodeValueOrValuesWithPrefix := range query.Where {
 		searchParameter, err := ProcessSearchParameter(searchParamCodeWithModifier, searchCodeToTypeLookup)
 		if err != nil {
 			return nil, err
 		}
-		searchParameterValue, err := ProcessSearchParameterValue(searchParameter, searchParamCodeValue)
+
+		searchParameterValueOperatorTree, err := ProcessSearchParameterValueIntoOperatorTree(searchParameter, searchParamCodeValueOrValuesWithPrefix)
 		if err != nil {
 			return nil, err
 		}
 
-		whereClause, clauseNamedParameters, err := SearchCodeToWhereClause(searchParameter, searchParameterValue)
-		if err != nil {
-			return nil, err
+		for ndxANDlevel, searchParameterValueOperatorAND := range searchParameterValueOperatorTree {
+			whereORClauses := []string{}
+			for ndxORlevel, searchParameterValueOperatorOR := range searchParameterValueOperatorAND {
+				whereORClause, clauseNamedParameters, err := SearchCodeToWhereClause(searchParameter, searchParameterValueOperatorOR, fmt.Sprintf("%d_%d", ndxANDlevel, ndxORlevel))
+				if err != nil {
+					return nil, err
+				}
+				//add generated where clause to the list, and add the named parameters to the map of existing named parameters
+				whereORClauses = append(whereORClauses, whereORClause)
+				maps.Copy(whereNamedParameters, clauseNamedParameters)
+			}
+			whereClauses = append(whereClauses, fmt.Sprintf("(%s)", strings.Join(whereORClauses, " OR ")))
 		}
-		//add generated where clause to the list, and add the named parameters to the map of existing named parameters
-		whereClauses = append(whereClauses, whereClause)
-		maps.Copy(whereNamedParameters, clauseNamedParameters)
 
-		fromClause, err := SearchCodeToFromClause(searchParameter, searchParameterValue)
+		fromClause, err := SearchCodeToFromClause(searchParameter)
 		if err != nil {
 			return nil, err
 		}
@@ -83,7 +90,7 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 		return nil, currentUserErr
 	}
 	whereNamedParameters["user_id"] = currentUser.ID.String()
-	whereClauses = append(whereClauses, "user_id = @user_id")
+	whereClauses = append(whereClauses, "(user_id = @user_id)")
 
 	results := []map[string]interface{}{}
 	clientResp := sr.GormClient.Where(strings.Join(whereClauses, " AND "), whereNamedParameters).Table(strings.Join(fromClauses, ", ")).Find(&results)
@@ -98,6 +105,16 @@ type SearchParameter struct {
 	Type     SearchParameterType
 	Modifier string
 }
+
+//Items in the SearchParameterValueOperatorTree are AND'd together, and items within each SearchParameterValueOperatorTree are OR'd together
+//For example, the following would be AND'd together, and then OR'd with the next SearchParameterValueOperatorTree
+// {
+//  {SearchParameterValue{Value: "foo"}, SearchParameterValue{Value: "bar"}}
+//  {SearchParameterValue{Value: "baz"}},
+// }
+//This would result in the following SQL:
+//  (value = "foo" OR value = "bar") AND (value = "baz")
+type SearchParameterValueOperatorTree [][]SearchParameterValue
 
 type SearchParameterValue struct {
 	Prefix          string
@@ -132,6 +149,47 @@ func ProcessSearchParameter(searchCodeWithModifier string, searchParamTypeLookup
 	}
 
 	return searchParameter, nil
+}
+
+// ProcessSearchParameterValueIntoOperatorTree searchParamCodeValueOrValuesWithPrefix may be a single string, or a list of strings
+// each string, may itself be a concatenation of multiple values, seperated by a comma
+// so we need to do three stages of processing:
+// 1. split the searchParamCodeValueOrValuesWithPrefix into a list of strings
+// 2. split each string into a list of values
+// 3. use the ProcessSearchParameterValue function to split each value into a list of prefixes and values
+// these are then stored in a multidimentional list of SearchParameterValueOperatorTree
+// top level is AND'd together, and each item within the lists are OR'd together
+func ProcessSearchParameterValueIntoOperatorTree(searchParameter SearchParameter, searchParamCodeValueOrValuesWithPrefix interface{}) (SearchParameterValueOperatorTree, error) {
+
+	searchParamCodeValuesWithPrefix := []string{}
+	switch v := searchParamCodeValueOrValuesWithPrefix.(type) {
+	case string:
+		searchParamCodeValuesWithPrefix = append(searchParamCodeValuesWithPrefix, v)
+		break
+	case []string:
+		searchParamCodeValuesWithPrefix = v
+		break
+	default:
+		return nil, fmt.Errorf("invalid search parameter value type %T, must be a string or a list of strings (%s=%v)", v, searchParameter.Name, searchParamCodeValueOrValuesWithPrefix)
+	}
+
+	//generate a SearchParameterValueOperatorTree, because we may have multiple OR and AND operators for the same search parameter.
+	//ie, (code = "foo" OR code = "bar") AND (code = "baz")
+	searchParamCodeValueOperatorTree := SearchParameterValueOperatorTree{}
+
+	//loop through each searchParamCodeValueWithPrefix, and split it into a list of values (comma seperated)
+	for _, searchParamCodeValuesInANDClause := range searchParamCodeValuesWithPrefix {
+		searchParameterValuesOperatorOR := []SearchParameterValue{}
+		for _, searchParamCodeValueInORClause := range strings.Split(searchParamCodeValuesInANDClause, ",") {
+			searchParameterValue, err := ProcessSearchParameterValue(searchParameter, searchParamCodeValueInORClause)
+			if err != nil {
+				return nil, err
+			}
+			searchParameterValuesOperatorOR = append(searchParameterValuesOperatorOR, searchParameterValue)
+		}
+		searchParamCodeValueOperatorTree = append(searchParamCodeValueOperatorTree, searchParameterValuesOperatorOR)
+	}
+	return searchParamCodeValueOperatorTree, nil
 }
 
 func ProcessSearchParameterValue(searchParameter SearchParameter, searchValueWithPrefix string) (SearchParameterValue, error) {
@@ -220,14 +278,18 @@ func ProcessSearchParameterValue(searchParameter SearchParameter, searchValueWit
 	return searchParameterValue, nil
 }
 
-func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue SearchParameterValue) (string, map[string]interface{}, error) {
+func NamedParameterWithSuffix(parameterName string, suffix string) string {
+	return fmt.Sprintf("%s_%s", parameterName, suffix)
+}
+
+func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue SearchParameterValue, namedParameterSuffix string) (string, map[string]interface{}, error) {
 
 	//add named parameters to the lookup map. Basically, this is a map of all the named parameters that will be used in the where clause we're generating
 	searchClauseNamedParams := map[string]interface{}{
-		searchParam.Name: searchParamValue.Value,
+		NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix): searchParamValue.Value,
 	}
 	for k, v := range searchParamValue.SecondaryValues {
-		searchClauseNamedParams[k] = v
+		searchClauseNamedParams[NamedParameterWithSuffix(k, namedParameterSuffix)] = v
 	}
 
 	//parse the searchCode and searchCodeValue to determine the correct where clause
@@ -238,37 +300,37 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 	case SearchParameterTypeNumber, SearchParameterTypeDate:
 
 		if searchParamValue.Prefix == "" || searchParamValue.Prefix == "eq" {
-			return fmt.Sprintf("(%s = @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s = @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
 		} else if searchParamValue.Prefix == "lt" || searchParamValue.Prefix == "eb" {
-			return fmt.Sprintf("(%s < @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s < @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
 		} else if searchParamValue.Prefix == "le" {
-			return fmt.Sprintf("(%s <= @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s <= @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
 		} else if searchParamValue.Prefix == "gt" || searchParamValue.Prefix == "sa" {
-			return fmt.Sprintf("(%s > @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s > @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
 		} else if searchParamValue.Prefix == "ge" {
-			return fmt.Sprintf("(%s >= @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s >= @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
 		} else if searchParamValue.Prefix == "ne" {
-			return fmt.Sprintf("(%s <> @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s <> @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
 		} else if searchParam.Modifier == "ap" {
 			return "", nil, fmt.Errorf("search modifier 'ap' not supported for search parameter type %s (%s=%s)", searchParam.Type, searchParam.Name, searchParamValue.Value)
 		}
 	case SearchParameterTypeString:
 		if searchParam.Modifier == "" {
-			searchClauseNamedParams[searchParam.Name] = searchParamValue.Value.(string) + "%" // "eve" matches "Eve" and "Evelyn"
-			return fmt.Sprintf("(%s LIKE @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			searchClauseNamedParams[NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)] = searchParamValue.Value.(string) + "%" // "eve" matches "Eve" and "Evelyn"
+			return fmt.Sprintf("(%s LIKE @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
 		} else if searchParam.Modifier == "exact" {
 			// "eve" matches "eve" (not "Eve" or "EVE")
-			return fmt.Sprintf("(%s = @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s = @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
 		} else if searchParam.Modifier == "contains" {
-			searchClauseNamedParams[searchParam.Name] = "%" + searchParamValue.Value.(string) + "%" // "eve" matches "Eve", "Evelyn" and "Severine"
-			return fmt.Sprintf("(%s LIKE @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			searchClauseNamedParams[NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)] = "%" + searchParamValue.Value.(string) + "%" // "eve" matches "Eve", "Evelyn" and "Severine"
+			return fmt.Sprintf("(%s LIKE @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
 		}
 	case SearchParameterTypeUri:
 		if searchParam.Modifier == "" {
-			return fmt.Sprintf("(%s = @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			return fmt.Sprintf("(%s = @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
 		} else if searchParam.Modifier == "below" {
-			searchClauseNamedParams[searchParam.Name] = searchParamValue.Value.(string) + "%" // column starts with "http://example.com"
-			return fmt.Sprintf("(%s LIKE @%s)", searchParam.Name, searchParam.Name), searchClauseNamedParams, nil
+			searchClauseNamedParams[NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)] = searchParamValue.Value.(string) + "%" // column starts with "http://example.com"
+			return fmt.Sprintf("(%s LIKE @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
 		} else if searchParam.Modifier == "above" {
 			return "", nil, fmt.Errorf("search modifier 'above' not supported for search parameter type %s (%s=%s)", searchParam.Type, searchParam.Name, searchParamValue.Value)
 		}
@@ -281,17 +343,17 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		var clause string
 		if searchParamValue.Prefix == "" || searchParamValue.Prefix == "eq" {
 			//TODO: when no prefix is specified, we need to search using BETWEEN (+/- 0.05)
-			clause = fmt.Sprintf("%sJson.value ->> '$.value' = @%s", searchParam.Name, searchParam.Name)
+			clause = fmt.Sprintf("%sJson.value ->> '$.value' = @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix))
 		} else if searchParamValue.Prefix == "lt" || searchParamValue.Prefix == "eb" {
-			clause = fmt.Sprintf("%sJson.value ->> '$.value' < @%s", searchParam.Name, searchParam.Name)
+			clause = fmt.Sprintf("%sJson.value ->> '$.value' < @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix))
 		} else if searchParamValue.Prefix == "le" {
-			clause = fmt.Sprintf("%sJson.value ->> '$.value' <= @%s", searchParam.Name, searchParam.Name)
+			clause = fmt.Sprintf("%sJson.value ->> '$.value' <= @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix))
 		} else if searchParamValue.Prefix == "gt" || searchParamValue.Prefix == "sa" {
-			clause = fmt.Sprintf("%sJson.value ->> '$.value' > @%s", searchParam.Name, searchParam.Name)
+			clause = fmt.Sprintf("%sJson.value ->> '$.value' > @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix))
 		} else if searchParamValue.Prefix == "ge" {
-			clause = fmt.Sprintf("%sJson.value ->> '$.value' >= @%s", searchParam.Name, searchParam.Name)
+			clause = fmt.Sprintf("%sJson.value ->> '$.value' >= @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix))
 		} else if searchParamValue.Prefix == "ne" {
-			clause = fmt.Sprintf("%sJson.value ->> '$.value' <> @%s", searchParam.Name, searchParam.Name)
+			clause = fmt.Sprintf("%sJson.value ->> '$.value' <> @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix))
 		} else if searchParamValue.Prefix == "ap" {
 			return "", nil, fmt.Errorf("search modifier 'ap' not supported for search parameter type %s (%s=%s)", searchParam.Type, searchParam.Name, searchParamValue.Value)
 		}
@@ -303,7 +365,7 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		for _, k := range allowedSecondaryKeys {
 			namedParameterKey := fmt.Sprintf("%s%s", searchParam.Name, strings.Title(k))
 			if _, ok := searchParamValue.SecondaryValues[namedParameterKey]; ok {
-				clause += fmt.Sprintf(` AND %sJson.value ->> '$.%s' = @%s`, searchParam.Name, k, namedParameterKey)
+				clause += fmt.Sprintf(` AND %sJson.value ->> '$.%s' = @%s`, searchParam.Name, k, NamedParameterWithSuffix(namedParameterKey, namedParameterSuffix))
 			}
 		}
 
@@ -330,7 +392,7 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		//TODO: support ":text" modifier
 
 		//setup the clause
-		clause := fmt.Sprintf("%sJson.value ->> '$.code' = @%s", searchParam.Name, searchParam.Name)
+		clause := fmt.Sprintf("%sJson.value ->> '$.code' = @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix))
 
 		//append the code and/or system clauses (if required)
 		//this looks like unnecessary code, however its required to ensure consistent tests
@@ -339,7 +401,7 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		for _, k := range allowedSecondaryKeys {
 			namedParameterKey := fmt.Sprintf("%s%s", searchParam.Name, strings.Title(k))
 			if _, ok := searchParamValue.SecondaryValues[namedParameterKey]; ok {
-				clause += fmt.Sprintf(` AND %sJson.value ->> '$.%s' = @%s`, searchParam.Name, k, namedParameterKey)
+				clause += fmt.Sprintf(` AND %sJson.value ->> '$.%s' = @%s`, searchParam.Name, k, NamedParameterWithSuffix(namedParameterKey, namedParameterSuffix))
 			}
 		}
 		return fmt.Sprintf("(%s)", clause), searchClauseNamedParams, nil
@@ -350,7 +412,7 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 	return "", searchClauseNamedParams, nil
 }
 
-func SearchCodeToFromClause(searchParam SearchParameter, searchParamValue SearchParameterValue) (string, error) {
+func SearchCodeToFromClause(searchParam SearchParameter) (string, error) {
 	//complex search parameters (e.g. token, reference, quantities, special) require the use of `json_*` FROM clauses
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
