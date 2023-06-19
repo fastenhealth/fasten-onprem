@@ -60,12 +60,6 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 			return nil, err
 		}
 
-		if searchParameter.Type == SearchParameterTypeToken && len(query.Where) > 1 {
-			//token query is incredibly complicated, and we cannot support multiple token queries at the same time.
-			//TODO: this constraint should be fixed in the future.
-			return nil, fmt.Errorf("token search parameter %s cannot be used with other search parameters", searchParameter.Name)
-		}
-
 		whereClause, clauseNamedParameters, err := SearchCodeToWhereClause(searchParameter, searchParameterValue)
 		if err != nil {
 			return nil, err
