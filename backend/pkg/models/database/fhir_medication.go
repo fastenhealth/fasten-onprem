@@ -14,6 +14,8 @@ import (
 
 type FhirMedication struct {
 	models.OriginBase
+	// The raw resource content in JSON format
+	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -64,9 +66,6 @@ type FhirMedication struct {
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
 	// Identifies where the resource comes from
 	// https://hl7.org/fhir/r4/search.html#uri
 	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
@@ -100,7 +99,6 @@ func (s *FhirMedication) GetSearchParameters() map[string]string {
 		"lotNumber":      "token",
 		"manufacturer":   "reference",
 		"profile":        "reference",
-		"rawResource":    "special",
 		"sourceUri":      "uri",
 		"status":         "token",
 		"tag":            "token",
@@ -109,11 +107,11 @@ func (s *FhirMedication) GetSearchParameters() map[string]string {
 	}
 	return searchParameters
 }
-func (s *FhirMedication) PopulateAndExtractSearchParameters(rawResource json.RawMessage) error {
-	s.RawResource = datatypes.JSON(rawResource)
+func (s *FhirMedication) PopulateAndExtractSearchParameters(resourceRaw json.RawMessage) error {
+	s.ResourceRaw = datatypes.JSON(resourceRaw)
 	// unmarshal the raw resource (bytes) into a map
-	var rawResourceMap map[string]interface{}
-	err := json.Unmarshal(rawResource, &rawResourceMap)
+	var resourceRawMap map[string]interface{}
+	err := json.Unmarshal(resourceRaw, &resourceRawMap)
 	if err != nil {
 		return err
 	}
@@ -124,7 +122,7 @@ func (s *FhirMedication) PopulateAndExtractSearchParameters(rawResource json.Raw
 	// setup the global window object
 	vm.Set("window", vm.NewObject())
 	// set the global FHIR Resource object
-	vm.Set("fhirResource", rawResourceMap)
+	vm.Set("fhirResource", resourceRawMap)
 	// compile the fhirpath library
 	fhirPathJsProgram, err := goja.Compile("fhirpath.min.js", fhirPathJs, true)
 	if err != nil {

@@ -8,6 +8,7 @@ import (
 	"github.com/iancoleman/strcase"
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
+	"gorm.io/datatypes"
 	"strconv"
 	"strings"
 	"time"
@@ -28,6 +29,21 @@ const (
 )
 
 const TABLE_ALIAS = "fhir"
+
+type FhirResourceQueryResult struct {
+	//todo, this is a hack to get around the fact that we can't use the same struct for all resources
+	ID        string     `json:"id" gorm:"column:id;type:uuid"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+
+	UserID             string `json:"user_id"`
+	SourceID           string `json:"source_id"`
+	SourceResourceType string `json:"source_resource_type"`
+	SourceResourceID   string `json:"source_resource_id"`
+
+	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+}
 
 func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) (interface{}, error) {
 	//todo, until we actually parse the select statement, we will just return all resources based on "from"
@@ -92,7 +108,7 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 	whereNamedParameters["user_id"] = currentUser.ID.String()
 	whereClauses = append(whereClauses, "(user_id = @user_id)")
 
-	results := []map[string]interface{}{}
+	results := []FhirResourceQueryResult{}
 	clientResp := sr.GormClient.Where(strings.Join(whereClauses, " AND "), whereNamedParameters).Table(strings.Join(fromClauses, ", ")).Find(&results)
 
 	return results, clientResp.Error

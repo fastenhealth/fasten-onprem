@@ -14,6 +14,8 @@ import (
 
 type FhirClaim struct {
 	models.OriginBase
+	// The raw resource content in JSON format
+	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
 	// Member of the CareTeam
 	// https://hl7.org/fhir/r4/search.html#reference
 	CareTeam datatypes.JSON `gorm:"column:careTeam;type:text;serializer:json" json:"careTeam,omitempty"`
@@ -62,9 +64,6 @@ type FhirClaim struct {
 	// Provider responsible for the Claim
 	// https://hl7.org/fhir/r4/search.html#reference
 	Provider datatypes.JSON `gorm:"column:provider;type:text;serializer:json" json:"provider,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
 	// Identifies where the resource comes from
 	// https://hl7.org/fhir/r4/search.html#uri
 	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
@@ -109,7 +108,6 @@ func (s *FhirClaim) GetSearchParameters() map[string]string {
 		"procedureUdi": "reference",
 		"profile":      "reference",
 		"provider":     "reference",
-		"rawResource":  "special",
 		"sourceUri":    "uri",
 		"status":       "token",
 		"subdetailUdi": "reference",
@@ -120,11 +118,11 @@ func (s *FhirClaim) GetSearchParameters() map[string]string {
 	}
 	return searchParameters
 }
-func (s *FhirClaim) PopulateAndExtractSearchParameters(rawResource json.RawMessage) error {
-	s.RawResource = datatypes.JSON(rawResource)
+func (s *FhirClaim) PopulateAndExtractSearchParameters(resourceRaw json.RawMessage) error {
+	s.ResourceRaw = datatypes.JSON(resourceRaw)
 	// unmarshal the raw resource (bytes) into a map
-	var rawResourceMap map[string]interface{}
-	err := json.Unmarshal(rawResource, &rawResourceMap)
+	var resourceRawMap map[string]interface{}
+	err := json.Unmarshal(resourceRaw, &resourceRawMap)
 	if err != nil {
 		return err
 	}
@@ -135,7 +133,7 @@ func (s *FhirClaim) PopulateAndExtractSearchParameters(rawResource json.RawMessa
 	// setup the global window object
 	vm.Set("window", vm.NewObject())
 	// set the global FHIR Resource object
-	vm.Set("fhirResource", rawResourceMap)
+	vm.Set("fhirResource", resourceRawMap)
 	// compile the fhirpath library
 	fhirPathJsProgram, err := goja.Compile("fhirpath.min.js", fhirPathJs, true)
 	if err != nil {

@@ -142,11 +142,6 @@ func main() {
 			Description: "A resource type filter",
 		}
 
-		fieldMap["RawResource"] = DBField{
-			FieldType:   "special",
-			Description: "The raw resource content in JSON format",
-		}
-
 		resourceFieldMap[resourceName] = fieldMap
 	}
 
@@ -169,6 +164,12 @@ func main() {
 		file.Type().Id(structName).StructFunc(func(g *jen.Group) {
 			//Add the OriginBase embedded struct
 			g.Qual("github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models", "OriginBase")
+
+			g.Comment("The raw resource content in JSON format")
+			g.Id("ResourceRaw").Qual("gorm.io/datatypes", "JSON").Tag(map[string]string{
+				"json": "resource_raw,omitempty",
+				"gorm": "column:resource_raw;type:text;serializer:json",
+			})
 
 			sort.Strings(keys)
 			for _, fieldName := range keys {
@@ -209,13 +210,13 @@ func main() {
 		})
 
 		//create an instance function that extracts all search parameters from the raw resource and populates the struct
-		file.Func().Call(jen.Id("s").Op("*").Id(structName)).Id("PopulateAndExtractSearchParameters").Params(jen.Id("rawResource").Qual("encoding/json", "RawMessage")).Params(jen.Error()).BlockFunc(func(g *jen.Group) {
-			//set rawResource to RawResource field
-			g.Id("s.RawResource").Op("=").Qual("gorm.io/datatypes", "JSON").Call(jen.Id("rawResource"))
+		file.Func().Call(jen.Id("s").Op("*").Id(structName)).Id("PopulateAndExtractSearchParameters").Params(jen.Id("resourceRaw").Qual("encoding/json", "RawMessage")).Params(jen.Error()).BlockFunc(func(g *jen.Group) {
+			//set resourceRaw to ResourceRaw field
+			g.Id("s.ResourceRaw").Op("=").Qual("gorm.io/datatypes", "JSON").Call(jen.Id("resourceRaw"))
 
 			g.Comment("unmarshal the raw resource (bytes) into a map")
-			g.Var().Id("rawResourceMap").Map(jen.String()).Interface()
-			g.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("rawResource"), jen.Op("&").Id("rawResourceMap"))
+			g.Var().Id("resourceRawMap").Map(jen.String()).Interface()
+			g.Err().Op(":=").Qual("encoding/json", "Unmarshal").Call(jen.Id("resourceRaw"), jen.Op("&").Id("resourceRawMap"))
 			g.If(jen.Err().Op("!=").Nil()).BlockFunc(func(g *jen.Group) {
 				g.Return(jen.Err())
 			})
@@ -231,7 +232,7 @@ func main() {
 			g.Id("vm").Dot("Set").Call(jen.Lit("window"), jen.Id("vm").Dot("NewObject").Call())
 
 			g.Comment("set the global FHIR Resource object")
-			g.Id("vm").Dot("Set").Call(jen.Lit("fhirResource"), jen.Id("rawResourceMap"))
+			g.Id("vm").Dot("Set").Call(jen.Lit("fhirResource"), jen.Id("resourceRawMap"))
 
 			g.Comment("compile the fhirpath library")
 			g.List(jen.Id("fhirPathJsProgram"), jen.Id("err")).Op(":=").Qual("github.com/dop251/goja", "Compile").Call(jen.Lit("fhirpath.min.js"), jen.Id("fhirPathJs"), jen.True())

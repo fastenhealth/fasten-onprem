@@ -14,6 +14,8 @@ import (
 
 type FhirOrganizationAffiliation struct {
 	models.OriginBase
+	// The raw resource content in JSON format
+	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
 	// Whether this organization affiliation record is in active use
 	// https://hl7.org/fhir/r4/search.html#token
 	Active datatypes.JSON `gorm:"column:active;type:text;serializer:json" json:"active,omitempty"`
@@ -53,9 +55,6 @@ type FhirOrganizationAffiliation struct {
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
 	// Definition of the role the participatingOrganization plays
 	// https://hl7.org/fhir/r4/search.html#token
 	Role datatypes.JSON `gorm:"column:role;type:text;serializer:json" json:"role,omitempty"`
@@ -100,7 +99,6 @@ func (s *FhirOrganizationAffiliation) GetSearchParameters() map[string]string {
 		"phone":                     "token",
 		"primaryOrganization":       "reference",
 		"profile":                   "reference",
-		"rawResource":               "special",
 		"role":                      "token",
 		"service":                   "reference",
 		"sourceUri":                 "uri",
@@ -112,11 +110,11 @@ func (s *FhirOrganizationAffiliation) GetSearchParameters() map[string]string {
 	}
 	return searchParameters
 }
-func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(rawResource json.RawMessage) error {
-	s.RawResource = datatypes.JSON(rawResource)
+func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourceRaw json.RawMessage) error {
+	s.ResourceRaw = datatypes.JSON(resourceRaw)
 	// unmarshal the raw resource (bytes) into a map
-	var rawResourceMap map[string]interface{}
-	err := json.Unmarshal(rawResource, &rawResourceMap)
+	var resourceRawMap map[string]interface{}
+	err := json.Unmarshal(resourceRaw, &resourceRawMap)
 	if err != nil {
 		return err
 	}
@@ -127,7 +125,7 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(rawReso
 	// setup the global window object
 	vm.Set("window", vm.NewObject())
 	// set the global FHIR Resource object
-	vm.Set("fhirResource", rawResourceMap)
+	vm.Set("fhirResource", resourceRawMap)
 	// compile the fhirpath library
 	fhirPathJsProgram, err := goja.Compile("fhirpath.min.js", fhirPathJs, true)
 	if err != nil {

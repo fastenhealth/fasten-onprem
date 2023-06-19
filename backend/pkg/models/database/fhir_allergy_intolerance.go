@@ -14,6 +14,8 @@ import (
 
 type FhirAllergyIntolerance struct {
 	models.OriginBase
+	// The raw resource content in JSON format
+	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
 	// Source of the information about the allergy
 	// https://hl7.org/fhir/r4/search.html#reference
 	Asserter datatypes.JSON `gorm:"column:asserter;type:text;serializer:json" json:"asserter,omitempty"`
@@ -123,9 +125,6 @@ type FhirAllergyIntolerance struct {
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// The raw resource content in JSON format
-	// https://hl7.org/fhir/r4/search.html#special
-	RawResource datatypes.JSON `gorm:"column:rawResource;type:text;serializer:json" json:"rawResource,omitempty"`
 	// Who recorded the sensitivity
 	// https://hl7.org/fhir/r4/search.html#reference
 	Recorder datatypes.JSON `gorm:"column:recorder;type:text;serializer:json" json:"recorder,omitempty"`
@@ -170,7 +169,6 @@ func (s *FhirAllergyIntolerance) GetSearchParameters() map[string]string {
 		"manifestation":      "token",
 		"onset":              "date",
 		"profile":            "reference",
-		"rawResource":        "special",
 		"recorder":           "reference",
 		"route":              "token",
 		"severity":           "token",
@@ -182,11 +180,11 @@ func (s *FhirAllergyIntolerance) GetSearchParameters() map[string]string {
 	}
 	return searchParameters
 }
-func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(rawResource json.RawMessage) error {
-	s.RawResource = datatypes.JSON(rawResource)
+func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw json.RawMessage) error {
+	s.ResourceRaw = datatypes.JSON(resourceRaw)
 	// unmarshal the raw resource (bytes) into a map
-	var rawResourceMap map[string]interface{}
-	err := json.Unmarshal(rawResource, &rawResourceMap)
+	var resourceRawMap map[string]interface{}
+	err := json.Unmarshal(resourceRaw, &resourceRawMap)
 	if err != nil {
 		return err
 	}
@@ -197,7 +195,7 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(rawResource 
 	// setup the global window object
 	vm.Set("window", vm.NewObject())
 	// set the global FHIR Resource object
-	vm.Set("fhirResource", rawResourceMap)
+	vm.Set("fhirResource", resourceRawMap)
 	// compile the fhirpath library
 	fhirPathJsProgram, err := goja.Compile("fhirpath.min.js", fhirPathJs, true)
 	if err != nil {
