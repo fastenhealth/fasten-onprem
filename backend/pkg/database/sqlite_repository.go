@@ -366,15 +366,36 @@ func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions mode
 		//enable preload functionality in query
 		queryBuilder = queryBuilder.Preload("RelatedResourceFhir")
 	}
+	if len(queryOptions.SourceResourceType) > 0 {
+		tableName, err := databaseModel.GetTableNameByResourceType(queryOptions.SourceResourceType)
+		if err != nil {
+			return nil, err
+		}
+		results := queryBuilder.Where(queryParam).Table(tableName).
+			Find(&wrappedResourceModels)
 
-	tableName, err := databaseModel.GetTableNameByResourceType(queryOptions.SourceResourceType)
-	if err != nil {
-		return nil, err
+		return wrappedResourceModels, results.Error
+	} else {
+		//there is no FHIR Resource name specified, so we're querying across all FHIR resources
+		//TODO: theres probably a more efficient way of doing this with GORM
+		wrappedResourceModels = []models.ResourceFhir{}
+		resourceTypes := databaseModel.GetAllowedResourceTypes()
+		for _, resourceType := range resourceTypes {
+			tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
+			if err != nil {
+				return nil, err
+			}
+			var tempWrappedResourceModels []models.ResourceFhir
+			results := queryBuilder.Where(queryParam).Table(tableName).
+				Find(&tempWrappedResourceModels)
+			if results.Error != nil {
+				return nil, results.Error
+			}
+			wrappedResourceModels = append(wrappedResourceModels, tempWrappedResourceModels...)
+		}
+		return wrappedResourceModels, nil
 	}
-	results := queryBuilder.Where(queryParam).Table(tableName).
-		Find(&wrappedResourceModels)
 
-	return wrappedResourceModels, results.Error
 }
 
 func (sr *SqliteRepository) GetResourceBySourceType(ctx context.Context, sourceResourceType string, sourceResourceId string) (*models.ResourceFhir, error) {
