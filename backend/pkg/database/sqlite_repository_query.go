@@ -93,7 +93,7 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 	whereClauses = append(whereClauses, "(user_id = @user_id)")
 
 	results := []models.ResourceFhir{}
-	clientResp := sr.GormClient.
+	clientResp := sr.GormClient.WithContext(ctx).
 		Select(fmt.Sprintf("%s.*", TABLE_ALIAS)).
 		Where(strings.Join(whereClauses, " AND "), whereNamedParameters).
 		Group(fmt.Sprintf("%s.id", TABLE_ALIAS)).
