@@ -366,7 +366,12 @@ func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions mode
 		//enable preload functionality in query
 		queryBuilder = queryBuilder.Preload("RelatedResourceFhir")
 	}
-	results := queryBuilder.Where(queryParam).
+
+	tableName, err := databaseModel.GetTableNameByResourceType(queryOptions.SourceResourceType)
+	if err != nil {
+		return nil, err
+	}
+	results := queryBuilder.Where(queryParam).Table(tableName).
 		Find(&wrappedResourceModels)
 
 	return wrappedResourceModels, results.Error

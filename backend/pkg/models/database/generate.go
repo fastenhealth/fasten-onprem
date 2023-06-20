@@ -424,6 +424,22 @@ func main() {
 		})
 	})
 
+	//A function which returns the GORM table name for a FHIRResource when provided the FhirResource type string
+	//uses a switch statement to return the correct type
+	utilsFile.Comment("Returns the GORM table name for a FHIRResource when provided the FhirResource type string")
+	utilsFile.Func().Id("GetTableNameByResourceType").Params(jen.Id("resourceType").String()).Params(jen.String(), jen.Error()).BlockFunc(func(g *jen.Group) {
+		g.Switch(jen.Id("resourceType")).BlockFunc(func(s *jen.Group) {
+			for _, resourceName := range AllowedResources {
+				s.Case(jen.Lit(resourceName)).BlockFunc(func(c *jen.Group) {
+					c.Return(jen.Lit(strcase.ToSnake("Fhir"+resourceName)), jen.Nil())
+				})
+			}
+			s.Default().BlockFunc(func(d *jen.Group) {
+				d.Return(jen.Lit(""), jen.Qual("fmt", "Errorf").Call(jen.Lit("Invalid resource type: %s"), jen.Id("resourceType")))
+			})
+		})
+	})
+
 	//A function which returns all allowed resource types
 	utilsFile.Comment("Returns a slice of all allowed resource types")
 	utilsFile.Func().Id("GetAllowedResourceTypes").Params().Params(jen.Index().String()).BlockFunc(func(g *jen.Group) {
