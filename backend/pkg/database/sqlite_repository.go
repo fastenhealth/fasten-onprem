@@ -375,10 +375,6 @@ func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions mode
 
 	var wrappedResourceModels []models.ResourceBase
 	queryBuilder := sr.GormClient.WithContext(ctx)
-	if queryOptions.PreloadRelated {
-		//enable preload functionality in query
-		queryBuilder = queryBuilder.Preload("RelatedResource")
-	}
 	if len(queryOptions.SourceResourceType) > 0 {
 		tableName, err := databaseModel.GetTableNameByResourceType(queryOptions.SourceResourceType)
 		if err != nil {

@@ -497,9 +497,6 @@ func (suite *RepositoryTestSuite) TestListResources() {
 	require.Equal(suite.T(), len(findResourceWithOtherUserId), 0)
 }
 
-//TODO add test for ListResources with related resources (PrefetchRelated)
-//func (suite *RepositoryTestSuite) TestListResources_WithRelatedResource() {}
-
 func (suite *RepositoryTestSuite) TestGetResourceByResourceTypeAndId() {
 	//setup
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)

@@ -48,9 +48,6 @@ func ListResourceFhir(c *gin.Context) {
 	if len(c.Query("sourceResourceID")) > 0 {
 		listResourceQueryOptions.SourceResourceID = c.Query("sourceResourceID")
 	}
-	if len(c.Query("preloadRelated")) > 0 {
-		listResourceQueryOptions.PreloadRelated = true
-	}
 
 	wrappedResourceModels, err := databaseRepo.ListResources(c, listResourceQueryOptions)
 

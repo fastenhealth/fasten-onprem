@@ -17,6 +17,4 @@ type ListResourceQueryOptions struct {
 	SourceID           string
 	SourceResourceType string
 	SourceResourceID   string
-
-	PreloadRelated bool
 }
