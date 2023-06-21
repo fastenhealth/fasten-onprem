@@ -458,6 +458,7 @@ var AllowedResources = []string{
 	"CareTeam",
 	"Claim",
 	"ClaimResponse",
+	"Composition",
 	"Condition",
 	"Coverage",
 	"CoverageEligibilityRequest",

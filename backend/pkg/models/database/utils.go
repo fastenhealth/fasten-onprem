@@ -11,7 +11,7 @@ var fhirPathJs string
 
 // Generates all tables in the database associated with these models
 func Migrate(gormClient *gorm.DB) error {
-	err := gormClient.AutoMigrate(&FhirAdverseEvent{}, &FhirAllergyIntolerance{}, &FhirAppointment{}, &FhirBinary{}, &FhirCarePlan{}, &FhirCareTeam{}, &FhirClaim{}, &FhirClaimResponse{}, &FhirCondition{}, &FhirCoverage{}, &FhirCoverageEligibilityRequest{}, &FhirCoverageEligibilityResponse{}, &FhirDevice{}, &FhirDeviceRequest{}, &FhirDiagnosticReport{}, &FhirDocumentManifest{}, &FhirDocumentReference{}, &FhirEncounter{}, &FhirEndpoint{}, &FhirEnrollmentRequest{}, &FhirEnrollmentResponse{}, &FhirExplanationOfBenefit{}, &FhirFamilyMemberHistory{}, &FhirGoal{}, &FhirImagingStudy{}, &FhirImmunization{}, &FhirInsurancePlan{}, &FhirLocation{}, &FhirMedia{}, &FhirMedication{}, &FhirMedicationAdministration{}, &FhirMedicationDispense{}, &FhirMedicationRequest{}, &FhirMedicationStatement{}, &FhirNutritionOrder{}, &FhirObservation{}, &FhirOrganization{}, &FhirOrganizationAffiliation{}, &FhirPatient{}, &FhirPerson{}, &FhirPractitionerRole{}, &FhirPractitioner{}, &FhirProcedure{}, &FhirProvenance{}, &FhirQuestionnaire{}, &FhirQuestionnaireResponse{}, &FhirRelatedPerson{}, &FhirServiceRequest{}, &FhirSpecimen{}, &FhirVisionPrescription{})
+	err := gormClient.AutoMigrate(&FhirAdverseEvent{}, &FhirAllergyIntolerance{}, &FhirAppointment{}, &FhirBinary{}, &FhirCarePlan{}, &FhirCareTeam{}, &FhirClaim{}, &FhirClaimResponse{}, &FhirComposition{}, &FhirCondition{}, &FhirCoverage{}, &FhirCoverageEligibilityRequest{}, &FhirCoverageEligibilityResponse{}, &FhirDevice{}, &FhirDeviceRequest{}, &FhirDiagnosticReport{}, &FhirDocumentManifest{}, &FhirDocumentReference{}, &FhirEncounter{}, &FhirEndpoint{}, &FhirEnrollmentRequest{}, &FhirEnrollmentResponse{}, &FhirExplanationOfBenefit{}, &FhirFamilyMemberHistory{}, &FhirGoal{}, &FhirImagingStudy{}, &FhirImmunization{}, &FhirInsurancePlan{}, &FhirLocation{}, &FhirMedia{}, &FhirMedication{}, &FhirMedicationAdministration{}, &FhirMedicationDispense{}, &FhirMedicationRequest{}, &FhirMedicationStatement{}, &FhirNutritionOrder{}, &FhirObservation{}, &FhirOrganization{}, &FhirOrganizationAffiliation{}, &FhirPatient{}, &FhirPerson{}, &FhirPractitionerRole{}, &FhirPractitioner{}, &FhirProcedure{}, &FhirProvenance{}, &FhirQuestionnaire{}, &FhirQuestionnaireResponse{}, &FhirRelatedPerson{}, &FhirServiceRequest{}, &FhirSpecimen{}, &FhirVisionPrescription{})
 	if err != nil {
 		return err
 	}
@@ -37,6 +37,8 @@ func NewFhirResourceModelByType(resourceType string) (IFhirResourceModel, error)
 		return &FhirClaim{}, nil
 	case "ClaimResponse":
 		return &FhirClaimResponse{}, nil
+	case "Composition":
+		return &FhirComposition{}, nil
 	case "Condition":
 		return &FhirCondition{}, nil
 	case "Coverage":
@@ -145,6 +147,8 @@ func GetTableNameByResourceType(resourceType string) (string, error) {
 		return "fhir_claim", nil
 	case "ClaimResponse":
 		return "fhir_claim_response", nil
+	case "Composition":
+		return "fhir_composition", nil
 	case "Condition":
 		return "fhir_condition", nil
 	case "Coverage":
@@ -236,5 +240,5 @@ func GetTableNameByResourceType(resourceType string) (string, error) {
 
 // Returns a slice of all allowed resource types
 func GetAllowedResourceTypes() []string {
-	return []string{"AdverseEvent", "AllergyIntolerance", "Appointment", "Binary", "CarePlan", "CareTeam", "Claim", "ClaimResponse", "Condition", "Coverage", "CoverageEligibilityRequest", "CoverageEligibilityResponse", "Device", "DeviceRequest", "DiagnosticReport", "DocumentManifest", "DocumentReference", "Encounter", "Endpoint", "EnrollmentRequest", "EnrollmentResponse", "ExplanationOfBenefit", "FamilyMemberHistory", "Goal", "ImagingStudy", "Immunization", "InsurancePlan", "Location", "Media", "Medication", "MedicationAdministration", "MedicationDispense", "MedicationRequest", "MedicationStatement", "NutritionOrder", "Observation", "Organization", "OrganizationAffiliation", "Patient", "Person", "PractitionerRole", "Practitioner", "Procedure", "Provenance", "Questionnaire", "QuestionnaireResponse", "RelatedPerson", "ServiceRequest", "Specimen", "VisionPrescription"}
+	return []string{"AdverseEvent", "AllergyIntolerance", "Appointment", "Binary", "CarePlan", "CareTeam", "Claim", "ClaimResponse", "Composition", "Condition", "Coverage", "CoverageEligibilityRequest", "CoverageEligibilityResponse", "Device", "DeviceRequest", "DiagnosticReport", "DocumentManifest", "DocumentReference", "Encounter", "Endpoint", "EnrollmentRequest", "EnrollmentResponse", "ExplanationOfBenefit", "FamilyMemberHistory", "Goal", "ImagingStudy", "Immunization", "InsurancePlan", "Location", "Media", "Medication", "MedicationAdministration", "MedicationDispense", "MedicationRequest", "MedicationStatement", "NutritionOrder", "Observation", "Organization", "OrganizationAffiliation", "Patient", "Person", "PractitionerRole", "Practitioner", "Procedure", "Provenance", "Questionnaire", "QuestionnaireResponse", "RelatedPerson", "ServiceRequest", "Specimen", "VisionPrescription"}
 }

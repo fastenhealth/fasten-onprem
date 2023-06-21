@@ -1,0 +1,3764 @@
+{
+  "resources": [{
+    "id": "8fb0d1ea-dcfd-415c-9a29-0c9413c53528",
+    "created_at": "2023-06-02T01:00:32.232142798Z",
+    "updated_at": "2023-06-02T01:00:32.232142798Z",
+    "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+    "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+    "source_resource_type": "Condition",
+    "source_resource_id": "cf39b665-4177-41e3-af34-149421cb895f",
+    "sort_date": "2010-10-05T12:22:44-04:00",
+    "sort_title": "Viral sinusitis (disorder)",
+    "resource_raw": {
+      "resourceType": "Condition",
+      "id": "cf39b665-4177-41e3-af34-149421cb895f",
+      "clinicalStatus": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "resolved"
+        }]
+      },
+      "verificationStatus": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }]
+      },
+      "code": {
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "444814009",
+          "display": "Viral sinusitis (disorder)"
+        }],
+        "text": "Viral sinusitis (disorder)"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:3fba349b-e165-45f7-9cf2-66c391f293b6"
+      },
+      "onsetDateTime": "2010-10-05T12:22:44-04:00",
+      "abatementDateTime": "2010-10-12T12:22:44-04:00",
+      "recordedDate": "2010-10-05T12:22:44-04:00"
+    },
+    "related_resources": [{
+      "id": "a33307e1-f5ef-463e-a999-cc5906c81e55",
+      "created_at": "2023-06-02T01:00:38.789012913Z",
+      "updated_at": "2023-06-02T01:00:38.789012913Z",
+      "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+      "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+      "source_resource_type": "MedicationRequest",
+      "source_resource_id": "7fb7521d-a9a6-4a1a-8aba-c0f09d58336c",
+      "sort_date": "2016-10-11T12:22:44-04:00",
+      "sort_title": null,
+      "resource_raw": {
+        "resourceType": "MedicationRequest",
+        "id": "7fb7521d-a9a6-4a1a-8aba-c0f09d58336c",
+        "status": "stopped",
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [{
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "562251",
+            "display": "Amoxicillin 250 MG / Clavulanate 125 MG Oral Tablet"
+          }],
+          "text": "Amoxicillin 250 MG / Clavulanate 125 MG Oral Tablet"
+        },
+        "subject": {
+          "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+        },
+        "encounter": {
+          "reference": "urn:uuid:919f002e-ff43-4ea6-8acb-be3f1139c59d"
+        },
+        "authoredOn": "2016-10-11T12:22:44-04:00",
+        "requester": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e",
+          "display": "Dr. Renato359 Jenkins714"
+        },
+        "reasonReference": [{
+          "reference": "urn:uuid:cf39b665-4177-41e3-af34-149421cb895f"
+        }, {
+          "reference": "urn:uuid:a892f1fa-6abd-473e-9447-18ffcb58de48"
+        }, {
+          "reference": "urn:uuid:109b791b-a53e-490a-9e89-0d307bcccfb6"
+        }]
+      },
+      "related_resources": [{
+        "id": "062dcb2b-86aa-4d24-9c2d-51ba303453a9",
+        "created_at": "2023-06-02T01:00:32.12179014Z",
+        "updated_at": "2023-06-02T01:00:32.12179014Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Practitioner",
+        "source_resource_id": "0000016d-3a85-4cca-0000-00000000010e",
+        "sort_date": null,
+        "sort_title": "Jenkins714, Renato359",
+        "resource_raw": {
+          "resourceType": "Practitioner",
+          "id": "0000016d-3a85-4cca-0000-00000000010e",
+          "identifier": [{
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "270"
+          }],
+          "active": true,
+          "name": [{
+            "family": "Jenkins714",
+            "given": ["Renato359"],
+            "prefix": ["Dr."]
+          }],
+          "telecom": [{
+            "system": "email",
+            "value": "Renato359.Jenkins714@example.com",
+            "use": "work"
+          }],
+          "address": [{
+            "line": ["585 LEBANON STREET"],
+            "city": "MELROSE",
+            "state": "MA",
+            "postalCode": "02176",
+            "country": "US"
+          }],
+          "gender": "male"
+        },
+        "related_resources": null
+      }, {
+        "id": "588040a0-20ff-4fb8-8ee8-966393be2378",
+        "created_at": "2023-06-02T01:00:31.555119321Z",
+        "updated_at": "2023-06-02T01:00:31.555119321Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Patient",
+        "source_resource_id": "b426b062-8273-4b93-a907-de3176c0567d",
+        "sort_date": null,
+        "sort_title": "Heller342, Abraham100",
+        "resource_raw": {
+          "resourceType": "Patient",
+          "id": "b426b062-8273-4b93-a907-de3176c0567d",
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>.Version identifier: v2.4.0-404-ge7ce2295\n .   Person seed: 4209933468692678950  Population seed: 0</div>"
+          },
+          "extension": [{
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [{
+              "url": "ombCategory",
+              "valueCoding": {
+                "system": "urn:oid:2.16.840.1.113883.6.238",
+                "code": "2106-3",
+                "display": "White"
+              }
+            }, {
+              "url": "text",
+              "valueString": "White"
+            }]
+          }, {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [{
+              "url": "ombCategory",
+              "valueCoding": {
+                "system": "urn:oid:2.16.840.1.113883.6.238",
+                "code": "2186-5",
+                "display": "Not Hispanic or Latino"
+              }
+            }, {
+              "url": "text",
+              "valueString": "Not Hispanic or Latino"
+            }]
+          }, {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName",
+            "valueString": "Sanda877 Kshlerin58"
+          }, {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "M"
+          }, {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+            "valueAddress": {
+              "city": "Peabody",
+              "state": "Massachusetts",
+              "country": "US"
+            }
+          }, {
+            "url": "http://synthetichealth.github.io/synthea/disability-adjusted-life-years",
+            "valueDecimal": 0
+          }, {
+            "url": "http://synthetichealth.github.io/synthea/quality-adjusted-life-years",
+            "valueDecimal": 16
+          }],
+          "identifier": [{
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "262b819a-5193-404a-9787-b7f599358035"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "MR",
+                "display": "Medical Record Number"
+              }],
+              "text": "Medical Record Number"
+            },
+            "system": "http://hospital.smarthealthit.org",
+            "value": "262b819a-5193-404a-9787-b7f599358035"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "SS",
+                "display": "Social Security Number"
+              }],
+              "text": "Social Security Number"
+            },
+            "system": "http://hl7.org/fhir/sid/us-ssn",
+            "value": "999-19-7941"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "DL",
+                "display": "Driver's License"
+              }],
+              "text": "Driver's License"
+            },
+            "system": "urn:oid:2.16.840.1.113883.4.3.25",
+            "value": "S99986287"
+          }],
+          "name": [{
+            "use": "official",
+            "family": "Heller342",
+            "given": ["Abraham100"]
+          }],
+          "telecom": [{
+            "system": "phone",
+            "value": "555-803-7962",
+            "use": "home"
+          }],
+          "gender": "male",
+          "birthDate": "2002-04-15",
+          "address": [{
+            "extension": [{
+              "url": "http://hl7.org/fhir/StructureDefinition/geolocation",
+              "extension": [{
+                "url": "latitude",
+                "valueDecimal": 42.410027249980345
+              }, {
+                "url": "longitude",
+                "valueDecimal": -71.07762136029856
+              }]
+            }],
+            "line": ["834 Hansen Run"],
+            "city": "Somerville",
+            "state": "Massachusetts",
+            "postalCode": "02138",
+            "country": "US"
+          }],
+          "maritalStatus": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+              "code": "S",
+              "display": "Never Married"
+            }],
+            "text": "Never Married"
+          },
+          "multipleBirthBoolean": false,
+          "communication": [{
+            "language": {
+              "coding": [{
+                "system": "urn:ietf:bcp:47",
+                "code": "en-US",
+                "display": "English"
+              }],
+              "text": "English"
+            }
+          }]
+        },
+        "related_resources": []
+      }]
+    }, {
+      "id": "47a508da-cde3-497b-b774-91d9117e4e6b",
+      "created_at": "2023-06-02T01:00:32.357098654Z",
+      "updated_at": "2023-06-02T01:00:32.357098654Z",
+      "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+      "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+      "source_resource_type": "ExplanationOfBenefit",
+      "source_resource_id": "49408067-47c9-4ae6-9d4b-3597d942ef06",
+      "sort_date": "2010-10-05T12:37:44-04:00",
+      "sort_title": null,
+      "resource_raw": {
+        "resourceType": "ExplanationOfBenefit",
+        "id": "49408067-47c9-4ae6-9d4b-3597d942ef06",
+        "contained": [{
+          "resourceType": "ServiceRequest",
+          "id": "referral",
+          "status": "completed",
+          "intent": "order",
+          "subject": {
+            "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+          },
+          "requester": {
+            "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e"
+          },
+          "performer": [{
+            "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e"
+          }]
+        }, {
+          "resourceType": "Coverage",
+          "id": "coverage",
+          "status": "active",
+          "type": {
+            "text": "Aetna"
+          },
+          "beneficiary": {
+            "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+          },
+          "payor": [{
+            "display": "Aetna"
+          }]
+        }],
+        "identifier": [{
+          "system": "https://bluebutton.cms.gov/resources/variables/clm_id",
+          "value": "54cc9fff-9f9c-4c63-ad3b-e65a807207d5"
+        }, {
+          "system": "https://bluebutton.cms.gov/resources/identifier/claim-group",
+          "value": "99999999999"
+        }],
+        "status": "active",
+        "type": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+            "code": "institutional"
+          }]
+        },
+        "use": "claim",
+        "patient": {
+          "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+        },
+        "billablePeriod": {
+          "start": "2010-10-05T12:37:44-04:00",
+          "end": "2011-10-05T12:37:44-04:00"
+        },
+        "created": "2010-10-05T12:37:44-04:00",
+        "insurer": {
+          "display": "Aetna"
+        },
+        "provider": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e"
+        },
+        "referral": {
+          "reference": "#referral"
+        },
+        "claim": {
+          "reference": "urn:uuid:54cc9fff-9f9c-4c63-ad3b-e65a807207d5"
+        },
+        "outcome": "complete",
+        "careTeam": [{
+          "sequence": 1,
+          "provider": {
+            "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e"
+          },
+          "role": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/claimcareteamrole",
+              "code": "primary",
+              "display": "Primary Care Practitioner"
+            }]
+          }
+        }],
+        "diagnosis": [{
+          "sequence": 1,
+          "diagnosisReference": {
+            "reference": "urn:uuid:cf39b665-4177-41e3-af34-149421cb895f"
+          },
+          "type": [{
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/ex-diagnosistype",
+              "code": "principal"
+            }]
+          }]
+        }],
+        "insurance": [{
+          "focal": true,
+          "coverage": {
+            "reference": "#coverage",
+            "display": "Aetna"
+          }
+        }],
+        "item": [{
+          "sequence": 1,
+          "category": {
+            "coding": [{
+              "system": "https://bluebutton.cms.gov/resources/variables/line_cms_type_srvc_cd",
+              "code": "1",
+              "display": "Medical care"
+            }]
+          },
+          "productOrService": {
+            "coding": [{
+              "system": "http://snomed.info/sct",
+              "code": "185345009",
+              "display": "Encounter for symptom"
+            }],
+            "text": "Encounter for symptom"
+          },
+          "servicedPeriod": {
+            "start": "2010-10-05T12:22:44-04:00",
+            "end": "2010-10-05T12:37:44-04:00"
+          },
+          "locationCodeableConcept": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/ex-serviceplace",
+              "code": "21",
+              "display": "Inpatient Hospital"
+            }]
+          },
+          "encounter": [{
+            "reference": "urn:uuid:3fba349b-e165-45f7-9cf2-66c391f293b6"
+          }]
+        }, {
+          "sequence": 2,
+          "diagnosisSequence": [1],
+          "category": {
+            "coding": [{
+              "system": "https://bluebutton.cms.gov/resources/variables/line_cms_type_srvc_cd",
+              "code": "1",
+              "display": "Medical care"
+            }]
+          },
+          "productOrService": {
+            "coding": [{
+              "system": "http://snomed.info/sct",
+              "code": "444814009",
+              "display": "Viral sinusitis (disorder)"
+            }],
+            "text": "Viral sinusitis (disorder)"
+          },
+          "servicedPeriod": {
+            "start": "2010-10-05T12:22:44-04:00",
+            "end": "2010-10-05T12:37:44-04:00"
+          },
+          "locationCodeableConcept": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/ex-serviceplace",
+              "code": "21",
+              "display": "Inpatient Hospital"
+            }]
+          }
+        }],
+        "total": [{
+          "category": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/adjudication",
+              "code": "submitted",
+              "display": "Submitted Amount"
+            }],
+            "text": "Submitted Amount"
+          },
+          "amount": {
+            "value": 129.16,
+            "currency": "USD"
+          }
+        }],
+        "payment": {
+          "amount": {
+            "value": 0,
+            "currency": "USD"
+          }
+        }
+      },
+      "related_resources": [{
+        "id": "062dcb2b-86aa-4d24-9c2d-51ba303453a9",
+        "created_at": "2023-06-02T01:00:32.12179014Z",
+        "updated_at": "2023-06-02T01:00:32.12179014Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Practitioner",
+        "source_resource_id": "0000016d-3a85-4cca-0000-00000000010e",
+        "sort_date": null,
+        "sort_title": "Jenkins714, Renato359",
+        "resource_raw": {
+          "resourceType": "Practitioner",
+          "id": "0000016d-3a85-4cca-0000-00000000010e",
+          "identifier": [{
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "270"
+          }],
+          "active": true,
+          "name": [{
+            "family": "Jenkins714",
+            "given": ["Renato359"],
+            "prefix": ["Dr."]
+          }],
+          "telecom": [{
+            "system": "email",
+            "value": "Renato359.Jenkins714@example.com",
+            "use": "work"
+          }],
+          "address": [{
+            "line": ["585 LEBANON STREET"],
+            "city": "MELROSE",
+            "state": "MA",
+            "postalCode": "02176",
+            "country": "US"
+          }],
+          "gender": "male"
+        },
+        "related_resources": null
+      }, {
+        "id": "588040a0-20ff-4fb8-8ee8-966393be2378",
+        "created_at": "2023-06-02T01:00:31.555119321Z",
+        "updated_at": "2023-06-02T01:00:31.555119321Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Patient",
+        "source_resource_id": "b426b062-8273-4b93-a907-de3176c0567d",
+        "sort_date": null,
+        "sort_title": "Heller342, Abraham100",
+        "resource_raw": {
+          "resourceType": "Patient",
+          "id": "b426b062-8273-4b93-a907-de3176c0567d",
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>.Version identifier: v2.4.0-404-ge7ce2295\n .   Person seed: 4209933468692678950  Population seed: 0</div>"
+          },
+          "extension": [{
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [{
+              "url": "ombCategory",
+              "valueCoding": {
+                "system": "urn:oid:2.16.840.1.113883.6.238",
+                "code": "2106-3",
+                "display": "White"
+              }
+            }, {
+              "url": "text",
+              "valueString": "White"
+            }]
+          }, {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [{
+              "url": "ombCategory",
+              "valueCoding": {
+                "system": "urn:oid:2.16.840.1.113883.6.238",
+                "code": "2186-5",
+                "display": "Not Hispanic or Latino"
+              }
+            }, {
+              "url": "text",
+              "valueString": "Not Hispanic or Latino"
+            }]
+          }, {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName",
+            "valueString": "Sanda877 Kshlerin58"
+          }, {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "M"
+          }, {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+            "valueAddress": {
+              "city": "Peabody",
+              "state": "Massachusetts",
+              "country": "US"
+            }
+          }, {
+            "url": "http://synthetichealth.github.io/synthea/disability-adjusted-life-years",
+            "valueDecimal": 0
+          }, {
+            "url": "http://synthetichealth.github.io/synthea/quality-adjusted-life-years",
+            "valueDecimal": 16
+          }],
+          "identifier": [{
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "262b819a-5193-404a-9787-b7f599358035"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "MR",
+                "display": "Medical Record Number"
+              }],
+              "text": "Medical Record Number"
+            },
+            "system": "http://hospital.smarthealthit.org",
+            "value": "262b819a-5193-404a-9787-b7f599358035"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "SS",
+                "display": "Social Security Number"
+              }],
+              "text": "Social Security Number"
+            },
+            "system": "http://hl7.org/fhir/sid/us-ssn",
+            "value": "999-19-7941"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "DL",
+                "display": "Driver's License"
+              }],
+              "text": "Driver's License"
+            },
+            "system": "urn:oid:2.16.840.1.113883.4.3.25",
+            "value": "S99986287"
+          }],
+          "name": [{
+            "use": "official",
+            "family": "Heller342",
+            "given": ["Abraham100"]
+          }],
+          "telecom": [{
+            "system": "phone",
+            "value": "555-803-7962",
+            "use": "home"
+          }],
+          "gender": "male",
+          "birthDate": "2002-04-15",
+          "address": [{
+            "extension": [{
+              "url": "http://hl7.org/fhir/StructureDefinition/geolocation",
+              "extension": [{
+                "url": "latitude",
+                "valueDecimal": 42.410027249980345
+              }, {
+                "url": "longitude",
+                "valueDecimal": -71.07762136029856
+              }]
+            }],
+            "line": ["834 Hansen Run"],
+            "city": "Somerville",
+            "state": "Massachusetts",
+            "postalCode": "02138",
+            "country": "US"
+          }],
+          "maritalStatus": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+              "code": "S",
+              "display": "Never Married"
+            }],
+            "text": "Never Married"
+          },
+          "multipleBirthBoolean": false,
+          "communication": [{
+            "language": {
+              "coding": [{
+                "system": "urn:ietf:bcp:47",
+                "code": "en-US",
+                "display": "English"
+              }],
+              "text": "English"
+            }
+          }]
+        },
+        "related_resources": []
+      }, {
+        "id": "f06aef08-31d0-4d8a-bb84-400a06464806",
+        "created_at": "2023-06-02T01:00:32.18722747Z",
+        "updated_at": "2023-06-02T01:00:32.18722747Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Encounter",
+        "source_resource_id": "3fba349b-e165-45f7-9cf2-66c391f293b6",
+        "sort_date": "2010-10-05T12:22:44-04:00",
+        "sort_title": "Encounter for symptom",
+        "resource_raw": {
+          "resourceType": "Encounter",
+          "id": "3fba349b-e165-45f7-9cf2-66c391f293b6",
+          "status": "finished",
+          "class": {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+            "code": "AMB"
+          },
+          "type": [{
+            "coding": [{
+              "system": "http://snomed.info/sct",
+              "code": "185345009",
+              "display": "Encounter for symptom"
+            }],
+            "text": "Encounter for symptom"
+          }],
+          "subject": {
+            "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+            "display": "Abraham100 Heller342"
+          },
+          "participant": [{
+            "individual": {
+              "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e",
+              "display": "Dr. Renato359 Jenkins714"
+            }
+          }],
+          "period": {
+            "start": "2010-10-05T12:22:44-04:00",
+            "end": "2010-10-05T12:37:44-04:00"
+          },
+          "reasonCode": [{
+            "coding": [{
+              "system": "http://snomed.info/sct",
+              "code": "444814009",
+              "display": "Viral sinusitis (disorder)"
+            }]
+          }],
+          "serviceProvider": {
+            "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+            "display": "HALLMARK HEALTH SYSTEM"
+          }
+        },
+        "related_resources": [{
+          "id": "fd4c45cc-db63-412d-83cd-71168a7ac504",
+          "created_at": "2023-06-02T01:00:32.100218389Z",
+          "updated_at": "2023-06-02T01:00:32.100218389Z",
+          "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+          "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+          "source_resource_type": "Organization",
+          "source_resource_id": "d692e283-0833-3201-8e55-4f868a9c0736",
+          "sort_date": null,
+          "sort_title": "HALLMARK HEALTH SYSTEM",
+          "resource_raw": {
+            "resourceType": "Organization",
+            "id": "d692e283-0833-3201-8e55-4f868a9c0736",
+            "identifier": [{
+              "system": "https://github.com/synthetichealth/synthea",
+              "value": "d692e283-0833-3201-8e55-4f868a9c0736"
+            }],
+            "active": true,
+            "type": [{
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/organization-type",
+                "code": "prov",
+                "display": "Healthcare Provider"
+              }],
+              "text": "Healthcare Provider"
+            }],
+            "name": "HALLMARK HEALTH SYSTEM",
+            "telecom": [{
+              "system": "phone",
+              "value": "7819793000"
+            }],
+            "address": [{
+              "line": ["585 LEBANON STREET"],
+              "city": "MELROSE",
+              "state": "MA",
+              "postalCode": "02176",
+              "country": "US"
+            }]
+          },
+          "related_resources": null
+        }, {
+          "id": "062dcb2b-86aa-4d24-9c2d-51ba303453a9",
+          "created_at": "2023-06-02T01:00:32.12179014Z",
+          "updated_at": "2023-06-02T01:00:32.12179014Z",
+          "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+          "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+          "source_resource_type": "Practitioner",
+          "source_resource_id": "0000016d-3a85-4cca-0000-00000000010e",
+          "sort_date": null,
+          "sort_title": "Jenkins714, Renato359",
+          "resource_raw": {
+            "resourceType": "Practitioner",
+            "id": "0000016d-3a85-4cca-0000-00000000010e",
+            "identifier": [{
+              "system": "http://hl7.org/fhir/sid/us-npi",
+              "value": "270"
+            }],
+            "active": true,
+            "name": [{
+              "family": "Jenkins714",
+              "given": ["Renato359"],
+              "prefix": ["Dr."]
+            }],
+            "telecom": [{
+              "system": "email",
+              "value": "Renato359.Jenkins714@example.com",
+              "use": "work"
+            }],
+            "address": [{
+              "line": ["585 LEBANON STREET"],
+              "city": "MELROSE",
+              "state": "MA",
+              "postalCode": "02176",
+              "country": "US"
+            }],
+            "gender": "male"
+          },
+          "related_resources": null
+        }, {
+          "id": "588040a0-20ff-4fb8-8ee8-966393be2378",
+          "created_at": "2023-06-02T01:00:31.555119321Z",
+          "updated_at": "2023-06-02T01:00:31.555119321Z",
+          "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+          "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+          "source_resource_type": "Patient",
+          "source_resource_id": "b426b062-8273-4b93-a907-de3176c0567d",
+          "sort_date": null,
+          "sort_title": "Heller342, Abraham100",
+          "resource_raw": {
+            "resourceType": "Patient",
+            "id": "b426b062-8273-4b93-a907-de3176c0567d",
+            "text": {
+              "status": "generated",
+              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>.Version identifier: v2.4.0-404-ge7ce2295\n .   Person seed: 4209933468692678950  Population seed: 0</div>"
+            },
+            "extension": [{
+              "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+              "extension": [{
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2106-3",
+                  "display": "White"
+                }
+              }, {
+                "url": "text",
+                "valueString": "White"
+              }]
+            }, {
+              "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+              "extension": [{
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2186-5",
+                  "display": "Not Hispanic or Latino"
+                }
+              }, {
+                "url": "text",
+                "valueString": "Not Hispanic or Latino"
+              }]
+            }, {
+              "url": "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName",
+              "valueString": "Sanda877 Kshlerin58"
+            }, {
+              "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+              "valueCode": "M"
+            }, {
+              "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+              "valueAddress": {
+                "city": "Peabody",
+                "state": "Massachusetts",
+                "country": "US"
+              }
+            }, {
+              "url": "http://synthetichealth.github.io/synthea/disability-adjusted-life-years",
+              "valueDecimal": 0
+            }, {
+              "url": "http://synthetichealth.github.io/synthea/quality-adjusted-life-years",
+              "valueDecimal": 16
+            }],
+            "identifier": [{
+              "system": "https://github.com/synthetichealth/synthea",
+              "value": "262b819a-5193-404a-9787-b7f599358035"
+            }, {
+              "type": {
+                "coding": [{
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR",
+                  "display": "Medical Record Number"
+                }],
+                "text": "Medical Record Number"
+              },
+              "system": "http://hospital.smarthealthit.org",
+              "value": "262b819a-5193-404a-9787-b7f599358035"
+            }, {
+              "type": {
+                "coding": [{
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "SS",
+                  "display": "Social Security Number"
+                }],
+                "text": "Social Security Number"
+              },
+              "system": "http://hl7.org/fhir/sid/us-ssn",
+              "value": "999-19-7941"
+            }, {
+              "type": {
+                "coding": [{
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "DL",
+                  "display": "Driver's License"
+                }],
+                "text": "Driver's License"
+              },
+              "system": "urn:oid:2.16.840.1.113883.4.3.25",
+              "value": "S99986287"
+            }],
+            "name": [{
+              "use": "official",
+              "family": "Heller342",
+              "given": ["Abraham100"]
+            }],
+            "telecom": [{
+              "system": "phone",
+              "value": "555-803-7962",
+              "use": "home"
+            }],
+            "gender": "male",
+            "birthDate": "2002-04-15",
+            "address": [{
+              "extension": [{
+                "url": "http://hl7.org/fhir/StructureDefinition/geolocation",
+                "extension": [{
+                  "url": "latitude",
+                  "valueDecimal": 42.410027249980345
+                }, {
+                  "url": "longitude",
+                  "valueDecimal": -71.07762136029856
+                }]
+              }],
+              "line": ["834 Hansen Run"],
+              "city": "Somerville",
+              "state": "Massachusetts",
+              "postalCode": "02138",
+              "country": "US"
+            }],
+            "maritalStatus": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+                "code": "S",
+                "display": "Never Married"
+              }],
+              "text": "Never Married"
+            },
+            "multipleBirthBoolean": false,
+            "communication": [{
+              "language": {
+                "coding": [{
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en-US",
+                  "display": "English"
+                }],
+                "text": "English"
+              }
+            }]
+          },
+          "related_resources": []
+        }]
+      }, {
+        "id": "fd4c45cc-db63-412d-83cd-71168a7ac504",
+        "created_at": "2023-06-02T01:00:32.100218389Z",
+        "updated_at": "2023-06-02T01:00:32.100218389Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Organization",
+        "source_resource_id": "d692e283-0833-3201-8e55-4f868a9c0736",
+        "sort_date": null,
+        "sort_title": "HALLMARK HEALTH SYSTEM",
+        "resource_raw": {
+          "resourceType": "Organization",
+          "id": "d692e283-0833-3201-8e55-4f868a9c0736",
+          "identifier": [{
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "d692e283-0833-3201-8e55-4f868a9c0736"
+          }],
+          "active": true,
+          "type": [{
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/organization-type",
+              "code": "prov",
+              "display": "Healthcare Provider"
+            }],
+            "text": "Healthcare Provider"
+          }],
+          "name": "HALLMARK HEALTH SYSTEM",
+          "telecom": [{
+            "system": "phone",
+            "value": "7819793000"
+          }],
+          "address": [{
+            "line": ["585 LEBANON STREET"],
+            "city": "MELROSE",
+            "state": "MA",
+            "postalCode": "02176",
+            "country": "US"
+          }]
+        },
+        "related_resources": null
+      }, {
+        "id": "81ba4c75-0367-4d16-932c-9c969fb93eeb",
+        "created_at": "2023-06-02T01:00:32.252964969Z",
+        "updated_at": "2023-06-02T01:00:32.252964969Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Claim",
+        "source_resource_id": "54cc9fff-9f9c-4c63-ad3b-e65a807207d5",
+        "sort_date": null,
+        "sort_title": null,
+        "resource_raw": {
+          "resourceType": "Claim",
+          "id": "54cc9fff-9f9c-4c63-ad3b-e65a807207d5",
+          "status": "active",
+          "type": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+              "code": "institutional"
+            }]
+          },
+          "use": "claim",
+          "patient": {
+            "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+            "display": "Abraham100 Heller342"
+          },
+          "billablePeriod": {
+            "start": "2010-10-05T12:22:44-04:00",
+            "end": "2010-10-05T12:37:44-04:00"
+          },
+          "created": "2010-10-05T12:37:44-04:00",
+          "provider": {
+            "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+            "display": "HALLMARK HEALTH SYSTEM"
+          },
+          "priority": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+              "code": "normal"
+            }]
+          },
+          "diagnosis": [{
+            "sequence": 1,
+            "diagnosisReference": {
+              "reference": "urn:uuid:cf39b665-4177-41e3-af34-149421cb895f"
+            }
+          }],
+          "insurance": [{
+            "sequence": 1,
+            "focal": true,
+            "coverage": {
+              "display": "Aetna"
+            }
+          }],
+          "item": [{
+            "sequence": 1,
+            "productOrService": {
+              "coding": [{
+                "system": "http://snomed.info/sct",
+                "code": "185345009",
+                "display": "Encounter for symptom"
+              }],
+              "text": "Encounter for symptom"
+            },
+            "encounter": [{
+              "reference": "urn:uuid:3fba349b-e165-45f7-9cf2-66c391f293b6"
+            }]
+          }, {
+            "sequence": 2,
+            "diagnosisSequence": [1],
+            "productOrService": {
+              "coding": [{
+                "system": "http://snomed.info/sct",
+                "code": "444814009",
+                "display": "Viral sinusitis (disorder)"
+              }],
+              "text": "Viral sinusitis (disorder)"
+            }
+          }],
+          "total": {
+            "value": 129.16,
+            "currency": "USD"
+          }
+        },
+        "related_resources": null
+      }]
+    }, {
+      "id": "f06aef08-31d0-4d8a-bb84-400a06464806",
+      "created_at": "2023-06-02T01:00:32.18722747Z",
+      "updated_at": "2023-06-02T01:00:32.18722747Z",
+      "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+      "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+      "source_resource_type": "Encounter",
+      "source_resource_id": "3fba349b-e165-45f7-9cf2-66c391f293b6",
+      "sort_date": "2010-10-05T12:22:44-04:00",
+      "sort_title": "Encounter for symptom",
+      "resource_raw": {
+        "resourceType": "Encounter",
+        "id": "3fba349b-e165-45f7-9cf2-66c391f293b6",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [{
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }],
+          "text": "Encounter for symptom"
+        }],
+        "subject": {
+          "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+          "display": "Abraham100 Heller342"
+        },
+        "participant": [{
+          "individual": {
+            "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e",
+            "display": "Dr. Renato359 Jenkins714"
+          }
+        }],
+        "period": {
+          "start": "2010-10-05T12:22:44-04:00",
+          "end": "2010-10-05T12:37:44-04:00"
+        },
+        "reasonCode": [{
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "444814009",
+            "display": "Viral sinusitis (disorder)"
+          }]
+        }],
+        "serviceProvider": {
+          "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+          "display": "HALLMARK HEALTH SYSTEM"
+        }
+      },
+      "related_resources": [{
+        "id": "fd4c45cc-db63-412d-83cd-71168a7ac504",
+        "created_at": "2023-06-02T01:00:32.100218389Z",
+        "updated_at": "2023-06-02T01:00:32.100218389Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Organization",
+        "source_resource_id": "d692e283-0833-3201-8e55-4f868a9c0736",
+        "sort_date": null,
+        "sort_title": "HALLMARK HEALTH SYSTEM",
+        "resource_raw": {
+          "resourceType": "Organization",
+          "id": "d692e283-0833-3201-8e55-4f868a9c0736",
+          "identifier": [{
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "d692e283-0833-3201-8e55-4f868a9c0736"
+          }],
+          "active": true,
+          "type": [{
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/organization-type",
+              "code": "prov",
+              "display": "Healthcare Provider"
+            }],
+            "text": "Healthcare Provider"
+          }],
+          "name": "HALLMARK HEALTH SYSTEM",
+          "telecom": [{
+            "system": "phone",
+            "value": "7819793000"
+          }],
+          "address": [{
+            "line": ["585 LEBANON STREET"],
+            "city": "MELROSE",
+            "state": "MA",
+            "postalCode": "02176",
+            "country": "US"
+          }]
+        },
+        "related_resources": null
+      }, {
+        "id": "062dcb2b-86aa-4d24-9c2d-51ba303453a9",
+        "created_at": "2023-06-02T01:00:32.12179014Z",
+        "updated_at": "2023-06-02T01:00:32.12179014Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Practitioner",
+        "source_resource_id": "0000016d-3a85-4cca-0000-00000000010e",
+        "sort_date": null,
+        "sort_title": "Jenkins714, Renato359",
+        "resource_raw": {
+          "resourceType": "Practitioner",
+          "id": "0000016d-3a85-4cca-0000-00000000010e",
+          "identifier": [{
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "270"
+          }],
+          "active": true,
+          "name": [{
+            "family": "Jenkins714",
+            "given": ["Renato359"],
+            "prefix": ["Dr."]
+          }],
+          "telecom": [{
+            "system": "email",
+            "value": "Renato359.Jenkins714@example.com",
+            "use": "work"
+          }],
+          "address": [{
+            "line": ["585 LEBANON STREET"],
+            "city": "MELROSE",
+            "state": "MA",
+            "postalCode": "02176",
+            "country": "US"
+          }],
+          "gender": "male"
+        },
+        "related_resources": null
+      }, {
+        "id": "588040a0-20ff-4fb8-8ee8-966393be2378",
+        "created_at": "2023-06-02T01:00:31.555119321Z",
+        "updated_at": "2023-06-02T01:00:31.555119321Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Patient",
+        "source_resource_id": "b426b062-8273-4b93-a907-de3176c0567d",
+        "sort_date": null,
+        "sort_title": "Heller342, Abraham100",
+        "resource_raw": {
+          "resourceType": "Patient",
+          "id": "b426b062-8273-4b93-a907-de3176c0567d",
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>.Version identifier: v2.4.0-404-ge7ce2295\n .   Person seed: 4209933468692678950  Population seed: 0</div>"
+          },
+          "extension": [{
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [{
+              "url": "ombCategory",
+              "valueCoding": {
+                "system": "urn:oid:2.16.840.1.113883.6.238",
+                "code": "2106-3",
+                "display": "White"
+              }
+            }, {
+              "url": "text",
+              "valueString": "White"
+            }]
+          }, {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [{
+              "url": "ombCategory",
+              "valueCoding": {
+                "system": "urn:oid:2.16.840.1.113883.6.238",
+                "code": "2186-5",
+                "display": "Not Hispanic or Latino"
+              }
+            }, {
+              "url": "text",
+              "valueString": "Not Hispanic or Latino"
+            }]
+          }, {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName",
+            "valueString": "Sanda877 Kshlerin58"
+          }, {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "M"
+          }, {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+            "valueAddress": {
+              "city": "Peabody",
+              "state": "Massachusetts",
+              "country": "US"
+            }
+          }, {
+            "url": "http://synthetichealth.github.io/synthea/disability-adjusted-life-years",
+            "valueDecimal": 0
+          }, {
+            "url": "http://synthetichealth.github.io/synthea/quality-adjusted-life-years",
+            "valueDecimal": 16
+          }],
+          "identifier": [{
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "262b819a-5193-404a-9787-b7f599358035"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "MR",
+                "display": "Medical Record Number"
+              }],
+              "text": "Medical Record Number"
+            },
+            "system": "http://hospital.smarthealthit.org",
+            "value": "262b819a-5193-404a-9787-b7f599358035"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "SS",
+                "display": "Social Security Number"
+              }],
+              "text": "Social Security Number"
+            },
+            "system": "http://hl7.org/fhir/sid/us-ssn",
+            "value": "999-19-7941"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "DL",
+                "display": "Driver's License"
+              }],
+              "text": "Driver's License"
+            },
+            "system": "urn:oid:2.16.840.1.113883.4.3.25",
+            "value": "S99986287"
+          }],
+          "name": [{
+            "use": "official",
+            "family": "Heller342",
+            "given": ["Abraham100"]
+          }],
+          "telecom": [{
+            "system": "phone",
+            "value": "555-803-7962",
+            "use": "home"
+          }],
+          "gender": "male",
+          "birthDate": "2002-04-15",
+          "address": [{
+            "extension": [{
+              "url": "http://hl7.org/fhir/StructureDefinition/geolocation",
+              "extension": [{
+                "url": "latitude",
+                "valueDecimal": 42.410027249980345
+              }, {
+                "url": "longitude",
+                "valueDecimal": -71.07762136029856
+              }]
+            }],
+            "line": ["834 Hansen Run"],
+            "city": "Somerville",
+            "state": "Massachusetts",
+            "postalCode": "02138",
+            "country": "US"
+          }],
+          "maritalStatus": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+              "code": "S",
+              "display": "Never Married"
+            }],
+            "text": "Never Married"
+          },
+          "multipleBirthBoolean": false,
+          "communication": [{
+            "language": {
+              "coding": [{
+                "system": "urn:ietf:bcp:47",
+                "code": "en-US",
+                "display": "English"
+              }],
+              "text": "English"
+            }
+          }]
+        },
+        "related_resources": []
+      }]
+    }, {
+      "id": "588040a0-20ff-4fb8-8ee8-966393be2378",
+      "created_at": "2023-06-02T01:00:31.555119321Z",
+      "updated_at": "2023-06-02T01:00:31.555119321Z",
+      "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+      "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+      "source_resource_type": "Patient",
+      "source_resource_id": "b426b062-8273-4b93-a907-de3176c0567d",
+      "sort_date": null,
+      "sort_title": "Heller342, Abraham100",
+      "resource_raw": {
+        "resourceType": "Patient",
+        "id": "b426b062-8273-4b93-a907-de3176c0567d",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>.Version identifier: v2.4.0-404-ge7ce2295\n .   Person seed: 4209933468692678950  Population seed: 0</div>"
+        },
+        "extension": [{
+          "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+          "extension": [{
+            "url": "ombCategory",
+            "valueCoding": {
+              "system": "urn:oid:2.16.840.1.113883.6.238",
+              "code": "2106-3",
+              "display": "White"
+            }
+          }, {
+            "url": "text",
+            "valueString": "White"
+          }]
+        }, {
+          "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+          "extension": [{
+            "url": "ombCategory",
+            "valueCoding": {
+              "system": "urn:oid:2.16.840.1.113883.6.238",
+              "code": "2186-5",
+              "display": "Not Hispanic or Latino"
+            }
+          }, {
+            "url": "text",
+            "valueString": "Not Hispanic or Latino"
+          }]
+        }, {
+          "url": "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName",
+          "valueString": "Sanda877 Kshlerin58"
+        }, {
+          "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+          "valueCode": "M"
+        }, {
+          "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+          "valueAddress": {
+            "city": "Peabody",
+            "state": "Massachusetts",
+            "country": "US"
+          }
+        }, {
+          "url": "http://synthetichealth.github.io/synthea/disability-adjusted-life-years",
+          "valueDecimal": 0
+        }, {
+          "url": "http://synthetichealth.github.io/synthea/quality-adjusted-life-years",
+          "valueDecimal": 16
+        }],
+        "identifier": [{
+          "system": "https://github.com/synthetichealth/synthea",
+          "value": "262b819a-5193-404a-9787-b7f599358035"
+        }, {
+          "type": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+              "code": "MR",
+              "display": "Medical Record Number"
+            }],
+            "text": "Medical Record Number"
+          },
+          "system": "http://hospital.smarthealthit.org",
+          "value": "262b819a-5193-404a-9787-b7f599358035"
+        }, {
+          "type": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+              "code": "SS",
+              "display": "Social Security Number"
+            }],
+            "text": "Social Security Number"
+          },
+          "system": "http://hl7.org/fhir/sid/us-ssn",
+          "value": "999-19-7941"
+        }, {
+          "type": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+              "code": "DL",
+              "display": "Driver's License"
+            }],
+            "text": "Driver's License"
+          },
+          "system": "urn:oid:2.16.840.1.113883.4.3.25",
+          "value": "S99986287"
+        }],
+        "name": [{
+          "use": "official",
+          "family": "Heller342",
+          "given": ["Abraham100"]
+        }],
+        "telecom": [{
+          "system": "phone",
+          "value": "555-803-7962",
+          "use": "home"
+        }],
+        "gender": "male",
+        "birthDate": "2002-04-15",
+        "address": [{
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/geolocation",
+            "extension": [{
+              "url": "latitude",
+              "valueDecimal": 42.410027249980345
+            }, {
+              "url": "longitude",
+              "valueDecimal": -71.07762136029856
+            }]
+          }],
+          "line": ["834 Hansen Run"],
+          "city": "Somerville",
+          "state": "Massachusetts",
+          "postalCode": "02138",
+          "country": "US"
+        }],
+        "maritalStatus": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+            "code": "S",
+            "display": "Never Married"
+          }],
+          "text": "Never Married"
+        },
+        "multipleBirthBoolean": false,
+        "communication": [{
+          "language": {
+            "coding": [{
+              "system": "urn:ietf:bcp:47",
+              "code": "en-US",
+              "display": "English"
+            }],
+            "text": "English"
+          }
+        }]
+      },
+      "related_resources": []
+    }]
+  }, {
+    "id": "7cebcb96-9f23-4090-abd5-5dba741e11b2",
+    "created_at": "2023-06-02T01:00:32.982319636Z",
+    "updated_at": "2023-06-02T01:00:32.982319636Z",
+    "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+    "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+    "source_resource_type": "Condition",
+    "source_resource_id": "bec92fdc-8765-409b-9850-52786d31aa9b",
+    "sort_date": "2011-09-15T12:22:44-04:00",
+    "sort_title": "Acute viral pharyngitis (disorder)",
+    "resource_raw": {
+      "resourceType": "Condition",
+      "id": "bec92fdc-8765-409b-9850-52786d31aa9b",
+      "clinicalStatus": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "resolved"
+        }]
+      },
+      "verificationStatus": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }]
+      },
+      "code": {
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "195662009",
+          "display": "Acute viral pharyngitis (disorder)"
+        }],
+        "text": "Acute viral pharyngitis (disorder)"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:24f73ec3-9b7a-42a9-be03-53bffd9b304c"
+      },
+      "onsetDateTime": "2011-09-15T12:22:44-04:00",
+      "abatementDateTime": "2011-09-27T12:22:44-04:00",
+      "recordedDate": "2011-09-15T12:22:44-04:00"
+    },
+    "related_resources": [{
+      "id": "343b71d6-f270-47fe-a1df-57f50683b5a7",
+      "created_at": "2023-06-02T01:00:33.338181356Z",
+      "updated_at": "2023-06-02T01:00:33.338181356Z",
+      "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+      "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+      "source_resource_type": "ExplanationOfBenefit",
+      "source_resource_id": "fc35ef17-ed18-4e2d-a770-59883ee1c00b",
+      "sort_date": "2011-09-15T12:52:44-04:00",
+      "sort_title": null,
+      "resource_raw": {
+        "resourceType": "ExplanationOfBenefit",
+        "id": "fc35ef17-ed18-4e2d-a770-59883ee1c00b",
+        "contained": [{
+          "resourceType": "ServiceRequest",
+          "id": "referral",
+          "status": "completed",
+          "intent": "order",
+          "subject": {
+            "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+          },
+          "requester": {
+            "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e"
+          },
+          "performer": [{
+            "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e"
+          }]
+        }, {
+          "resourceType": "Coverage",
+          "id": "coverage",
+          "status": "active",
+          "type": {
+            "text": "Aetna"
+          },
+          "beneficiary": {
+            "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+          },
+          "payor": [{
+            "display": "Aetna"
+          }]
+        }],
+        "identifier": [{
+          "system": "https://bluebutton.cms.gov/resources/variables/clm_id",
+          "value": "85e44e81-dda9-4213-a7d1-861db28f43f4"
+        }, {
+          "system": "https://bluebutton.cms.gov/resources/identifier/claim-group",
+          "value": "99999999999"
+        }],
+        "status": "active",
+        "type": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+            "code": "institutional"
+          }]
+        },
+        "use": "claim",
+        "patient": {
+          "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+        },
+        "billablePeriod": {
+          "start": "2011-09-15T12:52:44-04:00",
+          "end": "2012-09-15T12:52:44-04:00"
+        },
+        "created": "2011-09-15T12:52:44-04:00",
+        "insurer": {
+          "display": "Aetna"
+        },
+        "provider": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e"
+        },
+        "referral": {
+          "reference": "#referral"
+        },
+        "claim": {
+          "reference": "urn:uuid:85e44e81-dda9-4213-a7d1-861db28f43f4"
+        },
+        "outcome": "complete",
+        "careTeam": [{
+          "sequence": 1,
+          "provider": {
+            "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e"
+          },
+          "role": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/claimcareteamrole",
+              "code": "primary",
+              "display": "Primary Care Practitioner"
+            }]
+          }
+        }],
+        "diagnosis": [{
+          "sequence": 1,
+          "diagnosisReference": {
+            "reference": "urn:uuid:bec92fdc-8765-409b-9850-52786d31aa9b"
+          },
+          "type": [{
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/ex-diagnosistype",
+              "code": "principal"
+            }]
+          }]
+        }],
+        "insurance": [{
+          "focal": true,
+          "coverage": {
+            "reference": "#coverage",
+            "display": "Aetna"
+          }
+        }],
+        "item": [{
+          "sequence": 1,
+          "category": {
+            "coding": [{
+              "system": "https://bluebutton.cms.gov/resources/variables/line_cms_type_srvc_cd",
+              "code": "1",
+              "display": "Medical care"
+            }]
+          },
+          "productOrService": {
+            "coding": [{
+              "system": "http://snomed.info/sct",
+              "code": "185345009",
+              "display": "Encounter for symptom"
+            }],
+            "text": "Encounter for symptom"
+          },
+          "servicedPeriod": {
+            "start": "2011-09-15T12:22:44-04:00",
+            "end": "2011-09-15T12:52:44-04:00"
+          },
+          "locationCodeableConcept": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/ex-serviceplace",
+              "code": "21",
+              "display": "Inpatient Hospital"
+            }]
+          },
+          "encounter": [{
+            "reference": "urn:uuid:24f73ec3-9b7a-42a9-be03-53bffd9b304c"
+          }]
+        }, {
+          "sequence": 2,
+          "diagnosisSequence": [1],
+          "category": {
+            "coding": [{
+              "system": "https://bluebutton.cms.gov/resources/variables/line_cms_type_srvc_cd",
+              "code": "1",
+              "display": "Medical care"
+            }]
+          },
+          "productOrService": {
+            "coding": [{
+              "system": "http://snomed.info/sct",
+              "code": "195662009",
+              "display": "Acute viral pharyngitis (disorder)"
+            }],
+            "text": "Acute viral pharyngitis (disorder)"
+          },
+          "servicedPeriod": {
+            "start": "2011-09-15T12:22:44-04:00",
+            "end": "2011-09-15T12:52:44-04:00"
+          },
+          "locationCodeableConcept": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/ex-serviceplace",
+              "code": "21",
+              "display": "Inpatient Hospital"
+            }]
+          }
+        }, {
+          "sequence": 3,
+          "category": {
+            "coding": [{
+              "system": "https://bluebutton.cms.gov/resources/variables/line_cms_type_srvc_cd",
+              "code": "1",
+              "display": "Medical care"
+            }]
+          },
+          "productOrService": {
+            "coding": [{
+              "system": "http://snomed.info/sct",
+              "code": "117015009",
+              "display": "Throat culture (procedure)"
+            }],
+            "text": "Throat culture (procedure)"
+          },
+          "servicedPeriod": {
+            "start": "2011-09-15T12:22:44-04:00",
+            "end": "2011-09-15T12:52:44-04:00"
+          },
+          "locationCodeableConcept": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/ex-serviceplace",
+              "code": "21",
+              "display": "Inpatient Hospital"
+            }]
+          },
+          "net": {
+            "value": 1898.04,
+            "currency": "USD"
+          },
+          "adjudication": [{
+            "category": {
+              "coding": [{
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/line_coinsrnc_amt",
+                "display": "Line Beneficiary Coinsurance Amount"
+              }]
+            },
+            "amount": {
+              "value": 379.608,
+              "currency": "USD"
+            }
+          }, {
+            "category": {
+              "coding": [{
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/line_prvdr_pmt_amt",
+                "display": "Line Provider Payment Amount"
+              }]
+            },
+            "amount": {
+              "value": 1518.432,
+              "currency": "USD"
+            }
+          }, {
+            "category": {
+              "coding": [{
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/line_sbmtd_chrg_amt",
+                "display": "Line Submitted Charge Amount"
+              }]
+            },
+            "amount": {
+              "value": 1898.04,
+              "currency": "USD"
+            }
+          }, {
+            "category": {
+              "coding": [{
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/line_alowd_chrg_amt",
+                "display": "Line Allowed Charge Amount"
+              }]
+            },
+            "amount": {
+              "value": 1898.04,
+              "currency": "USD"
+            }
+          }, {
+            "category": {
+              "coding": [{
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/line_bene_ptb_ddctbl_amt",
+                "display": "Line Beneficiary Part B Deductible Amount"
+              }]
+            },
+            "amount": {
+              "value": 0,
+              "currency": "USD"
+            }
+          }, {
+            "category": {
+              "coding": [{
+                "system": "https://bluebutton.cms.gov/resources/codesystem/adjudication",
+                "code": "https://bluebutton.cms.gov/resources/variables/line_prcsg_ind_cd",
+                "display": "Line Processing Indicator Code"
+              }]
+            }
+          }]
+        }],
+        "total": [{
+          "category": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/adjudication",
+              "code": "submitted",
+              "display": "Submitted Amount"
+            }],
+            "text": "Submitted Amount"
+          },
+          "amount": {
+            "value": 129.16,
+            "currency": "USD"
+          }
+        }],
+        "payment": {
+          "amount": {
+            "value": 1518.432,
+            "currency": "USD"
+          }
+        }
+      },
+      "related_resources": [{
+        "id": "062dcb2b-86aa-4d24-9c2d-51ba303453a9",
+        "created_at": "2023-06-02T01:00:32.12179014Z",
+        "updated_at": "2023-06-02T01:00:32.12179014Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Practitioner",
+        "source_resource_id": "0000016d-3a85-4cca-0000-00000000010e",
+        "sort_date": null,
+        "sort_title": "Jenkins714, Renato359",
+        "resource_raw": {
+          "resourceType": "Practitioner",
+          "id": "0000016d-3a85-4cca-0000-00000000010e",
+          "identifier": [{
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "270"
+          }],
+          "active": true,
+          "name": [{
+            "family": "Jenkins714",
+            "given": ["Renato359"],
+            "prefix": ["Dr."]
+          }],
+          "telecom": [{
+            "system": "email",
+            "value": "Renato359.Jenkins714@example.com",
+            "use": "work"
+          }],
+          "address": [{
+            "line": ["585 LEBANON STREET"],
+            "city": "MELROSE",
+            "state": "MA",
+            "postalCode": "02176",
+            "country": "US"
+          }],
+          "gender": "male"
+        },
+        "related_resources": null
+      }, {
+        "id": "588040a0-20ff-4fb8-8ee8-966393be2378",
+        "created_at": "2023-06-02T01:00:31.555119321Z",
+        "updated_at": "2023-06-02T01:00:31.555119321Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Patient",
+        "source_resource_id": "b426b062-8273-4b93-a907-de3176c0567d",
+        "sort_date": null,
+        "sort_title": "Heller342, Abraham100",
+        "resource_raw": {
+          "resourceType": "Patient",
+          "id": "b426b062-8273-4b93-a907-de3176c0567d",
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>.Version identifier: v2.4.0-404-ge7ce2295\n .   Person seed: 4209933468692678950  Population seed: 0</div>"
+          },
+          "extension": [{
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [{
+              "url": "ombCategory",
+              "valueCoding": {
+                "system": "urn:oid:2.16.840.1.113883.6.238",
+                "code": "2106-3",
+                "display": "White"
+              }
+            }, {
+              "url": "text",
+              "valueString": "White"
+            }]
+          }, {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [{
+              "url": "ombCategory",
+              "valueCoding": {
+                "system": "urn:oid:2.16.840.1.113883.6.238",
+                "code": "2186-5",
+                "display": "Not Hispanic or Latino"
+              }
+            }, {
+              "url": "text",
+              "valueString": "Not Hispanic or Latino"
+            }]
+          }, {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName",
+            "valueString": "Sanda877 Kshlerin58"
+          }, {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "M"
+          }, {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+            "valueAddress": {
+              "city": "Peabody",
+              "state": "Massachusetts",
+              "country": "US"
+            }
+          }, {
+            "url": "http://synthetichealth.github.io/synthea/disability-adjusted-life-years",
+            "valueDecimal": 0
+          }, {
+            "url": "http://synthetichealth.github.io/synthea/quality-adjusted-life-years",
+            "valueDecimal": 16
+          }],
+          "identifier": [{
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "262b819a-5193-404a-9787-b7f599358035"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "MR",
+                "display": "Medical Record Number"
+              }],
+              "text": "Medical Record Number"
+            },
+            "system": "http://hospital.smarthealthit.org",
+            "value": "262b819a-5193-404a-9787-b7f599358035"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "SS",
+                "display": "Social Security Number"
+              }],
+              "text": "Social Security Number"
+            },
+            "system": "http://hl7.org/fhir/sid/us-ssn",
+            "value": "999-19-7941"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "DL",
+                "display": "Driver's License"
+              }],
+              "text": "Driver's License"
+            },
+            "system": "urn:oid:2.16.840.1.113883.4.3.25",
+            "value": "S99986287"
+          }],
+          "name": [{
+            "use": "official",
+            "family": "Heller342",
+            "given": ["Abraham100"]
+          }],
+          "telecom": [{
+            "system": "phone",
+            "value": "555-803-7962",
+            "use": "home"
+          }],
+          "gender": "male",
+          "birthDate": "2002-04-15",
+          "address": [{
+            "extension": [{
+              "url": "http://hl7.org/fhir/StructureDefinition/geolocation",
+              "extension": [{
+                "url": "latitude",
+                "valueDecimal": 42.410027249980345
+              }, {
+                "url": "longitude",
+                "valueDecimal": -71.07762136029856
+              }]
+            }],
+            "line": ["834 Hansen Run"],
+            "city": "Somerville",
+            "state": "Massachusetts",
+            "postalCode": "02138",
+            "country": "US"
+          }],
+          "maritalStatus": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+              "code": "S",
+              "display": "Never Married"
+            }],
+            "text": "Never Married"
+          },
+          "multipleBirthBoolean": false,
+          "communication": [{
+            "language": {
+              "coding": [{
+                "system": "urn:ietf:bcp:47",
+                "code": "en-US",
+                "display": "English"
+              }],
+              "text": "English"
+            }
+          }]
+        },
+        "related_resources": []
+      }, {
+        "id": "21537b1e-1ae3-4061-a641-b9f3313b3c3c",
+        "created_at": "2023-06-02T01:00:32.942948489Z",
+        "updated_at": "2023-06-02T01:00:32.942948489Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Encounter",
+        "source_resource_id": "24f73ec3-9b7a-42a9-be03-53bffd9b304c",
+        "sort_date": "2011-09-15T12:22:44-04:00",
+        "sort_title": "Encounter for symptom",
+        "resource_raw": {
+          "resourceType": "Encounter",
+          "id": "24f73ec3-9b7a-42a9-be03-53bffd9b304c",
+          "status": "finished",
+          "class": {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+            "code": "AMB"
+          },
+          "type": [{
+            "coding": [{
+              "system": "http://snomed.info/sct",
+              "code": "185345009",
+              "display": "Encounter for symptom"
+            }],
+            "text": "Encounter for symptom"
+          }],
+          "subject": {
+            "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+            "display": "Abraham100 Heller342"
+          },
+          "participant": [{
+            "individual": {
+              "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e",
+              "display": "Dr. Renato359 Jenkins714"
+            }
+          }],
+          "period": {
+            "start": "2011-09-15T12:22:44-04:00",
+            "end": "2011-09-15T12:52:44-04:00"
+          },
+          "reasonCode": [{
+            "coding": [{
+              "system": "http://snomed.info/sct",
+              "code": "195662009",
+              "display": "Acute viral pharyngitis (disorder)"
+            }]
+          }],
+          "serviceProvider": {
+            "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+            "display": "HALLMARK HEALTH SYSTEM"
+          }
+        },
+        "related_resources": [{
+          "id": "fd4c45cc-db63-412d-83cd-71168a7ac504",
+          "created_at": "2023-06-02T01:00:32.100218389Z",
+          "updated_at": "2023-06-02T01:00:32.100218389Z",
+          "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+          "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+          "source_resource_type": "Organization",
+          "source_resource_id": "d692e283-0833-3201-8e55-4f868a9c0736",
+          "sort_date": null,
+          "sort_title": "HALLMARK HEALTH SYSTEM",
+          "resource_raw": {
+            "resourceType": "Organization",
+            "id": "d692e283-0833-3201-8e55-4f868a9c0736",
+            "identifier": [{
+              "system": "https://github.com/synthetichealth/synthea",
+              "value": "d692e283-0833-3201-8e55-4f868a9c0736"
+            }],
+            "active": true,
+            "type": [{
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/organization-type",
+                "code": "prov",
+                "display": "Healthcare Provider"
+              }],
+              "text": "Healthcare Provider"
+            }],
+            "name": "HALLMARK HEALTH SYSTEM",
+            "telecom": [{
+              "system": "phone",
+              "value": "7819793000"
+            }],
+            "address": [{
+              "line": ["585 LEBANON STREET"],
+              "city": "MELROSE",
+              "state": "MA",
+              "postalCode": "02176",
+              "country": "US"
+            }]
+          },
+          "related_resources": null
+        }, {
+          "id": "07aa2ddd-e0ba-4878-9c9a-e8c9a1194d00",
+          "created_at": "2023-06-02T01:00:33.154589714Z",
+          "updated_at": "2023-06-02T01:00:33.154589714Z",
+          "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+          "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+          "source_resource_type": "Procedure",
+          "source_resource_id": "752d4411-1e2c-4a0f-ba21-9fed4b370c8b",
+          "sort_date": "2011-09-15T12:22:44-04:00",
+          "sort_title": "Throat culture (procedure)",
+          "resource_raw": {
+            "resourceType": "Procedure",
+            "id": "752d4411-1e2c-4a0f-ba21-9fed4b370c8b",
+            "status": "completed",
+            "code": {
+              "coding": [{
+                "system": "http://snomed.info/sct",
+                "code": "117015009",
+                "display": "Throat culture (procedure)"
+              }],
+              "text": "Throat culture (procedure)"
+            },
+            "subject": {
+              "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+            },
+            "encounter": {
+              "reference": "urn:uuid:24f73ec3-9b7a-42a9-be03-53bffd9b304c"
+            },
+            "performedPeriod": {
+              "start": "2011-09-15T12:22:44-04:00",
+              "end": "2011-09-15T12:37:44-04:00"
+            },
+            "reasonReference": [{
+              "reference": "urn:uuid:bec92fdc-8765-409b-9850-52786d31aa9b",
+              "display": "Acute viral pharyngitis (disorder)"
+            }]
+          },
+          "related_resources": [{
+            "id": "588040a0-20ff-4fb8-8ee8-966393be2378",
+            "created_at": "2023-06-02T01:00:31.555119321Z",
+            "updated_at": "2023-06-02T01:00:31.555119321Z",
+            "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+            "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+            "source_resource_type": "Patient",
+            "source_resource_id": "b426b062-8273-4b93-a907-de3176c0567d",
+            "sort_date": null,
+            "sort_title": "Heller342, Abraham100",
+            "resource_raw": {
+              "resourceType": "Patient",
+              "id": "b426b062-8273-4b93-a907-de3176c0567d",
+              "text": {
+                "status": "generated",
+                "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>.Version identifier: v2.4.0-404-ge7ce2295\n .   Person seed: 4209933468692678950  Population seed: 0</div>"
+              },
+              "extension": [{
+                "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+                "extension": [{
+                  "url": "ombCategory",
+                  "valueCoding": {
+                    "system": "urn:oid:2.16.840.1.113883.6.238",
+                    "code": "2106-3",
+                    "display": "White"
+                  }
+                }, {
+                  "url": "text",
+                  "valueString": "White"
+                }]
+              }, {
+                "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+                "extension": [{
+                  "url": "ombCategory",
+                  "valueCoding": {
+                    "system": "urn:oid:2.16.840.1.113883.6.238",
+                    "code": "2186-5",
+                    "display": "Not Hispanic or Latino"
+                  }
+                }, {
+                  "url": "text",
+                  "valueString": "Not Hispanic or Latino"
+                }]
+              }, {
+                "url": "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName",
+                "valueString": "Sanda877 Kshlerin58"
+              }, {
+                "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+                "valueCode": "M"
+              }, {
+                "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+                "valueAddress": {
+                  "city": "Peabody",
+                  "state": "Massachusetts",
+                  "country": "US"
+                }
+              }, {
+                "url": "http://synthetichealth.github.io/synthea/disability-adjusted-life-years",
+                "valueDecimal": 0
+              }, {
+                "url": "http://synthetichealth.github.io/synthea/quality-adjusted-life-years",
+                "valueDecimal": 16
+              }],
+              "identifier": [{
+                "system": "https://github.com/synthetichealth/synthea",
+                "value": "262b819a-5193-404a-9787-b7f599358035"
+              }, {
+                "type": {
+                  "coding": [{
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "MR",
+                    "display": "Medical Record Number"
+                  }],
+                  "text": "Medical Record Number"
+                },
+                "system": "http://hospital.smarthealthit.org",
+                "value": "262b819a-5193-404a-9787-b7f599358035"
+              }, {
+                "type": {
+                  "coding": [{
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "SS",
+                    "display": "Social Security Number"
+                  }],
+                  "text": "Social Security Number"
+                },
+                "system": "http://hl7.org/fhir/sid/us-ssn",
+                "value": "999-19-7941"
+              }, {
+                "type": {
+                  "coding": [{
+                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                    "code": "DL",
+                    "display": "Driver's License"
+                  }],
+                  "text": "Driver's License"
+                },
+                "system": "urn:oid:2.16.840.1.113883.4.3.25",
+                "value": "S99986287"
+              }],
+              "name": [{
+                "use": "official",
+                "family": "Heller342",
+                "given": ["Abraham100"]
+              }],
+              "telecom": [{
+                "system": "phone",
+                "value": "555-803-7962",
+                "use": "home"
+              }],
+              "gender": "male",
+              "birthDate": "2002-04-15",
+              "address": [{
+                "extension": [{
+                  "url": "http://hl7.org/fhir/StructureDefinition/geolocation",
+                  "extension": [{
+                    "url": "latitude",
+                    "valueDecimal": 42.410027249980345
+                  }, {
+                    "url": "longitude",
+                    "valueDecimal": -71.07762136029856
+                  }]
+                }],
+                "line": ["834 Hansen Run"],
+                "city": "Somerville",
+                "state": "Massachusetts",
+                "postalCode": "02138",
+                "country": "US"
+              }],
+              "maritalStatus": {
+                "coding": [{
+                  "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+                  "code": "S",
+                  "display": "Never Married"
+                }],
+                "text": "Never Married"
+              },
+              "multipleBirthBoolean": false,
+              "communication": [{
+                "language": {
+                  "coding": [{
+                    "system": "urn:ietf:bcp:47",
+                    "code": "en-US",
+                    "display": "English"
+                  }],
+                  "text": "English"
+                }
+              }]
+            },
+            "related_resources": []
+          }]
+        }, {
+          "id": "588040a0-20ff-4fb8-8ee8-966393be2378",
+          "created_at": "2023-06-02T01:00:31.555119321Z",
+          "updated_at": "2023-06-02T01:00:31.555119321Z",
+          "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+          "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+          "source_resource_type": "Patient",
+          "source_resource_id": "b426b062-8273-4b93-a907-de3176c0567d",
+          "sort_date": null,
+          "sort_title": "Heller342, Abraham100",
+          "resource_raw": {
+            "resourceType": "Patient",
+            "id": "b426b062-8273-4b93-a907-de3176c0567d",
+            "text": {
+              "status": "generated",
+              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>.Version identifier: v2.4.0-404-ge7ce2295\n .   Person seed: 4209933468692678950  Population seed: 0</div>"
+            },
+            "extension": [{
+              "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+              "extension": [{
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2106-3",
+                  "display": "White"
+                }
+              }, {
+                "url": "text",
+                "valueString": "White"
+              }]
+            }, {
+              "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+              "extension": [{
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2186-5",
+                  "display": "Not Hispanic or Latino"
+                }
+              }, {
+                "url": "text",
+                "valueString": "Not Hispanic or Latino"
+              }]
+            }, {
+              "url": "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName",
+              "valueString": "Sanda877 Kshlerin58"
+            }, {
+              "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+              "valueCode": "M"
+            }, {
+              "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+              "valueAddress": {
+                "city": "Peabody",
+                "state": "Massachusetts",
+                "country": "US"
+              }
+            }, {
+              "url": "http://synthetichealth.github.io/synthea/disability-adjusted-life-years",
+              "valueDecimal": 0
+            }, {
+              "url": "http://synthetichealth.github.io/synthea/quality-adjusted-life-years",
+              "valueDecimal": 16
+            }],
+            "identifier": [{
+              "system": "https://github.com/synthetichealth/synthea",
+              "value": "262b819a-5193-404a-9787-b7f599358035"
+            }, {
+              "type": {
+                "coding": [{
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR",
+                  "display": "Medical Record Number"
+                }],
+                "text": "Medical Record Number"
+              },
+              "system": "http://hospital.smarthealthit.org",
+              "value": "262b819a-5193-404a-9787-b7f599358035"
+            }, {
+              "type": {
+                "coding": [{
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "SS",
+                  "display": "Social Security Number"
+                }],
+                "text": "Social Security Number"
+              },
+              "system": "http://hl7.org/fhir/sid/us-ssn",
+              "value": "999-19-7941"
+            }, {
+              "type": {
+                "coding": [{
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "DL",
+                  "display": "Driver's License"
+                }],
+                "text": "Driver's License"
+              },
+              "system": "urn:oid:2.16.840.1.113883.4.3.25",
+              "value": "S99986287"
+            }],
+            "name": [{
+              "use": "official",
+              "family": "Heller342",
+              "given": ["Abraham100"]
+            }],
+            "telecom": [{
+              "system": "phone",
+              "value": "555-803-7962",
+              "use": "home"
+            }],
+            "gender": "male",
+            "birthDate": "2002-04-15",
+            "address": [{
+              "extension": [{
+                "url": "http://hl7.org/fhir/StructureDefinition/geolocation",
+                "extension": [{
+                  "url": "latitude",
+                  "valueDecimal": 42.410027249980345
+                }, {
+                  "url": "longitude",
+                  "valueDecimal": -71.07762136029856
+                }]
+              }],
+              "line": ["834 Hansen Run"],
+              "city": "Somerville",
+              "state": "Massachusetts",
+              "postalCode": "02138",
+              "country": "US"
+            }],
+            "maritalStatus": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+                "code": "S",
+                "display": "Never Married"
+              }],
+              "text": "Never Married"
+            },
+            "multipleBirthBoolean": false,
+            "communication": [{
+              "language": {
+                "coding": [{
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en-US",
+                  "display": "English"
+                }],
+                "text": "English"
+              }
+            }]
+          },
+          "related_resources": []
+        }, {
+          "id": "e00141b7-c66a-4e17-96e4-2190ae13b668",
+          "created_at": "2023-06-02T01:00:33.062514756Z",
+          "updated_at": "2023-06-02T01:00:33.062514756Z",
+          "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+          "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+          "source_resource_type": "Observation",
+          "source_resource_id": "6d0bf9df-348a-4b53-a608-9914298446d0",
+          "sort_date": "2011-09-15T12:22:44-04:00",
+          "sort_title": "Oral temperature",
+          "resource_raw": {
+            "resourceType": "Observation",
+            "id": "6d0bf9df-348a-4b53-a608-9914298446d0",
+            "status": "final",
+            "category": [{
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "vital-signs",
+                "display": "vital-signs"
+              }]
+            }],
+            "code": {
+              "coding": [{
+                "system": "http://loinc.org",
+                "code": "8331-1",
+                "display": "Oral temperature"
+              }],
+              "text": "Oral temperature"
+            },
+            "subject": {
+              "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+            },
+            "encounter": {
+              "reference": "urn:uuid:24f73ec3-9b7a-42a9-be03-53bffd9b304c"
+            },
+            "effectiveDateTime": "2011-09-15T12:22:44-04:00",
+            "issued": "2011-09-15T12:22:44.702-04:00",
+            "valueQuantity": {
+              "value": 37.65532501487887,
+              "unit": "Cel",
+              "system": "http://unitsofmeasure.org",
+              "code": "Cel"
+            }
+          },
+          "related_resources": null
+        }, {
+          "id": "062dcb2b-86aa-4d24-9c2d-51ba303453a9",
+          "created_at": "2023-06-02T01:00:32.12179014Z",
+          "updated_at": "2023-06-02T01:00:32.12179014Z",
+          "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+          "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+          "source_resource_type": "Practitioner",
+          "source_resource_id": "0000016d-3a85-4cca-0000-00000000010e",
+          "sort_date": null,
+          "sort_title": "Jenkins714, Renato359",
+          "resource_raw": {
+            "resourceType": "Practitioner",
+            "id": "0000016d-3a85-4cca-0000-00000000010e",
+            "identifier": [{
+              "system": "http://hl7.org/fhir/sid/us-npi",
+              "value": "270"
+            }],
+            "active": true,
+            "name": [{
+              "family": "Jenkins714",
+              "given": ["Renato359"],
+              "prefix": ["Dr."]
+            }],
+            "telecom": [{
+              "system": "email",
+              "value": "Renato359.Jenkins714@example.com",
+              "use": "work"
+            }],
+            "address": [{
+              "line": ["585 LEBANON STREET"],
+              "city": "MELROSE",
+              "state": "MA",
+              "postalCode": "02176",
+              "country": "US"
+            }],
+            "gender": "male"
+          },
+          "related_resources": null
+        }]
+      }, {
+        "id": "fd4c45cc-db63-412d-83cd-71168a7ac504",
+        "created_at": "2023-06-02T01:00:32.100218389Z",
+        "updated_at": "2023-06-02T01:00:32.100218389Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Organization",
+        "source_resource_id": "d692e283-0833-3201-8e55-4f868a9c0736",
+        "sort_date": null,
+        "sort_title": "HALLMARK HEALTH SYSTEM",
+        "resource_raw": {
+          "resourceType": "Organization",
+          "id": "d692e283-0833-3201-8e55-4f868a9c0736",
+          "identifier": [{
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "d692e283-0833-3201-8e55-4f868a9c0736"
+          }],
+          "active": true,
+          "type": [{
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/organization-type",
+              "code": "prov",
+              "display": "Healthcare Provider"
+            }],
+            "text": "Healthcare Provider"
+          }],
+          "name": "HALLMARK HEALTH SYSTEM",
+          "telecom": [{
+            "system": "phone",
+            "value": "7819793000"
+          }],
+          "address": [{
+            "line": ["585 LEBANON STREET"],
+            "city": "MELROSE",
+            "state": "MA",
+            "postalCode": "02176",
+            "country": "US"
+          }]
+        },
+        "related_resources": null
+      }, {
+        "id": "07aa2ddd-e0ba-4878-9c9a-e8c9a1194d00",
+        "created_at": "2023-06-02T01:00:33.154589714Z",
+        "updated_at": "2023-06-02T01:00:33.154589714Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Procedure",
+        "source_resource_id": "752d4411-1e2c-4a0f-ba21-9fed4b370c8b",
+        "sort_date": "2011-09-15T12:22:44-04:00",
+        "sort_title": "Throat culture (procedure)",
+        "resource_raw": {
+          "resourceType": "Procedure",
+          "id": "752d4411-1e2c-4a0f-ba21-9fed4b370c8b",
+          "status": "completed",
+          "code": {
+            "coding": [{
+              "system": "http://snomed.info/sct",
+              "code": "117015009",
+              "display": "Throat culture (procedure)"
+            }],
+            "text": "Throat culture (procedure)"
+          },
+          "subject": {
+            "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+          },
+          "encounter": {
+            "reference": "urn:uuid:24f73ec3-9b7a-42a9-be03-53bffd9b304c"
+          },
+          "performedPeriod": {
+            "start": "2011-09-15T12:22:44-04:00",
+            "end": "2011-09-15T12:37:44-04:00"
+          },
+          "reasonReference": [{
+            "reference": "urn:uuid:bec92fdc-8765-409b-9850-52786d31aa9b",
+            "display": "Acute viral pharyngitis (disorder)"
+          }]
+        },
+        "related_resources": [{
+          "id": "588040a0-20ff-4fb8-8ee8-966393be2378",
+          "created_at": "2023-06-02T01:00:31.555119321Z",
+          "updated_at": "2023-06-02T01:00:31.555119321Z",
+          "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+          "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+          "source_resource_type": "Patient",
+          "source_resource_id": "b426b062-8273-4b93-a907-de3176c0567d",
+          "sort_date": null,
+          "sort_title": "Heller342, Abraham100",
+          "resource_raw": {
+            "resourceType": "Patient",
+            "id": "b426b062-8273-4b93-a907-de3176c0567d",
+            "text": {
+              "status": "generated",
+              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>.Version identifier: v2.4.0-404-ge7ce2295\n .   Person seed: 4209933468692678950  Population seed: 0</div>"
+            },
+            "extension": [{
+              "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+              "extension": [{
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2106-3",
+                  "display": "White"
+                }
+              }, {
+                "url": "text",
+                "valueString": "White"
+              }]
+            }, {
+              "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+              "extension": [{
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2186-5",
+                  "display": "Not Hispanic or Latino"
+                }
+              }, {
+                "url": "text",
+                "valueString": "Not Hispanic or Latino"
+              }]
+            }, {
+              "url": "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName",
+              "valueString": "Sanda877 Kshlerin58"
+            }, {
+              "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+              "valueCode": "M"
+            }, {
+              "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+              "valueAddress": {
+                "city": "Peabody",
+                "state": "Massachusetts",
+                "country": "US"
+              }
+            }, {
+              "url": "http://synthetichealth.github.io/synthea/disability-adjusted-life-years",
+              "valueDecimal": 0
+            }, {
+              "url": "http://synthetichealth.github.io/synthea/quality-adjusted-life-years",
+              "valueDecimal": 16
+            }],
+            "identifier": [{
+              "system": "https://github.com/synthetichealth/synthea",
+              "value": "262b819a-5193-404a-9787-b7f599358035"
+            }, {
+              "type": {
+                "coding": [{
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR",
+                  "display": "Medical Record Number"
+                }],
+                "text": "Medical Record Number"
+              },
+              "system": "http://hospital.smarthealthit.org",
+              "value": "262b819a-5193-404a-9787-b7f599358035"
+            }, {
+              "type": {
+                "coding": [{
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "SS",
+                  "display": "Social Security Number"
+                }],
+                "text": "Social Security Number"
+              },
+              "system": "http://hl7.org/fhir/sid/us-ssn",
+              "value": "999-19-7941"
+            }, {
+              "type": {
+                "coding": [{
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "DL",
+                  "display": "Driver's License"
+                }],
+                "text": "Driver's License"
+              },
+              "system": "urn:oid:2.16.840.1.113883.4.3.25",
+              "value": "S99986287"
+            }],
+            "name": [{
+              "use": "official",
+              "family": "Heller342",
+              "given": ["Abraham100"]
+            }],
+            "telecom": [{
+              "system": "phone",
+              "value": "555-803-7962",
+              "use": "home"
+            }],
+            "gender": "male",
+            "birthDate": "2002-04-15",
+            "address": [{
+              "extension": [{
+                "url": "http://hl7.org/fhir/StructureDefinition/geolocation",
+                "extension": [{
+                  "url": "latitude",
+                  "valueDecimal": 42.410027249980345
+                }, {
+                  "url": "longitude",
+                  "valueDecimal": -71.07762136029856
+                }]
+              }],
+              "line": ["834 Hansen Run"],
+              "city": "Somerville",
+              "state": "Massachusetts",
+              "postalCode": "02138",
+              "country": "US"
+            }],
+            "maritalStatus": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+                "code": "S",
+                "display": "Never Married"
+              }],
+              "text": "Never Married"
+            },
+            "multipleBirthBoolean": false,
+            "communication": [{
+              "language": {
+                "coding": [{
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en-US",
+                  "display": "English"
+                }],
+                "text": "English"
+              }
+            }]
+          },
+          "related_resources": []
+        }]
+      }, {
+        "id": "e00141b7-c66a-4e17-96e4-2190ae13b668",
+        "created_at": "2023-06-02T01:00:33.062514756Z",
+        "updated_at": "2023-06-02T01:00:33.062514756Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Observation",
+        "source_resource_id": "6d0bf9df-348a-4b53-a608-9914298446d0",
+        "sort_date": "2011-09-15T12:22:44-04:00",
+        "sort_title": "Oral temperature",
+        "resource_raw": {
+          "resourceType": "Observation",
+          "id": "6d0bf9df-348a-4b53-a608-9914298446d0",
+          "status": "final",
+          "category": [{
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+              "code": "vital-signs",
+              "display": "vital-signs"
+            }]
+          }],
+          "code": {
+            "coding": [{
+              "system": "http://loinc.org",
+              "code": "8331-1",
+              "display": "Oral temperature"
+            }],
+            "text": "Oral temperature"
+          },
+          "subject": {
+            "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+          },
+          "encounter": {
+            "reference": "urn:uuid:24f73ec3-9b7a-42a9-be03-53bffd9b304c"
+          },
+          "effectiveDateTime": "2011-09-15T12:22:44-04:00",
+          "issued": "2011-09-15T12:22:44.702-04:00",
+          "valueQuantity": {
+            "value": 37.65532501487887,
+            "unit": "Cel",
+            "system": "http://unitsofmeasure.org",
+            "code": "Cel"
+          }
+        },
+        "related_resources": null
+      }, {
+        "id": "8552e0ed-ea40-4432-9db3-bdb615060365",
+        "created_at": "2023-06-02T01:00:33.183324464Z",
+        "updated_at": "2023-06-02T01:00:33.183324464Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Claim",
+        "source_resource_id": "85e44e81-dda9-4213-a7d1-861db28f43f4",
+        "sort_date": null,
+        "sort_title": null,
+        "resource_raw": {
+          "resourceType": "Claim",
+          "id": "85e44e81-dda9-4213-a7d1-861db28f43f4",
+          "status": "active",
+          "type": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+              "code": "institutional"
+            }]
+          },
+          "use": "claim",
+          "patient": {
+            "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+            "display": "Abraham100 Heller342"
+          },
+          "billablePeriod": {
+            "start": "2011-09-15T12:22:44-04:00",
+            "end": "2011-09-15T12:52:44-04:00"
+          },
+          "created": "2011-09-15T12:52:44-04:00",
+          "provider": {
+            "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+            "display": "HALLMARK HEALTH SYSTEM"
+          },
+          "priority": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+              "code": "normal"
+            }]
+          },
+          "diagnosis": [{
+            "sequence": 1,
+            "diagnosisReference": {
+              "reference": "urn:uuid:bec92fdc-8765-409b-9850-52786d31aa9b"
+            }
+          }],
+          "procedure": [{
+            "sequence": 1,
+            "procedureReference": {
+              "reference": "urn:uuid:752d4411-1e2c-4a0f-ba21-9fed4b370c8b"
+            }
+          }],
+          "insurance": [{
+            "sequence": 1,
+            "focal": true,
+            "coverage": {
+              "display": "Aetna"
+            }
+          }],
+          "item": [{
+            "sequence": 1,
+            "productOrService": {
+              "coding": [{
+                "system": "http://snomed.info/sct",
+                "code": "185345009",
+                "display": "Encounter for symptom"
+              }],
+              "text": "Encounter for symptom"
+            },
+            "encounter": [{
+              "reference": "urn:uuid:24f73ec3-9b7a-42a9-be03-53bffd9b304c"
+            }]
+          }, {
+            "sequence": 2,
+            "diagnosisSequence": [1],
+            "productOrService": {
+              "coding": [{
+                "system": "http://snomed.info/sct",
+                "code": "195662009",
+                "display": "Acute viral pharyngitis (disorder)"
+              }],
+              "text": "Acute viral pharyngitis (disorder)"
+            }
+          }, {
+            "sequence": 3,
+            "procedureSequence": [1],
+            "productOrService": {
+              "coding": [{
+                "system": "http://snomed.info/sct",
+                "code": "117015009",
+                "display": "Throat culture (procedure)"
+              }],
+              "text": "Throat culture (procedure)"
+            },
+            "net": {
+              "value": 1898.04,
+              "currency": "USD"
+            }
+          }],
+          "total": {
+            "value": 129.16,
+            "currency": "USD"
+          }
+        },
+        "related_resources": null
+      }]
+    }, {
+      "id": "07aa2ddd-e0ba-4878-9c9a-e8c9a1194d00",
+      "created_at": "2023-06-02T01:00:33.154589714Z",
+      "updated_at": "2023-06-02T01:00:33.154589714Z",
+      "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+      "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+      "source_resource_type": "Procedure",
+      "source_resource_id": "752d4411-1e2c-4a0f-ba21-9fed4b370c8b",
+      "sort_date": "2011-09-15T12:22:44-04:00",
+      "sort_title": "Throat culture (procedure)",
+      "resource_raw": {
+        "resourceType": "Procedure",
+        "id": "752d4411-1e2c-4a0f-ba21-9fed4b370c8b",
+        "status": "completed",
+        "code": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "117015009",
+            "display": "Throat culture (procedure)"
+          }],
+          "text": "Throat culture (procedure)"
+        },
+        "subject": {
+          "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+        },
+        "encounter": {
+          "reference": "urn:uuid:24f73ec3-9b7a-42a9-be03-53bffd9b304c"
+        },
+        "performedPeriod": {
+          "start": "2011-09-15T12:22:44-04:00",
+          "end": "2011-09-15T12:37:44-04:00"
+        },
+        "reasonReference": [{
+          "reference": "urn:uuid:bec92fdc-8765-409b-9850-52786d31aa9b",
+          "display": "Acute viral pharyngitis (disorder)"
+        }]
+      },
+      "related_resources": [{
+        "id": "588040a0-20ff-4fb8-8ee8-966393be2378",
+        "created_at": "2023-06-02T01:00:31.555119321Z",
+        "updated_at": "2023-06-02T01:00:31.555119321Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Patient",
+        "source_resource_id": "b426b062-8273-4b93-a907-de3176c0567d",
+        "sort_date": null,
+        "sort_title": "Heller342, Abraham100",
+        "resource_raw": {
+          "resourceType": "Patient",
+          "id": "b426b062-8273-4b93-a907-de3176c0567d",
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>.Version identifier: v2.4.0-404-ge7ce2295\n .   Person seed: 4209933468692678950  Population seed: 0</div>"
+          },
+          "extension": [{
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [{
+              "url": "ombCategory",
+              "valueCoding": {
+                "system": "urn:oid:2.16.840.1.113883.6.238",
+                "code": "2106-3",
+                "display": "White"
+              }
+            }, {
+              "url": "text",
+              "valueString": "White"
+            }]
+          }, {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [{
+              "url": "ombCategory",
+              "valueCoding": {
+                "system": "urn:oid:2.16.840.1.113883.6.238",
+                "code": "2186-5",
+                "display": "Not Hispanic or Latino"
+              }
+            }, {
+              "url": "text",
+              "valueString": "Not Hispanic or Latino"
+            }]
+          }, {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName",
+            "valueString": "Sanda877 Kshlerin58"
+          }, {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "M"
+          }, {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+            "valueAddress": {
+              "city": "Peabody",
+              "state": "Massachusetts",
+              "country": "US"
+            }
+          }, {
+            "url": "http://synthetichealth.github.io/synthea/disability-adjusted-life-years",
+            "valueDecimal": 0
+          }, {
+            "url": "http://synthetichealth.github.io/synthea/quality-adjusted-life-years",
+            "valueDecimal": 16
+          }],
+          "identifier": [{
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "262b819a-5193-404a-9787-b7f599358035"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "MR",
+                "display": "Medical Record Number"
+              }],
+              "text": "Medical Record Number"
+            },
+            "system": "http://hospital.smarthealthit.org",
+            "value": "262b819a-5193-404a-9787-b7f599358035"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "SS",
+                "display": "Social Security Number"
+              }],
+              "text": "Social Security Number"
+            },
+            "system": "http://hl7.org/fhir/sid/us-ssn",
+            "value": "999-19-7941"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "DL",
+                "display": "Driver's License"
+              }],
+              "text": "Driver's License"
+            },
+            "system": "urn:oid:2.16.840.1.113883.4.3.25",
+            "value": "S99986287"
+          }],
+          "name": [{
+            "use": "official",
+            "family": "Heller342",
+            "given": ["Abraham100"]
+          }],
+          "telecom": [{
+            "system": "phone",
+            "value": "555-803-7962",
+            "use": "home"
+          }],
+          "gender": "male",
+          "birthDate": "2002-04-15",
+          "address": [{
+            "extension": [{
+              "url": "http://hl7.org/fhir/StructureDefinition/geolocation",
+              "extension": [{
+                "url": "latitude",
+                "valueDecimal": 42.410027249980345
+              }, {
+                "url": "longitude",
+                "valueDecimal": -71.07762136029856
+              }]
+            }],
+            "line": ["834 Hansen Run"],
+            "city": "Somerville",
+            "state": "Massachusetts",
+            "postalCode": "02138",
+            "country": "US"
+          }],
+          "maritalStatus": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+              "code": "S",
+              "display": "Never Married"
+            }],
+            "text": "Never Married"
+          },
+          "multipleBirthBoolean": false,
+          "communication": [{
+            "language": {
+              "coding": [{
+                "system": "urn:ietf:bcp:47",
+                "code": "en-US",
+                "display": "English"
+              }],
+              "text": "English"
+            }
+          }]
+        },
+        "related_resources": []
+      }]
+    }, {
+      "id": "21537b1e-1ae3-4061-a641-b9f3313b3c3c",
+      "created_at": "2023-06-02T01:00:32.942948489Z",
+      "updated_at": "2023-06-02T01:00:32.942948489Z",
+      "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+      "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+      "source_resource_type": "Encounter",
+      "source_resource_id": "24f73ec3-9b7a-42a9-be03-53bffd9b304c",
+      "sort_date": "2011-09-15T12:22:44-04:00",
+      "sort_title": "Encounter for symptom",
+      "resource_raw": {
+        "resourceType": "Encounter",
+        "id": "24f73ec3-9b7a-42a9-be03-53bffd9b304c",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB"
+        },
+        "type": [{
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }],
+          "text": "Encounter for symptom"
+        }],
+        "subject": {
+          "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+          "display": "Abraham100 Heller342"
+        },
+        "participant": [{
+          "individual": {
+            "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e",
+            "display": "Dr. Renato359 Jenkins714"
+          }
+        }],
+        "period": {
+          "start": "2011-09-15T12:22:44-04:00",
+          "end": "2011-09-15T12:52:44-04:00"
+        },
+        "reasonCode": [{
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "195662009",
+            "display": "Acute viral pharyngitis (disorder)"
+          }]
+        }],
+        "serviceProvider": {
+          "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+          "display": "HALLMARK HEALTH SYSTEM"
+        }
+      },
+      "related_resources": [{
+        "id": "fd4c45cc-db63-412d-83cd-71168a7ac504",
+        "created_at": "2023-06-02T01:00:32.100218389Z",
+        "updated_at": "2023-06-02T01:00:32.100218389Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Organization",
+        "source_resource_id": "d692e283-0833-3201-8e55-4f868a9c0736",
+        "sort_date": null,
+        "sort_title": "HALLMARK HEALTH SYSTEM",
+        "resource_raw": {
+          "resourceType": "Organization",
+          "id": "d692e283-0833-3201-8e55-4f868a9c0736",
+          "identifier": [{
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "d692e283-0833-3201-8e55-4f868a9c0736"
+          }],
+          "active": true,
+          "type": [{
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/organization-type",
+              "code": "prov",
+              "display": "Healthcare Provider"
+            }],
+            "text": "Healthcare Provider"
+          }],
+          "name": "HALLMARK HEALTH SYSTEM",
+          "telecom": [{
+            "system": "phone",
+            "value": "7819793000"
+          }],
+          "address": [{
+            "line": ["585 LEBANON STREET"],
+            "city": "MELROSE",
+            "state": "MA",
+            "postalCode": "02176",
+            "country": "US"
+          }]
+        },
+        "related_resources": null
+      }, {
+        "id": "07aa2ddd-e0ba-4878-9c9a-e8c9a1194d00",
+        "created_at": "2023-06-02T01:00:33.154589714Z",
+        "updated_at": "2023-06-02T01:00:33.154589714Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Procedure",
+        "source_resource_id": "752d4411-1e2c-4a0f-ba21-9fed4b370c8b",
+        "sort_date": "2011-09-15T12:22:44-04:00",
+        "sort_title": "Throat culture (procedure)",
+        "resource_raw": {
+          "resourceType": "Procedure",
+          "id": "752d4411-1e2c-4a0f-ba21-9fed4b370c8b",
+          "status": "completed",
+          "code": {
+            "coding": [{
+              "system": "http://snomed.info/sct",
+              "code": "117015009",
+              "display": "Throat culture (procedure)"
+            }],
+            "text": "Throat culture (procedure)"
+          },
+          "subject": {
+            "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+          },
+          "encounter": {
+            "reference": "urn:uuid:24f73ec3-9b7a-42a9-be03-53bffd9b304c"
+          },
+          "performedPeriod": {
+            "start": "2011-09-15T12:22:44-04:00",
+            "end": "2011-09-15T12:37:44-04:00"
+          },
+          "reasonReference": [{
+            "reference": "urn:uuid:bec92fdc-8765-409b-9850-52786d31aa9b",
+            "display": "Acute viral pharyngitis (disorder)"
+          }]
+        },
+        "related_resources": [{
+          "id": "588040a0-20ff-4fb8-8ee8-966393be2378",
+          "created_at": "2023-06-02T01:00:31.555119321Z",
+          "updated_at": "2023-06-02T01:00:31.555119321Z",
+          "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+          "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+          "source_resource_type": "Patient",
+          "source_resource_id": "b426b062-8273-4b93-a907-de3176c0567d",
+          "sort_date": null,
+          "sort_title": "Heller342, Abraham100",
+          "resource_raw": {
+            "resourceType": "Patient",
+            "id": "b426b062-8273-4b93-a907-de3176c0567d",
+            "text": {
+              "status": "generated",
+              "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>.Version identifier: v2.4.0-404-ge7ce2295\n .   Person seed: 4209933468692678950  Population seed: 0</div>"
+            },
+            "extension": [{
+              "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+              "extension": [{
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2106-3",
+                  "display": "White"
+                }
+              }, {
+                "url": "text",
+                "valueString": "White"
+              }]
+            }, {
+              "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+              "extension": [{
+                "url": "ombCategory",
+                "valueCoding": {
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "code": "2186-5",
+                  "display": "Not Hispanic or Latino"
+                }
+              }, {
+                "url": "text",
+                "valueString": "Not Hispanic or Latino"
+              }]
+            }, {
+              "url": "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName",
+              "valueString": "Sanda877 Kshlerin58"
+            }, {
+              "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+              "valueCode": "M"
+            }, {
+              "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+              "valueAddress": {
+                "city": "Peabody",
+                "state": "Massachusetts",
+                "country": "US"
+              }
+            }, {
+              "url": "http://synthetichealth.github.io/synthea/disability-adjusted-life-years",
+              "valueDecimal": 0
+            }, {
+              "url": "http://synthetichealth.github.io/synthea/quality-adjusted-life-years",
+              "valueDecimal": 16
+            }],
+            "identifier": [{
+              "system": "https://github.com/synthetichealth/synthea",
+              "value": "262b819a-5193-404a-9787-b7f599358035"
+            }, {
+              "type": {
+                "coding": [{
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR",
+                  "display": "Medical Record Number"
+                }],
+                "text": "Medical Record Number"
+              },
+              "system": "http://hospital.smarthealthit.org",
+              "value": "262b819a-5193-404a-9787-b7f599358035"
+            }, {
+              "type": {
+                "coding": [{
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "SS",
+                  "display": "Social Security Number"
+                }],
+                "text": "Social Security Number"
+              },
+              "system": "http://hl7.org/fhir/sid/us-ssn",
+              "value": "999-19-7941"
+            }, {
+              "type": {
+                "coding": [{
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "DL",
+                  "display": "Driver's License"
+                }],
+                "text": "Driver's License"
+              },
+              "system": "urn:oid:2.16.840.1.113883.4.3.25",
+              "value": "S99986287"
+            }],
+            "name": [{
+              "use": "official",
+              "family": "Heller342",
+              "given": ["Abraham100"]
+            }],
+            "telecom": [{
+              "system": "phone",
+              "value": "555-803-7962",
+              "use": "home"
+            }],
+            "gender": "male",
+            "birthDate": "2002-04-15",
+            "address": [{
+              "extension": [{
+                "url": "http://hl7.org/fhir/StructureDefinition/geolocation",
+                "extension": [{
+                  "url": "latitude",
+                  "valueDecimal": 42.410027249980345
+                }, {
+                  "url": "longitude",
+                  "valueDecimal": -71.07762136029856
+                }]
+              }],
+              "line": ["834 Hansen Run"],
+              "city": "Somerville",
+              "state": "Massachusetts",
+              "postalCode": "02138",
+              "country": "US"
+            }],
+            "maritalStatus": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+                "code": "S",
+                "display": "Never Married"
+              }],
+              "text": "Never Married"
+            },
+            "multipleBirthBoolean": false,
+            "communication": [{
+              "language": {
+                "coding": [{
+                  "system": "urn:ietf:bcp:47",
+                  "code": "en-US",
+                  "display": "English"
+                }],
+                "text": "English"
+              }
+            }]
+          },
+          "related_resources": []
+        }]
+      }, {
+        "id": "588040a0-20ff-4fb8-8ee8-966393be2378",
+        "created_at": "2023-06-02T01:00:31.555119321Z",
+        "updated_at": "2023-06-02T01:00:31.555119321Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Patient",
+        "source_resource_id": "b426b062-8273-4b93-a907-de3176c0567d",
+        "sort_date": null,
+        "sort_title": "Heller342, Abraham100",
+        "resource_raw": {
+          "resourceType": "Patient",
+          "id": "b426b062-8273-4b93-a907-de3176c0567d",
+          "text": {
+            "status": "generated",
+            "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>.Version identifier: v2.4.0-404-ge7ce2295\n .   Person seed: 4209933468692678950  Population seed: 0</div>"
+          },
+          "extension": [{
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [{
+              "url": "ombCategory",
+              "valueCoding": {
+                "system": "urn:oid:2.16.840.1.113883.6.238",
+                "code": "2106-3",
+                "display": "White"
+              }
+            }, {
+              "url": "text",
+              "valueString": "White"
+            }]
+          }, {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [{
+              "url": "ombCategory",
+              "valueCoding": {
+                "system": "urn:oid:2.16.840.1.113883.6.238",
+                "code": "2186-5",
+                "display": "Not Hispanic or Latino"
+              }
+            }, {
+              "url": "text",
+              "valueString": "Not Hispanic or Latino"
+            }]
+          }, {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName",
+            "valueString": "Sanda877 Kshlerin58"
+          }, {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "M"
+          }, {
+            "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+            "valueAddress": {
+              "city": "Peabody",
+              "state": "Massachusetts",
+              "country": "US"
+            }
+          }, {
+            "url": "http://synthetichealth.github.io/synthea/disability-adjusted-life-years",
+            "valueDecimal": 0
+          }, {
+            "url": "http://synthetichealth.github.io/synthea/quality-adjusted-life-years",
+            "valueDecimal": 16
+          }],
+          "identifier": [{
+            "system": "https://github.com/synthetichealth/synthea",
+            "value": "262b819a-5193-404a-9787-b7f599358035"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "MR",
+                "display": "Medical Record Number"
+              }],
+              "text": "Medical Record Number"
+            },
+            "system": "http://hospital.smarthealthit.org",
+            "value": "262b819a-5193-404a-9787-b7f599358035"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "SS",
+                "display": "Social Security Number"
+              }],
+              "text": "Social Security Number"
+            },
+            "system": "http://hl7.org/fhir/sid/us-ssn",
+            "value": "999-19-7941"
+          }, {
+            "type": {
+              "coding": [{
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                "code": "DL",
+                "display": "Driver's License"
+              }],
+              "text": "Driver's License"
+            },
+            "system": "urn:oid:2.16.840.1.113883.4.3.25",
+            "value": "S99986287"
+          }],
+          "name": [{
+            "use": "official",
+            "family": "Heller342",
+            "given": ["Abraham100"]
+          }],
+          "telecom": [{
+            "system": "phone",
+            "value": "555-803-7962",
+            "use": "home"
+          }],
+          "gender": "male",
+          "birthDate": "2002-04-15",
+          "address": [{
+            "extension": [{
+              "url": "http://hl7.org/fhir/StructureDefinition/geolocation",
+              "extension": [{
+                "url": "latitude",
+                "valueDecimal": 42.410027249980345
+              }, {
+                "url": "longitude",
+                "valueDecimal": -71.07762136029856
+              }]
+            }],
+            "line": ["834 Hansen Run"],
+            "city": "Somerville",
+            "state": "Massachusetts",
+            "postalCode": "02138",
+            "country": "US"
+          }],
+          "maritalStatus": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+              "code": "S",
+              "display": "Never Married"
+            }],
+            "text": "Never Married"
+          },
+          "multipleBirthBoolean": false,
+          "communication": [{
+            "language": {
+              "coding": [{
+                "system": "urn:ietf:bcp:47",
+                "code": "en-US",
+                "display": "English"
+              }],
+              "text": "English"
+            }
+          }]
+        },
+        "related_resources": []
+      }, {
+        "id": "e00141b7-c66a-4e17-96e4-2190ae13b668",
+        "created_at": "2023-06-02T01:00:33.062514756Z",
+        "updated_at": "2023-06-02T01:00:33.062514756Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Observation",
+        "source_resource_id": "6d0bf9df-348a-4b53-a608-9914298446d0",
+        "sort_date": "2011-09-15T12:22:44-04:00",
+        "sort_title": "Oral temperature",
+        "resource_raw": {
+          "resourceType": "Observation",
+          "id": "6d0bf9df-348a-4b53-a608-9914298446d0",
+          "status": "final",
+          "category": [{
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+              "code": "vital-signs",
+              "display": "vital-signs"
+            }]
+          }],
+          "code": {
+            "coding": [{
+              "system": "http://loinc.org",
+              "code": "8331-1",
+              "display": "Oral temperature"
+            }],
+            "text": "Oral temperature"
+          },
+          "subject": {
+            "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+          },
+          "encounter": {
+            "reference": "urn:uuid:24f73ec3-9b7a-42a9-be03-53bffd9b304c"
+          },
+          "effectiveDateTime": "2011-09-15T12:22:44-04:00",
+          "issued": "2011-09-15T12:22:44.702-04:00",
+          "valueQuantity": {
+            "value": 37.65532501487887,
+            "unit": "Cel",
+            "system": "http://unitsofmeasure.org",
+            "code": "Cel"
+          }
+        },
+        "related_resources": null
+      }, {
+        "id": "062dcb2b-86aa-4d24-9c2d-51ba303453a9",
+        "created_at": "2023-06-02T01:00:32.12179014Z",
+        "updated_at": "2023-06-02T01:00:32.12179014Z",
+        "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+        "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+        "source_resource_type": "Practitioner",
+        "source_resource_id": "0000016d-3a85-4cca-0000-00000000010e",
+        "sort_date": null,
+        "sort_title": "Jenkins714, Renato359",
+        "resource_raw": {
+          "resourceType": "Practitioner",
+          "id": "0000016d-3a85-4cca-0000-00000000010e",
+          "identifier": [{
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "270"
+          }],
+          "active": true,
+          "name": [{
+            "family": "Jenkins714",
+            "given": ["Renato359"],
+            "prefix": ["Dr."]
+          }],
+          "telecom": [{
+            "system": "email",
+            "value": "Renato359.Jenkins714@example.com",
+            "use": "work"
+          }],
+          "address": [{
+            "line": ["585 LEBANON STREET"],
+            "city": "MELROSE",
+            "state": "MA",
+            "postalCode": "02176",
+            "country": "US"
+          }],
+          "gender": "male"
+        },
+        "related_resources": null
+      }]
+    }, {
+      "id": "588040a0-20ff-4fb8-8ee8-966393be2378",
+      "created_at": "2023-06-02T01:00:31.555119321Z",
+      "updated_at": "2023-06-02T01:00:31.555119321Z",
+      "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+      "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+      "source_resource_type": "Patient",
+      "source_resource_id": "b426b062-8273-4b93-a907-de3176c0567d",
+      "sort_date": null,
+      "sort_title": "Heller342, Abraham100",
+      "resource_raw": {
+        "resourceType": "Patient",
+        "id": "b426b062-8273-4b93-a907-de3176c0567d",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Generated by <a href=\"https://github.com/synthetichealth/synthea\">Synthea</a>.Version identifier: v2.4.0-404-ge7ce2295\n .   Person seed: 4209933468692678950  Population seed: 0</div>"
+        },
+        "extension": [{
+          "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+          "extension": [{
+            "url": "ombCategory",
+            "valueCoding": {
+              "system": "urn:oid:2.16.840.1.113883.6.238",
+              "code": "2106-3",
+              "display": "White"
+            }
+          }, {
+            "url": "text",
+            "valueString": "White"
+          }]
+        }, {
+          "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+          "extension": [{
+            "url": "ombCategory",
+            "valueCoding": {
+              "system": "urn:oid:2.16.840.1.113883.6.238",
+              "code": "2186-5",
+              "display": "Not Hispanic or Latino"
+            }
+          }, {
+            "url": "text",
+            "valueString": "Not Hispanic or Latino"
+          }]
+        }, {
+          "url": "http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName",
+          "valueString": "Sanda877 Kshlerin58"
+        }, {
+          "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+          "valueCode": "M"
+        }, {
+          "url": "http://hl7.org/fhir/StructureDefinition/patient-birthPlace",
+          "valueAddress": {
+            "city": "Peabody",
+            "state": "Massachusetts",
+            "country": "US"
+          }
+        }, {
+          "url": "http://synthetichealth.github.io/synthea/disability-adjusted-life-years",
+          "valueDecimal": 0
+        }, {
+          "url": "http://synthetichealth.github.io/synthea/quality-adjusted-life-years",
+          "valueDecimal": 16
+        }],
+        "identifier": [{
+          "system": "https://github.com/synthetichealth/synthea",
+          "value": "262b819a-5193-404a-9787-b7f599358035"
+        }, {
+          "type": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+              "code": "MR",
+              "display": "Medical Record Number"
+            }],
+            "text": "Medical Record Number"
+          },
+          "system": "http://hospital.smarthealthit.org",
+          "value": "262b819a-5193-404a-9787-b7f599358035"
+        }, {
+          "type": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+              "code": "SS",
+              "display": "Social Security Number"
+            }],
+            "text": "Social Security Number"
+          },
+          "system": "http://hl7.org/fhir/sid/us-ssn",
+          "value": "999-19-7941"
+        }, {
+          "type": {
+            "coding": [{
+              "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+              "code": "DL",
+              "display": "Driver's License"
+            }],
+            "text": "Driver's License"
+          },
+          "system": "urn:oid:2.16.840.1.113883.4.3.25",
+          "value": "S99986287"
+        }],
+        "name": [{
+          "use": "official",
+          "family": "Heller342",
+          "given": ["Abraham100"]
+        }],
+        "telecom": [{
+          "system": "phone",
+          "value": "555-803-7962",
+          "use": "home"
+        }],
+        "gender": "male",
+        "birthDate": "2002-04-15",
+        "address": [{
+          "extension": [{
+            "url": "http://hl7.org/fhir/StructureDefinition/geolocation",
+            "extension": [{
+              "url": "latitude",
+              "valueDecimal": 42.410027249980345
+            }, {
+              "url": "longitude",
+              "valueDecimal": -71.07762136029856
+            }]
+          }],
+          "line": ["834 Hansen Run"],
+          "city": "Somerville",
+          "state": "Massachusetts",
+          "postalCode": "02138",
+          "country": "US"
+        }],
+        "maritalStatus": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+            "code": "S",
+            "display": "Never Married"
+          }],
+          "text": "Never Married"
+        },
+        "multipleBirthBoolean": false,
+        "communication": [{
+          "language": {
+            "coding": [{
+              "system": "urn:ietf:bcp:47",
+              "code": "en-US",
+              "display": "English"
+            }],
+            "text": "English"
+          }
+        }]
+      },
+      "related_resources": []
+    }]
+  }],
+  "title": "Viral sinusitis (disorder)"
+}

@@ -561,6 +561,7 @@ func (sr *SqliteRepository) RemoveResourceAssociation(ctx context.Context, sourc
 // - add AddResourceAssociation for all resources linked to the Composition resource
 // - store the Composition resource
 //TODO: update to use new databaseModels
+//TODO: determine if we should be using a List Resource instead of a Composition resource
 func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceBase) error {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
