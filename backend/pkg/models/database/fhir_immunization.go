@@ -13,9 +13,7 @@ import (
 )
 
 type FhirImmunization struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	/*
 	   Multiple Resources:
 
@@ -137,9 +135,6 @@ type FhirImmunization struct {
 	VaccineCode datatypes.JSON `gorm:"column:vaccineCode;type:text;serializer:json" json:"vaccineCode,omitempty"`
 }
 
-func (s *FhirImmunization) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirImmunization) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"date":            "date",

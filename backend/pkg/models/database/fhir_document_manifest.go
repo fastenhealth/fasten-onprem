@@ -13,9 +13,7 @@ import (
 )
 
 type FhirDocumentManifest struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Who and/or what authored the DocumentManifest
 	// https://hl7.org/fhir/r4/search.html#reference
 	Author datatypes.JSON `gorm:"column:author;type:text;serializer:json" json:"author,omitempty"`
@@ -105,9 +103,6 @@ type FhirDocumentManifest struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirDocumentManifest) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirDocumentManifest) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"author":      "reference",

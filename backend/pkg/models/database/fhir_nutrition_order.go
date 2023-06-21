@@ -13,9 +13,7 @@ import (
 )
 
 type FhirNutritionOrder struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Type of module component to add to the feeding
 	// https://hl7.org/fhir/r4/search.html#token
 	Additive datatypes.JSON `gorm:"column:additive;type:text;serializer:json" json:"additive,omitempty"`
@@ -120,9 +118,6 @@ type FhirNutritionOrder struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirNutritionOrder) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirNutritionOrder) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"additive":              "token",

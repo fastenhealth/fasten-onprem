@@ -13,9 +13,7 @@ import (
 )
 
 type FhirMedicationAdministration struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	/*
 	   Multiple Resources:
 
@@ -139,9 +137,6 @@ type FhirMedicationAdministration struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirMedicationAdministration) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirMedicationAdministration) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"code":           "token",

@@ -13,9 +13,7 @@ import (
 )
 
 type FhirVisionPrescription struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Return prescriptions written on this date
 	// https://hl7.org/fhir/r4/search.html#date
 	Datewritten time.Time `gorm:"column:datewritten;type:datetime" json:"datewritten,omitempty"`
@@ -102,9 +100,6 @@ type FhirVisionPrescription struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirVisionPrescription) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirVisionPrescription) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"datewritten": "date",

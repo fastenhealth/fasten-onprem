@@ -13,9 +13,7 @@ import (
 )
 
 type FhirDeviceRequest struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// When the request transitioned to being actionable
 	// https://hl7.org/fhir/r4/search.html#date
 	AuthoredOn time.Time `gorm:"column:authoredOn;type:datetime" json:"authoredOn,omitempty"`
@@ -155,9 +153,6 @@ type FhirDeviceRequest struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirDeviceRequest) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirDeviceRequest) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"authoredOn":            "date",

@@ -13,9 +13,7 @@ import (
 )
 
 type FhirDevice struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// A server defined search that may match any of the string fields in Device.deviceName or Device.type.
 	// https://hl7.org/fhir/r4/search.html#string
 	DeviceName string `gorm:"column:deviceName;type:text" json:"deviceName,omitempty"`
@@ -69,9 +67,6 @@ type FhirDevice struct {
 	Url string `gorm:"column:url;type:text" json:"url,omitempty"`
 }
 
-func (s *FhirDevice) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirDevice) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"deviceName":   "string",

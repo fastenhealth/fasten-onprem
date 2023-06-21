@@ -13,9 +13,7 @@ import (
 )
 
 type FhirProvenance struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Who participated
 	// https://hl7.org/fhir/r4/search.html#reference
 	Agent datatypes.JSON `gorm:"column:agent;type:text;serializer:json" json:"agent,omitempty"`
@@ -66,9 +64,6 @@ type FhirProvenance struct {
 	When time.Time `gorm:"column:when;type:datetime" json:"when,omitempty"`
 }
 
-func (s *FhirProvenance) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirProvenance) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"agent":         "reference",

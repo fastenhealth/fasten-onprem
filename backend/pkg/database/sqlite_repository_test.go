@@ -1,11 +1,14 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	mock_config "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config/mock"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/fastenhealth/gofhir-models/fhir401"
+	fhirutils "github.com/fastenhealth/gofhir-models/fhir401/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
@@ -260,4 +263,707 @@ func (suite *RepositoryTestSuite) TestGetCurrentUser_WithContextBackgroundAuthUs
 	require.Nil(suite.T(), userModelResult)
 }
 
-//TODO - merging multiple Compositions is broken
+func (suite *RepositoryTestSuite) TestCreateGlossaryEntry() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	//test
+	glossaryEntry := &models.Glossary{
+		Code:       "49727002",
+		CodeSystem: "2.16.840.1.113883.6.96",
+		Publisher:  "U.S. National Library of Medicine",
+		Title:      "Cough",
+		Url:        "https://medlineplus.gov/cough.html?utm_source=mplusconnect&utm_medium=service",
+		Description: `<p>Coughing is a reflex that keeps your throat and airways clear.  Although it can be annoying, coughing helps your body heal or protect itself. Coughs can be either acute or chronic.  Acute coughs begin suddenly and usually last no more than 2 to 3 weeks.  Acute coughs are the kind you most often get with a <a href="https://medlineplus.gov/commoncold.html?utm_source=mplusconnect">cold</a>, <a href="https://medlineplus.gov/flu.html?utm_source=mplusconnect">flu</a>, or <a href="https://medlineplus.gov/acutebronchitis.html?utm_source=mplusconnect">acute bronchitis</a>.  Chronic coughs last longer than 2 to 3 weeks.  Causes of chronic cough include:</p><ul>
+<li><a href="https://medlineplus.gov/chronicbronchitis.html?utm_source=mplusconnect">Chronic bronchitis</a></li>
+<li><a href="https://medlineplus.gov/asthma.html?utm_source=mplusconnect">Asthma</a></li>
+<li><a href="https://medlineplus.gov/allergy.html?utm_source=mplusconnect">Allergies</a></li>
+<li><a href="https://medlineplus.gov/copd.html?utm_source=mplusconnect">COPD</a> (chronic obstructive pulmonary disease)</li>
+<li><a href="https://medlineplus.gov/gerd.html?utm_source=mplusconnect">GERD</a> (gastroesophageal reflux disease) </li>
+<li><a href="https://medlineplus.gov/smoking.html?utm_source=mplusconnect">Smoking</a></li>
+<li><a href="https://medlineplus.gov/throatdisorders.html?utm_source=mplusconnect">Throat disorders</a>, such as <a href="https://medlineplus.gov/croup.html?utm_source=mplusconnect">croup</a> in young children</li>
+<li>Some medicines </li>
+</ul>
+
+<p>Water can help ease your cough - whether you drink it or add it to the air with a steamy shower or vaporizer. If you have a cold or the flu, antihistamines may work better than non-prescription <a href="https://medlineplus.gov/coldandcoughmedicines.html?utm_source=mplusconnect">cough medicines</a>.   Children under four should not have cough medicine.  For children over four, use caution and read labels carefully.</p>`,
+	}
+	err = dbRepo.CreateGlossaryEntry(context.Background(), glossaryEntry)
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.NotEmpty(suite.T(), glossaryEntry.ID)
+}
+
+func (suite *RepositoryTestSuite) TestUpsertRawResource() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	testSourceCredential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: userModel.ID,
+	}
+	testPatientData, err := os.ReadFile("./testdata/Abraham100_Heller342_Patient.json")
+	require.NoError(suite.T(), err)
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+	wasCreated, err := dbRepo.UpsertRawResource(
+		authContext,
+		testSourceCredential,
+		sourceModels.RawResourceFhir{
+			SourceResourceType: "Patient",
+			SourceResourceID:   "b426b062-8273-4b93-a907-de3176c0567d",
+			ResourceRaw:        testPatientData,
+		},
+	)
+	require.NoError(suite.T(), err)
+	foundPatientResource, err := dbRepo.GetResourceByResourceTypeAndId(authContext, "Patient", "b426b062-8273-4b93-a907-de3176c0567d")
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.True(suite.T(), wasCreated)
+	require.NotNil(suite.T(), foundPatientResource)
+	require.Equal(suite.T(), foundPatientResource.SourceID, testSourceCredential.ID)
+
+	//ensure that the raw resource data is the same (we don't want to modify the data)
+	var expectedPationData map[string]interface{}
+	err = json.Unmarshal(testPatientData, &expectedPationData)
+	require.NoError(suite.T(), err)
+
+	var actualPatientData map[string]interface{}
+	err = json.Unmarshal(foundPatientResource.ResourceRaw, &actualPatientData)
+	require.Equal(suite.T(), expectedPationData, actualPatientData)
+}
+
+//TODO create UPSERT test, where the resource already exists and we need to update it
+
+func (suite *RepositoryTestSuite) TestUpsertRawResource_WithRelatedResourceAndDuplicateReference() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	testSourceCredential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: userModel.ID,
+	}
+	patientData, err := os.ReadFile("./testdata/Abraham100_Heller342_Patient.json")
+	require.NoError(suite.T(), err)
+
+	//test
+	wasCreated, err := dbRepo.UpsertRawResource(
+		context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username"),
+		testSourceCredential,
+		sourceModels.RawResourceFhir{
+			SourceResourceType:  "Patient",
+			SourceResourceID:    "b426b062-8273-4b93-a907-de3176c0567d",
+			ResourceRaw:         patientData,
+			ReferencedResources: []string{"Observation/1", "Observation/2", "Observation/3", "Observation/3"}, //duplicate resource reference should not cause an issue, it should be silently ignored
+		},
+	)
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.True(suite.T(), wasCreated)
+}
+
+func (suite *RepositoryTestSuite) TestListResources() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	otherUserModel := &models.User{
+		Username: "test_other_username",
+		Password: "testpassword",
+		Email:    "testother@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), otherUserModel)
+	require.NoError(suite.T(), err)
+
+	testSource1Credential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: userModel.ID,
+	}
+	testSource2Credential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: userModel.ID,
+	}
+	patientDataAbraham100, err := os.ReadFile("./testdata/Abraham100_Heller342_Patient.json")
+	require.NoError(suite.T(), err)
+
+	testResource1Created, err := dbRepo.UpsertRawResource(
+		context.WithValue(authContext, pkg.ContextKeyTypeAuthUsername, "test_username"),
+		testSource1Credential,
+		sourceModels.RawResourceFhir{
+			SourceResourceType:  "Patient",
+			SourceResourceID:    "b426b062-8273-4b93-a907-de3176c0567d",
+			ResourceRaw:         patientDataAbraham100,
+			ReferencedResources: []string{"Observation/1", "Observation/2", "Observation/3", "Observation/3"}, //duplicate resource reference should not cause an issue, it should be silently ignored
+		},
+	)
+	require.NoError(suite.T(), err)
+	require.True(suite.T(), testResource1Created)
+
+	patientDataLillia547, err := os.ReadFile("./testdata/Lillia547_Schneider99_Patient.json")
+	require.NoError(suite.T(), err)
+	testResource2Created, err := dbRepo.UpsertRawResource(
+		context.WithValue(authContext, pkg.ContextKeyTypeAuthUsername, "test_username"),
+		testSource2Credential,
+		sourceModels.RawResourceFhir{
+			SourceResourceType:  "Patient",
+			SourceResourceID:    "d3fbfb3a-7b8d-45c0-13b4-9666e4d36a3e",
+			ResourceRaw:         patientDataLillia547,
+			ReferencedResources: []string{"Observation/10", "Observation/20", "Observation/30"},
+		},
+	)
+	require.NoError(suite.T(), err)
+	require.True(suite.T(), testResource2Created)
+
+	//test
+	foundPatientResources, err := dbRepo.ListResources(authContext, models.ListResourceQueryOptions{
+		SourceResourceType: "Patient",
+	})
+	require.NoError(suite.T(), err)
+
+	findAllResources, err := dbRepo.ListResources(authContext, models.ListResourceQueryOptions{})
+	require.NoError(suite.T(), err)
+
+	findSourceResources, err := dbRepo.ListResources(authContext, models.ListResourceQueryOptions{SourceID: testSource1Credential.ID.String()})
+	require.NoError(suite.T(), err)
+
+	//find specific resource
+	findSpecificResource, err := dbRepo.ListResources(authContext, models.ListResourceQueryOptions{SourceResourceID: "d3fbfb3a-7b8d-45c0-13b4-9666e4d36a3e", SourceResourceType: "Patient"})
+	require.NoError(suite.T(), err)
+
+	findInvalidResource, err := dbRepo.ListResources(authContext, models.ListResourceQueryOptions{SourceResourceID: "11111111-7b8d-45c0-13b4-9666e4d36a3e", SourceResourceType: "Patient"})
+	require.NoError(suite.T(), err)
+
+	findResourceWithOtherUserId, err := dbRepo.ListResources(context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_other_username"), models.ListResourceQueryOptions{SourceResourceID: "d3fbfb3a-7b8d-45c0-13b4-9666e4d36a3e", SourceResourceType: "Patient"})
+	require.NoError(suite.T(), err)
+
+	_, err = dbRepo.ListResources(context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "doesnt_exist"), models.ListResourceQueryOptions{SourceResourceID: "d3fbfb3a-7b8d-45c0-13b4-9666e4d36a3e", SourceResourceType: "Patient"})
+	require.Error(suite.T(), err)
+
+	//assert
+	require.Equal(suite.T(), len(foundPatientResources), 2)
+	require.Equal(suite.T(), len(findAllResources), 2)
+	require.Equal(suite.T(), len(findSourceResources), 1)
+	require.Equal(suite.T(), len(findSpecificResource), 1)
+	require.Equal(suite.T(), len(findInvalidResource), 0)
+	require.Equal(suite.T(), len(findResourceWithOtherUserId), 0)
+}
+
+//TODO add test for ListResources with related resources (PrefetchRelated)
+//func (suite *RepositoryTestSuite) TestListResources_WithRelatedResource() {}
+
+func (suite *RepositoryTestSuite) TestGetResourceByResourceTypeAndId() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	testSourceCredential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: userModel.ID,
+	}
+	testPatientData, err := os.ReadFile("./testdata/Abraham100_Heller342_Patient.json")
+	require.NoError(suite.T(), err)
+
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+	wasCreated, err := dbRepo.UpsertRawResource(
+		authContext,
+		testSourceCredential,
+		sourceModels.RawResourceFhir{
+			SourceResourceType: "Patient",
+			SourceResourceID:   "b426b062-8273-4b93-a907-de3176c0567d",
+			ResourceRaw:        testPatientData,
+		},
+	)
+	require.NoError(suite.T(), err)
+	require.True(suite.T(), wasCreated)
+
+	//test & assert
+	findPatientResource, err := dbRepo.GetResourceByResourceTypeAndId(authContext, "Patient", "b426b062-8273-4b93-a907-de3176c0567d")
+	require.NoError(suite.T(), err)
+	require.NotNil(suite.T(), findPatientResource)
+
+	//raise an error if the resource is not found (invalid resource type or id missing)
+	_, err = dbRepo.GetResourceByResourceTypeAndId(authContext, "Patient", "11111111-8273-4b93-a907-de3176c0567d")
+	require.Error(suite.T(), err)
+
+	_, err = dbRepo.GetResourceByResourceTypeAndId(authContext, "Observation", "b426b062-8273-4b93-a907-de3176c0567d")
+	require.Error(suite.T(), err)
+
+	_, err = dbRepo.GetResourceByResourceTypeAndId(authContext, "InvalidResource", "b426b062-8273-4b93-a907-de3176c0567d")
+	require.Error(suite.T(), err)
+}
+
+func (suite *RepositoryTestSuite) TestGetResourceBySourceId() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	testSourceCredential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: userModel.ID,
+	}
+	testPatientData, err := os.ReadFile("./testdata/Abraham100_Heller342_Patient.json")
+	require.NoError(suite.T(), err)
+
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+	wasCreated, err := dbRepo.UpsertRawResource(
+		authContext,
+		testSourceCredential,
+		sourceModels.RawResourceFhir{
+			SourceResourceType: "Patient",
+			SourceResourceID:   "b426b062-8273-4b93-a907-de3176c0567d",
+			ResourceRaw:        testPatientData,
+		},
+	)
+	require.NoError(suite.T(), err)
+	require.True(suite.T(), wasCreated)
+
+	//test & assert
+	findPatientResource, err := dbRepo.GetResourceBySourceId(authContext, testSourceCredential.ID.String(), "b426b062-8273-4b93-a907-de3176c0567d")
+	require.NoError(suite.T(), err)
+	require.NotNil(suite.T(), findPatientResource)
+
+	//raise an error if the resource is not found (invalid resource id for source)
+	_, err = dbRepo.GetResourceByResourceTypeAndId(authContext, testSourceCredential.ID.String(), "11111111-8273-4b93-a907-de3176c0567d")
+	require.Error(suite.T(), err)
+
+	_, err = dbRepo.GetResourceByResourceTypeAndId(authContext, uuid.NewString(), "b426b062-8273-4b93-a907-de3176c0567d")
+	require.Error(suite.T(), err)
+
+	_, err = dbRepo.GetResourceByResourceTypeAndId(authContext, testSourceCredential.ID.String(), "")
+	require.Error(suite.T(), err)
+}
+
+func (suite *RepositoryTestSuite) TestGetPatientForSources() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	testSourceCredential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: userModel.ID,
+	}
+	testPatientData, err := os.ReadFile("./testdata/Abraham100_Heller342_Patient.json")
+	require.NoError(suite.T(), err)
+
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+	wasCreated, err := dbRepo.UpsertRawResource(
+		authContext,
+		testSourceCredential,
+		sourceModels.RawResourceFhir{
+			SourceResourceType: "Patient",
+			SourceResourceID:   "b426b062-8273-4b93-a907-de3176c0567d",
+			ResourceRaw:        testPatientData,
+		},
+	)
+	require.NoError(suite.T(), err)
+	require.True(suite.T(), wasCreated)
+
+	was2Created, err := dbRepo.UpsertRawResource(
+		authContext,
+		testSourceCredential,
+		sourceModels.RawResourceFhir{
+			SourceResourceType: "Patient",
+			SourceResourceID:   "11111111-8273-4b93-a907-de3176c0567d",
+			ResourceRaw:        testPatientData,
+		},
+	)
+	require.NoError(suite.T(), err)
+	require.True(suite.T(), was2Created)
+	//test & assert
+	findPatients, err := dbRepo.GetPatientForSources(authContext)
+	require.NoError(suite.T(), err)
+	require.NotNil(suite.T(), findPatients)
+	require.Len(suite.T(), findPatients, 2) //TODO: this may need to change to 1 if we group by source_id
+
+}
+
+func (suite *RepositoryTestSuite) TestAddResourceAssociation() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	testSourceCredential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: userModel.ID,
+	}
+
+	//test
+	err = dbRepo.AddResourceAssociation(authContext,
+		&testSourceCredential, "Patient", "b426b062-8273-4b93-a907-de3176c0567d",
+		&testSourceCredential, "Observation", "11111111-8273-4b93-a907-de3176c0567d")
+
+	//assert
+	require.NoError(suite.T(), err)
+}
+
+func (suite *RepositoryTestSuite) TestAddResourceAssociation_WithMismatchingSourceIds() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	//test 1 - user id does not match the user id on resources (but they match eachother)
+	differentUserIdSourceCredential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: uuid.New(),
+	}
+	errForUserMismatch := dbRepo.AddResourceAssociation(authContext,
+		&differentUserIdSourceCredential, "Patient", "b426b062-8273-4b93-a907-de3176c0567d",
+		&differentUserIdSourceCredential, "Observation", "11111111-8273-4b93-a907-de3176c0567d")
+	require.Error(suite.T(), errForUserMismatch)
+
+	//test 2 - user id for resources do not match eachother
+	sourceCredential1 := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: uuid.New(),
+	}
+	sourceCredential2 := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: uuid.New(),
+	}
+	require.NotEqual(suite.T(), sourceCredential1.UserID, sourceCredential2.UserID)
+	errForResourceMismatch := dbRepo.AddResourceAssociation(authContext,
+		&sourceCredential1, "Patient", "b426b062-8273-4b93-a907-de3176c0567d",
+		&sourceCredential2, "Observation", "11111111-8273-4b93-a907-de3176c0567d")
+	require.Error(suite.T(), errForResourceMismatch)
+}
+
+func (suite *RepositoryTestSuite) TestRemoveResourceAssociation() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	testSourceCredential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: userModel.ID,
+	}
+
+	err = dbRepo.AddResourceAssociation(authContext,
+		&testSourceCredential, "Patient", "b426b062-8273-4b93-a907-de3176c0567d",
+		&testSourceCredential, "Observation", "11111111-8273-4b93-a907-de3176c0567d")
+	require.NoError(suite.T(), err)
+
+	//test
+	errWhenNotExists := dbRepo.RemoveResourceAssociation(authContext,
+		&testSourceCredential, "Patient", "999999999-8273-4b93-a907-de3176c0567d",
+		&testSourceCredential, "Observation", "11111111-8273-4b93-a907-de3176c0567d")
+	require.Errorf(suite.T(), errWhenNotExists, "association should not exist, so deletion should fail")
+
+	err = dbRepo.RemoveResourceAssociation(authContext,
+		&testSourceCredential, "Patient", "b426b062-8273-4b93-a907-de3176c0567d",
+		&testSourceCredential, "Observation", "11111111-8273-4b93-a907-de3176c0567d")
+	require.NoError(suite.T(), err)
+}
+
+func (suite *RepositoryTestSuite) TestGetSourceSummary() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	testSourceCredential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: userModel.ID,
+	}
+	err = dbRepo.CreateSource(authContext, &testSourceCredential)
+	require.NoError(suite.T(), err)
+
+	testPatientData, err := os.ReadFile("./testdata/Abraham100_Heller342_262b819a-5193-404a-9787-b7f599358035.json")
+	require.NoError(suite.T(), err)
+
+	var testPatientBundle fhir401.Bundle
+	err = json.Unmarshal(testPatientData, &testPatientBundle)
+	require.NoError(suite.T(), err)
+
+	for _, resourceEntry := range testPatientBundle.Entry {
+
+		fhirResource, _ := fhirutils.MapToResource(resourceEntry.Resource, false)
+		resourceType, resourceId := fhirResource.(sourceModels.ResourceInterface).ResourceRef()
+		if resourceId == nil {
+			suite.T().Logf("skipping resource with no ID: %s", resourceType)
+			continue //skip resources missing an ID
+		}
+		wasCreated, err := dbRepo.UpsertRawResource(
+			authContext,
+			testSourceCredential,
+			sourceModels.RawResourceFhir{
+				SourceResourceType: resourceType,
+				SourceResourceID:   *resourceId,
+				ResourceRaw:        resourceEntry.Resource,
+			},
+		)
+		require.NoError(suite.T(), err)
+		require.True(suite.T(), wasCreated)
+	}
+
+	//test
+	sourceSummary, err := dbRepo.GetSourceSummary(authContext, testSourceCredential.ID.String())
+	require.NoError(suite.T(), err)
+	require.NotNil(suite.T(), sourceSummary)
+	//validated using https://www.maxmddirect.com/direct/FHIR/ResponseViewer
+	require.Equal(suite.T(), []map[string]interface{}{
+		{"count": int64(1), "resource_type": "CarePlan", "source_id": testSourceCredential.ID.String()},
+		{"count": int64(1), "resource_type": "CareTeam", "source_id": testSourceCredential.ID.String()},
+		{"count": int64(22), "resource_type": "Claim", "source_id": testSourceCredential.ID.String()},
+		{"count": int64(8), "resource_type": "Condition", "source_id": testSourceCredential.ID.String()},
+		{"count": int64(2), "resource_type": "DiagnosticReport", "source_id": testSourceCredential.ID.String()},
+		{"count": int64(18), "resource_type": "Encounter", "source_id": testSourceCredential.ID.String()},
+		{"count": int64(18), "resource_type": "ExplanationOfBenefit", "source_id": testSourceCredential.ID.String()},
+		{"count": int64(16), "resource_type": "Immunization", "source_id": testSourceCredential.ID.String()},
+		{"count": int64(4), "resource_type": "MedicationRequest", "source_id": testSourceCredential.ID.String()},
+		{"count": int64(93), "resource_type": "Observation", "source_id": testSourceCredential.ID.String()},
+		{"count": int64(3), "resource_type": "Organization", "source_id": testSourceCredential.ID.String()},
+		{"count": int64(1), "resource_type": "Patient", "source_id": testSourceCredential.ID.String()},
+		{"count": int64(3), "resource_type": "Practitioner", "source_id": testSourceCredential.ID.String()},
+		{"count": int64(8), "resource_type": "Procedure", "source_id": testSourceCredential.ID.String()},
+	}, sourceSummary.ResourceTypeCounts)
+	require.Equal(suite.T(), "b426b062-8273-4b93-a907-de3176c0567d", sourceSummary.Patient.SourceResourceID)
+	require.Equal(suite.T(), "Patient", sourceSummary.Patient.SourceResourceType)
+	require.NotEmpty(suite.T(), sourceSummary.Patient.ResourceRaw)
+}
+
+func (suite *RepositoryTestSuite) TestGetSummary() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	testSourceCredential1 := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID:  userModel.ID,
+		Patient: uuid.New().String(),
+	}
+	err = dbRepo.CreateSource(authContext, &testSourceCredential1)
+	require.NoError(suite.T(), err)
+
+	testSourceCredential2 := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID:  userModel.ID,
+		Patient: uuid.New().String(),
+	}
+	err = dbRepo.CreateSource(authContext, &testSourceCredential2)
+	require.NoError(suite.T(), err)
+
+	testPatientData, err := os.ReadFile("./testdata/Abraham100_Heller342_262b819a-5193-404a-9787-b7f599358035.json")
+	require.NoError(suite.T(), err)
+
+	var testPatientBundle fhir401.Bundle
+	err = json.Unmarshal(testPatientData, &testPatientBundle)
+	require.NoError(suite.T(), err)
+
+	for _, resourceEntry := range testPatientBundle.Entry {
+
+		fhirResource, _ := fhirutils.MapToResource(resourceEntry.Resource, false)
+		resourceType, resourceId := fhirResource.(sourceModels.ResourceInterface).ResourceRef()
+		if resourceId == nil {
+			suite.T().Logf("skipping resource with no ID: %s", resourceType)
+			continue //skip resources missing an ID
+		}
+		wasCreated, err := dbRepo.UpsertRawResource(
+			authContext,
+			testSourceCredential1,
+			sourceModels.RawResourceFhir{
+				SourceResourceType: resourceType,
+				SourceResourceID:   *resourceId,
+				ResourceRaw:        resourceEntry.Resource,
+			},
+		)
+		require.NoError(suite.T(), err)
+		require.True(suite.T(), wasCreated)
+
+		wasCreated2, err2 := dbRepo.UpsertRawResource(
+			authContext,
+			testSourceCredential2,
+			sourceModels.RawResourceFhir{
+				SourceResourceType: resourceType,
+				SourceResourceID:   *resourceId + "2",
+				ResourceRaw:        resourceEntry.Resource,
+			},
+		)
+		require.NoError(suite.T(), err2)
+		require.True(suite.T(), wasCreated2)
+	}
+
+	//test
+	sourceSummary, err := dbRepo.GetSummary(authContext)
+	require.NoError(suite.T(), err)
+	require.NotNil(suite.T(), sourceSummary)
+	//validated using https://www.maxmddirect.com/direct/FHIR/ResponseViewer
+	require.Equal(suite.T(), []map[string]interface{}{
+		{"count": int64(2), "resource_type": "CarePlan"},
+		{"count": int64(2), "resource_type": "CareTeam"},
+		{"count": int64(44), "resource_type": "Claim"},
+		{"count": int64(16), "resource_type": "Condition"},
+		{"count": int64(4), "resource_type": "DiagnosticReport"},
+		{"count": int64(36), "resource_type": "Encounter"},
+		{"count": int64(36), "resource_type": "ExplanationOfBenefit"},
+		{"count": int64(32), "resource_type": "Immunization"},
+		{"count": int64(8), "resource_type": "MedicationRequest"},
+		{"count": int64(93 * 2), "resource_type": "Observation"},
+		{"count": int64(6), "resource_type": "Organization"},
+		{"count": int64(2), "resource_type": "Patient"},
+		{"count": int64(6), "resource_type": "Practitioner"},
+		{"count": int64(16), "resource_type": "Procedure"},
+	}, sourceSummary.ResourceTypeCounts)
+
+	require.Equal(suite.T(), 2, len(sourceSummary.Sources))
+	require.Equal(suite.T(), 2, len(sourceSummary.Patients))
+}

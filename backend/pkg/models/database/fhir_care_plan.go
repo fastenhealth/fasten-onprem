@@ -13,9 +13,7 @@ import (
 )
 
 type FhirCarePlan struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Detail type of activity
 	// https://hl7.org/fhir/r4/search.html#token
 	ActivityCode datatypes.JSON `gorm:"column:activityCode;type:text;serializer:json" json:"activityCode,omitempty"`
@@ -149,9 +147,6 @@ type FhirCarePlan struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirCarePlan) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirCarePlan) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"activityCode":          "token",

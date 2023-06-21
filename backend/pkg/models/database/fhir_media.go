@@ -13,9 +13,7 @@ import (
 )
 
 type FhirMedia struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Procedure that caused this media to be created
 	// https://hl7.org/fhir/r4/search.html#reference
 	BasedOn datatypes.JSON `gorm:"column:basedOn;type:text;serializer:json" json:"basedOn,omitempty"`
@@ -72,9 +70,6 @@ type FhirMedia struct {
 	View datatypes.JSON `gorm:"column:view;type:text;serializer:json" json:"view,omitempty"`
 }
 
-func (s *FhirMedia) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirMedia) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"basedOn":     "reference",

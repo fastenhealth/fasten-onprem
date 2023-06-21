@@ -13,9 +13,7 @@ import (
 )
 
 type FhirEncounter struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// The set of accounts that may be used for billing for this Encounter
 	// https://hl7.org/fhir/r4/search.html#reference
 	Account datatypes.JSON `gorm:"column:account;type:text;serializer:json" json:"account,omitempty"`
@@ -155,9 +153,6 @@ type FhirEncounter struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirEncounter) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirEncounter) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"account":            "reference",

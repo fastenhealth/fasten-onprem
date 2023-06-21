@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	sourceModel "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
@@ -16,7 +17,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
-	"log"
 	"net/url"
 	"strings"
 )
@@ -63,19 +63,21 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 		GormClient: database,
 	}
 
-	//TODO: automigrate for now
+	//TODO: automigrate for now, this should be replaced with a migration tool once the DB has stabilized.
 	err = fastenRepo.Migrate()
 	if err != nil {
 		return nil, err
 	}
 
-	//automigrate Fhir Database
+	//automigrate Fhir Resource Tables
 	err = databaseModel.Migrate(fastenRepo.GormClient)
 	if err != nil {
 		return nil, err
 	}
 
 	// create/update admin user
+	//TODO: determine if this admin user is ncessary
+	//SECURITY: validate this user is necessary
 	adminUser := models.User{}
 	err = database.FirstOrCreate(&adminUser, models.User{Username: "admin"}).Error
 	if err != nil {
@@ -96,7 +98,6 @@ func (sr *SqliteRepository) Migrate() error {
 	err := sr.GormClient.AutoMigrate(
 		&models.User{},
 		&models.SourceCredential{},
-		&models.ResourceFhir{},
 		&models.Glossary{},
 	)
 	if err != nil {
@@ -125,7 +126,7 @@ func (sr *SqliteRepository) CreateUser(ctx context.Context, user *models.User) e
 }
 func (sr *SqliteRepository) GetUserByUsername(ctx context.Context, username string) (*models.User, error) {
 	var foundUser models.User
-	result := sr.GormClient.Where(models.User{Username: username}).First(&foundUser)
+	result := sr.GormClient.WithContext(ctx).Where(models.User{Username: username}).First(&foundUser)
 	return &foundUser, result.Error
 }
 
@@ -138,7 +139,7 @@ func (sr *SqliteRepository) GetCurrentUser(ctx context.Context) (*models.User, e
 	}
 
 	var currentUser models.User
-	result := sr.GormClient.First(&currentUser, models.User{Username: username.(string)})
+	result := sr.GormClient.WithContext(ctx).First(&currentUser, models.User{Username: username.(string)})
 
 	if result.Error != nil {
 		return nil, fmt.Errorf("could not retrieve current user: %v", result.Error)
@@ -152,7 +153,7 @@ func (sr *SqliteRepository) GetCurrentUser(ctx context.Context) (*models.User, e
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func (sr *SqliteRepository) CreateGlossaryEntry(ctx context.Context, glossaryEntry *models.Glossary) error {
-	record := sr.GormClient.Create(glossaryEntry)
+	record := sr.GormClient.WithContext(ctx).Create(glossaryEntry)
 	if record.Error != nil {
 		return record.Error
 	}
@@ -161,7 +162,9 @@ func (sr *SqliteRepository) CreateGlossaryEntry(ctx context.Context, glossaryEnt
 
 func (sr *SqliteRepository) GetGlossaryEntry(ctx context.Context, code string, codeSystem string) (*models.Glossary, error) {
 	var foundGlossaryEntry models.Glossary
-	result := sr.GormClient.Where(models.Glossary{Code: code, CodeSystem: codeSystem}).First(&foundGlossaryEntry)
+	result := sr.GormClient.WithContext(ctx).
+		Where(models.Glossary{Code: code, CodeSystem: codeSystem}).
+		First(&foundGlossaryEntry)
 	return &foundGlossaryEntry, result.Error
 }
 
@@ -178,18 +181,29 @@ func (sr *SqliteRepository) GetSummary(ctx context.Context) (*models.Summary, er
 	// we want a count of all resources for this user by type
 	var resourceCountResults []map[string]interface{}
 
-	//group by resource type and return counts
-	// SELECT source_resource_type as resource_type, COUNT(*) as count FROM resource_fhirs WHERE source_id = "53c1e930-63af-46c9-b760-8e83cbc1abd9" GROUP BY source_resource_type;
-	result := sr.GormClient.WithContext(ctx).
-		Model(models.ResourceFhir{}).
-		Select("source_resource_type as resource_type, count(*) as count").
-		Group("source_resource_type").
-		Where(models.OriginBase{
-			UserID: currentUser.ID,
-		}).
-		Scan(&resourceCountResults)
-	if result.Error != nil {
-		return nil, result.Error
+	resourceTypes := databaseModel.GetAllowedResourceTypes()
+	for _, resourceType := range resourceTypes {
+		tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
+		if err != nil {
+			return nil, err
+		}
+		var count int64
+		result := sr.GormClient.WithContext(ctx).
+			Table(tableName).
+			Where(models.OriginBase{
+				UserID: currentUser.ID,
+			}).
+			Count(&count)
+		if result.Error != nil {
+			return nil, result.Error
+		}
+		if count == 0 {
+			continue //don't add resource counts if the count is 0
+		}
+		resourceCountResults = append(resourceCountResults, map[string]interface{}{
+			"resource_type": resourceType,
+			"count":         count,
+		})
 	}
 
 	// we want a list of all sources (when they were last updated)
@@ -220,11 +234,14 @@ func (sr *SqliteRepository) GetSummary(ctx context.Context) (*models.Summary, er
 // Resource
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//This function will create a new resource if it does not exist, or update an existing resource if it does exist.
+//It will also create associations between fhir resources
 func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredential sourceModel.SourceCredential, rawResource sourceModel.RawResourceFhir) (bool, error) {
 
 	source := sourceCredential.(models.SourceCredential)
 
-	wrappedResourceModel := &models.ResourceFhir{
+	//convert from a raw resource (from fasten-sources) to a ResourceFhir (which matches the database models)
+	wrappedResourceModel := &models.ResourceBase{
 		OriginBase: models.OriginBase{
 			ModelBase:          models.ModelBase{},
 			UserID:             source.UserID,
@@ -232,10 +249,10 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 			SourceResourceID:   rawResource.SourceResourceID,
 			SourceResourceType: rawResource.SourceResourceType,
 		},
-		SortTitle:           rawResource.SortTitle,
-		SortDate:            rawResource.SortDate,
-		ResourceRaw:         datatypes.JSON(rawResource.ResourceRaw),
-		RelatedResourceFhir: nil,
+		SortTitle:       rawResource.SortTitle,
+		SortDate:        rawResource.SortDate,
+		ResourceRaw:     datatypes.JSON(rawResource.ResourceRaw),
+		RelatedResource: nil,
 	}
 
 	//create associations
@@ -248,13 +265,13 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 				continue
 			}
 
-			relatedResource := &models.ResourceFhir{
+			relatedResource := &models.ResourceBase{
 				OriginBase: models.OriginBase{
 					SourceID:           source.ID,
 					SourceResourceType: parts[0],
 					SourceResourceID:   parts[1],
 				},
-				RelatedResourceFhir: nil,
+				RelatedResource: nil,
 			}
 			err := sr.AddResourceAssociation(
 				ctx,
@@ -266,7 +283,7 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 				relatedResource.SourceResourceID,
 			)
 			if err != nil {
-				sr.Logger.Errorf("Error when creating a reciprocal association for %s: %v", referencedResource, err)
+				return false, err
 			}
 		}
 	}
@@ -275,19 +292,24 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 
 }
 
-//this method will upsert a resource, however it will not create associations.
-func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceModel *models.ResourceFhir) (bool, error) {
+// UpsertResource
+// this method will upsert a resource, however it will not create associations.
+// UPSERT operation
+// - call FindOrCreate
+// 	- check if the resource exists
+// 	- if it does not exist, insert it
+// - if no error during FindOrCreate && no rows affected (nothing was created)
+// 	- update the resource using Updates operation
+func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceModel *models.ResourceBase) (bool, error) {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
 		return false, currentUserErr
 	}
 
 	wrappedResourceModel.UserID = currentUser.ID
-	wrappedResourceModel.RelatedResourceFhir = nil
 	cachedResourceRaw := wrappedResourceModel.ResourceRaw
 
-	//TODO: fully migrate to the new code
-	sr.Logger.Infof("NEW CODE -- insert FHIRResource (%v) %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID)
+	sr.Logger.Infof("insert/update FHIRResource (%v) %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID)
 	wrappedFhirResourceModel, err := databaseModel.NewFhirResourceModelByType(wrappedResourceModel.SourceResourceType)
 	if err != nil {
 		return false, err
@@ -295,21 +317,13 @@ func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceM
 	wrappedFhirResourceModel.SetOriginBase(wrappedResourceModel.OriginBase)
 	err = wrappedFhirResourceModel.PopulateAndExtractSearchParameters(json.RawMessage(wrappedResourceModel.ResourceRaw))
 	if err != nil {
-		log.Fatalf("========================> AN ERROR OCCURED WHILE EXTRACTING: %v", err)
+		return false, fmt.Errorf("An error ocurred while extracting SearchParameters using FHIRPath (%s/%s): %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID, err)
 	}
-	_ = sr.GormClient.WithContext(ctx).Where(models.OriginBase{
+	createResult := sr.GormClient.WithContext(ctx).Where(models.OriginBase{
 		SourceID:           wrappedFhirResourceModel.GetSourceID(),
 		SourceResourceID:   wrappedFhirResourceModel.GetSourceResourceID(),
 		SourceResourceType: wrappedFhirResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-	}).Omit("RelatedResourceFhir.*").FirstOrCreate(wrappedFhirResourceModel)
-
-	sr.Logger.Infof("insert/update (%v) %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID)
-
-	createResult := sr.GormClient.WithContext(ctx).Where(models.OriginBase{
-		SourceID:           wrappedResourceModel.GetSourceID(),
-		SourceResourceID:   wrappedResourceModel.GetSourceResourceID(),
-		SourceResourceType: wrappedResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-	}).Omit("RelatedResourceFhir.*").FirstOrCreate(wrappedResourceModel)
+	}).Omit("RelatedResource.*").FirstOrCreate(wrappedFhirResourceModel)
 
 	if createResult.Error != nil {
 		return false, createResult.Error
@@ -317,7 +331,7 @@ func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceM
 		//at this point, wrappedResourceModel contains the data found in the database.
 		// check if the database resource matches the new resource.
 		if wrappedResourceModel.ResourceRaw.String() != string(cachedResourceRaw) {
-			updateResult := createResult.Omit("RelatedResourceFhir.*").Updates(wrappedResourceModel)
+			updateResult := createResult.Omit("RelatedResource.*").Updates(wrappedResourceModel)
 			return updateResult.RowsAffected > 0, updateResult.Error
 		} else {
 			return false, nil
@@ -329,20 +343,19 @@ func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceM
 	}
 }
 
-func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceFhir, error) {
+//TODO: preloadRelated is broken since we no longer generate it the same way.
+func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceBase, error) {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
 		return nil, currentUserErr
 	}
 
-	queryParam := models.ResourceFhir{
-		OriginBase: models.OriginBase{
-			UserID: currentUser.ID,
-		},
+	queryParam := models.OriginBase{
+		UserID: currentUser.ID,
 	}
 
 	if len(queryOptions.SourceResourceType) > 0 {
-		queryParam.OriginBase.SourceResourceType = queryOptions.SourceResourceType
+		queryParam.SourceResourceType = queryOptions.SourceResourceType
 	}
 
 	if len(queryOptions.SourceID) > 0 {
@@ -351,76 +364,66 @@ func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions mode
 			return nil, err
 		}
 
-		queryParam.OriginBase.SourceID = sourceUUID
+		queryParam.SourceID = sourceUUID
 	}
 	if len(queryOptions.SourceResourceID) > 0 {
-		queryParam.OriginBase.SourceResourceID = queryOptions.SourceResourceID
+		queryParam.SourceResourceID = queryOptions.SourceResourceID
 	}
 
 	manifestJson, _ := json.MarshalIndent(queryParam, "", "  ")
-	sr.Logger.Infof("THE QUERY OBJECT===========> %v", string(manifestJson))
+	sr.Logger.Debugf("THE QUERY OBJECT===========> %v", string(manifestJson))
 
-	var wrappedResourceModels []models.ResourceFhir
+	var wrappedResourceModels []models.ResourceBase
 	queryBuilder := sr.GormClient.WithContext(ctx)
 	if queryOptions.PreloadRelated {
 		//enable preload functionality in query
-		queryBuilder = queryBuilder.Preload("RelatedResourceFhir")
+		queryBuilder = queryBuilder.Preload("RelatedResource")
 	}
 	if len(queryOptions.SourceResourceType) > 0 {
 		tableName, err := databaseModel.GetTableNameByResourceType(queryOptions.SourceResourceType)
 		if err != nil {
 			return nil, err
 		}
-		results := queryBuilder.Where(queryParam).Table(tableName).
+		results := queryBuilder.
+			Where(queryParam).
+			Table(tableName).
 			Find(&wrappedResourceModels)
 
 		return wrappedResourceModels, results.Error
 	} else {
 		//there is no FHIR Resource name specified, so we're querying across all FHIR resources
-		//TODO: theres probably a more efficient way of doing this with GORM
-		wrappedResourceModels = []models.ResourceFhir{}
-		resourceTypes := databaseModel.GetAllowedResourceTypes()
-		for _, resourceType := range resourceTypes {
-			tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
-			if err != nil {
-				return nil, err
-			}
-			var tempWrappedResourceModels []models.ResourceFhir
-			results := queryBuilder.Where(queryParam).Table(tableName).
-				Find(&tempWrappedResourceModels)
-			if results.Error != nil {
-				return nil, results.Error
-			}
-			wrappedResourceModels = append(wrappedResourceModels, tempWrappedResourceModels...)
-		}
-		return wrappedResourceModels, nil
+		return sr.getResourcesFromAllTables(queryBuilder, queryParam)
 	}
-
 }
 
-func (sr *SqliteRepository) GetResourceBySourceType(ctx context.Context, sourceResourceType string, sourceResourceId string) (*models.ResourceFhir, error) {
+func (sr *SqliteRepository) GetResourceByResourceTypeAndId(ctx context.Context, sourceResourceType string, sourceResourceId string) (*models.ResourceBase, error) {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
 		return nil, currentUserErr
 	}
 
-	queryParam := models.ResourceFhir{
-		OriginBase: models.OriginBase{
-			UserID:             currentUser.ID,
-			SourceResourceType: sourceResourceType,
-			SourceResourceID:   sourceResourceId,
-		},
+	tableName, err := databaseModel.GetTableNameByResourceType(sourceResourceType)
+	if err != nil {
+		return nil, err
 	}
 
-	var wrappedResourceModel models.ResourceFhir
+	queryParam := models.OriginBase{
+		UserID:             currentUser.ID,
+		SourceResourceType: sourceResourceType,
+		SourceResourceID:   sourceResourceId,
+	}
+
+	var wrappedResourceModel models.ResourceBase
 	results := sr.GormClient.WithContext(ctx).
 		Where(queryParam).
+		Table(tableName).
 		First(&wrappedResourceModel)
 
 	return &wrappedResourceModel, results.Error
 }
 
-func (sr *SqliteRepository) GetResourceBySourceId(ctx context.Context, sourceId string, sourceResourceId string) (*models.ResourceFhir, error) {
+// we need to figure out how to get the source resource type from the source resource id, or if we're searching across every table :(
+func (sr *SqliteRepository) GetResourceBySourceId(ctx context.Context, sourceId string, sourceResourceId string) (*models.ResourceBase, error) {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
 		return nil, currentUserErr
@@ -431,44 +434,43 @@ func (sr *SqliteRepository) GetResourceBySourceId(ctx context.Context, sourceId 
 		return nil, err
 	}
 
-	queryParam := models.ResourceFhir{
-		OriginBase: models.OriginBase{
-			UserID:           currentUser.ID,
-			SourceID:         sourceIdUUID,
-			SourceResourceID: sourceResourceId,
-		},
+	queryParam := models.OriginBase{
+		UserID:           currentUser.ID,
+		SourceID:         sourceIdUUID,
+		SourceResourceID: sourceResourceId,
 	}
 
-	var wrappedResourceModel models.ResourceFhir
-	results := sr.GormClient.WithContext(ctx).
-		Where(queryParam).
-		First(&wrappedResourceModel)
-
-	return &wrappedResourceModel, results.Error
+	//there is no FHIR Resource name specified, so we're querying across all FHIR resources
+	wrappedResourceModels, err := sr.getResourcesFromAllTables(sr.GormClient.WithContext(ctx), queryParam)
+	if len(wrappedResourceModels) > 0 {
+		return &wrappedResourceModels[0], err
+	} else {
+		return nil, fmt.Errorf("no resource found with source id %s and source resource id %s", sourceId, sourceResourceId)
+	}
 }
 
 // Get the patient for each source (for the current user)
-func (sr *SqliteRepository) GetPatientForSources(ctx context.Context) ([]models.ResourceFhir, error) {
+func (sr *SqliteRepository) GetPatientForSources(ctx context.Context) ([]models.ResourceBase, error) {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
 		return nil, currentUserErr
 	}
 
-	//SELECT * FROM resource_fhirs WHERE user_id = "" and source_resource_type = "Patient" GROUP BY source_id
+	//SELECT * FROM resource_bases WHERE user_id = "" and source_resource_type = "Patient" GROUP BY source_id
 
-	//var sourceCred models.SourceCredential
-	//results := sr.GormClient.WithContext(ctx).
-	//	Where(models.SourceCredential{UserID: sr.GetCurrentUser(ctx).ID, ModelBase: models.ModelBase{ID: sourceUUID}}).
-	//	First(&sourceCred)
+	tableName, err := databaseModel.GetTableNameByResourceType("Patient")
+	if err != nil {
+		return nil, err
+	}
 
-	var wrappedResourceModels []models.ResourceFhir
+	var wrappedResourceModels []models.ResourceBase
 	results := sr.GormClient.WithContext(ctx).
-		Model(models.ResourceFhir{}).
 		//Group("source_id"). //broken in Postgres.
 		Where(models.OriginBase{
 			UserID:             currentUser.ID,
 			SourceResourceType: "Patient",
 		}).
+		Table(tableName).
 		Find(&wrappedResourceModels)
 
 	return wrappedResourceModels, results.Error
@@ -477,8 +479,9 @@ func (sr *SqliteRepository) GetPatientForSources(ctx context.Context) ([]models.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Resource Associations
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-func (sr *SqliteRepository) VerifyAssociationPermission(ctx context.Context, sourceUserID uuid.UUID, relatedSourceUserID uuid.UUID) error {
-	//ensure that the sources are "owned" by the same user
+
+// verifyAssociationPermission ensure that the sources are "owned" by the same user, and that the user is the current user
+func (sr *SqliteRepository) verifyAssociationPermission(ctx context.Context, sourceUserID uuid.UUID, relatedSourceUserID uuid.UUID) error {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
 		return currentUserErr
@@ -494,41 +497,59 @@ func (sr *SqliteRepository) VerifyAssociationPermission(ctx context.Context, sou
 
 func (sr *SqliteRepository) AddResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error {
 	//ensure that the sources are "owned" by the same user
-	err := sr.VerifyAssociationPermission(ctx, source.UserID, relatedSource.UserID)
+	err := sr.verifyAssociationPermission(ctx, source.UserID, relatedSource.UserID)
 	if err != nil {
 		return err
 	}
 
-	return sr.GormClient.WithContext(ctx).Table("related_resources").Create(map[string]interface{}{
-		"resource_fhir_user_id":                      source.UserID,
-		"resource_fhir_source_id":                    source.ID,
-		"resource_fhir_source_resource_type":         resourceType,
-		"resource_fhir_source_resource_id":           resourceId,
-		"related_resource_fhir_user_id":              relatedSource.UserID,
-		"related_resource_fhir_source_id":            relatedSource.ID,
-		"related_resource_fhir_source_resource_type": relatedResourceType,
-		"related_resource_fhir_source_resource_id":   relatedResourceId,
+	err = sr.GormClient.WithContext(ctx).Table("related_resources").Create(map[string]interface{}{
+		"resource_base_user_id":                 source.UserID,
+		"resource_base_source_id":               source.ID,
+		"resource_base_source_resource_type":    resourceType,
+		"resource_base_source_resource_id":      resourceId,
+		"related_resource_user_id":              relatedSource.UserID,
+		"related_resource_source_id":            relatedSource.ID,
+		"related_resource_source_resource_type": relatedResourceType,
+		"related_resource_source_resource_id":   relatedResourceId,
 	}).Error
+	uniqueConstraintError := errors.New("UNIQUE constraint failed")
+	if err != nil {
+		if errors.As(err, &uniqueConstraintError) {
+			sr.Logger.Warnf("Ignoring an error when creating a related_resource association for %s/%s: %v", resourceType, resourceId, err)
+			//we can safely ignore this error
+			return nil
+		}
+	}
+	return err
 }
 
 func (sr *SqliteRepository) RemoveResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error {
 	//ensure that the sources are "owned" by the same user
-	err := sr.VerifyAssociationPermission(ctx, source.UserID, relatedSource.UserID)
+	err := sr.verifyAssociationPermission(ctx, source.UserID, relatedSource.UserID)
 	if err != nil {
 		return err
 	}
 
-	//manually create association (we've tried to create using Association.Append, and it doesnt work for some reason.
-	return sr.GormClient.WithContext(ctx).Table("related_resources").Delete(map[string]interface{}{
-		"resource_fhir_user_id":                      source.UserID,
-		"resource_fhir_source_id":                    source.ID,
-		"resource_fhir_source_resource_type":         resourceType,
-		"resource_fhir_source_resource_id":           resourceId,
-		"related_resource_fhir_user_id":              relatedSource.UserID,
-		"related_resource_fhir_source_id":            relatedSource.ID,
-		"related_resource_fhir_source_resource_type": relatedResourceType,
-		"related_resource_fhir_source_resource_id":   relatedResourceId,
-	}).Error
+	//manually delete association
+	results := sr.GormClient.WithContext(ctx).
+		//Table("related_resources").
+		Delete(&models.RelatedResource{}, map[string]interface{}{
+			"resource_base_user_id":                 source.UserID,
+			"resource_base_source_id":               source.ID,
+			"resource_base_source_resource_type":    resourceType,
+			"resource_base_source_resource_id":      resourceId,
+			"related_resource_user_id":              relatedSource.UserID,
+			"related_resource_source_id":            relatedSource.ID,
+			"related_resource_source_resource_type": relatedResourceType,
+			"related_resource_source_resource_id":   relatedResourceId,
+		})
+
+	if results.Error != nil {
+		return results.Error
+	} else if results.RowsAffected == 0 {
+		return fmt.Errorf("no association found for %s/%s and %s/%s", resourceType, resourceId, relatedResourceType, relatedResourceId)
+	}
+	return nil
 }
 
 // AddResourceComposition
@@ -543,7 +564,8 @@ func (sr *SqliteRepository) RemoveResourceAssociation(ctx context.Context, sourc
 //			- Create a Composition resource type (populated with "relatesTo" references to all provided Resources)
 // - add AddResourceAssociation for all resources linked to the Composition resource
 // - store the Composition resource
-func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceFhir) error {
+//TODO: update to use new databaseModels
+func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceBase) error {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
 		return currentUserErr
@@ -552,8 +574,8 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 	//generate placeholder source
 	placeholderSource := models.SourceCredential{UserID: currentUser.ID, SourceType: "manual", ModelBase: models.ModelBase{ID: uuid.MustParse("00000000-0000-0000-0000-000000000000")}}
 
-	existingCompositionResources := []*models.ResourceFhir{}
-	rawResourceLookupTable := map[string]*models.ResourceFhir{}
+	existingCompositionResources := []*models.ResourceBase{}
+	rawResourceLookupTable := map[string]*models.ResourceBase{}
 
 	//find the source for each resource we'd like to merge. (for ownership verification)
 	sourceLookup := map[uuid.UUID]*models.SourceCredential{}
@@ -563,7 +585,7 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 			existingCompositionResources = append(existingCompositionResources, resource)
 
 			//compositions may include existing resources, make sure we handle these
-			for _, related := range resource.RelatedResourceFhir {
+			for _, related := range resource.RelatedResource {
 				rawResourceLookupTable[fmt.Sprintf("%s/%s", related.SourceResourceType, related.SourceResourceID)] = related
 			}
 			continue
@@ -589,7 +611,7 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 	}
 
 	// - check if there is a Composition resource Type already.
-	var compositionResource *models.ResourceFhir
+	var compositionResource *models.ResourceBase
 
 	if len(existingCompositionResources) > 0 {
 		//- if Composition type already exists in this set
@@ -598,7 +620,7 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 
 		//unassociated all existing composition resources.
 		for _, existingCompositionResource := range existingCompositionResources[1:] {
-			for _, relatedResource := range existingCompositionResource.RelatedResourceFhir {
+			for _, relatedResource := range existingCompositionResource.RelatedResource {
 				if err := sr.RemoveResourceAssociation(
 					ctx,
 					&placeholderSource,
@@ -623,7 +645,7 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 	} else {
 		//- else:
 		//	- Create a Composition resource type (populated with "relatesTo" references to all provided Resources)
-		compositionResource = &models.ResourceFhir{
+		compositionResource = &models.ResourceBase{
 			OriginBase: models.OriginBase{
 				UserID:             placeholderSource.UserID, //
 				SourceID:           placeholderSource.ID,     //Empty SourceID expected ("0000-0000-0000-0000")
@@ -656,8 +678,8 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 	compositionResource.ResourceRaw = rawResourceJson
 
 	compositionResource.SortTitle = &compositionTitle
-	compositionResource.RelatedResourceFhir = utils.SortResourcePtrListByDate(resources)
-	compositionResource.SortDate = compositionResource.RelatedResourceFhir[0].SortDate
+	compositionResource.RelatedResource = utils.SortResourcePtrListByDate(resources)
+	compositionResource.SortDate = compositionResource.RelatedResource[0].SortDate
 
 	//store the Composition resource
 	_, err = sr.UpsertResource(ctx, compositionResource)
@@ -676,8 +698,7 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 			resource.SourceResourceType,
 			resource.SourceResourceID,
 		); err != nil {
-			//ignoring errors, could be due to duplicate edges
-			sr.Logger.Warnf("an error occurred while creating resource association: %v", err)
+			return err
 		}
 	}
 
@@ -743,38 +764,56 @@ func (sr *SqliteRepository) GetSourceSummary(ctx context.Context, sourceId strin
 	sourceSummary.Source = source
 
 	//group by resource type and return counts
-	// SELECT source_resource_type as resource_type, COUNT(*) as count FROM resource_fhirs WHERE source_id = "53c1e930-63af-46c9-b760-8e83cbc1abd9" GROUP BY source_resource_type;
+	// SELECT source_resource_type as resource_type, COUNT(*) as count FROM resource_bases WHERE source_id = "53c1e930-63af-46c9-b760-8e83cbc1abd9" GROUP BY source_resource_type;
 
 	var resourceTypeCounts []map[string]interface{}
 
-	result := sr.GormClient.WithContext(ctx).
-		Model(models.ResourceFhir{}).
-		Select("source_id, source_resource_type as resource_type, count(*) as count").
-		Group("source_resource_type").
-		Where(models.OriginBase{
-			UserID:   currentUser.ID,
-			SourceID: sourceUUID,
-		}).
-		Scan(&resourceTypeCounts)
-
-	if result.Error != nil {
-		return nil, result.Error
+	resourceTypes := databaseModel.GetAllowedResourceTypes()
+	for _, resourceType := range resourceTypes {
+		tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
+		if err != nil {
+			return nil, err
+		}
+		var count int64
+		result := sr.GormClient.WithContext(ctx).
+			Table(tableName).
+			Where(models.OriginBase{
+				UserID:   currentUser.ID,
+				SourceID: sourceUUID,
+			}).
+			Count(&count)
+		if result.Error != nil {
+			return nil, result.Error
+		}
+		if count == 0 {
+			continue //don't add resource counts if the count is 0
+		}
+		resourceTypeCounts = append(resourceTypeCounts, map[string]interface{}{
+			"source_id":     sourceId,
+			"resource_type": resourceType,
+			"count":         count,
+		})
 	}
 
 	sourceSummary.ResourceTypeCounts = resourceTypeCounts
 
 	//set patient
-	var wrappedPatientResourceModel models.ResourceFhir
-	results := sr.GormClient.WithContext(ctx).
+	patientTableName, err := databaseModel.GetTableNameByResourceType("Patient")
+	if err != nil {
+		return nil, err
+	}
+	var wrappedPatientResourceModel models.ResourceBase
+	patientResults := sr.GormClient.WithContext(ctx).
 		Where(models.OriginBase{
 			UserID:             currentUser.ID,
 			SourceResourceType: "Patient",
 			SourceID:           sourceUUID,
 		}).
+		Table(patientTableName).
 		First(&wrappedPatientResourceModel)
 
-	if results.Error != nil {
-		return nil, result.Error
+	if patientResults.Error != nil {
+		return nil, patientResults.Error
 	}
 	sourceSummary.Patient = &wrappedPatientResourceModel
 
@@ -810,4 +849,30 @@ func sqlitePragmaString(pragmas map[string]string) string {
 		return "?" + queryStr
 	}
 	return ""
+}
+
+//Internal function
+// This function will return a list of resources from all FHIR tables in the database
+// The query allows us to set the  source id, source resource id, source resource type
+//SECURITY: this function assumes the user has already been authenticated
+//TODO: theres probably a more efficient way of doing this with GORM
+func (sr *SqliteRepository) getResourcesFromAllTables(queryBuilder *gorm.DB, queryParam models.OriginBase) ([]models.ResourceBase, error) {
+	wrappedResourceModels := []models.ResourceBase{}
+	resourceTypes := databaseModel.GetAllowedResourceTypes()
+	for _, resourceType := range resourceTypes {
+		tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
+		if err != nil {
+			return nil, err
+		}
+		var tempWrappedResourceModels []models.ResourceBase
+		results := queryBuilder.
+			Where(queryParam).
+			Table(tableName).
+			Find(&tempWrappedResourceModels)
+		if results.Error != nil {
+			return nil, results.Error
+		}
+		wrappedResourceModels = append(wrappedResourceModels, tempWrappedResourceModels...)
+	}
+	return wrappedResourceModels, nil
 }

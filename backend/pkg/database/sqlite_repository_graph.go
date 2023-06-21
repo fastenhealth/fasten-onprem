@@ -15,7 +15,7 @@ import (
 // Retrieve a list of all fhir resources (vertex), and a list of all associations (edge)
 // Generate a graph
 // return list of root nodes, and their flattened related resources.
-func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType) (map[string][]*models.ResourceFhir, error) {
+func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType) (map[string][]*models.ResourceBase, error) {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
 		return nil, currentUserErr
@@ -103,7 +103,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 	// Doing this in one massive function, because passing graph by reference is difficult due to generics.
 
 	// Step 1: use predecessorMap to find all "root" resources (eg. MedicalHistory - encounters and conditions). store those nodes in their respective lists.
-	resourceListDictionary := map[string][]*models.ResourceFhir{}
+	resourceListDictionary := map[string][]*models.ResourceBase{}
 	sources, _, sourceFlattenLevel := getSourcesAndSinksForGraphType(graphType)
 
 	for vertexId, val := range predecessorMap {
@@ -138,19 +138,19 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 		}
 
 		if _, ok := resourceListDictionary[foundSourceType]; !ok {
-			resourceListDictionary[foundSourceType] = []*models.ResourceFhir{}
+			resourceListDictionary[foundSourceType] = []*models.ResourceBase{}
 		}
 
 		resourceListDictionary[foundSourceType] = append(resourceListDictionary[foundSourceType], resource)
 	}
 
 	// Step 2: define a function. When given a resource, should find all related resources, flatten the heirarchy and set the RelatedResourceFhir list
-	flattenRelatedResourcesFn := func(resource *models.ResourceFhir) {
+	flattenRelatedResourcesFn := func(resource *models.ResourceBase) {
 		// this is a "root" encounter, which is not related to any condition, we should add it to the Unknown encounters list
 		vertexId := resourceVertexId(resource)
 		sr.Logger.Debugf("populating resource: %s", vertexId)
 
-		resource.RelatedResourceFhir = []*models.ResourceFhir{}
+		resource.RelatedResource = []*models.ResourceBase{}
 
 		//get all the resources associated with this node
 		graph.DFS(g, vertexId, func(relatedVertexId string) bool {
@@ -158,7 +158,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 			//skip the current resource if it's referenced in this list.
 			//also skip the current resource if its a Binary resource (which is a special case)
 			if vertexId != resourceVertexId(relatedResourceFhir) && relatedResourceFhir.SourceResourceType != "Binary" {
-				resource.RelatedResourceFhir = append(resource.RelatedResourceFhir, relatedResourceFhir)
+				resource.RelatedResource = append(resource.RelatedResource, relatedResourceFhir)
 			}
 			return false
 		})
@@ -176,7 +176,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 				flattenRelatedResourcesFn(resourceListDictionary[resourceType][ndx])
 
 				//sort all related resources (by date, desc)
-				resourceListDictionary[resourceType][ndx].RelatedResourceFhir = utils.SortResourcePtrListByDate(resourceListDictionary[resourceType][ndx].RelatedResourceFhir)
+				resourceListDictionary[resourceType][ndx].RelatedResource = utils.SortResourcePtrListByDate(resourceListDictionary[resourceType][ndx].RelatedResource)
 			}
 		} else {
 			// if flatten is set to false, we want to preserve the top relationships in the graph heirarchy. This is usually for primary source types (eg. Condition is the primary source type)
@@ -186,16 +186,16 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 			for ndx, _ := range resourceListDictionary[resourceType] {
 				// this is a "root" condition,
 
-				resourceListDictionary[resourceType][ndx].RelatedResourceFhir = []*models.ResourceFhir{}
+				resourceListDictionary[resourceType][ndx].RelatedResource = []*models.ResourceBase{}
 				vertexId := resourceVertexId(resourceListDictionary[resourceType][ndx])
 				for relatedVertexId, _ := range adjacencyMap[vertexId] {
 					relatedResourceFhir, _ := g.Vertex(relatedVertexId)
 					flattenRelatedResourcesFn(relatedResourceFhir)
-					resourceListDictionary[resourceType][ndx].RelatedResourceFhir = append(resourceListDictionary[resourceType][ndx].RelatedResourceFhir, relatedResourceFhir)
+					resourceListDictionary[resourceType][ndx].RelatedResource = append(resourceListDictionary[resourceType][ndx].RelatedResource, relatedResourceFhir)
 				}
 
 				//sort all related resources (by date, desc)
-				resourceListDictionary[resourceType][ndx].RelatedResourceFhir = utils.SortResourcePtrListByDate(resourceListDictionary[resourceType][ndx].RelatedResourceFhir)
+				resourceListDictionary[resourceType][ndx].RelatedResource = utils.SortResourcePtrListByDate(resourceListDictionary[resourceType][ndx].RelatedResource)
 			}
 		}
 
@@ -351,7 +351,7 @@ func foundResourceGraphSink(checkResourceType string, sinkResourceTypes [][]stri
 }
 
 // helper function for GetResourceGraph, creating a "hash" for the resource
-func resourceVertexId(resource *models.ResourceFhir) string {
+func resourceVertexId(resource *models.ResourceBase) string {
 	return resourceKeysVertexId(resource.SourceID.String(), resource.SourceResourceType, resource.SourceResourceID)
 }
 func resourceKeysVertexId(sourceId string, resourceType string, resourceId string) string {

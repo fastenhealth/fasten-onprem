@@ -13,9 +13,7 @@ import (
 )
 
 type FhirGoal struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// in-progress | improving | worsening | no-change | achieved | sustaining | not-achieved | no-progress | not-attainable
 	// https://hl7.org/fhir/r4/search.html#token
 	AchievementStatus datatypes.JSON `gorm:"column:achievementStatus;type:text;serializer:json" json:"achievementStatus,omitempty"`
@@ -93,9 +91,6 @@ type FhirGoal struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirGoal) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirGoal) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"achievementStatus": "token",

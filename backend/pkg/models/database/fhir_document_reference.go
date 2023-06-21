@@ -13,9 +13,7 @@ import (
 )
 
 type FhirDocumentReference struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Who/what authenticated the document
 	// https://hl7.org/fhir/r4/search.html#reference
 	Authenticator datatypes.JSON `gorm:"column:authenticator;type:text;serializer:json" json:"authenticator,omitempty"`
@@ -150,9 +148,6 @@ type FhirDocumentReference struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirDocumentReference) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirDocumentReference) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"authenticator": "reference",

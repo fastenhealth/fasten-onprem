@@ -163,13 +163,7 @@ func main() {
 		structName := "Fhir" + strings.Title(resourceName)
 		file.Type().Id(structName).StructFunc(func(g *jen.Group) {
 			//Add the OriginBase embedded struct
-			g.Qual("github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models", "OriginBase")
-
-			g.Comment("The raw resource content in JSON format")
-			g.Id("ResourceRaw").Qual("gorm.io/datatypes", "JSON").Tag(map[string]string{
-				"json": "resource_raw,omitempty",
-				"gorm": "column:resource_raw;type:text;serializer:json",
-			})
+			g.Qual("github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models", "ResourceBase")
 
 			sort.Strings(keys)
 			for _, fieldName := range keys {
@@ -190,11 +184,6 @@ func main() {
 					"gorm": fmt.Sprintf("column:%s;%s", strcase.ToLowerCamel(fieldName), mapGormType(fieldInfo.FieldType)),
 				})
 			}
-		})
-
-		//create an instance function that allows us to set the OriginBase field
-		file.Func().Call(jen.Id("s").Op("*").Id(structName)).Id("SetOriginBase").Params(jen.Id("originBase").Qual("github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models", "OriginBase")).BlockFunc(func(g *jen.Group) {
-			g.Id("s.OriginBase").Op("=").Id("originBase")
 		})
 
 		//create an instance function that returns a map of all fields and their types

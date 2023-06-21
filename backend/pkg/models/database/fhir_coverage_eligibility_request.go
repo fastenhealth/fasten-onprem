@@ -13,9 +13,7 @@ import (
 )
 
 type FhirCoverageEligibilityRequest struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// The creation date for the EOB
 	// https://hl7.org/fhir/r4/search.html#date
 	Created time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
@@ -57,9 +55,6 @@ type FhirCoverageEligibilityRequest struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirCoverageEligibilityRequest) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirCoverageEligibilityRequest) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"created":     "date",

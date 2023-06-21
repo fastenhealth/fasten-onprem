@@ -13,9 +13,7 @@ import (
 )
 
 type FhirAllergyIntolerance struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Source of the information about the allergy
 	// https://hl7.org/fhir/r4/search.html#reference
 	Asserter datatypes.JSON `gorm:"column:asserter;type:text;serializer:json" json:"asserter,omitempty"`
@@ -151,9 +149,6 @@ type FhirAllergyIntolerance struct {
 	VerificationStatus datatypes.JSON `gorm:"column:verificationStatus;type:text;serializer:json" json:"verificationStatus,omitempty"`
 }
 
-func (s *FhirAllergyIntolerance) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirAllergyIntolerance) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"asserter":           "reference",

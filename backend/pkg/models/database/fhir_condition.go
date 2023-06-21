@@ -13,9 +13,7 @@ import (
 )
 
 type FhirCondition struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Abatement as age or age range
 	// https://hl7.org/fhir/r4/search.html#quantity
 	AbatementAge datatypes.JSON `gorm:"column:abatementAge;type:text;serializer:json" json:"abatementAge,omitempty"`
@@ -149,9 +147,6 @@ type FhirCondition struct {
 	VerificationStatus datatypes.JSON `gorm:"column:verificationStatus;type:text;serializer:json" json:"verificationStatus,omitempty"`
 }
 
-func (s *FhirCondition) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirCondition) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"abatementAge":       "quantity",

@@ -13,9 +13,7 @@ import (
 )
 
 type FhirSpecimen struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// The accession number associated with the specimen
 	// https://hl7.org/fhir/r4/search.html#token
 	Accession datatypes.JSON `gorm:"column:accession;type:text;serializer:json" json:"accession,omitempty"`
@@ -69,9 +67,6 @@ type FhirSpecimen struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirSpecimen) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirSpecimen) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"accession":   "token",

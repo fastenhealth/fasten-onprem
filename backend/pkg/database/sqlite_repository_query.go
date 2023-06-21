@@ -29,7 +29,7 @@ const (
 
 const TABLE_ALIAS = "fhir"
 
-func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) ([]models.ResourceFhir, error) {
+func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) ([]models.ResourceBase, error) {
 	//todo, until we actually parse the select statement, we will just return all resources based on "from"
 
 	//SECURITY: this is required to ensure that only valid resource types are queried (since it's controlled by the user)
@@ -92,7 +92,7 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 	whereNamedParameters["user_id"] = currentUser.ID.String()
 	whereClauses = append(whereClauses, "(user_id = @user_id)")
 
-	results := []models.ResourceFhir{}
+	results := []models.ResourceBase{}
 	clientResp := sr.GormClient.WithContext(ctx).
 		Select(fmt.Sprintf("%s.*", TABLE_ALIAS)).
 		Where(strings.Join(whereClauses, " AND "), whereNamedParameters).

@@ -13,9 +13,7 @@ import (
 )
 
 type FhirInsurancePlan struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// A server defined search that may match any of the string fields in the Address, including line, city, district, state, country, postalCode, and/or text
 	// https://hl7.org/fhir/r4/search.html#string
 	Address string `gorm:"column:address;type:text" json:"address,omitempty"`
@@ -78,9 +76,6 @@ type FhirInsurancePlan struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirInsurancePlan) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirInsurancePlan) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"address":           "string",

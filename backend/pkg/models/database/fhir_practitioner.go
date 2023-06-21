@@ -13,9 +13,7 @@ import (
 )
 
 type FhirPractitioner struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Whether the practitioner record is active
 	// https://hl7.org/fhir/r4/search.html#token
 	Active datatypes.JSON `gorm:"column:active;type:text;serializer:json" json:"active,omitempty"`
@@ -180,9 +178,6 @@ type FhirPractitioner struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirPractitioner) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirPractitioner) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"active":            "token",

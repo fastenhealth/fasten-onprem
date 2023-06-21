@@ -13,9 +13,7 @@ import (
 )
 
 type FhirBinary struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Language of the resource content
 	// https://hl7.org/fhir/r4/search.html#token
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
@@ -39,9 +37,6 @@ type FhirBinary struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirBinary) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirBinary) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"language":    "token",

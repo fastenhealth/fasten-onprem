@@ -13,9 +13,7 @@ import (
 )
 
 type FhirAdverseEvent struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// actual | potential
 	// https://hl7.org/fhir/r4/search.html#token
 	Actuality datatypes.JSON `gorm:"column:actuality;type:text;serializer:json" json:"actuality,omitempty"`
@@ -75,9 +73,6 @@ type FhirAdverseEvent struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirAdverseEvent) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirAdverseEvent) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"actuality":          "token",

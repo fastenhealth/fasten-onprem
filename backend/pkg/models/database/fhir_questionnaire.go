@@ -13,9 +13,7 @@ import (
 )
 
 type FhirQuestionnaire struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// A code that corresponds to one of its items in the questionnaire
 	// https://hl7.org/fhir/r4/search.html#token
 	Code datatypes.JSON `gorm:"column:code;type:text;serializer:json" json:"code,omitempty"`
@@ -90,9 +88,6 @@ type FhirQuestionnaire struct {
 	Version datatypes.JSON `gorm:"column:version;type:text;serializer:json" json:"version,omitempty"`
 }
 
-func (s *FhirQuestionnaire) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirQuestionnaire) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"code":            "token",

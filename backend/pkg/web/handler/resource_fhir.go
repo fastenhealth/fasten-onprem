@@ -93,7 +93,7 @@ func CreateResourceComposition(c *gin.Context) {
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	type jsonPayload struct {
-		Resources []*models.ResourceFhir `json:"resources"`
+		Resources []*models.ResourceBase `json:"resources"`
 		Title     string                 `json:"title"`
 	}
 	var payload jsonPayload

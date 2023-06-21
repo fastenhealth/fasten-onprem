@@ -13,9 +13,7 @@ import (
 )
 
 type FhirClaim struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Member of the CareTeam
 	// https://hl7.org/fhir/r4/search.html#reference
 	CareTeam datatypes.JSON `gorm:"column:careTeam;type:text;serializer:json" json:"careTeam,omitempty"`
@@ -87,9 +85,6 @@ type FhirClaim struct {
 	Use datatypes.JSON `gorm:"column:use;type:text;serializer:json" json:"use,omitempty"`
 }
 
-func (s *FhirClaim) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirClaim) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"careTeam":     "reference",

@@ -13,9 +13,7 @@ import (
 )
 
 type FhirDiagnosticReport struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Reference to the service request.
 	// https://hl7.org/fhir/r4/search.html#reference
 	BasedOn datatypes.JSON `gorm:"column:basedOn;type:text;serializer:json" json:"basedOn,omitempty"`
@@ -169,9 +167,6 @@ type FhirDiagnosticReport struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirDiagnosticReport) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirDiagnosticReport) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"basedOn":            "reference",

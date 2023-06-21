@@ -13,9 +13,7 @@ import (
 )
 
 type FhirEnrollmentResponse struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// The business identifier of the EnrollmentResponse
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
@@ -48,9 +46,6 @@ type FhirEnrollmentResponse struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirEnrollmentResponse) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirEnrollmentResponse) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"identifier":  "token",

@@ -13,9 +13,7 @@ import (
 )
 
 type FhirImagingStudy struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// The order for the image
 	// https://hl7.org/fhir/r4/search.html#reference
 	Basedon datatypes.JSON `gorm:"column:basedon;type:text;serializer:json" json:"basedon,omitempty"`
@@ -120,9 +118,6 @@ type FhirImagingStudy struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirImagingStudy) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirImagingStudy) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"basedon":     "reference",

@@ -13,9 +13,7 @@ import (
 )
 
 type FhirAppointment struct {
-	models.OriginBase
-	// The raw resource content in JSON format
-	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
+	models.ResourceBase
 	// Any one of the individuals participating in the appointment
 	// https://hl7.org/fhir/r4/search.html#reference
 	Actor datatypes.JSON `gorm:"column:actor;type:text;serializer:json" json:"actor,omitempty"`
@@ -87,9 +85,6 @@ type FhirAppointment struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
-func (s *FhirAppointment) SetOriginBase(originBase models.OriginBase) {
-	s.OriginBase = originBase
-}
 func (s *FhirAppointment) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"actor":           "reference",
