@@ -83,6 +83,6 @@ jobs:
       - uses: chromaui/action@v1
         with:
           workingDir: frontend
-          buildScriptName: "fastenhealth:build-storybook"
+          buildScriptName: "build-storybook"
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           token: ${{ secrets.GITHUB_TOKEN }}
