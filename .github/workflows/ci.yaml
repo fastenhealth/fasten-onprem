@@ -73,6 +73,7 @@ jobs:
           verbose: true
 
   storybook:
+    name: Storybook Upload
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -81,7 +82,7 @@ jobs:
       - run: cd frontend && yarn install
       - uses: chromaui/action@v1
         with:
-          storybookBaseDir: frontend
+          workingDir: frontend
           buildScriptName: "fastenhealth:build-storybook"
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           token: ${{ secrets.GITHUB_TOKEN }}
