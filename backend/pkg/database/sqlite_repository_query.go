@@ -29,6 +29,7 @@ const (
 
 const TABLE_ALIAS = "fhir"
 
+//Allows users to use SearchParameters to query resources
 func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) ([]models.ResourceBase, error) {
 	//todo, until we actually parse the select statement, we will just return all resources based on "from"
 

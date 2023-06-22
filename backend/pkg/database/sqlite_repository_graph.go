@@ -32,11 +32,10 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 
 	// SELECT * FROM related_resources WHERE user_id = "53c1e930-63af-46c9-b760-8e83cbc1abd9";
 	result := sr.GormClient.WithContext(ctx).
-		Table("related_resources").
 		Where(models.RelatedResource{
-			ResourceFhirUserID: currentUser.ID,
+			ResourceBaseUserID: currentUser.ID,
 		}).
-		Scan(&relatedResourceRelationships)
+		Find(&relatedResourceRelationships)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -62,8 +61,8 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 	for _, relationship := range relatedResourceRelationships {
 
 		err = g.AddEdge(
-			resourceKeysVertexId(relationship.ResourceFhirSourceID.String(), relationship.ResourceFhirSourceResourceType, relationship.ResourceFhirSourceResourceID),
-			resourceKeysVertexId(relationship.RelatedResourceFhirSourceID.String(), relationship.RelatedResourceFhirSourceResourceType, relationship.RelatedResourceFhirSourceResourceID),
+			resourceKeysVertexId(relationship.ResourceBaseSourceID.String(), relationship.ResourceBaseSourceResourceType, relationship.ResourceBaseSourceResourceID),
+			resourceKeysVertexId(relationship.RelatedResourceSourceID.String(), relationship.RelatedResourceSourceResourceType, relationship.RelatedResourceSourceResourceID),
 		)
 
 		if err != nil {
@@ -153,6 +152,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 		resource.RelatedResource = []*models.ResourceBase{}
 
 		//get all the resources associated with this node
+		//TODO: handle error?
 		graph.DFS(g, vertexId, func(relatedVertexId string) bool {
 			relatedResourceFhir, _ := g.Vertex(relatedVertexId)
 			//skip the current resource if it's referenced in this list.
@@ -224,11 +224,11 @@ func (sr *SqliteRepository) PopulateGraphTypeReciprocalRelationships(graphType p
 	for _, relationship := range relationships {
 
 		//calculate the
-		resourceAGraphSourceLevel := foundResourceGraphSource(relationship.ResourceFhirSourceResourceType, sources)
-		resourceBGraphSourceLevel := foundResourceGraphSource(relationship.RelatedResourceFhirSourceResourceType, sources)
+		resourceAGraphSourceLevel := foundResourceGraphSource(relationship.ResourceBaseSourceResourceType, sources)
+		resourceBGraphSourceLevel := foundResourceGraphSource(relationship.RelatedResourceSourceResourceType, sources)
 
-		resourceAGraphSinkLevel := foundResourceGraphSink(relationship.ResourceFhirSourceResourceType, sinks)
-		resourceBGraphSinkLevel := foundResourceGraphSink(relationship.RelatedResourceFhirSourceResourceType, sinks)
+		resourceAGraphSinkLevel := foundResourceGraphSink(relationship.ResourceBaseSourceResourceType, sinks)
+		resourceBGraphSinkLevel := foundResourceGraphSink(relationship.RelatedResourceSourceResourceType, sinks)
 
 		if resourceAGraphSourceLevel > -1 && resourceBGraphSourceLevel > -1 {
 			//handle the case where both resources are "sources" (eg. MedicalHistory - Condition or Encounter)
@@ -238,14 +238,14 @@ func (sr *SqliteRepository) PopulateGraphTypeReciprocalRelationships(graphType p
 			} else {
 				//B is a higher priority than A, so we will add an edge from B to A (flipped relationship)
 				reciprocalRelationships = append(reciprocalRelationships, models.RelatedResource{
-					ResourceFhirUserID:                    relationship.RelatedResourceFhirUserID,
-					ResourceFhirSourceID:                  relationship.RelatedResourceFhirSourceID,
-					ResourceFhirSourceResourceType:        relationship.RelatedResourceFhirSourceResourceType,
-					ResourceFhirSourceResourceID:          relationship.RelatedResourceFhirSourceResourceID,
-					RelatedResourceFhirUserID:             relationship.ResourceFhirUserID,
-					RelatedResourceFhirSourceID:           relationship.ResourceFhirSourceID,
-					RelatedResourceFhirSourceResourceType: relationship.ResourceFhirSourceResourceType,
-					RelatedResourceFhirSourceResourceID:   relationship.ResourceFhirSourceResourceID,
+					ResourceBaseUserID:                relationship.RelatedResourceUserID,
+					ResourceBaseSourceID:              relationship.RelatedResourceSourceID,
+					ResourceBaseSourceResourceType:    relationship.RelatedResourceSourceResourceType,
+					ResourceBaseSourceResourceID:      relationship.RelatedResourceSourceResourceID,
+					RelatedResourceUserID:             relationship.ResourceBaseUserID,
+					RelatedResourceSourceID:           relationship.ResourceBaseSourceID,
+					RelatedResourceSourceResourceType: relationship.ResourceBaseSourceResourceType,
+					RelatedResourceSourceResourceID:   relationship.ResourceBaseSourceResourceID,
 				})
 			}
 
@@ -257,14 +257,14 @@ func (sr *SqliteRepository) PopulateGraphTypeReciprocalRelationships(graphType p
 			//resource B is a Source, or resource A is a sink, create B -> A relationship (edge)
 
 			reciprocalRelationships = append(reciprocalRelationships, models.RelatedResource{
-				ResourceFhirUserID:                    relationship.RelatedResourceFhirUserID,
-				ResourceFhirSourceID:                  relationship.RelatedResourceFhirSourceID,
-				ResourceFhirSourceResourceType:        relationship.RelatedResourceFhirSourceResourceType,
-				ResourceFhirSourceResourceID:          relationship.RelatedResourceFhirSourceResourceID,
-				RelatedResourceFhirUserID:             relationship.ResourceFhirUserID,
-				RelatedResourceFhirSourceID:           relationship.ResourceFhirSourceID,
-				RelatedResourceFhirSourceResourceType: relationship.ResourceFhirSourceResourceType,
-				RelatedResourceFhirSourceResourceID:   relationship.ResourceFhirSourceResourceID,
+				ResourceBaseUserID:                relationship.RelatedResourceUserID,
+				ResourceBaseSourceID:              relationship.RelatedResourceSourceID,
+				ResourceBaseSourceResourceType:    relationship.RelatedResourceSourceResourceType,
+				ResourceBaseSourceResourceID:      relationship.RelatedResourceSourceResourceID,
+				RelatedResourceUserID:             relationship.ResourceBaseUserID,
+				RelatedResourceSourceID:           relationship.ResourceBaseSourceID,
+				RelatedResourceSourceResourceType: relationship.ResourceBaseSourceResourceType,
+				RelatedResourceSourceResourceID:   relationship.ResourceBaseSourceResourceID,
 			})
 
 		} else {
@@ -273,14 +273,14 @@ func (sr *SqliteRepository) PopulateGraphTypeReciprocalRelationships(graphType p
 			reciprocalRelationships = append(reciprocalRelationships, relationship)
 
 			reciprocalRelationships = append(reciprocalRelationships, models.RelatedResource{
-				ResourceFhirUserID:                    relationship.RelatedResourceFhirUserID,
-				ResourceFhirSourceID:                  relationship.RelatedResourceFhirSourceID,
-				ResourceFhirSourceResourceType:        relationship.RelatedResourceFhirSourceResourceType,
-				ResourceFhirSourceResourceID:          relationship.RelatedResourceFhirSourceResourceID,
-				RelatedResourceFhirUserID:             relationship.ResourceFhirUserID,
-				RelatedResourceFhirSourceID:           relationship.ResourceFhirSourceID,
-				RelatedResourceFhirSourceResourceType: relationship.ResourceFhirSourceResourceType,
-				RelatedResourceFhirSourceResourceID:   relationship.ResourceFhirSourceResourceID,
+				ResourceBaseUserID:                relationship.RelatedResourceUserID,
+				ResourceBaseSourceID:              relationship.RelatedResourceSourceID,
+				ResourceBaseSourceResourceType:    relationship.RelatedResourceSourceResourceType,
+				ResourceBaseSourceResourceID:      relationship.RelatedResourceSourceResourceID,
+				RelatedResourceUserID:             relationship.ResourceBaseUserID,
+				RelatedResourceSourceID:           relationship.ResourceBaseSourceID,
+				RelatedResourceSourceResourceType: relationship.ResourceBaseSourceResourceType,
+				RelatedResourceSourceResourceID:   relationship.ResourceBaseSourceResourceID,
 			})
 		}
 

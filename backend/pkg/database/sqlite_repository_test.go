@@ -369,6 +369,8 @@ func (suite *RepositoryTestSuite) TestUpsertRawResource_WithRelatedResourceAndDu
 	}
 	err = dbRepo.CreateUser(context.Background(), userModel)
 	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
 	testSourceCredential := models.SourceCredential{
 		ModelBase: models.ModelBase{
 			ID: uuid.New(),
@@ -393,6 +395,10 @@ func (suite *RepositoryTestSuite) TestUpsertRawResource_WithRelatedResourceAndDu
 	//assert
 	require.NoError(suite.T(), err)
 	require.True(suite.T(), wasCreated)
+	relatedResource, err := dbRepo.FindResourceAssociationsByTypeAndId(authContext, &testSourceCredential, "Patient", "b426b062-8273-4b93-a907-de3176c0567d")
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), 3, len(relatedResource))
+
 }
 
 func (suite *RepositoryTestSuite) TestListResources() {
@@ -687,9 +693,12 @@ func (suite *RepositoryTestSuite) TestAddResourceAssociation() {
 	err = dbRepo.AddResourceAssociation(authContext,
 		&testSourceCredential, "Patient", "b426b062-8273-4b93-a907-de3176c0567d",
 		&testSourceCredential, "Observation", "11111111-8273-4b93-a907-de3176c0567d")
+	require.NoError(suite.T(), err)
 
 	//assert
+	related, err := dbRepo.FindResourceAssociationsByTypeAndId(authContext, &testSourceCredential, "Patient", "b426b062-8273-4b93-a907-de3176c0567d")
 	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), 1, len(related))
 }
 
 func (suite *RepositoryTestSuite) TestAddResourceAssociation_WithMismatchingSourceIds() {
@@ -963,4 +972,249 @@ func (suite *RepositoryTestSuite) TestGetSummary() {
 
 	require.Equal(suite.T(), 2, len(sourceSummary.Sources))
 	require.Equal(suite.T(), 2, len(sourceSummary.Patients))
+}
+
+func (suite *RepositoryTestSuite) TestAddResourceComposition() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	testSourceCredential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID:  userModel.ID,
+		Patient: uuid.New().String(),
+	}
+	err = dbRepo.CreateSource(authContext, &testSourceCredential)
+	require.NoError(suite.T(), err)
+
+	//test
+	testCompositionData, err := os.ReadFile("./testdata/Composition_Create.json")
+	require.NoError(suite.T(), err)
+
+	type CompositionPayload struct {
+		Title     string                 `json:"title"`
+		Resources []*models.ResourceBase `json:"resources"`
+	}
+	var compositionPayload CompositionPayload
+	err = json.Unmarshal(testCompositionData, &compositionPayload)
+	require.NoError(suite.T(), err)
+
+	//update resources with testSource Credential
+	for i, _ := range compositionPayload.Resources {
+		compositionPayload.Resources[i].SourceID = testSourceCredential.ID
+	}
+	err = dbRepo.AddResourceComposition(authContext, compositionPayload.Title, compositionPayload.Resources)
+	require.NoError(suite.T(), err)
+
+	//assert
+	//check that composition was created
+	compositions, err := dbRepo.ListResources(authContext, models.ListResourceQueryOptions{
+		SourceID:           "00000000-0000-0000-0000-000000000000",
+		SourceResourceType: "Composition",
+	})
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), 1, len(compositions))
+
+	//assert that the associations were created
+	associations, err := dbRepo.FindResourceAssociationsByTypeAndId(authContext,
+		&models.SourceCredential{UserID: userModel.ID, ModelBase: models.ModelBase{ID: uuid.MustParse("00000000-0000-0000-0000-000000000000")}}, //Compositions have a unique/placeholder credential ID
+		"Composition", compositions[0].SourceResourceID)
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), 2, len(associations))
+	require.Equal(suite.T(), []models.RelatedResource{
+		{
+			ResourceBaseUserID:                testSourceCredential.UserID,
+			ResourceBaseSourceID:              compositions[0].SourceID,
+			ResourceBaseSourceResourceType:    "Composition",
+			ResourceBaseSourceResourceID:      compositions[0].SourceResourceID,
+			RelatedResourceUserID:             testSourceCredential.UserID,
+			RelatedResourceSourceID:           testSourceCredential.ID,
+			RelatedResourceSourceResourceType: "Condition",
+			RelatedResourceSourceResourceID:   "bec92fdc-8765-409b-9850-52786d31aa9b",
+		},
+		{
+			ResourceBaseUserID:                testSourceCredential.UserID,
+			ResourceBaseSourceID:              compositions[0].SourceID,
+			ResourceBaseSourceResourceType:    "Composition",
+			ResourceBaseSourceResourceID:      compositions[0].SourceResourceID,
+			RelatedResourceUserID:             testSourceCredential.UserID,
+			RelatedResourceSourceID:           testSourceCredential.ID,
+			RelatedResourceSourceResourceType: "Condition",
+			RelatedResourceSourceResourceID:   "cf39b665-4177-41e3-af34-149421cb895f",
+		},
+	}, associations)
+}
+
+func (suite *RepositoryTestSuite) TestAddResourceComposition_WithExistingComposition() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	testSourceCredential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.MustParse("00000000-0000-0000-0000-000000000000"),
+		},
+		UserID:  userModel.ID,
+		Patient: uuid.New().String(),
+	}
+	err = dbRepo.CreateSource(authContext, &testSourceCredential)
+	require.NoError(suite.T(), err)
+
+	//create existing composition
+	emptyRawJson, err := json.Marshal(map[string]interface{}{})
+	require.NoError(suite.T(), err)
+	err = dbRepo.AddResourceComposition(authContext, "existing composition", []*models.ResourceBase{
+		{
+			OriginBase: models.OriginBase{
+				SourceID:           testSourceCredential.ID,
+				SourceResourceType: "Observation",
+				SourceResourceID:   "1",
+			},
+			ResourceRaw: emptyRawJson,
+		},
+		{
+			OriginBase: models.OriginBase{
+				SourceID:           testSourceCredential.ID,
+				SourceResourceType: "Observation",
+				SourceResourceID:   "2",
+			},
+			ResourceRaw: emptyRawJson,
+		},
+		{
+			OriginBase: models.OriginBase{
+				SourceID:           testSourceCredential.ID,
+				SourceResourceType: "Observation",
+				SourceResourceID:   "3",
+			},
+			ResourceRaw: emptyRawJson,
+		},
+	})
+
+	require.NoError(suite.T(), err)
+
+	//find existing composition
+	existingCompositions, err := dbRepo.ListResources(authContext, models.ListResourceQueryOptions{
+		SourceID:           "00000000-0000-0000-0000-000000000000",
+		SourceResourceType: "Composition",
+	})
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), 1, len(existingCompositions), "Only 1 composition should exist at this point")
+
+	//test
+	testCompositionData, err := os.ReadFile("./testdata/Composition_Create.json")
+	require.NoError(suite.T(), err)
+
+	type CompositionPayload struct {
+		Title     string                 `json:"title"`
+		Resources []*models.ResourceBase `json:"resources"`
+	}
+	var compositionPayload CompositionPayload
+	err = json.Unmarshal(testCompositionData, &compositionPayload)
+	require.NoError(suite.T(), err)
+
+	//update resources with testSource Credential
+	for i, _ := range compositionPayload.Resources {
+		compositionPayload.Resources[i].SourceID = testSourceCredential.ID
+	}
+	//add the existing composition as a resource to this composition
+	compositionPayload.Resources = append(compositionPayload.Resources, &existingCompositions[0])
+
+	//test
+	err = dbRepo.AddResourceComposition(authContext, compositionPayload.Title, compositionPayload.Resources)
+	require.NoError(suite.T(), err)
+
+	//assert
+	//check that composition was created
+	compositions, err := dbRepo.ListResources(authContext, models.ListResourceQueryOptions{
+		SourceID:           "00000000-0000-0000-0000-000000000000",
+		SourceResourceType: "Composition",
+	})
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), 1, len(compositions), "Only 1 composition should exist, the previous one should be deleted, and its related resources merged into this one.")
+
+	//assert that the associations were created
+	associations, err := dbRepo.FindResourceAssociationsByTypeAndId(authContext,
+		&models.SourceCredential{UserID: userModel.ID, ModelBase: models.ModelBase{ID: uuid.MustParse("00000000-0000-0000-0000-000000000000")}}, //Compositions have a unique/placeholder credential ID
+		"Composition", compositions[0].SourceResourceID)
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), 5, len(associations))
+	require.Equal(suite.T(), []models.RelatedResource{
+		{
+			ResourceBaseUserID:                testSourceCredential.UserID,
+			ResourceBaseSourceID:              compositions[0].SourceID,
+			ResourceBaseSourceResourceType:    "Composition",
+			ResourceBaseSourceResourceID:      compositions[0].SourceResourceID,
+			RelatedResourceUserID:             testSourceCredential.UserID,
+			RelatedResourceSourceID:           testSourceCredential.ID,
+			RelatedResourceSourceResourceType: "Condition",
+			RelatedResourceSourceResourceID:   "bec92fdc-8765-409b-9850-52786d31aa9b",
+		},
+		{
+			ResourceBaseUserID:                testSourceCredential.UserID,
+			ResourceBaseSourceID:              compositions[0].SourceID,
+			ResourceBaseSourceResourceType:    "Composition",
+			ResourceBaseSourceResourceID:      compositions[0].SourceResourceID,
+			RelatedResourceUserID:             testSourceCredential.UserID,
+			RelatedResourceSourceID:           testSourceCredential.ID,
+			RelatedResourceSourceResourceType: "Condition",
+			RelatedResourceSourceResourceID:   "cf39b665-4177-41e3-af34-149421cb895f",
+		},
+		{
+			ResourceBaseUserID:                testSourceCredential.UserID,
+			ResourceBaseSourceID:              compositions[0].SourceID,
+			ResourceBaseSourceResourceType:    "Composition",
+			ResourceBaseSourceResourceID:      compositions[0].SourceResourceID,
+			RelatedResourceUserID:             testSourceCredential.UserID,
+			RelatedResourceSourceID:           testSourceCredential.ID,
+			RelatedResourceSourceResourceType: "Observation",
+			RelatedResourceSourceResourceID:   "1",
+		},
+		{
+			ResourceBaseUserID:                testSourceCredential.UserID,
+			ResourceBaseSourceID:              compositions[0].SourceID,
+			ResourceBaseSourceResourceType:    "Composition",
+			ResourceBaseSourceResourceID:      compositions[0].SourceResourceID,
+			RelatedResourceUserID:             testSourceCredential.UserID,
+			RelatedResourceSourceID:           testSourceCredential.ID,
+			RelatedResourceSourceResourceType: "Observation",
+			RelatedResourceSourceResourceID:   "2",
+		},
+		{
+			ResourceBaseUserID:                testSourceCredential.UserID,
+			ResourceBaseSourceID:              compositions[0].SourceID,
+			ResourceBaseSourceResourceType:    "Composition",
+			ResourceBaseSourceResourceID:      compositions[0].SourceResourceID,
+			RelatedResourceUserID:             testSourceCredential.UserID,
+			RelatedResourceSourceID:           testSourceCredential.ID,
+			RelatedResourceSourceResourceType: "Observation",
+			RelatedResourceSourceResourceID:   "3",
+		},
+	}, associations)
+
 }

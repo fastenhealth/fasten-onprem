@@ -13,7 +13,7 @@ func TestSortResourceListByTitle(t *testing.T) {
 	g := "g"
 	p := "p"
 	z := "z"
-	resources := []*models.ResourceFhir{
+	resources := []*models.ResourceBase{
 		{
 			SortTitle: &a,
 		},
@@ -44,7 +44,7 @@ func TestSortResourceListByDate(t *testing.T) {
 	g := time.Now().Add(time.Hour * -48)
 	p := time.Now().Add(time.Hour * -72)
 	z := time.Now().Add(time.Hour * -100)
-	resources := []*models.ResourceFhir{
+	resources := []*models.ResourceBase{
 		{
 			SortDate: &a,
 		},

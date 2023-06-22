@@ -343,7 +343,6 @@ func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceM
 	}
 }
 
-//TODO: preloadRelated is broken since we no longer generate it the same way.
 func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceBase, error) {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
@@ -548,11 +547,38 @@ func (sr *SqliteRepository) RemoveResourceAssociation(ctx context.Context, sourc
 	return nil
 }
 
+func (sr *SqliteRepository) FindResourceAssociationsByTypeAndId(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string) ([]models.RelatedResource, error) {
+	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return nil, currentUserErr
+	}
+
+	if source.UserID != currentUser.ID {
+		return nil, fmt.Errorf("source credential must match the current user id")
+	}
+
+	// SELECT * FROM related_resources WHERE user_id = "53c1e930-63af-46c9-b760-8e83cbc1abd9";
+	var relatedResources []models.RelatedResource
+	result := sr.GormClient.WithContext(ctx).
+		Where(models.RelatedResource{
+			ResourceBaseUserID:             currentUser.ID,
+			ResourceBaseSourceID:           source.ID,
+			ResourceBaseSourceResourceType: resourceType,
+			ResourceBaseSourceResourceID:   resourceId,
+		}).
+		Find(&relatedResources)
+	return relatedResources, result.Error
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Resource Composition (Grouping)
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // AddResourceComposition
 // this will group resources together into a "Composition" -- primarily to group related Encounters & Conditions into one semantic root.
 // algorithm:
 // - find source for each resource
-// - (validate) ensure the current user and the source for each resource matches
+// - (SECURITY) ensure the current user and the source for each resource matches
 // - check if there is a Composition resource Type already.
 // 		- if Composition type already exists:
 // 			- update "relatesTo" field with additional data.
@@ -560,7 +586,6 @@ func (sr *SqliteRepository) RemoveResourceAssociation(ctx context.Context, sourc
 //			- Create a Composition resource type (populated with "relatesTo" references to all provided Resources)
 // - add AddResourceAssociation for all resources linked to the Composition resource
 // - store the Composition resource
-//TODO: update to use new databaseModels
 //TODO: determine if we should be using a List Resource instead of a Composition resource
 func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceBase) error {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
@@ -600,7 +625,7 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 		rawResourceLookupTable[fmt.Sprintf("%s/%s", resource.SourceResourceType, resource.SourceResourceID)] = resource
 	}
 
-	// (validate) ensure the current user and the source for each resource matches
+	// SECURITY: ensure the current user and the source for each resource matches
 	for _, source := range sourceLookup {
 		if source.UserID != currentUser.ID {
 			return fmt.Errorf("source must be owned by the current user: %s vs %s", source.UserID, currentUser.ID)
@@ -615,7 +640,7 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 		//	- update "relatesTo" field with additional data.
 		compositionResource = existingCompositionResources[0]
 
-		//unassociated all existing composition resources.
+		//disassociate all existing remaining composition resources.
 		for _, existingCompositionResource := range existingCompositionResources[1:] {
 			for _, relatedResource := range existingCompositionResource.RelatedResource {
 				if err := sr.RemoveResourceAssociation(
@@ -633,9 +658,18 @@ func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, composit
 			}
 
 			//remove this resource
-			err := sr.GormClient.WithContext(ctx).Delete(existingCompositionResource)
-			if err.Error != nil {
-				return fmt.Errorf("an error occurred while removing resource: %v", err)
+			compositionTable, err := databaseModel.GetTableNameByResourceType("Composition")
+			if err != nil {
+				return fmt.Errorf("an error occurred while finding Composition resource table: %v", err)
+			}
+			//TODO: we may need to delete with using the FhirComposition struct type
+			deleteResult := sr.GormClient.WithContext(ctx).
+				Table(compositionTable).
+				Delete(existingCompositionResource)
+			if deleteResult.Error != nil {
+				return fmt.Errorf("an error occurred while removing Composition resource(%s/%s): %v", existingCompositionResource.SourceResourceType, existingCompositionResource.SourceID, err)
+			} else if deleteResult.RowsAffected != 1 {
+				return fmt.Errorf("composition resource was not deleted %s/%s", existingCompositionResource.SourceResourceType, existingCompositionResource.SourceID)
 			}
 		}
 
