@@ -21,6 +21,7 @@ import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
 import {DashboardWidgetQuery} from '../models/widget/dashboard-widget-query';
 import * as fhirpath from 'fhirpath';
 import _ from 'lodash';
+import {DashboardConfig} from '../models/widget/dashboard-config';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +53,16 @@ export class FastenApiService {
   /*
   SECURE ENDPOINTS
   */
+
+  getDashboards(): Observable<DashboardConfig[]> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/dashboards`, )
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as DashboardConfig[]
+        })
+      );
+  }
+
   getSummary(): Observable<Summary> {
     return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/summary`, )
       .pipe(

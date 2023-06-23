@@ -1,5 +1,5 @@
 {
-  "id": "example_dashboard",
+  "id": "default",
   "schema_version": "1.0",
   "title": "Example Dashboard",
   "description": "An example dashboard to show-off the power of Fasten widgets",

@@ -134,12 +134,26 @@ func (sr *SqliteRepository) GetUserByUsername(ctx context.Context, username stri
 func (sr *SqliteRepository) GetCurrentUser(ctx context.Context) (*models.User, error) {
 	username := ctx.Value(pkg.ContextKeyTypeAuthUsername)
 	if username == nil {
-		ginCtx := ctx.(*gin.Context)
-		username = ginCtx.MustGet(pkg.ContextKeyTypeAuthUsername)
+		ginCtx, ginCtxOk := ctx.(*gin.Context)
+		if !ginCtxOk {
+			return nil, fmt.Errorf("could not convert context to gin context")
+		}
+		var exists bool
+		username, exists = ginCtx.Get(pkg.ContextKeyTypeAuthUsername)
+		if !exists {
+			return nil, fmt.Errorf("could not extract username from context")
+		}
 	}
 
 	var currentUser models.User
-	result := sr.GormClient.WithContext(ctx).First(&currentUser, models.User{Username: username.(string)})
+	usernameStr, usernameStrOk := username.(string)
+	if !usernameStrOk {
+		return nil, fmt.Errorf("could not convert username to string: %v", username)
+	}
+
+	result := sr.GormClient.
+		WithContext(ctx).
+		First(&currentUser, map[string]interface{}{"username": usernameStr})
 
 	if result.Error != nil {
 		return nil, fmt.Errorf("could not retrieve current user: %v", result.Error)

@@ -5,13 +5,9 @@ import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {forkJoin} from 'rxjs';
 import {MetadataSource} from '../../models/fasten/metadata-source';
 import {FastenApiService} from '../../services/fasten-api.service';
-import {Summary} from '../../models/fasten/summary';
 import {LighthouseService} from '../../services/lighthouse.service';
 import { GridStack, GridStackOptions, GridStackWidget } from 'gridstack';
 import {GridstackComponent, NgGridStackOptions} from '../../components/gridstack/gridstack.component';
-import {DashboardWidgetComponent} from '../../widgets/dashboard-widget/dashboard-widget.component';
-import {DashboardWidgetConfig} from '../../models/widget/dashboard-widget-config';
-import exampleDashboardConfig from "./example_dashboard.json";
 import {DashboardConfig} from '../../models/widget/dashboard-config';
 
 
@@ -33,6 +29,7 @@ export class DashboardComponent implements OnInit {
   patientForSource: {[name: string]: ResourceFhir} = {}
 
   metadataSource: { [name: string]: MetadataSource }
+  dashboardConfigs: DashboardConfig[] = []
 
   @ViewChild(GridstackComponent) gridComp?: GridstackComponent;
 
@@ -48,49 +45,33 @@ export class DashboardComponent implements OnInit {
     this.loading = true
 
 
-    forkJoin([this.fastenApi.getSummary(), this.lighthouseApi.getLighthouseSourceMetadataMap(false)]).subscribe(results => {
+    forkJoin([
+      this.fastenApi.getDashboards(),
+    ]).subscribe(results => {
       this.loading = false
-      let summary = results[0] as Summary
-      let metadataSource = results[1] as { [name: string]: MetadataSource }
+      this.dashboardConfigs = results[0] as DashboardConfig[]
 
-      //process
-      console.log("SUMMARY RESPONSE",summary);
-      this.sources = summary.sources
-      this.metadataSource = metadataSource
-      this.metadataSource["manual"] = {
-        "source_type": "manual",
-        "platform_type": "manual",
-        "display": "Manual",
-        "category": ["Manual"],
-        "hidden": false,
-      }
 
-      //calculate the number of records
-      summary.resource_type_counts.forEach((resourceTypeInfo) => {
-        this.recordsCount += resourceTypeInfo.count
-        if(resourceTypeInfo.resource_type == "Encounter"){
-          this.encounterCount = resourceTypeInfo.count
-        }
+      //setup dashboard configs
+      console.log("DASHBOARDS!", this.dashboardConfigs)
+      this.dashboardConfigs?.[0].widgets.forEach((widgetConfig) => {
+        console.log("Adding Widgets to Dashboard Grid")
+
+        this.gridComp?.grid?.addWidget({
+          x: widgetConfig.x,
+          y: widgetConfig.y,
+          w: widgetConfig.width,
+          h: widgetConfig.height,
+          // @ts-ignore
+          type: widgetConfig.item_type,
+          widgetConfig: !!widgetConfig?.queries?.length ? widgetConfig : undefined,
+        })
       })
 
-      summary.patients.forEach((resourceFhir) => {
-        this.patientForSource[resourceFhir.source_id] = resourceFhir
-      })
     }, error => {
       this.loading = false
     });
 
-
-    (exampleDashboardConfig as DashboardConfig).widgets.forEach((widgetConfig) => {
-      this.gridOptions.children.push({
-        x: widgetConfig.x,
-        y: widgetConfig.y,
-        w: widgetConfig.width,
-        h: widgetConfig.height,
-        type: widgetConfig.item_type,
-        widgetConfig: !!widgetConfig?.queries?.length ? widgetConfig : undefined,
-      })
-    })
 
   }
 
@@ -142,24 +123,4 @@ export class DashboardComponent implements OnInit {
     this.gridEditDisabled ? this.gridComp.grid?.disable(true) : this.gridComp.grid?.enable(true);
 
   }
-
-  /**
-   * TEST dynamic grid operations - uses grid API directly (since we don't track structure that gets out of sync)
-   */
-  // public add(gridComp: GridstackComponent) {
-  //   // TODO: BUG the content doesn't appear until widget is moved around (or another created). Need to force
-  //   // angular detection changes...
-  //   // gridComp.grid?.addWidget({x:3, y:0, w:2, content:`item ${ids}`, id:String(ids++)});
-  //
-  //   this.dashboardItems.push({x:3, y:0, width:4, height:3, id:String(ids++)} as DashboardWidgetConfig)
-  //
-  //   // this.makeWidget(gridComp);
-  // }
-  // public delete(gridComp: GridstackComponent) {
-  //   gridComp.grid?.removeWidget(gridComp.grid.engine.nodes[0]?.el!);
-  // }
-  // public modify(gridComp: GridstackComponent) {
-  //   gridComp.grid?.update(gridComp.grid.engine.nodes[0]?.el!, {w:3})
-  // }
-
 }

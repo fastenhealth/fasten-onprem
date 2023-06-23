@@ -18,6 +18,7 @@ import (
 	"golang.org/x/net/context"
 	"io/ioutil"
 	"log"
+	"net/http/httptest"
 	"os"
 	"testing"
 )
@@ -237,9 +238,11 @@ func (suite *RepositoryTestSuite) TestGetCurrentUser_WithGinContextBackgroundAut
 	require.NoError(suite.T(), err)
 
 	//test
-	ginContext := gin.Context{}
+	//ginContext := gin.Context{}
+	w := httptest.NewRecorder()
+	ginContext, _ := gin.CreateTestContext(w)
 	ginContext.Set(pkg.ContextKeyTypeAuthUsername, "test_username")
-	userModelResult, err := dbRepo.GetCurrentUser(&ginContext)
+	userModelResult, err := dbRepo.GetCurrentUser(ginContext)
 
 	//assert
 	require.NoError(suite.T(), err)

@@ -21,8 +21,30 @@ func TestFhirObservation_ExtractSearchParameters(t *testing.T) {
 	err = observationModel.PopulateAndExtractSearchParameters(observationBytes)
 
 	//assert
+	type CodeSystemType struct {
+		System string `json:"system"`
+		Code   string `json:"code"`
+	}
+	var testCodeSystem []CodeSystemType
 	require.NoError(t, err)
-	parsed, err := json.MarshalIndent(observationModel.Code, "", "  ")
+	err = json.Unmarshal(json.RawMessage(observationModel.Code), &testCodeSystem)
 	require.NoError(t, err)
-	require.Equal(t, "", string(parsed))
+	require.Equal(t, []CodeSystemType{
+		{
+			Code:   "29463-7",
+			System: "http://loinc.org",
+		},
+		{
+			Code:   "3141-9",
+			System: "http://loinc.org",
+		},
+		{
+			Code:   "27113001",
+			System: "http://snomed.info/sct",
+		},
+		{
+			Code:   "body-weight",
+			System: "http://acme.org/devices/clinical-codes",
+		},
+	}, testCodeSystem)
 }
