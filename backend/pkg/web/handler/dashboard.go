@@ -31,7 +31,7 @@ func GetDashboard(c *gin.Context) {
 		logger.Infof("Loading dashboard(s) from %v", dashboardLocations)
 		for _, dashboardLocation := range dashboardLocations {
 			if strings.HasPrefix(dashboardLocation, "http") {
-				c.JSON(http.StatusOK, gin.H{"success": false, "error": fmt.Sprint("Remote Dashboard URL's are not supported yet: %v", dashboardLocations)})
+				c.JSON(http.StatusOK, gin.H{"success": false, "error": fmt.Sprintf("Remote Dashboard URL's are not supported yet: %v", dashboardLocations)})
 				return
 			}
 
