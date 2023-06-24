@@ -18,10 +18,10 @@ import {ValueSet} from 'fhir/r4';
 import {AttachmentModel} from '../../lib/models/datatypes/attachment-model';
 import {BinaryModel} from '../../lib/models/resources/binary-model';
 import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
-import {DashboardWidgetQuery} from '../models/widget/dashboard-widget-query';
 import * as fhirpath from 'fhirpath';
 import _ from 'lodash';
 import {DashboardConfig} from '../models/widget/dashboard-config';
+import {DashboardWidgetQuery} from '../models/widget/dashboard-widget-query';
 
 @Injectable({
   providedIn: 'root'

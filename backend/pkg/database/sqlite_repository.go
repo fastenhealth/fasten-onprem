@@ -521,9 +521,9 @@ func (sr *SqliteRepository) AddResourceAssociation(ctx context.Context, source *
 		"related_resource_source_resource_type": relatedResourceType,
 		"related_resource_source_resource_id":   relatedResourceId,
 	}).Error
-	uniqueConstraintError := errors.New("UNIQUE constraint failed")
+	uniqueConstraintError := errors.New("constraint failed: UNIQUE constraint failed")
 	if err != nil {
-		if errors.As(err, &uniqueConstraintError) {
+		if strings.HasPrefix(err.Error(), uniqueConstraintError.Error()) {
 			sr.Logger.Warnf("Ignoring an error when creating a related_resource association for %s/%s: %v", resourceType, resourceId, err)
 			//we can safely ignore this error
 			return nil
