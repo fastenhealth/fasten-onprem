@@ -5,6 +5,7 @@ import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
 import {importProvidersFrom} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {RouterTestingModule} from '@angular/router/testing';
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<EmptyWidgetComponent> = {
@@ -25,7 +26,7 @@ const meta: Meta<EmptyWidgetComponent> = {
       ]
     }),
     moduleMetadata({
-      imports: [CommonModule, HttpClientModule],
+      imports: [CommonModule, HttpClientModule, RouterTestingModule],
     })
   ],
   tags: ['autodocs'],
