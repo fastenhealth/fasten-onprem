@@ -209,6 +209,7 @@
             ],
             "assets": [
               "src/assets/sources",
+              "src/assets/images",
               {
                 "glob": "**/*",
                 "input": "./node_modules/dwv/decoders/",
