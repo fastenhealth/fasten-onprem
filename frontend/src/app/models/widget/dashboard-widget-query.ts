@@ -2,7 +2,7 @@ export class DashboardWidgetQuery {
   use?: string
   select: string[]
   from: string
-  where: string[]
+  where: {[key: string]: string | string[]}
   // limit: number
   // offset: number
 

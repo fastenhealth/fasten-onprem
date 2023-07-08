@@ -1,0 +1,93 @@
+{
+  "resources": [
+    {
+    "id": "8fb0d1ea-dcfd-415c-9a29-0c9413c53528",
+    "created_at": "2023-06-02T01:00:32.232142798Z",
+    "updated_at": "2023-06-02T01:00:32.232142798Z",
+    "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+    "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+    "source_resource_type": "Condition",
+    "source_resource_id": "cf39b665-4177-41e3-af34-149421cb895f",
+    "sort_date": "2010-10-05T12:22:44-04:00",
+    "sort_title": "Viral sinusitis (disorder)",
+    "resource_raw": {
+      "resourceType": "Condition",
+      "id": "cf39b665-4177-41e3-af34-149421cb895f",
+      "clinicalStatus": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "resolved"
+        }]
+      },
+      "verificationStatus": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }]
+      },
+      "code": {
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "444814009",
+          "display": "Viral sinusitis (disorder)"
+        }],
+        "text": "Viral sinusitis (disorder)"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:3fba349b-e165-45f7-9cf2-66c391f293b6"
+      },
+      "onsetDateTime": "2010-10-05T12:22:44-04:00",
+      "abatementDateTime": "2010-10-12T12:22:44-04:00",
+      "recordedDate": "2010-10-05T12:22:44-04:00"
+    }
+  },
+    {
+    "id": "7cebcb96-9f23-4090-abd5-5dba741e11b2",
+    "created_at": "2023-06-02T01:00:32.982319636Z",
+    "updated_at": "2023-06-02T01:00:32.982319636Z",
+    "user_id": "acb246b7-c676-4601-b3c9-0319c6fcadfe",
+    "source_id": "fd56fc0f-3909-4899-a2df-bdc34ee9c984",
+    "source_resource_type": "Condition",
+    "source_resource_id": "bec92fdc-8765-409b-9850-52786d31aa9b",
+    "sort_date": "2011-09-15T12:22:44-04:00",
+    "sort_title": "Acute viral pharyngitis (disorder)",
+    "resource_raw": {
+      "resourceType": "Condition",
+      "id": "bec92fdc-8765-409b-9850-52786d31aa9b",
+      "clinicalStatus": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "resolved"
+        }]
+      },
+      "verificationStatus": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }]
+      },
+      "code": {
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "195662009",
+          "display": "Acute viral pharyngitis (disorder)"
+        }],
+        "text": "Acute viral pharyngitis (disorder)"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:24f73ec3-9b7a-42a9-be03-53bffd9b304c"
+      },
+      "onsetDateTime": "2011-09-15T12:22:44-04:00",
+      "abatementDateTime": "2011-09-27T12:22:44-04:00",
+      "recordedDate": "2011-09-15T12:22:44-04:00"
+    }
+  }
+  ],
+  "title": "Viral sinusitis (disorder)"
+}

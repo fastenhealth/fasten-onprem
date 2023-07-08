@@ -70,6 +70,7 @@
     "@storybook/testing-library": "^0.0.14-next.2",
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
+    "chromatic": "^6.19.8",
     "codelyzer": "^5.1.2",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.0",

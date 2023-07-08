@@ -6,7 +6,7 @@ import (
 )
 
 //default sort ASC (a, b, c, d, e...)
-func SortResourcePtrListByTitle(resourceList []*models.ResourceFhir) []*models.ResourceFhir {
+func SortResourcePtrListByTitle(resourceList []*models.ResourceBase) []*models.ResourceBase {
 	sort.SliceStable(resourceList, func(i, j int) bool {
 		if resourceList[i].SortTitle != nil && resourceList[j].SortTitle != nil {
 			return (*resourceList[i].SortTitle) < (*resourceList[j].SortTitle)
@@ -19,7 +19,7 @@ func SortResourcePtrListByTitle(resourceList []*models.ResourceFhir) []*models.R
 	return resourceList
 }
 
-func SortResourceListByTitle(resourceList []models.ResourceFhir) []models.ResourceFhir {
+func SortResourceListByTitle(resourceList []models.ResourceBase) []models.ResourceBase {
 	sort.SliceStable(resourceList, func(i, j int) bool {
 		if resourceList[i].SortTitle != nil && resourceList[j].SortTitle != nil {
 			return (*resourceList[i].SortTitle) < (*resourceList[j].SortTitle)
@@ -33,7 +33,7 @@ func SortResourceListByTitle(resourceList []models.ResourceFhir) []models.Resour
 }
 
 //default sort DESC (today, yesterday, 2 days ago, 3 days ago...)
-func SortResourcePtrListByDate(resourceList []*models.ResourceFhir) []*models.ResourceFhir {
+func SortResourcePtrListByDate(resourceList []*models.ResourceBase) []*models.ResourceBase {
 	sort.SliceStable(resourceList, func(i, j int) bool {
 		if resourceList[i].SortDate != nil && resourceList[j].SortDate != nil {
 			return (*resourceList[i].SortDate).After(*resourceList[j].SortDate)
@@ -46,7 +46,7 @@ func SortResourcePtrListByDate(resourceList []*models.ResourceFhir) []*models.Re
 	return resourceList
 }
 
-func SortResourceListByDate(resourceList []models.ResourceFhir) []models.ResourceFhir {
+func SortResourceListByDate(resourceList []models.ResourceBase) []models.ResourceBase {
 	sort.SliceStable(resourceList, func(i, j int) bool {
 		if resourceList[i].SortDate != nil && resourceList[j].SortDate != nil {
 			return (*resourceList[i].SortDate).After(*resourceList[j].SortDate)

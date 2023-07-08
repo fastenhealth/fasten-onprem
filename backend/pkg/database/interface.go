@@ -19,15 +19,16 @@ type DatabaseRepository interface {
 
 	GetSummary(ctx context.Context) (*models.Summary, error)
 
-	GetResourceBySourceType(context.Context, string, string) (*models.ResourceFhir, error)
-	GetResourceBySourceId(context.Context, string, string) (*models.ResourceFhir, error)
-	QueryResources(context.Context, models.QueryResource) ([]models.ResourceFhir, error)
-	ListResources(context.Context, models.ListResourceQueryOptions) ([]models.ResourceFhir, error)
-	GetPatientForSources(ctx context.Context) ([]models.ResourceFhir, error)
+	GetResourceByResourceTypeAndId(context.Context, string, string) (*models.ResourceBase, error)
+	GetResourceBySourceId(context.Context, string, string) (*models.ResourceBase, error)
+	QueryResources(ctx context.Context, query models.QueryResource) ([]models.ResourceBase, error)
+	ListResources(context.Context, models.ListResourceQueryOptions) ([]models.ResourceBase, error)
+	GetPatientForSources(ctx context.Context) ([]models.ResourceBase, error)
 	AddResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error
 	RemoveResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error
-	GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType) (map[string][]*models.ResourceFhir, error)
-	AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceFhir) error
+	FindResourceAssociationsByTypeAndId(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string) ([]models.RelatedResource, error)
+	GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType) (map[string][]*models.ResourceBase, error)
+	AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceBase) error
 	//UpsertProfile(context.Context, *models.Profile) error
 	//UpsertOrganziation(context.Context, *models.Organization) error
 

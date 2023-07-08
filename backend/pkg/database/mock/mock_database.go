@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	models "github.com/fastenhealth/fasten-sources/clients/models"
+	pkg "github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	models0 "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -51,7 +52,7 @@ func (mr *MockDatabaseRepositoryMockRecorder) AddResourceAssociation(ctx, source
 }
 
 // AddResourceComposition mocks base method.
-func (m *MockDatabaseRepository) AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models0.ResourceFhir) error {
+func (m *MockDatabaseRepository) AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models0.ResourceBase) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddResourceComposition", ctx, compositionTitle, resources)
 	ret0, _ := ret[0].(error)
@@ -76,6 +77,20 @@ func (m *MockDatabaseRepository) Close() error {
 func (mr *MockDatabaseRepositoryMockRecorder) Close() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockDatabaseRepository)(nil).Close))
+}
+
+// CreateGlossaryEntry mocks base method.
+func (m *MockDatabaseRepository) CreateGlossaryEntry(ctx context.Context, glossaryEntry *models0.Glossary) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateGlossaryEntry", ctx, glossaryEntry)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateGlossaryEntry indicates an expected call of CreateGlossaryEntry.
+func (mr *MockDatabaseRepositoryMockRecorder) CreateGlossaryEntry(ctx, glossaryEntry interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGlossaryEntry", reflect.TypeOf((*MockDatabaseRepository)(nil).CreateGlossaryEntry), ctx, glossaryEntry)
 }
 
 // CreateSource mocks base method.
@@ -106,41 +121,71 @@ func (mr *MockDatabaseRepositoryMockRecorder) CreateUser(arg0, arg1 interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockDatabaseRepository)(nil).CreateUser), arg0, arg1)
 }
 
-// GetCurrentUser mocks base method.
-func (m *MockDatabaseRepository) GetCurrentUser(arg0 context.Context) *models0.User {
+// FindResourceAssociationsByTypeAndId mocks base method.
+func (m *MockDatabaseRepository) FindResourceAssociationsByTypeAndId(ctx context.Context, source *models0.SourceCredential, resourceType, resourceId string) ([]models0.RelatedResource, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCurrentUser", arg0)
+	ret := m.ctrl.Call(m, "FindResourceAssociationsByTypeAndId", ctx, source, resourceType, resourceId)
+	ret0, _ := ret[0].([]models0.RelatedResource)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindResourceAssociationsByTypeAndId indicates an expected call of FindResourceAssociationsByTypeAndId.
+func (mr *MockDatabaseRepositoryMockRecorder) FindResourceAssociationsByTypeAndId(ctx, source, resourceType, resourceId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindResourceAssociationsByTypeAndId", reflect.TypeOf((*MockDatabaseRepository)(nil).FindResourceAssociationsByTypeAndId), ctx, source, resourceType, resourceId)
+}
+
+// GetCurrentUser mocks base method.
+func (m *MockDatabaseRepository) GetCurrentUser(ctx context.Context) (*models0.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCurrentUser", ctx)
 	ret0, _ := ret[0].(*models0.User)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetCurrentUser indicates an expected call of GetCurrentUser.
-func (mr *MockDatabaseRepositoryMockRecorder) GetCurrentUser(arg0 interface{}) *gomock.Call {
+func (mr *MockDatabaseRepositoryMockRecorder) GetCurrentUser(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCurrentUser", reflect.TypeOf((*MockDatabaseRepository)(nil).GetCurrentUser), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCurrentUser", reflect.TypeOf((*MockDatabaseRepository)(nil).GetCurrentUser), ctx)
 }
 
 // GetFlattenedResourceGraph mocks base method.
-func (m *MockDatabaseRepository) GetFlattenedResourceGraph(ctx context.Context) ([]*models0.ResourceFhir, []*models0.ResourceFhir, error) {
+func (m *MockDatabaseRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType) (map[string][]*models0.ResourceBase, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetFlattenedResourceGraph", ctx)
-	ret0, _ := ret[0].([]*models0.ResourceFhir)
-	ret1, _ := ret[1].([]*models0.ResourceFhir)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret := m.ctrl.Call(m, "GetFlattenedResourceGraph", ctx, graphType)
+	ret0, _ := ret[0].(map[string][]*models0.ResourceBase)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetFlattenedResourceGraph indicates an expected call of GetFlattenedResourceGraph.
-func (mr *MockDatabaseRepositoryMockRecorder) GetFlattenedResourceGraph(ctx interface{}) *gomock.Call {
+func (mr *MockDatabaseRepositoryMockRecorder) GetFlattenedResourceGraph(ctx, graphType interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFlattenedResourceGraph", reflect.TypeOf((*MockDatabaseRepository)(nil).GetFlattenedResourceGraph), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFlattenedResourceGraph", reflect.TypeOf((*MockDatabaseRepository)(nil).GetFlattenedResourceGraph), ctx, graphType)
+}
+
+// GetGlossaryEntry mocks base method.
+func (m *MockDatabaseRepository) GetGlossaryEntry(ctx context.Context, code, codeSystem string) (*models0.Glossary, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGlossaryEntry", ctx, code, codeSystem)
+	ret0, _ := ret[0].(*models0.Glossary)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGlossaryEntry indicates an expected call of GetGlossaryEntry.
+func (mr *MockDatabaseRepositoryMockRecorder) GetGlossaryEntry(ctx, code, codeSystem interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGlossaryEntry", reflect.TypeOf((*MockDatabaseRepository)(nil).GetGlossaryEntry), ctx, code, codeSystem)
 }
 
 // GetPatientForSources mocks base method.
-func (m *MockDatabaseRepository) GetPatientForSources(ctx context.Context) ([]models0.ResourceFhir, error) {
+func (m *MockDatabaseRepository) GetPatientForSources(ctx context.Context) ([]models0.ResourceBase, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPatientForSources", ctx)
-	ret0, _ := ret[0].([]models0.ResourceFhir)
+	ret0, _ := ret[0].([]models0.ResourceBase)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -151,11 +196,26 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetPatientForSources(ctx interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPatientForSources", reflect.TypeOf((*MockDatabaseRepository)(nil).GetPatientForSources), ctx)
 }
 
+// GetResourceByResourceTypeAndId mocks base method.
+func (m *MockDatabaseRepository) GetResourceByResourceTypeAndId(arg0 context.Context, arg1, arg2 string) (*models0.ResourceBase, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetResourceByResourceTypeAndId", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*models0.ResourceBase)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetResourceByResourceTypeAndId indicates an expected call of GetResourceByResourceTypeAndId.
+func (mr *MockDatabaseRepositoryMockRecorder) GetResourceByResourceTypeAndId(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResourceByResourceTypeAndId", reflect.TypeOf((*MockDatabaseRepository)(nil).GetResourceByResourceTypeAndId), arg0, arg1, arg2)
+}
+
 // GetResourceBySourceId mocks base method.
-func (m *MockDatabaseRepository) GetResourceBySourceId(arg0 context.Context, arg1, arg2 string) (*models0.ResourceFhir, error) {
+func (m *MockDatabaseRepository) GetResourceBySourceId(arg0 context.Context, arg1, arg2 string) (*models0.ResourceBase, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetResourceBySourceId", arg0, arg1, arg2)
-	ret0, _ := ret[0].(*models0.ResourceFhir)
+	ret0, _ := ret[0].(*models0.ResourceBase)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -164,21 +224,6 @@ func (m *MockDatabaseRepository) GetResourceBySourceId(arg0 context.Context, arg
 func (mr *MockDatabaseRepositoryMockRecorder) GetResourceBySourceId(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResourceBySourceId", reflect.TypeOf((*MockDatabaseRepository)(nil).GetResourceBySourceId), arg0, arg1, arg2)
-}
-
-// GetResourceBySourceType mocks base method.
-func (m *MockDatabaseRepository) GetResourceBySourceType(arg0 context.Context, arg1, arg2 string) (*models0.ResourceFhir, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetResourceBySourceType", arg0, arg1, arg2)
-	ret0, _ := ret[0].(*models0.ResourceFhir)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetResourceBySourceType indicates an expected call of GetResourceBySourceType.
-func (mr *MockDatabaseRepositoryMockRecorder) GetResourceBySourceType(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResourceBySourceType", reflect.TypeOf((*MockDatabaseRepository)(nil).GetResourceBySourceType), arg0, arg1, arg2)
 }
 
 // GetSource mocks base method.
@@ -257,10 +302,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetUserByUsername(arg0, arg1 inter
 }
 
 // ListResources mocks base method.
-func (m *MockDatabaseRepository) ListResources(arg0 context.Context, arg1 models0.ListResourceQueryOptions) ([]models0.ResourceFhir, error) {
+func (m *MockDatabaseRepository) ListResources(arg0 context.Context, arg1 models0.ListResourceQueryOptions) ([]models0.ResourceBase, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListResources", arg0, arg1)
-	ret0, _ := ret[0].([]models0.ResourceFhir)
+	ret0, _ := ret[0].([]models0.ResourceBase)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -283,6 +328,21 @@ func (m *MockDatabaseRepository) Migrate() error {
 func (mr *MockDatabaseRepositoryMockRecorder) Migrate() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Migrate", reflect.TypeOf((*MockDatabaseRepository)(nil).Migrate))
+}
+
+// QueryResources mocks base method.
+func (m *MockDatabaseRepository) QueryResources(ctx context.Context, query models0.QueryResource) ([]models0.ResourceBase, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "QueryResources", ctx, query)
+	ret0, _ := ret[0].([]models0.ResourceBase)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// QueryResources indicates an expected call of QueryResources.
+func (mr *MockDatabaseRepositoryMockRecorder) QueryResources(ctx, query interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueryResources", reflect.TypeOf((*MockDatabaseRepository)(nil).QueryResources), ctx, query)
 }
 
 // RemoveResourceAssociation mocks base method.

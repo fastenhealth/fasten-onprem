@@ -71,3 +71,18 @@ jobs:
           flags: unittests
           fail_ci_if_error: true
           verbose: true
+
+  storybook:
+    name: Storybook Upload
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: cd frontend && yarn install
+      - uses: chromaui/action@v1
+        with:
+          workingDir: frontend
+          buildScriptName: "build-storybook"
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}

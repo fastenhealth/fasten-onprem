@@ -36,6 +36,10 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
     //manually define the widget config, rather than pull from the configuration file
     this.widgetConfig = {
       id: 'patient-vitals-widget',
+      item_type: 'patient-vitals-widget',
+      description_text: 'Displays a patients vitals',
+      width: 4,
+      height: 5,
       title_text: 'Patient Vitals',
       queries: [
         {
@@ -47,9 +51,9 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
               "valueQuantity as valueQuantity"
             ],
             from: "Observation",
-            where: [
-              "(category.coding.where(system = 'http://terminology.hl7.org/CodeSystem/observation-category' and code = 'vital-signs')).exists()"
-            ]
+            where: {
+              "category": "http://terminology.hl7.org/CodeSystem/observation-category|vital-signs"
+            }
           }
         },
         {
@@ -60,7 +64,7 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
               "gender as gender",
             ],
             from: "Patient",
-            where: []
+            where: {}
           }
         },
 
@@ -81,7 +85,6 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
     //process Patient objecst
     let sortedPatients = _.sortBy(queryResults?.[1], ['birthDate'])
     for(let patient of sortedPatients){
-      console.log("PROCESSING PATIENT DATA =======> ", patient)
       if(!this.name && _.get(patient, 'name[0].family') && _.get(patient, 'name[0].given[0]')){
         this.name = `${_.get(patient, 'name[0].given[0]')} ${_.get(patient, 'name[0].family')}`
       }
