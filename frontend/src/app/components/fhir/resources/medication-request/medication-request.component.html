@@ -1,7 +1,7 @@
 <div class="card card-fhir-resource" >
   <div class="card-header" (click)="isCollapsed = ! isCollapsed">
     <div>
-      <h6 class="card-title">{{displayModel?.medication_reference?.display}}</h6>
+      <h6 class="card-title">{{displayModel?.display}}</h6>
       <p class="card-text tx-gray-400" *ngIf="displayModel?.sort_date"><strong>Start date</strong> {{displayModel?.sort_date | date}}</p>
     </div>
     <fhir-ui-badge class="float-right" [status]="displayModel?.status">{{displayModel?.status}}</fhir-ui-badge>

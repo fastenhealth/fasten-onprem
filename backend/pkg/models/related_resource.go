@@ -4,13 +4,13 @@ import "github.com/google/uuid"
 
 //this model is used by the DB (see ResourceAssociation for web model)
 type RelatedResource struct {
-	ResourceFhirUserID             uuid.UUID `gorm:"resource_fhir_user_id"`
-	ResourceFhirSourceID           uuid.UUID `gorm:"resource_fhir_source_id"`
-	ResourceFhirSourceResourceType string    `gorm:"resource_fhir_source_resource_type"`
-	ResourceFhirSourceResourceID   string    `gorm:"resource_fhir_source_resource_id"`
+	ResourceBaseUserID             uuid.UUID `gorm:"resource_base_user_id"`
+	ResourceBaseSourceID           uuid.UUID `gorm:"resource_base_source_id"`
+	ResourceBaseSourceResourceType string    `gorm:"resource_base_source_resource_type"`
+	ResourceBaseSourceResourceID   string    `gorm:"resource_base_source_resource_id"`
 
-	RelatedResourceFhirUserID             uuid.UUID `gorm:"related_resource_fhir_user_id"`
-	RelatedResourceFhirSourceID           uuid.UUID `gorm:"related_resource_fhir_source_id"`
-	RelatedResourceFhirSourceResourceType string    `gorm:"related_resource_fhir_source_resource_type"`
-	RelatedResourceFhirSourceResourceID   string    `gorm:"related_resource_fhir_source_resource_id"`
+	RelatedResourceUserID             uuid.UUID `gorm:"related_resource_user_id"`
+	RelatedResourceSourceID           uuid.UUID `gorm:"related_resource_source_id"`
+	RelatedResourceSourceResourceType string    `gorm:"related_resource_source_resource_type"`
+	RelatedResourceSourceResourceID   string    `gorm:"related_resource_source_resource_id"`
 }

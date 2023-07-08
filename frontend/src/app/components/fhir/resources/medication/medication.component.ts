@@ -7,10 +7,11 @@ import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
 import {CommonModule} from "@angular/common";
 import {BadgeComponent} from "../../common/badge/badge.component";
 import {TableComponent} from "../../common/table/table.component";
+import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.component';
 
 @Component({
   standalone: true,
-  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent],
+  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, GlossaryLookupComponent],
   selector: 'fhir-medication',
   templateUrl: './medication.component.html',
   styleUrls: ['./medication.component.scss']
@@ -18,6 +19,11 @@ import {TableComponent} from "../../common/table/table.component";
 export class MedicationComponent implements OnInit, FhirResourceComponentInterface {
   @Input() displayModel: MedicationModel
   @Input() showDetails: boolean = true
+
+  //these are used to populate the description of the resource. May not be available for all resources
+  resourceCode?: string;
+  resourceCodeSystem?: string;
+
   isCollapsed: boolean = false
 
   tableData: TableRowItem[] = []
@@ -25,6 +31,8 @@ export class MedicationComponent implements OnInit, FhirResourceComponentInterfa
   constructor(public changeRef: ChangeDetectorRef, public router: Router) {}
 
   ngOnInit(): void {
+    this.resourceCode = this.displayModel?.title?.code
+    this.resourceCodeSystem = this.displayModel?.title?.system
 
     this.tableData = [
       {

@@ -1,11 +1,23 @@
-<div class="card card-dashboard-two h-100">
-  <div class="card-header">
-    <h6>65 kg <i class="icon ion-md-trending-up tx-success"></i> <small>18.02%</small></h6>
-    <p>Weight</p>
-  </div><!-- card-header -->
-  <div class="card-body d-flex flex-column">
-    <div class="bounce-rate-chart-wrapper mt-auto mx-auto">
-      <canvas style="height:100px" baseChart [chartType]="'line'" [datasets]="bounceRateChartData" [labels]="bounceRateChartLabels" [options]="bounceRateChartOptions" [colors]="bounceRateChartColors"></canvas>
-    </div>
-  </div><!-- card-body -->
-</div><!-- card -->
+<ng-container [ngTemplateOutlet]="loading ? showLoading : (!loading && isEmpty) ? showEmpty : showChart"></ng-container>
+
+<ng-template #showLoading>
+  <loading-widget></loading-widget>
+</ng-template>
+
+<ng-template #showEmpty>
+  <empty-widget></empty-widget>
+</ng-template>
+
+<ng-template #showChart>
+  <div class="card card-dashboard-two h-100">
+    <div class="card-header">
+      <h6>{{getLastDatasetValue(chartDatasets?.[0])}} kg <i class="icon ion-md-trending-up tx-success"></i> <small>18.02%</small></h6>
+      <p>{{widgetConfig?.title_text}}</p>
+    </div><!-- card-header -->
+    <div class="card-body d-flex flex-column">
+      <div class="bounce-rate-chart-wrapper mt-auto mx-auto" style="position: relative; height:80%; width:100%">
+        <canvas baseChart [type]="'line'" [datasets]="chartDatasets" [labels]="chartLabels" [options]="chartOptions"></canvas>
+      </div>
+    </div><!-- card-body -->
+  </div>
+</ng-template><!-- card -->

@@ -7,12 +7,16 @@
 .PHONY: test
 test: test-backend test-frontend
 
+.PHONY: serve-frontend-storybook
+serve-frontend-storybook:
+	cd frontend && ng run fastenhealth:storybook
+
 .PHONY: serve-frontend
-serve-frontend:
+serve-frontend: dep-frontend
 	cd frontend && yarn dist -- -c sandbox
 
 .PHONY: serve-frontend-prod
-serve-frontend-prod:
+serve-frontend-prod: dep-frontend
 	cd frontend && yarn dist -- -c prod
 
 .PHONY: serve-backend

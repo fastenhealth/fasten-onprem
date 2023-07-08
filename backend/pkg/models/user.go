@@ -1,7 +1,9 @@
 package models
 
 import (
+	"fmt"
 	"golang.org/x/crypto/bcrypt"
+	"strings"
 )
 
 type User struct {
@@ -17,6 +19,9 @@ type User struct {
 }
 
 func (user *User) HashPassword(password string) error {
+	if len(strings.TrimSpace(password)) == 0 {
+		return fmt.Errorf("password cannot be empty")
+	}
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
 		return err

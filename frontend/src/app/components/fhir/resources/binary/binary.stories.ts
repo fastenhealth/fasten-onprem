@@ -12,6 +12,7 @@ import {moduleMetadata} from "@storybook/angular";
 import {BrowserModule} from "@angular/platform-browser";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {CommonModule} from "@angular/common";
+import {HTTP_CLIENT_TOKEN} from '../../../../dependency-injection';
 
 
 
@@ -22,7 +23,16 @@ const meta: Meta<BinaryComponent> = {
   decorators: [
     moduleMetadata({
       imports: [CommonModule, HttpClientModule],
-      providers: [{ provide: HttpClient, useClass: HttpClient }],
+      providers: [
+        {
+          provide: HttpClient,
+          useClass: HttpClient
+        },
+        {
+        provide: HTTP_CLIENT_TOKEN,
+        useClass: HttpClient,
+        }
+      ],
     }),
     // applicationConfig({
     //   providers: [importProvidersFrom(AppModule)],

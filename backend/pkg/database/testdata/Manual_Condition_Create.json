@@ -1,0 +1,230 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [{
+    "fullUrl": "urn:uuid:92edc658-e83c-467d-a02d-5b23426f4a97",
+    "resource": {
+      "resourceType": "Patient",
+      "id": "92edc658-e83c-467d-a02d-5b23426f4a97",
+      "name": [{
+        "family": "Placeholder",
+        "given": ["Patient"]
+      }]
+    }
+  }, {
+    "fullUrl": "urn:uuid:dba611f8-9462-4005-bc49-fdecb66218b8",
+    "resource": {
+      "subject": {
+        "reference": "urn:uuid:92edc658-e83c-467d-a02d-5b23426f4a97"
+      },
+      "resourceType": "Condition",
+      "id": "dba611f8-9462-4005-bc49-fdecb66218b8",
+      "code": {
+        "coding": [{
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "M54.9",
+          "display": "Back pain"
+        }],
+        "text": "Back pain"
+      },
+      "clinicalStatus": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }]
+      },
+      "onsetDateTime": "2023-06-01T07:00:00.000Z",
+      "abatementDateTime": "2023-06-01T07:00:00.000Z",
+      "recordedDate": "2023-06-21T04:25:10.783Z",
+      "note": [{
+        "text": "test"
+      }]
+    }
+  }, {
+    "fullUrl": "urn:uuid:52a37825-1216-4645-a16b-cd48626c2be2",
+    "resource": {
+      "resourceType": "Encounter",
+      "id": "52a37825-1216-4645-a16b-cd48626c2be2",
+      "status": "finished",
+      "subject": {
+        "reference": "urn:uuid:92edc658-e83c-467d-a02d-5b23426f4a97"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:c9b8c3ee-2e81-45b5-b476-0c370a3bf50a"
+        }
+      }],
+      "period": {
+        "start": "2023-06-20T07:00:00.000Z",
+        "end": "2023-06-20T07:00:00.000Z"
+      },
+      "reasonReference": [{
+        "reference": "urn:uuid:dba611f8-9462-4005-bc49-fdecb66218b8"
+      }]
+    }
+  }, {
+    "fullUrl": "urn:uuid:6301d3c2-01e8-454f-b7c0-b8d06705a524",
+    "resource": {
+      "resourceType": "Encounter",
+      "id": "6301d3c2-01e8-454f-b7c0-b8d06705a524",
+      "status": "finished",
+      "subject": {
+        "reference": "urn:uuid:92edc658-e83c-467d-a02d-5b23426f4a97"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:c9b8c3ee-2e81-45b5-b476-0c370a3bf50a"
+        }
+      }],
+      "period": {
+        "start": "2023-06-21T07:00:00.000Z",
+        "end": "2023-06-21T07:00:00.000Z"
+      },
+      "reasonReference": [{
+        "reference": "urn:uuid:dba611f8-9462-4005-bc49-fdecb66218b8"
+      }],
+      "serviceProvider": {
+        "reference": "urn:uuid:22113f25-fa0c-4556-a6a6-cfe47386f775"
+      }
+    }
+  }, {
+    "fullUrl": "urn:uuid:22113f25-fa0c-4556-a6a6-cfe47386f775",
+    "resource": {
+      "resourceType": "Organization",
+      "id": "22113f25-fa0c-4556-a6a6-cfe47386f775",
+      "name": "DENTIST",
+      "identifier": [{
+        "system": "http://hl7.org/fhir/sid/us-npi",
+        "value": "1588030480",
+        "type": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+            "code": "NPI"
+          }]
+        }
+      }],
+      "type": [{
+        "coding": [{
+          "system": "http://nucc.org/provider-taxonomy",
+          "code": "1223P0700X",
+          "display": "Dentist"
+        }]
+      }],
+      "address": [{
+        "line": ["39038 SUTTER DR", null],
+        "city": "FREMONT",
+        "state": "CA",
+        "postalCode": "94538",
+        "country": "US"
+      }],
+      "telecom": [],
+      "active": true
+    }
+  }, {
+    "fullUrl": "urn:uuid:c9b8c3ee-2e81-45b5-b476-0c370a3bf50a",
+    "resource": {
+      "resourceType": "Practitioner",
+      "id": "c9b8c3ee-2e81-45b5-b476-0c370a3bf50a",
+      "name": [{
+        "text": "d"
+      }],
+      "identifier": [],
+      "address": [{
+        "line": [null, null],
+        "city": null,
+        "state": null,
+        "postalCode": null,
+        "country": null
+      }],
+      "telecom": [],
+      "active": true,
+      "qualification": [{
+        "code": {
+          "coding": [{
+            "code": "122300000X",
+            "display": "Dentist",
+            "system": "http://nucc.org/provider-taxonomy"
+          }]
+        }
+      }]
+    }
+  }, {
+    "fullUrl": "urn:uuid:1805e09a-545a-4dfd-be7b-44532d690b7e",
+    "resource": {
+      "id": "1805e09a-545a-4dfd-be7b-44532d690b7e",
+      "resourceType": "MedicationRequest",
+      "status": "active",
+      "statusReason": {
+        "coding": []
+      },
+      "intent": "order",
+      "medicationCodeableConcept": {
+        "coding": [{
+          "system": "http://hl7.org/fhir/sid/rxnorm",
+          "code": "1172038",
+          "display": "ADVIL (Oral Pill)"
+        }]
+      },
+      "subject": {
+        "reference": "urn:uuid:92edc658-e83c-467d-a02d-5b23426f4a97"
+      },
+      "encounter": {
+        "reference": "urn:uuid:52a37825-1216-4645-a16b-cd48626c2be2"
+      },
+      "authoredOn": "2023-06-20T07:00:00.000Z",
+      "requester": {
+        "reference": "urn:uuid:c9b8c3ee-2e81-45b5-b476-0c370a3bf50a"
+      },
+      "supportingInformation": [],
+      "reasonReference": [{
+        "reference": "urn:uuid:dba611f8-9462-4005-bc49-fdecb66218b8"
+      }],
+      "note": [{
+        "text": "test"
+      }],
+      "dispenseRequest": {
+        "validityPeriod": {
+          "start": "2023-06-20T07:00:00.000Z",
+          "end": "2023-06-20T07:00:00.000Z"
+        }
+      }
+    }
+  }, {
+    "fullUrl": "urn:uuid:ad63c2e6-8a2d-47d0-a75e-b3663a2d51ee",
+    "resource": {
+      "subject": {
+        "reference": "urn:uuid:92edc658-e83c-467d-a02d-5b23426f4a97"
+      },
+      "status": "completed",
+      "resourceType": "Procedure",
+      "id": "ad63c2e6-8a2d-47d0-a75e-b3663a2d51ee",
+      "code": {
+        "coding": [{
+          "system": "http://hl7.org/fhir/sid/icd-9-cm",
+          "code": "",
+          "display": "Tooth extraction"
+        }],
+        "text": "Tooth extraction"
+      },
+      "performedDateTime": "2023-06-21T07:00:00.000Z",
+      "encounter": {
+        "reference": "urn:uuid:6301d3c2-01e8-454f-b7c0-b8d06705a524"
+      },
+      "reasonReference": [{
+        "reference": "urn:uuid:dba611f8-9462-4005-bc49-fdecb66218b8"
+      }],
+      "report": [],
+      "performer": [{
+        "actor": {
+          "reference": "urn:uuid:c9b8c3ee-2e81-45b5-b476-0c370a3bf50a"
+        },
+        "onBehalfOf": {
+          "reference": "urn:uuid:22113f25-fa0c-4556-a6a6-cfe47386f775"
+        }
+      }],
+      "note": [{
+        "text": "test"
+      }]
+    }
+  }]
+}

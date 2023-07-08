@@ -11,6 +11,29 @@ import (
 	"strings"
 )
 
+func QueryResourceFhir(c *gin.Context) {
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	var query models.QueryResource
+	if err := c.ShouldBindJSON(&query); err != nil {
+		logger.Errorln("An error occurred while parsing queries", err)
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
+	}
+
+	queryResults, err := databaseRepo.QueryResources(c, query)
+	if err != nil {
+		logger.Errorln("An error occurred while querying resources", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	//sort by date
+	//queryResults = utils.SortResourceListByDate(queryResults)
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": queryResults})
+}
+
 func ListResourceFhir(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
@@ -24,9 +47,6 @@ func ListResourceFhir(c *gin.Context) {
 	}
 	if len(c.Query("sourceResourceID")) > 0 {
 		listResourceQueryOptions.SourceResourceID = c.Query("sourceResourceID")
-	}
-	if len(c.Query("preloadRelated")) > 0 {
-		listResourceQueryOptions.PreloadRelated = true
 	}
 
 	wrappedResourceModels, err := databaseRepo.ListResources(c, listResourceQueryOptions)
@@ -70,7 +90,7 @@ func CreateResourceComposition(c *gin.Context) {
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	type jsonPayload struct {
-		Resources []*models.ResourceFhir `json:"resources"`
+		Resources []*models.ResourceBase `json:"resources"`
 		Title     string                 `json:"title"`
 	}
 	var payload jsonPayload

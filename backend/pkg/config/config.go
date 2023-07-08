@@ -27,6 +27,7 @@ func (c *configuration) Init() error {
 	c.SetDefault("web.allow_unsafe_endpoints", false)
 
 	c.SetDefault("web.src.frontend.path", "/opt/fasten/web")
+	c.SetDefault("dashboard.location", []string{})
 
 	c.SetDefault("database.location", "/opt/fasten/db/fasten.db")
 

@@ -63,6 +63,11 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 				secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
 				secure.POST("/resource/composition", handler.CreateResourceComposition)
 
+				secure.GET("/dashboards", handler.GetDashboard)
+				//secure.GET("/dashboard/:dashboardId", handler.GetDashboard)
+
+				secure.POST("/query", handler.QueryResourceFhir)
+
 			}
 
 			if ae.Config.GetBool("web.allow_unsafe_endpoints") {

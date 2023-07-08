@@ -50,57 +50,12 @@
               <li>Users will be able to share their dashboards with other users.</li>
             </ul>
             <br/>
-            <strong>This functionality is not yet available</strong>, but this example dashboard below will give you a sense of what this may look like. This dashboard only contains placeholder data.
+            <strong>This functionality is not yet fully completed</strong> but this example dashboard below will give you a sense of what this may look like. Widgets in yellow only contain placeholder data.
           </div>
         </div>
       </div>
 
-      <gridstack id="gridstack" #gridComp [options]="gridOptions">
-        <gridstack-item class="grid-stack-item" gs-w="8" gs-h="5" gs-x="0" gs-y="0">
-          <app-complex-line-widget></app-complex-line-widget>
-        </gridstack-item>
-
-
-        <gridstack-item class="grid-stack-item" gs-w="2" gs-h="2" gs-x="8" gs-y="0">
-          <app-simple-line-chart-widget></app-simple-line-chart-widget>
-        </gridstack-item>
-
-        <gridstack-item class="grid-stack-item" gs-w="2" gs-h="2" gs-x="10" gs-y="0">
-          <app-simple-line-chart-widget></app-simple-line-chart-widget>
-        </gridstack-item>
-
-        <gridstack-item class="grid-stack-item" gs-w="4" gs-h="3" gs-x="8" gs-y="2">
-          <app-grouped-bar-chart-widget></app-grouped-bar-chart-widget>
-        </gridstack-item>
-
-        <gridstack-item class="grid-stack-item" gs-w="4" gs-h="5" gs-x="0" gs-y="5">
-          <app-patient-vitals-widget></app-patient-vitals-widget>
-        </gridstack-item>
-
-        <gridstack-item class="grid-stack-item" gs-w="8" gs-h="5" gs-x="4" gs-y="5">
-          <app-donut-chart-widget></app-donut-chart-widget>
-        </gridstack-item>
-
-        <gridstack-item class="grid-stack-item" gs-w="4" gs-h="2" gs-x="0" gs-y="10">
-          <app-dual-gauges-widget></app-dual-gauges-widget>
-        </gridstack-item>
-
-        <gridstack-item class="grid-stack-item" gs-w="8" gs-h="4" gs-x="4" gs-y="10">
-          <app-table-widget></app-table-widget>
-        </gridstack-item>
-
-
-        <gridstack-item *ngFor="let item of dashboardItems" class="grid-stack-item"
-                        [attr.gs-w]="item.width"
-                        [attr.gs-h]="item.height"
-                        [attr.gs-x]="item.x"
-                        [attr.gs-y]="item.y"
-                        [attr.gs-min-w]="item.minWidth"
-                        [attr.gs-min-h]="item.minHeight"
-        >
-          <app-dashboard-widget [widgetConfig]="item"></app-dashboard-widget>
-        </gridstack-item>
-      </gridstack>
+      <gridstack id="gridstack" #gridComp [options]="gridOptions"></gridstack>
 
 
     </div><!-- az-content-body -->

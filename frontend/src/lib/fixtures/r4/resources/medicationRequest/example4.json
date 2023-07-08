@@ -1,0 +1,32 @@
+{
+  "resourceType": "MedicationRequest",
+  "id": "3564c124-8601-99aa-814a-512c38f9ed45",
+  "status": "stopped",
+  "intent": "order",
+  "medicationCodeableConcept": {
+    "coding": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "834102",
+        "display": "Penicillin V Potassium 500 MG Oral Tablet"
+      }
+    ],
+    "text": "Penicillin V Potassium 500 MG Oral Tablet"
+  },
+  "subject": {
+    "reference": "urn:uuid:cd1e75b4-0cd1-ac66-5648-11d26f0b6205"
+  },
+  "encounter": {
+    "reference": "urn:uuid:f1063f37-ab76-297d-18ad-0a784347a61f"
+  },
+  "authoredOn": "2020-06-28T13:35:13-04:00",
+  "requester": {
+    "reference": "Practitioner?identifier=http://hl7.org/fhir/sid/us-npi|9999999439",
+    "display": "Dr. Rodrick370 Corkery305"
+  },
+  "reasonReference": [
+    {
+      "reference": "urn:uuid:c0d1f171-5547-c564-f2a2-e9eb3d1229b1"
+    }
+  ]
+}

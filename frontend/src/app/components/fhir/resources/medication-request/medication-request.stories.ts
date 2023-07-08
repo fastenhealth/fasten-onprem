@@ -3,7 +3,7 @@ import {fhirVersions} from "../../../../../lib/models/constants";
 import R4Example1Json from "../../../../../lib/fixtures/r4/resources/medicationRequest/example1.json";
 import R4Example2Json from "../../../../../lib/fixtures/r4/resources/medicationRequest/example2.json";
 import R4Example3Json from "../../../../../lib/fixtures/r4/resources/medicationRequest/example3.json";
-import {MedicationModel} from "../../../../../lib/models/resources/medication-model";
+import R4Example4Json from "../../../../../lib/fixtures/r4/resources/medicationRequest/example4.json";
 import {MedicationRequestComponent} from "./medication-request.component";
 import {MedicationRequestModel} from "../../../../../lib/models/resources/medication-request-model";
 
@@ -69,3 +69,12 @@ export const R4Example3: Story = {
   }
 };
 
+
+let r4Example4DisplayModel =  new MedicationRequestModel(R4Example4Json, fhirVersions.R4)
+r4Example4DisplayModel.source_id = '123-456-789'
+r4Example4DisplayModel.source_resource_id = '123-456-789'
+export const R4Example4: Story = {
+  args: {
+    displayModel: r4Example4DisplayModel
+  }
+};

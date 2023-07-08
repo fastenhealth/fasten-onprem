@@ -1,27 +1,37 @@
-export class DashboardWidgetConfig {
-  id: string
-  item_type: "bar_chart" | "bubble_chart" | "doughnut_chart" | "line_chart" | "pie_chart" | "scatter_chart" | "calendar" | "striped_table" | "basic_table"
+import {DashboardWidgetQuery} from './dashboard-widget-query';
+import * as _ from 'lodash';
 
+export class DashboardWidgetConfig {
+  id?: string
+  item_type: "complex-line-widget" | "donut-chart-widget" | "dual-gauges-widget" | "grouped-bar-chart-widget" | "patient-vitals-widget" | "simple-line-chart-widget" | "table-widget"
 
   title_text: string
   description_text: string
 
   queries:  {
-    q: string,
-    "aggregator": "avg",
-    "conditional_formats": [],
-    "type": "line",
-    "style": {
-      "palette": "grey" | "pastel" | "light" | "default"
+    q: DashboardWidgetQuery,
+    conditional_formats?: [],
+    dataset_options?: {
+      label?: string,
+      borderWidth?: number,
+      borderColor?: string,
+      fill?: boolean,
+      backgroundColor?: string,
     }
+    // type?: "line",
+    // style?: {
+    //   "palette": "grey" | "pastel" | "light" | "default"
+    // }
   }[]
 
 
   //used for display purposes within the Dashboard, not for the actual chart
-  minWidth?: number
-  minHeight?: number
+  // minWidth?: number
+  // minHeight?: number
   width: number
   height: number
   x?: number
   y?: number
+
+  parsing?: {label?: string, xAxisKey?: string, yAxisKey?: string} | {[name:string]: string}
 }

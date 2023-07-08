@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
-import {ChartOptions} from 'chart.js';
+import {ChartConfiguration} from 'chart.js';
 // import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 // import { BaseChartDirective } from 'ng2-charts';
 import * as fhirpath from 'fhirpath';
@@ -70,11 +70,12 @@ export class ReportLabsObservationComponent implements OnInit {
       //chart type
       // type: "line",
     }
-  ]
+  ]  as ChartConfiguration<'bar'>['data']['datasets']
 
   barChartLabels = [] // ["2020", "2018"] //["1","2","3","4","5","6","7","8"]
 
   barChartOptions = {
+    indexAxis: 'y',
     legend:{
       display: false,
     },
@@ -88,7 +89,7 @@ export class ReportLabsObservationComponent implements OnInit {
       }
     },
     scales: {
-      yAxes: [{
+      y: {
         stacked: true,
         ticks: {
           beginAtZero: true,
@@ -96,8 +97,8 @@ export class ReportLabsObservationComponent implements OnInit {
           min: 0,
           // max: 80
         },
-      }],
-      xAxes: [{
+      },
+      x: {
         scaleLabel:{
           display: false,
           labelString: "xaxis",
@@ -111,40 +112,9 @@ export class ReportLabsObservationComponent implements OnInit {
           // max: 80
         },
 
-      }],
+      },
     }
-    //   xAxes: [{
-    //     id: "x-axis-current",
-    //     stacked: true,
-    //     // barPercentage: 0.6,
-    //     ticks: {
-    //       beginAtZero:true,
-    //       fontSize: 11
-    //     }
-    //   },{
-    //     id: "x-axis-ref",
-    //     stacked: true,
-    //     ticks: {
-    //       beginAtZero:true,
-    //       fontSize: 11
-    //     }
-    //     // offset: true,
-    //
-    //     // display: false,
-    //     // gridLines: {
-    //     //   offsetGridLines: true
-    //     // }
-    //   }]
-    // },
-    // legend: {
-    //   display: false
-    // },
-    // elements: {
-    //   point: {
-    //     radius: 0
-    //   }
-    // }
-  } as ChartOptions
+  } as ChartConfiguration<'bar'>['options']
 
   barChartColors = [
     {
@@ -178,10 +148,13 @@ export class ReportLabsObservationComponent implements OnInit {
 
       //set chart x-axis label
       let units = fhirpath.evaluate(observation.resource_raw, "Observation.valueQuantity.unit")[0]
-      if(units){
-        this.barChartOptions.scales.xAxes[0].scaleLabel.display = true
-        this.barChartOptions.scales.xAxes[0].scaleLabel.labelString = units
-      }
+
+      //TODO: fix x-axis label
+      // if(units){
+      //
+      //   (this.barChartOptions as ChartConfiguration<'bar'>['options']).scales['x']['scaleLabel'].display = true
+      //   (this.barChartOptions as ChartConfiguration<'bar'>['options']).scales['y']['scaleLabel'].labelString = units
+      // }
 
 
       //add low/high ref value blocks
