@@ -450,6 +450,7 @@ func main() {
 //TODO: should we do this, or allow all resources instead of just USCore?
 //The dataabase would be full of empty data, but we'd be more flexible & future-proof.. supporting other countries, etc.
 var AllowedResources = []string{
+	"Account",
 	"AdverseEvent",
 	"AllergyIntolerance",
 	"Appointment",
@@ -460,6 +461,7 @@ var AllowedResources = []string{
 	"ClaimResponse",
 	"Composition",
 	"Condition",
+	"Consent",
 	"Coverage",
 	"CoverageEligibilityRequest",
 	"CoverageEligibilityResponse",
@@ -491,14 +493,16 @@ var AllowedResources = []string{
 	"OrganizationAffiliation",
 	"Patient",
 	"Person",
-	"PractitionerRole",
 	"Practitioner",
+	"PractitionerRole",
 	"Procedure",
 	"Provenance",
 	"Questionnaire",
 	"QuestionnaireResponse",
 	"RelatedPerson",
+	"Schedule",
 	"ServiceRequest",
+	"Slot",
 	"Specimen",
 	"VisionPrescription",
 }
