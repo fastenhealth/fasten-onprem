@@ -132,7 +132,7 @@ func NewFhirResourceModelByType(resourceType string) (IFhirResourceModel, error)
 	case "VisionPrescription":
 		return &FhirVisionPrescription{}, nil
 	default:
-		return nil, fmt.Errorf("Invalid resource type: %s", resourceType)
+		return nil, fmt.Errorf("Invalid resource type for model: %s", resourceType)
 	}
 }
 
@@ -250,7 +250,7 @@ func GetTableNameByResourceType(resourceType string) (string, error) {
 	case "VisionPrescription":
 		return "fhir_vision_prescription", nil
 	default:
-		return "", fmt.Errorf("Invalid resource type: %s", resourceType)
+		return "", fmt.Errorf("Invalid resource type for table name: %s", resourceType)
 	}
 }
 

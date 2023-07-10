@@ -408,7 +408,7 @@ func main() {
 				})
 			}
 			s.Default().BlockFunc(func(d *jen.Group) {
-				d.Return(jen.Nil(), jen.Qual("fmt", "Errorf").Call(jen.Lit("Invalid resource type: %s"), jen.Id("resourceType")))
+				d.Return(jen.Nil(), jen.Qual("fmt", "Errorf").Call(jen.Lit("Invalid resource type for model: %s"), jen.Id("resourceType")))
 			})
 		})
 	})
@@ -424,7 +424,7 @@ func main() {
 				})
 			}
 			s.Default().BlockFunc(func(d *jen.Group) {
-				d.Return(jen.Lit(""), jen.Qual("fmt", "Errorf").Call(jen.Lit("Invalid resource type: %s"), jen.Id("resourceType")))
+				d.Return(jen.Lit(""), jen.Qual("fmt", "Errorf").Call(jen.Lit("Invalid resource type for table name: %s"), jen.Id("resourceType")))
 			})
 		})
 	})
