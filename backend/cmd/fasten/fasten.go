@@ -56,10 +56,11 @@ func main() {
 
 			fmt.Fprintf(c.App.Writer, fmt.Sprintf(utils.StripIndent(
 				`
-			 ____   __    ___  __ _   __    ___  ____ 
-			(  _ \ / _\  / __)(  / ) / _\  / __)(  _ \
-			 ) __//    \( (__  )  ( /    \( (_ \ )   /
-			(__)  \_/\_/ \___)(__\_)\_/\_/ \___/(__\_)
+			  o888o                       o8                          
+			o888oo ooooooo    oooooooo8 o888oo ooooooooo8 oo oooooo   
+			 888   ooooo888  888ooooooo  888  888oooooo8   888   888  
+			 888 888    888          888 888  888          888   888  
+			o888o 88ooo88 8o 88oooooo88   888o  88oooo888 o888o o888o
 			%s
 
 			`), subtitle))
