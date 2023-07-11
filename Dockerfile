@@ -16,7 +16,7 @@ COPY frontend/package.json frontend/yarn.lock ./
 
 RUN yarn install --frozen-lockfile
 COPY frontend/ ./
-RUN --mount=type=cache,target=/tmp/frontend_lock,sharing=locked \
+RUN --mount=type=cache,target=/tmp/lock,sharing=locked \
     yarn run build -- --configuration ${FASTEN_ENV} --output-path=../dist
 
 #########################################################################################################
@@ -27,7 +27,7 @@ FROM golang:1.18 as backend-build
 WORKDIR /go/src/github.com/fastenhealth/fastenhealth-onprem
 COPY . .
 
-RUN --mount=type=cache,target=/tmp/backend_lock,sharing=locked \
+RUN --mount=type=cache,target=/tmp/lock,sharing=locked \
     go mod vendor \
     && go install github.com/golang/mock/mockgen@v1.6.0 \
     && go generate ./... \
