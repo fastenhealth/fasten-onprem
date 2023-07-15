@@ -329,7 +329,7 @@ func (suite *RepositoryTestSuite) TestUpsertRawResource() {
 	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
 	wasCreated, err := dbRepo.UpsertRawResource(
 		authContext,
-		testSourceCredential,
+		&testSourceCredential,
 		sourceModels.RawResourceFhir{
 			SourceResourceType: "Patient",
 			SourceResourceID:   "b426b062-8273-4b93-a907-de3176c0567d",
@@ -386,7 +386,7 @@ func (suite *RepositoryTestSuite) TestUpsertRawResource_WithRelatedResourceAndDu
 	//test
 	wasCreated, err := dbRepo.UpsertRawResource(
 		context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username"),
-		testSourceCredential,
+		&testSourceCredential,
 		sourceModels.RawResourceFhir{
 			SourceResourceType:  "Patient",
 			SourceResourceID:    "b426b062-8273-4b93-a907-de3176c0567d",
@@ -446,7 +446,7 @@ func (suite *RepositoryTestSuite) TestListResources() {
 
 	testResource1Created, err := dbRepo.UpsertRawResource(
 		context.WithValue(authContext, pkg.ContextKeyTypeAuthUsername, "test_username"),
-		testSource1Credential,
+		&testSource1Credential,
 		sourceModels.RawResourceFhir{
 			SourceResourceType:  "Patient",
 			SourceResourceID:    "b426b062-8273-4b93-a907-de3176c0567d",
@@ -461,7 +461,7 @@ func (suite *RepositoryTestSuite) TestListResources() {
 	require.NoError(suite.T(), err)
 	testResource2Created, err := dbRepo.UpsertRawResource(
 		context.WithValue(authContext, pkg.ContextKeyTypeAuthUsername, "test_username"),
-		testSource2Credential,
+		&testSource2Credential,
 		sourceModels.RawResourceFhir{
 			SourceResourceType:  "Patient",
 			SourceResourceID:    "d3fbfb3a-7b8d-45c0-13b4-9666e4d36a3e",
@@ -533,7 +533,7 @@ func (suite *RepositoryTestSuite) TestGetResourceByResourceTypeAndId() {
 	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
 	wasCreated, err := dbRepo.UpsertRawResource(
 		authContext,
-		testSourceCredential,
+		&testSourceCredential,
 		sourceModels.RawResourceFhir{
 			SourceResourceType: "Patient",
 			SourceResourceID:   "b426b062-8273-4b93-a907-de3176c0567d",
@@ -586,7 +586,7 @@ func (suite *RepositoryTestSuite) TestGetResourceBySourceId() {
 	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
 	wasCreated, err := dbRepo.UpsertRawResource(
 		authContext,
-		testSourceCredential,
+		&testSourceCredential,
 		sourceModels.RawResourceFhir{
 			SourceResourceType: "Patient",
 			SourceResourceID:   "b426b062-8273-4b93-a907-de3176c0567d",
@@ -639,7 +639,7 @@ func (suite *RepositoryTestSuite) TestGetPatientForSources() {
 	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
 	wasCreated, err := dbRepo.UpsertRawResource(
 		authContext,
-		testSourceCredential,
+		&testSourceCredential,
 		sourceModels.RawResourceFhir{
 			SourceResourceType: "Patient",
 			SourceResourceID:   "b426b062-8273-4b93-a907-de3176c0567d",
@@ -651,7 +651,7 @@ func (suite *RepositoryTestSuite) TestGetPatientForSources() {
 
 	was2Created, err := dbRepo.UpsertRawResource(
 		authContext,
-		testSourceCredential,
+		&testSourceCredential,
 		sourceModels.RawResourceFhir{
 			SourceResourceType: "Patient",
 			SourceResourceID:   "11111111-8273-4b93-a907-de3176c0567d",
@@ -837,7 +837,7 @@ func (suite *RepositoryTestSuite) TestGetSourceSummary() {
 		}
 		wasCreated, err := dbRepo.UpsertRawResource(
 			authContext,
-			testSourceCredential,
+			&testSourceCredential,
 			sourceModels.RawResourceFhir{
 				SourceResourceType: resourceType,
 				SourceResourceID:   *resourceId,
@@ -928,7 +928,7 @@ func (suite *RepositoryTestSuite) TestGetSummary() {
 		}
 		wasCreated, err := dbRepo.UpsertRawResource(
 			authContext,
-			testSourceCredential1,
+			&testSourceCredential1,
 			sourceModels.RawResourceFhir{
 				SourceResourceType: resourceType,
 				SourceResourceID:   *resourceId,
@@ -940,7 +940,7 @@ func (suite *RepositoryTestSuite) TestGetSummary() {
 
 		wasCreated2, err2 := dbRepo.UpsertRawResource(
 			authContext,
-			testSourceCredential2,
+			&testSourceCredential2,
 			sourceModels.RawResourceFhir{
 				SourceResourceType: resourceType,
 				SourceResourceID:   *resourceId + "2",

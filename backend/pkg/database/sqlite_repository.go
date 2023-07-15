@@ -252,7 +252,7 @@ func (sr *SqliteRepository) GetSummary(ctx context.Context) (*models.Summary, er
 //It will also create associations between fhir resources
 func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredential sourceModel.SourceCredential, rawResource sourceModel.RawResourceFhir) (bool, error) {
 
-	source := sourceCredential.(models.SourceCredential)
+	source := sourceCredential.(*models.SourceCredential)
 
 	//convert from a raw resource (from fasten-sources) to a ResourceFhir (which matches the database models)
 	wrappedResourceModel := &models.ResourceBase{
@@ -289,10 +289,10 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 			}
 			err := sr.AddResourceAssociation(
 				ctx,
-				&source,
+				source,
 				wrappedResourceModel.SourceResourceType,
 				wrappedResourceModel.SourceResourceID,
-				&source,
+				source,
 				relatedResource.SourceResourceType,
 				relatedResource.SourceResourceID,
 			)
@@ -328,11 +328,16 @@ func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceM
 	if err != nil {
 		return false, err
 	}
+
 	wrappedFhirResourceModel.SetOriginBase(wrappedResourceModel.OriginBase)
+	//wrappedFhirResourceModel.SetResourceRaw(wrappedResourceModel.ResourceRaw)
+
+	//TODO: this takes too long, we need to find a way to do this processing faster or in the background async.
 	err = wrappedFhirResourceModel.PopulateAndExtractSearchParameters(json.RawMessage(wrappedResourceModel.ResourceRaw))
 	if err != nil {
 		return false, fmt.Errorf("An error ocurred while extracting SearchParameters using FHIRPath (%s/%s): %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID, err)
 	}
+
 	createResult := sr.GormClient.WithContext(ctx).Where(models.OriginBase{
 		SourceID:           wrappedFhirResourceModel.GetSourceID(),
 		SourceResourceID:   wrappedFhirResourceModel.GetSourceResourceID(),

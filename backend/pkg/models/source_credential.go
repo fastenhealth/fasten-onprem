@@ -46,47 +46,50 @@ type SourceCredential struct {
 	CodeVerifier  string `json:"code_verifier"`
 }
 
-func (s SourceCredential) GetSourceType() pkg.SourceType {
+func (s *SourceCredential) GetSourceType() pkg.SourceType {
 	return s.SourceType
 }
 
-func (s SourceCredential) GetClientId() string {
+func (s *SourceCredential) GetClientId() string {
 	return s.ClientId
 }
 
-func (s SourceCredential) GetPatientId() string {
+func (s *SourceCredential) GetPatientId() string {
 	return s.Patient
 }
 
-func (s SourceCredential) GetOauthAuthorizationEndpoint() string {
+func (s *SourceCredential) GetOauthAuthorizationEndpoint() string {
 	return s.AuthorizationEndpoint
 }
 
-func (s SourceCredential) GetOauthTokenEndpoint() string {
+func (s *SourceCredential) GetOauthTokenEndpoint() string {
 	return s.TokenEndpoint
 }
 
-func (s SourceCredential) GetApiEndpointBaseUrl() string {
+func (s *SourceCredential) GetApiEndpointBaseUrl() string {
 	return s.ApiEndpointBaseUrl
 }
 
-func (s SourceCredential) GetRefreshToken() string {
+func (s *SourceCredential) GetRefreshToken() string {
 	return s.RefreshToken
 }
 
-func (s SourceCredential) GetAccessToken() string {
+func (s *SourceCredential) GetAccessToken() string {
 	return s.AccessToken
 }
 
-func (s SourceCredential) GetExpiresAt() int64 {
+func (s *SourceCredential) GetExpiresAt() int64 {
 	return s.ExpiresAt
 }
 
-func (s SourceCredential) RefreshTokens(accessToken string, refreshToken string, expiresAt int64) {
+func (s *SourceCredential) RefreshTokens(accessToken string, refreshToken string, expiresAt int64) {
+	if expiresAt > 0 && expiresAt != s.ExpiresAt {
+		s.ExpiresAt = expiresAt
+	}
+
 	if accessToken != s.AccessToken {
 		// update the "source" credential with new data (which will need to be sent
 		s.AccessToken = accessToken
-		s.ExpiresAt = expiresAt
 		// Don't overwrite `RefreshToken` with an empty value
 		// if this was a token refreshing request.
 		if refreshToken != "" {

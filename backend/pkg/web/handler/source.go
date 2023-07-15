@@ -36,7 +36,7 @@ func CreateSource(c *gin.Context) {
 	}
 
 	// after creating the source, we should do a bulk import
-	summary, err := SyncSourceResources(c, logger, databaseRepo, sourceCred)
+	summary, err := SyncSourceResources(c, logger, databaseRepo, &sourceCred)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
@@ -59,7 +59,7 @@ func SourceSync(c *gin.Context) {
 	}
 
 	// after creating the source, we should do a bulk import
-	summary, err := SyncSourceResources(c, logger, databaseRepo, *sourceCred)
+	summary, err := SyncSourceResources(c, logger, databaseRepo, sourceCred)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
@@ -99,7 +99,7 @@ func CreateManualSource(c *gin.Context) {
 	manualSourceCredential := models.SourceCredential{
 		SourceType: sourcePkg.SourceTypeManual,
 	}
-	tempSourceClient, _, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourcePkg.SourceTypeManual, c, logger, manualSourceCredential)
+	tempSourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourcePkg.SourceTypeManual, c, logger, &manualSourceCredential)
 	if err != nil {
 		logger.Errorln("An error occurred while initializing hub client using manual source without credentials", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
@@ -122,7 +122,7 @@ func CreateManualSource(c *gin.Context) {
 		return
 	}
 
-	manualSourceClient, _, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourcePkg.SourceTypeManual, c, logger, manualSourceCredential)
+	manualSourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourcePkg.SourceTypeManual, c, logger, &manualSourceCredential)
 	if err != nil {
 		logger.Errorln("An error occurred while initializing hub client using manual source with credential", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
@@ -178,22 +178,22 @@ func ListSource(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceCreds})
 }
 
-func SyncSourceResources(c context.Context, logger *logrus.Entry, databaseRepo database.DatabaseRepository, sourceCred models.SourceCredential) (sourceModels.UpsertSummary, error) {
+func SyncSourceResources(c context.Context, logger *logrus.Entry, databaseRepo database.DatabaseRepository, sourceCred *models.SourceCredential) (sourceModels.UpsertSummary, error) {
 	// after creating the source, we should do a bulk import
-	sourceClient, updatedSource, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourceCred.SourceType, c, logger, sourceCred)
+	sourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourceCred.SourceType, c, logger, sourceCred)
 	if err != nil {
 		logger.Errorln("An error occurred while initializing hub client using source credential", err)
 		return sourceModels.UpsertSummary{}, err
 	}
 	//TODO: update source
-	if updatedSource != nil {
-		logger.Warnf("TODO: source credential has been updated, we should store it in the database: %v", updatedSource)
-		//err := databaseRepo.CreateSource(c, updatedSource)
-		//if err != nil {
-		//	logger.Errorln("An error occurred while updating source credential", err)
-		//	return err
-		//}
-	}
+	//if updatedSource != nil {
+	//	logger.Warnf("TODO: source credential has been updated, we should store it in the database: %v", updatedSource)
+	//	//err := databaseRepo.CreateSource(c, updatedSource)
+	//	//if err != nil {
+	//	//	logger.Errorln("An error occurred while updating source credential", err)
+	//	//	return err
+	//	//}
+	//}
 
 	summary, err := sourceClient.SyncAll(databaseRepo)
 	if err != nil {

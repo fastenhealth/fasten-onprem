@@ -21,3 +21,7 @@ type ResourceBase struct {
 func (s *ResourceBase) SetOriginBase(originBase OriginBase) {
 	s.OriginBase = originBase
 }
+
+func (s *ResourceBase) SetResourceRaw(resourceRaw datatypes.JSON) {
+	s.ResourceRaw = resourceRaw
+}
