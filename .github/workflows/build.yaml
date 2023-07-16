@@ -3,7 +3,7 @@ on:
   push:
     branches: [ main, beta ]
     # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
+    tags: [ '*' ]
 
 env:
   REGISTRY: ghcr.io
