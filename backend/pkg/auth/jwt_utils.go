@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/golang-jwt/jwt/v4"
-	"log"
 	"strings"
 	"time"
 )
@@ -16,7 +15,7 @@ func JwtGenerateFastenTokenFromUser(user models.User, issuerSigningKey string) (
 	if len(strings.TrimSpace(issuerSigningKey)) == 0 {
 		return "", fmt.Errorf("issuer signing key cannot be empty")
 	}
-	log.Printf("ISSUER KEY: " + issuerSigningKey)
+	//log.Printf("ISSUER KEY: " + issuerSigningKey)
 	userClaims := UserRegisteredClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			// In JWT, the expiry time is expressed as unix milliseconds
