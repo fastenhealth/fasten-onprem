@@ -194,7 +194,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
               const toastNotification = new ToastNotification()
               toastNotification.type = ToastType.Error
-              toastNotification.message = `An error occurred while accessing ${sourceType}: ${err}`
+              toastNotification.message = `An error occurred while accessing ${sourceType}: '${JSON.stringify(err)}'`
               toastNotification.autohide = false
               this.toastService.show(toastNotification)
               console.error(err)
@@ -206,7 +206,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
         const toastNotification = new ToastNotification()
         toastNotification.type = ToastType.Error
-        toastNotification.message = `An error occurred while accessing ${sourceType}: ${err}`
+        toastNotification.message = `An error occurred while accessing ${sourceType}: '${JSON.stringify(err)}'`
         toastNotification.autohide = false
         this.toastService.show(toastNotification)
         console.error(err)
