@@ -11,6 +11,10 @@ export class Source extends LighthouseSourceMetadata{
   id_token?:              string
   expires_at:            number //seconds since epoch
 
+
+  dynamic_client_jwks?: any[]
+  dynamic_client_id?: string
+
   constructor(object: any) {
     super()
     return Object.assign(this, object)

@@ -1,8 +1,18 @@
 package models
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/fastenhealth/fasten-sources/pkg"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/jwk"
 	"github.com/google/uuid"
+	"github.com/lestrrat-go/jwx/v2/jwa"
+	"github.com/lestrrat-go/jwx/v2/jwt"
+	"io"
+	"log"
+	"net/http"
+	"net/url"
+	"time"
 )
 
 // SourceCredential Data/Medical Provider Credentials
@@ -18,6 +28,7 @@ type SourceCredential struct {
 	AuthorizationEndpoint string `json:"authorization_endpoint"`
 	TokenEndpoint         string `json:"token_endpoint"`
 	IntrospectionEndpoint string `json:"introspection_endpoint"`
+	RegistrationEndpoint  string `json:"registration_endpoint"` //optional - required when Dynamic Client Registration mode is set
 
 	Scopes                        []string `json:"scopes_supported" gorm:"type:text;serializer:json"`
 	Issuer                        string   `json:"issuer"`
@@ -33,8 +44,9 @@ type SourceCredential struct {
 	ClientId           string `json:"client_id"`
 	RedirectUri        string `json:"redirect_uri"` //lighthouse url the provider will redirect to (registered with App)
 
-	Confidential      bool `json:"confidential"`        //if enabled, requires client_secret to authenticate with provider (PKCE)
-	CORSRelayRequired bool `json:"cors_relay_required"` //if true, requires CORS proxy/relay, as provider does not return proper response to CORS preflight
+	Confidential                  bool   `json:"confidential"`                     //if enabled, requires client_secret to authenticate with provider (PKCE)
+	DynamicClientRegistrationMode string `json:"dynamic_client_registration_mode"` //if enabled, will dynamically register client with provider (https://oauth.net/2/dynamic-client-registration/)
+	CORSRelayRequired             bool   `json:"cors_relay_required"`              //if true, requires CORS proxy/relay, as provider does not return proper response to CORS preflight
 	//SecretKeyPrefix   string `json:"-"`                   //the secret key prefix to use, if empty (default) will use the sourceType value
 
 	// auth/credential data
@@ -44,6 +56,10 @@ type SourceCredential struct {
 	ExpiresAt     int64  `json:"expires_at"`
 	CodeChallenge string `json:"code_challenge"`
 	CodeVerifier  string `json:"code_verifier"`
+
+	//dynamic client auth/credential data
+	DynamicClientJWKS []map[string]string `json:"dynamic_client_jwks" gorm:"type:text;serializer:json"`
+	DynamicClientId   string              `json:"dynamic_client_id"`
 }
 
 func (s *SourceCredential) GetSourceType() pkg.SourceType {
@@ -82,7 +98,7 @@ func (s *SourceCredential) GetExpiresAt() int64 {
 	return s.ExpiresAt
 }
 
-func (s *SourceCredential) RefreshTokens(accessToken string, refreshToken string, expiresAt int64) {
+func (s *SourceCredential) SetTokens(accessToken string, refreshToken string, expiresAt int64) {
 	if expiresAt > 0 && expiresAt != s.ExpiresAt {
 		s.ExpiresAt = expiresAt
 	}
@@ -108,5 +124,83 @@ tokenResponse: payload,
 expiresAt: getAccessTokenExpiration(payload, new BrowserAdapter()),
 codeChallenge: codeChallenge,
 codeVerifier: codeVerifier
-
 */
+
+// IsDynamicClient this method is used to check if this source uses dynamic client registration (used to customize token refresh logic)
+func (s *SourceCredential) IsDynamicClient() bool {
+	return len(s.DynamicClientRegistrationMode) > 0
+}
+
+//this will set/update the AccessToken and Expiry using the dynamic client credentials
+func (s *SourceCredential) RefreshDynamicClientAccessToken() error {
+	if len(s.DynamicClientRegistrationMode) == 0 {
+		return fmt.Errorf("dynamic client registration mode not set")
+	}
+	if len(s.DynamicClientJWKS) == 0 {
+		return fmt.Errorf("dynamic client jwks not set")
+	}
+	if len(s.DynamicClientId) == 0 {
+		return fmt.Errorf("dynamic client id not set")
+	}
+
+	//convert the serialized dynamic-client credentials to a jwx.Key
+	jwkeypair, err := jwk.JWKDeserialize(s.DynamicClientJWKS[0])
+	if err != nil {
+		return err
+	}
+
+	// see https://github.com/lestrrat-go/jwx/tree/v2/jwt#token-usage
+	t := jwt.New()
+	t.Set("kid", jwkeypair.KeyID())
+	t.Set(jwt.SubjectKey, s.DynamicClientId)
+	t.Set(jwt.AudienceKey, s.TokenEndpoint)
+	t.Set(jwt.JwtIDKey, uuid.New().String())
+	t.Set(jwt.ExpirationKey, time.Now().Add(time.Minute*2).Unix()) // must be less than 5 minutes from now. Time when this JWT expires
+	t.Set(jwt.IssuedAtKey, time.Now().Unix())
+	t.Set(jwt.IssuerKey, s.DynamicClientId)
+
+	//sign the jwt with the private key
+	// Signing a token (using raw rsa.PrivateKey)
+	signed, err := jwt.Sign(t, jwt.WithKey(jwa.RS256, jwkeypair))
+	if err != nil {
+		return fmt.Errorf("failed to sign dynamic-client jwt: %s", err)
+	}
+
+	//send this signed jwt to the token endpoint to get a new access token
+	// https://fhir.epic.com/Documentation?docId=oauth2&section=JWKS
+
+	postForm := url.Values{
+		"grant_type": {"urn:ietf:params:oauth:grant-type:jwt-bearer"},
+		"assertion":  {string(signed)},
+		"client_id":  {s.DynamicClientId},
+	}
+
+	tokenResp, err := http.PostForm(s.TokenEndpoint, postForm)
+
+	if err != nil {
+		return fmt.Errorf("an error occurred while sending dynamic client token request, %s", err)
+	}
+
+	defer tokenResp.Body.Close()
+	if tokenResp.StatusCode >= 300 || tokenResp.StatusCode < 200 {
+
+		b, err := io.ReadAll(tokenResp.Body)
+		if err != nil {
+			log.Printf("Response body: %s", string(b))
+		}
+
+		return fmt.Errorf("an error occurred while reading dynamic client token response, status code was not 200: %d", tokenResp.StatusCode)
+	}
+
+	var registrationTokenResponseBytes ClientRegistrationTokenResponse
+	err = json.NewDecoder(tokenResp.Body).Decode(&registrationTokenResponseBytes)
+	if err != nil {
+		return fmt.Errorf("an error occurred while parsing dynamic client token response", err)
+	}
+
+	//update the source credential with the new access token
+	s.AccessToken = registrationTokenResponseBytes.AccessToken
+	s.ExpiresAt = time.Now().Add(time.Second * time.Duration(registrationTokenResponseBytes.ExpiresIn)).Unix()
+
+	return nil
+}

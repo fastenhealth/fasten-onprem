@@ -141,6 +141,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           token_endpoint: sourceMetadata.token_endpoint,
           introspection_endpoint: sourceMetadata.introspection_endpoint,
           userinfo_endpoint: sourceMetadata.userinfo_endpoint,
+          registration_endpoint: sourceMetadata.registration_endpoint,
           api_endpoint_base_url:   sourceMetadata.api_endpoint_base_url,
           client_id:             sourceMetadata.client_id,
           redirect_uri:          sourceMetadata.redirect_uri,
@@ -157,6 +158,8 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           access_token:          payload.access_token,
           refresh_token:          payload.refresh_token,
           id_token:              payload.id_token,
+
+          dynamic_client_registration_mode:  sourceMetadata.dynamic_client_registration_mode,
 
           // @ts-ignore - in some cases the getAccessTokenExpiration is a string, which cases failures to store Source in db.
           expires_at:            parseInt(this.getAccessTokenExpiration(payload)),
