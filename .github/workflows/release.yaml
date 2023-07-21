@@ -23,7 +23,8 @@ jobs:
     steps:
       - name: Get Packagr Token
         id: packagr-token
-        uses: getsentry/action-github-app-token@v2
+#        uses: getsentry/action-github-app-token@v2
+        uses: tibdex/github-app-token@v1
         with:
           app_id: ${{ secrets.PACKAGR_APP_ID }}
           private_key: ${{ secrets.PACKAGR_APP_PRIVATE_KEY }}
