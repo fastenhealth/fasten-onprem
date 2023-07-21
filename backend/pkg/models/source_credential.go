@@ -195,7 +195,7 @@ func (s *SourceCredential) RefreshDynamicClientAccessToken() error {
 	var registrationTokenResponseBytes ClientRegistrationTokenResponse
 	err = json.NewDecoder(tokenResp.Body).Decode(&registrationTokenResponseBytes)
 	if err != nil {
-		return fmt.Errorf("an error occurred while parsing dynamic client token response", err)
+		return fmt.Errorf("an error occurred while parsing dynamic client token response: %v", err)
 	}
 
 	//update the source credential with the new access token
