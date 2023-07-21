@@ -21,12 +21,12 @@ jobs:
     env:
       STATIC: true
     steps:
-#      - name: Get Packagr Token
-#        id: packagr-token
-#        uses: getsentry/action-github-app-token@v2
-#        with:
-#          app_id: ${{ secrets.PACKAGR_APP_ID }}
-#          private_key: ${{ secrets.PACKAGR_APP_PRIVATE_KEY }}
+      - name: Get Packagr Token
+        id: packagr-token
+        uses: getsentry/action-github-app-token@v2
+        with:
+          app_id: ${{ secrets.PACKAGR_APP_ID }}
+          private_key: ${{ secrets.PACKAGR_APP_PRIVATE_KEY }}
       - name: Git
         run: |
           apt-get update && apt-get install -y software-properties-common
@@ -43,8 +43,8 @@ jobs:
           version_bump_type: ${{ github.event.inputs.version_bump_type }}
           version_metadata_path: ${{ github.event.inputs.version_metadata_path }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          GITHUB_TOKEN: ${{ steps.packagr-token.outputs.token }}
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.packagr-token.outputs.token }}
 #      - name: Test
 #        run: |
 #          make test
@@ -52,8 +52,8 @@ jobs:
         id: commit
         uses: packagrio/action-releasr-go@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          GITHUB_TOKEN: ${{ steps.packagr-token.outputs.token }}
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.packagr-token.outputs.token }}
         with:
           version_metadata_path: ${{ github.event.inputs.version_metadata_path }}
       - name: Publish Release & Assets
@@ -61,8 +61,8 @@ jobs:
         uses: packagrio/action-publishr-go@master
         env:
           # This is necessary in order to push a commit to the repo
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          GITHUB_TOKEN: ${{ steps.packagr-token.outputs.token }}
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.packagr-token.outputs.token }}
         with:
           version_metadata_path: ${{ github.event.inputs.version_metadata_path }}
 
