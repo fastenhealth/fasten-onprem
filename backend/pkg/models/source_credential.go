@@ -185,8 +185,8 @@ func (s *SourceCredential) RefreshDynamicClientAccessToken() error {
 	if tokenResp.StatusCode >= 300 || tokenResp.StatusCode < 200 {
 
 		b, err := io.ReadAll(tokenResp.Body)
-		if err != nil {
-			log.Printf("Response body: %s", string(b))
+		if err == nil {
+			log.Printf("Error Response body: %s", string(b))
 		}
 
 		return fmt.Errorf("an error occurred while reading dynamic client token response, status code was not 200: %d", tokenResp.StatusCode)

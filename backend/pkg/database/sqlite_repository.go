@@ -775,6 +775,29 @@ func (sr *SqliteRepository) CreateSource(ctx context.Context, sourceCreds *model
 		Assign(*sourceCreds).FirstOrCreate(sourceCreds).Error
 }
 
+func (sr *SqliteRepository) UpdateSource(ctx context.Context, sourceCreds *models.SourceCredential) error {
+	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return currentUserErr
+	}
+	sourceCreds.UserID = currentUser.ID
+
+	//Assign will **always** update the source credential in the DB with data passed into this function.
+	return sr.GormClient.WithContext(ctx).
+		Where(models.SourceCredential{
+			ModelBase:  models.ModelBase{ID: sourceCreds.ID},
+			UserID:     sourceCreds.UserID,
+			SourceType: sourceCreds.SourceType,
+		}).Updates(models.SourceCredential{
+		AccessToken:                   sourceCreds.AccessToken,
+		RefreshToken:                  sourceCreds.RefreshToken,
+		ExpiresAt:                     sourceCreds.ExpiresAt,
+		DynamicClientId:               sourceCreds.DynamicClientId,
+		DynamicClientRegistrationMode: sourceCreds.DynamicClientRegistrationMode,
+		DynamicClientJWKS:             sourceCreds.DynamicClientJWKS,
+	}).Error
+}
+
 func (sr *SqliteRepository) GetSource(ctx context.Context, sourceId string) (*models.SourceCredential, error) {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {

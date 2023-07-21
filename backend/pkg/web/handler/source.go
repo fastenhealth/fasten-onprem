@@ -105,8 +105,8 @@ func CreateSource(c *gin.Context) {
 		if registrationResponse.StatusCode >= 300 || registrationResponse.StatusCode < 200 {
 			logger.Errorln("An error occurred while reading dynamic client registration response, status code was not 200", registrationResponse.StatusCode)
 			b, err := io.ReadAll(registrationResponse.Body)
-			if err != nil {
-				logger.Printf("Response body: %s", string(b))
+			if err == nil {
+				logger.Printf("Error Response body: %s", string(b))
 			}
 
 			c.JSON(http.StatusBadRequest, gin.H{"success": false})
@@ -291,20 +291,25 @@ func SyncSourceResources(c context.Context, logger *logrus.Entry, databaseRepo d
 		logger.Errorln("An error occurred while initializing hub client using source credential", err)
 		return sourceModels.UpsertSummary{}, err
 	}
-	//TODO: update source
-	//if updatedSource != nil {
-	//	logger.Warnf("TODO: source credential has been updated, we should store it in the database: %v", updatedSource)
-	//	//err := databaseRepo.CreateSource(c, updatedSource)
-	//	//if err != nil {
-	//	//	logger.Errorln("An error occurred while updating source credential", err)
-	//	//	return err
-	//	//}
-	//}
 
 	summary, err := sourceClient.SyncAll(databaseRepo)
 	if err != nil {
 		logger.Errorln("An error occurred while bulk import of resources from source", err)
 		return summary, err
 	}
+
+	//update source incase the access token/refresh token has been updated
+	sourceCredential := sourceClient.GetSourceCredential()
+	sourceCredentialConcrete, ok := sourceCredential.(*models.SourceCredential)
+	if !ok {
+		logger.Errorln("An error occurred while updating source credential, source credential is not of type *models.SourceCredential")
+		return summary, fmt.Errorf("source credential is not of type *models.SourceCredential")
+	}
+	err = databaseRepo.UpdateSource(c, sourceCredentialConcrete)
+	if err != nil {
+		logger.Errorf("An error occurred while updating source credential: %v", err)
+		return summary, err
+	}
+
 	return summary, nil
 }

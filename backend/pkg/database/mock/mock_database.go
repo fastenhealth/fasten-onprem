@@ -359,6 +359,20 @@ func (mr *MockDatabaseRepositoryMockRecorder) RemoveResourceAssociation(ctx, sou
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveResourceAssociation", reflect.TypeOf((*MockDatabaseRepository)(nil).RemoveResourceAssociation), ctx, source, resourceType, resourceId, relatedSource, relatedResourceType, relatedResourceId)
 }
 
+// UpdateSource mocks base method.
+func (m *MockDatabaseRepository) UpdateSource(ctx context.Context, sourceCreds *models0.SourceCredential) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateSource", ctx, sourceCreds)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateSource indicates an expected call of UpdateSource.
+func (mr *MockDatabaseRepositoryMockRecorder) UpdateSource(ctx, sourceCreds interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSource", reflect.TypeOf((*MockDatabaseRepository)(nil).UpdateSource), ctx, sourceCreds)
+}
+
 // UpsertRawResource mocks base method.
 func (m *MockDatabaseRepository) UpsertRawResource(ctx context.Context, sourceCredentials models.SourceCredential, rawResource models.RawResourceFhir) (bool, error) {
 	m.ctrl.T.Helper()

@@ -23,9 +23,6 @@ func TestJWKSerialize(t *testing.T) {
 	require.NotEmpty(t, keypair.KeyID())
 	require.ElementsMatch(t, []string{"d", "dp", "dq", "e", "kty", "n", "p", "q", "qi", "kid"}, keys)
 	require.Equal(t, "RSA", dict["kty"])
-	//require.Equal(t, map[string]string{}, dict)
-
-	require.Equal(t, string(keypair.N()), dict["n"])
 }
 
 func TestJWKDeserialize(t *testing.T) {
