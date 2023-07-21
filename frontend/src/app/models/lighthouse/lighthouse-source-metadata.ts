@@ -6,6 +6,7 @@ export class LighthouseSourceMetadata extends MetadataSource {
   token_endpoint: string
   introspection_endpoint: string
   userinfo_endpoint: string
+  registration_endpoint: string
 
   scopes_supported: string[]
   issuer: string
@@ -20,5 +21,6 @@ export class LighthouseSourceMetadata extends MetadataSource {
   redirect_uri: string
 
   confidential: boolean
+  dynamic_client_registration_mode: string
   cors_relay_required: boolean
 }

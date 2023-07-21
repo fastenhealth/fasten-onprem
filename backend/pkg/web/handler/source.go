@@ -1,16 +1,20 @@
 package handler
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/fastenhealth/fasten-sources/clients/factory"
 	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/jwk"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"io"
 	"io/ioutil"
 	"net/http"
 )
@@ -27,6 +31,108 @@ func CreateSource(c *gin.Context) {
 	}
 
 	logger.Infof("Parsed Create SourceCredential Credentials Payload: %v", sourceCred)
+
+	if sourceCred.DynamicClientRegistrationMode == "user-authenticated" {
+		logger.Warnf("This client requires a dynamice client registration, starting registration process")
+
+		if len(sourceCred.RegistrationEndpoint) == 0 {
+			logger.Errorln("Empty registration endpoint, cannot be used with dynamic-client registration mode:", sourceCred.DynamicClientRegistrationMode)
+			c.JSON(http.StatusBadRequest, gin.H{"success": false})
+			return
+		}
+		//this source requires dynamic client registration
+		// see https://fhir.epic.com/Documentation?docId=Oauth2&section=Standalone-Oauth2-OfflineAccess-0
+
+		// Generate a public-private key pair
+		// Must be 2048 bits (larger keys will silently fail when used with Epic, untested on other providers)
+		sourceSpecificClientKeyPair, err := jwk.JWKGenerate()
+		if err != nil {
+			logger.Errorln("An error occurred while generating device-specific keypair for dynamic client", err)
+			c.JSON(http.StatusBadRequest, gin.H{"success": false})
+			return
+		}
+		//store in sourceCredential
+		serializedKeypair, err := jwk.JWKSerialize(sourceSpecificClientKeyPair)
+		if err != nil {
+			logger.Errorln("An error occurred while serializing keypair for dynamic client", err)
+			c.JSON(http.StatusBadRequest, gin.H{"success": false})
+			return
+		}
+		sourceCred.DynamicClientJWKS = []map[string]string{
+			serializedKeypair,
+		}
+
+		//generate dynamic client registration request
+		payload := models.ClientRegistrationRequest{
+			SoftwareId: sourceCred.ClientId,
+			Jwks: models.ClientRegistrationRequestJwks{
+				Keys: []models.ClientRegistrationRequestJwksKey{
+					{
+						KeyType:        "RSA",
+						KeyId:          serializedKeypair["kid"],
+						Modulus:        serializedKeypair["n"],
+						PublicExponent: serializedKeypair["e"],
+					},
+				},
+			},
+		}
+		payloadBytes, err := json.Marshal(payload)
+		if err != nil {
+			logger.Errorln("An error occurred while marshalling dynamic client registration request", err)
+			c.JSON(http.StatusBadRequest, gin.H{"success": false})
+			return
+		}
+
+		//http.Post("https://fhir.epic.com/interconnect-fhir-oauth/oauth2/token", "application/x-www-form-urlencoded", bytes.NewBuffer([]byte(fmt.Sprintf("grant_type=client_credentials&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&client_assertion=%s&scope=system/Patient.read", sourceSpecificClientKeyPair))))
+		req, err := http.NewRequest(http.MethodPost, sourceCred.RegistrationEndpoint, bytes.NewBuffer(payloadBytes))
+		if err != nil {
+			logger.Errorln("An error occurred while generating dynamic client registration request", err)
+			c.JSON(http.StatusBadRequest, gin.H{"success": false})
+			return
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Accept", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", sourceCred.AccessToken))
+
+		registrationResponse, err := http.DefaultClient.Do(req)
+
+		if err != nil {
+			logger.Errorln("An error occurred while sending dynamic client registration request", err)
+			c.JSON(http.StatusBadRequest, gin.H{"success": false})
+			return
+		}
+		defer registrationResponse.Body.Close()
+		if registrationResponse.StatusCode >= 300 || registrationResponse.StatusCode < 200 {
+			logger.Errorln("An error occurred while reading dynamic client registration response, status code was not 200", registrationResponse.StatusCode)
+			b, err := io.ReadAll(registrationResponse.Body)
+			if err == nil {
+				logger.Printf("Error Response body: %s", string(b))
+			}
+
+			c.JSON(http.StatusBadRequest, gin.H{"success": false})
+			return
+		}
+
+		//read response
+		var registrationResponseBytes models.ClientRegistrationResponse
+		err = json.NewDecoder(registrationResponse.Body).Decode(&registrationResponseBytes)
+		if err != nil {
+			logger.Errorln("An error occurred while parsing dynamic client registration response", err)
+			c.JSON(http.StatusBadRequest, gin.H{"success": false})
+			return
+		}
+
+		//store the dynamic client id
+		sourceCred.DynamicClientId = registrationResponseBytes.ClientId
+
+		//generate a JWT token and then use it to get an access token for the dynamic client
+		err = sourceCred.RefreshDynamicClientAccessToken()
+		if err != nil {
+			logger.Errorln("An error occurred while retrieving access token for dynamic client", err)
+			c.JSON(http.StatusBadRequest, gin.H{"success": false})
+			return
+		}
+	}
 
 	err := databaseRepo.CreateSource(c, &sourceCred)
 	if err != nil {
@@ -185,20 +291,25 @@ func SyncSourceResources(c context.Context, logger *logrus.Entry, databaseRepo d
 		logger.Errorln("An error occurred while initializing hub client using source credential", err)
 		return sourceModels.UpsertSummary{}, err
 	}
-	//TODO: update source
-	//if updatedSource != nil {
-	//	logger.Warnf("TODO: source credential has been updated, we should store it in the database: %v", updatedSource)
-	//	//err := databaseRepo.CreateSource(c, updatedSource)
-	//	//if err != nil {
-	//	//	logger.Errorln("An error occurred while updating source credential", err)
-	//	//	return err
-	//	//}
-	//}
 
 	summary, err := sourceClient.SyncAll(databaseRepo)
 	if err != nil {
 		logger.Errorln("An error occurred while bulk import of resources from source", err)
 		return summary, err
 	}
+
+	//update source incase the access token/refresh token has been updated
+	sourceCredential := sourceClient.GetSourceCredential()
+	sourceCredentialConcrete, ok := sourceCredential.(*models.SourceCredential)
+	if !ok {
+		logger.Errorln("An error occurred while updating source credential, source credential is not of type *models.SourceCredential")
+		return summary, fmt.Errorf("source credential is not of type *models.SourceCredential")
+	}
+	err = databaseRepo.UpdateSource(c, sourceCredentialConcrete)
+	if err != nil {
+		logger.Errorf("An error occurred while updating source credential: %v", err)
+		return summary, err
+	}
+
 	return summary, nil
 }
