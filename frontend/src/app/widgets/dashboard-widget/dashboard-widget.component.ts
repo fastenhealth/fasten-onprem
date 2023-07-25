@@ -54,7 +54,21 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
       return
     }
     this.loading = true
-    forkJoin(this.widgetConfig.queries.map(query => { return this.fastenApi.queryResources(query.q)})).subscribe((queryResults) => {
+    var currentThis = this
+    forkJoin(this.widgetConfig.queries.map(query => { return this.fastenApi.queryResources(query.q)})).subscribe(
+      this.processQueryResults.bind(currentThis),
+      (error) => {
+        this.loading = false
+      },
+      () => {
+        console.log("complete")
+      })
+  }
+
+  //requires widgetConfig to be specified
+  processQueryResults(queryResults: any[]) {
+
+    try {
       this.chartDatasets = []
 
       for (let queryNdx in queryResults) {
@@ -67,8 +81,8 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
           // if(Array.isArray(label)){
           //   this.chartLabels.push(...label)
           // } else {
-            this.isEmpty = false
-            this.chartLabels.push(label)
+          this.isEmpty = false
+          this.chartLabels.push(label)
           // }
         }
 
@@ -86,14 +100,18 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
       //push datasets for non-query components
       this.chartDatasetsSubject.next(queryResults)
       this.loading = false
+    } catch(e){
+      console.error("ERROR DURING PROCESSING")
+      console.error(e)
+    }
 
-    }, (error) => {
-      this.loading = false
-    })
+
+
+    console.log(`Loading COmpleted for ${this.widgetConfig.title_text}, ${this.loading}`)
   }
 
   getLastDatasetValue(dataset: ChartDataset<'line'>): string {
-    let lastItem = dataset?.data?.splice(-1) || ''
+    let lastItem = dataset?.data?.[dataset?.data?.length -1] || ''
     let valueKey = this.chartOptions?.parsing?.['yAxisKey'] || dataset?.parsing?.['key']
     console.log('current', lastItem, valueKey)
 
@@ -107,7 +125,7 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
       console.log('lastItem-object', lastItem?.[valueKey])
       return lastItem?.[valueKey]
     } else {
-      return lastItem
+      return lastItem.toString()
     }
   }
 

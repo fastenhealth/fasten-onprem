@@ -1,0 +1,454 @@
+{
+  "data": [{
+    "id": "4c0ab718-2236-4933-bb31-2ff3a62f3c97",
+    "created_at": "2023-06-21T10:30:19.76805-07:00",
+    "updated_at": "2023-06-21T10:30:19.76805-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "d86f988c-81b9-4b07-acb6-2e5894bd4b78",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "d86f988c-81b9-4b07-acb6-2e5894bd4b78",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body Weight"
+        }],
+        "text": "Body Weight"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:1a3bbe38-b7c3-43fc-b175-740adfcaa83a"
+      },
+      "effectiveDateTime": "2012-04-23T12:22:44-04:00",
+      "issued": "2012-04-23T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 50.83337173371525,
+        "unit": "kg",
+        "system": "http://unitsofmeasure.org",
+        "code": "kg"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "6fa1b324-1951-4704-9257-41a8959c87d4",
+    "created_at": "2023-06-21T10:30:37.580984-07:00",
+    "updated_at": "2023-06-21T10:30:37.580984-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "a06df51f-be7e-446b-b130-ff6c015197c7",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "a06df51f-be7e-446b-b130-ff6c015197c7",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body Weight"
+        }],
+        "text": "Body Weight"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:cde6c902-957a-48c1-883f-38c808188fe3"
+      },
+      "effectiveDateTime": "2016-05-16T12:22:44-04:00",
+      "issued": "2016-05-16T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 72.87763876057473,
+        "unit": "kg",
+        "system": "http://unitsofmeasure.org",
+        "code": "kg"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "75b5050f-a52c-4838-a860-fdf643e99bb4",
+    "created_at": "2023-06-21T10:30:12.10784-07:00",
+    "updated_at": "2023-06-21T10:30:12.10784-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "10d0066d-df64-47cc-aa26-91d8515befe8",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "10d0066d-df64-47cc-aa26-91d8515befe8",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body Weight"
+        }],
+        "text": "Body Weight"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:d051d64b-5b2f-4465-92c3-4e693d54f653"
+      },
+      "effectiveDateTime": "2010-04-12T12:22:44-04:00",
+      "issued": "2010-04-12T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 34.076302569156475,
+        "unit": "kg",
+        "system": "http://unitsofmeasure.org",
+        "code": "kg"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "7bfe2e7e-0484-4fc7-90f5-35c2bace9742",
+    "created_at": "2023-06-21T10:30:31.477868-07:00",
+    "updated_at": "2023-06-21T10:30:31.477868-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "7631babf-ac63-4a68-ac60-f904ca811665",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "7631babf-ac63-4a68-ac60-f904ca811665",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body Weight"
+        }],
+        "text": "Body Weight"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:9f4e40e3-6f6b-4959-b407-3926e9ed049c"
+      },
+      "effectiveDateTime": "2014-05-05T12:22:44-04:00",
+      "issued": "2014-05-05T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 48.44696267722808,
+        "unit": "kg",
+        "system": "http://unitsofmeasure.org",
+        "code": "kg"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "84c89bf1-aead-481f-8cec-b1ef9683eddd",
+    "created_at": "2023-06-21T10:30:15.860444-07:00",
+    "updated_at": "2023-06-21T10:30:15.860444-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "7245ab6c-9a3a-4870-b4ed-ecfd8dc9c333",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "7245ab6c-9a3a-4870-b4ed-ecfd8dc9c333",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body Weight"
+        }],
+        "text": "Body Weight"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:cb3ae560-0a65-41f8-9712-aa3c5766ffe5"
+      },
+      "effectiveDateTime": "2011-04-18T12:22:44-04:00",
+      "issued": "2011-04-18T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 42.58491202920048,
+        "unit": "kg",
+        "system": "http://unitsofmeasure.org",
+        "code": "kg"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "9a11be87-b435-4e39-b060-76b9d892f5d6",
+    "created_at": "2023-06-21T10:30:52.338823-07:00",
+    "updated_at": "2023-06-21T10:30:52.338823-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "9ad47387-cc5a-4be6-b42c-440a51b3ff02",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "9ad47387-cc5a-4be6-b42c-440a51b3ff02",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body Weight"
+        }],
+        "text": "Body Weight"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:92b439da-6fdd-48e5-aa8d-b0543f840a1b"
+      },
+      "effectiveDateTime": "2019-06-03T12:22:44-04:00",
+      "issued": "2019-06-03T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 96.76402696153822,
+        "unit": "kg",
+        "system": "http://unitsofmeasure.org",
+        "code": "kg"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "a425342e-cb4b-4391-b320-634fcb91ec79",
+    "created_at": "2023-06-21T10:30:34.150903-07:00",
+    "updated_at": "2023-06-21T10:30:34.150903-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "076abe82-ca7b-45d1-a291-4352f67da147",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "076abe82-ca7b-45d1-a291-4352f67da147",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body Weight"
+        }],
+        "text": "Body Weight"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:9ea75521-441c-41e4-96df-237219e5ca63"
+      },
+      "effectiveDateTime": "2015-05-11T12:22:44-04:00",
+      "issued": "2015-05-11T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 59.362647916721876,
+        "unit": "kg",
+        "system": "http://unitsofmeasure.org",
+        "code": "kg"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "a737caca-f54e-4896-b846-f4d1fa9b518c",
+    "created_at": "2023-06-21T10:30:22.288958-07:00",
+    "updated_at": "2023-06-21T10:30:22.288958-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "cead148c-1544-49fd-990d-7d802ba41d5f",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "cead148c-1544-49fd-990d-7d802ba41d5f",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body Weight"
+        }],
+        "text": "Body Weight"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:d9a7c76f-dfe4-41c6-9924-82a405613f44"
+      },
+      "effectiveDateTime": "2013-04-29T12:22:44-04:00",
+      "issued": "2013-04-29T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 39.61004192084209,
+        "unit": "kg",
+        "system": "http://unitsofmeasure.org",
+        "code": "kg"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "b771e5b8-6c57-4b45-beb7-88f5a3676991",
+    "created_at": "2023-06-21T10:30:41.306405-07:00",
+    "updated_at": "2023-06-21T10:30:41.306405-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "d5b46576-377f-4b1a-a011-da8c5107f490",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "d5b46576-377f-4b1a-a011-da8c5107f490",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body Weight"
+        }],
+        "text": "Body Weight"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:e44ec534-b752-4647-acd3-3794bc51db6d"
+      },
+      "effectiveDateTime": "2017-05-22T12:22:44-04:00",
+      "issued": "2017-05-22T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 86.04162138432913,
+        "unit": "kg",
+        "system": "http://unitsofmeasure.org",
+        "code": "kg"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "fc8b95c3-8068-4704-ac54-d3248ecdc64b",
+    "created_at": "2023-06-21T10:30:44.726575-07:00",
+    "updated_at": "2023-06-21T10:30:44.726575-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "01802c42-f734-4229-8101-bd34725133e3",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "01802c42-f734-4229-8101-bd34725133e3",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body Weight"
+        }],
+        "text": "Body Weight"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:51dec3d2-a098-4671-99bc-d7cf68561903"
+      },
+      "effectiveDateTime": "2018-05-28T12:22:44-04:00",
+      "issued": "2018-05-28T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 91.84249104812005,
+        "unit": "kg",
+        "system": "http://unitsofmeasure.org",
+        "code": "kg"
+      }
+    },
+    "related_resources": null
+  }],
+  "success": true
+}

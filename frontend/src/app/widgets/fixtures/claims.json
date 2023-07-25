@@ -1,0 +1,2217 @@
+{
+  "data": [{
+    "id": "01ff40b9-3f15-4586-b707-72ce62a5f4c8",
+    "created_at": "2023-07-23T12:12:07.677467-07:00",
+    "updated_at": "2023-07-23T12:12:07.677467-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "a83fa865-3e99-461e-92a1-c287bbd34e57",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "a83fa865-3e99-461e-92a1-c287bbd34e57",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2012-04-23T12:22:44-04:00",
+        "end": "2012-04-23T12:37:44-04:00"
+      },
+      "created": "2012-04-23T12:37:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "supportingInfo": [{
+        "sequence": 1,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:b05b0644-26d6-41aa-93af-07d7d2b8442e"
+        }
+      }],
+      "diagnosis": [{
+        "sequence": 1,
+        "diagnosisReference": {
+          "reference": "urn:uuid:df0a9364-e519-469e-b70d-3fb29ab88f89"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "410620009",
+            "display": "Well child visit (procedure)"
+          }],
+          "text": "Well child visit (procedure)"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:1a3bbe38-b7c3-43fc-b175-740adfcaa83a"
+        }]
+      }, {
+        "sequence": 2,
+        "informationSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "140",
+            "display": "Influenza, seasonal, injectable, preservative free"
+          }],
+          "text": "Influenza, seasonal, injectable, preservative free"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }, {
+        "sequence": 3,
+        "diagnosisSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "162864005",
+            "display": "Body mass index 30+ - obesity (finding)"
+          }],
+          "text": "Body mass index 30+ - obesity (finding)"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "103eb87f-69c2-4592-a108-72c181386241",
+    "created_at": "2023-07-23T12:12:21.981369-07:00",
+    "updated_at": "2023-07-23T12:12:21.981369-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "492476ce-dd7c-44de-8ad7-1a6fb4610cab",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "492476ce-dd7c-44de-8ad7-1a6fb4610cab",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2015-12-24T11:22:44-05:00",
+        "end": "2015-12-24T11:37:44-05:00"
+      },
+      "created": "2015-12-24T11:37:44-05:00",
+      "provider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "diagnosis": [{
+        "sequence": 1,
+        "diagnosisReference": {
+          "reference": "urn:uuid:a892f1fa-6abd-473e-9447-18ffcb58de48"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }],
+          "text": "Encounter for symptom"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:9a6f9230-3549-43e1-83c8-f0fd740a24f3"
+        }]
+      }, {
+        "sequence": 2,
+        "diagnosisSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "444814009",
+            "display": "Viral sinusitis (disorder)"
+          }],
+          "text": "Viral sinusitis (disorder)"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "1cf0930a-e595-4618-957e-dd1580f23e14",
+    "created_at": "2023-07-23T12:12:34.353334-07:00",
+    "updated_at": "2023-07-23T12:12:34.353334-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "2de6756c-1410-4811-b572-28af4da79753",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "2de6756c-1410-4811-b572-28af4da79753",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2018-05-28T12:22:44-04:00",
+        "end": "2018-05-28T12:52:44-04:00"
+      },
+      "created": "2018-05-28T12:52:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "supportingInfo": [{
+        "sequence": 1,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:8bcaf993-bab5-4944-b546-a40bb846f76d"
+        }
+      }, {
+        "sequence": 2,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:17d84df6-db93-4a91-8dd0-c520e3c7f11e"
+        }
+      }],
+      "procedure": [{
+        "sequence": 1,
+        "procedureReference": {
+          "reference": "urn:uuid:81ff2d35-9959-4c81-95ab-b389425a42b7"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "410620009",
+            "display": "Well child visit (procedure)"
+          }],
+          "text": "Well child visit (procedure)"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:51dec3d2-a098-4671-99bc-d7cf68561903"
+        }]
+      }, {
+        "sequence": 2,
+        "informationSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "140",
+            "display": "Influenza, seasonal, injectable, preservative free"
+          }],
+          "text": "Influenza, seasonal, injectable, preservative free"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }, {
+        "sequence": 3,
+        "informationSequence": [2],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "114",
+            "display": "meningococcal MCV4P"
+          }],
+          "text": "meningococcal MCV4P"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }, {
+        "sequence": 4,
+        "procedureSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "430193006",
+            "display": "Medication Reconciliation (procedure)"
+          }],
+          "text": "Medication Reconciliation (procedure)"
+        },
+        "net": {
+          "value": 656.32,
+          "currency": "USD"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "1ea3efbe-a0fd-46c1-9c15-f1dbefb9cd58",
+    "created_at": "2023-07-23T12:12:13.740132-07:00",
+    "updated_at": "2023-07-23T12:12:13.740132-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "17920b98-aa26-4580-bd90-2a93471ca130",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "17920b98-aa26-4580-bd90-2a93471ca130",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2013-04-29T12:22:44-04:00",
+        "end": "2013-04-29T12:52:44-04:00"
+      },
+      "created": "2013-04-29T12:52:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "supportingInfo": [{
+        "sequence": 1,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:02078df4-8b3f-4a18-9baf-4a7780c93280"
+        }
+      }, {
+        "sequence": 2,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:a9a4ff8c-5436-41ea-a92e-6f63675ed93b"
+        }
+      }, {
+        "sequence": 3,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:1eb934cb-c79b-4b27-b542-130bbc8bca2b"
+        }
+      }, {
+        "sequence": 4,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:63460520-46d2-4af3-9bd9-7778e92d381e"
+        }
+      }],
+      "procedure": [{
+        "sequence": 1,
+        "procedureReference": {
+          "reference": "urn:uuid:5c87a703-a820-45e0-84d8-cfd2d76d0072"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "410620009",
+            "display": "Well child visit (procedure)"
+          }],
+          "text": "Well child visit (procedure)"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:d9a7c76f-dfe4-41c6-9924-82a405613f44"
+        }]
+      }, {
+        "sequence": 2,
+        "informationSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "115",
+            "display": "Tdap"
+          }],
+          "text": "Tdap"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }, {
+        "sequence": 3,
+        "informationSequence": [2],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "140",
+            "display": "Influenza, seasonal, injectable, preservative free"
+          }],
+          "text": "Influenza, seasonal, injectable, preservative free"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }, {
+        "sequence": 4,
+        "informationSequence": [3],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "62",
+            "display": "HPV, quadrivalent"
+          }],
+          "text": "HPV, quadrivalent"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }, {
+        "sequence": 5,
+        "informationSequence": [4],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "114",
+            "display": "meningococcal MCV4P"
+          }],
+          "text": "meningococcal MCV4P"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }, {
+        "sequence": 6,
+        "procedureSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "430193006",
+            "display": "Medication Reconciliation (procedure)"
+          }],
+          "text": "Medication Reconciliation (procedure)"
+        },
+        "net": {
+          "value": 654.00,
+          "currency": "USD"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "2f9022c6-f9c7-4eac-8ff0-932856cdd044",
+    "created_at": "2023-07-23T12:12:35.646436-07:00",
+    "updated_at": "2023-07-23T12:12:35.646436-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "50ce367c-cd3e-49d7-a973-2b32fba9c600",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "50ce367c-cd3e-49d7-a973-2b32fba9c600",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2019-01-16T11:22:44-05:00",
+        "end": "2019-01-16T11:37:44-05:00"
+      },
+      "created": "2019-01-16T11:37:44-05:00",
+      "provider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "diagnosis": [{
+        "sequence": 1,
+        "diagnosisReference": {
+          "reference": "urn:uuid:4f3aa82d-6989-4986-b795-7d1762749b31"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "NO_INSURANCE"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }],
+          "text": "Encounter for symptom"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:9adf6236-72dc-4abf-ab7e-df370b02701c"
+        }]
+      }, {
+        "sequence": 2,
+        "diagnosisSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "65363002",
+            "display": "Otitis media"
+          }],
+          "text": "Otitis media"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "3a2391e5-56db-4dea-8688-3a1212008188",
+    "created_at": "2023-07-23T12:12:24.536644-07:00",
+    "updated_at": "2023-07-23T12:12:24.536644-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "5da057c1-01aa-4422-b90e-9c08eaaffad2",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "5da057c1-01aa-4422-b90e-9c08eaaffad2",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2016-05-16T12:22:44-04:00",
+        "end": "2016-05-16T12:52:44-04:00"
+      },
+      "created": "2016-05-16T12:52:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "supportingInfo": [{
+        "sequence": 1,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:982b0617-b1d8-4fc7-a635-4860d31f04df"
+        }
+      }],
+      "procedure": [{
+        "sequence": 1,
+        "procedureReference": {
+          "reference": "urn:uuid:d25136ec-d6ce-44e1-8f07-161f9b501889"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "410620009",
+            "display": "Well child visit (procedure)"
+          }],
+          "text": "Well child visit (procedure)"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:cde6c902-957a-48c1-883f-38c808188fe3"
+        }]
+      }, {
+        "sequence": 2,
+        "informationSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "140",
+            "display": "Influenza, seasonal, injectable, preservative free"
+          }],
+          "text": "Influenza, seasonal, injectable, preservative free"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }, {
+        "sequence": 3,
+        "procedureSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "430193006",
+            "display": "Medication Reconciliation (procedure)"
+          }],
+          "text": "Medication Reconciliation (procedure)"
+        },
+        "net": {
+          "value": 667.77,
+          "currency": "USD"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "4bf1dcd8-6122-4478-b64c-e5962c6aedfd",
+    "created_at": "2023-07-23T12:12:28.746092-07:00",
+    "updated_at": "2023-07-23T12:12:28.746092-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "0ea80e15-ed0f-4c14-b93c-fc95d8ab4e44",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "0ea80e15-ed0f-4c14-b93c-fc95d8ab4e44",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2018-03-03T11:22:44-05:00",
+        "end": "2018-03-03T11:37:44-05:00"
+      },
+      "created": "2018-03-03T11:37:44-05:00",
+      "provider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "diagnosis": [{
+        "sequence": 1,
+        "diagnosisReference": {
+          "reference": "urn:uuid:4acfeabc-2032-4dc0-8010-123141093990"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }],
+          "text": "Encounter for symptom"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:7a38b6bf-1787-4227-af08-ae10c29632e4"
+        }]
+      }, {
+        "sequence": 2,
+        "diagnosisSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "444814009",
+            "display": "Viral sinusitis (disorder)"
+          }],
+          "text": "Viral sinusitis (disorder)"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "4e220862-a0a9-4ba4-b82c-6b7e8f4b1b22",
+    "created_at": "2023-07-23T12:12:37.985683-07:00",
+    "updated_at": "2023-07-23T12:12:37.985683-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "19aa41e4-5be8-469b-886e-a4c13a1d91c2",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "19aa41e4-5be8-469b-886e-a4c13a1d91c2",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2019-06-03T12:22:44-04:00",
+        "end": "2019-06-03T12:37:44-04:00"
+      },
+      "created": "2019-06-03T12:37:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "supportingInfo": [{
+        "sequence": 1,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:36b1cf87-a6e8-4271-8350-cf230ac8361d"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "410620009",
+            "display": "Well child visit (procedure)"
+          }],
+          "text": "Well child visit (procedure)"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:92b439da-6fdd-48e5-aa8d-b0543f840a1b"
+        }]
+      }, {
+        "sequence": 2,
+        "informationSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "140",
+            "display": "Influenza, seasonal, injectable, preservative free"
+          }],
+          "text": "Influenza, seasonal, injectable, preservative free"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "589560a6-7f04-469d-b7b1-469ffaca200d",
+    "created_at": "2023-07-23T12:12:03.999837-07:00",
+    "updated_at": "2023-07-23T12:12:03.999837-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "6d81b94a-bd75-43aa-9fbf-8d419d267910",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "6d81b94a-bd75-43aa-9fbf-8d419d267910",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2011-04-18T12:22:44-04:00",
+        "end": "2011-04-18T12:37:44-04:00"
+      },
+      "created": "2011-04-18T12:37:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "supportingInfo": [{
+        "sequence": 1,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:4420064d-2ec9-4639-a8ba-0df125eb9310"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "410620009",
+            "display": "Well child visit (procedure)"
+          }],
+          "text": "Well child visit (procedure)"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:cb3ae560-0a65-41f8-9712-aa3c5766ffe5"
+        }]
+      }, {
+        "sequence": 2,
+        "informationSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "140",
+            "display": "Influenza, seasonal, injectable, preservative free"
+          }],
+          "text": "Influenza, seasonal, injectable, preservative free"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "5fc4127d-02ab-4992-bf1f-88912d46359d",
+    "created_at": "2023-07-23T12:12:25.395431-07:00",
+    "updated_at": "2023-07-23T12:12:25.395431-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "63439fc2-97ba-4606-a9b2-8dfaffc4d5c5",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "63439fc2-97ba-4606-a9b2-8dfaffc4d5c5",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "pharmacy"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "billablePeriod": {
+        "start": "2016-10-11T12:22:44-04:00",
+        "end": "2016-10-11T12:37:44-04:00"
+      },
+      "created": "2016-10-11T12:37:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "prescription": {
+        "reference": "urn:uuid:7fb7521d-a9a6-4a1a-8aba-c0f09d58336c"
+      },
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }],
+          "text": "Encounter for symptom"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:919f002e-ff43-4ea6-8acb-be3f1139c59d"
+        }]
+      }],
+      "total": {
+        "value": 100.13,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "6eb53668-d2d3-4959-815b-c5fa8a3a67a2",
+    "created_at": "2023-07-23T12:12:35.214553-07:00",
+    "updated_at": "2023-07-23T12:12:35.214553-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "a608f48d-482b-4832-ab50-4923c287b165",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "a608f48d-482b-4832-ab50-4923c287b165",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "pharmacy"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "billablePeriod": {
+        "start": "2019-01-16T11:22:44-05:00",
+        "end": "2019-01-16T11:37:44-05:00"
+      },
+      "created": "2019-01-16T11:37:44-05:00",
+      "provider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "prescription": {
+        "reference": "urn:uuid:2632f5e0-f174-4b5d-b56d-ec168470168d"
+      },
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "NO_INSURANCE"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }],
+          "text": "Encounter for symptom"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:9adf6236-72dc-4abf-ab7e-df370b02701c"
+        }]
+      }],
+      "total": {
+        "value": 6.81,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "7aa5fc6f-f88b-4051-a006-bf6c76d67972",
+    "created_at": "2023-07-23T12:12:21.319334-07:00",
+    "updated_at": "2023-07-23T12:12:21.319334-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "e1d95a29-08d5-4a4b-89cf-36b63a963280",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "e1d95a29-08d5-4a4b-89cf-36b63a963280",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2015-05-11T12:22:44-04:00",
+        "end": "2015-05-11T12:52:44-04:00"
+      },
+      "created": "2015-05-11T12:52:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "supportingInfo": [{
+        "sequence": 1,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:c2965e56-432f-4182-b406-8144c9e10ac9"
+        }
+      }],
+      "procedure": [{
+        "sequence": 1,
+        "procedureReference": {
+          "reference": "urn:uuid:49aaa938-e095-4001-82bc-bc782c2f88ee"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "410620009",
+            "display": "Well child visit (procedure)"
+          }],
+          "text": "Well child visit (procedure)"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:9ea75521-441c-41e4-96df-237219e5ca63"
+        }]
+      }, {
+        "sequence": 2,
+        "informationSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "140",
+            "display": "Influenza, seasonal, injectable, preservative free"
+          }],
+          "text": "Influenza, seasonal, injectable, preservative free"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }, {
+        "sequence": 3,
+        "procedureSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "430193006",
+            "display": "Medication Reconciliation (procedure)"
+          }],
+          "text": "Medication Reconciliation (procedure)"
+        },
+        "net": {
+          "value": 465.67,
+          "currency": "USD"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "7e289543-a443-4ddb-b3d7-cf5e7dbc42b5",
+    "created_at": "2023-07-23T12:12:05.122049-07:00",
+    "updated_at": "2023-07-23T12:12:05.122049-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "85e44e81-dda9-4213-a7d1-861db28f43f4",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "85e44e81-dda9-4213-a7d1-861db28f43f4",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2011-09-15T12:22:44-04:00",
+        "end": "2011-09-15T12:52:44-04:00"
+      },
+      "created": "2011-09-15T12:52:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "diagnosis": [{
+        "sequence": 1,
+        "diagnosisReference": {
+          "reference": "urn:uuid:bec92fdc-8765-409b-9850-52786d31aa9b"
+        }
+      }],
+      "procedure": [{
+        "sequence": 1,
+        "procedureReference": {
+          "reference": "urn:uuid:752d4411-1e2c-4a0f-ba21-9fed4b370c8b"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }],
+          "text": "Encounter for symptom"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:24f73ec3-9b7a-42a9-be03-53bffd9b304c"
+        }]
+      }, {
+        "sequence": 2,
+        "diagnosisSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "195662009",
+            "display": "Acute viral pharyngitis (disorder)"
+          }],
+          "text": "Acute viral pharyngitis (disorder)"
+        }
+      }, {
+        "sequence": 3,
+        "procedureSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "117015009",
+            "display": "Throat culture (procedure)"
+          }],
+          "text": "Throat culture (procedure)"
+        },
+        "net": {
+          "value": 1898.04,
+          "currency": "USD"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "9b7ae3eb-84ef-4358-b298-af69da904847",
+    "created_at": "2023-07-23T12:12:15.332598-07:00",
+    "updated_at": "2023-07-23T12:12:15.332598-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "e476faca-9120-43bd-9c08-d10a46e1285e",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "e476faca-9120-43bd-9c08-d10a46e1285e",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2013-09-23T12:22:44-04:00",
+        "end": "2013-09-23T12:40:44-04:00"
+      },
+      "created": "2013-09-23T12:40:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "diagnosis": [{
+        "sequence": 1,
+        "diagnosisReference": {
+          "reference": "urn:uuid:07cbaf7e-4a29-4dfd-b221-b18bbb7214b4"
+        }
+      }],
+      "procedure": [{
+        "sequence": 1,
+        "procedureReference": {
+          "reference": "urn:uuid:19187915-df16-451d-a877-0c505965a6c1"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }],
+          "text": "Encounter for symptom"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:47f5936b-ef68-4404-9183-8971e75e5a1d"
+        }]
+      }, {
+        "sequence": 2,
+        "diagnosisSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "10509002",
+            "display": "Acute bronchitis (disorder)"
+          }],
+          "text": "Acute bronchitis (disorder)"
+        }
+      }, {
+        "sequence": 3,
+        "procedureSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "269911007",
+            "display": "Sputum examination (procedure)"
+          }],
+          "text": "Sputum examination (procedure)"
+        },
+        "net": {
+          "value": 6059.37,
+          "currency": "USD"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "a13406f9-8ba8-4c83-bdb5-0cb4e529a24d",
+    "created_at": "2023-07-23T12:12:28.088258-07:00",
+    "updated_at": "2023-07-23T12:12:28.088258-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "d59fb9ce-43a1-47a0-bce5-50f87b0d0625",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "d59fb9ce-43a1-47a0-bce5-50f87b0d0625",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2017-05-22T12:22:44-04:00",
+        "end": "2017-05-22T12:52:44-04:00"
+      },
+      "created": "2017-05-22T12:52:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "supportingInfo": [{
+        "sequence": 1,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:80f61f92-5ad2-4f50-886c-488fb6df8f04"
+        }
+      }],
+      "procedure": [{
+        "sequence": 1,
+        "procedureReference": {
+          "reference": "urn:uuid:7887089b-ab92-4acc-9994-ff8fd40792ea"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "410620009",
+            "display": "Well child visit (procedure)"
+          }],
+          "text": "Well child visit (procedure)"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:e44ec534-b752-4647-acd3-3794bc51db6d"
+        }]
+      }, {
+        "sequence": 2,
+        "informationSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "140",
+            "display": "Influenza, seasonal, injectable, preservative free"
+          }],
+          "text": "Influenza, seasonal, injectable, preservative free"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }, {
+        "sequence": 3,
+        "procedureSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "430193006",
+            "display": "Medication Reconciliation (procedure)"
+          }],
+          "text": "Medication Reconciliation (procedure)"
+        },
+        "net": {
+          "value": 384.56,
+          "currency": "USD"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "a59f6a8e-87c4-4aa9-9e82-440cf13f8e32",
+    "created_at": "2023-07-23T12:12:25.514262-07:00",
+    "updated_at": "2023-07-23T12:12:25.514262-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "132db8c4-ff61-44f2-9f92-e72fdd2e7809",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "132db8c4-ff61-44f2-9f92-e72fdd2e7809",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2016-10-11T12:22:44-04:00",
+        "end": "2016-10-11T12:37:44-04:00"
+      },
+      "created": "2016-10-11T12:37:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "diagnosis": [{
+        "sequence": 1,
+        "diagnosisReference": {
+          "reference": "urn:uuid:109b791b-a53e-490a-9e89-0d307bcccfb6"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }],
+          "text": "Encounter for symptom"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:919f002e-ff43-4ea6-8acb-be3f1139c59d"
+        }]
+      }, {
+        "sequence": 2,
+        "diagnosisSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "444814009",
+            "display": "Viral sinusitis (disorder)"
+          }],
+          "text": "Viral sinusitis (disorder)"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "aba2bce6-8ca6-4c59-ac92-fad093b74bd8",
+    "created_at": "2023-07-23T12:12:18.762538-07:00",
+    "updated_at": "2023-07-23T12:12:18.762538-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "bf440efe-380a-4916-b66b-58d93bced6d5",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "bf440efe-380a-4916-b66b-58d93bced6d5",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2014-05-05T12:22:44-04:00",
+        "end": "2014-05-05T12:37:44-04:00"
+      },
+      "created": "2014-05-05T12:37:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "supportingInfo": [{
+        "sequence": 1,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:0917e09d-5533-4b78-9876-6f92b079a37b"
+        }
+      }, {
+        "sequence": 2,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:9bfbcc5f-bfbe-4a7d-a558-ee3549f8dc20"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "410620009",
+            "display": "Well child visit (procedure)"
+          }],
+          "text": "Well child visit (procedure)"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:9f4e40e3-6f6b-4959-b407-3926e9ed049c"
+        }]
+      }, {
+        "sequence": 2,
+        "informationSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "140",
+            "display": "Influenza, seasonal, injectable, preservative free"
+          }],
+          "text": "Influenza, seasonal, injectable, preservative free"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }, {
+        "sequence": 3,
+        "informationSequence": [2],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "62",
+            "display": "HPV, quadrivalent"
+          }],
+          "text": "HPV, quadrivalent"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "b2f17364-d400-46ef-8f51-b96d1300acb8",
+    "created_at": "2023-07-23T12:12:01.650041-07:00",
+    "updated_at": "2023-07-23T12:12:01.650041-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "54cc9fff-9f9c-4c63-ad3b-e65a807207d5",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "54cc9fff-9f9c-4c63-ad3b-e65a807207d5",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2010-10-05T12:22:44-04:00",
+        "end": "2010-10-05T12:37:44-04:00"
+      },
+      "created": "2010-10-05T12:37:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "diagnosis": [{
+        "sequence": 1,
+        "diagnosisReference": {
+          "reference": "urn:uuid:cf39b665-4177-41e3-af34-149421cb895f"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }],
+          "text": "Encounter for symptom"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:3fba349b-e165-45f7-9cf2-66c391f293b6"
+        }]
+      }, {
+        "sequence": 2,
+        "diagnosisSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "444814009",
+            "display": "Viral sinusitis (disorder)"
+          }],
+          "text": "Viral sinusitis (disorder)"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "b5affdc1-1864-47d4-a457-d5b31afd51e2",
+    "created_at": "2023-07-23T12:12:14.837397-07:00",
+    "updated_at": "2023-07-23T12:12:14.837397-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "1cbacbc6-4ebf-40d8-a0d7-60d6d535b210",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "1cbacbc6-4ebf-40d8-a0d7-60d6d535b210",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "pharmacy"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "billablePeriod": {
+        "start": "2013-09-23T12:22:44-04:00",
+        "end": "2013-09-23T12:40:44-04:00"
+      },
+      "created": "2013-09-23T12:40:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "prescription": {
+        "reference": "urn:uuid:99a130b6-8470-49d4-b242-be4399a6e4a7"
+      },
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "NO_INSURANCE"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }],
+          "text": "Encounter for symptom"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:47f5936b-ef68-4404-9183-8971e75e5a1d"
+        }]
+      }],
+      "total": {
+        "value": 6.43,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "c24d4932-c258-4c76-af73-7bacaabbc497",
+    "created_at": "2023-07-23T12:12:35.526202-07:00",
+    "updated_at": "2023-07-23T12:12:35.526202-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "f751e655-2f4b-4ae0-8618-1680a899c1a6",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "f751e655-2f4b-4ae0-8618-1680a899c1a6",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "pharmacy"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "billablePeriod": {
+        "start": "2019-01-16T11:22:44-05:00",
+        "end": "2019-01-16T11:37:44-05:00"
+      },
+      "created": "2019-01-16T11:37:44-05:00",
+      "provider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "prescription": {
+        "reference": "urn:uuid:95141fb0-fbc2-4264-87a2-05be01233b88"
+      },
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "NO_INSURANCE"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "185345009",
+            "display": "Encounter for symptom"
+          }],
+          "text": "Encounter for symptom"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:9adf6236-72dc-4abf-ab7e-df370b02701c"
+        }]
+      }],
+      "total": {
+        "value": 5.96,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "c509b4f0-0fb3-4394-ae9e-db4932fdae4b",
+    "created_at": "2023-07-23T12:12:00.694534-07:00",
+    "updated_at": "2023-07-23T12:12:00.694534-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "8e3b38d2-fe27-40ec-b8c3-6a4ea37493c7",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "8e3b38d2-fe27-40ec-b8c3-6a4ea37493c7",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2010-04-12T12:22:44-04:00",
+        "end": "2010-04-12T12:52:44-04:00"
+      },
+      "created": "2010-04-12T12:52:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "supportingInfo": [{
+        "sequence": 1,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:41b6c040-0306-4e61-beea-d9e9f1bec3a1"
+        }
+      }],
+      "procedure": [{
+        "sequence": 1,
+        "procedureReference": {
+          "reference": "urn:uuid:375aeec5-02f0-4adc-96df-9278c385bde1"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "410620009",
+            "display": "Well child visit (procedure)"
+          }],
+          "text": "Well child visit (procedure)"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:d051d64b-5b2f-4465-92c3-4e693d54f653"
+        }]
+      }, {
+        "sequence": 2,
+        "informationSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "140",
+            "display": "Influenza, seasonal, injectable, preservative free"
+          }],
+          "text": "Influenza, seasonal, injectable, preservative free"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }, {
+        "sequence": 3,
+        "procedureSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "430193006",
+            "display": "Medication Reconciliation (procedure)"
+          }],
+          "text": "Medication Reconciliation (procedure)"
+        },
+        "net": {
+          "value": 410.94,
+          "currency": "USD"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "e09a9df1-cb2e-4639-993a-e51124abdc58",
+    "created_at": "2023-07-23T12:12:16.241522-07:00",
+    "updated_at": "2023-07-23T12:12:16.241522-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Claim",
+    "source_resource_id": "fa15b28e-f188-43e2-839e-bdc8a3a8b344",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Claim",
+      "id": "fa15b28e-f188-43e2-839e-bdc8a3a8b344",
+      "status": "active",
+      "type": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/claim-type",
+          "code": "institutional"
+        }]
+      },
+      "use": "claim",
+      "patient": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "billablePeriod": {
+        "start": "2013-09-30T12:22:44-04:00",
+        "end": "2013-09-30T12:37:44-04:00"
+      },
+      "created": "2013-09-30T12:37:44-04:00",
+      "provider": {
+        "reference": "urn:uuid:90cf148c-69ed-3d33-aa86-b509c6b0b25f",
+        "display": "PROMPT CARE WALK-IN CLINIC"
+      },
+      "priority": {
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/processpriority",
+          "code": "normal"
+        }]
+      },
+      "supportingInfo": [{
+        "sequence": 1,
+        "category": {
+          "coding": [{
+            "system": "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+            "code": "info"
+          }]
+        },
+        "valueReference": {
+          "reference": "urn:uuid:23e0e3e8-0a58-4545-ac23-759912398535"
+        }
+      }],
+      "insurance": [{
+        "sequence": 1,
+        "focal": true,
+        "coverage": {
+          "display": "Aetna"
+        }
+      }],
+      "item": [{
+        "sequence": 1,
+        "productOrService": {
+          "coding": [{
+            "system": "http://snomed.info/sct",
+            "code": "702927004",
+            "display": "Urgent care clinic (procedure)"
+          }],
+          "text": "Urgent care clinic (procedure)"
+        },
+        "encounter": [{
+          "reference": "urn:uuid:cd4bfc24-8fff-4eb0-bd93-3c7054551514"
+        }]
+      }, {
+        "sequence": 2,
+        "informationSequence": [1],
+        "productOrService": {
+          "coding": [{
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "62",
+            "display": "HPV, quadrivalent"
+          }],
+          "text": "HPV, quadrivalent"
+        },
+        "net": {
+          "value": 140.52,
+          "currency": "USD"
+        }
+      }],
+      "total": {
+        "value": 129.16,
+        "currency": "USD"
+      }
+    },
+    "related_resources": null
+  }],
+  "success": true
+}

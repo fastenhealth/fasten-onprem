@@ -1,0 +1,454 @@
+{
+  "data": [{
+    "id": "04046c9e-ff18-4180-872f-a4aab7c537c7",
+    "created_at": "2023-06-21T10:30:33.641052-07:00",
+    "updated_at": "2023-06-21T10:30:33.641052-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "a0330432-1e3e-4c71-a83e-2c87f12a9599",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "a0330432-1e3e-4c71-a83e-2c87f12a9599",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body Height"
+        }],
+        "text": "Body Height"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:9ea75521-441c-41e4-96df-237219e5ca63"
+      },
+      "effectiveDateTime": "2015-05-11T12:22:44-04:00",
+      "issued": "2015-05-11T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 142.9831664150447,
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "34571a1a-8bab-40da-a9f8-40088e646693",
+    "created_at": "2023-06-21T10:30:40.787113-07:00",
+    "updated_at": "2023-06-21T10:30:40.787113-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "56bf0b2a-9a7e-4269-a580-6949eec26e2c",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "56bf0b2a-9a7e-4269-a580-6949eec26e2c",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body Height"
+        }],
+        "text": "Body Height"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:e44ec534-b752-4647-acd3-3794bc51db6d"
+      },
+      "effectiveDateTime": "2017-05-22T12:22:44-04:00",
+      "issued": "2017-05-22T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 156.4382689397082,
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "5c8c0db8-4321-49d1-bc53-84ef5ee0b316",
+    "created_at": "2023-06-21T10:30:15.332053-07:00",
+    "updated_at": "2023-06-21T10:30:15.332053-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "d10efaa1-82af-4007-ab2b-f5a5f0e0fad2",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "d10efaa1-82af-4007-ab2b-f5a5f0e0fad2",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body Height"
+        }],
+        "text": "Body Height"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:cb3ae560-0a65-41f8-9712-aa3c5766ffe5"
+      },
+      "effectiveDateTime": "2011-04-18T12:22:44-04:00",
+      "issued": "2011-04-18T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 123.35269569531211,
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "714d2e6c-94c2-421e-b046-239dd8f98958",
+    "created_at": "2023-06-21T10:30:19.247324-07:00",
+    "updated_at": "2023-06-21T10:30:19.247324-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "0d1e439d-c801-44af-a464-160dbd48a764",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "0d1e439d-c801-44af-a464-160dbd48a764",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body Height"
+        }],
+        "text": "Body Height"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:1a3bbe38-b7c3-43fc-b175-740adfcaa83a"
+      },
+      "effectiveDateTime": "2012-04-23T12:22:44-04:00",
+      "issued": "2012-04-23T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 127.68914275222296,
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "78369c16-d3be-42aa-a4a8-f2b8c9847f32",
+    "created_at": "2023-06-21T10:30:44.202046-07:00",
+    "updated_at": "2023-06-21T10:30:44.202046-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "cb49521a-1bf2-4d34-99ab-d99a5bfffd09",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "cb49521a-1bf2-4d34-99ab-d99a5bfffd09",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body Height"
+        }],
+        "text": "Body Height"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:51dec3d2-a098-4671-99bc-d7cf68561903"
+      },
+      "effectiveDateTime": "2018-05-28T12:22:44-04:00",
+      "issued": "2018-05-28T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 160.42796181485912,
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "8871e135-0dde-4042-ae20-827e4a76560b",
+    "created_at": "2023-06-21T10:30:11.589418-07:00",
+    "updated_at": "2023-06-21T10:30:11.589418-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "5cd46965-1cb3-47dd-a2e3-fb2581b981da",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "5cd46965-1cb3-47dd-a2e3-fb2581b981da",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body Height"
+        }],
+        "text": "Body Height"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:d051d64b-5b2f-4465-92c3-4e693d54f653"
+      },
+      "effectiveDateTime": "2010-04-12T12:22:44-04:00",
+      "issued": "2010-04-12T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 117.94689209145396,
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "a73bd3c4-c058-4e9a-86d2-555b19b5da47",
+    "created_at": "2023-06-21T10:30:30.966291-07:00",
+    "updated_at": "2023-06-21T10:30:30.966291-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "219c5904-d540-426e-8ed4-459b17ddd388",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "219c5904-d540-426e-8ed4-459b17ddd388",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body Height"
+        }],
+        "text": "Body Height"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:9f4e40e3-6f6b-4959-b407-3926e9ed049c"
+      },
+      "effectiveDateTime": "2014-05-05T12:22:44-04:00",
+      "issued": "2014-05-05T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 136.80339022666615,
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "c2f934bf-c4d8-4fdb-b28a-c2db264f9adf",
+    "created_at": "2023-06-21T10:30:37.060212-07:00",
+    "updated_at": "2023-06-21T10:30:37.060212-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "e1ca3903-26e0-4e84-8e9c-161bca128155",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "e1ca3903-26e0-4e84-8e9c-161bca128155",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body Height"
+        }],
+        "text": "Body Height"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:cde6c902-957a-48c1-883f-38c808188fe3"
+      },
+      "effectiveDateTime": "2016-05-16T12:22:44-04:00",
+      "issued": "2016-05-16T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 150.4737728470438,
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "c8d39944-a058-42c8-9072-eeebf46f4b83",
+    "created_at": "2023-06-21T10:30:51.811191-07:00",
+    "updated_at": "2023-06-21T10:30:51.811191-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "d42b10f9-6a5b-482e-a7ea-d8ebc8acab62",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "d42b10f9-6a5b-482e-a7ea-d8ebc8acab62",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body Height"
+        }],
+        "text": "Body Height"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:92b439da-6fdd-48e5-aa8d-b0543f840a1b"
+      },
+      "effectiveDateTime": "2019-06-03T12:22:44-04:00",
+      "issued": "2019-06-03T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 162.6483417232778,
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "cb408d49-497c-4d5c-a9e3-73e2454c80ac",
+    "created_at": "2023-06-21T10:30:21.766861-07:00",
+    "updated_at": "2023-06-21T10:30:21.766861-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "9d6c6593-4349-4a35-830a-b6eef25b80cc",
+    "source_resource_type": "Observation",
+    "source_resource_id": "ffdd22ed-4942-4c8a-a740-aa2ea68d21c0",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Observation",
+      "id": "ffdd22ed-4942-4c8a-a740-aa2ea68d21c0",
+      "status": "final",
+      "category": [{
+        "coding": [{
+          "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+          "code": "vital-signs",
+          "display": "vital-signs"
+        }]
+      }],
+      "code": {
+        "coding": [{
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body Height"
+        }],
+        "text": "Body Height"
+      },
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d"
+      },
+      "encounter": {
+        "reference": "urn:uuid:d9a7c76f-dfe4-41c6-9924-82a405613f44"
+      },
+      "effectiveDateTime": "2013-04-29T12:22:44-04:00",
+      "issued": "2013-04-29T12:22:44.702-04:00",
+      "valueQuantity": {
+        "value": 131.8966291126083,
+        "unit": "cm",
+        "system": "http://unitsofmeasure.org",
+        "code": "cm"
+      }
+    },
+    "related_resources": null
+  }],
+  "success": true
+}

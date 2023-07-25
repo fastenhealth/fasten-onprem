@@ -1,0 +1,881 @@
+{
+  "data": [{
+    "id": "00e8dd4a-1656-47ca-866d-2270981d7fcb",
+    "created_at": "2023-07-23T12:12:19.099567-07:00",
+    "updated_at": "2023-07-23T12:12:19.099567-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "9ea75521-441c-41e4-96df-237219e5ca63",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "9ea75521-441c-41e4-96df-237219e5ca63",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "410620009",
+          "display": "Well child visit (procedure)"
+        }],
+        "text": "Well child visit (procedure)"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-000000000636",
+          "display": "Dr. Mariela993 Schamberger479"
+        }
+      }],
+      "period": {
+        "start": "2015-05-11T12:22:44-04:00",
+        "end": "2015-05-11T12:52:44-04:00"
+      },
+      "serviceProvider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "09d8baa1-abcd-4374-be5a-8ae9feb8300b",
+    "created_at": "2023-07-23T12:12:01.982323-07:00",
+    "updated_at": "2023-07-23T12:12:01.982323-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "cb3ae560-0a65-41f8-9712-aa3c5766ffe5",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "cb3ae560-0a65-41f8-9712-aa3c5766ffe5",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "410620009",
+          "display": "Well child visit (procedure)"
+        }],
+        "text": "Well child visit (procedure)"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-000000000636",
+          "display": "Dr. Mariela993 Schamberger479"
+        }
+      }],
+      "period": {
+        "start": "2011-04-18T12:22:44-04:00",
+        "end": "2011-04-18T12:37:44-04:00"
+      },
+      "serviceProvider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "0e9191d7-01b5-4962-96cf-2d837046d552",
+    "created_at": "2023-07-23T12:12:14.101721-07:00",
+    "updated_at": "2023-07-23T12:12:14.101721-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "47f5936b-ef68-4404-9183-8971e75e5a1d",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "47f5936b-ef68-4404-9183-8971e75e5a1d",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "185345009",
+          "display": "Encounter for symptom"
+        }],
+        "text": "Encounter for symptom"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e",
+          "display": "Dr. Renato359 Jenkins714"
+        }
+      }],
+      "period": {
+        "start": "2013-09-23T12:22:44-04:00",
+        "end": "2013-09-23T12:40:44-04:00"
+      },
+      "reasonCode": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "10509002",
+          "display": "Acute bronchitis (disorder)"
+        }]
+      }],
+      "serviceProvider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "233ad8d1-e9ed-414c-a99d-74a717554f9d",
+    "created_at": "2023-07-23T12:11:58.389565-07:00",
+    "updated_at": "2023-07-23T12:11:58.389565-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "d051d64b-5b2f-4465-92c3-4e693d54f653",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "d051d64b-5b2f-4465-92c3-4e693d54f653",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "410620009",
+          "display": "Well child visit (procedure)"
+        }],
+        "text": "Well child visit (procedure)"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-000000000636",
+          "display": "Dr. Mariela993 Schamberger479"
+        }
+      }],
+      "period": {
+        "start": "2010-04-12T12:22:44-04:00",
+        "end": "2010-04-12T12:52:44-04:00"
+      },
+      "serviceProvider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "2b07dffb-e5a8-4171-a524-f2f1a7f75446",
+    "created_at": "2023-07-23T12:12:22.314839-07:00",
+    "updated_at": "2023-07-23T12:12:22.314839-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "cde6c902-957a-48c1-883f-38c808188fe3",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "cde6c902-957a-48c1-883f-38c808188fe3",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "410620009",
+          "display": "Well child visit (procedure)"
+        }],
+        "text": "Well child visit (procedure)"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-000000000636",
+          "display": "Dr. Mariela993 Schamberger479"
+        }
+      }],
+      "period": {
+        "start": "2016-05-16T12:22:44-04:00",
+        "end": "2016-05-16T12:52:44-04:00"
+      },
+      "serviceProvider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "37ef36ee-5e97-47d9-a35b-5467d531b1d3",
+    "created_at": "2023-07-23T12:12:16.573045-07:00",
+    "updated_at": "2023-07-23T12:12:16.573045-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "9f4e40e3-6f6b-4959-b407-3926e9ed049c",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "9f4e40e3-6f6b-4959-b407-3926e9ed049c",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "410620009",
+          "display": "Well child visit (procedure)"
+        }],
+        "text": "Well child visit (procedure)"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-000000000636",
+          "display": "Dr. Mariela993 Schamberger479"
+        }
+      }],
+      "period": {
+        "start": "2014-05-05T12:22:44-04:00",
+        "end": "2014-05-05T12:37:44-04:00"
+      },
+      "serviceProvider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "3b449c0d-8a94-4685-b629-3d6d78a6f8d6",
+    "created_at": "2023-07-23T12:12:15.9432-07:00",
+    "updated_at": "2023-07-23T12:12:15.9432-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "cd4bfc24-8fff-4eb0-bd93-3c7054551514",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "cd4bfc24-8fff-4eb0-bd93-3c7054551514",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "702927004",
+          "display": "Urgent care clinic (procedure)"
+        }],
+        "text": "Urgent care clinic (procedure)"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-000000016d8c",
+          "display": "Dr. Candyce305 Prohaska837"
+        }
+      }],
+      "period": {
+        "start": "2013-09-30T12:22:44-04:00",
+        "end": "2013-09-30T12:37:44-04:00"
+      },
+      "serviceProvider": {
+        "reference": "urn:uuid:90cf148c-69ed-3d33-aa86-b509c6b0b25f",
+        "display": "PROMPT CARE WALK-IN CLINIC"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "5048c750-75dd-474a-a492-566405f712dd",
+    "created_at": "2023-07-23T12:12:34.692432-07:00",
+    "updated_at": "2023-07-23T12:12:34.692432-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "9adf6236-72dc-4abf-ab7e-df370b02701c",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "9adf6236-72dc-4abf-ab7e-df370b02701c",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "185345009",
+          "display": "Encounter for symptom"
+        }],
+        "text": "Encounter for symptom"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e",
+          "display": "Dr. Renato359 Jenkins714"
+        }
+      }],
+      "period": {
+        "start": "2019-01-16T11:22:44-05:00",
+        "end": "2019-01-16T11:37:44-05:00"
+      },
+      "reasonCode": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "65363002",
+          "display": "Otitis media"
+        }]
+      }],
+      "serviceProvider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "6411f6b8-9934-4da7-b7c5-505f48f562bb",
+    "created_at": "2023-07-23T12:12:21.661068-07:00",
+    "updated_at": "2023-07-23T12:12:21.661068-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "9a6f9230-3549-43e1-83c8-f0fd740a24f3",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "9a6f9230-3549-43e1-83c8-f0fd740a24f3",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "185345009",
+          "display": "Encounter for symptom"
+        }],
+        "text": "Encounter for symptom"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e",
+          "display": "Dr. Renato359 Jenkins714"
+        }
+      }],
+      "period": {
+        "start": "2015-12-24T11:22:44-05:00",
+        "end": "2015-12-24T11:37:44-05:00"
+      },
+      "reasonCode": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "444814009",
+          "display": "Viral sinusitis (disorder)"
+        }]
+      }],
+      "serviceProvider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "66d13c6e-73f2-4a97-a414-c5e68e5d2938",
+    "created_at": "2023-07-23T12:12:24.876373-07:00",
+    "updated_at": "2023-07-23T12:12:24.876373-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "919f002e-ff43-4ea6-8acb-be3f1139c59d",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "919f002e-ff43-4ea6-8acb-be3f1139c59d",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "185345009",
+          "display": "Encounter for symptom"
+        }],
+        "text": "Encounter for symptom"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e",
+          "display": "Dr. Renato359 Jenkins714"
+        }
+      }],
+      "period": {
+        "start": "2016-10-11T12:22:44-04:00",
+        "end": "2016-10-11T12:37:44-04:00"
+      },
+      "reasonCode": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "444814009",
+          "display": "Viral sinusitis (disorder)"
+        }]
+      }],
+      "serviceProvider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "6d21c578-5fd8-48fa-859b-6d6964bf3154",
+    "created_at": "2023-07-23T12:12:28.426776-07:00",
+    "updated_at": "2023-07-23T12:12:28.426776-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "7a38b6bf-1787-4227-af08-ae10c29632e4",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "7a38b6bf-1787-4227-af08-ae10c29632e4",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "185345009",
+          "display": "Encounter for symptom"
+        }],
+        "text": "Encounter for symptom"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e",
+          "display": "Dr. Renato359 Jenkins714"
+        }
+      }],
+      "period": {
+        "start": "2018-03-03T11:22:44-05:00",
+        "end": "2018-03-03T11:37:44-05:00"
+      },
+      "reasonCode": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "444814009",
+          "display": "Viral sinusitis (disorder)"
+        }]
+      }],
+      "serviceProvider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "8a7ec8f9-ee67-4616-b51f-cbbf021d48fb",
+    "created_at": "2023-07-23T12:12:25.846215-07:00",
+    "updated_at": "2023-07-23T12:12:25.846215-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "e44ec534-b752-4647-acd3-3794bc51db6d",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "e44ec534-b752-4647-acd3-3794bc51db6d",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "410620009",
+          "display": "Well child visit (procedure)"
+        }],
+        "text": "Well child visit (procedure)"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-000000000636",
+          "display": "Dr. Mariela993 Schamberger479"
+        }
+      }],
+      "period": {
+        "start": "2017-05-22T12:22:44-04:00",
+        "end": "2017-05-22T12:52:44-04:00"
+      },
+      "serviceProvider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "9b63be9a-4cec-4387-a17e-b0a9bab2e15e",
+    "created_at": "2023-07-23T12:12:29.074866-07:00",
+    "updated_at": "2023-07-23T12:12:29.074866-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "51dec3d2-a098-4671-99bc-d7cf68561903",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "51dec3d2-a098-4671-99bc-d7cf68561903",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "410620009",
+          "display": "Well child visit (procedure)"
+        }],
+        "text": "Well child visit (procedure)"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-000000000636",
+          "display": "Dr. Mariela993 Schamberger479"
+        }
+      }],
+      "period": {
+        "start": "2018-05-28T12:22:44-04:00",
+        "end": "2018-05-28T12:52:44-04:00"
+      },
+      "serviceProvider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "a9f304d1-10c7-423d-a381-6f390bf0d76e",
+    "created_at": "2023-07-23T12:12:05.46516-07:00",
+    "updated_at": "2023-07-23T12:12:05.46516-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "1a3bbe38-b7c3-43fc-b175-740adfcaa83a",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "1a3bbe38-b7c3-43fc-b175-740adfcaa83a",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "410620009",
+          "display": "Well child visit (procedure)"
+        }],
+        "text": "Well child visit (procedure)"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-000000000636",
+          "display": "Dr. Mariela993 Schamberger479"
+        }
+      }],
+      "period": {
+        "start": "2012-04-23T12:22:44-04:00",
+        "end": "2012-04-23T12:37:44-04:00"
+      },
+      "serviceProvider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "b0a56a45-ce9f-4573-a899-38a51a4e9a8d",
+    "created_at": "2023-07-23T12:12:01.325522-07:00",
+    "updated_at": "2023-07-23T12:12:01.325522-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "3fba349b-e165-45f7-9cf2-66c391f293b6",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "3fba349b-e165-45f7-9cf2-66c391f293b6",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "185345009",
+          "display": "Encounter for symptom"
+        }],
+        "text": "Encounter for symptom"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e",
+          "display": "Dr. Renato359 Jenkins714"
+        }
+      }],
+      "period": {
+        "start": "2010-10-05T12:22:44-04:00",
+        "end": "2010-10-05T12:37:44-04:00"
+      },
+      "reasonCode": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "444814009",
+          "display": "Viral sinusitis (disorder)"
+        }]
+      }],
+      "serviceProvider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "e909b89c-eaf7-4d58-a7cf-6e8e9943eeae",
+    "created_at": "2023-07-23T12:12:04.338554-07:00",
+    "updated_at": "2023-07-23T12:12:04.338554-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "24f73ec3-9b7a-42a9-be03-53bffd9b304c",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "24f73ec3-9b7a-42a9-be03-53bffd9b304c",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "185345009",
+          "display": "Encounter for symptom"
+        }],
+        "text": "Encounter for symptom"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-00000000010e",
+          "display": "Dr. Renato359 Jenkins714"
+        }
+      }],
+      "period": {
+        "start": "2011-09-15T12:22:44-04:00",
+        "end": "2011-09-15T12:52:44-04:00"
+      },
+      "reasonCode": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "195662009",
+          "display": "Acute viral pharyngitis (disorder)"
+        }]
+      }],
+      "serviceProvider": {
+        "reference": "urn:uuid:d692e283-0833-3201-8e55-4f868a9c0736",
+        "display": "HALLMARK HEALTH SYSTEM"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "fafe0438-2f83-45ab-a7c9-1b9330658b25",
+    "created_at": "2023-07-23T12:12:35.984997-07:00",
+    "updated_at": "2023-07-23T12:12:35.984997-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "92b439da-6fdd-48e5-aa8d-b0543f840a1b",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "92b439da-6fdd-48e5-aa8d-b0543f840a1b",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "410620009",
+          "display": "Well child visit (procedure)"
+        }],
+        "text": "Well child visit (procedure)"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-000000000636",
+          "display": "Dr. Mariela993 Schamberger479"
+        }
+      }],
+      "period": {
+        "start": "2019-06-03T12:22:44-04:00",
+        "end": "2019-06-03T12:37:44-04:00"
+      },
+      "serviceProvider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      }
+    },
+    "related_resources": null
+  }, {
+    "id": "fbb13047-e7ad-49d1-bfae-13b0b0ab181b",
+    "created_at": "2023-07-23T12:12:08.013515-07:00",
+    "updated_at": "2023-07-23T12:12:08.013515-07:00",
+    "user_id": "8b6a16f4-4a5f-4b01-bf4c-93c73c9ff0e8",
+    "source_id": "ae461093-1fbb-4783-a7a7-92b127d788bc",
+    "source_resource_type": "Encounter",
+    "source_resource_id": "d9a7c76f-dfe4-41c6-9924-82a405613f44",
+    "sort_date": null,
+    "sort_title": null,
+    "resource_raw": {
+      "resourceType": "Encounter",
+      "id": "d9a7c76f-dfe4-41c6-9924-82a405613f44",
+      "status": "finished",
+      "class": {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB"
+      },
+      "type": [{
+        "coding": [{
+          "system": "http://snomed.info/sct",
+          "code": "410620009",
+          "display": "Well child visit (procedure)"
+        }],
+        "text": "Well child visit (procedure)"
+      }],
+      "subject": {
+        "reference": "urn:uuid:b426b062-8273-4b93-a907-de3176c0567d",
+        "display": "Abraham100 Heller342"
+      },
+      "participant": [{
+        "individual": {
+          "reference": "urn:uuid:0000016d-3a85-4cca-0000-000000000636",
+          "display": "Dr. Mariela993 Schamberger479"
+        }
+      }],
+      "period": {
+        "start": "2013-04-29T12:22:44-04:00",
+        "end": "2013-04-29T12:52:44-04:00"
+      },
+      "serviceProvider": {
+        "reference": "urn:uuid:fc0bcb63-569b-3658-aa03-71cf89aea64e",
+        "display": "PCP1336"
+      }
+    },
+    "related_resources": null
+  }],
+  "success": true
+}
