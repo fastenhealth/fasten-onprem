@@ -18,10 +18,10 @@ export class TableWidgetComponent  extends DashboardWidgetComponent implements O
   rows: any[] = []
   ngOnInit(): void {
     super.ngOnInit()
-    this.chartDatasetsSubject.subscribe(this.processQueryResults.bind(this))
+    this.chartDatasetsSubject.subscribe(this.tableProcessQueryResults.bind(this))
   }
 
-  processQueryResults(queryResults: any[]) {
+  tableProcessQueryResults(queryResults: any[]) {
     if(!queryResults || queryResults.length < 1){
       return
     }
