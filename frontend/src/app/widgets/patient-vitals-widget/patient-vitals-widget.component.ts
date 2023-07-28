@@ -72,12 +72,12 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
 
     } as DashboardWidgetConfig
     super.ngOnInit();
-    this.chartDatasetsSubject.subscribe(this.processQueryResults.bind(this))
+    this.chartDatasetsSubject.subscribe(this.vitalsProcessQueryResults.bind(this))
   }
 
   //process query results
 
-  processQueryResults(queryResults: any[]): void {
+  vitalsProcessQueryResults(queryResults: any[]): void {
     if(!queryResults || queryResults.length < 2){
       return
     }
