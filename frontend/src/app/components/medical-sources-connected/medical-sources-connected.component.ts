@@ -122,7 +122,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           //console.log(introspectionResp)
           let decodedIdToken = this.jwtDecode(payload.id_token)
           //nextGen uses fhirUser instead of profile.
-          payload.patient = decodedIdToken["profile"] || decodedIdToken["fhirUser"]
+          payload.patient = decodedIdToken["patient"] || decodedIdToken["profile"] || decodedIdToken["fhirUser"]
 
           if(payload.patient){
             payload.patient = payload.patient.replace(/^(Patient\/)/,'')
