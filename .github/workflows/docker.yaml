@@ -49,7 +49,7 @@ jobs:
         with:
           flavor: |
             # only latest if push has a tag and we're building the "main" flavor
-            latest=${{ github.event_name == 'push' && matrix.flavor == 'main' && contains(github.ref, 'refs/tags/') }}
+            latest=${{ github.event_name == 'push' && matrix.flavor == 'main' && github.ref_type == 'tag' }}
           tags: |
             # if this is a tag'd build, prefix it with the flavor (eg. main-v1.2.3 and sandbox-v1.2.3)
             type=ref,event=tag,prefix=${{ matrix.flavor }}-
