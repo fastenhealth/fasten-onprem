@@ -84,7 +84,7 @@ type FhirImmunization struct {
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
 	// Vaccine Lot Number
 	// https://hl7.org/fhir/r4/search.html#string
-	LotNumber string `gorm:"column:lotNumber;type:text" json:"lotNumber,omitempty"`
+	LotNumber datatypes.JSON `gorm:"column:lotNumber;type:text;serializer:json" json:"lotNumber,omitempty"`
 	// Vaccine Manufacturer
 	// https://hl7.org/fhir/r4/search.html#reference
 	Manufacturer datatypes.JSON `gorm:"column:manufacturer;type:text;serializer:json" json:"manufacturer,omitempty"`
@@ -108,7 +108,7 @@ type FhirImmunization struct {
 	ReasonReference datatypes.JSON `gorm:"column:reasonReference;type:text;serializer:json" json:"reasonReference,omitempty"`
 	// The series being followed by the provider
 	// https://hl7.org/fhir/r4/search.html#string
-	Series string `gorm:"column:series;type:text" json:"series,omitempty"`
+	Series datatypes.JSON `gorm:"column:series;type:text;serializer:json" json:"series,omitempty"`
 	// Identifies where the resource comes from
 	// https://hl7.org/fhir/r4/search.html#uri
 	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
@@ -126,7 +126,7 @@ type FhirImmunization struct {
 	TargetDisease datatypes.JSON `gorm:"column:targetDisease;type:text;serializer:json" json:"targetDisease,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -295,9 +295,59 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Location = []byte(locationResult.String())
 	}
 	// extracting LotNumber
-	lotNumberResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Immunization.lotNumber')[0]")
+	lotNumberResult, err := vm.RunString(` 
+							LotNumberResult = window.fhirpath.evaluate(fhirResource, 'Immunization.lotNumber')
+							LotNumberProcessed = LotNumberResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(LotNumberProcessed)
+						 `)
 	if err == nil && lotNumberResult.String() != "undefined" {
-		s.LotNumber = lotNumberResult.String()
+		s.LotNumber = []byte(lotNumberResult.String())
 	}
 	// extracting Manufacturer
 	manufacturerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.manufacturer'))")
@@ -375,9 +425,59 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.ReasonReference = []byte(reasonReferenceResult.String())
 	}
 	// extracting Series
-	seriesResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Immunization.protocolApplied.series')[0]")
+	seriesResult, err := vm.RunString(` 
+							SeriesResult = window.fhirpath.evaluate(fhirResource, 'Immunization.protocolApplied.series')
+							SeriesProcessed = SeriesResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(SeriesProcessed)
+						 `)
 	if err == nil && seriesResult.String() != "undefined" {
-		s.Series = seriesResult.String()
+		s.Series = []byte(seriesResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")

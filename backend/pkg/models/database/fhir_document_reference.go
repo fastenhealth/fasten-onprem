@@ -34,7 +34,7 @@ type FhirDocumentReference struct {
 	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
 	// Human-readable description
 	// https://hl7.org/fhir/r4/search.html#string
-	Description string `gorm:"column:description;type:text" json:"description,omitempty"`
+	Description datatypes.JSON `gorm:"column:description;type:text;serializer:json" json:"description,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -142,7 +142,7 @@ type FhirDocumentReference struct {
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -316,9 +316,59 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 		}
 	}
 	// extracting Description
-	descriptionResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DocumentReference.description')[0]")
+	descriptionResult, err := vm.RunString(` 
+							DescriptionResult = window.fhirpath.evaluate(fhirResource, 'DocumentReference.description')
+							DescriptionProcessed = DescriptionResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(DescriptionProcessed)
+						 `)
 	if err == nil && descriptionResult.String() != "undefined" {
-		s.Description = descriptionResult.String()
+		s.Description = []byte(descriptionResult.String())
 	}
 	// extracting Encounter
 	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter.where(resolve() is Encounter) | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | ServiceRequest.encounter | VisionPrescription.encounter'))")

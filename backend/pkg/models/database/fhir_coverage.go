@@ -22,10 +22,10 @@ type FhirCoverage struct {
 	ClassType datatypes.JSON `gorm:"column:classType;type:text;serializer:json" json:"classType,omitempty"`
 	// Value of the class (eg. Plan number, group number)
 	// https://hl7.org/fhir/r4/search.html#string
-	ClassValue string `gorm:"column:classValue;type:text" json:"classValue,omitempty"`
+	ClassValue datatypes.JSON `gorm:"column:classValue;type:text;serializer:json" json:"classValue,omitempty"`
 	// Dependent number
 	// https://hl7.org/fhir/r4/search.html#string
-	Dependent string `gorm:"column:dependent;type:text" json:"dependent,omitempty"`
+	Dependent datatypes.JSON `gorm:"column:dependent;type:text;serializer:json" json:"dependent,omitempty"`
 	// The primary identifier of the insured and the coverage
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
@@ -58,7 +58,7 @@ type FhirCoverage struct {
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -160,14 +160,114 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		s.ClassType = []byte(classTypeResult.String())
 	}
 	// extracting ClassValue
-	classValueResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Coverage.class.value')[0]")
+	classValueResult, err := vm.RunString(` 
+							ClassValueResult = window.fhirpath.evaluate(fhirResource, 'Coverage.class.value')
+							ClassValueProcessed = ClassValueResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(ClassValueProcessed)
+						 `)
 	if err == nil && classValueResult.String() != "undefined" {
-		s.ClassValue = classValueResult.String()
+		s.ClassValue = []byte(classValueResult.String())
 	}
 	// extracting Dependent
-	dependentResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Coverage.dependent')[0]")
+	dependentResult, err := vm.RunString(` 
+							DependentResult = window.fhirpath.evaluate(fhirResource, 'Coverage.dependent')
+							DependentProcessed = DependentResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(DependentProcessed)
+						 `)
 	if err == nil && dependentResult.String() != "undefined" {
-		s.Dependent = dependentResult.String()
+		s.Dependent = []byte(dependentResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 

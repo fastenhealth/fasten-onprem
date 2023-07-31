@@ -19,7 +19,7 @@ type FhirClaimResponse struct {
 	Created time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
 	// The contents of the disposition message
 	// https://hl7.org/fhir/r4/search.html#string
-	Disposition string `gorm:"column:disposition;type:text" json:"disposition,omitempty"`
+	Disposition datatypes.JSON `gorm:"column:disposition;type:text;serializer:json" json:"disposition,omitempty"`
 	// The identity of the ClaimResponse
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
@@ -58,7 +58,7 @@ type FhirClaimResponse struct {
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -125,9 +125,59 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 		}
 	}
 	// extracting Disposition
-	dispositionResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'ClaimResponse.disposition')[0]")
+	dispositionResult, err := vm.RunString(` 
+							DispositionResult = window.fhirpath.evaluate(fhirResource, 'ClaimResponse.disposition')
+							DispositionProcessed = DispositionResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(DispositionProcessed)
+						 `)
 	if err == nil && dispositionResult.String() != "undefined" {
-		s.Disposition = dispositionResult.String()
+		s.Disposition = []byte(dispositionResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
