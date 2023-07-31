@@ -30,6 +30,21 @@ const (
 const TABLE_ALIAS = "fhir"
 
 //Allows users to use SearchParameters to query resources
+// Can generate simple or complex queries, depending on the SearchParameter type:
+//
+// eg. Simple
+//
+//
+// eg. Complex
+// SELECT fhir.*
+// FROM fhir_observation as fhir, json_each(fhir.code) as codeJson
+// WHERE (
+//	(codeJson.value ->> '$.code' = "29463-7" AND codeJson.value ->> '$.system' = "http://loinc.org")
+//	OR (codeJson.value ->> '$.code' = "3141-9" AND codeJson.value ->> '$.system' = "http://loinc.org")
+//	OR (codeJson.value ->> '$.code' = "27113001" AND codeJson.value ->> '$.system' = "http://snomed.info/sct")
+// )
+// AND (user_id = "6efcd7c5-3f29-4f0d-926d-a66ff68bbfc2")
+// GROUP BY `fhir`.`id`
 func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) ([]models.ResourceBase, error) {
 	//todo, until we actually parse the select statement, we will just return all resources based on "from"
 
@@ -112,7 +127,7 @@ type SearchParameter struct {
 	Modifier string
 }
 
-//Items in the SearchParameterValueOperatorTree are AND'd together, and items within each SearchParameterValueOperatorTree are OR'd together
+//Lists in the SearchParameterValueOperatorTree are AND'd together, and items within each SearchParameterValueOperatorTree list are OR'd together
 //For example, the following would be AND'd together, and then OR'd with the next SearchParameterValueOperatorTree
 // {
 //  {SearchParameterValue{Value: "foo"}, SearchParameterValue{Value: "bar"}}
@@ -128,6 +143,8 @@ type SearchParameterValue struct {
 	SecondaryValues map[string]interface{}
 }
 
+//SearchParameters are made up of parameter names and modifiers. For example, "name" and "name:exact" are both valid search parameters
+// This function will parse the searchCodeWithModifier and return the SearchParameter
 func ProcessSearchParameter(searchCodeWithModifier string, searchParamTypeLookup map[string]string) (SearchParameter, error) {
 	searchParameter := SearchParameter{}
 
@@ -165,6 +182,10 @@ func ProcessSearchParameter(searchCodeWithModifier string, searchParamTypeLookup
 // 3. use the ProcessSearchParameterValue function to split each value into a list of prefixes and values
 // these are then stored in a multidimentional list of SearchParameterValueOperatorTree
 // top level is AND'd together, and each item within the lists are OR'd together
+//
+// For example, searchParamCodeValueOrValuesWithPrefix may be:
+//  "code": "29463-7,3141-9,27113001"
+//  "code": ["le29463-7", "gt3141-9", "27113001"]
 func ProcessSearchParameterValueIntoOperatorTree(searchParameter SearchParameter, searchParamCodeValueOrValuesWithPrefix interface{}) (SearchParameterValueOperatorTree, error) {
 
 	searchParamCodeValuesWithPrefix := []string{}
@@ -198,6 +219,13 @@ func ProcessSearchParameterValueIntoOperatorTree(searchParameter SearchParameter
 	return searchParamCodeValueOperatorTree, nil
 }
 
+// ProcessSearchParameterValue searchValueWithPrefix may or may not have a prefix which needs to be parsed
+// this function will parse the searchValueWithPrefix and return the SearchParameterValue
+// for example, "eq2018-01-01" would return a SearchParameterValue with a prefix of "eq" and a value of "2018-01-01"
+// and "2018-01-01" would return a SearchParameterValue with a value of "2018-01-01"
+//
+// some query types, like token, quantity and reference, have secondary values that need to be parsed
+// for example, code="http://loinc.org|29463-7" would return a SearchParameterValue with a value of "29463-7" and a secondary value of { "codeSystem": "http://loinc.org" }
 func ProcessSearchParameterValue(searchParameter SearchParameter, searchValueWithPrefix string) (SearchParameterValue, error) {
 	searchParameterValue := SearchParameterValue{
 		SecondaryValues: map[string]interface{}{},
@@ -288,6 +316,7 @@ func NamedParameterWithSuffix(parameterName string, suffix string) string {
 	return fmt.Sprintf("%s_%s", parameterName, suffix)
 }
 
+//SearchCodeToWhereClause converts a searchCode and searchCodeValue to a where clause and a map of named parameters
 func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue SearchParameterValue, namedParameterSuffix string) (string, map[string]interface{}, error) {
 
 	//add named parameters to the lookup map. Basically, this is a map of all the named parameters that will be used in the where clause we're generating
@@ -320,17 +349,7 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		} else if searchParam.Modifier == "ap" {
 			return "", nil, fmt.Errorf("search modifier 'ap' not supported for search parameter type %s (%s=%s)", searchParam.Type, searchParam.Name, searchParamValue.Value)
 		}
-	case SearchParameterTypeString:
-		if searchParam.Modifier == "" {
-			searchClauseNamedParams[NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)] = searchParamValue.Value.(string) + "%" // "eve" matches "Eve" and "Evelyn"
-			return fmt.Sprintf("(%s LIKE @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
-		} else if searchParam.Modifier == "exact" {
-			// "eve" matches "eve" (not "Eve" or "EVE")
-			return fmt.Sprintf("(%s = @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
-		} else if searchParam.Modifier == "contains" {
-			searchClauseNamedParams[NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)] = "%" + searchParamValue.Value.(string) + "%" // "eve" matches "Eve", "Evelyn" and "Severine"
-			return fmt.Sprintf("(%s LIKE @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
-		}
+
 	case SearchParameterTypeUri:
 		if searchParam.Modifier == "" {
 			return fmt.Sprintf("(%s = @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
@@ -343,6 +362,17 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//COMPLEX SEARCH PARAMETERS
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	case SearchParameterTypeString:
+		if searchParam.Modifier == "" {
+			searchClauseNamedParams[NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)] = searchParamValue.Value.(string) + "%" // "eve" matches "Eve" and "Evelyn"
+			return fmt.Sprintf("(%sJson.value LIKE @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
+		} else if searchParam.Modifier == "exact" {
+			// "eve" matches "eve" (not "Eve" or "EVE")
+			return fmt.Sprintf("(%sJson.value = @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
+		} else if searchParam.Modifier == "contains" {
+			searchClauseNamedParams[NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)] = "%" + searchParamValue.Value.(string) + "%" // "eve" matches "Eve", "Evelyn" and "Severine"
+			return fmt.Sprintf("(%sJson.value LIKE @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
+		}
 	case SearchParameterTypeQuantity:
 
 		//setup the clause
@@ -425,7 +455,7 @@ func SearchCodeToFromClause(searchParam SearchParameter) (string, error) {
 	//COMPLEX SEARCH PARAMETERS
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	switch searchParam.Type {
-	case SearchParameterTypeQuantity, SearchParameterTypeToken:
+	case SearchParameterTypeQuantity, SearchParameterTypeToken, SearchParameterTypeString:
 		//setup the clause
 		return fmt.Sprintf("json_each(%s.%s) as %sJson", TABLE_ALIAS, searchParam.Name, searchParam.Name), nil
 	}
