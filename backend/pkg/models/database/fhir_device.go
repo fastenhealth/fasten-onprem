@@ -16,7 +16,7 @@ type FhirDevice struct {
 	models.ResourceBase
 	// A server defined search that may match any of the string fields in Device.deviceName or Device.type.
 	// https://hl7.org/fhir/r4/search.html#string
-	DeviceName string `gorm:"column:deviceName;type:text" json:"deviceName,omitempty"`
+	DeviceName datatypes.JSON `gorm:"column:deviceName;type:text;serializer:json" json:"deviceName,omitempty"`
 	// Instance id from manufacturer, owner, and others
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
@@ -31,10 +31,10 @@ type FhirDevice struct {
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
 	// The manufacturer of the device
 	// https://hl7.org/fhir/r4/search.html#string
-	Manufacturer string `gorm:"column:manufacturer;type:text" json:"manufacturer,omitempty"`
+	Manufacturer datatypes.JSON `gorm:"column:manufacturer;type:text;serializer:json" json:"manufacturer,omitempty"`
 	// The model of the device
 	// https://hl7.org/fhir/r4/search.html#string
-	Model string `gorm:"column:model;type:text" json:"model,omitempty"`
+	Model datatypes.JSON `gorm:"column:model;type:text;serializer:json" json:"model,omitempty"`
 	// The organization responsible for the device
 	// https://hl7.org/fhir/r4/search.html#reference
 	Organization datatypes.JSON `gorm:"column:organization;type:text;serializer:json" json:"organization,omitempty"`
@@ -52,16 +52,16 @@ type FhirDevice struct {
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 	// UDI Barcode (RFID or other technology) string in *HRF* format.
 	// https://hl7.org/fhir/r4/search.html#string
-	UdiCarrier string `gorm:"column:udiCarrier;type:text" json:"udiCarrier,omitempty"`
+	UdiCarrier datatypes.JSON `gorm:"column:udiCarrier;type:text;serializer:json" json:"udiCarrier,omitempty"`
 	// The udi Device Identifier (DI)
 	// https://hl7.org/fhir/r4/search.html#string
-	UdiDi string `gorm:"column:udiDi;type:text" json:"udiDi,omitempty"`
+	UdiDi datatypes.JSON `gorm:"column:udiDi;type:text;serializer:json" json:"udiDi,omitempty"`
 	// Network address to contact device
 	// https://hl7.org/fhir/r4/search.html#uri
 	Url string `gorm:"column:url;type:text" json:"url,omitempty"`
@@ -117,9 +117,59 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting DeviceName
-	deviceNameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.deviceName.name | Device.type.coding.display | Device.type.text')[0]")
+	deviceNameResult, err := vm.RunString(` 
+							DeviceNameResult = window.fhirpath.evaluate(fhirResource, 'Device.deviceName.name | Device.type.coding.display | Device.type.text')
+							DeviceNameProcessed = DeviceNameResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(DeviceNameProcessed)
+						 `)
 	if err == nil && deviceNameResult.String() != "undefined" {
-		s.DeviceName = deviceNameResult.String()
+		s.DeviceName = []byte(deviceNameResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -219,14 +269,114 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 		s.Location = []byte(locationResult.String())
 	}
 	// extracting Manufacturer
-	manufacturerResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.manufacturer')[0]")
+	manufacturerResult, err := vm.RunString(` 
+							ManufacturerResult = window.fhirpath.evaluate(fhirResource, 'Device.manufacturer')
+							ManufacturerProcessed = ManufacturerResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(ManufacturerProcessed)
+						 `)
 	if err == nil && manufacturerResult.String() != "undefined" {
-		s.Manufacturer = manufacturerResult.String()
+		s.Manufacturer = []byte(manufacturerResult.String())
 	}
 	// extracting Model
-	modelResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.modelNumber')[0]")
+	modelResult, err := vm.RunString(` 
+							ModelResult = window.fhirpath.evaluate(fhirResource, 'Device.modelNumber')
+							ModelProcessed = ModelResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(ModelProcessed)
+						 `)
 	if err == nil && modelResult.String() != "undefined" {
-		s.Model = modelResult.String()
+		s.Model = []byte(modelResult.String())
 	}
 	// extracting Organization
 	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Device.owner'))")
@@ -328,14 +478,114 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 		s.Tag = []byte(tagResult.String())
 	}
 	// extracting UdiCarrier
-	udiCarrierResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.udiCarrier.carrierHRF')[0]")
+	udiCarrierResult, err := vm.RunString(` 
+							UdiCarrierResult = window.fhirpath.evaluate(fhirResource, 'Device.udiCarrier.carrierHRF')
+							UdiCarrierProcessed = UdiCarrierResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(UdiCarrierProcessed)
+						 `)
 	if err == nil && udiCarrierResult.String() != "undefined" {
-		s.UdiCarrier = udiCarrierResult.String()
+		s.UdiCarrier = []byte(udiCarrierResult.String())
 	}
 	// extracting UdiDi
-	udiDiResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.udiCarrier.deviceIdentifier')[0]")
+	udiDiResult, err := vm.RunString(` 
+							UdiDiResult = window.fhirpath.evaluate(fhirResource, 'Device.udiCarrier.deviceIdentifier')
+							UdiDiProcessed = UdiDiResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(UdiDiProcessed)
+						 `)
 	if err == nil && udiDiResult.String() != "undefined" {
-		s.UdiDi = udiDiResult.String()
+		s.UdiDi = []byte(udiDiResult.String())
 	}
 	// extracting Url
 	urlResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Device.url')[0]")

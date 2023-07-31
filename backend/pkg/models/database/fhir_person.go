@@ -23,7 +23,7 @@ type FhirPerson struct {
 	   * [RelatedPerson](relatedperson.html): A server defined search that may match any of the string fields in the Address, including line, city, district, state, country, postalCode, and/or text
 	*/
 	// https://hl7.org/fhir/r4/search.html#string
-	Address string `gorm:"column:address;type:text" json:"address,omitempty"`
+	Address datatypes.JSON `gorm:"column:address;type:text;serializer:json" json:"address,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -33,7 +33,7 @@ type FhirPerson struct {
 	   * [RelatedPerson](relatedperson.html): A city specified in an address
 	*/
 	// https://hl7.org/fhir/r4/search.html#string
-	AddressCity string `gorm:"column:addressCity;type:text" json:"addressCity,omitempty"`
+	AddressCity datatypes.JSON `gorm:"column:addressCity;type:text;serializer:json" json:"addressCity,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -43,7 +43,7 @@ type FhirPerson struct {
 	   * [RelatedPerson](relatedperson.html): A country specified in an address
 	*/
 	// https://hl7.org/fhir/r4/search.html#string
-	AddressCountry string `gorm:"column:addressCountry;type:text" json:"addressCountry,omitempty"`
+	AddressCountry datatypes.JSON `gorm:"column:addressCountry;type:text;serializer:json" json:"addressCountry,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -53,7 +53,7 @@ type FhirPerson struct {
 	   * [RelatedPerson](relatedperson.html): A postal code specified in an address
 	*/
 	// https://hl7.org/fhir/r4/search.html#string
-	AddressPostalcode string `gorm:"column:addressPostalcode;type:text" json:"addressPostalcode,omitempty"`
+	AddressPostalcode datatypes.JSON `gorm:"column:addressPostalcode;type:text;serializer:json" json:"addressPostalcode,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -63,7 +63,7 @@ type FhirPerson struct {
 	   * [RelatedPerson](relatedperson.html): A state specified in an address
 	*/
 	// https://hl7.org/fhir/r4/search.html#string
-	AddressState string `gorm:"column:addressState;type:text" json:"addressState,omitempty"`
+	AddressState datatypes.JSON `gorm:"column:addressState;type:text;serializer:json" json:"addressState,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -118,7 +118,7 @@ type FhirPerson struct {
 	Link datatypes.JSON `gorm:"column:link;type:text;serializer:json" json:"link,omitempty"`
 	// A server defined search that may match any of the string fields in the HumanName, including family, give, prefix, suffix, suffix, and/or text
 	// https://hl7.org/fhir/r4/search.html#string
-	Name string `gorm:"column:name;type:text" json:"name,omitempty"`
+	Name datatypes.JSON `gorm:"column:name;type:text;serializer:json" json:"name,omitempty"`
 	// The organization at which this person record is being managed
 	// https://hl7.org/fhir/r4/search.html#reference
 	Organization datatypes.JSON `gorm:"column:organization;type:text;serializer:json" json:"organization,omitempty"`
@@ -142,7 +142,7 @@ type FhirPerson struct {
 	   * [RelatedPerson](relatedperson.html): A portion of name using some kind of phonetic matching algorithm
 	*/
 	// https://hl7.org/fhir/r4/search.html#string
-	Phonetic string `gorm:"column:phonetic;type:text" json:"phonetic,omitempty"`
+	Phonetic datatypes.JSON `gorm:"column:phonetic;type:text;serializer:json" json:"phonetic,omitempty"`
 	// The Person links to this Practitioner
 	// https://hl7.org/fhir/r4/search.html#reference
 	Practitioner datatypes.JSON `gorm:"column:practitioner;type:text;serializer:json" json:"practitioner,omitempty"`
@@ -171,7 +171,7 @@ type FhirPerson struct {
 	Telecom datatypes.JSON `gorm:"column:telecom;type:text;serializer:json" json:"telecom,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -235,29 +235,279 @@ func (s *FhirPerson) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Address
-	addressResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address | Person.address | Practitioner.address | RelatedPerson.address')[0]")
+	addressResult, err := vm.RunString(` 
+							AddressResult = window.fhirpath.evaluate(fhirResource, 'Patient.address | Person.address | Practitioner.address | RelatedPerson.address')
+							AddressProcessed = AddressResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(AddressProcessed)
+						 `)
 	if err == nil && addressResult.String() != "undefined" {
-		s.Address = addressResult.String()
+		s.Address = []byte(addressResult.String())
 	}
 	// extracting AddressCity
-	addressCityResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address.city | Person.address.city | Practitioner.address.city | RelatedPerson.address.city')[0]")
+	addressCityResult, err := vm.RunString(` 
+							AddressCityResult = window.fhirpath.evaluate(fhirResource, 'Patient.address.city | Person.address.city | Practitioner.address.city | RelatedPerson.address.city')
+							AddressCityProcessed = AddressCityResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(AddressCityProcessed)
+						 `)
 	if err == nil && addressCityResult.String() != "undefined" {
-		s.AddressCity = addressCityResult.String()
+		s.AddressCity = []byte(addressCityResult.String())
 	}
 	// extracting AddressCountry
-	addressCountryResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address.country | Person.address.country | Practitioner.address.country | RelatedPerson.address.country')[0]")
+	addressCountryResult, err := vm.RunString(` 
+							AddressCountryResult = window.fhirpath.evaluate(fhirResource, 'Patient.address.country | Person.address.country | Practitioner.address.country | RelatedPerson.address.country')
+							AddressCountryProcessed = AddressCountryResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(AddressCountryProcessed)
+						 `)
 	if err == nil && addressCountryResult.String() != "undefined" {
-		s.AddressCountry = addressCountryResult.String()
+		s.AddressCountry = []byte(addressCountryResult.String())
 	}
 	// extracting AddressPostalcode
-	addressPostalcodeResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address.postalCode | Person.address.postalCode | Practitioner.address.postalCode | RelatedPerson.address.postalCode')[0]")
+	addressPostalcodeResult, err := vm.RunString(` 
+							AddressPostalcodeResult = window.fhirpath.evaluate(fhirResource, 'Patient.address.postalCode | Person.address.postalCode | Practitioner.address.postalCode | RelatedPerson.address.postalCode')
+							AddressPostalcodeProcessed = AddressPostalcodeResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(AddressPostalcodeProcessed)
+						 `)
 	if err == nil && addressPostalcodeResult.String() != "undefined" {
-		s.AddressPostalcode = addressPostalcodeResult.String()
+		s.AddressPostalcode = []byte(addressPostalcodeResult.String())
 	}
 	// extracting AddressState
-	addressStateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.address.state | Person.address.state | Practitioner.address.state | RelatedPerson.address.state')[0]")
+	addressStateResult, err := vm.RunString(` 
+							AddressStateResult = window.fhirpath.evaluate(fhirResource, 'Patient.address.state | Person.address.state | Practitioner.address.state | RelatedPerson.address.state')
+							AddressStateProcessed = AddressStateResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(AddressStateProcessed)
+						 `)
 	if err == nil && addressStateResult.String() != "undefined" {
-		s.AddressState = addressStateResult.String()
+		s.AddressState = []byte(addressStateResult.String())
 	}
 	// extracting AddressUse
 	addressUseResult, err := vm.RunString(` 
@@ -491,9 +741,59 @@ func (s *FhirPerson) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 		s.Link = []byte(linkResult.String())
 	}
 	// extracting Name
-	nameResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Person.name')[0]")
+	nameResult, err := vm.RunString(` 
+							NameResult = window.fhirpath.evaluate(fhirResource, 'Person.name')
+							NameProcessed = NameResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(NameProcessed)
+						 `)
 	if err == nil && nameResult.String() != "undefined" {
-		s.Name = nameResult.String()
+		s.Name = []byte(nameResult.String())
 	}
 	// extracting Organization
 	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Person.managingOrganization'))")
@@ -543,9 +843,59 @@ func (s *FhirPerson) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 		s.Phone = []byte(phoneResult.String())
 	}
 	// extracting Phonetic
-	phoneticResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Patient.name | Person.name | Practitioner.name | RelatedPerson.name')[0]")
+	phoneticResult, err := vm.RunString(` 
+							PhoneticResult = window.fhirpath.evaluate(fhirResource, 'Patient.name | Person.name | Practitioner.name | RelatedPerson.name')
+							PhoneticProcessed = PhoneticResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(PhoneticProcessed)
+						 `)
 	if err == nil && phoneticResult.String() != "undefined" {
-		s.Phonetic = phoneticResult.String()
+		s.Phonetic = []byte(phoneticResult.String())
 	}
 	// extracting Practitioner
 	practitionerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Person.link.target.where(resolve() is Practitioner)'))")

@@ -22,7 +22,7 @@ type FhirCondition struct {
 	AbatementDate time.Time `gorm:"column:abatementDate;type:datetime" json:"abatementDate,omitempty"`
 	// Abatement as a string
 	// https://hl7.org/fhir/r4/search.html#string
-	AbatementString string `gorm:"column:abatementString;type:text" json:"abatementString,omitempty"`
+	AbatementString datatypes.JSON `gorm:"column:abatementString;type:text;serializer:json" json:"abatementString,omitempty"`
 	// Person who asserts this condition
 	// https://hl7.org/fhir/r4/search.html#reference
 	Asserter datatypes.JSON `gorm:"column:asserter;type:text;serializer:json" json:"asserter,omitempty"`
@@ -114,7 +114,7 @@ type FhirCondition struct {
 	OnsetDate time.Time `gorm:"column:onsetDate;type:datetime" json:"onsetDate,omitempty"`
 	// Onsets as a string
 	// https://hl7.org/fhir/r4/search.html#string
-	OnsetInfo string `gorm:"column:onsetInfo;type:text" json:"onsetInfo,omitempty"`
+	OnsetInfo datatypes.JSON `gorm:"column:onsetInfo;type:text;serializer:json" json:"onsetInfo,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
@@ -138,7 +138,7 @@ type FhirCondition struct {
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -220,9 +220,59 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 		}
 	}
 	// extracting AbatementString
-	abatementStringResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.abatement.as(string)')[0]")
+	abatementStringResult, err := vm.RunString(` 
+							AbatementStringResult = window.fhirpath.evaluate(fhirResource, 'Condition.abatement.as(string)')
+							AbatementStringProcessed = AbatementStringResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(AbatementStringProcessed)
+						 `)
 	if err == nil && abatementStringResult.String() != "undefined" {
-		s.AbatementString = abatementStringResult.String()
+		s.AbatementString = []byte(abatementStringResult.String())
 	}
 	// extracting Asserter
 	asserterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.asserter'))")
@@ -555,9 +605,59 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 		}
 	}
 	// extracting OnsetInfo
-	onsetInfoResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.onset.as(string)')[0]")
+	onsetInfoResult, err := vm.RunString(` 
+							OnsetInfoResult = window.fhirpath.evaluate(fhirResource, 'Condition.onset.as(string)')
+							OnsetInfoProcessed = OnsetInfoResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(OnsetInfoProcessed)
+						 `)
 	if err == nil && onsetInfoResult.String() != "undefined" {
-		s.OnsetInfo = onsetInfoResult.String()
+		s.OnsetInfo = []byte(onsetInfoResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
