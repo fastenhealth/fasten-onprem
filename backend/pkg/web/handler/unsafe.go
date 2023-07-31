@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/fastenhealth/fasten-sources/clients/factory"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -79,6 +81,22 @@ func UnsafeRequestSource(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error(), "data": resp})
 		return
 	}
+
+	//update source incase the access token/refresh token has been updated
+	sourceCredential := client.GetSourceCredential()
+	sourceCredentialConcrete, ok := sourceCredential.(*models.SourceCredential)
+	if !ok {
+		logger.Errorln("An error occurred while updating source credential, source credential is not of type *models.SourceCredential")
+		c.JSON(http.StatusOK, gin.H{"success": false, "data": resp, "error": fmt.Errorf("An error occurred while updating source credential, source credential is not of type *models.SourceCredential")})
+		return
+	}
+	err = databaseRepo.UpdateSource(c, sourceCredentialConcrete)
+	if err != nil {
+		logger.Errorf("An error occurred while updating source credential: %v", err)
+		c.JSON(http.StatusOK, gin.H{"success": false, "data": resp, "error": fmt.Errorf("An error occurred while updating source credential: %v", err)})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": resp})
 }
 
