@@ -268,7 +268,64 @@ func main() {
 				g.List(jen.Id(fieldNameVar), jen.Id("err")).Op(":=").Id("vm").Dot("RunString").CallFunc(func(r *jen.Group) {
 
 					script := fmt.Sprintf("window.fhirpath.evaluate(fhirResource, '%s')", fieldInfo.FHIRPathExpression)
-					if isSimpleFieldType(fieldInfo.FieldType) {
+
+					if fieldInfo.FieldType == "string" {
+						//strings are unusual in that they can contain HumanName and Address types, which are not actually simple types
+						//we need to do some additional processing,
+						r.Op("`").Id(fmt.Sprintf(`
+							%sResult = %s
+							%sProcessed = %sResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+				
+							JSON.stringify(%sProcessed)
+						`, fieldName, script, fieldName, fieldName, fieldName)).Op("`")
+
+					} else if isSimpleFieldType(fieldInfo.FieldType) {
+						//TODO: we may end up losing some information here, as we are only returning the first element of the array
 						script += "[0]"
 						//"Don't JSON.stringfy simple types"
 						r.Lit(script)
@@ -317,7 +374,7 @@ func main() {
 				})
 				g.If(jen.Err().Op("==").Nil().Op("&&").Id(fieldNameVar).Dot("String").Call().Op("!=").Lit("undefined")).BlockFunc(func(i *jen.Group) {
 					switch fieldInfo.FieldType {
-					case "token", "reference", "special", "quantity":
+					case "token", "reference", "special", "quantity", "string":
 						i.Id("s").Dot(fieldName).Op("=").Index().Byte().Parens(jen.Id(fieldNameVar).Dot("String").Call())
 						break
 					case "number":
@@ -329,7 +386,7 @@ func main() {
 						i.If(jen.Err().Op("==").Nil()).BlockFunc(func(e *jen.Group) {
 							e.Id("s").Dot(fieldName).Op("=").Id("t")
 						})
-					case "string", "uri":
+					case "uri":
 						i.Id("s").Dot(fieldName).Op("=").Id(fieldNameVar).Dot("String").Call()
 						break
 					default:
@@ -510,9 +567,9 @@ var AllowedResources = []string{
 //simple field types are not json encoded in the DB and are always single values (not arrays)
 func isSimpleFieldType(fieldType string) bool {
 	switch fieldType {
-	case "number", "string", "uri", "date":
+	case "number", "uri", "date":
 		return true
-	case "token", "reference", "special", "quantity":
+	case "token", "reference", "special", "quantity", "string":
 		return false
 	default:
 		return true
@@ -533,7 +590,7 @@ func mapFieldType(fieldType string) string {
 	case "date":
 		return "time#Time"
 	case "string":
-		return "string"
+		return "gorm.io/datatypes#JSON"
 	case "uri":
 		return "string"
 	case "special":
@@ -559,7 +616,7 @@ func mapGormType(fieldType string) string {
 	case "date":
 		return "type:datetime"
 	case "string":
-		return "type:text"
+		return "type:text;serializer:json"
 	case "uri":
 		return "type:text"
 	case "special":
