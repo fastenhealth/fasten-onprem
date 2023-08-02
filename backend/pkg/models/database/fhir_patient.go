@@ -85,10 +85,10 @@ type FhirPatient struct {
 	   * [RelatedPerson](relatedperson.html): The Related Person's date of birth
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Birthdate time.Time `gorm:"column:birthdate;type:datetime" json:"birthdate,omitempty"`
+	Birthdate *time.Time `gorm:"column:birthdate;type:datetime" json:"birthdate,omitempty"`
 	// The date of death has been provided and satisfies this search value
 	// https://hl7.org/fhir/r4/search.html#date
-	DeathDate time.Time `gorm:"column:deathDate;type:datetime" json:"deathDate,omitempty"`
+	DeathDate *time.Time `gorm:"column:deathDate;type:datetime" json:"deathDate,omitempty"`
 	// This patient has been marked as deceased, or has a death date entered
 	// https://hl7.org/fhir/r4/search.html#token
 	Deceased datatypes.JSON `gorm:"column:deceased;type:text;serializer:json" json:"deceased,omitempty"`
@@ -140,7 +140,7 @@ type FhirPatient struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// All patients linked to the given patient
 	// https://hl7.org/fhir/r4/search.html#reference
 	Link datatypes.JSON `gorm:"column:link;type:text;serializer:json" json:"link,omitempty"`
@@ -297,7 +297,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 							}, [])
 						
 				
-							JSON.stringify(ActiveProcessed)
+							if(ActiveProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ActiveProcessed)
+							}
 						 `)
 	if err == nil && activeResult.String() != "undefined" {
 		s.Active = []byte(activeResult.String())
@@ -351,8 +356,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(AddressProcessed)
+							if(AddressProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AddressProcessed)
+							}
 						 `)
 	if err == nil && addressResult.String() != "undefined" {
 		s.Address = []byte(addressResult.String())
@@ -406,8 +415,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(AddressCityProcessed)
+							if(AddressCityProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AddressCityProcessed)
+							}
 						 `)
 	if err == nil && addressCityResult.String() != "undefined" {
 		s.AddressCity = []byte(addressCityResult.String())
@@ -461,8 +474,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(AddressCountryProcessed)
+							if(AddressCountryProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AddressCountryProcessed)
+							}
 						 `)
 	if err == nil && addressCountryResult.String() != "undefined" {
 		s.AddressCountry = []byte(addressCountryResult.String())
@@ -516,8 +533,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(AddressPostalcodeProcessed)
+							if(AddressPostalcodeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AddressPostalcodeProcessed)
+							}
 						 `)
 	if err == nil && addressPostalcodeResult.String() != "undefined" {
 		s.AddressPostalcode = []byte(addressPostalcodeResult.String())
@@ -571,8 +592,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(AddressStateProcessed)
+							if(AddressStateProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AddressStateProcessed)
+							}
 						 `)
 	if err == nil && addressStateResult.String() != "undefined" {
 		s.AddressState = []byte(addressStateResult.String())
@@ -614,7 +639,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 							}, [])
 						
 				
-							JSON.stringify(AddressUseProcessed)
+							if(AddressUseProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AddressUseProcessed)
+							}
 						 `)
 	if err == nil && addressUseResult.String() != "undefined" {
 		s.AddressUse = []byte(addressUseResult.String())
@@ -624,7 +654,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 	if err == nil && birthdateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, birthdateResult.String())
 		if err == nil {
-			s.Birthdate = t
+			s.Birthdate = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", birthdateResult.String())
+			if err == nil {
+				s.Birthdate = &d
+			}
 		}
 	}
 	// extracting DeathDate
@@ -632,7 +667,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 	if err == nil && deathDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, deathDateResult.String())
 		if err == nil {
-			s.DeathDate = t
+			s.DeathDate = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", deathDateResult.String())
+			if err == nil {
+				s.DeathDate = &d
+			}
 		}
 	}
 	// extracting Deceased
@@ -672,7 +712,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 							}, [])
 						
 				
-							JSON.stringify(DeceasedProcessed)
+							if(DeceasedProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(DeceasedProcessed)
+							}
 						 `)
 	if err == nil && deceasedResult.String() != "undefined" {
 		s.Deceased = []byte(deceasedResult.String())
@@ -714,7 +759,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 							}, [])
 						
 				
-							JSON.stringify(EmailProcessed)
+							if(EmailProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(EmailProcessed)
+							}
 						 `)
 	if err == nil && emailResult.String() != "undefined" {
 		s.Email = []byte(emailResult.String())
@@ -768,8 +818,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(FamilyProcessed)
+							if(FamilyProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(FamilyProcessed)
+							}
 						 `)
 	if err == nil && familyResult.String() != "undefined" {
 		s.Family = []byte(familyResult.String())
@@ -811,7 +865,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 							}, [])
 						
 				
-							JSON.stringify(GenderProcessed)
+							if(GenderProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(GenderProcessed)
+							}
 						 `)
 	if err == nil && genderResult.String() != "undefined" {
 		s.Gender = []byte(genderResult.String())
@@ -819,7 +878,6 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 	// extracting GeneralPractitioner
 	generalPractitionerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.generalPractitioner'))")
 	if err == nil && generalPractitionerResult.String() != "undefined" {
-		s.GeneralPractitioner = []byte(generalPractitionerResult.String())
 	}
 	// extracting Given
 	givenResult, err := vm.RunString(` 
@@ -870,8 +928,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(GivenProcessed)
+							if(GivenProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(GivenProcessed)
+							}
 						 `)
 	if err == nil && givenResult.String() != "undefined" {
 		s.Given = []byte(givenResult.String())
@@ -913,7 +975,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -955,7 +1022,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -965,13 +1037,17 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Link
 	linkResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.link.other'))")
 	if err == nil && linkResult.String() != "undefined" {
-		s.Link = []byte(linkResult.String())
 	}
 	// extracting Name
 	nameResult, err := vm.RunString(` 
@@ -1022,8 +1098,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(NameProcessed)
+							if(NameProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(NameProcessed)
+							}
 						 `)
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = []byte(nameResult.String())
@@ -1031,7 +1111,6 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 	// extracting Organization
 	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.managingOrganization'))")
 	if err == nil && organizationResult.String() != "undefined" {
-		s.Organization = []byte(organizationResult.String())
 	}
 	// extracting Phone
 	phoneResult, err := vm.RunString(` 
@@ -1070,7 +1149,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 							}, [])
 						
 				
-							JSON.stringify(PhoneProcessed)
+							if(PhoneProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PhoneProcessed)
+							}
 						 `)
 	if err == nil && phoneResult.String() != "undefined" {
 		s.Phone = []byte(phoneResult.String())
@@ -1124,8 +1208,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(PhoneticProcessed)
+							if(PhoneticProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PhoneticProcessed)
+							}
 						 `)
 	if err == nil && phoneticResult.String() != "undefined" {
 		s.Phonetic = []byte(phoneticResult.String())
@@ -1133,7 +1221,6 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
@@ -1177,7 +1264,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())
@@ -1219,7 +1311,12 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 							}, [])
 						
 				
-							JSON.stringify(TelecomProcessed)
+							if(TelecomProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TelecomProcessed)
+							}
 						 `)
 	if err == nil && telecomResult.String() != "undefined" {
 		s.Telecom = []byte(telecomResult.String())

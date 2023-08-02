@@ -16,7 +16,7 @@ type FhirMedicationRequest struct {
 	models.ResourceBase
 	// Return prescriptions written on this date
 	// https://hl7.org/fhir/r4/search.html#date
-	Authoredon time.Time `gorm:"column:authoredon;type:datetime" json:"authoredon,omitempty"`
+	Authoredon *time.Time `gorm:"column:authoredon;type:datetime" json:"authoredon,omitempty"`
 	// Returns prescriptions with different categories
 	// https://hl7.org/fhir/r4/search.html#token
 	Category datatypes.JSON `gorm:"column:category;type:text;serializer:json" json:"category,omitempty"`
@@ -46,7 +46,7 @@ type FhirMedicationRequest struct {
 	   * [MedicationRequest](medicationrequest.html): Returns medication request to be administered on a specific date
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -107,7 +107,7 @@ type FhirMedicationRequest struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -213,7 +213,12 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 	if err == nil && authoredonResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, authoredonResult.String())
 		if err == nil {
-			s.Authoredon = t
+			s.Authoredon = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", authoredonResult.String())
+			if err == nil {
+				s.Authoredon = &d
+			}
 		}
 	}
 	// extracting Category
@@ -253,7 +258,12 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 							}, [])
 						
 				
-							JSON.stringify(CategoryProcessed)
+							if(CategoryProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(CategoryProcessed)
+							}
 						 `)
 	if err == nil && categoryResult.String() != "undefined" {
 		s.Category = []byte(categoryResult.String())
@@ -295,7 +305,12 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 							}, [])
 						
 				
-							JSON.stringify(CodeProcessed)
+							if(CodeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(CodeProcessed)
+							}
 						 `)
 	if err == nil && codeResult.String() != "undefined" {
 		s.Code = []byte(codeResult.String())
@@ -305,13 +320,17 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
-			s.Date = t
+			s.Date = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", dateResult.String())
+			if err == nil {
+				s.Date = &d
+			}
 		}
 	}
 	// extracting Encounter
 	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationRequest.encounter'))")
 	if err == nil && encounterResult.String() != "undefined" {
-		s.Encounter = []byte(encounterResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -350,7 +369,12 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -358,12 +382,10 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 	// extracting IntendedDispenser
 	intendedDispenserResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationRequest.dispenseRequest.performer'))")
 	if err == nil && intendedDispenserResult.String() != "undefined" {
-		s.IntendedDispenser = []byte(intendedDispenserResult.String())
 	}
 	// extracting IntendedPerformer
 	intendedPerformerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationRequest.performer'))")
 	if err == nil && intendedPerformerResult.String() != "undefined" {
-		s.IntendedPerformer = []byte(intendedPerformerResult.String())
 	}
 	// extracting IntendedPerformertype
 	intendedPerformertypeResult, err := vm.RunString(` 
@@ -402,7 +424,12 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 							}, [])
 						
 				
-							JSON.stringify(IntendedPerformertypeProcessed)
+							if(IntendedPerformertypeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IntendedPerformertypeProcessed)
+							}
 						 `)
 	if err == nil && intendedPerformertypeResult.String() != "undefined" {
 		s.IntendedPerformertype = []byte(intendedPerformertypeResult.String())
@@ -444,7 +471,12 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 							}, [])
 						
 				
-							JSON.stringify(IntentProcessed)
+							if(IntentProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IntentProcessed)
+							}
 						 `)
 	if err == nil && intentResult.String() != "undefined" {
 		s.Intent = []byte(intentResult.String())
@@ -486,7 +518,12 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -496,13 +533,17 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Medication
 	medicationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(MedicationAdministration.medicationReference) | (MedicationDispense.medicationReference) | (MedicationRequest.medicationReference) | (MedicationStatement.medicationReference)'))")
 	if err == nil && medicationResult.String() != "undefined" {
-		s.Medication = []byte(medicationResult.String())
 	}
 	// extracting Priority
 	priorityResult, err := vm.RunString(` 
@@ -541,7 +582,12 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 							}, [])
 						
 				
-							JSON.stringify(PriorityProcessed)
+							if(PriorityProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PriorityProcessed)
+							}
 						 `)
 	if err == nil && priorityResult.String() != "undefined" {
 		s.Priority = []byte(priorityResult.String())
@@ -549,12 +595,10 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Requester
 	requesterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationRequest.requester'))")
 	if err == nil && requesterResult.String() != "undefined" {
-		s.Requester = []byte(requesterResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
@@ -598,7 +642,12 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 							}, [])
 						
 				
-							JSON.stringify(StatusProcessed)
+							if(StatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusProcessed)
+							}
 						 `)
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
@@ -606,7 +655,6 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 	// extracting Subject
 	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationRequest.subject'))")
 	if err == nil && subjectResult.String() != "undefined" {
-		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 
@@ -645,7 +693,12 @@ func (s *FhirMedicationRequest) PopulateAndExtractSearchParameters(resourceRaw j
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())

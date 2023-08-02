@@ -16,7 +16,7 @@ type FhirVisionPrescription struct {
 	models.ResourceBase
 	// Return prescriptions written on this date
 	// https://hl7.org/fhir/r4/search.html#date
-	Datewritten time.Time `gorm:"column:datewritten;type:datetime" json:"datewritten,omitempty"`
+	Datewritten *time.Time `gorm:"column:datewritten;type:datetime" json:"datewritten,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -76,7 +76,7 @@ type FhirVisionPrescription struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// Who authorized the vision prescription
 	// https://hl7.org/fhir/r4/search.html#reference
 	Prescriber datatypes.JSON `gorm:"column:prescriber;type:text;serializer:json" json:"prescriber,omitempty"`
@@ -149,13 +149,17 @@ func (s *FhirVisionPrescription) PopulateAndExtractSearchParameters(resourceRaw 
 	if err == nil && datewrittenResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, datewrittenResult.String())
 		if err == nil {
-			s.Datewritten = t
+			s.Datewritten = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", datewrittenResult.String())
+			if err == nil {
+				s.Datewritten = &d
+			}
 		}
 	}
 	// extracting Encounter
 	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter.where(resolve() is Encounter) | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | ServiceRequest.encounter | VisionPrescription.encounter'))")
 	if err == nil && encounterResult.String() != "undefined" {
-		s.Encounter = []byte(encounterResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -194,7 +198,12 @@ func (s *FhirVisionPrescription) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -236,7 +245,12 @@ func (s *FhirVisionPrescription) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -246,18 +260,21 @@ func (s *FhirVisionPrescription) PopulateAndExtractSearchParameters(resourceRaw 
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Prescriber
 	prescriberResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'VisionPrescription.prescriber'))")
 	if err == nil && prescriberResult.String() != "undefined" {
-		s.Prescriber = []byte(prescriberResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
@@ -301,7 +318,12 @@ func (s *FhirVisionPrescription) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(StatusProcessed)
+							if(StatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusProcessed)
+							}
 						 `)
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
@@ -343,7 +365,12 @@ func (s *FhirVisionPrescription) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())

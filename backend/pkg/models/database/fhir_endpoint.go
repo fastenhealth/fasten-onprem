@@ -25,7 +25,7 @@ type FhirEndpoint struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// A name that this endpoint can be identified by
 	// https://hl7.org/fhir/r4/search.html#string
 	Name datatypes.JSON `gorm:"column:name;type:text;serializer:json" json:"name,omitempty"`
@@ -137,7 +137,12 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(ConnectionTypeProcessed)
+							if(ConnectionTypeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ConnectionTypeProcessed)
+							}
 						 `)
 	if err == nil && connectionTypeResult.String() != "undefined" {
 		s.ConnectionType = []byte(connectionTypeResult.String())
@@ -179,7 +184,12 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -221,7 +231,12 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -231,7 +246,12 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Name
@@ -283,8 +303,12 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(NameProcessed)
+							if(NameProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(NameProcessed)
+							}
 						 `)
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = []byte(nameResult.String())
@@ -292,7 +316,6 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	// extracting Organization
 	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.managingOrganization'))")
 	if err == nil && organizationResult.String() != "undefined" {
-		s.Organization = []byte(organizationResult.String())
 	}
 	// extracting PayloadType
 	payloadTypeResult, err := vm.RunString(` 
@@ -331,7 +354,12 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(PayloadTypeProcessed)
+							if(PayloadTypeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PayloadTypeProcessed)
+							}
 						 `)
 	if err == nil && payloadTypeResult.String() != "undefined" {
 		s.PayloadType = []byte(payloadTypeResult.String())
@@ -339,7 +367,6 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
@@ -383,7 +410,12 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(StatusProcessed)
+							if(StatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusProcessed)
+							}
 						 `)
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
@@ -425,7 +457,12 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())

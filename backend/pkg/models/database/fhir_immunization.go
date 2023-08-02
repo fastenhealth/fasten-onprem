@@ -36,7 +36,7 @@ type FhirImmunization struct {
 	   * [SupplyRequest](supplyrequest.html): When the request was made
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -78,7 +78,7 @@ type FhirImmunization struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// The service delivery location or facility in which the vaccine was / was to be administered
 	// https://hl7.org/fhir/r4/search.html#reference
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
@@ -99,7 +99,7 @@ type FhirImmunization struct {
 	Reaction datatypes.JSON `gorm:"column:reaction;type:text;serializer:json" json:"reaction,omitempty"`
 	// When reaction started
 	// https://hl7.org/fhir/r4/search.html#date
-	ReactionDate time.Time `gorm:"column:reactionDate;type:datetime" json:"reactionDate,omitempty"`
+	ReactionDate *time.Time `gorm:"column:reactionDate;type:datetime" json:"reactionDate,omitempty"`
 	// Reason why the vaccine was administered
 	// https://hl7.org/fhir/r4/search.html#token
 	ReasonCode datatypes.JSON `gorm:"column:reasonCode;type:text;serializer:json" json:"reasonCode,omitempty"`
@@ -194,7 +194,12 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
-			s.Date = t
+			s.Date = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", dateResult.String())
+			if err == nil {
+				s.Date = &d
+			}
 		}
 	}
 	// extracting Identifier
@@ -234,7 +239,12 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -276,7 +286,12 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -286,13 +301,17 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Location
 	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.location'))")
 	if err == nil && locationResult.String() != "undefined" {
-		s.Location = []byte(locationResult.String())
 	}
 	// extracting LotNumber
 	lotNumberResult, err := vm.RunString(` 
@@ -343,8 +362,12 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(LotNumberProcessed)
+							if(LotNumberProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LotNumberProcessed)
+							}
 						 `)
 	if err == nil && lotNumberResult.String() != "undefined" {
 		s.LotNumber = []byte(lotNumberResult.String())
@@ -352,29 +375,30 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 	// extracting Manufacturer
 	manufacturerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.manufacturer'))")
 	if err == nil && manufacturerResult.String() != "undefined" {
-		s.Manufacturer = []byte(manufacturerResult.String())
 	}
 	// extracting Performer
 	performerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.performer.actor'))")
 	if err == nil && performerResult.String() != "undefined" {
-		s.Performer = []byte(performerResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Reaction
 	reactionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.reaction.detail'))")
 	if err == nil && reactionResult.String() != "undefined" {
-		s.Reaction = []byte(reactionResult.String())
 	}
 	// extracting ReactionDate
 	reactionDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Immunization.reaction.date')[0]")
 	if err == nil && reactionDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, reactionDateResult.String())
 		if err == nil {
-			s.ReactionDate = t
+			s.ReactionDate = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", reactionDateResult.String())
+			if err == nil {
+				s.ReactionDate = &d
+			}
 		}
 	}
 	// extracting ReasonCode
@@ -414,7 +438,12 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 							}, [])
 						
 				
-							JSON.stringify(ReasonCodeProcessed)
+							if(ReasonCodeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ReasonCodeProcessed)
+							}
 						 `)
 	if err == nil && reasonCodeResult.String() != "undefined" {
 		s.ReasonCode = []byte(reasonCodeResult.String())
@@ -422,7 +451,6 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 	// extracting ReasonReference
 	reasonReferenceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.reasonReference'))")
 	if err == nil && reasonReferenceResult.String() != "undefined" {
-		s.ReasonReference = []byte(reasonReferenceResult.String())
 	}
 	// extracting Series
 	seriesResult, err := vm.RunString(` 
@@ -473,8 +501,12 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(SeriesProcessed)
+							if(SeriesProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SeriesProcessed)
+							}
 						 `)
 	if err == nil && seriesResult.String() != "undefined" {
 		s.Series = []byte(seriesResult.String())
@@ -521,7 +553,12 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 							}, [])
 						
 				
-							JSON.stringify(StatusProcessed)
+							if(StatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusProcessed)
+							}
 						 `)
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
@@ -563,7 +600,12 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 							}, [])
 						
 				
-							JSON.stringify(StatusReasonProcessed)
+							if(StatusReasonProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusReasonProcessed)
+							}
 						 `)
 	if err == nil && statusReasonResult.String() != "undefined" {
 		s.StatusReason = []byte(statusReasonResult.String())
@@ -605,7 +647,12 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())
@@ -647,7 +694,12 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 							}, [])
 						
 				
-							JSON.stringify(TargetDiseaseProcessed)
+							if(TargetDiseaseProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TargetDiseaseProcessed)
+							}
 						 `)
 	if err == nil && targetDiseaseResult.String() != "undefined" {
 		s.TargetDisease = []byte(targetDiseaseResult.String())
@@ -689,7 +741,12 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 							}, [])
 						
 				
-							JSON.stringify(VaccineCodeProcessed)
+							if(VaccineCodeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(VaccineCodeProcessed)
+							}
 						 `)
 	if err == nil && vaccineCodeResult.String() != "undefined" {
 		s.VaccineCode = []byte(vaccineCodeResult.String())

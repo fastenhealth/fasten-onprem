@@ -16,7 +16,7 @@ type FhirCoverageEligibilityResponse struct {
 	models.ResourceBase
 	// The creation date
 	// https://hl7.org/fhir/r4/search.html#date
-	Created time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
+	Created *time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
 	// The contents of the disposition message
 	// https://hl7.org/fhir/r4/search.html#string
 	Disposition datatypes.JSON `gorm:"column:disposition;type:text;serializer:json" json:"disposition,omitempty"`
@@ -31,7 +31,7 @@ type FhirCoverageEligibilityResponse struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// The processing outcome
 	// https://hl7.org/fhir/r4/search.html#token
 	Outcome datatypes.JSON `gorm:"column:outcome;type:text;serializer:json" json:"outcome,omitempty"`
@@ -113,7 +113,12 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 	if err == nil && createdResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, createdResult.String())
 		if err == nil {
-			s.Created = t
+			s.Created = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", createdResult.String())
+			if err == nil {
+				s.Created = &d
+			}
 		}
 	}
 	// extracting Disposition
@@ -165,8 +170,12 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(DispositionProcessed)
+							if(DispositionProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(DispositionProcessed)
+							}
 						 `)
 	if err == nil && dispositionResult.String() != "undefined" {
 		s.Disposition = []byte(dispositionResult.String())
@@ -208,7 +217,12 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -216,7 +230,6 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 	// extracting Insurer
 	insurerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'CoverageEligibilityResponse.insurer'))")
 	if err == nil && insurerResult.String() != "undefined" {
-		s.Insurer = []byte(insurerResult.String())
 	}
 	// extracting Language
 	languageResult, err := vm.RunString(` 
@@ -255,7 +268,12 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -265,7 +283,12 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Outcome
@@ -305,7 +328,12 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 							}, [])
 						
 				
-							JSON.stringify(OutcomeProcessed)
+							if(OutcomeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(OutcomeProcessed)
+							}
 						 `)
 	if err == nil && outcomeResult.String() != "undefined" {
 		s.Outcome = []byte(outcomeResult.String())
@@ -313,17 +341,14 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Request
 	requestResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'CoverageEligibilityResponse.request'))")
 	if err == nil && requestResult.String() != "undefined" {
-		s.Request = []byte(requestResult.String())
 	}
 	// extracting Requestor
 	requestorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'CoverageEligibilityResponse.requestor'))")
 	if err == nil && requestorResult.String() != "undefined" {
-		s.Requestor = []byte(requestorResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
@@ -367,7 +392,12 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 							}, [])
 						
 				
-							JSON.stringify(StatusProcessed)
+							if(StatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusProcessed)
+							}
 						 `)
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
@@ -409,7 +439,12 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())

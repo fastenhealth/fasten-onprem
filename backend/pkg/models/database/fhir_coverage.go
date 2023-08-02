@@ -34,7 +34,7 @@ type FhirCoverage struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// The identity of the insurer or party paying for services
 	// https://hl7.org/fhir/r4/search.html#reference
 	Payor datatypes.JSON `gorm:"column:payor;type:text;serializer:json" json:"payor,omitempty"`
@@ -115,7 +115,6 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	// extracting Beneficiary
 	beneficiaryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.beneficiary'))")
 	if err == nil && beneficiaryResult.String() != "undefined" {
-		s.Beneficiary = []byte(beneficiaryResult.String())
 	}
 	// extracting ClassType
 	classTypeResult, err := vm.RunString(` 
@@ -154,7 +153,12 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(ClassTypeProcessed)
+							if(ClassTypeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ClassTypeProcessed)
+							}
 						 `)
 	if err == nil && classTypeResult.String() != "undefined" {
 		s.ClassType = []byte(classTypeResult.String())
@@ -208,8 +212,12 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(ClassValueProcessed)
+							if(ClassValueProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ClassValueProcessed)
+							}
 						 `)
 	if err == nil && classValueResult.String() != "undefined" {
 		s.ClassValue = []byte(classValueResult.String())
@@ -263,8 +271,12 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(DependentProcessed)
+							if(DependentProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(DependentProcessed)
+							}
 						 `)
 	if err == nil && dependentResult.String() != "undefined" {
 		s.Dependent = []byte(dependentResult.String())
@@ -306,7 +318,12 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -348,7 +365,12 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -358,23 +380,25 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Payor
 	payorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.payor'))")
 	if err == nil && payorResult.String() != "undefined" {
-		s.Payor = []byte(payorResult.String())
 	}
 	// extracting PolicyHolder
 	policyHolderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.policyHolder'))")
 	if err == nil && policyHolderResult.String() != "undefined" {
-		s.PolicyHolder = []byte(policyHolderResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
@@ -418,7 +442,12 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(StatusProcessed)
+							if(StatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusProcessed)
+							}
 						 `)
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
@@ -426,7 +455,6 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	// extracting Subscriber
 	subscriberResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Coverage.subscriber'))")
 	if err == nil && subscriberResult.String() != "undefined" {
-		s.Subscriber = []byte(subscriberResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 
@@ -465,7 +493,12 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())

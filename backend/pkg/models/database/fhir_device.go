@@ -25,7 +25,7 @@ type FhirDevice struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// A location, where the resource is found
 	// https://hl7.org/fhir/r4/search.html#reference
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
@@ -165,8 +165,12 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(DeviceNameProcessed)
+							if(DeviceNameProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(DeviceNameProcessed)
+							}
 						 `)
 	if err == nil && deviceNameResult.String() != "undefined" {
 		s.DeviceName = []byte(deviceNameResult.String())
@@ -208,7 +212,12 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -250,7 +259,12 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -260,13 +274,17 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Location
 	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Device.location'))")
 	if err == nil && locationResult.String() != "undefined" {
-		s.Location = []byte(locationResult.String())
 	}
 	// extracting Manufacturer
 	manufacturerResult, err := vm.RunString(` 
@@ -317,8 +335,12 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(ManufacturerProcessed)
+							if(ManufacturerProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ManufacturerProcessed)
+							}
 						 `)
 	if err == nil && manufacturerResult.String() != "undefined" {
 		s.Manufacturer = []byte(manufacturerResult.String())
@@ -372,8 +394,12 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(ModelProcessed)
+							if(ModelProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ModelProcessed)
+							}
 						 `)
 	if err == nil && modelResult.String() != "undefined" {
 		s.Model = []byte(modelResult.String())
@@ -381,12 +407,10 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 	// extracting Organization
 	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Device.owner'))")
 	if err == nil && organizationResult.String() != "undefined" {
-		s.Organization = []byte(organizationResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
@@ -430,7 +454,12 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 							}, [])
 						
 				
-							JSON.stringify(StatusProcessed)
+							if(StatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusProcessed)
+							}
 						 `)
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
@@ -472,7 +501,12 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())
@@ -526,8 +560,12 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(UdiCarrierProcessed)
+							if(UdiCarrierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(UdiCarrierProcessed)
+							}
 						 `)
 	if err == nil && udiCarrierResult.String() != "undefined" {
 		s.UdiCarrier = []byte(udiCarrierResult.String())
@@ -581,8 +619,12 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(UdiDiProcessed)
+							if(UdiDiProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(UdiDiProcessed)
+							}
 						 `)
 	if err == nil && udiDiResult.String() != "undefined" {
 		s.UdiDi = []byte(udiDiResult.String())

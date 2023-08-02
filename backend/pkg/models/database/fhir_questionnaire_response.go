@@ -19,7 +19,7 @@ type FhirQuestionnaireResponse struct {
 	Author datatypes.JSON `gorm:"column:author;type:text;serializer:json" json:"author,omitempty"`
 	// When the questionnaire response was last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	Authored time.Time `gorm:"column:authored;type:datetime" json:"authored,omitempty"`
+	Authored *time.Time `gorm:"column:authored;type:datetime" json:"authored,omitempty"`
 	// Plan/proposal/order fulfilled by this questionnaire response
 	// https://hl7.org/fhir/r4/search.html#reference
 	BasedOn datatypes.JSON `gorm:"column:basedOn;type:text;serializer:json" json:"basedOn,omitempty"`
@@ -34,7 +34,7 @@ type FhirQuestionnaireResponse struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// Procedure or observation this questionnaire response was performed as a part of
 	// https://hl7.org/fhir/r4/search.html#reference
 	PartOf datatypes.JSON `gorm:"column:partOf;type:text;serializer:json" json:"partOf,omitempty"`
@@ -119,25 +119,27 @@ func (s *FhirQuestionnaireResponse) PopulateAndExtractSearchParameters(resourceR
 	// extracting Author
 	authorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.author'))")
 	if err == nil && authorResult.String() != "undefined" {
-		s.Author = []byte(authorResult.String())
 	}
 	// extracting Authored
 	authoredResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.authored')[0]")
 	if err == nil && authoredResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, authoredResult.String())
 		if err == nil {
-			s.Authored = t
+			s.Authored = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", authoredResult.String())
+			if err == nil {
+				s.Authored = &d
+			}
 		}
 	}
 	// extracting BasedOn
 	basedOnResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.basedOn'))")
 	if err == nil && basedOnResult.String() != "undefined" {
-		s.BasedOn = []byte(basedOnResult.String())
 	}
 	// extracting Encounter
 	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.encounter'))")
 	if err == nil && encounterResult.String() != "undefined" {
-		s.Encounter = []byte(encounterResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -176,7 +178,12 @@ func (s *FhirQuestionnaireResponse) PopulateAndExtractSearchParameters(resourceR
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -218,7 +225,12 @@ func (s *FhirQuestionnaireResponse) PopulateAndExtractSearchParameters(resourceR
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -228,28 +240,29 @@ func (s *FhirQuestionnaireResponse) PopulateAndExtractSearchParameters(resourceR
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting PartOf
 	partOfResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.partOf'))")
 	if err == nil && partOfResult.String() != "undefined" {
-		s.PartOf = []byte(partOfResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Questionnaire
 	questionnaireResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.questionnaire'))")
 	if err == nil && questionnaireResult.String() != "undefined" {
-		s.Questionnaire = []byte(questionnaireResult.String())
 	}
 	// extracting Source
 	sourceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.source'))")
 	if err == nil && sourceResult.String() != "undefined" {
-		s.Source = []byte(sourceResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
@@ -293,7 +306,12 @@ func (s *FhirQuestionnaireResponse) PopulateAndExtractSearchParameters(resourceR
 							}, [])
 						
 				
-							JSON.stringify(StatusProcessed)
+							if(StatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusProcessed)
+							}
 						 `)
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
@@ -301,7 +319,6 @@ func (s *FhirQuestionnaireResponse) PopulateAndExtractSearchParameters(resourceR
 	// extracting Subject
 	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'QuestionnaireResponse.subject'))")
 	if err == nil && subjectResult.String() != "undefined" {
-		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 
@@ -340,7 +357,12 @@ func (s *FhirQuestionnaireResponse) PopulateAndExtractSearchParameters(resourceR
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())

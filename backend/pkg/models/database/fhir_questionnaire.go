@@ -28,7 +28,7 @@ type FhirQuestionnaire struct {
 	ContextType datatypes.JSON `gorm:"column:contextType;type:text;serializer:json" json:"contextType,omitempty"`
 	// The questionnaire publication date
 	// https://hl7.org/fhir/r4/search.html#date
-	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
 	// ElementDefinition - details for the item
 	// https://hl7.org/fhir/r4/search.html#uri
 	Definition string `gorm:"column:definition;type:text" json:"definition,omitempty"`
@@ -37,7 +37,7 @@ type FhirQuestionnaire struct {
 	Description datatypes.JSON `gorm:"column:description;type:text;serializer:json" json:"description,omitempty"`
 	// The time during which the questionnaire is intended to be in use
 	// https://hl7.org/fhir/r4/search.html#date
-	Effective time.Time `gorm:"column:effective;type:datetime" json:"effective,omitempty"`
+	Effective *time.Time `gorm:"column:effective;type:datetime" json:"effective,omitempty"`
 	// External identifier for the questionnaire
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
@@ -49,7 +49,7 @@ type FhirQuestionnaire struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// Computationally friendly name of the questionnaire
 	// https://hl7.org/fhir/r4/search.html#string
 	Name datatypes.JSON `gorm:"column:name;type:text;serializer:json" json:"name,omitempty"`
@@ -181,7 +181,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(CodeProcessed)
+							if(CodeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(CodeProcessed)
+							}
 						 `)
 	if err == nil && codeResult.String() != "undefined" {
 		s.Code = []byte(codeResult.String())
@@ -223,7 +228,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(ContextProcessed)
+							if(ContextProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ContextProcessed)
+							}
 						 `)
 	if err == nil && contextResult.String() != "undefined" {
 		s.Context = []byte(contextResult.String())
@@ -270,7 +280,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(ContextTypeProcessed)
+							if(ContextTypeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ContextTypeProcessed)
+							}
 						 `)
 	if err == nil && contextTypeResult.String() != "undefined" {
 		s.ContextType = []byte(contextTypeResult.String())
@@ -280,7 +295,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
-			s.Date = t
+			s.Date = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", dateResult.String())
+			if err == nil {
+				s.Date = &d
+			}
 		}
 	}
 	// extracting Definition
@@ -337,8 +357,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(DescriptionProcessed)
+							if(DescriptionProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(DescriptionProcessed)
+							}
 						 `)
 	if err == nil && descriptionResult.String() != "undefined" {
 		s.Description = []byte(descriptionResult.String())
@@ -348,7 +372,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 	if err == nil && effectiveResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, effectiveResult.String())
 		if err == nil {
-			s.Effective = t
+			s.Effective = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", effectiveResult.String())
+			if err == nil {
+				s.Effective = &d
+			}
 		}
 	}
 	// extracting Identifier
@@ -388,7 +417,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -430,7 +464,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(JurisdictionProcessed)
+							if(JurisdictionProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(JurisdictionProcessed)
+							}
 						 `)
 	if err == nil && jurisdictionResult.String() != "undefined" {
 		s.Jurisdiction = []byte(jurisdictionResult.String())
@@ -472,7 +511,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -482,7 +526,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Name
@@ -534,8 +583,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(NameProcessed)
+							if(NameProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(NameProcessed)
+							}
 						 `)
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = []byte(nameResult.String())
@@ -543,7 +596,6 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Publisher
 	publisherResult, err := vm.RunString(` 
@@ -594,8 +646,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(PublisherProcessed)
+							if(PublisherProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PublisherProcessed)
+							}
 						 `)
 	if err == nil && publisherResult.String() != "undefined" {
 		s.Publisher = []byte(publisherResult.String())
@@ -642,7 +698,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(StatusProcessed)
+							if(StatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusProcessed)
+							}
 						 `)
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
@@ -684,7 +745,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(SubjectTypeProcessed)
+							if(SubjectTypeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SubjectTypeProcessed)
+							}
 						 `)
 	if err == nil && subjectTypeResult.String() != "undefined" {
 		s.SubjectType = []byte(subjectTypeResult.String())
@@ -726,7 +792,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())
@@ -780,8 +851,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(TitleProcessed)
+							if(TitleProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TitleProcessed)
+							}
 						 `)
 	if err == nil && titleResult.String() != "undefined" {
 		s.Title = []byte(titleResult.String())
@@ -828,7 +903,12 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(VersionProcessed)
+							if(VersionProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(VersionProcessed)
+							}
 						 `)
 	if err == nil && versionResult.String() != "undefined" {
 		s.Version = []byte(versionResult.String())

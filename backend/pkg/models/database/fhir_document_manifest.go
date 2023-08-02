@@ -19,7 +19,7 @@ type FhirDocumentManifest struct {
 	Author datatypes.JSON `gorm:"column:author;type:text;serializer:json" json:"author,omitempty"`
 	// When this document manifest created
 	// https://hl7.org/fhir/r4/search.html#date
-	Created time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
+	Created *time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
 	// Human-readable description (title)
 	// https://hl7.org/fhir/r4/search.html#string
 	Description datatypes.JSON `gorm:"column:description;type:text;serializer:json" json:"description,omitempty"`
@@ -67,7 +67,7 @@ type FhirDocumentManifest struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
@@ -156,14 +156,18 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 	// extracting Author
 	authorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.author'))")
 	if err == nil && authorResult.String() != "undefined" {
-		s.Author = []byte(authorResult.String())
 	}
 	// extracting Created
 	createdResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DocumentManifest.created')[0]")
 	if err == nil && createdResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, createdResult.String())
 		if err == nil {
-			s.Created = t
+			s.Created = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", createdResult.String())
+			if err == nil {
+				s.Created = &d
+			}
 		}
 	}
 	// extracting Description
@@ -215,8 +219,12 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(DescriptionProcessed)
+							if(DescriptionProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(DescriptionProcessed)
+							}
 						 `)
 	if err == nil && descriptionResult.String() != "undefined" {
 		s.Description = []byte(descriptionResult.String())
@@ -258,7 +266,12 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -266,7 +279,6 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 	// extracting Item
 	itemResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.content'))")
 	if err == nil && itemResult.String() != "undefined" {
-		s.Item = []byte(itemResult.String())
 	}
 	// extracting Language
 	languageResult, err := vm.RunString(` 
@@ -305,7 +317,12 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -315,18 +332,21 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Recipient
 	recipientResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.recipient'))")
 	if err == nil && recipientResult.String() != "undefined" {
-		s.Recipient = []byte(recipientResult.String())
 	}
 	// extracting RelatedId
 	relatedIdResult, err := vm.RunString(` 
@@ -365,7 +385,12 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 							}, [])
 						
 				
-							JSON.stringify(RelatedIdProcessed)
+							if(RelatedIdProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RelatedIdProcessed)
+							}
 						 `)
 	if err == nil && relatedIdResult.String() != "undefined" {
 		s.RelatedId = []byte(relatedIdResult.String())
@@ -373,7 +398,6 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 	// extracting RelatedRef
 	relatedRefResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.related.ref'))")
 	if err == nil && relatedRefResult.String() != "undefined" {
-		s.RelatedRef = []byte(relatedRefResult.String())
 	}
 	// extracting Source
 	sourceResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DocumentManifest.source')[0]")
@@ -422,7 +446,12 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 							}, [])
 						
 				
-							JSON.stringify(StatusProcessed)
+							if(StatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusProcessed)
+							}
 						 `)
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
@@ -430,7 +459,6 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 	// extracting Subject
 	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.subject'))")
 	if err == nil && subjectResult.String() != "undefined" {
-		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 
@@ -469,7 +497,12 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())

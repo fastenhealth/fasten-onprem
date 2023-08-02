@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestFhirPatient_ExtractSearchParameters(t *testing.T) {
@@ -24,6 +25,7 @@ func TestFhirPatient_ExtractSearchParameters(t *testing.T) {
 	type CodeType struct {
 		Code bool `json:"code"`
 	}
+
 	var testCode []CodeType
 	require.NoError(t, err)
 	err = json.Unmarshal(json.RawMessage(patientModel.Active), &testCode)
@@ -47,4 +49,7 @@ func TestFhirPatient_ExtractSearchParameters(t *testing.T) {
 	require.Equal(t, []string{
 		"534 Erewhon St PleasantVille Vic 3999",
 	}, testAddress)
+
+	require.Equal(t, time.Date(1974, 12, 25, 0, 0, 0, 0, time.UTC), patientModel.Birthdate)
+
 }

@@ -68,7 +68,7 @@ type FhirAllergyIntolerance struct {
 	   * [SupplyRequest](supplyrequest.html): When the request was made
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -110,16 +110,16 @@ type FhirAllergyIntolerance struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// Date(/time) of last known occurrence of a reaction
 	// https://hl7.org/fhir/r4/search.html#date
-	LastDate time.Time `gorm:"column:lastDate;type:datetime" json:"lastDate,omitempty"`
+	LastDate *time.Time `gorm:"column:lastDate;type:datetime" json:"lastDate,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// Clinical symptoms/signs associated with the Event
 	// https://hl7.org/fhir/r4/search.html#token
 	Manifestation datatypes.JSON `gorm:"column:manifestation;type:text;serializer:json" json:"manifestation,omitempty"`
 	// Date(/time) when manifestations showed
 	// https://hl7.org/fhir/r4/search.html#date
-	Onset time.Time `gorm:"column:onset;type:datetime" json:"onset,omitempty"`
+	Onset *time.Time `gorm:"column:onset;type:datetime" json:"onset,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
@@ -205,7 +205,6 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting Asserter
 	asserterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.asserter'))")
 	if err == nil && asserterResult.String() != "undefined" {
-		s.Asserter = []byte(asserterResult.String())
 	}
 	// extracting Category
 	categoryResult, err := vm.RunString(` 
@@ -244,7 +243,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(CategoryProcessed)
+							if(CategoryProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(CategoryProcessed)
+							}
 						 `)
 	if err == nil && categoryResult.String() != "undefined" {
 		s.Category = []byte(categoryResult.String())
@@ -286,7 +290,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(ClinicalStatusProcessed)
+							if(ClinicalStatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ClinicalStatusProcessed)
+							}
 						 `)
 	if err == nil && clinicalStatusResult.String() != "undefined" {
 		s.ClinicalStatus = []byte(clinicalStatusResult.String())
@@ -328,7 +337,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(CodeProcessed)
+							if(CodeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(CodeProcessed)
+							}
 						 `)
 	if err == nil && codeResult.String() != "undefined" {
 		s.Code = []byte(codeResult.String())
@@ -370,7 +384,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(CriticalityProcessed)
+							if(CriticalityProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(CriticalityProcessed)
+							}
 						 `)
 	if err == nil && criticalityResult.String() != "undefined" {
 		s.Criticality = []byte(criticalityResult.String())
@@ -380,7 +399,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
-			s.Date = t
+			s.Date = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", dateResult.String())
+			if err == nil {
+				s.Date = &d
+			}
 		}
 	}
 	// extracting Identifier
@@ -420,7 +444,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -462,7 +491,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -472,7 +506,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	if err == nil && lastDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastDateResult.String())
 		if err == nil {
-			s.LastDate = t
+			s.LastDate = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastDateResult.String())
+			if err == nil {
+				s.LastDate = &d
+			}
 		}
 	}
 	// extracting LastUpdated
@@ -480,7 +519,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Manifestation
@@ -520,7 +564,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(ManifestationProcessed)
+							if(ManifestationProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ManifestationProcessed)
+							}
 						 `)
 	if err == nil && manifestationResult.String() != "undefined" {
 		s.Manifestation = []byte(manifestationResult.String())
@@ -530,18 +579,21 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	if err == nil && onsetResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, onsetResult.String())
 		if err == nil {
-			s.Onset = t
+			s.Onset = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", onsetResult.String())
+			if err == nil {
+				s.Onset = &d
+			}
 		}
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Recorder
 	recorderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recorder'))")
 	if err == nil && recorderResult.String() != "undefined" {
-		s.Recorder = []byte(recorderResult.String())
 	}
 	// extracting Route
 	routeResult, err := vm.RunString(` 
@@ -580,7 +632,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(RouteProcessed)
+							if(RouteProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RouteProcessed)
+							}
 						 `)
 	if err == nil && routeResult.String() != "undefined" {
 		s.Route = []byte(routeResult.String())
@@ -622,7 +679,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(SeverityProcessed)
+							if(SeverityProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SeverityProcessed)
+							}
 						 `)
 	if err == nil && severityResult.String() != "undefined" {
 		s.Severity = []byte(severityResult.String())
@@ -669,7 +731,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())
@@ -711,7 +778,12 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 							}, [])
 						
 				
-							JSON.stringify(VerificationStatusProcessed)
+							if(VerificationStatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(VerificationStatusProcessed)
+							}
 						 `)
 	if err == nil && verificationStatusResult.String() != "undefined" {
 		s.VerificationStatus = []byte(verificationStatusResult.String())

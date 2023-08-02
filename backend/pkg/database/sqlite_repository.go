@@ -330,12 +330,14 @@ func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceM
 	}
 
 	wrappedFhirResourceModel.SetOriginBase(wrappedResourceModel.OriginBase)
-	//wrappedFhirResourceModel.SetResourceRaw(wrappedResourceModel.ResourceRaw)
+	wrappedFhirResourceModel.SetSortTitle(wrappedResourceModel.SortTitle)
+	wrappedFhirResourceModel.SetSortDate(wrappedResourceModel.SortDate)
 
 	//TODO: this takes too long, we need to find a way to do this processing faster or in the background async.
 	err = wrappedFhirResourceModel.PopulateAndExtractSearchParameters(json.RawMessage(wrappedResourceModel.ResourceRaw))
 	if err != nil {
-		return false, fmt.Errorf("An error ocurred while extracting SearchParameters using FHIRPath (%s/%s): %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID, err)
+		sr.Logger.Warnf("ignoring: an error occurred while extracting SearchParameters using FHIRPath (%s/%s): %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID, err)
+		//wrappedFhirResourceModel.SetResourceRaw(wrappedResourceModel.ResourceRaw)
 	}
 
 	createResult := sr.GormClient.WithContext(ctx).Where(models.OriginBase{

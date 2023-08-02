@@ -22,7 +22,7 @@ type FhirSpecimen struct {
 	Bodysite datatypes.JSON `gorm:"column:bodysite;type:text;serializer:json" json:"bodysite,omitempty"`
 	// The date the specimen was collected
 	// https://hl7.org/fhir/r4/search.html#date
-	Collected time.Time `gorm:"column:collected;type:datetime" json:"collected,omitempty"`
+	Collected *time.Time `gorm:"column:collected;type:datetime" json:"collected,omitempty"`
 	// Who collected the specimen
 	// https://hl7.org/fhir/r4/search.html#reference
 	Collector datatypes.JSON `gorm:"column:collector;type:text;serializer:json" json:"collector,omitempty"`
@@ -40,7 +40,7 @@ type FhirSpecimen struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// The parent of the specimen
 	// https://hl7.org/fhir/r4/search.html#reference
 	Parent datatypes.JSON `gorm:"column:parent;type:text;serializer:json" json:"parent,omitempty"`
@@ -153,7 +153,12 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(AccessionProcessed)
+							if(AccessionProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AccessionProcessed)
+							}
 						 `)
 	if err == nil && accessionResult.String() != "undefined" {
 		s.Accession = []byte(accessionResult.String())
@@ -195,7 +200,12 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(BodysiteProcessed)
+							if(BodysiteProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(BodysiteProcessed)
+							}
 						 `)
 	if err == nil && bodysiteResult.String() != "undefined" {
 		s.Bodysite = []byte(bodysiteResult.String())
@@ -205,13 +215,17 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	if err == nil && collectedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, collectedResult.String())
 		if err == nil {
-			s.Collected = t
+			s.Collected = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", collectedResult.String())
+			if err == nil {
+				s.Collected = &d
+			}
 		}
 	}
 	// extracting Collector
 	collectorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.collection.collector'))")
 	if err == nil && collectorResult.String() != "undefined" {
-		s.Collector = []byte(collectorResult.String())
 	}
 	// extracting Container
 	containerResult, err := vm.RunString(` 
@@ -250,7 +264,12 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(ContainerProcessed)
+							if(ContainerProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ContainerProcessed)
+							}
 						 `)
 	if err == nil && containerResult.String() != "undefined" {
 		s.Container = []byte(containerResult.String())
@@ -292,7 +311,12 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(ContainerIdProcessed)
+							if(ContainerIdProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ContainerIdProcessed)
+							}
 						 `)
 	if err == nil && containerIdResult.String() != "undefined" {
 		s.ContainerId = []byte(containerIdResult.String())
@@ -334,7 +358,12 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -376,7 +405,12 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -386,18 +420,21 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Parent
 	parentResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.parent'))")
 	if err == nil && parentResult.String() != "undefined" {
-		s.Parent = []byte(parentResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
@@ -441,7 +478,12 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(StatusProcessed)
+							if(StatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusProcessed)
+							}
 						 `)
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
@@ -449,7 +491,6 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	// extracting Subject
 	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Specimen.subject'))")
 	if err == nil && subjectResult.String() != "undefined" {
-		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 
@@ -488,7 +529,12 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())

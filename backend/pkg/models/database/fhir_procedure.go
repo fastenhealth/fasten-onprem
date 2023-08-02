@@ -62,7 +62,7 @@ type FhirProcedure struct {
 	   * [SupplyRequest](supplyrequest.html): When the request was made
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -128,7 +128,7 @@ type FhirProcedure struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// Where the procedure happened
 	// https://hl7.org/fhir/r4/search.html#reference
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
@@ -224,7 +224,6 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	// extracting BasedOn
 	basedOnResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Procedure.basedOn'))")
 	if err == nil && basedOnResult.String() != "undefined" {
-		s.BasedOn = []byte(basedOnResult.String())
 	}
 	// extracting Category
 	categoryResult, err := vm.RunString(` 
@@ -263,7 +262,12 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 							}, [])
 						
 				
-							JSON.stringify(CategoryProcessed)
+							if(CategoryProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(CategoryProcessed)
+							}
 						 `)
 	if err == nil && categoryResult.String() != "undefined" {
 		s.Category = []byte(categoryResult.String())
@@ -305,7 +309,12 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 							}, [])
 						
 				
-							JSON.stringify(CodeProcessed)
+							if(CodeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(CodeProcessed)
+							}
 						 `)
 	if err == nil && codeResult.String() != "undefined" {
 		s.Code = []byte(codeResult.String())
@@ -315,13 +324,17 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
-			s.Date = t
+			s.Date = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", dateResult.String())
+			if err == nil {
+				s.Date = &d
+			}
 		}
 	}
 	// extracting Encounter
 	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter.where(resolve() is Encounter) | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | ServiceRequest.encounter | VisionPrescription.encounter'))")
 	if err == nil && encounterResult.String() != "undefined" {
-		s.Encounter = []byte(encounterResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -360,7 +373,12 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -368,7 +386,6 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	// extracting InstantiatesCanonical
 	instantiatesCanonicalResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Procedure.instantiatesCanonical'))")
 	if err == nil && instantiatesCanonicalResult.String() != "undefined" {
-		s.InstantiatesCanonical = []byte(instantiatesCanonicalResult.String())
 	}
 	// extracting InstantiatesUri
 	instantiatesUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Procedure.instantiatesUri')[0]")
@@ -412,7 +429,12 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -422,28 +444,29 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Location
 	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Procedure.location'))")
 	if err == nil && locationResult.String() != "undefined" {
-		s.Location = []byte(locationResult.String())
 	}
 	// extracting PartOf
 	partOfResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Procedure.partOf'))")
 	if err == nil && partOfResult.String() != "undefined" {
-		s.PartOf = []byte(partOfResult.String())
 	}
 	// extracting Performer
 	performerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Procedure.performer.actor'))")
 	if err == nil && performerResult.String() != "undefined" {
-		s.Performer = []byte(performerResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting ReasonCode
 	reasonCodeResult, err := vm.RunString(` 
@@ -482,7 +505,12 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 							}, [])
 						
 				
-							JSON.stringify(ReasonCodeProcessed)
+							if(ReasonCodeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ReasonCodeProcessed)
+							}
 						 `)
 	if err == nil && reasonCodeResult.String() != "undefined" {
 		s.ReasonCode = []byte(reasonCodeResult.String())
@@ -490,7 +518,6 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	// extracting ReasonReference
 	reasonReferenceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Procedure.reasonReference'))")
 	if err == nil && reasonReferenceResult.String() != "undefined" {
-		s.ReasonReference = []byte(reasonReferenceResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
@@ -534,7 +561,12 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 							}, [])
 						
 				
-							JSON.stringify(StatusProcessed)
+							if(StatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusProcessed)
+							}
 						 `)
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
@@ -542,7 +574,6 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	// extracting Subject
 	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Procedure.subject'))")
 	if err == nil && subjectResult.String() != "undefined" {
-		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 
@@ -581,7 +612,12 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())

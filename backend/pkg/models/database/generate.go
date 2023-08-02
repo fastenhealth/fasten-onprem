@@ -172,12 +172,26 @@ func main() {
 				g.Comment(fieldInfo.Description)
 				g.Comment(fmt.Sprintf("https://hl7.org/fhir/r4/search.html#%s", fieldInfo.FieldType))
 				golangFieldType := mapFieldType(fieldInfo.FieldType)
+				var isPointer bool
+				if strings.HasPrefix(golangFieldType, "*") {
+					golangFieldType = strings.TrimPrefix(golangFieldType, "*")
+					isPointer = true
+				}
+
 				var golangFieldStatement *jen.Statement
 				if strings.Contains(golangFieldType, "#") {
 					golangFieldTypeParts := strings.Split(golangFieldType, "#")
-					golangFieldStatement = g.Id(fieldName).Add(jen.Qual(golangFieldTypeParts[0], golangFieldTypeParts[1]))
+					if isPointer {
+						golangFieldStatement = g.Id(fieldName).Op("*").Add(jen.Qual(golangFieldTypeParts[0], golangFieldTypeParts[1]))
+					} else {
+						golangFieldStatement = g.Id(fieldName).Add(jen.Qual(golangFieldTypeParts[0], golangFieldTypeParts[1]))
+					}
 				} else {
-					golangFieldStatement = g.Id(fieldName).Add(jen.Id(golangFieldType))
+					if isPointer {
+						golangFieldStatement = g.Id(fieldName).Op("*").Id(golangFieldType)
+					} else {
+						golangFieldStatement = g.Id(fieldName).Id(golangFieldType)
+					}
 				}
 				golangFieldStatement.Tag(map[string]string{
 					"json": fmt.Sprintf("%s,omitempty", strcase.ToLowerCamel(fieldName)),
@@ -320,9 +334,13 @@ func main() {
 								return accumulator
 							}, [])
 						
-				
-							JSON.stringify(%sProcessed)
-						`, fieldName, script, fieldName, fieldName, fieldName)).Op("`")
+							if(%sProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(%sProcessed)
+							}
+						`, fieldName, script, fieldName, fieldName, fieldName, fieldName)).Op("`")
 
 					} else if isSimpleFieldType(fieldInfo.FieldType) {
 						//TODO: we may end up losing some information here, as we are only returning the first element of the array
@@ -366,15 +384,20 @@ func main() {
 							}, [])
 						
 				
-							JSON.stringify(%sProcessed)
-						`, fieldName, script, fieldName, fieldName, fieldName)).Op("`")
+							if(%sProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(%sProcessed)
+							}
+						`, fieldName, script, fieldName, fieldName, fieldName, fieldName)).Op("`")
 					} else {
 						r.Lit(fmt.Sprintf(`JSON.stringify(%s)`, script))
 					}
 				})
 				g.If(jen.Err().Op("==").Nil().Op("&&").Id(fieldNameVar).Dot("String").Call().Op("!=").Lit("undefined")).BlockFunc(func(i *jen.Group) {
 					switch fieldInfo.FieldType {
-					case "token", "reference", "special", "quantity", "string":
+					case "token", "special", "quantity", "string":
 						i.Id("s").Dot(fieldName).Op("=").Index().Byte().Parens(jen.Id(fieldNameVar).Dot("String").Call())
 						break
 					case "number":
@@ -384,10 +407,19 @@ func main() {
 						//parse RFC3339 date
 						i.List(jen.Id("t"), jen.Id("err")).Op(":=").Qual("time", "Parse").Call(jen.Qual("time", "RFC3339"), jen.Id(fieldNameVar).Dot("String").Call())
 						i.If(jen.Err().Op("==").Nil()).BlockFunc(func(e *jen.Group) {
-							e.Id("s").Dot(fieldName).Op("=").Id("t")
+							e.Id("s").Dot(fieldName).Op("=").Op("&").Id("t")
+						}).Else().If(jen.Err().Op("!=").Nil()).BlockFunc(func(e *jen.Group) {
+							//parse date only
+							e.List(jen.Id("d"), jen.Id("err")).Op(":=").Qual("time", "Parse").Call(jen.Lit("2006-01-02"), jen.Id(fieldNameVar).Dot("String").Call())
+							e.If(jen.Err().Op("==").Nil()).BlockFunc(func(f *jen.Group) {
+								f.Id("s").Dot(fieldName).Op("=").Op("&").Id("d")
+							})
 						})
 					case "uri":
 						i.Id("s").Dot(fieldName).Op("=").Id(fieldNameVar).Dot("String").Call()
+						break
+					case "reference":
+						//TODO: do nothing for reference types, not supported yet.
 						break
 					default:
 						i.Id("s").Dot(fieldName).Op("=").Id(fieldNameVar).Dot("String").Call()
@@ -588,7 +620,7 @@ func mapFieldType(fieldType string) string {
 	case "reference":
 		return "gorm.io/datatypes#JSON"
 	case "date":
-		return "time#Time"
+		return "*time#Time"
 	case "string":
 		return "gorm.io/datatypes#JSON"
 	case "uri":
