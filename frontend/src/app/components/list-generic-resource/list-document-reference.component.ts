@@ -10,7 +10,8 @@ import {attributeXTime} from './utils';
 export class ListDocumentReferenceComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
     { title: 'Date', versions: '*', format: 'date', getter: d => d.date },
-    { title: 'Content', versions: '*', getter: d => atob(d.content[0].attachment.data) }
+    { title: 'Content', versions: '*', getter: d => d.content[0].attachment.title }, // Cerner works
+    { title: 'Author', versions: '*', getter: d => d.author[0].display }, // Whoever creates the document
 
   ]
 }
