@@ -9,7 +9,7 @@ import {FORMATTERS} from './utils';
 })
 export class ListConditionComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
-    { title: 'Condition', versions: '*', format: 'code', getter: c => c.code.coding[0] },
+    { title: 'Condition', versions: '*', getter: c => c.code.text },
     { title: 'Date of Onset', versions: '*', format: 'date', getter: c => c.onsetDateTime },
     { title: 'Date Resolved', 'versions': '*', format: 'date', getter: c => c.abatementDateTime, defaultValue: 'N/A' },
     { title: 'Recorded Date', versions: '*', format: 'date', getter: c => c.recordedDate },
