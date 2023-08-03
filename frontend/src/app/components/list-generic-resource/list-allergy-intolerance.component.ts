@@ -9,7 +9,7 @@ import {attributeXTime} from './utils';
 })
 export class ListAllergyIntoleranceComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
-    { title: 'Allergy', versions: '*', format: 'code', getter: a => a.code.coding[0] },
+    { title: 'Allergy', versions: '*', getter: a => a.code.text }, // Allergy Name w/o Allergy Code
     { title: 'Date Recorded', versions: '*',  format: 'date', getter: a => a.assertedDate || a.recordedDate },
     { title: 'Onset', versions: '*', format: 'date', getter: a => a.onsetDateTime },
     { title: 'Resolution Age', versions: '*', format: 'date', getter: a => a.extension.resolutionAge }
