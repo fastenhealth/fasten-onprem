@@ -5,10 +5,11 @@ import {DashboardWidgetComponent} from '../dashboard-widget/dashboard-widget.com
 import {CommonModule} from '@angular/common';
 import {LoadingWidgetComponent} from '../loading-widget/loading-widget.component';
 import {EmptyWidgetComponent} from '../empty-widget/empty-widget.component';
+import {PipesModule} from '../../pipes/pipes.module';
 
 @Component({
   standalone: true,
-  imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
+  imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent, PipesModule],
   selector: 'grouped-bar-chart-widget',
   templateUrl: './grouped-bar-chart-widget.component.html',
   styleUrls: ['./grouped-bar-chart-widget.component.scss']

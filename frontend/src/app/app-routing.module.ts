@@ -13,6 +13,7 @@ import {PatientProfileComponent} from './pages/patient-profile/patient-profile.c
 import {MedicalHistoryComponent} from './pages/medical-history/medical-history.component';
 import {ReportLabsComponent} from './pages/report-labs/report-labs.component';
 import {ResourceCreatorComponent} from './pages/resource-creator/resource-creator.component';
+import {ExploreComponent} from './pages/explore/explore.component';
 
 const routes: Routes = [
 
@@ -23,9 +24,13 @@ const routes: Routes = [
 
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, canActivate: [ IsAuthenticatedAuthGuard] },
-  { path: 'source/:source_id', component: SourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard] },
-  { path: 'source/:source_id/resource/:resource_id', component: ResourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard] },
-  { path: 'source/:source_id/resource/:resource_type/:resource_id', component: ResourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+
+  //explore page will replace source/* pages
+  { path: 'explore', component: ExploreComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+  { path: 'explore/:source_id', component: SourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+  { path: 'explore/:source_id/resource/:resource_id', component: ResourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+  { path: 'explore/:source_id/resource/:resource_type/:resource_id', component: ResourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+
   { path: 'sources', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'sources/callback/:source_type', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'resource/create', component: ResourceCreatorComponent, canActivate: [ IsAuthenticatedAuthGuard] },

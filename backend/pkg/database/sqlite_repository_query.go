@@ -113,6 +113,7 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 		Select(fmt.Sprintf("%s.*", TABLE_ALIAS)).
 		Where(strings.Join(whereClauses, " AND "), whereNamedParameters).
 		Group(fmt.Sprintf("%s.id", TABLE_ALIAS)).
+		Order(fmt.Sprintf("%s.sort_date asc", TABLE_ALIAS)).
 		Table(strings.Join(fromClauses, ", ")).
 		Find(&results)
 
