@@ -8,12 +8,13 @@ import {GenericColumnDefn, ListGenericResourceComponent} from './list-generic-re
 })
 export class ListMedicationRequestComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
-    { title: 'Medication', versions: '*', format: 'code', getter: m => m.medicationCodeableConcept?.coding[0] },
-    { title: 'Dosage Timing', versions: '*', format: 'period', getter: m => m.dosageInstruction[0]?.timing.repeat.boundsPeriod},
-    { title: 'Dosage Date', versions: '*', format: 'date', getter: m => m.dosageInstruction[0]?.timing.event},
+    // { title: 'Medication', versions: '*', format: 'code', getter: m => m.medicationCodeableConcept?.coding[0] },
     { title: 'Author Date', versions: '*', format: 'date', getter: m => m.authoredOn },
+    { title: 'Medication', versions: '*', getter: m => m.medicationCodeableConcept.coding[0].display }, //remove drug code
+    { title: 'Dosage Timing', versions: '*', format: 'period', getter: m => m.dosageInstruction[0]?.timing.repeat.boundsPeriod},
+    // Not used { title: 'Dosage Date', versions: '*', format: 'date', getter: m => m.dosageInstruction[0]?.timing.event},
+    { title: 'Route', versions: '*', format: 'code', getter: m => m.dosageInstruction[0]?.route.coding[0] },
     { title: 'Do Not Perform', versions: '*', getter: m => m.doNotPerform},
     { title: 'Reason', versions: '*', format: 'code', getter: m => m.reasonCode[0]?.coding[0] },
-    { title: 'Route', versions: '*', format: 'code', getter: m => m.dosageInstruction[0]?.route.coding[0] }
   ]
 }
