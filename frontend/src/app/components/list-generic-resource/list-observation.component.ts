@@ -9,10 +9,12 @@ import {GenericColumnDefn, ListGenericResourceComponent} from './list-generic-re
 })
 export class ListObservationComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
+    { title: 'Issued Date', 'versions': '*', format: 'date', getter: o => o.issued },
+    // { title: 'Effective', 'versions': '*', getter: o => attributeXTime(o,'effective') },
+    { title: 'Effective', 'versions': '*', getter: o => attributeXTime(o,'effective') },
     { title: 'Observation', versions: '*', format: 'code', getter: o => o.code.coding[0] },
     { title: 'Value', versions: '*', getter: o => obsValue(o) },
-    { title: 'Effective', 'versions': '*', getter: o => attributeXTime(o,'effective') },
-    { title: 'Issued Date', 'versions': '*', format: 'date', getter: o => o.issued },
+    // { title: 'Issued Date', 'versions': '*', format: 'date', getter: o => o.issued },
     { title: 'ID', versions: '*', getter: o => o.id }
   ]
 }
