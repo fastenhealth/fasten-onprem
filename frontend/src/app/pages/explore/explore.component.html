@@ -1,0 +1,73 @@
+<div class="az-content">
+  <div class="container">
+    <div class="az-content-body pd-lg-l-40 d-flex flex-column">
+
+      <!-- Header Row -->
+      <report-header [reportHeaderTitle]="'Explore'" [reportHeaderSubTitle]="'Explore your Medical Records'"></report-header>
+
+      <ng-container [ngTemplateOutlet]="loading ? isLoadingTemplate : (connectedSources.length == 0) ? emptyReport : report"></ng-container>
+
+      <ng-template #report>
+        <div class="row">
+          <app-medical-sources-card class="col-sm-3 mg-b-20 px-3"
+                                    *ngFor="let sourceData of connectedSources"
+                                    [sourceInfo]="sourceData"
+                                    (onClick)="exploreSource($event)"
+          ></app-medical-sources-card>
+        </div>
+      </ng-template>
+
+      <ng-template #emptyReport>
+        <div class="d-flex align-items-center" style="height:100%">
+          <div class="modal-body tx-center pd-y-20 pd-x-20">
+            <h4 class="tx-purple mg-b-20">No Sources Found!</h4>
+            <p class="mg-b-20 mg-x-20">
+              Fasten was unable to find any connected sources. You will need to connect a medical source before you can use this page.
+            </p>
+            <p class="mg-b-20 mg-x-20">
+              Click below to add a new healthcare provider to Fasten.
+            </p>
+            <button [routerLink]="'/sources'" type="button" class="btn btn-purple pd-x-25">Add Source</button>
+            <button [routerLink]="'/resource/create'" type="button" class="btn btn-purple mg-l-10 pd-x-25">Add Condition</button>
+
+          </div><!-- modal-body -->
+        </div>
+      </ng-template>
+
+      <ng-template #isLoadingTemplate>
+        <div class="row">
+          <div class="col-12">
+            <app-loading-spinner [loadingTitle]="'Please wait, loading report...'"></app-loading-spinner>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template #contentModalRef let-modal>
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title"></h4>
+          <button type="button" class="btn btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <h6>Manage Source</h6>
+          <p>Existing connections can be "Synced", "Reconnected" or "Deleted"</p>
+          <ul>
+            <li><p><strong>Sync</strong> - Download all resources from this healthcare provider, storing them securely in Fasten</p></li>
+            <li><p><strong>Reconnect</strong> - If your healthcare connection has expired, you can use this button to reconnect</p></li>
+            <li><p><strong>Delete</strong> - Delete all resources for this healthcare provider. This will ONLY effect data stored in Fasten</p></li>
+          </ul>
+        </div>
+
+        <div class="modal-footer">
+<!--          <button (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>-->
+          <!--    <button (click)="connectHandler($event, modalSelectedSourceListItem.source['source_type'])" type="button" class="btn btn-outline-light">Reconnect</button>-->
+          <button type="button" class="btn disabled btn-outline-danger">Delete</button>
+          <button (click)="modal.dismiss('Close click')" type="button" class="btn btn-outline-light">Close</button>
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+</div>

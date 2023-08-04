@@ -121,26 +121,6 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
     console.log(`Loading COmpleted for ${this.widgetConfig.title_text}, ${this.loading}`)
   }
 
-  getLastDatasetValue(dataset: ChartDataset<'line'>): string {
-    let lastItem = dataset?.data?.[dataset?.data?.length -1] || ''
-    let valueKey = this.chartOptions?.parsing?.['yAxisKey'] || dataset?.parsing?.['key']
-    console.log('current', lastItem, valueKey)
-
-    if(typeof lastItem === 'string'){
-      console.log('lastItem-string', lastItem)
-      return lastItem
-    } else if(Array.isArray(lastItem)){
-
-      return _.flatten(lastItem?.[0]?.[valueKey])?.[0] as string
-    } else if(typeof lastItem === 'object'){
-      console.log('lastItem-object', lastItem?.[valueKey])
-      return lastItem?.[valueKey]
-    } else {
-      return lastItem.toString()
-    }
-  }
-
-
 
   // This function will process the raw response from the Dashboard Query API call, which requires frontend processing of the select clause.
   // it will call the fhirPathMapQueryFn which will extract FHIRPath values from the resource_raw field of the ResourceFhir object

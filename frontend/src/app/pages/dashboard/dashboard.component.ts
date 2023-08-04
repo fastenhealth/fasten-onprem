@@ -76,7 +76,7 @@ export class DashboardComponent implements OnInit {
   }
 
   selectSource(selectedSource: Source){
-    this.router.navigateByUrl(`/source/${selectedSource.id}`, {
+    this.router.navigateByUrl(`/explore/${selectedSource.id}`, {
       state: selectedSource
     });
   }
