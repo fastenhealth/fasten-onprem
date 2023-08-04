@@ -40,7 +40,7 @@ export class ExploreComponent implements OnInit {
   }
 
   public exploreSource(sourceListItem: SourceListItem, ) {
-    this.router.navigateByUrl(`/source/${sourceListItem.source.id}`, {
+    this.router.navigateByUrl(`/explore/${sourceListItem.source.id}`, {
       state: sourceListItem.source
     });
 
