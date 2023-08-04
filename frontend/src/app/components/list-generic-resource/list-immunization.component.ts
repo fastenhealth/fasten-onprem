@@ -9,6 +9,7 @@ import {GenericColumnDefn, ListGenericResourceComponent} from './list-generic-re
 export class ListImmunizationComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
     { title: 'Vaccine', versions: '*', format: 'code', getter: i => i.vaccineCode.coding[0] },
+    { title: 'Status', versions: '*', getter: i => i.status },
     { title: 'Date Given', versions: '*', format: 'date', getter: i => i.date || i.occurrenceDateTime || i.occurrenceStringe },
     { title: 'Date Recorded', versions: '*', format: 'date', getter: i => i.recorded }
   ]
