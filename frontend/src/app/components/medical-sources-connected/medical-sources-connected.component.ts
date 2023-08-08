@@ -124,8 +124,9 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           //nextGen uses fhirUser instead of profile.
           payload.patient = decodedIdToken["patient"] || decodedIdToken["profile"] || decodedIdToken["fhirUser"]
 
-          if(payload.patient){
-            payload.patient = payload.patient.replace(/^(Patient\/)/,'')
+          if(payload.patient && payload.patient.includes("Patient/")){
+            //remove the "Patient/" or "https://example.com/fhir/Patient/" prefix if it exists
+            payload.patient = payload.patient.split("Patient/")[1]
           }
 
         }
