@@ -85,7 +85,7 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
    */
   onSelect({ selected }) {
     console.log('Select Event', selected);
-    this.router.navigateByUrl(`/source/${selected[0].source_id}/resource/${selected[0].source_resource_id}`);
+    this.router.navigateByUrl(`/explore/${selected[0].source_id}/resource/${selected[0].source_resource_id}`);
 
   }
 

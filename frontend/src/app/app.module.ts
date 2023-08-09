@@ -34,6 +34,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NgSelectModule } from '@ng-select/ng-select';
 import {HTTP_CLIENT_TOKEN} from "./dependency-injection";
 import {WidgetsModule} from './widgets/widgets.module';
+import { ExploreComponent } from './pages/explore/explore.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import {WidgetsModule} from './widgets/widgets.module';
     MedicalHistoryComponent,
     ReportLabsComponent,
     ResourceCreatorComponent,
+    ExploreComponent,
   ],
   imports: [
     FormsModule,

@@ -61,7 +61,7 @@ type FhirGoal struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// proposed | planned | accepted | active | on-hold | completed | cancelled | entered-in-error | rejected
 	// https://hl7.org/fhir/r4/search.html#token
 	LifecycleStatus datatypes.JSON `gorm:"column:lifecycleStatus;type:text;serializer:json" json:"lifecycleStatus,omitempty"`
@@ -73,7 +73,7 @@ type FhirGoal struct {
 	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// When goal pursuit begins
 	// https://hl7.org/fhir/r4/search.html#date
-	StartDate time.Time `gorm:"column:startDate;type:datetime" json:"startDate,omitempty"`
+	StartDate *time.Time `gorm:"column:startDate;type:datetime" json:"startDate,omitempty"`
 	// Who this goal is intended for
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
@@ -82,10 +82,10 @@ type FhirGoal struct {
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Reach goal on or before
 	// https://hl7.org/fhir/r4/search.html#date
-	TargetDate time.Time `gorm:"column:targetDate;type:datetime" json:"targetDate,omitempty"`
+	TargetDate *time.Time `gorm:"column:targetDate;type:datetime" json:"targetDate,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -174,7 +174,12 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 							}, [])
 						
 				
-							JSON.stringify(AchievementStatusProcessed)
+							if(AchievementStatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AchievementStatusProcessed)
+							}
 						 `)
 	if err == nil && achievementStatusResult.String() != "undefined" {
 		s.AchievementStatus = []byte(achievementStatusResult.String())
@@ -216,7 +221,12 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 							}, [])
 						
 				
-							JSON.stringify(CategoryProcessed)
+							if(CategoryProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(CategoryProcessed)
+							}
 						 `)
 	if err == nil && categoryResult.String() != "undefined" {
 		s.Category = []byte(categoryResult.String())
@@ -258,7 +268,12 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -300,7 +315,12 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -310,7 +330,12 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting LifecycleStatus
@@ -350,7 +375,12 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 							}, [])
 						
 				
-							JSON.stringify(LifecycleStatusProcessed)
+							if(LifecycleStatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LifecycleStatusProcessed)
+							}
 						 `)
 	if err == nil && lifecycleStatusResult.String() != "undefined" {
 		s.LifecycleStatus = []byte(lifecycleStatusResult.String())
@@ -358,7 +388,6 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
@@ -370,13 +399,17 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 	if err == nil && startDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, startDateResult.String())
 		if err == nil {
-			s.StartDate = t
+			s.StartDate = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", startDateResult.String())
+			if err == nil {
+				s.StartDate = &d
+			}
 		}
 	}
 	// extracting Subject
 	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Goal.subject'))")
 	if err == nil && subjectResult.String() != "undefined" {
-		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 
@@ -415,7 +448,12 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())
@@ -425,7 +463,12 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 	if err == nil && targetDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, targetDateResult.String())
 		if err == nil {
-			s.TargetDate = t
+			s.TargetDate = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", targetDateResult.String())
+			if err == nil {
+				s.TargetDate = &d
+			}
 		}
 	}
 	return nil

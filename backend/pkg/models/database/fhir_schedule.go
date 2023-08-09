@@ -22,7 +22,7 @@ type FhirSchedule struct {
 	Actor datatypes.JSON `gorm:"column:actor;type:text;serializer:json" json:"actor,omitempty"`
 	// Search for Schedule resources that have a period that contains this date specified
 	// https://hl7.org/fhir/r4/search.html#date
-	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
 	// A Schedule Identifier
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
@@ -31,7 +31,7 @@ type FhirSchedule struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
@@ -52,7 +52,7 @@ type FhirSchedule struct {
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -141,7 +141,12 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(ActiveProcessed)
+							if(ActiveProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ActiveProcessed)
+							}
 						 `)
 	if err == nil && activeResult.String() != "undefined" {
 		s.Active = []byte(activeResult.String())
@@ -149,14 +154,18 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	// extracting Actor
 	actorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Schedule.actor'))")
 	if err == nil && actorResult.String() != "undefined" {
-		s.Actor = []byte(actorResult.String())
 	}
 	// extracting Date
 	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Schedule.planningHorizon')[0]")
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
-			s.Date = t
+			s.Date = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", dateResult.String())
+			if err == nil {
+				s.Date = &d
+			}
 		}
 	}
 	// extracting Identifier
@@ -196,7 +205,12 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -238,7 +252,12 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -248,13 +267,17 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting ServiceCategory
 	serviceCategoryResult, err := vm.RunString(` 
@@ -293,7 +316,12 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(ServiceCategoryProcessed)
+							if(ServiceCategoryProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ServiceCategoryProcessed)
+							}
 						 `)
 	if err == nil && serviceCategoryResult.String() != "undefined" {
 		s.ServiceCategory = []byte(serviceCategoryResult.String())
@@ -335,7 +363,12 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(ServiceTypeProcessed)
+							if(ServiceTypeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ServiceTypeProcessed)
+							}
 						 `)
 	if err == nil && serviceTypeResult.String() != "undefined" {
 		s.ServiceType = []byte(serviceTypeResult.String())
@@ -382,7 +415,12 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(SpecialtyProcessed)
+							if(SpecialtyProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SpecialtyProcessed)
+							}
 						 `)
 	if err == nil && specialtyResult.String() != "undefined" {
 		s.Specialty = []byte(specialtyResult.String())
@@ -424,7 +462,12 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())

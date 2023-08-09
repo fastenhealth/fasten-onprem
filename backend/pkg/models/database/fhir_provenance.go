@@ -31,7 +31,7 @@ type FhirProvenance struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// Where the activity occurred, if relevant
 	// https://hl7.org/fhir/r4/search.html#reference
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
@@ -40,7 +40,7 @@ type FhirProvenance struct {
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
 	// When the activity was recorded / updated
 	// https://hl7.org/fhir/r4/search.html#date
-	Recorded time.Time `gorm:"column:recorded;type:datetime" json:"recorded,omitempty"`
+	Recorded *time.Time `gorm:"column:recorded;type:datetime" json:"recorded,omitempty"`
 	// Indication of the reason the entity signed the object(s)
 	// https://hl7.org/fhir/r4/search.html#token
 	SignatureType datatypes.JSON `gorm:"column:signatureType;type:text;serializer:json" json:"signatureType,omitempty"`
@@ -55,13 +55,13 @@ type FhirProvenance struct {
 	Target datatypes.JSON `gorm:"column:target;type:text;serializer:json" json:"target,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 	// When the activity occurred
 	// https://hl7.org/fhir/r4/search.html#date
-	When time.Time `gorm:"column:when;type:datetime" json:"when,omitempty"`
+	When *time.Time `gorm:"column:when;type:datetime" json:"when,omitempty"`
 }
 
 func (s *FhirProvenance) GetSearchParameters() map[string]string {
@@ -115,7 +115,6 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 	// extracting Agent
 	agentResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.agent.who'))")
 	if err == nil && agentResult.String() != "undefined" {
-		s.Agent = []byte(agentResult.String())
 	}
 	// extracting AgentRole
 	agentRoleResult, err := vm.RunString(` 
@@ -154,7 +153,12 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 							}, [])
 						
 				
-							JSON.stringify(AgentRoleProcessed)
+							if(AgentRoleProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AgentRoleProcessed)
+							}
 						 `)
 	if err == nil && agentRoleResult.String() != "undefined" {
 		s.AgentRole = []byte(agentRoleResult.String())
@@ -196,7 +200,12 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 							}, [])
 						
 				
-							JSON.stringify(AgentTypeProcessed)
+							if(AgentTypeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AgentTypeProcessed)
+							}
 						 `)
 	if err == nil && agentTypeResult.String() != "undefined" {
 		s.AgentType = []byte(agentTypeResult.String())
@@ -204,7 +213,6 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 	// extracting Entity
 	entityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.entity.what'))")
 	if err == nil && entityResult.String() != "undefined" {
-		s.Entity = []byte(entityResult.String())
 	}
 	// extracting Language
 	languageResult, err := vm.RunString(` 
@@ -243,7 +251,12 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -253,25 +266,33 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Location
 	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.location'))")
 	if err == nil && locationResult.String() != "undefined" {
-		s.Location = []byte(locationResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Recorded
 	recordedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Provenance.recorded')[0]")
 	if err == nil && recordedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, recordedResult.String())
 		if err == nil {
-			s.Recorded = t
+			s.Recorded = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", recordedResult.String())
+			if err == nil {
+				s.Recorded = &d
+			}
 		}
 	}
 	// extracting SignatureType
@@ -311,7 +332,12 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 							}, [])
 						
 				
-							JSON.stringify(SignatureTypeProcessed)
+							if(SignatureTypeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SignatureTypeProcessed)
+							}
 						 `)
 	if err == nil && signatureTypeResult.String() != "undefined" {
 		s.SignatureType = []byte(signatureTypeResult.String())
@@ -358,7 +384,12 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())
@@ -366,14 +397,18 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 	// extracting Target
 	targetResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.target'))")
 	if err == nil && targetResult.String() != "undefined" {
-		s.Target = []byte(targetResult.String())
 	}
 	// extracting When
 	whenResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Provenance.occurredDateTime)')[0]")
 	if err == nil && whenResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, whenResult.String())
 		if err == nil {
-			s.When = t
+			s.When = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", whenResult.String())
+			if err == nil {
+				s.When = &d
+			}
 		}
 	}
 	return nil

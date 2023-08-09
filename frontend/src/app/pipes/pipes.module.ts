@@ -5,6 +5,7 @@ import { NgModule } from '@angular/core';
 import {FhirPathPipe} from './fhir-path.pipe';
 import {FilterPipe} from './filter.pipe';
 import { ShortDomainPipe } from './short-domain.pipe';
+import { DatasetLatestEntryPipe } from './dataset-latest-entry.pipe';
 
 @NgModule({
   declarations: [
@@ -12,6 +13,7 @@ import { ShortDomainPipe } from './short-domain.pipe';
     FhirPathPipe,
     FilterPipe,
     ShortDomainPipe,
+    DatasetLatestEntryPipe,
   ],
   imports: [
 
@@ -19,7 +21,8 @@ import { ShortDomainPipe } from './short-domain.pipe';
   exports: [
     FhirPathPipe,
     FilterPipe,
-    ShortDomainPipe
+    ShortDomainPipe,
+    DatasetLatestEntryPipe
   ]
 })
 export class PipesModule {}

@@ -16,10 +16,10 @@ type FhirClaimResponse struct {
 	models.ResourceBase
 	// The creation date
 	// https://hl7.org/fhir/r4/search.html#date
-	Created time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
+	Created *time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
 	// The contents of the disposition message
 	// https://hl7.org/fhir/r4/search.html#string
-	Disposition string `gorm:"column:disposition;type:text" json:"disposition,omitempty"`
+	Disposition datatypes.JSON `gorm:"column:disposition;type:text;serializer:json" json:"disposition,omitempty"`
 	// The identity of the ClaimResponse
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
@@ -31,13 +31,13 @@ type FhirClaimResponse struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// The processing outcome
 	// https://hl7.org/fhir/r4/search.html#token
 	Outcome datatypes.JSON `gorm:"column:outcome;type:text;serializer:json" json:"outcome,omitempty"`
 	// The expected payment date
 	// https://hl7.org/fhir/r4/search.html#date
-	PaymentDate time.Time `gorm:"column:paymentDate;type:datetime" json:"paymentDate,omitempty"`
+	PaymentDate *time.Time `gorm:"column:paymentDate;type:datetime" json:"paymentDate,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
@@ -58,7 +58,7 @@ type FhirClaimResponse struct {
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -121,13 +121,72 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 	if err == nil && createdResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, createdResult.String())
 		if err == nil {
-			s.Created = t
+			s.Created = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", createdResult.String())
+			if err == nil {
+				s.Created = &d
+			}
 		}
 	}
 	// extracting Disposition
-	dispositionResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'ClaimResponse.disposition')[0]")
+	dispositionResult, err := vm.RunString(` 
+							DispositionResult = window.fhirpath.evaluate(fhirResource, 'ClaimResponse.disposition')
+							DispositionProcessed = DispositionResult.reduce((accumulator, currentValue) => {
+								if (typeof currentValue === 'string') {
+									//basic string
+									accumulator.push(currentValue)
+								} else if (currentValue.family  || currentValue.given) {
+									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
+									var humanNameParts = []
+									if (currentValue.prefix) {
+										humanNameParts = humanNameParts.concat(currentValue.prefix)
+									}
+									if (currentValue.given) {	
+										humanNameParts = humanNameParts.concat(currentValue.given)
+									}	
+									if (currentValue.family) {	
+										humanNameParts.push(currentValue.family)	
+									}	
+									if (currentValue.suffix) {	
+										humanNameParts = humanNameParts.concat(currentValue.suffix)	
+									}
+									accumulator.push(humanNameParts.join(" "))
+								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
+									//Address http://hl7.org/fhir/R4/datatypes.html#Address
+									var addressParts = []		
+									if (currentValue.line) {
+										addressParts = addressParts.concat(currentValue.line)
+									}
+									if (currentValue.city) {
+										addressParts.push(currentValue.city)
+									}	
+									if (currentValue.state) {	
+										addressParts.push(currentValue.state)
+									}	
+									if (currentValue.postalCode) {
+										addressParts.push(currentValue.postalCode)
+									}	
+									if (currentValue.country) {
+										addressParts.push(currentValue.country)	
+									}	
+									accumulator.push(addressParts.join(" "))
+								} else {
+									//string, boolean
+									accumulator.push(currentValue)
+								}
+								return accumulator
+							}, [])
+						
+							if(DispositionProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(DispositionProcessed)
+							}
+						 `)
 	if err == nil && dispositionResult.String() != "undefined" {
-		s.Disposition = dispositionResult.String()
+		s.Disposition = []byte(dispositionResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -166,7 +225,12 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -174,7 +238,6 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 	// extracting Insurer
 	insurerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.insurer'))")
 	if err == nil && insurerResult.String() != "undefined" {
-		s.Insurer = []byte(insurerResult.String())
 	}
 	// extracting Language
 	languageResult, err := vm.RunString(` 
@@ -213,7 +276,12 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -223,7 +291,12 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Outcome
@@ -263,7 +336,12 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(OutcomeProcessed)
+							if(OutcomeProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(OutcomeProcessed)
+							}
 						 `)
 	if err == nil && outcomeResult.String() != "undefined" {
 		s.Outcome = []byte(outcomeResult.String())
@@ -273,23 +351,25 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 	if err == nil && paymentDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, paymentDateResult.String())
 		if err == nil {
-			s.PaymentDate = t
+			s.PaymentDate = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", paymentDateResult.String())
+			if err == nil {
+				s.PaymentDate = &d
+			}
 		}
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Request
 	requestResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.request'))")
 	if err == nil && requestResult.String() != "undefined" {
-		s.Request = []byte(requestResult.String())
 	}
 	// extracting Requestor
 	requestorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ClaimResponse.requestor'))")
 	if err == nil && requestorResult.String() != "undefined" {
-		s.Requestor = []byte(requestorResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
@@ -333,7 +413,12 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(StatusProcessed)
+							if(StatusProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StatusProcessed)
+							}
 						 `)
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
@@ -375,7 +460,12 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())
@@ -417,7 +507,12 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 							}, [])
 						
 				
-							JSON.stringify(UseProcessed)
+							if(UseProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(UseProcessed)
+							}
 						 `)
 	if err == nil && useResult.String() != "undefined" {
 		s.Use = []byte(useResult.String())

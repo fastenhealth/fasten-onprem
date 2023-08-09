@@ -1,6 +1,6 @@
 <div class="card card-dashboard-seven mb-3">
   <div class="card-header tx-medium">
-    <div class="row cursor-pointer" routerLink="/source/{{eobDisplayModel?.source_id}}/resource/{{eobDisplayModel?.source_resource_id}}">
+    <div class="row cursor-pointer" routerLink="/explore/{{eobDisplayModel?.source_id}}/resource/{{eobDisplayModel?.source_resource_id}}">
       <!-- Condition Header -->
       <div class="col-6">
         {{eobDisplayModel?.sort_title ? eobDisplayModel?.sort_title : condition?.display ?  condition?.display : 'unknown'}}
@@ -135,7 +135,7 @@
           <div *ngIf="eobDisplayModel?.related_resources?.Device as devices" class="col-12 mt-2 mb-2">
             <strong>Device:</strong>
             <ul>
-              <li routerLink="/source/{{device?.source_id}}/resource/{{device?.source_resource_id}}" *ngFor="let device of devices">
+              <li routerLink="/explore/{{device?.source_id}}/resource/{{device?.source_resource_id}}" *ngFor="let device of devices">
                 {{device.model}}
               </li>
             </ul>

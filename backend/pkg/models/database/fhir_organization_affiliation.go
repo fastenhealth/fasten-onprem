@@ -19,7 +19,7 @@ type FhirOrganizationAffiliation struct {
 	Active datatypes.JSON `gorm:"column:active;type:text;serializer:json" json:"active,omitempty"`
 	// The period during which the participatingOrganization is affiliated with the primary organization
 	// https://hl7.org/fhir/r4/search.html#date
-	Date time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
 	// A value in an email contact
 	// https://hl7.org/fhir/r4/search.html#token
 	Email datatypes.JSON `gorm:"column:email;type:text;serializer:json" json:"email,omitempty"`
@@ -34,7 +34,7 @@ type FhirOrganizationAffiliation struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
 	// The location(s) at which the role occurs
 	// https://hl7.org/fhir/r4/search.html#reference
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
@@ -73,7 +73,7 @@ type FhirOrganizationAffiliation struct {
 	Telecom datatypes.JSON `gorm:"column:telecom;type:text;serializer:json" json:"telecom,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -169,7 +169,12 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 							}, [])
 						
 				
-							JSON.stringify(ActiveProcessed)
+							if(ActiveProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ActiveProcessed)
+							}
 						 `)
 	if err == nil && activeResult.String() != "undefined" {
 		s.Active = []byte(activeResult.String())
@@ -179,7 +184,12 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
-			s.Date = t
+			s.Date = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", dateResult.String())
+			if err == nil {
+				s.Date = &d
+			}
 		}
 	}
 	// extracting Email
@@ -219,7 +229,12 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 							}, [])
 						
 				
-							JSON.stringify(EmailProcessed)
+							if(EmailProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(EmailProcessed)
+							}
 						 `)
 	if err == nil && emailResult.String() != "undefined" {
 		s.Email = []byte(emailResult.String())
@@ -227,7 +242,6 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 	// extracting Endpoint
 	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.endpoint'))")
 	if err == nil && endpointResult.String() != "undefined" {
-		s.Endpoint = []byte(endpointResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -266,7 +280,12 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 							}, [])
 						
 				
-							JSON.stringify(IdentifierProcessed)
+							if(IdentifierProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IdentifierProcessed)
+							}
 						 `)
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
@@ -308,7 +327,12 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 							}, [])
 						
 				
-							JSON.stringify(LanguageProcessed)
+							if(LanguageProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LanguageProcessed)
+							}
 						 `)
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
@@ -318,23 +342,25 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = t
+			s.LastUpdated = &t
+		} else if err != nil {
+			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			if err == nil {
+				s.LastUpdated = &d
+			}
 		}
 	}
 	// extracting Location
 	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.location'))")
 	if err == nil && locationResult.String() != "undefined" {
-		s.Location = []byte(locationResult.String())
 	}
 	// extracting Network
 	networkResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.network'))")
 	if err == nil && networkResult.String() != "undefined" {
-		s.Network = []byte(networkResult.String())
 	}
 	// extracting ParticipatingOrganization
 	participatingOrganizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.participatingOrganization'))")
 	if err == nil && participatingOrganizationResult.String() != "undefined" {
-		s.ParticipatingOrganization = []byte(participatingOrganizationResult.String())
 	}
 	// extracting Phone
 	phoneResult, err := vm.RunString(` 
@@ -373,7 +399,12 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 							}, [])
 						
 				
-							JSON.stringify(PhoneProcessed)
+							if(PhoneProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PhoneProcessed)
+							}
 						 `)
 	if err == nil && phoneResult.String() != "undefined" {
 		s.Phone = []byte(phoneResult.String())
@@ -381,12 +412,10 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 	// extracting PrimaryOrganization
 	primaryOrganizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.organization'))")
 	if err == nil && primaryOrganizationResult.String() != "undefined" {
-		s.PrimaryOrganization = []byte(primaryOrganizationResult.String())
 	}
 	// extracting Profile
 	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Role
 	roleResult, err := vm.RunString(` 
@@ -425,7 +454,12 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 							}, [])
 						
 				
-							JSON.stringify(RoleProcessed)
+							if(RoleProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RoleProcessed)
+							}
 						 `)
 	if err == nil && roleResult.String() != "undefined" {
 		s.Role = []byte(roleResult.String())
@@ -433,7 +467,6 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 	// extracting Service
 	serviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.healthcareService'))")
 	if err == nil && serviceResult.String() != "undefined" {
-		s.Service = []byte(serviceResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
@@ -477,7 +510,12 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 							}, [])
 						
 				
-							JSON.stringify(SpecialtyProcessed)
+							if(SpecialtyProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SpecialtyProcessed)
+							}
 						 `)
 	if err == nil && specialtyResult.String() != "undefined" {
 		s.Specialty = []byte(specialtyResult.String())
@@ -519,7 +557,12 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 							}, [])
 						
 				
-							JSON.stringify(TagProcessed)
+							if(TagProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TagProcessed)
+							}
 						 `)
 	if err == nil && tagResult.String() != "undefined" {
 		s.Tag = []byte(tagResult.String())
@@ -561,7 +604,12 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 							}, [])
 						
 				
-							JSON.stringify(TelecomProcessed)
+							if(TelecomProcessed.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TelecomProcessed)
+							}
 						 `)
 	if err == nil && telecomResult.String() != "undefined" {
 		s.Telecom = []byte(telecomResult.String())

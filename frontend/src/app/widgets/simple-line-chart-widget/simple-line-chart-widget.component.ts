@@ -7,10 +7,11 @@ import {ChartConfiguration, ChartDataset, ChartOptions} from 'chart.js';
 import {CommonModule} from '@angular/common';
 import {LoadingWidgetComponent} from '../loading-widget/loading-widget.component';
 import {EmptyWidgetComponent} from '../empty-widget/empty-widget.component';
+import {PipesModule} from '../../pipes/pipes.module';
 
 @Component({
   standalone: true,
-  imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
+  imports: [NgChartsModule, CommonModule, LoadingWidgetComponent, EmptyWidgetComponent, PipesModule],
   selector: 'simple-line-chart-widget',
   templateUrl: './simple-line-chart-widget.component.html',
   styleUrls: ['./simple-line-chart-widget.component.scss']

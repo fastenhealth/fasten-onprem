@@ -21,6 +21,13 @@ type ResourceBase struct {
 func (s *ResourceBase) SetOriginBase(originBase OriginBase) {
 	s.OriginBase = originBase
 }
+func (s *ResourceBase) SetSortTitle(sortTitle *string) {
+	s.SortTitle = sortTitle
+}
+
+func (s *ResourceBase) SetSortDate(sortDate *time.Time) {
+	s.SortDate = sortDate
+}
 
 func (s *ResourceBase) SetResourceRaw(resourceRaw datatypes.JSON) {
 	s.ResourceRaw = resourceRaw
