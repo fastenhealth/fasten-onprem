@@ -50,6 +50,6 @@ func TestFhirPatient_ExtractSearchParameters(t *testing.T) {
 		"534 Erewhon St PleasantVille Vic 3999",
 	}, testAddress)
 
-	require.Equal(t, time.Date(1974, 12, 25, 0, 0, 0, 0, time.UTC), patientModel.Birthdate)
+	require.Equal(t, time.Date(1974, 12, 25, 0, 0, 0, 0, time.UTC), *patientModel.Birthdate)
 
 }
