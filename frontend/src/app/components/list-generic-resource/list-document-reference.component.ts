@@ -11,7 +11,7 @@ export class ListDocumentReferenceComponent extends ListGenericResourceComponent
   columnDefinitions: GenericColumnDefn[] = [
     { title: 'Date', versions: '*', format: 'date', getter: d => d.date },
     { title: 'Content', versions: '*', getter: d => d.content?.[0]?.attachment.title },
-    { title: 'Category', versions: '*', format: 'codeableConcept', getter: d => d.category }, // Document category
+    { title: 'Category', versions: '*', format: 'codeableConcept', getter: d => d.category?.[0] }, // Document category
     { title: 'Author', versions: '*', getter: d => d.author?.[0]?.display }, // Whoever creates the document
 
   ]
