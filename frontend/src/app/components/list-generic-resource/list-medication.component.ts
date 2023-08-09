@@ -8,7 +8,7 @@ import {GenericColumnDefn, ListGenericResourceComponent} from './list-generic-re
 })
 export class ListMedicationComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
-    { title: 'Medication', versions: '*', format: 'code', getter: c => c.medicationCodeableConcept.coding[0] },
+    { title: 'Medication', versions: '*', format: 'codeableConcept', getter: c => c.medicationCodeableConcept },
     { title: 'Date Prescribed', versions: '*', format: 'date', getter: c => c.authoredOn },
     { title: 'Status', 'versions': '*', getter: c => c.status }
   ]

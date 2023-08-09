@@ -9,11 +9,11 @@ import {attributeXTime} from './utils';
 })
 export class ListMedicationAdministrationComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
-    { title: 'Medication', versions: '*', format: 'code', getter: m => m.medicationCodeableConcept.coding[0] },
-    { title: 'Route', versions: '*', format: 'code', getter: m => m.dosage.route.coding[0] },
+    { title: 'Medication', versions: '*', format: 'codeableConcept', getter: m => m.medicationCodeableConcept },
+    { title: 'Route', versions: '*', format: 'codeableConcept', getter: m => m.dosage.route },
     { title: 'Effective', versions: '*', getter: m => attributeXTime(m,'effective')},
     { title: 'Status', versions: '*', getter: m => m.status},
-    { title: 'Status Reason', versions: '*', format: 'code', getter: m => m.statusReason[0].coding[0] },
+    { title: 'Status Reason', versions: '*', format: 'codeableConcept', getter: m => m.statusReason?.[0] },
     { title: 'Recorded', versions: '*', format: 'date', getter: m => m.extension.recorded }
   ]
 }

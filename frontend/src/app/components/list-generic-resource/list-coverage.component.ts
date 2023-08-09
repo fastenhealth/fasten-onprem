@@ -9,7 +9,7 @@ import {attributeXTime} from './utils';
 })
 export class ListCoverageComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
-    { title: 'Type', versions: '*', format: 'code', getter: c => c.type.coding[0] },
+    { title: 'Type', versions: '*', format: 'codeableConcept', getter: c => c.type },
     { title: 'Period', versions: '*', format: 'period', getter: c => c.period }
   ]
 }
