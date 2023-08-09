@@ -9,7 +9,7 @@ import {attributeXTime} from './utils';
 })
 export class ListMedicationDispenseComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
-    { title: 'Medication', versions: '*', format: 'code', getter: m => m.medicationCodeableConcept.coding[0] },
+    { title: 'Medication', versions: '*', format: 'code', getter: m => m.medicationCodeableConcept?.coding?.[0] },
     { title: 'Handed Over Date', versions: '*', format: 'date', getter: m => m.whenHandedOver}
   ]
 }

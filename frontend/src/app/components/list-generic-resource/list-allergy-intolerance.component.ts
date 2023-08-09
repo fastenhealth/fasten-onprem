@@ -10,11 +10,10 @@ import {attributeXTime} from './utils';
 export class ListAllergyIntoleranceComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
     { title: 'Date Recorded', versions: '*',  format: 'date', getter: a => a.assertedDate || a.recordedDate },
-    // orig { title: 'Allergy', versions: '*', format: 'code', getter: a => a.code.coding[0] },
     { title: 'Allergy Type', versions: '*', getter: a => a.category[0] }, // Allergy Type
-    { title: 'Allergic To', versions: '*', getter: a => a.code.text }, // Substance
+    { title: 'Allergic To', versions: '*', format: 'codeableConcept', getter: a => a.code }, // Substance
     { title: 'Reaction', versions: '*', getter: a => a.reaction[0].manifestation[0].text }, // Reaction
     { title: 'Onset', versions: '*', format: 'date', getter: a => a.onsetDateTime },
-    { title: 'Resolution Age', versions: '*', format: 'date', getter: a => a.extension.resolutionAge }
+    { title: 'Resolution Age', versions: '*', format: 'date', getter: a => a.extension.resolutionAge },
   ]
 }

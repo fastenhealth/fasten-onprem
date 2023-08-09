@@ -9,10 +9,10 @@ import {attributeXTime} from './utils';
 })
 export class ListDeviceRequestComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
-    { title: 'Device', versions: '*', format: 'code', getter: d => d.codeCodeableConcept.coding[0] },
+    { title: 'Device', versions: '*', format: 'codeableConcept', getter: d => d.codeCodeableConcept },
     { title: 'Author Date', versions: '*', format: 'date', getter: d => d.authoredOn },
     { title: 'Do Not Perform', versions: '*', getter: d => d.modifierExtension.doNotPerform },
-    { title: 'Do Not Perform Reason', versions: '*', format: 'code', getter: s => s.extension.doNotPerformReason.coding[0] }
+    { title: 'Do Not Perform Reason', versions: '*', format: 'codeableConcept', getter: s => s.extension?.doNotPerformReason }
 
   ]
 }

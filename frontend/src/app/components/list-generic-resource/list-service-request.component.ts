@@ -11,10 +11,10 @@ export class ListServiceRequestComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
     // orig { title: 'Service', versions: '*', format: 'code', getter: s => s.code.coding[0] },
     { title: 'Author Date', versions: '*', format: 'date', getter: s => s.authoredOn },
-    { title: 'Service', versions: '*', getter: s => s.category[0].text },
-    { title: 'Ordered', versions: '*', getter: s => s.code.text },
-    { title: 'Dx', versions: '*', format: 'code', getter: s => s.reasonCode[0].coding[0] }, //Was Task
-    { title: 'Ordered By', versions: '*', getter: s => s.requester.display },
+    { title: 'Service', versions: '*', format:'codeableConcept', getter: s => s.category?.[0] },
+    { title: 'Ordered', versions: '*', format:'codeableConcept', getter: s => s.code },
+    { title: 'Dx', versions: '*', format: 'codeableConcept', getter: s => s.reasonCode?.[0] }, //Was Task
+    { title: 'Ordered By', versions: '*', getter: s => s.requester?.display },
     { title: 'Status', versions: '*', getter: s => s.status },
     // Useless { title: 'ID', versions: '*', getter: s => s.id },
     // Not used { title: 'Do Not Perform', versions: '*', getter: s => s.doNotPerform },

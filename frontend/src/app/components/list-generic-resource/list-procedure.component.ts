@@ -9,12 +9,12 @@ import {GenericColumnDefn, ListGenericResourceComponent} from './list-generic-re
 })
 export class ListProcedureComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
-    { title: 'Procedure', versions: '*', format: 'code', getter: p => p.code.coding[0] },
+    { title: 'Procedure', versions: '*', format: 'code', getter: p => p.code.coding?.[0] },
     { title: 'Performed', versions: '*', getter: p => attributeXTime(p,'performed') },
     { title: 'ID', versions: '*', getter: p => p.id },
     { title: 'Recorded', versions: '*', format: 'dateTime', getter: p => p.extension?.recorded },
-    { title: 'Reason', versions: '*', format: 'code', getter: p => p.reasonCode?.coding[0] },
+    { title: 'Reason', versions: '*', format: 'code', getter: p => p.reasonCode?.coding?.[0] },
     { title: 'Status', versions: '*', getter: p => p.status },
-    { title: 'Status Reason', versions: '*', format: 'code', getter: p => p.statusReason?.coding[0] }
+    { title: 'Status Reason', versions: '*', format: 'code', getter: p => p.statusReason?.coding?.[0] }
   ]
 }

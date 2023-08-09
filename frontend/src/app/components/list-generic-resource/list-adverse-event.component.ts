@@ -9,7 +9,7 @@ import {attributeXTime} from './utils';
 })
 export class ListAdverseEventComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
-    { title: 'Event', versions: '*', format: 'code', getter: a => a.event.coding[0] },
+    { title: 'Event', versions: '*', format: 'codeableConcept', getter: a => a.event },
     { title: 'Date', versions: '*', format: 'date', getter: a => a.date }
   ]
 }

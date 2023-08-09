@@ -15,11 +15,16 @@ export function getPath(obj, path = ""): string {
 
 export const FORMATTERS = {
   date: (str) => str ? moment(str).format('YYYY-MM-DD') : '',
-  time: (str) => str ? moment(str).format('HH:mm:ss') : '',
-  dateTime: (str) => str ? moment(str).format('YYYY-MM-DD - h:mm:ss a') : '',
+  time: (str) => str ? moment(str).format('HH:mm') : '',
+  dateTime: (str) => str ? moment(str).format('YYYY-MM-DD - h:mm a') : '',
   numberWithCommas: (str) => str ? str.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '',
   code: (code) => code ? `${code.code}: ${code.display ? code.display : ''}` : '',
-  period: (period) => period ? `${moment(period.start).format('YYYY-MM-DD - h:mm:ss a')} -> ${moment(period.end).format('YYYY-MM-DD - h:mm:ss a')}` : ''
+  codeableConcept: (codeableConcept) => {
+    if(!codeableConcept) return ''
+    if(codeableConcept.text) return codeableConcept.text
+    return codeableConcept.coding && codeableConcept.coding[0] ? `${codeableConcept.coding[0].code}: ${codeableConcept.coding[0].display ? codeableConcept.coding[0].display : ''}` : ''
+  },
+  period: (period) => period ? `${moment(period.start).format('YYYY-MM-DD - h:mm a')} -> ${moment(period.end).format('YYYY-MM-DD - h:mm a')}` : ''
 };
 
 export function round(num, digits) {

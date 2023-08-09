@@ -9,9 +9,9 @@ import {attributeXTime} from './utils';
 })
 export class ListAppointmentComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
-    { title: 'Type', versions: '*', format: 'code', getter: a => a.type.coding[0] },
+    { title: 'Type', versions: '*', format: 'codeableConcept', getter: a => a.serviceType },
     { title: 'Status', versions: '*', getter: a => a.status },
-    { title: 'Reason', versions: '*',  format: 'code', getter: a => a.reason.coding[0] },
+    { title: 'Reason', versions: '*',  format: 'code', getter: a => a.reason?.coding?.[0] },
     { title: 'Description', versions: '*', getter: a => a.description },
   ]
 }

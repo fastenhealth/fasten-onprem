@@ -10,9 +10,9 @@ import {attributeXTime} from './utils';
 export class ListDiagnosticReportComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
     { title: 'Issued', versions: '*', format: 'date', getter: d => d.issued },
-    { title: 'Title', versions: '*', getter: d => d.code.text }, 
-    { title: 'Document Title', versions: '*', getter: d => d.presentedForm[0].title }, //Doc title
-    { title: 'Author', versions: '*', getter: d => d.performer[0].display },
+    { title: 'Title', versions: '*', format: 'codeableConcept', getter: d => d.code },
+    { title: 'Document Title', versions: '*', getter: d => d.presentedForm?.[0]?.title }, //Doc title
+    { title: 'Author', versions: '*', getter: d => d.performer?.[0]?.display },
 
   ]
 }

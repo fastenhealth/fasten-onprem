@@ -9,8 +9,8 @@ import {attributeXTime} from './utils';
 })
 export class ListNutritionOrderComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
-    { title: 'Preference', versions: '*', format: 'code', getter: n => n.foodPreferenceModifier[0].coding[0] },
-    { title: 'Exclusion', versions: '*', format: 'code', getter: n => n.excludeFoodModifier[0].coding[0] },
+    { title: 'Preference', versions: '*', format: 'code', getter: n => n.foodPreferenceModifier?.[0].coding?.[0] },
+    { title: 'Exclusion', versions: '*', format: 'code', getter: n => n.excludeFoodModifier?.[0].coding?.[0] },
     { title: 'Date', versions: '*', format: 'date', getter: n => n.dateTime },
     { title: 'Status', versions: '*', getter: n => n.status }
   ]
