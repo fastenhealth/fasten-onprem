@@ -7,8 +7,8 @@ import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
 
 export class MedicationModel extends FastenDisplayModel {
-
-  title: CodingModel|undefined
+  code: CodableConceptModel|undefined
+  title: string|undefined
   is_brand: string|undefined
   manufacturer: string|undefined
   has_product_form:boolean|undefined
@@ -29,10 +29,8 @@ export class MedicationModel extends FastenDisplayModel {
   }
 
   commonDTO(fhirResource:any){
-    this.title = _.get(fhirResource, 'code.coding.0');
-    if (!this.title) {
-      this.title = { display: _.get(fhirResource, 'code.text', '') };
-    }
+    this.code = _.get(fhirResource, 'code')
+    this.title =  _.get(fhirResource, 'code.text') || _.get(fhirResource, 'code.coding.0.display');
     this.manufacturer = _.get(fhirResource, 'manufacturer');
   };
 

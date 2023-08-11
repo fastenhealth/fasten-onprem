@@ -1,17 +1,18 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
-import {Router} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {MedicationModel} from '../../../../../lib/models/resources/medication-model';
 import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
 import {CommonModule} from "@angular/common";
 import {BadgeComponent} from "../../common/badge/badge.component";
 import {TableComponent} from "../../common/table/table.component";
 import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.component';
+import * as _ from "lodash";
 
 @Component({
   standalone: true,
-  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, GlossaryLookupComponent],
+  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, GlossaryLookupComponent, RouterModule],
   selector: 'fhir-medication',
   templateUrl: './medication.component.html',
   styleUrls: ['./medication.component.scss']
@@ -31,8 +32,8 @@ export class MedicationComponent implements OnInit, FhirResourceComponentInterfa
   constructor(public changeRef: ChangeDetectorRef, public router: Router) {}
 
   ngOnInit(): void {
-    this.resourceCode = this.displayModel?.title?.code
-    this.resourceCodeSystem = this.displayModel?.title?.system
+    this.resourceCode = _.get(this.displayModel?.code, 'coding[0].code')
+    this.resourceCodeSystem = _.get(this.displayModel?.code, 'coding[0].system')
 
     this.tableData = [
       {

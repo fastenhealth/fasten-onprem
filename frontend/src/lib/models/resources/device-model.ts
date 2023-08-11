@@ -6,6 +6,7 @@ import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
 
 export class DeviceModel extends FastenDisplayModel {
+  code: CodableConceptModel | undefined
 
   model: string | undefined
   status: string | undefined
@@ -27,6 +28,7 @@ export class DeviceModel extends FastenDisplayModel {
 
 
   commonDTO(fhirResource:any){
+    this.code = _.get(fhirResource, 'type');
     this.model = _.get(fhirResource, 'model') || _.get(fhirResource,"code.text", 'Device');
     this.status = _.get(fhirResource, 'status', '');
     this.get_type_coding = _.get(fhirResource, 'type.coding');

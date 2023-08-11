@@ -6,7 +6,7 @@ import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
 
 export class ConditionModel extends FastenDisplayModel {
-
+  code: CodableConceptModel | undefined
   code_text: string | undefined
   code_id: string | undefined
   code_system: string | undefined
@@ -30,6 +30,7 @@ export class ConditionModel extends FastenDisplayModel {
 
 
   commonDTO(fhirResource:any){
+    this.code = _.get(fhirResource, 'code')
     this.code_text =
       _.get(fhirResource, 'code.coding.0.display') ||
       _.get(fhirResource, 'code.text') ||

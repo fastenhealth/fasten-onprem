@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
-import {Router} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {ProcedureModel} from '../../../../../lib/models/resources/procedure-model';
 import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
 import {CommonModule} from "@angular/common";
@@ -11,7 +11,7 @@ import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.
 
 @Component({
   standalone: true,
-  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, GlossaryLookupComponent],
+  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, GlossaryLookupComponent, RouterModule],
   selector: 'fhir-procedure',
   templateUrl: './procedure.component.html',
   styleUrls: ['./procedure.component.scss']

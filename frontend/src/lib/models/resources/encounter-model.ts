@@ -7,7 +7,7 @@ import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
 
 export class EncounterModel extends FastenDisplayModel {
-
+  code: CodableConceptModel | undefined
   period_end: string | undefined
   period_start: string | undefined
   has_participant: boolean | undefined
@@ -30,6 +30,7 @@ export class EncounterModel extends FastenDisplayModel {
   }
 
   commonDTO(fhirResource:any){
+    this.code = _.get(fhirResource, 'serviceType') || _.get(fhirResource, 'type.0');
     this.resource_status = _.get(fhirResource, 'status');
     this.location_display = _.get(
       fhirResource,

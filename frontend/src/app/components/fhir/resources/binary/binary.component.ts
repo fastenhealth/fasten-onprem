@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {BinaryModel} from '../../../../../lib/models/resources/binary-model';
 import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
-import {Router} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {AttachmentModel} from '../../../../../lib/models/datatypes/attachment-model';
 import {FastenApiService} from '../../../../services/fasten-api.service';
 import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
@@ -30,6 +30,7 @@ import {AuthService} from "../../../../services/auth.service";
     BinaryTextComponent,
     DicomComponent,
     HighlightModule,
+    RouterModule
   ],
   providers: [FastenApiService, AuthService],
   selector: 'fhir-binary',

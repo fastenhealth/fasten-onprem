@@ -80,7 +80,7 @@
                   </ng-template>
                 </li>
                 <li class="cursor-pointer" [ngbPopover]="medicationPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let medication of encounter?.related_resources?.Medication">
-                  {{medication.title}}
+                  {{medication.title }}
 
                   <ng-template #medicationPopoverContent>
                     <fhir-resource [displayModel]="medication"></fhir-resource>
