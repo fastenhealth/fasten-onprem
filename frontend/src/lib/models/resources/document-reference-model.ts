@@ -11,6 +11,7 @@ import {AttachmentModel} from '../datatypes/attachment-model';
 
 export class DocumentReferenceModel extends FastenDisplayModel {
   code: CodableConceptModel | undefined
+  title: string | undefined
   description: string | undefined
   status: string | undefined
   category: CodableConceptModel | undefined
@@ -37,6 +38,7 @@ export class DocumentReferenceModel extends FastenDisplayModel {
 
   commonDTO(fhirResource:any){
     this.code = _.get(fhirResource, 'type');
+    this.title = _.get(fhirResource, 'category.0.text') || _.get(fhirResource, 'category.0.coding.0.display') || _.get(fhirResource, 'type.text') || _.get(fhirResource, 'type.coding.0.display');
     this.description = _.get(fhirResource, 'description');
     this.status = _.get(fhirResource, 'status');
     this.type_coding = _.get(fhirResource, 'type.coding[0]');

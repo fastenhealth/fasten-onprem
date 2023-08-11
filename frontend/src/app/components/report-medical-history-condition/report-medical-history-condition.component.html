@@ -111,7 +111,7 @@
               <strong>Tests and Examinations:</strong>
               <ul>
                 <li class="cursor-pointer" [ngbPopover]="diagnosticReportPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let diagnosticReport of diagnosticReports">
-                  {{diagnosticReport.title}}
+                  {{diagnosticReport.sort_title || diagnosticReport.title}}
 
                   <ng-template #diagnosticReportPopoverContent>
                     <fhir-resource [displayModel]="diagnosticReport"></fhir-resource>
@@ -124,7 +124,7 @@
               <strong>Attachments:</strong>
               <ul>
                 <li class="cursor-pointer" [ngbPopover]="documentReferencePopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let documentReference of documentReferences">
-                  {{documentReference.sort_title}}
+                  {{documentReference.sort_title || documentReference.title}}
 
                   <ng-template #documentReferencePopoverContent>
                     <fhir-resource [displayModel]="documentReference"></fhir-resource>
