@@ -8,7 +8,7 @@ import {FastenOptions} from '../fasten/fasten-options';
 
 
 export class ObservationModel extends FastenDisplayModel {
-
+  code: CodableConceptModel | undefined
   effective_date: string
   code_coding_display: string
   code_text: string
@@ -25,6 +25,7 @@ export class ObservationModel extends FastenDisplayModel {
     super(fastenOptions)
     this.source_resource_type = ResourceType.Observation
     this.effective_date = _.get(fhirResource, 'effectiveDateTime');
+    this.code = _.get(fhirResource, 'code');
     this.code_coding_display = _.get(fhirResource, 'code.coding.0.display');
     this.code_text = _.get(fhirResource, 'code.text', '');
     this.value_quantity_value = _.get(fhirResource, 'valueQuantity.value', '');

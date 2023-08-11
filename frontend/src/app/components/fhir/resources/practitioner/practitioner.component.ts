@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
 import {ImmunizationModel} from '../../../../../lib/models/resources/immunization-model';
 import {TableRowItem} from '../../common/table/table-row-item';
-import {Router} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {PractitionerModel} from '../../../../../lib/models/resources/practitioner-model';
 import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
 import {CommonModule} from "@angular/common";
@@ -11,7 +11,7 @@ import {TableComponent} from "../../common/table/table.component";
 
 @Component({
   standalone: true,
-  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent],
+  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, RouterModule],
   selector: 'app-practitioner',
   templateUrl: './practitioner.component.html',
   styleUrls: ['./practitioner.component.scss']

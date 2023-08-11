@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
-import {Router} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {ImmunizationModel} from '../../../../../lib/models/resources/immunization-model';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import * as _ from "lodash";
@@ -11,7 +11,7 @@ import {TableComponent} from "../../common/table/table.component";
 
 @Component({
   standalone: true,
-  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent],
+  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, RouterModule],
   selector: 'fhir-immunization',
   templateUrl: './immunization.component.html',
   styleUrls: ['./immunization.component.scss']

@@ -10,7 +10,7 @@ import {BinaryModel} from './binary-model';
 import {AttachmentModel} from '../datatypes/attachment-model';
 
 export class DocumentReferenceModel extends FastenDisplayModel {
-
+  code: CodableConceptModel | undefined
   description: string | undefined
   status: string | undefined
   category: CodableConceptModel | undefined
@@ -36,6 +36,7 @@ export class DocumentReferenceModel extends FastenDisplayModel {
 
 
   commonDTO(fhirResource:any){
+    this.code = _.get(fhirResource, 'type');
     this.description = _.get(fhirResource, 'description');
     this.status = _.get(fhirResource, 'status');
     this.type_coding = _.get(fhirResource, 'type.coding[0]');

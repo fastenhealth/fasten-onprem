@@ -7,7 +7,7 @@ import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
 
 export class AppointmentModel extends FastenDisplayModel {
-
+  code: CodableConceptModel | undefined
   description: string|undefined
   status: string|undefined
   start: string|undefined
@@ -30,6 +30,7 @@ export class AppointmentModel extends FastenDisplayModel {
 
 
   commonDTO(fhirResource:any) {
+    this.code = _.get(fhirResource, 'serviceType.0') || _.get(fhirResource, 'reasonCode.0');
     this.description = _.get(fhirResource, 'description');
     this.status = _.get(fhirResource, 'status');
     this.start = _.get(fhirResource, 'start');

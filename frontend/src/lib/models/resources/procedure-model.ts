@@ -7,7 +7,7 @@ import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
 
 export class ProcedureModel extends FastenDisplayModel {
-
+  code: CodableConceptModel| undefined
   display: string|undefined;
   status: string|undefined;
   has_performed_datetime: boolean|undefined;
@@ -42,6 +42,7 @@ export class ProcedureModel extends FastenDisplayModel {
     this.has_performed_period = !!(this.performed_period_start || this.performed_period_end);
     this.has_coding = _.has(fhirResource, 'code.coding');
     this.coding = _.get(fhirResource, 'code.coding', []);
+    this.code = _.get(fhirResource, 'code');
     this.category = _.get(fhirResource, 'category.coding[0]');
     this.location_reference = _.get(fhirResource, 'location');
     this.has_performer_data = _.has(fhirResource, 'performer.0.actor.display');

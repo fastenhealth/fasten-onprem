@@ -3,9 +3,10 @@ import * as _ from "lodash";
 import {ReferenceModel} from '../datatypes/reference-model';
 import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
+import {CodableConceptModel} from '../datatypes/codable-concept-model';
 
 export class CarePlanModel extends FastenDisplayModel {
-
+  code: CodableConceptModel | undefined
   status: string | undefined
   expiry: string | undefined
   category: any[] | undefined
@@ -32,6 +33,8 @@ export class CarePlanModel extends FastenDisplayModel {
   }
 
   commonDTO(fhirResource: any) {
+    this.code = _.get(fhirResource, 'category');
+
     this.status = _.get(fhirResource, 'status', '');
     this.expiry = _.get(fhirResource, 'expiry');
     this.category = _.get(fhirResource, 'category');

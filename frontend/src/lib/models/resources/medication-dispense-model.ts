@@ -7,7 +7,7 @@ import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
 
 export class MedicationDispenseModel extends FastenDisplayModel {
-
+  code: CodableConceptModel | undefined
   medication_title: string|undefined
   medication_coding: string|undefined
   type_coding: string|undefined
@@ -24,6 +24,7 @@ export class MedicationDispenseModel extends FastenDisplayModel {
 
 
   commonDTO(fhirResource:any){
+    this.code = _.get(fhirResource, 'medicationCodeableConcept');
     this.type_coding = _.get(fhirResource, 'type.coding.0');
     this.when_prepared = _.get(fhirResource, 'whenPrepared');
   };

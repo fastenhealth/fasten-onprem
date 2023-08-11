@@ -4,9 +4,10 @@ import {fhirVersions, ResourceType} from '../constants';
 import {FastenOptions} from '../fasten/fasten-options';
 import * as _ from "lodash";
 import {ReferenceModel} from '../datatypes/reference-model';
+import {CodableConceptModel} from '../datatypes/codable-concept-model';
 
 export class MedicationRequestModel extends FastenDisplayModel {
-
+  code: CodableConceptModel|undefined
   display: string|undefined
   medication_reference: ReferenceModel|undefined
   medication_codeable_concept: CodingModel|undefined
@@ -27,6 +28,7 @@ export class MedicationRequestModel extends FastenDisplayModel {
       fhirResource,
       'medicationCodeableConcept.coding.0',
     );
+    this.code = _.get(fhirResource, 'medicationCodeableConcept');
     this.reason_code = _.get(fhirResource, 'reasonCode');
     this.status = _.get(fhirResource, 'status');
     this.dosage_instruction = _.get(fhirResource, 'dosageInstruction');
@@ -37,6 +39,6 @@ export class MedicationRequestModel extends FastenDisplayModel {
     this.created = _.get(fhirResource, 'authoredOn');
     this.intent = _.get(fhirResource, 'intent');
 
-    this.display = _.get(fhirResource, 'medicationCodeableConcept.text') || this.medication_codeable_concept?.display || _.get(fhirResource, 'medicationCodeableConcept.text') || this.medication_reference?.display
+    this.display = _.get(fhirResource, 'medicationCodeableConcept.text') || _.get(fhirResource, 'medicationCodeableConcept.0.display') || _.get(fhirResource, 'dosageInstruction.0.text') || 'unknown'
   }
 }

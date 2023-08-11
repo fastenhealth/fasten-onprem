@@ -4,8 +4,10 @@ import {fhirVersions, ResourceType} from '../constants'
 import {ReferenceModel} from '../datatypes/reference-model';
 import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
+import {CodableConceptModel} from '../datatypes/codable-concept-model';
 
 export class AllergyIntoleranceModel extends FastenDisplayModel {
+  code: CodableConceptModel | undefined
 
   title: string | undefined
   status: string | undefined
@@ -26,6 +28,7 @@ export class AllergyIntoleranceModel extends FastenDisplayModel {
 
 
   commonDTO(fhirResource: any) {
+    this.code = _.get(fhirResource, 'code');
     // this.reaction = _.get(fhirResource, 'reaction', []);
     this.asserter = _.get(fhirResource, 'asserter');
     this.type = _.get(fhirResource, 'type');

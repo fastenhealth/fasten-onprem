@@ -6,7 +6,7 @@ import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
 
 export class CareTeamModel extends FastenDisplayModel {
-
+  code: CodableConceptModel | undefined
   name: string | undefined
   status: string | undefined
   period_start: string | undefined

@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
-import {Router} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {AllergyIntoleranceModel} from '../../../../../lib/models/resources/allergy-intolerance-model';
 import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
 import {CommonModule} from "@angular/common";
@@ -10,7 +10,7 @@ import {TableComponent} from "../../common/table/table.component";
 
 @Component({
   standalone: true,
-  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent],
+  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, RouterModule],
   selector: 'fhir-allergy-intolerance',
   templateUrl: './allergy-intolerance.component.html',
   styleUrls: ['./allergy-intolerance.component.scss']

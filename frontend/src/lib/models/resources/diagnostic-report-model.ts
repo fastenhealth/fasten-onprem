@@ -7,6 +7,7 @@ import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
 
 export class DiagnosticReportModel extends FastenDisplayModel {
+  code: CodableConceptModel | undefined
 
   title: string | undefined
   status: string | undefined
@@ -26,6 +27,7 @@ export class DiagnosticReportModel extends FastenDisplayModel {
   }
 
   commonDTO(fhirResource:any){
+    this.code = _.get(fhirResource, 'code');
     this.title =
       _.get(fhirResource, 'code.text') ||
       _.get(fhirResource, 'code.display') ||

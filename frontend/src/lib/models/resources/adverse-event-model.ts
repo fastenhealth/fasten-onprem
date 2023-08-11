@@ -6,6 +6,8 @@ import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
 
 export class AdverseEventModel extends FastenDisplayModel {
+  code: CodableConceptModel | undefined
+
   subject: ReferenceModel | undefined
   description: string | undefined
   event_type: string | undefined
@@ -25,6 +27,7 @@ export class AdverseEventModel extends FastenDisplayModel {
 
 
   commonDTO(fhirResource:any ){
+    this.code = _.get(fhirResource, 'event');
     this.subject = _.get(fhirResource, 'subject');
     this.date = _.get(fhirResource, 'date');
     let seriousness = _.get(fhirResource, 'seriousness', [])
