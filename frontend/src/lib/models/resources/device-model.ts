@@ -29,7 +29,7 @@ export class DeviceModel extends FastenDisplayModel {
 
   commonDTO(fhirResource:any){
     this.code = _.get(fhirResource, 'type');
-    this.model = _.get(fhirResource, 'model') || _.get(fhirResource,"code.text", 'Device');
+    this.model = _.get(fhirResource, 'model') || _.get(fhirResource,"code.text") || _.get(fhirResource,"code.coding.0.display") || 'Unknown Device';
     this.status = _.get(fhirResource, 'status', '');
     this.get_type_coding = _.get(fhirResource, 'type.coding');
     this.has_type_coding = Array.isArray(this.get_type_coding);
