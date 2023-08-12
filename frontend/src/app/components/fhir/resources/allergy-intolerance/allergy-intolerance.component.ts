@@ -29,9 +29,9 @@ export class AllergyIntoleranceComponent implements OnInit, FhirResourceComponen
     this.tableData = [
       {
         label: 'Substance',
-        data: this.displayModel?.substance_coding,
-        data_type: TableRowItemDataType.CodingList,
-        enabled: !!this.displayModel?.substance_coding,
+        data: this.displayModel?.code,
+        data_type: TableRowItemDataType.CodableConcept,
+        enabled: !!this.displayModel?.code,
       },
       {
         label: 'Type',

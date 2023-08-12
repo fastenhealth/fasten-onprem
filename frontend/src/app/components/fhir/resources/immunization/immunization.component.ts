@@ -65,12 +65,6 @@ export class ImmunizationComponent implements OnInit, FhirResourceComponentInter
       data_type: TableRowItemDataType.Reference,
       enabled: !!this.displayModel?.performer,
     },
-    // {
-    //   label: 'Note',
-    //     testId: 'note',
-    //   data: note && <Annotation fhirData={note} />,
-    //   status: note,
-    // },
     {
       label: 'Route',
       data: this.displayModel?.route,

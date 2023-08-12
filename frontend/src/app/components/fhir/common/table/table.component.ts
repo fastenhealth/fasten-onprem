@@ -4,10 +4,11 @@ import {FastenDisplayModel} from '../../../../../lib/models/fasten/fasten-displa
 import {CommonModule} from "@angular/common";
 import {CodingComponent} from "../../datatypes/coding/coding.component";
 import {Router, RouterModule} from "@angular/router";
+import {CodableConceptComponent} from '../../datatypes/codable-concept/codable-concept.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, CodingComponent, RouterModule],
+  imports: [CommonModule, CodingComponent, RouterModule, CodableConceptComponent],
   providers: [RouterModule],
   selector: 'fhir-ui-table',
   templateUrl: './table.component.html',

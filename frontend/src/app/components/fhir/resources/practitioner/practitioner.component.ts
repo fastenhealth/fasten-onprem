@@ -48,16 +48,16 @@ export class PractitionerComponent implements OnInit, FhirResourceComponentInter
     // ),
     //   status: isContactData,
     // },
-    // {
-    //   label: 'Address',
-    //   data: this.displayModel?.address.,
-    //   status: !!this.displayModel?.address,
-    // },
-    // {
-    //   label: 'Telephone',
-    //   data: this.displayModel.telecom,
-    //   enabled: !!this.displayModel.telecom,
-    // },
+    {
+      label: 'Address',
+      data: this.displayModel?.address,
+      enabled: !!this.displayModel?.address,
+    },
+    {
+      label: 'Telephone',
+      data: this.displayModel.telecom,
+      enabled: !!this.displayModel.telecom,
+    },
   ];
     for(let idCoding of (this.displayModel?.identifier || [])){
       this.tableData.push({

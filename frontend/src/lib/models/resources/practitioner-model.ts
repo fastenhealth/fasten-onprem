@@ -5,11 +5,12 @@ import {ReferenceModel} from '../datatypes/reference-model';
 import {CodingModel} from '../datatypes/coding-model';
 import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
+import {HumanNameModel} from '../datatypes/human-name-model';
 
 export class PractitionerModel extends FastenDisplayModel {
 
   identifier: CodingModel[]|undefined
-  name: any|undefined
+  name: HumanNameModel[]|undefined
   gender: string|undefined
   status: string|undefined
   is_contact_data: boolean|undefined
@@ -44,11 +45,11 @@ export class PractitionerModel extends FastenDisplayModel {
   };
 
   dstu2DTO(fhirResource:any){
-    this.name = _.get(fhirResource, 'name');
+    this.name = [new HumanNameModel(_.get(fhirResource, 'name'))];
   };
 
   stu3DTO(fhirResource:any){
-    this.name = _.get(fhirResource, 'name.0');
+    this.name = _.get(fhirResource, 'name',[]).map((name:any): HumanNameModel => new HumanNameModel(name));
     this.address = _.get(fhirResource, 'address.0');
     this.telecom = _.get(fhirResource, 'telecom');
   };
