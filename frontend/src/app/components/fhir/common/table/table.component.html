@@ -10,8 +10,12 @@
         <ng-container [ngTemplateOutlet]="rowItem.data_type == 'reference' ? dataTypeReference :
          rowItem.data_type == 'coding'? dataTypeCoding :
          rowItem.data_type == 'codingList'? dataTypeCodingList :
+         rowItem.data_type == 'codableConcept'? dataTypeCodableConcept :
          dataTypeString"></ng-container>
 
+        <ng-template #dataTypeCodableConcept>
+          <fhir-codable-concept [codableConcept]="rowItem.data"></fhir-codable-concept>
+        </ng-template>
         <ng-template #dataTypeCoding>
           <fhir-coding [coding]="rowItem.data"></fhir-coding>
         </ng-template>

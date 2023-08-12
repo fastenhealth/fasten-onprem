@@ -28,12 +28,12 @@ export class DocumentReferenceComponent implements OnInit, FhirResourceComponent
       },
       {
         label: 'Category',
-        data: this.displayModel?.category?.coding,
-        data_type: TableRowItemDataType.CodingList,
+        data: this.displayModel?.category,
+        data_type: TableRowItemDataType.CodableConcept,
         enabled: !!this.displayModel?.category,
       },
       // {
-      //   label: 'Performer',
+      //   label: 'Author',
       //   data: this.displayModel?.performer,
       //   data_type: TableRowItemDataType.Reference,
       //   enabled: this.displayModel?.has_performer,

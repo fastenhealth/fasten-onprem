@@ -6,7 +6,7 @@ export class HumanNameModel {
   suffix: string
   textName: string
   use: string
-  header: string
+  displayName: string
 
 
   constructor(fhirData: any) {
@@ -15,6 +15,6 @@ export class HumanNameModel {
     this.suffix = _.get(fhirData, 'suffix', []).join(' ');
     this.textName = _.get(fhirData, 'text');
     this.use = _.get(fhirData, 'use');
-    this.header = this.textName ? this.textName : `${this.givenName} ${this.familyName} ${this.suffix}`.trim();
+    this.displayName = this.textName ? this.textName : `${this.givenName} ${this.familyName}`.trim();
   }
 }

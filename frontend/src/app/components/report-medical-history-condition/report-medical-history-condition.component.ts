@@ -109,8 +109,8 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
             {},
             involvedInCareMap[id],
             {
-              displayName: practitionerModel.name?.family && practitionerModel.name?.given ? `${practitionerModel.name?.family }, ${practitionerModel.name?.given}` : practitionerModel.name?.text,
-              role: qualification?.display || practitionerModel.name?.prefix || practitionerModel.name?.suffix,
+              displayName: practitionerModel.name?.[0]?.displayName,
+              role: qualification?.display || practitionerModel.name?.[0]?.suffix,
               email: email,
               displayModel: resource
             },
