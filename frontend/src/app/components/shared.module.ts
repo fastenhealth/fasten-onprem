@@ -12,6 +12,7 @@ import {ListEncounterComponent} from './list-generic-resource/list-encounter.com
 import {ListImmunizationComponent} from './list-generic-resource/list-immunization.component'
 import {ListMedicationAdministrationComponent} from './list-generic-resource/list-medication-administration.component';
 import {ListMedicationComponent} from './list-generic-resource/list-medication.component'
+import {ListFallbackComponent} from './list-generic-resource/list-fallback.component'
 import {ListMedicationDispenseComponent} from './list-generic-resource/list-medication-dispense.component';
 import {ListMedicationRequestComponent} from './list-generic-resource/list-medication-request.component'
 import {ListNutritionOrderComponent} from './list-generic-resource/list-nutrition-order.component';
@@ -30,7 +31,6 @@ import {ListAppointmentComponent} from './list-generic-resource/list-appointment
 import {ListDeviceComponent} from './list-generic-resource/list-device.component';
 import {ListDiagnosticReportComponent} from './list-generic-resource/list-diagnostic-report.component';
 import {ListGoalComponent} from './list-generic-resource/list-goal.component';
-import { ListFallbackResourceComponent } from './list-fallback-resource/list-fallback-resource.component';
 import {NgbCollapseModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { ToastComponent } from './toast/toast.component';
 import { MomentModule } from 'ngx-moment';
@@ -145,7 +145,7 @@ import { CodableConceptComponent } from './fhir/datatypes/codable-concept/codabl
     ListGoalComponent,
     ResourceListComponent,
     ResourceListOutletDirective,
-    ListFallbackResourceComponent,
+    ListFallbackComponent,
     ToastComponent,
     ReportHeaderComponent,
     ReportMedicalHistoryEditorComponent,
@@ -155,6 +155,7 @@ import { CodableConceptComponent } from './fhir/datatypes/codable-concept/codabl
     FhirResourceComponent,
     FhirResourceOutletDirective,
     FallbackComponent,
+    ListFallbackComponent,
     DiagnosticReportComponent,
     NlmTypeaheadComponent,
     DocumentReferenceComponent,
@@ -171,6 +172,7 @@ import { CodableConceptComponent } from './fhir/datatypes/codable-concept/codabl
         DiagnosticReportComponent,
         DocumentReferenceComponent,
         FallbackComponent,
+        ListFallbackComponent,
         FhirResourceComponent,
         FhirResourceOutletDirective,
         ImmunizationComponent,

@@ -17,4 +17,8 @@ type ListResourceQueryOptions struct {
 	SourceID           string
 	SourceResourceType string
 	SourceResourceID   string
+
+	//pagination
+	Limit  int
+	Offset int
 }

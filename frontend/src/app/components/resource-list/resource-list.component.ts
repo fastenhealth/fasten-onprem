@@ -29,7 +29,7 @@ import {ListAppointmentComponent} from '../list-generic-resource/list-appointmen
 import {ListDeviceComponent} from '../list-generic-resource/list-device.component';
 import {ListDiagnosticReportComponent} from '../list-generic-resource/list-diagnostic-report.component';
 import {ListGoalComponent} from '../list-generic-resource/list-goal.component';
-import {ListFallbackResourceComponent} from '../list-fallback-resource/list-fallback-resource.component';
+import {ListFallbackComponent} from '../list-generic-resource/list-fallback.component';
 
 @Component({
   selector: 'source-resource-list',
@@ -41,9 +41,7 @@ export class ResourceListComponent implements OnInit, OnChanges {
 
   @Input() source: Source;
   @Input() resourceListType: string;
-  resourceListCache: { [name:string]: ResourceFhir[] } = {}
-
-
+  @Input() selectedTotalElements: number;
 
   //location to dynamically load the resource list
   @ViewChild(ResourceListOutletDirective, {static: true}) resourceListOutlet!: ResourceListOutletDirective;
@@ -63,30 +61,14 @@ export class ResourceListComponent implements OnInit, OnChanges {
     const viewContainerRef = this.resourceListOutlet.viewContainerRef;
     viewContainerRef.clear();
 
-    this.getResources().subscribe((resourceList) => {
-      let componentType = this.typeLookup(this.resourceListType)
-      if(componentType != null){
-        console.log("Attempting to create component", this.resourceListType, componentType)
-        const componentRef = viewContainerRef.createComponent<ResourceListComponentInterface>(componentType);
-        componentRef.instance.resourceList = resourceList;
-        componentRef.instance.markForCheck()
-
-      }
-    })
-  }
-
-  getResources(): Observable<ResourceFhir[]>{
-
-    if(this.resourceListType && !this.resourceListCache[this.resourceListType]){
-      // this resource type list has not been downloaded yet, do so now
-      return this.fastenApi.getResources(this.resourceListType, this.source.id)
-        .pipe(map((resourceList: ResourceFhir[]) => {
-          //cache this response so we can skip the request next time
-          this.resourceListCache[this.resourceListType] = resourceList
-          return resourceList
-        }))
-    } else {
-      return of(this.resourceListCache[this.resourceListType] || [])
+    let componentType = this.typeLookup(this.resourceListType)
+    if(componentType != null){
+      console.log("Attempting to create component", this.resourceListType, componentType)
+      const componentRef = viewContainerRef.createComponent<ResourceListComponentInterface>(componentType);
+      componentRef.instance.totalElements = this.selectedTotalElements;
+      componentRef.instance.resourceListType = this.resourceListType;
+      componentRef.instance.sourceId = this.source.id;
+      componentRef.instance.markForCheck()
     }
   }
 
@@ -164,7 +146,7 @@ export class ResourceListComponent implements OnInit, OnChanges {
       }
       default: {
         console.warn("Unknown component type, using fallback", resourceType)
-        return ListFallbackResourceComponent;
+        return ListFallbackComponent;
 
       }
     }
