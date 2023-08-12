@@ -9,6 +9,9 @@ export class AddressModel {
 
 
   constructor(fhirData: any) {
+    if(!fhirData){
+      return
+    }
     this.city = fhirpath.evaluate(fhirData, "city").join("")
     this.line = fhirpath.evaluate(fhirData, "line")
     this.state = fhirpath.evaluate(fhirData, "state").join("")

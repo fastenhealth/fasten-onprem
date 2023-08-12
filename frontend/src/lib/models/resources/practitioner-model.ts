@@ -6,6 +6,7 @@ import {CodingModel} from '../datatypes/coding-model';
 import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
 import {HumanNameModel} from '../datatypes/human-name-model';
+import {AddressModel} from '../datatypes/address-model';
 
 export class PractitionerModel extends FastenDisplayModel {
 
@@ -19,7 +20,7 @@ export class PractitionerModel extends FastenDisplayModel {
     relationship: string
   }|undefined
   telecom: { system?: string, value?: string, use?: string }[]|undefined
-  address: string|undefined
+  address: AddressModel|undefined
   birthdate: string|undefined
   qualification: { code: string, system: string }[]|undefined
 
@@ -50,7 +51,7 @@ export class PractitionerModel extends FastenDisplayModel {
 
   stu3DTO(fhirResource:any){
     this.name = _.get(fhirResource, 'name',[]).map((name:any): HumanNameModel => new HumanNameModel(name));
-    this.address = _.get(fhirResource, 'address.0');
+    this.address = new AddressModel(_.get(fhirResource, 'address.0'));
     this.telecom = _.get(fhirResource, 'telecom');
   };
 
