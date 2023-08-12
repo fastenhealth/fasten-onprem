@@ -24,7 +24,6 @@ export class ExploreComponent implements OnInit {
   ngOnInit(): void {
     this.loading = true
     this.fastenApi.getSources().subscribe(results => {
-      this.loading = false
 
       //handle connected sources sources
       const connectedSources = results as Source[]
@@ -32,6 +31,7 @@ export class ExploreComponent implements OnInit {
         for(const ndx in connectedSources){
           this.connectedSources.push({source: connectedSources[ndx], metadata: connectedMetadata[ndx]})
         }
+        this.loading = false
       })
     }, error => {
       this.loading = false
@@ -44,19 +44,6 @@ export class ExploreComponent implements OnInit {
       state: sourceListItem.source
     });
 
-    // if(this.status[sourceListItem.metadata.source_type] || !sourceListItem.source){
-    //   //if this source is currently "loading" dont open the modal window
-    //   return
-    // }
-    //
-    // this.modalSelectedSourceListItem = sourceListItem
-    // this.modalService.open(contentModalRef, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-    //   this.modalSelectedSourceListItem = null
-    //   this.modalCloseResult = `Closed with: ${result}`;
-    // }, (reason) => {
-    //   this.modalSelectedSourceListItem = null
-    //   this.modalCloseResult = `Dismissed ${this.getDismissReason(reason)}`;
-    // });
   }
 
 }
