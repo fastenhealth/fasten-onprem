@@ -16,6 +16,7 @@ export class SourceDetailComponent implements OnInit {
   selectedSource: Source = null
   selectedPatient: ResourceFhir = null
   selectedResourceType: string = null
+  selectedTotalElements: number = 0
 
   resourceTypeCounts: { [name: string]: number } = {}
 
@@ -43,6 +44,7 @@ export class SourceDetailComponent implements OnInit {
 
   selectResourceType(resourceType: string) {
     this.selectedResourceType = resourceType
+    this.selectedTotalElements = this.resourceTypeCounts[resourceType]
   }
 
   //functions to call on patient

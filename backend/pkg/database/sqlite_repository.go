@@ -400,13 +400,18 @@ func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions mode
 		if err != nil {
 			return nil, err
 		}
-		results := queryBuilder.
+		queryBuilder = queryBuilder.
 			Where(queryParam).
-			Table(tableName).
-			Find(&wrappedResourceModels)
+			Table(tableName)
 
-		return wrappedResourceModels, results.Error
+		if queryOptions.Limit > 0 {
+			queryBuilder = queryBuilder.Limit(queryOptions.Limit).Offset(queryOptions.Offset)
+		}
+		return wrappedResourceModels, queryBuilder.Find(&wrappedResourceModels).Error
 	} else {
+		if queryOptions.Limit > 0 {
+			queryBuilder = queryBuilder.Limit(queryOptions.Limit).Offset(queryOptions.Offset)
+		}
 		//there is no FHIR Resource name specified, so we're querying across all FHIR resources
 		return sr.getResourcesFromAllTables(queryBuilder, queryParam)
 	}

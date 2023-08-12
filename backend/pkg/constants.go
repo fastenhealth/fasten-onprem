@@ -3,6 +3,8 @@ package pkg
 type ResourceGraphType string
 
 const (
+	ResourceListPageSize int = 20
+
 	ContextKeyTypeConfig   string = "CONFIG"
 	ContextKeyTypeDatabase string = "REPOSITORY"
 	ContextKeyTypeLogger   string = "LOGGER"

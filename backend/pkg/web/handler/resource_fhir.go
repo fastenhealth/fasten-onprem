@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -48,7 +49,16 @@ func ListResourceFhir(c *gin.Context) {
 	if len(c.Query("sourceResourceID")) > 0 {
 		listResourceQueryOptions.SourceResourceID = c.Query("sourceResourceID")
 	}
-
+	if len(c.Query("page")) > 0 {
+		listResourceQueryOptions.Limit = pkg.ResourceListPageSize //hardcoded number of resources per page
+		pageNumb, err := strconv.Atoi(c.Query("page"))
+		if err != nil {
+			logger.Errorln("An error occurred while calculating page number", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+			return
+		}
+		listResourceQueryOptions.Offset = pageNumb * listResourceQueryOptions.Limit
+	}
 	wrappedResourceModels, err := databaseRepo.ListResources(c, listResourceQueryOptions)
 
 	if c.Query("sortBy") == "title" {
