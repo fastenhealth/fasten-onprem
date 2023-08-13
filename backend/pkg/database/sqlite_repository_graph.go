@@ -7,6 +7,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
+	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	"golang.org/x/exp/slices"
 	"log"
 	"strings"
@@ -89,7 +90,9 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 		}
 	}
 
-	for _, resourcePlaceholder := range resourcePlaceholders {
+	for ndx, _ := range resourcePlaceholders {
+		resourcePlaceholder := resourcePlaceholders[ndx]
+		log.Printf("Adding vertex: %v", resourcePlaceholder.ID())
 		err := g.AddVertex(
 			&resourcePlaceholder,
 		)
@@ -187,74 +190,153 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 		resourcePlaceholderListDictionary[foundSourceType] = append(resourcePlaceholderListDictionary[foundSourceType], resourcePlaceholder)
 	}
 
-	// Step 2: define a function. When given a resource, should find all related resources, flatten the heirarchy and set the RelatedResourceFhir list
-	flattenRelatedResourcesFn := func(resourcePlaceholder *VertexResourcePlaceholder) {
+	// Step 2: now that we've created a relationship graph using placeholders, we need to determine which page of resources to return
+	// and look up the actual resources from the database.
+
+	resourceListDictionary, err := sr.InflateResourceGraphAtPage(resourcePlaceholderListDictionary, options.Page)
+	if err != nil {
+		return nil, fmt.Errorf("error while paginating & inflating resource graph: %v", err)
+	}
+
+	// Step 3: define a function. When given a resource, should find all related resources, flatten the heirarchy and set the RelatedResourceFhir list
+	flattenRelatedResourcesFn := func(resource *models.ResourceBase) {
 		// this is a "root" encounter, which is not related to any condition, we should add it to the Unknown encounters list
-		vertexId := resourceVertexId(resourcePlaceholder)
+		vertexId := resourceVertexId(&VertexResourcePlaceholder{
+			ResourceType: resource.SourceResourceType,
+			ResourceID:   resource.SourceResourceID,
+			SourceID:     resource.SourceID.String(),
+			UserID:       resource.UserID.String(),
+		})
 		sr.Logger.Debugf("populating resourcePlaceholder: %s", vertexId)
 
-		resourcePlaceholder.RelatedResourcePlaceholder = []*VertexResourcePlaceholder{}
+		resource.RelatedResource = []*models.ResourceBase{}
 
-		//get all the resources associated with this node
+		//get all the resource placeholders associated with this node
 		//TODO: handle error?
 		graph.DFS(g, vertexId, func(relatedVertexId string) bool {
 			relatedResourcePlaceholder, _ := g.Vertex(relatedVertexId)
 			//skip the current resourcePlaceholder if it's referenced in this list.
 			//also skip the current resourcePlaceholder if its a Binary resourcePlaceholder (which is a special case)
 			if vertexId != resourceVertexId(relatedResourcePlaceholder) && relatedResourcePlaceholder.ResourceType != "Binary" {
-				resourcePlaceholder.RelatedResourcePlaceholder = append(resourcePlaceholder.RelatedResourcePlaceholder, relatedResourcePlaceholder)
+				relatedResource, err := sr.GetResourceByResourceTypeAndId(ctx, relatedResourcePlaceholder.ResourceType, relatedResourcePlaceholder.ResourceID)
+				if err != nil {
+					sr.Logger.Warnf("ignoring, cannot safely handle error which occurred while getting related resource: %v", err)
+					return true
+				}
+				resource.RelatedResource = append(
+					resource.RelatedResource,
+					relatedResource,
+				)
 			}
 			return false
 		})
 	}
 
-	// Step 3: now that we've created a relationship graph using placeholders, we need to determine which page of resources to return
-	// and look up the actual resources from the database.
-
-	//TODO: Step 3a: since we cant calulate the sort order until the resources are loaded, we need to load all the root resources first.
-
 	// Step 4: flatten resources (if needed) and sort them
-	for resourceType, _ := range resourcePlaceholderListDictionary {
+	for resourceType, _ := range resourceListDictionary {
 		sourceFlatten, sourceFlattenOk := sourceFlattenLevel[strings.ToLower(resourceType)]
 
 		if sourceFlattenOk && sourceFlatten == true {
 			//if flatten is set to true, we want to flatten the graph. This is usually for non primary source types (eg. Encounter is a source type, but Condition is the primary source type)
 
 			// Step 3: populate related resources for each encounter, flattened
-			for ndx, _ := range resourcePlaceholderListDictionary[resourceType] {
+			for ndx, _ := range resourceListDictionary[resourceType] {
 				// this is a "root" encounter, which is not related to any condition, we should add it to the Unknown encounters list
-				flattenRelatedResourcesFn(resourcePlaceholderListDictionary[resourceType][ndx])
+				flattenRelatedResourcesFn(resourceListDictionary[resourceType][ndx])
 
 				//sort all related resources (by date, desc)
-				resourcePlaceholderListDictionary[resourceType][ndx].RelatedResource = utils.SortResourcePtrListByDate(resourcePlaceholderListDictionary[resourceType][ndx].RelatedResource)
+				resourceListDictionary[resourceType][ndx].RelatedResource = utils.SortResourcePtrListByDate(resourceListDictionary[resourceType][ndx].RelatedResource)
 			}
 		} else {
 			// if flatten is set to false, we want to preserve the top relationships in the graph heirarchy. This is usually for primary source types (eg. Condition is the primary source type)
 			// we want to ensure context is preserved, so we will flatten the graph futher down in the heirarchy
 
 			// Step 4: find all encounters referenced by the root conditions, populate them, then add them to the condition as RelatedResourceFhir
-			for ndx, _ := range resourcePlaceholderListDictionary[resourceType] {
+			for ndx, _ := range resourceListDictionary[resourceType] {
 				// this is a "root" condition,
 
-				resourcePlaceholderListDictionary[resourceType][ndx].RelatedResource = []*models.ResourceBase{}
-				vertexId := resourceVertexId(resourcePlaceholderListDictionary[resourceType][ndx])
+				resourceListDictionary[resourceType][ndx].RelatedResource = []*models.ResourceBase{}
+				currentResource := resourceListDictionary[resourceType][ndx]
+				vertexId := resourceKeysVertexId(currentResource.SourceID.String(), currentResource.SourceResourceType, currentResource.SourceResourceID)
 				for relatedVertexId, _ := range adjacencyMap[vertexId] {
-					relatedResourceFhir, _ := g.Vertex(relatedVertexId)
+					relatedResourcePlaceholder, _ := g.Vertex(relatedVertexId)
+					relatedResourceFhir, err := sr.GetResourceByResourceTypeAndId(ctx, relatedResourcePlaceholder.ResourceType, relatedResourcePlaceholder.ResourceID)
+					if err != nil {
+						sr.Logger.Warnf("ignoring, cannot safely handle error which occurred while getting related resource (flatten=false): %v", err)
+						continue
+					}
 					flattenRelatedResourcesFn(relatedResourceFhir)
-					resourcePlaceholderListDictionary[resourceType][ndx].RelatedResource = append(resourcePlaceholderListDictionary[resourceType][ndx].RelatedResource, relatedResourceFhir)
+					resourceListDictionary[resourceType][ndx].RelatedResource = append(resourceListDictionary[resourceType][ndx].RelatedResource, relatedResourceFhir)
 				}
 
 				//sort all related resources (by date, desc)
-				resourcePlaceholderListDictionary[resourceType][ndx].RelatedResource = utils.SortResourcePtrListByDate(resourcePlaceholderListDictionary[resourceType][ndx].RelatedResource)
+				resourceListDictionary[resourceType][ndx].RelatedResource = utils.SortResourcePtrListByDate(resourceListDictionary[resourceType][ndx].RelatedResource)
 			}
 		}
 
-		resourcePlaceholderListDictionary[resourceType] = utils.SortResourcePtrListByDate(resourcePlaceholderListDictionary[resourceType])
+		resourceListDictionary[resourceType] = utils.SortResourcePtrListByDate(resourceListDictionary[resourceType])
 	}
 
 	// Step 5: return the populated resource list dictionary
 
-	return resourcePlaceholderListDictionary, nil
+	return resourceListDictionary, nil
+}
+
+// LoadResourceGraphAtPage - this function will take a dictionary of placeholder "sources" graph and load the actual resources from the database, for a specific page
+// - first, it will load all the "source" resources (eg. Encounter, Condition, etc)
+// - sort the root resources by date, desc
+// - use the page number + page size to determine which root resources to return
+// - return a dictionary of "source" resource lists
+func (sr *SqliteRepository) InflateResourceGraphAtPage(resourcePlaceholderListDictionary map[string][]*VertexResourcePlaceholder, page int) (map[string][]*models.ResourceBase, error) {
+	// Step 3a: since we cant calulate the sort order until the resources are loaded, we need to load all the root resources first.
+
+	//TODO: maybe its more performant to query each resource by type/id/source, since they are indexed already?
+	rootWrappedResourceModels := []models.ResourceBase{}
+	for resourceType, _ := range resourcePlaceholderListDictionary {
+		// resourcePlaceholderListDictionary contains top level resource types (eg. Encounter, Condition, etc)
+
+		selectList := [][]interface{}{}
+		for ndx, _ := range resourcePlaceholderListDictionary[resourceType] {
+			selectList = append(selectList, []interface{}{
+				resourcePlaceholderListDictionary[resourceType][ndx].UserID,
+				resourcePlaceholderListDictionary[resourceType][ndx].SourceID,
+				resourcePlaceholderListDictionary[resourceType][ndx].ResourceType,
+				resourcePlaceholderListDictionary[resourceType][ndx].ResourceID,
+			})
+		}
+
+		tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
+		if err != nil {
+			return nil, err
+		}
+		var tableWrappedResourceModels []models.ResourceBase
+		sr.GormClient.
+			Where("(user_id, source_id, source_resource_type, source_resource_id) IN ?", selectList).
+			Table(tableName).
+			Find(&tableWrappedResourceModels)
+
+		//append these resources to the rootWrappedResourceModels list
+		rootWrappedResourceModels = append(rootWrappedResourceModels, tableWrappedResourceModels...)
+	}
+
+	//sort
+	rootWrappedResourceModels = utils.SortResourceListByDate(rootWrappedResourceModels)
+
+	//paginate (by calculating window for the slice)
+	rootWrappedResourceModels = utils.PaginateResourceList(rootWrappedResourceModels, page, 20) //todo: replace size with pkg.ResourceListPageSize
+
+	// Step 3b: now that we have the root resources, lets generate a dictionary of resource lists, keyed by resource type
+	resourceListDictionary := map[string][]*models.ResourceBase{}
+	for ndx, _ := range rootWrappedResourceModels {
+		resourceType := rootWrappedResourceModels[ndx].SourceResourceType
+		if _, ok := resourceListDictionary[resourceType]; !ok {
+			resourceListDictionary[resourceType] = []*models.ResourceBase{}
+		}
+		resourceListDictionary[resourceType] = append(resourceListDictionary[resourceType], &rootWrappedResourceModels[ndx])
+	}
+
+	// Step 4: return the populated resource list dictionary
+	return resourceListDictionary, nil
 }
 
 //We need to support the following types of graphs:

@@ -141,7 +141,8 @@ func (sr *SqliteRepository) GetUserByUsername(ctx context.Context, username stri
 	return &foundUser, result.Error
 }
 
-// TODO: check for error, right now we return a nil which may cause a panic.
+//TODO: check for error, right now we return a nil which may cause a panic.
+//TODO: can we cache the current user? //SECURITY:
 func (sr *SqliteRepository) GetCurrentUser(ctx context.Context) (*models.User, error) {
 	username := ctx.Value(pkg.ContextKeyTypeAuthUsername)
 	if username == nil {
@@ -446,6 +447,7 @@ func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions mode
 	}
 }
 
+//TODO: should this be deprecated? (replaced by ListResources)
 func (sr *SqliteRepository) GetResourceByResourceTypeAndId(ctx context.Context, sourceResourceType string, sourceResourceId string) (*models.ResourceBase, error) {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
@@ -635,14 +637,13 @@ func (sr *SqliteRepository) FindResourceAssociationsByTypeAndId(ctx context.Cont
 // - find source for each resource
 // - (SECURITY) ensure the current user and the source for each resource matches
 // - check if there is a Composition resource Type already.
-//   - if Composition type already exists:
-//   - update "relatesTo" field with additional data.
-//   - else:
-//   - Create a Composition resource type (populated with "relatesTo" references to all provided Resources)
-//
+// 		- if Composition type already exists:
+// 			- update "relatesTo" field with additional data.
+// 		- else:
+//			- Create a Composition resource type (populated with "relatesTo" references to all provided Resources)
 // - add AddResourceAssociation for all resources linked to the Composition resource
 // - store the Composition resource
-// TODO: determine if we should be using a List Resource instead of a Composition resource
+//TODO: determine if we should be using a List Resource instead of a Composition resource
 func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceBase) error {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
