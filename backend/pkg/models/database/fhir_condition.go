@@ -207,12 +207,12 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting AbatementAge
-	abatementAgeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.abatement.as(Age) | Condition.abatement.as(Range)'))")
+	abatementAgeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.abatementAge | Condition.abatementRange'))")
 	if err == nil && abatementAgeResult.String() != "undefined" {
 		s.AbatementAge = []byte(abatementAgeResult.String())
 	}
 	// extracting AbatementDate
-	abatementDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.abatement.as(dateTime) | Condition.abatement.as(Period)')[0]")
+	abatementDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.abatementDateTime | Condition.abatementPeriod')[0]")
 	if err == nil && abatementDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, abatementDateResult.String())
 		if err == nil {
@@ -226,7 +226,7 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	}
 	// extracting AbatementString
 	abatementStringResult, err := vm.RunString(` 
-							AbatementStringResult = window.fhirpath.evaluate(fhirResource, 'Condition.abatement.as(string)')
+							AbatementStringResult = window.fhirpath.evaluate(fhirResource, 'Condition.abatementString')
 							AbatementStringProcessed = AbatementStringResult.reduce((accumulator, currentValue) => {
 								if (typeof currentValue === 'string') {
 									//basic string
@@ -638,12 +638,12 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 		}
 	}
 	// extracting OnsetAge
-	onsetAgeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.onset.as(Age) | Condition.onset.as(Range)'))")
+	onsetAgeResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Condition.onsetAge | Condition.onsetRange'))")
 	if err == nil && onsetAgeResult.String() != "undefined" {
 		s.OnsetAge = []byte(onsetAgeResult.String())
 	}
 	// extracting OnsetDate
-	onsetDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.onset.as(dateTime) | Condition.onset.as(Period)')[0]")
+	onsetDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Condition.onsetDateTime | Condition.onsetPeriod')[0]")
 	if err == nil && onsetDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, onsetDateResult.String())
 		if err == nil {
@@ -657,7 +657,7 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	}
 	// extracting OnsetInfo
 	onsetInfoResult, err := vm.RunString(` 
-							OnsetInfoResult = window.fhirpath.evaluate(fhirResource, 'Condition.onset.as(string)')
+							OnsetInfoResult = window.fhirpath.evaluate(fhirResource, 'Condition.onsetString')
 							OnsetInfoProcessed = OnsetInfoResult.reduce((accumulator, currentValue) => {
 								if (typeof currentValue === 'string') {
 									//basic string

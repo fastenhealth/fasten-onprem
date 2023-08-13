@@ -264,14 +264,28 @@ func main() {
 					// https://hl7.org/fhir/r4/formats.html#choice
 					// this is a very naive implementation, but it works for now
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as string", " as String")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, ".as(string)", " as String")
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as time", " as Time")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, ".as(time)", " as Time")
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as date", " as Date")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, ".as(date)", " as Date")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as dateTime", " as DateTime")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, ".as(dateTime)", " as DateTime")
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as boolean", " as Boolean")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, ".as(boolean)", " as Boolean")
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as url", " as Url")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, ".as(url)", " as Url")
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as code", " as Code")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, ".as(code)", " as Code")
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as integer", " as Integer")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, ".as(integer)", " as Integer")
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as uri", " as Uri")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, ".as(uri)", " as Uri")
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as decimal", " as Decimal")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, ".as(decimal)", " as Decimal")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, ".as(Age)", " as Age")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, ".as(Period)", " as Period")
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, ".as(Range)", " as Range")
 
 					//remove all " as " from the fhirpath expression, this does not work correctly with goja or otto
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as ", "")
