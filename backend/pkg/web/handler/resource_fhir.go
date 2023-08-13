@@ -140,12 +140,15 @@ func GetResourceFhirGraph(c *gin.Context) {
 		graphOptions.Page = pageNumb
 	}
 
-	resourceListDictionary, err := databaseRepo.GetFlattenedResourceGraph(c, pkg.ResourceGraphType(graphType), graphOptions)
+	resourceListDictionary, resourceListMetadata, err := databaseRepo.GetFlattenedResourceGraph(c, pkg.ResourceGraphType(graphType), graphOptions)
 	if err != nil {
 		logger.Errorln("An error occurred while retrieving list of resources", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"success": true, "data": resourceListDictionary})
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": map[string]interface{}{
+		"results":  resourceListDictionary,
+		"metadata": resourceListMetadata,
+	}})
 }

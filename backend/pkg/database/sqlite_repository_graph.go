@@ -28,10 +28,17 @@ func (rp *VertexResourcePlaceholder) ID() string {
 // Retrieve a list of all fhir resources (vertex), and a list of all associations (edge)
 // Generate a graph
 // return list of root nodes, and their flattened related resources.
-func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, error) {
+func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, *models.ResourceGraphMetadata, error) {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
-		return nil, currentUserErr
+		return nil, nil, currentUserErr
+	}
+
+	//initialize the graph results metadata
+	resourceGraphMetadata := models.ResourceGraphMetadata{
+		TotalElements: 0,
+		PageSize:      20, //TODO: replace this with pkg.DefaultPageSize
+		Page:          options.Page,
 	}
 
 	// Get list of all (non-reciprocal) relationships
@@ -44,7 +51,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 		}).
 		Find(&relatedResourceRelationships)
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, nil, result.Error
 	}
 
 	//Generate Graph
@@ -97,7 +104,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 			&resourcePlaceholder,
 		)
 		if err != nil {
-			return nil, fmt.Errorf("an error occurred while adding vertex: %v", err)
+			return nil, nil, fmt.Errorf("an error occurred while adding vertex: %v", err)
 		}
 	}
 
@@ -134,7 +141,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 	//	}
 	adjacencyMap, err := g.AdjacencyMap()
 	if err != nil {
-		return nil, fmt.Errorf("error while generating AdjacencyMap: %v", err)
+		return nil, nil, fmt.Errorf("error while generating AdjacencyMap: %v", err)
 	}
 
 	// For a directed graph, PredecessorMap is the complement of AdjacencyMap. This is because in a directed graph, only
@@ -143,7 +150,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 	// ie. "empty" verticies in this map are "root" nodes.
 	predecessorMap, err := g.PredecessorMap()
 	if err != nil {
-		return nil, fmt.Errorf("error while generating PredecessorMap: %v", err)
+		return nil, nil, fmt.Errorf("error while generating PredecessorMap: %v", err)
 	}
 
 	// Doing this in one massive function, because passing graph by reference is difficult due to generics.
@@ -193,10 +200,11 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 	// Step 2: now that we've created a relationship graph using placeholders, we need to determine which page of resources to return
 	// and look up the actual resources from the database.
 
-	resourceListDictionary, err := sr.InflateResourceGraphAtPage(resourcePlaceholderListDictionary, options.Page)
+	resourceListDictionary, totalElements, err := sr.InflateResourceGraphAtPage(resourcePlaceholderListDictionary, options.Page)
 	if err != nil {
-		return nil, fmt.Errorf("error while paginating & inflating resource graph: %v", err)
+		return nil, nil, fmt.Errorf("error while paginating & inflating resource graph: %v", err)
 	}
+	resourceGraphMetadata.TotalElements = totalElements
 
 	// Step 3: define a function. When given a resource, should find all related resources, flatten the heirarchy and set the RelatedResourceFhir list
 	flattenRelatedResourcesFn := func(resource *models.ResourceBase) {
@@ -279,7 +287,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 
 	// Step 5: return the populated resource list dictionary
 
-	return resourceListDictionary, nil
+	return resourceListDictionary, &resourceGraphMetadata, nil
 }
 
 // LoadResourceGraphAtPage - this function will take a dictionary of placeholder "sources" graph and load the actual resources from the database, for a specific page
@@ -287,7 +295,8 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 // - sort the root resources by date, desc
 // - use the page number + page size to determine which root resources to return
 // - return a dictionary of "source" resource lists
-func (sr *SqliteRepository) InflateResourceGraphAtPage(resourcePlaceholderListDictionary map[string][]*VertexResourcePlaceholder, page int) (map[string][]*models.ResourceBase, error) {
+func (sr *SqliteRepository) InflateResourceGraphAtPage(resourcePlaceholderListDictionary map[string][]*VertexResourcePlaceholder, page int) (map[string][]*models.ResourceBase, int, error) {
+	totalElements := 0
 	// Step 3a: since we cant calulate the sort order until the resources are loaded, we need to load all the root resources first.
 
 	//TODO: maybe its more performant to query each resource by type/id/source, since they are indexed already?
@@ -307,7 +316,7 @@ func (sr *SqliteRepository) InflateResourceGraphAtPage(resourcePlaceholderListDi
 
 		tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
 		if err != nil {
-			return nil, err
+			return nil, totalElements, err
 		}
 		var tableWrappedResourceModels []models.ResourceBase
 		sr.GormClient.
@@ -321,6 +330,9 @@ func (sr *SqliteRepository) InflateResourceGraphAtPage(resourcePlaceholderListDi
 
 	//sort
 	rootWrappedResourceModels = utils.SortResourceListByDate(rootWrappedResourceModels)
+
+	//calculate total elements
+	totalElements = len(rootWrappedResourceModels)
 
 	//paginate (by calculating window for the slice)
 	rootWrappedResourceModels = utils.PaginateResourceList(rootWrappedResourceModels, page, 20) //todo: replace size with pkg.ResourceListPageSize
@@ -336,7 +348,7 @@ func (sr *SqliteRepository) InflateResourceGraphAtPage(resourcePlaceholderListDi
 	}
 
 	// Step 4: return the populated resource list dictionary
-	return resourceListDictionary, nil
+	return resourceListDictionary, totalElements, nil
 }
 
 //We need to support the following types of graphs:

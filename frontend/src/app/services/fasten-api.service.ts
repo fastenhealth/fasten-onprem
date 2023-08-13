@@ -22,6 +22,7 @@ import * as fhirpath from 'fhirpath';
 import _ from 'lodash';
 import {DashboardConfig} from '../models/widget/dashboard-config';
 import {DashboardWidgetQuery} from '../models/widget/dashboard-widget-query';
+import {ResourceGraphResponse} from '../models/fasten/resource-graph-response';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 @Injectable({
@@ -178,16 +179,21 @@ export class FastenApiService {
     return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/query`, query)
   }
 
-  getResourceGraph(graphType?: string): Observable<{[resourceType: string]: ResourceFhir[]}> {
+  getResourceGraph(graphType?: string, page?:number): Observable<ResourceGraphResponse> {
     if(!graphType){
       graphType = "MedicalHistory"
     }
+    let queryParams = {}
+    if(page){
+      //the backend is 0 indexed, but the frontend is 1 indexed
+      queryParams["page"] = page - 1
+    }
 
-    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/graph/${graphType}`)
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/graph/${graphType}`, {params: queryParams})
       .pipe(
         map((response: ResponseWrapper) => {
           console.log("RESPONSE", response)
-          return response.data as {[name: string]: ResourceFhir[]}
+          return response.data as ResourceGraphResponse
         })
       );
   }
