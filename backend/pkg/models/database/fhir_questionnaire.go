@@ -594,8 +594,18 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.Name = []byte(nameResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Publisher
 	publisherResult, err := vm.RunString(` 

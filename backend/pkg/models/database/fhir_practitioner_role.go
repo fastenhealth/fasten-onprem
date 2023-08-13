@@ -260,8 +260,18 @@ func (s *FhirPractitionerRole) PopulateAndExtractSearchParameters(resourceRaw js
 		s.Email = []byte(emailResult.String())
 	}
 	// extracting Endpoint
-	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.endpoint'))")
+	endpointResult, err := vm.RunString(` 
+							EndpointResult = window.fhirpath.evaluate(fhirResource, 'PractitionerRole.endpoint')
+						
+							if(EndpointResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(EndpointResult)
+							}
+						 `)
 	if err == nil && endpointResult.String() != "undefined" {
+		s.Endpoint = []byte(endpointResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -371,12 +381,32 @@ func (s *FhirPractitionerRole) PopulateAndExtractSearchParameters(resourceRaw js
 		}
 	}
 	// extracting Location
-	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.location'))")
+	locationResult, err := vm.RunString(` 
+							LocationResult = window.fhirpath.evaluate(fhirResource, 'PractitionerRole.location')
+						
+							if(LocationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LocationResult)
+							}
+						 `)
 	if err == nil && locationResult.String() != "undefined" {
+		s.Location = []byte(locationResult.String())
 	}
 	// extracting Organization
-	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.organization'))")
+	organizationResult, err := vm.RunString(` 
+							OrganizationResult = window.fhirpath.evaluate(fhirResource, 'PractitionerRole.organization')
+						
+							if(OrganizationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(OrganizationResult)
+							}
+						 `)
 	if err == nil && organizationResult.String() != "undefined" {
+		s.Organization = []byte(organizationResult.String())
 	}
 	// extracting Phone
 	phoneResult, err := vm.RunString(` 
@@ -426,12 +456,32 @@ func (s *FhirPractitionerRole) PopulateAndExtractSearchParameters(resourceRaw js
 		s.Phone = []byte(phoneResult.String())
 	}
 	// extracting Practitioner
-	practitionerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.practitioner'))")
+	practitionerResult, err := vm.RunString(` 
+							PractitionerResult = window.fhirpath.evaluate(fhirResource, 'PractitionerRole.practitioner')
+						
+							if(PractitionerResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PractitionerResult)
+							}
+						 `)
 	if err == nil && practitionerResult.String() != "undefined" {
+		s.Practitioner = []byte(practitionerResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Role
 	roleResult, err := vm.RunString(` 
@@ -481,8 +531,18 @@ func (s *FhirPractitionerRole) PopulateAndExtractSearchParameters(resourceRaw js
 		s.Role = []byte(roleResult.String())
 	}
 	// extracting Service
-	serviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'PractitionerRole.healthcareService'))")
+	serviceResult, err := vm.RunString(` 
+							ServiceResult = window.fhirpath.evaluate(fhirResource, 'PractitionerRole.healthcareService')
+						
+							if(ServiceResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ServiceResult)
+							}
+						 `)
 	if err == nil && serviceResult.String() != "undefined" {
+		s.Service = []byte(serviceResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")

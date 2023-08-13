@@ -286,8 +286,18 @@ func (s *FhirFamilyMemberHistory) PopulateAndExtractSearchParameters(resourceRaw
 		s.Identifier = []byte(identifierResult.String())
 	}
 	// extracting InstantiatesCanonical
-	instantiatesCanonicalResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'FamilyMemberHistory.instantiatesCanonical'))")
+	instantiatesCanonicalResult, err := vm.RunString(` 
+							InstantiatesCanonicalResult = window.fhirpath.evaluate(fhirResource, 'FamilyMemberHistory.instantiatesCanonical')
+						
+							if(InstantiatesCanonicalResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(InstantiatesCanonicalResult)
+							}
+						 `)
 	if err == nil && instantiatesCanonicalResult.String() != "undefined" {
+		s.InstantiatesCanonical = []byte(instantiatesCanonicalResult.String())
 	}
 	// extracting InstantiatesUri
 	instantiatesUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'FamilyMemberHistory.instantiatesUri')[0]")
@@ -355,8 +365,18 @@ func (s *FhirFamilyMemberHistory) PopulateAndExtractSearchParameters(resourceRaw
 		}
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Relationship
 	relationshipResult, err := vm.RunString(` 

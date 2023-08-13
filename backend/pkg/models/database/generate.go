@@ -407,13 +407,25 @@ func main() {
 								JSON.stringify(%sProcessed)
 							}
 						`, fieldName, script, fieldName, fieldName, fieldName, fieldName)).Op("`")
+					} else if fieldInfo.FieldType == "reference" {
+						r.Op("`").Id(fmt.Sprintf(`
+							%sResult = %s
+						
+							if(%sResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(%sResult)
+							}
+						`, fieldName, script, fieldName, fieldName)).Op("`")
+
 					} else {
 						r.Lit(fmt.Sprintf(`JSON.stringify(%s)`, script))
 					}
 				})
 				g.If(jen.Err().Op("==").Nil().Op("&&").Id(fieldNameVar).Dot("String").Call().Op("!=").Lit("undefined")).BlockFunc(func(i *jen.Group) {
 					switch fieldInfo.FieldType {
-					case "token", "special", "quantity", "string":
+					case "token", "special", "quantity", "string", "reference":
 						i.Id("s").Dot(fieldName).Op("=").Index().Byte().Parens(jen.Id(fieldNameVar).Dot("String").Call())
 						break
 					case "number":
@@ -433,9 +445,6 @@ func main() {
 						})
 					case "uri":
 						i.Id("s").Dot(fieldName).Op("=").Id(fieldNameVar).Dot("String").Call()
-						break
-					case "reference":
-						//TODO: do nothing for reference types, not supported yet.
 						break
 					default:
 						i.Id("s").Dot(fieldName).Op("=").Id(fieldNameVar).Dot("String").Call()

@@ -209,12 +209,32 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Authenticator
-	authenticatorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.authenticator'))")
+	authenticatorResult, err := vm.RunString(` 
+							AuthenticatorResult = window.fhirpath.evaluate(fhirResource, 'DocumentReference.authenticator')
+						
+							if(AuthenticatorResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AuthenticatorResult)
+							}
+						 `)
 	if err == nil && authenticatorResult.String() != "undefined" {
+		s.Authenticator = []byte(authenticatorResult.String())
 	}
 	// extracting Author
-	authorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.author'))")
+	authorResult, err := vm.RunString(` 
+							AuthorResult = window.fhirpath.evaluate(fhirResource, 'DocumentReference.author')
+						
+							if(AuthorResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AuthorResult)
+							}
+						 `)
 	if err == nil && authorResult.String() != "undefined" {
+		s.Author = []byte(authorResult.String())
 	}
 	// extracting Category
 	categoryResult, err := vm.RunString(` 
@@ -311,8 +331,18 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 		s.Contenttype = []byte(contenttypeResult.String())
 	}
 	// extracting Custodian
-	custodianResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.custodian'))")
+	custodianResult, err := vm.RunString(` 
+							CustodianResult = window.fhirpath.evaluate(fhirResource, 'DocumentReference.custodian')
+						
+							if(CustodianResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(CustodianResult)
+							}
+						 `)
 	if err == nil && custodianResult.String() != "undefined" {
+		s.Custodian = []byte(custodianResult.String())
 	}
 	// extracting Date
 	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DocumentReference.date')[0]")
@@ -387,8 +417,18 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 		s.Description = []byte(descriptionResult.String())
 	}
 	// extracting Encounter
-	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter.where(resolve() is Encounter) | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | ServiceRequest.encounter | VisionPrescription.encounter'))")
+	encounterResult, err := vm.RunString(` 
+							EncounterResult = window.fhirpath.evaluate(fhirResource, 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter.where(resolve() is Encounter) | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | ServiceRequest.encounter | VisionPrescription.encounter')
+						
+							if(EncounterResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(EncounterResult)
+							}
+						 `)
 	if err == nil && encounterResult.String() != "undefined" {
+		s.Encounter = []byte(encounterResult.String())
 	}
 	// extracting Event
 	eventResult, err := vm.RunString(` 
@@ -657,16 +697,46 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 		}
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Related
-	relatedResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.context.related'))")
+	relatedResult, err := vm.RunString(` 
+							RelatedResult = window.fhirpath.evaluate(fhirResource, 'DocumentReference.context.related')
+						
+							if(RelatedResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RelatedResult)
+							}
+						 `)
 	if err == nil && relatedResult.String() != "undefined" {
+		s.Related = []byte(relatedResult.String())
 	}
 	// extracting Relatesto
-	relatestoResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.relatesTo.target'))")
+	relatestoResult, err := vm.RunString(` 
+							RelatestoResult = window.fhirpath.evaluate(fhirResource, 'DocumentReference.relatesTo.target')
+						
+							if(RelatestoResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RelatestoResult)
+							}
+						 `)
 	if err == nil && relatestoResult.String() != "undefined" {
+		s.Relatesto = []byte(relatestoResult.String())
 	}
 	// extracting Relation
 	relationResult, err := vm.RunString(` 
@@ -862,8 +932,18 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 		s.Status = []byte(statusResult.String())
 	}
 	// extracting Subject
-	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentReference.subject'))")
+	subjectResult, err := vm.RunString(` 
+							SubjectResult = window.fhirpath.evaluate(fhirResource, 'DocumentReference.subject')
+						
+							if(SubjectResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SubjectResult)
+							}
+						 `)
 	if err == nil && subjectResult.String() != "undefined" {
+		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 

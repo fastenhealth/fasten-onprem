@@ -228,8 +228,18 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 		s.Identifier = []byte(identifierResult.String())
 	}
 	// extracting Insurer
-	insurerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'CoverageEligibilityResponse.insurer'))")
+	insurerResult, err := vm.RunString(` 
+							InsurerResult = window.fhirpath.evaluate(fhirResource, 'CoverageEligibilityResponse.insurer')
+						
+							if(InsurerResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(InsurerResult)
+							}
+						 `)
 	if err == nil && insurerResult.String() != "undefined" {
+		s.Insurer = []byte(insurerResult.String())
 	}
 	// extracting Language
 	languageResult, err := vm.RunString(` 
@@ -339,16 +349,46 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 		s.Outcome = []byte(outcomeResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Request
-	requestResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'CoverageEligibilityResponse.request'))")
+	requestResult, err := vm.RunString(` 
+							RequestResult = window.fhirpath.evaluate(fhirResource, 'CoverageEligibilityResponse.request')
+						
+							if(RequestResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RequestResult)
+							}
+						 `)
 	if err == nil && requestResult.String() != "undefined" {
+		s.Request = []byte(requestResult.String())
 	}
 	// extracting Requestor
-	requestorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'CoverageEligibilityResponse.requestor'))")
+	requestorResult, err := vm.RunString(` 
+							RequestorResult = window.fhirpath.evaluate(fhirResource, 'CoverageEligibilityResponse.requestor')
+						
+							if(RequestorResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RequestorResult)
+							}
+						 `)
 	if err == nil && requestorResult.String() != "undefined" {
+		s.Requestor = []byte(requestorResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")

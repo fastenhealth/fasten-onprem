@@ -152,8 +152,18 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		s.Active = []byte(activeResult.String())
 	}
 	// extracting Actor
-	actorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Schedule.actor'))")
+	actorResult, err := vm.RunString(` 
+							ActorResult = window.fhirpath.evaluate(fhirResource, 'Schedule.actor')
+						
+							if(ActorResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ActorResult)
+							}
+						 `)
 	if err == nil && actorResult.String() != "undefined" {
+		s.Actor = []byte(actorResult.String())
 	}
 	// extracting Date
 	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Schedule.planningHorizon')[0]")
@@ -276,8 +286,18 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		}
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting ServiceCategory
 	serviceCategoryResult, err := vm.RunString(` 

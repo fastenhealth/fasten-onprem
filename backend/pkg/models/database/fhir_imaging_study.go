@@ -174,8 +174,18 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Basedon
-	basedonResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.basedOn'))")
+	basedonResult, err := vm.RunString(` 
+							BasedonResult = window.fhirpath.evaluate(fhirResource, 'ImagingStudy.basedOn')
+						
+							if(BasedonResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(BasedonResult)
+							}
+						 `)
 	if err == nil && basedonResult.String() != "undefined" {
+		s.Basedon = []byte(basedonResult.String())
 	}
 	// extracting Bodysite
 	bodysiteResult, err := vm.RunString(` 
@@ -272,12 +282,32 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.DicomClass = []byte(dicomClassResult.String())
 	}
 	// extracting Encounter
-	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.encounter'))")
+	encounterResult, err := vm.RunString(` 
+							EncounterResult = window.fhirpath.evaluate(fhirResource, 'ImagingStudy.encounter')
+						
+							if(EncounterResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(EncounterResult)
+							}
+						 `)
 	if err == nil && encounterResult.String() != "undefined" {
+		s.Encounter = []byte(encounterResult.String())
 	}
 	// extracting Endpoint
-	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.endpoint | ImagingStudy.series.endpoint'))")
+	endpointResult, err := vm.RunString(` 
+							EndpointResult = window.fhirpath.evaluate(fhirResource, 'ImagingStudy.endpoint | ImagingStudy.series.endpoint')
+						
+							if(EndpointResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(EndpointResult)
+							}
+						 `)
 	if err == nil && endpointResult.String() != "undefined" {
+		s.Endpoint = []byte(endpointResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -374,8 +404,18 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Instance = []byte(instanceResult.String())
 	}
 	// extracting Interpreter
-	interpreterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.interpreter'))")
+	interpreterResult, err := vm.RunString(` 
+							InterpreterResult = window.fhirpath.evaluate(fhirResource, 'ImagingStudy.interpreter')
+						
+							if(InterpreterResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(InterpreterResult)
+							}
+						 `)
 	if err == nil && interpreterResult.String() != "undefined" {
+		s.Interpreter = []byte(interpreterResult.String())
 	}
 	// extracting Language
 	languageResult, err := vm.RunString(` 
@@ -485,12 +525,32 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Modality = []byte(modalityResult.String())
 	}
 	// extracting Performer
-	performerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.series.performer.actor'))")
+	performerResult, err := vm.RunString(` 
+							PerformerResult = window.fhirpath.evaluate(fhirResource, 'ImagingStudy.series.performer.actor')
+						
+							if(PerformerResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PerformerResult)
+							}
+						 `)
 	if err == nil && performerResult.String() != "undefined" {
+		s.Performer = []byte(performerResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Reason
 	reasonResult, err := vm.RunString(` 
@@ -540,8 +600,18 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Reason = []byte(reasonResult.String())
 	}
 	// extracting Referrer
-	referrerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.referrer'))")
+	referrerResult, err := vm.RunString(` 
+							ReferrerResult = window.fhirpath.evaluate(fhirResource, 'ImagingStudy.referrer')
+						
+							if(ReferrerResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ReferrerResult)
+							}
+						 `)
 	if err == nil && referrerResult.String() != "undefined" {
+		s.Referrer = []byte(referrerResult.String())
 	}
 	// extracting Series
 	seriesResult, err := vm.RunString(` 
@@ -656,8 +726,18 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Status = []byte(statusResult.String())
 	}
 	// extracting Subject
-	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'ImagingStudy.subject'))")
+	subjectResult, err := vm.RunString(` 
+							SubjectResult = window.fhirpath.evaluate(fhirResource, 'ImagingStudy.subject')
+						
+							if(SubjectResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SubjectResult)
+							}
+						 `)
 	if err == nil && subjectResult.String() != "undefined" {
+		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 

@@ -314,8 +314,18 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		s.Name = []byte(nameResult.String())
 	}
 	// extracting Organization
-	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Endpoint.managingOrganization'))")
+	organizationResult, err := vm.RunString(` 
+							OrganizationResult = window.fhirpath.evaluate(fhirResource, 'Endpoint.managingOrganization')
+						
+							if(OrganizationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(OrganizationResult)
+							}
+						 `)
 	if err == nil && organizationResult.String() != "undefined" {
+		s.Organization = []byte(organizationResult.String())
 	}
 	// extracting PayloadType
 	payloadTypeResult, err := vm.RunString(` 
@@ -365,8 +375,18 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		s.PayloadType = []byte(payloadTypeResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")

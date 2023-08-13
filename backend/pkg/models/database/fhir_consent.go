@@ -233,8 +233,18 @@ func (s *FhirConsent) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 		s.Action = []byte(actionResult.String())
 	}
 	// extracting Actor
-	actorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Consent.provision.actor.reference'))")
+	actorResult, err := vm.RunString(` 
+							ActorResult = window.fhirpath.evaluate(fhirResource, 'Consent.provision.actor.reference')
+						
+							if(ActorResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ActorResult)
+							}
+						 `)
 	if err == nil && actorResult.String() != "undefined" {
+		s.Actor = []byte(actorResult.String())
 	}
 	// extracting Category
 	categoryResult, err := vm.RunString(` 
@@ -284,12 +294,32 @@ func (s *FhirConsent) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 		s.Category = []byte(categoryResult.String())
 	}
 	// extracting Consentor
-	consentorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Consent.performer'))")
+	consentorResult, err := vm.RunString(` 
+							ConsentorResult = window.fhirpath.evaluate(fhirResource, 'Consent.performer')
+						
+							if(ConsentorResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ConsentorResult)
+							}
+						 `)
 	if err == nil && consentorResult.String() != "undefined" {
+		s.Consentor = []byte(consentorResult.String())
 	}
 	// extracting Data
-	dataResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Consent.provision.data.reference'))")
+	dataResult, err := vm.RunString(` 
+							DataResult = window.fhirpath.evaluate(fhirResource, 'Consent.provision.data.reference')
+						
+							if(DataResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(DataResult)
+							}
+						 `)
 	if err == nil && dataResult.String() != "undefined" {
+		s.Data = []byte(dataResult.String())
 	}
 	// extracting Date
 	dateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')[0]")
@@ -412,8 +442,18 @@ func (s *FhirConsent) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 		}
 	}
 	// extracting Organization
-	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Consent.organization'))")
+	organizationResult, err := vm.RunString(` 
+							OrganizationResult = window.fhirpath.evaluate(fhirResource, 'Consent.organization')
+						
+							if(OrganizationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(OrganizationResult)
+							}
+						 `)
 	if err == nil && organizationResult.String() != "undefined" {
+		s.Organization = []byte(organizationResult.String())
 	}
 	// extracting Period
 	periodResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Consent.provision.period')[0]")
@@ -429,8 +469,18 @@ func (s *FhirConsent) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 		}
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Purpose
 	purposeResult, err := vm.RunString(` 
@@ -574,8 +624,18 @@ func (s *FhirConsent) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 		s.SecurityLabel = []byte(securityLabelResult.String())
 	}
 	// extracting SourceReference
-	sourceReferenceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Consent.source'))")
+	sourceReferenceResult, err := vm.RunString(` 
+							SourceReferenceResult = window.fhirpath.evaluate(fhirResource, 'Consent.source')
+						
+							if(SourceReferenceResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SourceReferenceResult)
+							}
+						 `)
 	if err == nil && sourceReferenceResult.String() != "undefined" {
+		s.SourceReference = []byte(sourceReferenceResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")

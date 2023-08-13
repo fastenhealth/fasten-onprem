@@ -339,20 +339,60 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(resourceRaw json.R
 		}
 	}
 	// extracting Location
-	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.location'))")
+	locationResult, err := vm.RunString(` 
+							LocationResult = window.fhirpath.evaluate(fhirResource, 'AdverseEvent.location')
+						
+							if(LocationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LocationResult)
+							}
+						 `)
 	if err == nil && locationResult.String() != "undefined" {
+		s.Location = []byte(locationResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Recorder
-	recorderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.recorder'))")
+	recorderResult, err := vm.RunString(` 
+							RecorderResult = window.fhirpath.evaluate(fhirResource, 'AdverseEvent.recorder')
+						
+							if(RecorderResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RecorderResult)
+							}
+						 `)
 	if err == nil && recorderResult.String() != "undefined" {
+		s.Recorder = []byte(recorderResult.String())
 	}
 	// extracting Resultingcondition
-	resultingconditionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.resultingCondition'))")
+	resultingconditionResult, err := vm.RunString(` 
+							ResultingconditionResult = window.fhirpath.evaluate(fhirResource, 'AdverseEvent.resultingCondition')
+						
+							if(ResultingconditionResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ResultingconditionResult)
+							}
+						 `)
 	if err == nil && resultingconditionResult.String() != "undefined" {
+		s.Resultingcondition = []byte(resultingconditionResult.String())
 	}
 	// extracting Seriousness
 	seriousnessResult, err := vm.RunString(` 
@@ -454,16 +494,46 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Study
-	studyResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.study'))")
+	studyResult, err := vm.RunString(` 
+							StudyResult = window.fhirpath.evaluate(fhirResource, 'AdverseEvent.study')
+						
+							if(StudyResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(StudyResult)
+							}
+						 `)
 	if err == nil && studyResult.String() != "undefined" {
+		s.Study = []byte(studyResult.String())
 	}
 	// extracting Subject
-	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.subject'))")
+	subjectResult, err := vm.RunString(` 
+							SubjectResult = window.fhirpath.evaluate(fhirResource, 'AdverseEvent.subject')
+						
+							if(SubjectResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SubjectResult)
+							}
+						 `)
 	if err == nil && subjectResult.String() != "undefined" {
+		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Substance
-	substanceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AdverseEvent.suspectEntity.instance'))")
+	substanceResult, err := vm.RunString(` 
+							SubstanceResult = window.fhirpath.evaluate(fhirResource, 'AdverseEvent.suspectEntity.instance')
+						
+							if(SubstanceResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SubstanceResult)
+							}
+						 `)
 	if err == nil && substanceResult.String() != "undefined" {
+		s.Substance = []byte(substanceResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 

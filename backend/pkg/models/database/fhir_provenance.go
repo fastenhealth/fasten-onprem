@@ -113,8 +113,18 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Agent
-	agentResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.agent.who'))")
+	agentResult, err := vm.RunString(` 
+							AgentResult = window.fhirpath.evaluate(fhirResource, 'Provenance.agent.who')
+						
+							if(AgentResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AgentResult)
+							}
+						 `)
 	if err == nil && agentResult.String() != "undefined" {
+		s.Agent = []byte(agentResult.String())
 	}
 	// extracting AgentRole
 	agentRoleResult, err := vm.RunString(` 
@@ -211,8 +221,18 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 		s.AgentType = []byte(agentTypeResult.String())
 	}
 	// extracting Entity
-	entityResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.entity.what'))")
+	entityResult, err := vm.RunString(` 
+							EntityResult = window.fhirpath.evaluate(fhirResource, 'Provenance.entity.what')
+						
+							if(EntityResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(EntityResult)
+							}
+						 `)
 	if err == nil && entityResult.String() != "undefined" {
+		s.Entity = []byte(entityResult.String())
 	}
 	// extracting Language
 	languageResult, err := vm.RunString(` 
@@ -275,12 +295,32 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 		}
 	}
 	// extracting Location
-	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.location'))")
+	locationResult, err := vm.RunString(` 
+							LocationResult = window.fhirpath.evaluate(fhirResource, 'Provenance.location')
+						
+							if(LocationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LocationResult)
+							}
+						 `)
 	if err == nil && locationResult.String() != "undefined" {
+		s.Location = []byte(locationResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Recorded
 	recordedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Provenance.recorded')[0]")
@@ -395,8 +435,18 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 		s.Tag = []byte(tagResult.String())
 	}
 	// extracting Target
-	targetResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Provenance.target'))")
+	targetResult, err := vm.RunString(` 
+							TargetResult = window.fhirpath.evaluate(fhirResource, 'Provenance.target')
+						
+							if(TargetResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(TargetResult)
+							}
+						 `)
 	if err == nil && targetResult.String() != "undefined" {
+		s.Target = []byte(targetResult.String())
 	}
 	// extracting When
 	whenResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Provenance.occurredDateTime)')[0]")

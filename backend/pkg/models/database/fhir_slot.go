@@ -263,12 +263,32 @@ func (s *FhirSlot) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 		}
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Schedule
-	scheduleResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Slot.schedule'))")
+	scheduleResult, err := vm.RunString(` 
+							ScheduleResult = window.fhirpath.evaluate(fhirResource, 'Slot.schedule')
+						
+							if(ScheduleResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ScheduleResult)
+							}
+						 `)
 	if err == nil && scheduleResult.String() != "undefined" {
+		s.Schedule = []byte(scheduleResult.String())
 	}
 	// extracting ServiceCategory
 	serviceCategoryResult, err := vm.RunString(` 

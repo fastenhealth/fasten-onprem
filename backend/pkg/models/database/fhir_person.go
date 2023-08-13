@@ -791,8 +791,18 @@ func (s *FhirPerson) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 		}
 	}
 	// extracting Link
-	linkResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Person.link.target'))")
+	linkResult, err := vm.RunString(` 
+							LinkResult = window.fhirpath.evaluate(fhirResource, 'Person.link.target')
+						
+							if(LinkResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LinkResult)
+							}
+						 `)
 	if err == nil && linkResult.String() != "undefined" {
+		s.Link = []byte(linkResult.String())
 	}
 	// extracting Name
 	nameResult, err := vm.RunString(` 
@@ -854,8 +864,18 @@ func (s *FhirPerson) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 		s.Name = []byte(nameResult.String())
 	}
 	// extracting Organization
-	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Person.managingOrganization'))")
+	organizationResult, err := vm.RunString(` 
+							OrganizationResult = window.fhirpath.evaluate(fhirResource, 'Person.managingOrganization')
+						
+							if(OrganizationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(OrganizationResult)
+							}
+						 `)
 	if err == nil && organizationResult.String() != "undefined" {
+		s.Organization = []byte(organizationResult.String())
 	}
 	// extracting Phone
 	phoneResult, err := vm.RunString(` 
@@ -964,16 +984,46 @@ func (s *FhirPerson) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 		s.Phonetic = []byte(phoneticResult.String())
 	}
 	// extracting Practitioner
-	practitionerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Person.link.target.where(resolve() is Practitioner)'))")
+	practitionerResult, err := vm.RunString(` 
+							PractitionerResult = window.fhirpath.evaluate(fhirResource, 'Person.link.target.where(resolve() is Practitioner)')
+						
+							if(PractitionerResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PractitionerResult)
+							}
+						 `)
 	if err == nil && practitionerResult.String() != "undefined" {
+		s.Practitioner = []byte(practitionerResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Relatedperson
-	relatedpersonResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Person.link.target.where(resolve() is RelatedPerson)'))")
+	relatedpersonResult, err := vm.RunString(` 
+							RelatedpersonResult = window.fhirpath.evaluate(fhirResource, 'Person.link.target.where(resolve() is RelatedPerson)')
+						
+							if(RelatedpersonResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RelatedpersonResult)
+							}
+						 `)
 	if err == nil && relatedpersonResult.String() != "undefined" {
+		s.Relatedperson = []byte(relatedpersonResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")

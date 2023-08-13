@@ -876,8 +876,18 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 		s.Gender = []byte(genderResult.String())
 	}
 	// extracting GeneralPractitioner
-	generalPractitionerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.generalPractitioner'))")
+	generalPractitionerResult, err := vm.RunString(` 
+							GeneralPractitionerResult = window.fhirpath.evaluate(fhirResource, 'Patient.generalPractitioner')
+						
+							if(GeneralPractitionerResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(GeneralPractitionerResult)
+							}
+						 `)
 	if err == nil && generalPractitionerResult.String() != "undefined" {
+		s.GeneralPractitioner = []byte(generalPractitionerResult.String())
 	}
 	// extracting Given
 	givenResult, err := vm.RunString(` 
@@ -1046,8 +1056,18 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 		}
 	}
 	// extracting Link
-	linkResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.link.other'))")
+	linkResult, err := vm.RunString(` 
+							LinkResult = window.fhirpath.evaluate(fhirResource, 'Patient.link.other')
+						
+							if(LinkResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LinkResult)
+							}
+						 `)
 	if err == nil && linkResult.String() != "undefined" {
+		s.Link = []byte(linkResult.String())
 	}
 	// extracting Name
 	nameResult, err := vm.RunString(` 
@@ -1109,8 +1129,18 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 		s.Name = []byte(nameResult.String())
 	}
 	// extracting Organization
-	organizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Patient.managingOrganization'))")
+	organizationResult, err := vm.RunString(` 
+							OrganizationResult = window.fhirpath.evaluate(fhirResource, 'Patient.managingOrganization')
+						
+							if(OrganizationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(OrganizationResult)
+							}
+						 `)
 	if err == nil && organizationResult.String() != "undefined" {
+		s.Organization = []byte(organizationResult.String())
 	}
 	// extracting Phone
 	phoneResult, err := vm.RunString(` 
@@ -1219,8 +1249,18 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 		s.Phonetic = []byte(phoneticResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")

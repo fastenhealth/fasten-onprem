@@ -471,12 +471,32 @@ func (s *FhirInsurancePlan) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.AddressUse = []byte(addressUseResult.String())
 	}
 	// extracting AdministeredBy
-	administeredByResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.administeredBy'))")
+	administeredByResult, err := vm.RunString(` 
+							AdministeredByResult = window.fhirpath.evaluate(fhirResource, 'InsurancePlan.administeredBy')
+						
+							if(AdministeredByResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AdministeredByResult)
+							}
+						 `)
 	if err == nil && administeredByResult.String() != "undefined" {
+		s.AdministeredBy = []byte(administeredByResult.String())
 	}
 	// extracting Endpoint
-	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.endpoint'))")
+	endpointResult, err := vm.RunString(` 
+							EndpointResult = window.fhirpath.evaluate(fhirResource, 'InsurancePlan.endpoint')
+						
+							if(EndpointResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(EndpointResult)
+							}
+						 `)
 	if err == nil && endpointResult.String() != "undefined" {
+		s.Endpoint = []byte(endpointResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -645,8 +665,18 @@ func (s *FhirInsurancePlan) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.Name = []byte(nameResult.String())
 	}
 	// extracting OwnedBy
-	ownedByResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'InsurancePlan.ownedBy'))")
+	ownedByResult, err := vm.RunString(` 
+							OwnedByResult = window.fhirpath.evaluate(fhirResource, 'InsurancePlan.ownedBy')
+						
+							if(OwnedByResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(OwnedByResult)
+							}
+						 `)
 	if err == nil && ownedByResult.String() != "undefined" {
+		s.OwnedBy = []byte(ownedByResult.String())
 	}
 	// extracting Phonetic
 	phoneticResult, err := vm.RunString(` 
@@ -708,8 +738,18 @@ func (s *FhirInsurancePlan) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.Phonetic = []byte(phoneticResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")

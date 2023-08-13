@@ -310,8 +310,18 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 		}
 	}
 	// extracting Location
-	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.location'))")
+	locationResult, err := vm.RunString(` 
+							LocationResult = window.fhirpath.evaluate(fhirResource, 'Immunization.location')
+						
+							if(LocationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LocationResult)
+							}
+						 `)
 	if err == nil && locationResult.String() != "undefined" {
+		s.Location = []byte(locationResult.String())
 	}
 	// extracting LotNumber
 	lotNumberResult, err := vm.RunString(` 
@@ -373,20 +383,60 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.LotNumber = []byte(lotNumberResult.String())
 	}
 	// extracting Manufacturer
-	manufacturerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.manufacturer'))")
+	manufacturerResult, err := vm.RunString(` 
+							ManufacturerResult = window.fhirpath.evaluate(fhirResource, 'Immunization.manufacturer')
+						
+							if(ManufacturerResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ManufacturerResult)
+							}
+						 `)
 	if err == nil && manufacturerResult.String() != "undefined" {
+		s.Manufacturer = []byte(manufacturerResult.String())
 	}
 	// extracting Performer
-	performerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.performer.actor'))")
+	performerResult, err := vm.RunString(` 
+							PerformerResult = window.fhirpath.evaluate(fhirResource, 'Immunization.performer.actor')
+						
+							if(PerformerResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PerformerResult)
+							}
+						 `)
 	if err == nil && performerResult.String() != "undefined" {
+		s.Performer = []byte(performerResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Reaction
-	reactionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.reaction.detail'))")
+	reactionResult, err := vm.RunString(` 
+							ReactionResult = window.fhirpath.evaluate(fhirResource, 'Immunization.reaction.detail')
+						
+							if(ReactionResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ReactionResult)
+							}
+						 `)
 	if err == nil && reactionResult.String() != "undefined" {
+		s.Reaction = []byte(reactionResult.String())
 	}
 	// extracting ReactionDate
 	reactionDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Immunization.reaction.date')[0]")
@@ -449,8 +499,18 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.ReasonCode = []byte(reasonCodeResult.String())
 	}
 	// extracting ReasonReference
-	reasonReferenceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Immunization.reasonReference'))")
+	reasonReferenceResult, err := vm.RunString(` 
+							ReasonReferenceResult = window.fhirpath.evaluate(fhirResource, 'Immunization.reasonReference')
+						
+							if(ReasonReferenceResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ReasonReferenceResult)
+							}
+						 `)
 	if err == nil && reasonReferenceResult.String() != "undefined" {
+		s.ReasonReference = []byte(reasonReferenceResult.String())
 	}
 	// extracting Series
 	seriesResult, err := vm.RunString(` 

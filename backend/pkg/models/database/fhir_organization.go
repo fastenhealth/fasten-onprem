@@ -514,8 +514,18 @@ func (s *FhirOrganization) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.AddressUse = []byte(addressUseResult.String())
 	}
 	// extracting Endpoint
-	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Organization.endpoint'))")
+	endpointResult, err := vm.RunString(` 
+							EndpointResult = window.fhirpath.evaluate(fhirResource, 'Organization.endpoint')
+						
+							if(EndpointResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(EndpointResult)
+							}
+						 `)
 	if err == nil && endpointResult.String() != "undefined" {
+		s.Endpoint = []byte(endpointResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -684,8 +694,18 @@ func (s *FhirOrganization) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Name = []byte(nameResult.String())
 	}
 	// extracting Partof
-	partofResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Organization.partOf'))")
+	partofResult, err := vm.RunString(` 
+							PartofResult = window.fhirpath.evaluate(fhirResource, 'Organization.partOf')
+						
+							if(PartofResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PartofResult)
+							}
+						 `)
 	if err == nil && partofResult.String() != "undefined" {
+		s.Partof = []byte(partofResult.String())
 	}
 	// extracting Phonetic
 	phoneticResult, err := vm.RunString(` 
@@ -747,8 +767,18 @@ func (s *FhirOrganization) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Phonetic = []byte(phoneticResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")

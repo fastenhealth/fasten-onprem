@@ -244,12 +244,32 @@ func (s *FhirMedicationDispense) PopulateAndExtractSearchParameters(resourceRaw 
 		s.Code = []byte(codeResult.String())
 	}
 	// extracting Context
-	contextResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationDispense.context'))")
+	contextResult, err := vm.RunString(` 
+							ContextResult = window.fhirpath.evaluate(fhirResource, 'MedicationDispense.context')
+						
+							if(ContextResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ContextResult)
+							}
+						 `)
 	if err == nil && contextResult.String() != "undefined" {
+		s.Context = []byte(contextResult.String())
 	}
 	// extracting Destination
-	destinationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationDispense.destination'))")
+	destinationResult, err := vm.RunString(` 
+							DestinationResult = window.fhirpath.evaluate(fhirResource, 'MedicationDispense.destination')
+						
+							if(DestinationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(DestinationResult)
+							}
+						 `)
 	if err == nil && destinationResult.String() != "undefined" {
+		s.Destination = []byte(destinationResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -359,28 +379,88 @@ func (s *FhirMedicationDispense) PopulateAndExtractSearchParameters(resourceRaw 
 		}
 	}
 	// extracting Medication
-	medicationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(MedicationAdministration.medicationReference) | (MedicationDispense.medicationReference) | (MedicationRequest.medicationReference) | (MedicationStatement.medicationReference)'))")
+	medicationResult, err := vm.RunString(` 
+							MedicationResult = window.fhirpath.evaluate(fhirResource, '(MedicationAdministration.medicationReference) | (MedicationDispense.medicationReference) | (MedicationRequest.medicationReference) | (MedicationStatement.medicationReference)')
+						
+							if(MedicationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(MedicationResult)
+							}
+						 `)
 	if err == nil && medicationResult.String() != "undefined" {
+		s.Medication = []byte(medicationResult.String())
 	}
 	// extracting Performer
-	performerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationDispense.performer.actor'))")
+	performerResult, err := vm.RunString(` 
+							PerformerResult = window.fhirpath.evaluate(fhirResource, 'MedicationDispense.performer.actor')
+						
+							if(PerformerResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PerformerResult)
+							}
+						 `)
 	if err == nil && performerResult.String() != "undefined" {
+		s.Performer = []byte(performerResult.String())
 	}
 	// extracting Prescription
-	prescriptionResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationDispense.authorizingPrescription'))")
+	prescriptionResult, err := vm.RunString(` 
+							PrescriptionResult = window.fhirpath.evaluate(fhirResource, 'MedicationDispense.authorizingPrescription')
+						
+							if(PrescriptionResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PrescriptionResult)
+							}
+						 `)
 	if err == nil && prescriptionResult.String() != "undefined" {
+		s.Prescription = []byte(prescriptionResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Receiver
-	receiverResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationDispense.receiver'))")
+	receiverResult, err := vm.RunString(` 
+							ReceiverResult = window.fhirpath.evaluate(fhirResource, 'MedicationDispense.receiver')
+						
+							if(ReceiverResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ReceiverResult)
+							}
+						 `)
 	if err == nil && receiverResult.String() != "undefined" {
+		s.Receiver = []byte(receiverResult.String())
 	}
 	// extracting Responsibleparty
-	responsiblepartyResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationDispense.substitution.responsibleParty'))")
+	responsiblepartyResult, err := vm.RunString(` 
+							ResponsiblepartyResult = window.fhirpath.evaluate(fhirResource, 'MedicationDispense.substitution.responsibleParty')
+						
+							if(ResponsiblepartyResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ResponsiblepartyResult)
+							}
+						 `)
 	if err == nil && responsiblepartyResult.String() != "undefined" {
+		s.Responsibleparty = []byte(responsiblepartyResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
@@ -435,8 +515,18 @@ func (s *FhirMedicationDispense) PopulateAndExtractSearchParameters(resourceRaw 
 		s.Status = []byte(statusResult.String())
 	}
 	// extracting Subject
-	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'MedicationDispense.subject'))")
+	subjectResult, err := vm.RunString(` 
+							SubjectResult = window.fhirpath.evaluate(fhirResource, 'MedicationDispense.subject')
+						
+							if(SubjectResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SubjectResult)
+							}
+						 `)
 	if err == nil && subjectResult.String() != "undefined" {
+		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 

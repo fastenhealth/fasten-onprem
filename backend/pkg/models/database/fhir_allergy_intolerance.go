@@ -203,8 +203,18 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Asserter
-	asserterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.asserter'))")
+	asserterResult, err := vm.RunString(` 
+							AsserterResult = window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.asserter')
+						
+							if(AsserterResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AsserterResult)
+							}
+						 `)
 	if err == nil && asserterResult.String() != "undefined" {
+		s.Asserter = []byte(asserterResult.String())
 	}
 	// extracting Category
 	categoryResult, err := vm.RunString(` 
@@ -588,12 +598,32 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 		}
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Recorder
-	recorderResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recorder'))")
+	recorderResult, err := vm.RunString(` 
+							RecorderResult = window.fhirpath.evaluate(fhirResource, 'AllergyIntolerance.recorder')
+						
+							if(RecorderResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RecorderResult)
+							}
+						 `)
 	if err == nil && recorderResult.String() != "undefined" {
+		s.Recorder = []byte(recorderResult.String())
 	}
 	// extracting Route
 	routeResult, err := vm.RunString(` 

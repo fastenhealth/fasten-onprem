@@ -196,12 +196,32 @@ func (s *FhirEnrollmentResponse) PopulateAndExtractSearchParameters(resourceRaw 
 		}
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Request
-	requestResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'EnrollmentResponse.request'))")
+	requestResult, err := vm.RunString(` 
+							RequestResult = window.fhirpath.evaluate(fhirResource, 'EnrollmentResponse.request')
+						
+							if(RequestResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RequestResult)
+							}
+						 `)
 	if err == nil && requestResult.String() != "undefined" {
+		s.Request = []byte(requestResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")

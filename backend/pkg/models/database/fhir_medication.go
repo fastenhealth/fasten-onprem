@@ -284,8 +284,18 @@ func (s *FhirMedication) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 		s.Identifier = []byte(identifierResult.String())
 	}
 	// extracting Ingredient
-	ingredientResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Medication.ingredient.itemReference)'))")
+	ingredientResult, err := vm.RunString(` 
+							IngredientResult = window.fhirpath.evaluate(fhirResource, '(Medication.ingredient.itemReference)')
+						
+							if(IngredientResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(IngredientResult)
+							}
+						 `)
 	if err == nil && ingredientResult.String() != "undefined" {
+		s.Ingredient = []byte(ingredientResult.String())
 	}
 	// extracting IngredientCode
 	ingredientCodeResult, err := vm.RunString(` 
@@ -442,12 +452,32 @@ func (s *FhirMedication) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 		s.LotNumber = []byte(lotNumberResult.String())
 	}
 	// extracting Manufacturer
-	manufacturerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Medication.manufacturer'))")
+	manufacturerResult, err := vm.RunString(` 
+							ManufacturerResult = window.fhirpath.evaluate(fhirResource, 'Medication.manufacturer')
+						
+							if(ManufacturerResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ManufacturerResult)
+							}
+						 `)
 	if err == nil && manufacturerResult.String() != "undefined" {
+		s.Manufacturer = []byte(manufacturerResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")

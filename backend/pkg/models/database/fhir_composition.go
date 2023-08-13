@@ -209,12 +209,32 @@ func (s *FhirComposition) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Attester
-	attesterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.attester.party'))")
+	attesterResult, err := vm.RunString(` 
+							AttesterResult = window.fhirpath.evaluate(fhirResource, 'Composition.attester.party')
+						
+							if(AttesterResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AttesterResult)
+							}
+						 `)
 	if err == nil && attesterResult.String() != "undefined" {
+		s.Attester = []byte(attesterResult.String())
 	}
 	// extracting Author
-	authorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.author'))")
+	authorResult, err := vm.RunString(` 
+							AuthorResult = window.fhirpath.evaluate(fhirResource, 'Composition.author')
+						
+							if(AuthorResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AuthorResult)
+							}
+						 `)
 	if err == nil && authorResult.String() != "undefined" {
+		s.Author = []byte(authorResult.String())
 	}
 	// extracting Category
 	categoryResult, err := vm.RunString(` 
@@ -371,12 +391,32 @@ func (s *FhirComposition) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 		}
 	}
 	// extracting Encounter
-	encounterResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter.where(resolve() is Encounter) | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | ServiceRequest.encounter | VisionPrescription.encounter'))")
+	encounterResult, err := vm.RunString(` 
+							EncounterResult = window.fhirpath.evaluate(fhirResource, 'Composition.encounter | DeviceRequest.encounter | DiagnosticReport.encounter | DocumentReference.context.encounter.where(resolve() is Encounter) | Flag.encounter | List.encounter | NutritionOrder.encounter | Observation.encounter | Procedure.encounter | RiskAssessment.encounter | ServiceRequest.encounter | VisionPrescription.encounter')
+						
+							if(EncounterResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(EncounterResult)
+							}
+						 `)
 	if err == nil && encounterResult.String() != "undefined" {
+		s.Encounter = []byte(encounterResult.String())
 	}
 	// extracting Entry
-	entryResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.section.entry'))")
+	entryResult, err := vm.RunString(` 
+							EntryResult = window.fhirpath.evaluate(fhirResource, 'Composition.section.entry')
+						
+							if(EntryResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(EntryResult)
+							}
+						 `)
 	if err == nil && entryResult.String() != "undefined" {
+		s.Entry = []byte(entryResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -499,8 +539,18 @@ func (s *FhirComposition) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 		}
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting RelatedId
 	relatedIdResult, err := vm.RunString(` 
@@ -550,8 +600,18 @@ func (s *FhirComposition) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 		s.RelatedId = []byte(relatedIdResult.String())
 	}
 	// extracting RelatedRef
-	relatedRefResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, '(Composition.relatesTo.targetReference)'))")
+	relatedRefResult, err := vm.RunString(` 
+							RelatedRefResult = window.fhirpath.evaluate(fhirResource, '(Composition.relatesTo.targetReference)')
+						
+							if(RelatedRefResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RelatedRefResult)
+							}
+						 `)
 	if err == nil && relatedRefResult.String() != "undefined" {
+		s.RelatedRef = []byte(relatedRefResult.String())
 	}
 	// extracting Section
 	sectionResult, err := vm.RunString(` 
@@ -653,8 +713,18 @@ func (s *FhirComposition) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 		s.Status = []byte(statusResult.String())
 	}
 	// extracting Subject
-	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Composition.subject'))")
+	subjectResult, err := vm.RunString(` 
+							SubjectResult = window.fhirpath.evaluate(fhirResource, 'Composition.subject')
+						
+							if(SubjectResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SubjectResult)
+							}
+						 `)
 	if err == nil && subjectResult.String() != "undefined" {
+		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 

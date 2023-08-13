@@ -267,8 +267,18 @@ func (s *FhirAccount) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 		s.Name = []byte(nameResult.String())
 	}
 	// extracting Owner
-	ownerResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Account.owner'))")
+	ownerResult, err := vm.RunString(` 
+							OwnerResult = window.fhirpath.evaluate(fhirResource, 'Account.owner')
+						
+							if(OwnerResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(OwnerResult)
+							}
+						 `)
 	if err == nil && ownerResult.String() != "undefined" {
+		s.Owner = []byte(ownerResult.String())
 	}
 	// extracting Period
 	periodResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Account.servicePeriod')[0]")
@@ -284,8 +294,18 @@ func (s *FhirAccount) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 		}
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
@@ -340,8 +360,18 @@ func (s *FhirAccount) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 		s.Status = []byte(statusResult.String())
 	}
 	// extracting Subject
-	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Account.subject'))")
+	subjectResult, err := vm.RunString(` 
+							SubjectResult = window.fhirpath.evaluate(fhirResource, 'Account.subject')
+						
+							if(SubjectResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SubjectResult)
+							}
+						 `)
 	if err == nil && subjectResult.String() != "undefined" {
+		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 

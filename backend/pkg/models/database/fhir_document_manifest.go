@@ -154,8 +154,18 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Author
-	authorResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.author'))")
+	authorResult, err := vm.RunString(` 
+							AuthorResult = window.fhirpath.evaluate(fhirResource, 'DocumentManifest.author')
+						
+							if(AuthorResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(AuthorResult)
+							}
+						 `)
 	if err == nil && authorResult.String() != "undefined" {
+		s.Author = []byte(authorResult.String())
 	}
 	// extracting Created
 	createdResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DocumentManifest.created')[0]")
@@ -277,8 +287,18 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 		s.Identifier = []byte(identifierResult.String())
 	}
 	// extracting Item
-	itemResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.content'))")
+	itemResult, err := vm.RunString(` 
+							ItemResult = window.fhirpath.evaluate(fhirResource, 'DocumentManifest.content')
+						
+							if(ItemResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ItemResult)
+							}
+						 `)
 	if err == nil && itemResult.String() != "undefined" {
+		s.Item = []byte(itemResult.String())
 	}
 	// extracting Language
 	languageResult, err := vm.RunString(` 
@@ -341,12 +361,32 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 		}
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Recipient
-	recipientResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.recipient'))")
+	recipientResult, err := vm.RunString(` 
+							RecipientResult = window.fhirpath.evaluate(fhirResource, 'DocumentManifest.recipient')
+						
+							if(RecipientResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RecipientResult)
+							}
+						 `)
 	if err == nil && recipientResult.String() != "undefined" {
+		s.Recipient = []byte(recipientResult.String())
 	}
 	// extracting RelatedId
 	relatedIdResult, err := vm.RunString(` 
@@ -396,8 +436,18 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 		s.RelatedId = []byte(relatedIdResult.String())
 	}
 	// extracting RelatedRef
-	relatedRefResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.related.ref'))")
+	relatedRefResult, err := vm.RunString(` 
+							RelatedRefResult = window.fhirpath.evaluate(fhirResource, 'DocumentManifest.related.ref')
+						
+							if(RelatedRefResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(RelatedRefResult)
+							}
+						 `)
 	if err == nil && relatedRefResult.String() != "undefined" {
+		s.RelatedRef = []byte(relatedRefResult.String())
 	}
 	// extracting Source
 	sourceResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'DocumentManifest.source')[0]")
@@ -457,8 +507,18 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 		s.Status = []byte(statusResult.String())
 	}
 	// extracting Subject
-	subjectResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'DocumentManifest.subject'))")
+	subjectResult, err := vm.RunString(` 
+							SubjectResult = window.fhirpath.evaluate(fhirResource, 'DocumentManifest.subject')
+						
+							if(SubjectResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(SubjectResult)
+							}
+						 `)
 	if err == nil && subjectResult.String() != "undefined" {
+		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 

@@ -240,8 +240,18 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 		s.Email = []byte(emailResult.String())
 	}
 	// extracting Endpoint
-	endpointResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.endpoint'))")
+	endpointResult, err := vm.RunString(` 
+							EndpointResult = window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.endpoint')
+						
+							if(EndpointResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(EndpointResult)
+							}
+						 `)
 	if err == nil && endpointResult.String() != "undefined" {
+		s.Endpoint = []byte(endpointResult.String())
 	}
 	// extracting Identifier
 	identifierResult, err := vm.RunString(` 
@@ -351,16 +361,46 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 		}
 	}
 	// extracting Location
-	locationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.location'))")
+	locationResult, err := vm.RunString(` 
+							LocationResult = window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.location')
+						
+							if(LocationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(LocationResult)
+							}
+						 `)
 	if err == nil && locationResult.String() != "undefined" {
+		s.Location = []byte(locationResult.String())
 	}
 	// extracting Network
-	networkResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.network'))")
+	networkResult, err := vm.RunString(` 
+							NetworkResult = window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.network')
+						
+							if(NetworkResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(NetworkResult)
+							}
+						 `)
 	if err == nil && networkResult.String() != "undefined" {
+		s.Network = []byte(networkResult.String())
 	}
 	// extracting ParticipatingOrganization
-	participatingOrganizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.participatingOrganization'))")
+	participatingOrganizationResult, err := vm.RunString(` 
+							ParticipatingOrganizationResult = window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.participatingOrganization')
+						
+							if(ParticipatingOrganizationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ParticipatingOrganizationResult)
+							}
+						 `)
 	if err == nil && participatingOrganizationResult.String() != "undefined" {
+		s.ParticipatingOrganization = []byte(participatingOrganizationResult.String())
 	}
 	// extracting Phone
 	phoneResult, err := vm.RunString(` 
@@ -410,12 +450,32 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 		s.Phone = []byte(phoneResult.String())
 	}
 	// extracting PrimaryOrganization
-	primaryOrganizationResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.organization'))")
+	primaryOrganizationResult, err := vm.RunString(` 
+							PrimaryOrganizationResult = window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.organization')
+						
+							if(PrimaryOrganizationResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(PrimaryOrganizationResult)
+							}
+						 `)
 	if err == nil && primaryOrganizationResult.String() != "undefined" {
+		s.PrimaryOrganization = []byte(primaryOrganizationResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
+	profileResult, err := vm.RunString(` 
+							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
+						
+							if(ProfileResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ProfileResult)
+							}
+						 `)
 	if err == nil && profileResult.String() != "undefined" {
+		s.Profile = []byte(profileResult.String())
 	}
 	// extracting Role
 	roleResult, err := vm.RunString(` 
@@ -465,8 +525,18 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 		s.Role = []byte(roleResult.String())
 	}
 	// extracting Service
-	serviceResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.healthcareService'))")
+	serviceResult, err := vm.RunString(` 
+							ServiceResult = window.fhirpath.evaluate(fhirResource, 'OrganizationAffiliation.healthcareService')
+						
+							if(ServiceResult.length == 0) {
+								"undefined"
+							}
+ 							else {
+								JSON.stringify(ServiceResult)
+							}
+						 `)
 	if err == nil && serviceResult.String() != "undefined" {
+		s.Service = []byte(serviceResult.String())
 	}
 	// extracting SourceUri
 	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
