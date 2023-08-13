@@ -771,7 +771,7 @@ func (s *FhirRelatedPerson) PopulateAndExtractSearchParameters(resourceRaw json.
 	}
 	// extracting Language
 	languageResult, err := vm.RunString(` 
-							LanguageResult = window.fhirpath.evaluate(fhirResource, 'Resource.language')
+							LanguageResult = window.fhirpath.evaluate(fhirResource, 'language')
 							LanguageProcessed = LanguageResult.reduce((accumulator, currentValue) => {
 								if (currentValue.coding) {
 									//CodeableConcept
@@ -817,7 +817,7 @@ func (s *FhirRelatedPerson) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.lastUpdated')[0]")
+	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.lastUpdated')[0]")
 	if err == nil && lastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
 		if err == nil {
@@ -995,7 +995,7 @@ func (s *FhirRelatedPerson) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.Phonetic = []byte(phoneticResult.String())
 	}
 	// extracting Profile
-	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'Resource.meta.profile'))")
+	profileResult, err := vm.RunString("JSON.stringify(window.fhirpath.evaluate(fhirResource, 'meta.profile'))")
 	if err == nil && profileResult.String() != "undefined" {
 	}
 	// extracting Relationship
@@ -1046,13 +1046,13 @@ func (s *FhirRelatedPerson) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.Relationship = []byte(relationshipResult.String())
 	}
 	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Resource.meta.source')[0]")
+	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
 	if err == nil && sourceUriResult.String() != "undefined" {
 		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 
-							TagResult = window.fhirpath.evaluate(fhirResource, 'Resource.meta.tag')
+							TagResult = window.fhirpath.evaluate(fhirResource, 'meta.tag')
 							TagProcessed = TagResult.reduce((accumulator, currentValue) => {
 								if (currentValue.coding) {
 									//CodeableConcept

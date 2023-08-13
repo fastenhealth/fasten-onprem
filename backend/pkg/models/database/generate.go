@@ -289,6 +289,8 @@ func main() {
 
 					//remove all " as " from the fhirpath expression, this does not work correctly with goja or otto
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as ", "")
+					//remove `Resource.` prefix from resource expression
+					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, "Resource.", "")
 				}
 
 				g.Comment(fmt.Sprintf("extracting %s", fieldName))
