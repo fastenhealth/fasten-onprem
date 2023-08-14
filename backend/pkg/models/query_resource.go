@@ -1,6 +1,9 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // maps to frontend/src/app/models/widget/dashboard-widget-query.ts
 type QueryResource struct {
@@ -43,6 +46,15 @@ func (q *QueryResource) Validate() error {
 		}
 		if len(q.Aggregations.CountBy) == 0 && len(q.Aggregations.OrderBy) == 0 && len(q.Aggregations.GroupBy) == 0 {
 			return fmt.Errorf("aggregations must have at least one of 'count_by', 'group_by', or 'order_by'")
+		}
+		if strings.Contains(q.Aggregations.CountBy, " ") {
+			return fmt.Errorf("count_by cannot have spaces (or aliases)")
+		}
+		if strings.Contains(q.Aggregations.GroupBy, " ") {
+			return fmt.Errorf("group_by cannot have spaces (or aliases)")
+		}
+		if strings.Contains(q.Aggregations.OrderBy, " ") {
+			return fmt.Errorf("order_by cannot have spaces (or aliases)")
 		}
 
 	}
