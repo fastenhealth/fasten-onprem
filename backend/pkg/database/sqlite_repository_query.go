@@ -6,8 +6,10 @@ import (
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	databaseModel "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models/database"
 	"github.com/iancoleman/strcase"
+	"github.com/samber/lo"
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
+	"gorm.io/gorm"
 	"strconv"
 	"strings"
 	"time"
@@ -46,11 +48,29 @@ const TABLE_ALIAS = "fhir"
 // AND (user_id = "6efcd7c5-3f29-4f0d-926d-a66ff68bbfc2")
 // GROUP BY `fhir`.`id`
 func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) ([]models.ResourceBase, error) {
+	results := []models.ResourceBase{}
+
+	sqlQuery, err := sr.sqlQueryResources(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	clientResp := sqlQuery.Find(&results)
+
+	return results, clientResp.Error
+}
+
+// see QueryResources
+// this function has all the logic, but should only be called directly for testing
+func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.QueryResource) (*gorm.DB, error) {
 	//todo, until we actually parse the select statement, we will just return all resources based on "from"
 
 	//SECURITY: this is required to ensure that only valid resource types are queried (since it's controlled by the user)
 	if !slices.Contains(databaseModel.GetAllowedResourceTypes(), query.From) {
 		return nil, fmt.Errorf("invalid resource type %s", query.From)
+	}
+
+	if queryValidate := query.Validate(); queryValidate != nil {
+		return nil, queryValidate
 	}
 
 	//find the associated Gorm Model for this query
@@ -108,16 +128,33 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 	whereNamedParameters["user_id"] = currentUser.ID.String()
 	whereClauses = append(whereClauses, "(user_id = @user_id)")
 
-	results := []models.ResourceBase{}
-	clientResp := sr.GormClient.WithContext(ctx).
-		Select(fmt.Sprintf("%s.*", TABLE_ALIAS)).
-		Where(strings.Join(whereClauses, " AND "), whereNamedParameters).
-		Group(fmt.Sprintf("%s.id", TABLE_ALIAS)).
-		Order(fmt.Sprintf("%s.sort_date asc", TABLE_ALIAS)).
-		Table(strings.Join(fromClauses, ", ")).
-		Find(&results)
+	//defaults
+	selectClauses := []string{fmt.Sprintf("%s.*", TABLE_ALIAS)}
+	groupClause := fmt.Sprintf("%s.id", TABLE_ALIAS)
+	orderClause := fmt.Sprintf("%s.sort_date asc", TABLE_ALIAS)
+	if query.Aggregations != nil {
+		selectClauses = []string{}
+		groupClause = ""
+		orderClause = ""
+		//Handle Aggregations
 
-	return results, clientResp.Error
+		if len(query.Aggregations.CountBy) > 0 {
+			//populate the group by and order by clause with the count by values
+
+			//TODO:
+		}
+	}
+
+	//ensure Where and From clauses are unique
+	whereClauses = lo.Uniq(whereClauses)
+	fromClauses = lo.Uniq(fromClauses)
+
+	return sr.GormClient.WithContext(ctx).
+		Select(strings.Join(selectClauses, ", ")).
+		Where(strings.Join(whereClauses, " AND "), whereNamedParameters).
+		Group(groupClause).
+		Order(orderClause).
+		Table(strings.Join(fromClauses, ", ")), nil
 }
 
 /// INTERNAL functionality. These functions are exported for testing, but are not available in the Interface

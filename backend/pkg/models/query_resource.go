@@ -1,13 +1,6 @@
 package models
 
-type QueryResourceAggregationType string
-
-const (
-	QueryResourceAggregationTypeCountBy QueryResourceAggregationType = "countBy"
-	QueryResourceAggregationTypeGroupBy QueryResourceAggregationType = "groupBy"
-	QueryResourceAggregationTypeMinBy   QueryResourceAggregationType = "minBy"
-	QueryResourceAggregationTypeMaxBy   QueryResourceAggregationType = "maxBy"
-)
+import "fmt"
 
 // maps to frontend/src/app/models/widget/dashboard-widget-query.ts
 type QueryResource struct {
@@ -17,6 +10,42 @@ type QueryResource struct {
 	Where  map[string]interface{} `json:"where"`
 
 	//aggregation fields
-	AggregationParams []string                      `json:"aggregation_params"`
-	AggregationType   *QueryResourceAggregationType `json:"aggregation_type"`
+	Aggregations *QueryResourceAggregations `json:"aggregations"`
+}
+
+type QueryResourceAggregations struct {
+	CountBy string `json:"count_by"` //alias for both groupby and orderby, cannot be used together
+
+	GroupBy string `json:"group_by"`
+	OrderBy string `json:"order_by"`
+}
+
+func (q *QueryResource) Validate() error {
+	if len(q.Use) > 0 {
+		return fmt.Errorf("'use' is not supported yet")
+	}
+
+	if len(q.From) == 0 {
+		return fmt.Errorf("'from' is required")
+	}
+
+	if q.Aggregations != nil {
+		if len(q.Select) > 0 {
+			return fmt.Errorf("cannot use 'select' and 'aggregations' together")
+		}
+		if len(q.Aggregations.CountBy) > 0 {
+			if len(q.Aggregations.GroupBy) > 0 {
+				return fmt.Errorf("cannot use 'count_by' and 'group_by' together")
+			}
+			if len(q.Aggregations.OrderBy) > 0 {
+				return fmt.Errorf("cannot use 'count_by' and 'order_by' together")
+			}
+		}
+		if len(q.Aggregations.CountBy) == 0 && len(q.Aggregations.OrderBy) == 0 && len(q.Aggregations.GroupBy) == 0 {
+			return fmt.Errorf("aggregations must have at least one of 'count_by', 'group_by', or 'order_by'")
+		}
+
+	}
+
+	return nil
 }
