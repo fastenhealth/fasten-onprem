@@ -133,28 +133,19 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
       return []
     }
     let results = response.data
-      .map((resource: ResourceFhir) => {
+
+    if(query.aggregations?.count_by || query.aggregations?.group_by){
+      //list of aggregated results [{"label": "xxx", "value":"xxx"}]
+      return results
+    }
+    else {
+      //list of FHIR resources
+      return results.map((resource: ResourceFhir) => {
         if (!resource.resource_raw) {
           return null
         }
         return this.fhirPathMapQueryFn(query)(resource.resource_raw)
       })
-
-    if(query.aggregation_type){
-      switch (query.aggregation_type) {
-        case "countBy":
-
-          return Object.entries(_[query.aggregation_type](results, ...(query.aggregation_params || []))).map(pair => {
-            return {key: pair[0], value: pair[1]}
-          })
-
-          break;
-        default:
-          throw new Error("unsupported aggregation type")
-      }
-    }
-    else {
-      return results
     }
   }
 

@@ -243,7 +243,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveCountBy
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(),
 		strings.Join([]string{
-			"SELECT fhir.sourceUri as group_by, count(*) as count",
+			"SELECT fhir.sourceUri as label, count(*) as value",
 			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
 			"WHERE ((codeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
 			"GROUP BY `fhir`.`sourceUri`",
@@ -280,7 +280,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithComplexCountByAg
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(),
 		strings.Join([]string{
-			"SELECT (codeJson.value ->> '$.code') as group_by, count(*) as count",
+			"SELECT (codeJson.value ->> '$.code') as label, count(*) as value",
 			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
 			"WHERE ((codeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
 			"GROUP BY (codeJson.value ->> '$.code')",
