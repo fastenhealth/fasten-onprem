@@ -1,7 +1,14 @@
 package database
 
 import (
+	"context"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
+	mock_config "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config/mock"
+	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
+	"strings"
 	"testing"
 	"time"
 )
@@ -188,4 +195,51 @@ func TestSearchCodeToFromClause(t *testing.T) {
 		}
 	}
 
+}
+
+func (suite *RepositoryTestSuite) TestQueryResources_SQL() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	require.NoError(suite.T(), err)
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+
+	sqliteRepo := dbRepo.(*SqliteRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select: []string{},
+		Where: map[string]interface{}{
+			"code": "test_code",
+		},
+		From: "Observation",
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), sqlString,
+		strings.Join([]string{
+			"SELECT fhir.*",
+			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
+			"WHERE ((codeJson.value ->> '$.code' = ?)) AND (user_id = ?) GROUP BY `fhir`.`id`",
+			"ORDER BY fhir.sort_date asc"}, " "))
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"test_code", "00000000-0000-0000-0000-000000000000",
+	})
 }
