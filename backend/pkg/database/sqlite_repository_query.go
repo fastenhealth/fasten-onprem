@@ -47,16 +47,24 @@ const TABLE_ALIAS = "fhir"
 // )
 // AND (user_id = "6efcd7c5-3f29-4f0d-926d-a66ff68bbfc2")
 // GROUP BY `fhir`.`id`
-func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) ([]models.ResourceBase, error) {
-	results := []models.ResourceBase{}
+func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) (interface{}, error) {
 
 	sqlQuery, err := sr.sqlQueryResources(ctx, query)
 	if err != nil {
 		return nil, err
 	}
-	clientResp := sqlQuery.Find(&results)
 
-	return results, clientResp.Error
+	if query.Aggregations != nil && (len(query.Aggregations.GroupBy) > 0 || len(query.Aggregations.CountBy) > 0) {
+		results := []map[string]interface{}{}
+		clientResp := sqlQuery.Find(&results)
+		return results, clientResp.Error
+
+	} else {
+		results := []models.ResourceBase{}
+		clientResp := sqlQuery.Find(&results)
+		return results, clientResp.Error
+	}
+
 }
 
 // see QueryResources
@@ -181,8 +189,8 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 
 			groupClause = AggregationParameterToClause(groupAggregationParam)
 			selectClauses = []string{
-				fmt.Sprintf("%s as %s", groupClause, "group_by"),
-				"count(*) as count",
+				fmt.Sprintf("%s as %s", groupClause, "label"),
+				"count(*) as value",
 			}
 		}
 	}

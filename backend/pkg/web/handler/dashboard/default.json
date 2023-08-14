@@ -119,7 +119,7 @@
       "item_type": "patient-vitals-widget"
     },
     {
-      "title_text": "Records by Type",
+      "title_text": "Observations by Type",
       "description_text": "",
       "x": 4,
       "y": 5,
@@ -129,15 +129,15 @@
       "queries": [{
         "q": {
           "select": [],
-          "from": "",
+          "from": "Observation",
           "where": {},
-
-          "aggregation_params":["resourceType"],
-          "aggregation_type":"countBy"
+          "aggregations":{
+            "count_by": "code:code"
+          }
         }
       }],
       "parsing": {
-        "label": "key",
+        "label": "label",
         "key": "value"
       }
     },
