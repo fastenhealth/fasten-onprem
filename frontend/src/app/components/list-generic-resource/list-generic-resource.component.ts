@@ -95,7 +95,7 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
   renderList(resourceList: ResourceFhir[]){
     console.log("GENERIC RESOURCE RENDERLSIT")
     this.columns = this.columnDefinitions.map((defn) => {
-      let column = {name: defn.title, prop: defn.title.replace(/[^A-Z0-9]/ig, "_")}
+      let column = {name: defn.title, prop: defn.title.replace(/[^A-Z0-9]/ig, "_"), sortable: false}
       return column
     })
 
