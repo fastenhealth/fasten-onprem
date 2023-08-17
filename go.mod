@@ -107,4 +107,4 @@ require (
 	modernc.org/sqlite v1.19.1 // indirect
 )
 
-replace github.com/fastenhealth/fasten-sources => ../fasten-sources
+//replace github.com/fastenhealth/fasten-sources => ../fasten-sources
