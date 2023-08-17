@@ -214,24 +214,28 @@ export class FastenApiService {
   getBinaryModel(sourceId: string, attachmentModel: AttachmentModel): Observable<BinaryModel> {
     if(attachmentModel.url && !attachmentModel.data){
       //this attachment model is a refernce to a Binary model, we need to download it first.
-
-      let binaryResourceId = attachmentModel.url
+      let urnPrefix = "urn:uuid:";
+      let resourceType = "Binary"
+      let resourceId = ""
+      let binaryUrl = attachmentModel.url
 
       //strip out the urn prefix (if this is an embedded id, eg. urn:uuid:2a35e080-c5f7-4dde-b0cf-8210505708f1)
-      let urnPrefix = "urn:uuid:";
-      if (binaryResourceId.startsWith(urnPrefix)) {
+      if (binaryUrl.startsWith(urnPrefix)) {
         // PREFIX is exactly at the beginning
-        binaryResourceId = binaryResourceId.slice(urnPrefix.length);
+        resourceId = binaryUrl.slice(urnPrefix.length);
+      } else if(binaryUrl.startsWith("http://") || binaryUrl.startsWith("https://")){
+        //this is an absolute URL (which could be a FHIR url with Binary/xxx-xxx-xxx-xxx or a direct link to a file)
+        let urlParts = binaryUrl.split("Binary/");
+        if(urlParts.length > 1){
+          //this url has a Binary/xxx-xxx-xxx-xxx part, so we can use that as the resource id
+          resourceId = urlParts[urlParts.length - 1];
+        } else {
+          //this is a fully qualified url. we need to base64 encode the url and use that as the resource id
+          resourceId = btoa(binaryUrl)
+        }
       }
 
-      //TODO: this is a naiive solution.
-      //assumes that this is a relative or absolutie url in the following format:
-      // 'Binary/xxx-xxx-xxx-xxx'
-      // 'https://www.example.com/R4/path/Binary/xxx-xx-x-xx'
-      let urlParts = binaryResourceId.split("Binary/");
-      binaryResourceId = urlParts[urlParts.length - 1];
-
-      return this.getResourceBySourceId(sourceId, binaryResourceId).pipe(
+      return this.getResourceBySourceId(sourceId, resourceId).pipe(
         map((resourceFhir: ResourceFhir) => {
           return new BinaryModel(resourceFhir.resource_raw)
         })

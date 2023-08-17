@@ -5,6 +5,7 @@ import {ReferenceModel} from '../datatypes/reference-model';
 import {CodingModel} from '../datatypes/coding-model';
 import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
+import {AttachmentModel} from '../datatypes/attachment-model';
 
 export class DiagnosticReportModel extends FastenDisplayModel {
   code: CodableConceptModel | undefined
@@ -19,6 +20,7 @@ export class DiagnosticReportModel extends FastenDisplayModel {
   conclusion: string | undefined
   performer: ReferenceModel | undefined
   issued: string | undefined
+  presented_form: AttachmentModel[] | undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
@@ -39,6 +41,7 @@ export class DiagnosticReportModel extends FastenDisplayModel {
     this.has_category_coding = Array.isArray(this.category_coding);
     this.conclusion = _.get(fhirResource, 'conclusion');
     this.issued = _.get(fhirResource, 'issued');
+
   };
 
   dstu2DTO(fhirResource:any){
@@ -58,6 +61,10 @@ export class DiagnosticReportModel extends FastenDisplayModel {
     this.has_performer = !!this.performer;
     this.category_coding = _.get(fhirResource, 'category.coding');
     this.has_category_coding = Array.isArray(this.category_coding);
+
+    this.presented_form = _.get(fhirResource, 'presentedForm', []).map((attachment: any) => {
+      return new AttachmentModel(attachment);
+    })
   };
 
   resourceDTO(fhirResource:any, fhirVersion: fhirVersions){
