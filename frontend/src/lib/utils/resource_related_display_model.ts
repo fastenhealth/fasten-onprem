@@ -46,5 +46,5 @@ export function RecResourceRelatedDisplayModel(resource: ResourceFhir, resources
 }
 
 export function GenResourceId(relatedResource: ResourceFhir): string {
-  return `/source/${relatedResource?.source_id}/resource/${relatedResource?.source_resource_type}/${relatedResource?.source_resource_id}`
+  return `/explore/${relatedResource?.source_id}/resource/${relatedResource?.source_resource_type}/${relatedResource?.source_resource_id}`
 }
