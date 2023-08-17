@@ -50,9 +50,6 @@ type FhirAdverseEvent struct {
 	// mild | moderate | severe
 	// https://hl7.org/fhir/r4/search.html#token
 	Severity datatypes.JSON `gorm:"column:severity;type:text;serializer:json" json:"severity,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// AdverseEvent.study
 	// https://hl7.org/fhir/r4/search.html#reference
 	Study datatypes.JSON `gorm:"column:study;type:text;serializer:json" json:"study,omitempty"`
@@ -87,7 +84,6 @@ func (s *FhirAdverseEvent) GetSearchParameters() map[string]string {
 		"resultingcondition": "reference",
 		"seriousness":        "token",
 		"severity":           "token",
-		"sourceUri":          "uri",
 		"study":              "reference",
 		"subject":            "reference",
 		"substance":          "reference",
@@ -487,11 +483,6 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(resourceRaw json.R
 						 `)
 	if err == nil && severityResult.String() != "undefined" {
 		s.Severity = []byte(severityResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Study
 	studyResult, err := vm.RunString(` 

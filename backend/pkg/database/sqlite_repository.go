@@ -250,6 +250,7 @@ func (sr *SqliteRepository) GetSummary(ctx context.Context) (*models.Summary, er
 
 //This function will create a new resource if it does not exist, or update an existing resource if it does exist.
 //It will also create associations between fhir resources
+//This function is called directly by fasten-sources
 func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredential sourceModel.SourceCredential, rawResource sourceModel.RawResourceFhir) (bool, error) {
 
 	source := sourceCredential.(*models.SourceCredential)
@@ -267,6 +268,9 @@ func (sr *SqliteRepository) UpsertRawResource(ctx context.Context, sourceCredent
 		SortDate:        rawResource.SortDate,
 		ResourceRaw:     datatypes.JSON(rawResource.ResourceRaw),
 		RelatedResource: nil,
+	}
+	if len(rawResource.SourceUri) > 0 {
+		wrappedResourceModel.SourceUri = &rawResource.SourceUri
 	}
 
 	//create associations
@@ -332,6 +336,7 @@ func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceM
 	wrappedFhirResourceModel.SetOriginBase(wrappedResourceModel.OriginBase)
 	wrappedFhirResourceModel.SetSortTitle(wrappedResourceModel.SortTitle)
 	wrappedFhirResourceModel.SetSortDate(wrappedResourceModel.SortDate)
+	wrappedFhirResourceModel.SetSourceUri(wrappedResourceModel.SourceUri)
 
 	//TODO: this takes too long, we need to find a way to do this processing faster or in the background async.
 	err = wrappedFhirResourceModel.PopulateAndExtractSearchParameters(json.RawMessage(wrappedResourceModel.ResourceRaw))

@@ -128,9 +128,6 @@ type FhirDocumentReference struct {
 	// Additional details about where the content was created (e.g. clinical specialty)
 	// https://hl7.org/fhir/r4/search.html#token
 	Setting datatypes.JSON `gorm:"column:setting;type:text;serializer:json" json:"setting,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// current | superseded | entered-in-error
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
@@ -172,7 +169,6 @@ func (s *FhirDocumentReference) GetSearchParameters() map[string]string {
 		"relation":      "token",
 		"securityLabel": "token",
 		"setting":       "token",
-		"sourceUri":     "uri",
 		"status":        "token",
 		"subject":       "reference",
 		"tag":           "token",
@@ -878,11 +874,6 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 						 `)
 	if err == nil && settingResult.String() != "undefined" {
 		s.Setting = []byte(settingResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

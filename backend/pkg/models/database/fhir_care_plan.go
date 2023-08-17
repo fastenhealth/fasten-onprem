@@ -127,9 +127,6 @@ type FhirCarePlan struct {
 	// CarePlan replaced by this CarePlan
 	// https://hl7.org/fhir/r4/search.html#reference
 	Replaces datatypes.JSON `gorm:"column:replaces;type:text;serializer:json" json:"replaces,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// draft | active | on-hold | revoked | completed | entered-in-error | unknown
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
@@ -169,7 +166,6 @@ func (s *FhirCarePlan) GetSearchParameters() map[string]string {
 		"performer":             "reference",
 		"profile":               "reference",
 		"replaces":              "reference",
-		"sourceUri":             "uri",
 		"status":                "token",
 		"subject":               "reference",
 		"tag":                   "token",
@@ -637,11 +633,6 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 						 `)
 	if err == nil && replacesResult.String() != "undefined" {
 		s.Replaces = []byte(replacesResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

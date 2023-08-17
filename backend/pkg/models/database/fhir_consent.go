@@ -115,9 +115,6 @@ type FhirConsent struct {
 	// Search by reference to a Consent, DocumentReference, Contract  or QuestionnaireResponse
 	// https://hl7.org/fhir/r4/search.html#reference
 	SourceReference datatypes.JSON `gorm:"column:sourceReference;type:text;serializer:json" json:"sourceReference,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// draft | proposed | active | rejected | inactive | entered-in-error
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
@@ -150,7 +147,6 @@ func (s *FhirConsent) GetSearchParameters() map[string]string {
 		"scope":           "token",
 		"securityLabel":   "token",
 		"sourceReference": "reference",
-		"sourceUri":       "uri",
 		"status":          "token",
 		"tag":             "token",
 		"text":            "string",
@@ -636,11 +632,6 @@ func (s *FhirConsent) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 						 `)
 	if err == nil && sourceReferenceResult.String() != "undefined" {
 		s.SourceReference = []byte(sourceReferenceResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

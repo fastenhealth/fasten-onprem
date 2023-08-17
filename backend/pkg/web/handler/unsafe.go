@@ -75,7 +75,7 @@ func UnsafeRequestSource(c *gin.Context) {
 	//make sure we include all query string parameters with the raw request.
 	parsedUrl.RawQuery = c.Request.URL.Query().Encode()
 
-	err = client.GetRequest(parsedUrl.String(), &resp)
+	_, err = client.GetRequest(parsedUrl.String(), &resp)
 	if err != nil {
 		logger.Errorf("Error making raw request, %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error(), "data": resp})

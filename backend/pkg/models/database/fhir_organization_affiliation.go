@@ -59,9 +59,6 @@ type FhirOrganizationAffiliation struct {
 	// Healthcare services provided through the role
 	// https://hl7.org/fhir/r4/search.html#reference
 	Service datatypes.JSON `gorm:"column:service;type:text;serializer:json" json:"service,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Specific specialty of the participatingOrganization in the context of the role
 	// https://hl7.org/fhir/r4/search.html#token
 	Specialty datatypes.JSON `gorm:"column:specialty;type:text;serializer:json" json:"specialty,omitempty"`
@@ -96,7 +93,6 @@ func (s *FhirOrganizationAffiliation) GetSearchParameters() map[string]string {
 		"profile":                   "reference",
 		"role":                      "token",
 		"service":                   "reference",
-		"sourceUri":                 "uri",
 		"specialty":                 "token",
 		"tag":                       "token",
 		"telecom":                   "token",
@@ -537,11 +533,6 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 						 `)
 	if err == nil && serviceResult.String() != "undefined" {
 		s.Service = []byte(serviceResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Specialty
 	specialtyResult, err := vm.RunString(` 

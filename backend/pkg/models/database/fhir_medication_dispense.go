@@ -111,9 +111,6 @@ type FhirMedicationDispense struct {
 	// Returns dispenses with the specified responsible party
 	// https://hl7.org/fhir/r4/search.html#reference
 	Responsibleparty datatypes.JSON `gorm:"column:responsibleparty;type:text;serializer:json" json:"responsibleparty,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -158,7 +155,6 @@ func (s *FhirMedicationDispense) GetSearchParameters() map[string]string {
 		"profile":          "reference",
 		"receiver":         "reference",
 		"responsibleparty": "reference",
-		"sourceUri":        "uri",
 		"status":           "token",
 		"subject":          "reference",
 		"tag":              "token",
@@ -461,11 +457,6 @@ func (s *FhirMedicationDispense) PopulateAndExtractSearchParameters(resourceRaw 
 						 `)
 	if err == nil && responsiblepartyResult.String() != "undefined" {
 		s.Responsibleparty = []byte(responsiblepartyResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

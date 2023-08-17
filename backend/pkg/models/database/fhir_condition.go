@@ -124,9 +124,6 @@ type FhirCondition struct {
 	// The severity of the condition
 	// https://hl7.org/fhir/r4/search.html#token
 	Severity datatypes.JSON `gorm:"column:severity;type:text;serializer:json" json:"severity,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Simple summary (disease specific)
 	// https://hl7.org/fhir/r4/search.html#token
 	Stage datatypes.JSON `gorm:"column:stage;type:text;serializer:json" json:"stage,omitempty"`
@@ -169,7 +166,6 @@ func (s *FhirCondition) GetSearchParameters() map[string]string {
 		"profile":            "reference",
 		"recordedDate":       "date",
 		"severity":           "token",
-		"sourceUri":          "uri",
 		"stage":              "token",
 		"subject":            "reference",
 		"tag":                "token",
@@ -817,11 +813,6 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 						 `)
 	if err == nil && severityResult.String() != "undefined" {
 		s.Severity = []byte(severityResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Stage
 	stageResult, err := vm.RunString(` 

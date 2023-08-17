@@ -29,9 +29,6 @@ type FhirEnrollmentResponse struct {
 	// The reference to the claim
 	// https://hl7.org/fhir/r4/search.html#reference
 	Request datatypes.JSON `gorm:"column:request;type:text;serializer:json" json:"request,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// The status of the enrollment response
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
@@ -53,7 +50,6 @@ func (s *FhirEnrollmentResponse) GetSearchParameters() map[string]string {
 		"lastUpdated": "date",
 		"profile":     "reference",
 		"request":     "reference",
-		"sourceUri":   "uri",
 		"status":      "token",
 		"tag":         "token",
 		"text":        "string",
@@ -222,11 +218,6 @@ func (s *FhirEnrollmentResponse) PopulateAndExtractSearchParameters(resourceRaw 
 						 `)
 	if err == nil && requestResult.String() != "undefined" {
 		s.Request = []byte(requestResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

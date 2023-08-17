@@ -59,9 +59,6 @@ type FhirQuestionnaire struct {
 	// Name of the publisher of the questionnaire
 	// https://hl7.org/fhir/r4/search.html#string
 	Publisher datatypes.JSON `gorm:"column:publisher;type:text;serializer:json" json:"publisher,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// The current status of the questionnaire
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
@@ -105,7 +102,6 @@ func (s *FhirQuestionnaire) GetSearchParameters() map[string]string {
 		"name":            "string",
 		"profile":         "reference",
 		"publisher":       "string",
-		"sourceUri":       "uri",
 		"status":          "token",
 		"subjectType":     "token",
 		"tag":             "token",
@@ -665,11 +661,6 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 						 `)
 	if err == nil && publisherResult.String() != "undefined" {
 		s.Publisher = []byte(publisherResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

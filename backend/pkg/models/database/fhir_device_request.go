@@ -133,9 +133,6 @@ type FhirDeviceRequest struct {
 	// Who/what is requesting service
 	// https://hl7.org/fhir/r4/search.html#reference
 	Requester datatypes.JSON `gorm:"column:requester;type:text;serializer:json" json:"requester,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// entered-in-error | draft | active |suspended | completed
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
@@ -173,7 +170,6 @@ func (s *FhirDeviceRequest) GetSearchParameters() map[string]string {
 		"priorRequest":          "reference",
 		"profile":               "reference",
 		"requester":             "reference",
-		"sourceUri":             "uri",
 		"status":                "token",
 		"subject":               "reference",
 		"tag":                   "token",
@@ -613,11 +609,6 @@ func (s *FhirDeviceRequest) PopulateAndExtractSearchParameters(resourceRaw json.
 						 `)
 	if err == nil && requesterResult.String() != "undefined" {
 		s.Requester = []byte(requesterResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 
