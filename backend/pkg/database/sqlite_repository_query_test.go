@@ -238,7 +238,7 @@ func (suite *RepositoryTestSuite) TestQueryResources_SQL() {
 			"SELECT fhir.*",
 			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
 			"WHERE ((codeJson.value ->> '$.code' = ?)) AND (user_id = ?) GROUP BY `fhir`.`id`",
-			"ORDER BY fhir.sort_date asc"}, " "))
+			"ORDER BY fhir.sort_date ASC"}, " "))
 	require.Equal(suite.T(), sqlParams, []interface{}{
 		"test_code", "00000000-0000-0000-0000-000000000000",
 	})
