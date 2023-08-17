@@ -7,7 +7,7 @@ require (
 	github.com/dave/jennifer v1.6.1
 	github.com/dominikbraun/graph v0.15.0
 	github.com/dop251/goja v0.0.0-20230605162241-28ee0ee714f3
-	github.com/fastenhealth/fasten-sources v0.2.7
+	github.com/fastenhealth/fasten-sources v0.2.9
 	github.com/fastenhealth/gofhir-models v0.0.5
 	github.com/gin-gonic/gin v1.9.0
 	github.com/glebarez/sqlite v1.5.0
@@ -17,6 +17,7 @@ require (
 	github.com/iancoleman/strcase v0.2.0
 	github.com/lestrrat-go/jwx/v2 v2.0.11
 	github.com/philips-software/go-hsdp-api v0.81.0
+	github.com/samber/lo v1.35.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.8.4
@@ -78,7 +79,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/samber/lo v1.35.0 // indirect
 	github.com/seborama/govcr v4.5.0+incompatible // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/serenize/snaker v0.0.0-20201027110005-a7ad2135616e // indirect
@@ -107,4 +107,4 @@ require (
 	modernc.org/sqlite v1.19.1 // indirect
 )
 
-//replace github.com/fastenhealth/fasten-sources => ../fasten-sources
+replace github.com/fastenhealth/fasten-sources => ../fasten-sources
