@@ -50,7 +50,11 @@
             <div #collapse="ngbCollapse" [ngbCollapse]="true">
 
               <ul>
-                <li class="cursor-pointer tx-indigo" *ngFor="let resourceEntry of resourcesLookup | keyvalue" [routerLink]="resourceEntry.key" role="link">{{resourceEntry.value.source_resource_type}} {{resourceEntry.value.sort_title ? '- '+resourceEntry.value.sort_title : '' }} </li>
+                <li  *ngFor="let resourceEntry of resourcesLookup | keyvalue">
+                  <a class="cursor-pointer tx-indigo" [routerLink]="resourceEntry.key">
+                    {{resourceEntry.value.source_resource_type}} {{resourceEntry.value.sort_title ? '- '+resourceEntry.value.sort_title : '' }}
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
