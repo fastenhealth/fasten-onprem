@@ -132,14 +132,14 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithMultipleWhereCon
 	require.Equal(suite.T(),
 		strings.Join([]string{
 			"SELECT fhir.*",
-			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
-			"WHERE ((codeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
+			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson, json_each(fhir.category) as categoryJson",
+			"WHERE ((codeJson.value ->> '$.code' = ?)) AND ((categoryJson.value ->> '$.code' = ?)) AND (user_id = ?)",
 			"GROUP BY `fhir`.`id`",
 			"ORDER BY fhir.sort_date ASC",
 		}, " "),
 		sqlString)
 	require.Equal(suite.T(), sqlParams, []interface{}{
-		"test_code", "00000000-0000-0000-0000-000000000000",
+		"test_code", "12345", "00000000-0000-0000-0000-000000000000",
 	})
 }
 
@@ -154,10 +154,10 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveOrderBy
 	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
 		Select: []string{},
 		Where: map[string]interface{}{
-			"code": "test_code",
+			"activityCode": "test_code",
 		},
-		From:         "Observation",
-		Aggregations: &models.QueryResourceAggregations{OrderBy: "sourceUri"},
+		From:         "CarePlan",
+		Aggregations: &models.QueryResourceAggregations{OrderBy: "instantiatesUri"},
 	})
 	require.NoError(suite.T(), err)
 	var results []map[string]interface{}
@@ -170,10 +170,10 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveOrderBy
 	require.Equal(suite.T(),
 		strings.Join([]string{
 			"SELECT fhir.*",
-			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
-			"WHERE ((codeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
+			"FROM fhir_care_plan as fhir, json_each(fhir.activityCode) as activityCodeJson",
+			"WHERE ((activityCodeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
 			"GROUP BY `fhir`.`id`",
-			"ORDER BY fhir.sourceUri ASC",
+			"ORDER BY fhir.instantiatesUri ASC",
 		}, " "), sqlString)
 	require.Equal(suite.T(), sqlParams, []interface{}{
 		"test_code", "00000000-0000-0000-0000-000000000000",
@@ -228,10 +228,10 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveCountBy
 	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
 		Select: []string{},
 		Where: map[string]interface{}{
-			"code": "test_code",
+			"activityCode": "test_code",
 		},
-		From:         "Observation",
-		Aggregations: &models.QueryResourceAggregations{CountBy: "sourceUri"},
+		From:         "CarePlan",
+		Aggregations: &models.QueryResourceAggregations{CountBy: "instantiatesUri"},
 	})
 	require.NoError(suite.T(), err)
 	var results []map[string]interface{}
@@ -243,10 +243,10 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveCountBy
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(),
 		strings.Join([]string{
-			"SELECT fhir.sourceUri as label, count(*) as value",
-			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
-			"WHERE ((codeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
-			"GROUP BY `fhir`.`sourceUri`",
+			"SELECT fhir.instantiatesUri as label, count(*) as value",
+			"FROM fhir_care_plan as fhir, json_each(fhir.activityCode) as activityCodeJson",
+			"WHERE ((activityCodeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
+			"GROUP BY `fhir`.`instantiatesUri`",
 			"ORDER BY count(*) DESC",
 		}, " "), sqlString)
 	require.Equal(suite.T(), sqlParams, []interface{}{
