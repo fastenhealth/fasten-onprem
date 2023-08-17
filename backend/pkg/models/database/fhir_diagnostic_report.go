@@ -144,9 +144,6 @@ type FhirDiagnosticReport struct {
 	// Who was the source of the report
 	// https://hl7.org/fhir/r4/search.html#reference
 	ResultsInterpreter datatypes.JSON `gorm:"column:resultsInterpreter;type:text;serializer:json" json:"resultsInterpreter,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// The specimen details
 	// https://hl7.org/fhir/r4/search.html#reference
 	Specimen datatypes.JSON `gorm:"column:specimen;type:text;serializer:json" json:"specimen,omitempty"`
@@ -184,7 +181,6 @@ func (s *FhirDiagnosticReport) GetSearchParameters() map[string]string {
 		"profile":            "reference",
 		"result":             "reference",
 		"resultsInterpreter": "reference",
-		"sourceUri":          "uri",
 		"specimen":           "reference",
 		"status":             "token",
 		"subject":            "reference",
@@ -592,11 +588,6 @@ func (s *FhirDiagnosticReport) PopulateAndExtractSearchParameters(resourceRaw js
 						 `)
 	if err == nil && resultsInterpreterResult.String() != "undefined" {
 		s.ResultsInterpreter = []byte(resultsInterpreterResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Specimen
 	specimenResult, err := vm.RunString(` 

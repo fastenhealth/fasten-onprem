@@ -132,9 +132,6 @@ type FhirAllergyIntolerance struct {
 	// mild | moderate | severe (of event as a whole)
 	// https://hl7.org/fhir/r4/search.html#token
 	Severity datatypes.JSON `gorm:"column:severity;type:text;serializer:json" json:"severity,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Tags applied to this resource
 	// https://hl7.org/fhir/r4/search.html#token
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
@@ -167,7 +164,6 @@ func (s *FhirAllergyIntolerance) GetSearchParameters() map[string]string {
 		"recorder":           "reference",
 		"route":              "token",
 		"severity":           "token",
-		"sourceUri":          "uri",
 		"tag":                "token",
 		"text":               "string",
 		"type":               "special",
@@ -718,11 +714,6 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 						 `)
 	if err == nil && severityResult.String() != "undefined" {
 		s.Severity = []byte(severityResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 

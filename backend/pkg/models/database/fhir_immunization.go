@@ -109,9 +109,6 @@ type FhirImmunization struct {
 	// The series being followed by the provider
 	// https://hl7.org/fhir/r4/search.html#string
 	Series datatypes.JSON `gorm:"column:series;type:text;serializer:json" json:"series,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Immunization event status
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
@@ -151,7 +148,6 @@ func (s *FhirImmunization) GetSearchParameters() map[string]string {
 		"reasonCode":      "token",
 		"reasonReference": "reference",
 		"series":          "string",
-		"sourceUri":       "uri",
 		"status":          "token",
 		"statusReason":    "token",
 		"tag":             "token",
@@ -570,11 +566,6 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 						 `)
 	if err == nil && seriesResult.String() != "undefined" {
 		s.Series = []byte(seriesResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

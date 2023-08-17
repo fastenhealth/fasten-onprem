@@ -104,9 +104,6 @@ type FhirMedicationStatement struct {
 	// Who or where the information in the statement came from
 	// https://hl7.org/fhir/r4/search.html#reference
 	Source datatypes.JSON `gorm:"column:source;type:text;serializer:json" json:"source,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -144,7 +141,6 @@ func (s *FhirMedicationStatement) GetSearchParameters() map[string]string {
 		"partOf":      "reference",
 		"profile":     "reference",
 		"source":      "reference",
-		"sourceUri":   "uri",
 		"status":      "token",
 		"subject":     "reference",
 		"tag":         "token",
@@ -463,11 +459,6 @@ func (s *FhirMedicationStatement) PopulateAndExtractSearchParameters(resourceRaw
 						 `)
 	if err == nil && sourceResult.String() != "undefined" {
 		s.Source = []byte(sourceResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

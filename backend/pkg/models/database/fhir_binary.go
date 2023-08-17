@@ -23,9 +23,6 @@ type FhirBinary struct {
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Tags applied to this resource
 	// https://hl7.org/fhir/r4/search.html#token
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
@@ -42,7 +39,6 @@ func (s *FhirBinary) GetSearchParameters() map[string]string {
 		"language":    "token",
 		"lastUpdated": "date",
 		"profile":     "reference",
-		"sourceUri":   "uri",
 		"tag":         "token",
 		"text":        "string",
 		"type":        "special",
@@ -149,11 +145,6 @@ func (s *FhirBinary) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 						 `)
 	if err == nil && profileResult.String() != "undefined" {
 		s.Profile = []byte(profileResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 

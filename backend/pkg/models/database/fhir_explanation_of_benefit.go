@@ -65,9 +65,6 @@ type FhirExplanationOfBenefit struct {
 	// The reference to the provider
 	// https://hl7.org/fhir/r4/search.html#reference
 	Provider datatypes.JSON `gorm:"column:provider;type:text;serializer:json" json:"provider,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Status of the instance
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
@@ -104,7 +101,6 @@ func (s *FhirExplanationOfBenefit) GetSearchParameters() map[string]string {
 		"procedureUdi": "reference",
 		"profile":      "reference",
 		"provider":     "reference",
-		"sourceUri":    "uri",
 		"status":       "token",
 		"subdetailUdi": "reference",
 		"tag":          "token",
@@ -486,11 +482,6 @@ func (s *FhirExplanationOfBenefit) PopulateAndExtractSearchParameters(resourceRa
 						 `)
 	if err == nil && providerResult.String() != "undefined" {
 		s.Provider = []byte(providerResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

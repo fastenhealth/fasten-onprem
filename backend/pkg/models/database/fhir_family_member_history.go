@@ -114,9 +114,6 @@ type FhirFamilyMemberHistory struct {
 	// A search by a sex code of a family member
 	// https://hl7.org/fhir/r4/search.html#token
 	Sex datatypes.JSON `gorm:"column:sex;type:text;serializer:json" json:"sex,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// partial | completed | entered-in-error | health-unknown
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
@@ -143,7 +140,6 @@ func (s *FhirFamilyMemberHistory) GetSearchParameters() map[string]string {
 		"profile":               "reference",
 		"relationship":          "token",
 		"sex":                   "token",
-		"sourceUri":             "uri",
 		"status":                "token",
 		"tag":                   "token",
 		"text":                  "string",
@@ -471,11 +467,6 @@ func (s *FhirFamilyMemberHistory) PopulateAndExtractSearchParameters(resourceRaw
 						 `)
 	if err == nil && sexResult.String() != "undefined" {
 		s.Sex = []byte(sexResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

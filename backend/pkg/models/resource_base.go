@@ -10,6 +10,7 @@ type ResourceBase struct {
 
 	SortDate  *time.Time `json:"sort_date" gorm:"sort_date"`
 	SortTitle *string    `json:"sort_title" gorm:"sort_title"`
+	SourceUri *string    `json:"source_uri" gorm:"source_uri"`
 
 	// The raw resource content in JSON format
 	ResourceRaw datatypes.JSON `gorm:"column:resource_raw;type:text;serializer:json" json:"resource_raw,omitempty"`
@@ -31,4 +32,8 @@ func (s *ResourceBase) SetSortDate(sortDate *time.Time) {
 
 func (s *ResourceBase) SetResourceRaw(resourceRaw datatypes.JSON) {
 	s.ResourceRaw = resourceRaw
+}
+
+func (s *ResourceBase) SetSourceUri(sourceUri *string) {
+	s.SourceUri = sourceUri
 }

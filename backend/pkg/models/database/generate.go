@@ -123,11 +123,6 @@ func main() {
 			Description:        "Profiles this resource claims to conform to",
 			FHIRPathExpression: "Resource.meta.profile",
 		}
-		fieldMap["SourceUri"] = DBField{
-			FieldType:          "uri",
-			Description:        "Identifies where the resource comes from",
-			FHIRPathExpression: "Resource.meta.source",
-		}
 		fieldMap["Tag"] = DBField{
 			FieldType:          "token",
 			Description:        "Tags applied to this resource",

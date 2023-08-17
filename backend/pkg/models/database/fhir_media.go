@@ -47,9 +47,6 @@ type FhirMedia struct {
 	// Observed body part
 	// https://hl7.org/fhir/r4/search.html#token
 	Site datatypes.JSON `gorm:"column:site;type:text;serializer:json" json:"site,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// preparation | in-progress | not-done | on-hold | stopped | completed | entered-in-error | unknown
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
@@ -83,7 +80,6 @@ func (s *FhirMedia) GetSearchParameters() map[string]string {
 		"operator":    "reference",
 		"profile":     "reference",
 		"site":        "token",
-		"sourceUri":   "uri",
 		"status":      "token",
 		"subject":     "reference",
 		"tag":         "token",
@@ -403,11 +399,6 @@ func (s *FhirMedia) PopulateAndExtractSearchParameters(resourceRaw json.RawMessa
 						 `)
 	if err == nil && siteResult.String() != "undefined" {
 		s.Site = []byte(siteResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

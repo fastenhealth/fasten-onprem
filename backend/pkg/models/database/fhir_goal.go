@@ -68,9 +68,6 @@ type FhirGoal struct {
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// When goal pursuit begins
 	// https://hl7.org/fhir/r4/search.html#date
 	StartDate *time.Time `gorm:"column:startDate;type:datetime" json:"startDate,omitempty"`
@@ -100,7 +97,6 @@ func (s *FhirGoal) GetSearchParameters() map[string]string {
 		"lastUpdated":       "date",
 		"lifecycleStatus":   "token",
 		"profile":           "reference",
-		"sourceUri":         "uri",
 		"startDate":         "date",
 		"subject":           "reference",
 		"tag":               "token",
@@ -398,11 +394,6 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 						 `)
 	if err == nil && profileResult.String() != "undefined" {
 		s.Profile = []byte(profileResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting StartDate
 	startDateResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, '(Goal.startDate)')[0]")

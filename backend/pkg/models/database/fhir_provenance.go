@@ -44,9 +44,6 @@ type FhirProvenance struct {
 	// Indication of the reason the entity signed the object(s)
 	// https://hl7.org/fhir/r4/search.html#token
 	SignatureType datatypes.JSON `gorm:"column:signatureType;type:text;serializer:json" json:"signatureType,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Tags applied to this resource
 	// https://hl7.org/fhir/r4/search.html#token
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
@@ -76,7 +73,6 @@ func (s *FhirProvenance) GetSearchParameters() map[string]string {
 		"profile":       "reference",
 		"recorded":      "date",
 		"signatureType": "token",
-		"sourceUri":     "uri",
 		"tag":           "token",
 		"target":        "reference",
 		"text":          "string",
@@ -381,11 +377,6 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 						 `)
 	if err == nil && signatureTypeResult.String() != "undefined" {
 		s.SignatureType = []byte(signatureTypeResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 

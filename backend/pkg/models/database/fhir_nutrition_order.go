@@ -98,9 +98,6 @@ type FhirNutritionOrder struct {
 	// The identity of the provider who placed the nutrition order
 	// https://hl7.org/fhir/r4/search.html#reference
 	Provider datatypes.JSON `gorm:"column:provider;type:text;serializer:json" json:"provider,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Status of the nutrition order.
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
@@ -132,7 +129,6 @@ func (s *FhirNutritionOrder) GetSearchParameters() map[string]string {
 		"oraldiet":              "token",
 		"profile":               "reference",
 		"provider":              "reference",
-		"sourceUri":             "uri",
 		"status":                "token",
 		"supplement":            "token",
 		"tag":                   "token",
@@ -489,11 +485,6 @@ func (s *FhirNutritionOrder) PopulateAndExtractSearchParameters(resourceRaw json
 						 `)
 	if err == nil && providerResult.String() != "undefined" {
 		s.Provider = []byte(providerResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

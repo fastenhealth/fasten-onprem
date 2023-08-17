@@ -130,9 +130,6 @@ type FhirEncounter struct {
 	// The organization (facility) responsible for this encounter
 	// https://hl7.org/fhir/r4/search.html#reference
 	ServiceProvider datatypes.JSON `gorm:"column:serviceProvider;type:text;serializer:json" json:"serviceProvider,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Wheelchair, translator, stretcher, etc.
 	// https://hl7.org/fhir/r4/search.html#token
 	SpecialArrangement datatypes.JSON `gorm:"column:specialArrangement;type:text;serializer:json" json:"specialArrangement,omitempty"`
@@ -176,7 +173,6 @@ func (s *FhirEncounter) GetSearchParameters() map[string]string {
 		"reasonCode":         "token",
 		"reasonReference":    "reference",
 		"serviceProvider":    "reference",
-		"sourceUri":          "uri",
 		"specialArrangement": "token",
 		"status":             "token",
 		"subject":            "reference",
@@ -659,11 +655,6 @@ func (s *FhirEncounter) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 						 `)
 	if err == nil && serviceProviderResult.String() != "undefined" {
 		s.ServiceProvider = []byte(serviceProviderResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting SpecialArrangement
 	specialArrangementResult, err := vm.RunString(` 

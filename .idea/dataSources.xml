@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="fasten" uuid="b32d1214-0f9b-4c79-b291-d03ac069209e">
+    <data-source source="LOCAL" name="fasten" uuid="d164a8cf-0ebf-4a73-b7a0-59097243fbce">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>

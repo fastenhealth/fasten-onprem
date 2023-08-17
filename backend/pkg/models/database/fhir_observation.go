@@ -174,9 +174,6 @@ type FhirObservation struct {
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Specimen used for this observation
 	// https://hl7.org/fhir/r4/search.html#reference
 	Specimen datatypes.JSON `gorm:"column:specimen;type:text;serializer:json" json:"specimen,omitempty"`
@@ -236,7 +233,6 @@ func (s *FhirObservation) GetSearchParameters() map[string]string {
 		"partOf":                    "reference",
 		"performer":                 "reference",
 		"profile":                   "reference",
-		"sourceUri":                 "uri",
 		"specimen":                  "reference",
 		"status":                    "token",
 		"subject":                   "reference",
@@ -1002,11 +998,6 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 						 `)
 	if err == nil && profileResult.String() != "undefined" {
 		s.Profile = []byte(profileResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Specimen
 	specimenResult, err := vm.RunString(` 

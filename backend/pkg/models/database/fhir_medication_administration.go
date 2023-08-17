@@ -110,9 +110,6 @@ type FhirMedicationAdministration struct {
 	// The identity of a request to list administrations from
 	// https://hl7.org/fhir/r4/search.html#reference
 	Request datatypes.JSON `gorm:"column:request;type:text;serializer:json" json:"request,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -152,7 +149,6 @@ func (s *FhirMedicationAdministration) GetSearchParameters() map[string]string {
 		"reasonGiven":    "token",
 		"reasonNotGiven": "token",
 		"request":        "reference",
-		"sourceUri":      "uri",
 		"status":         "token",
 		"subject":        "reference",
 		"tag":            "token",
@@ -532,11 +528,6 @@ func (s *FhirMedicationAdministration) PopulateAndExtractSearchParameters(resour
 						 `)
 	if err == nil && requestResult.String() != "undefined" {
 		s.Request = []byte(requestResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

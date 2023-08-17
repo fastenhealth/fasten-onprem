@@ -147,9 +147,6 @@ type FhirProcedure struct {
 	// The justification that the procedure was performed
 	// https://hl7.org/fhir/r4/search.html#reference
 	ReasonReference datatypes.JSON `gorm:"column:reasonReference;type:text;serializer:json" json:"reasonReference,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// preparation | in-progress | not-done | on-hold | stopped | completed | entered-in-error | unknown
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
@@ -185,7 +182,6 @@ func (s *FhirProcedure) GetSearchParameters() map[string]string {
 		"profile":               "reference",
 		"reasonCode":            "token",
 		"reasonReference":       "reference",
-		"sourceUri":             "uri",
 		"status":                "token",
 		"subject":               "reference",
 		"tag":                   "token",
@@ -598,11 +594,6 @@ func (s *FhirProcedure) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 						 `)
 	if err == nil && reasonReferenceResult.String() != "undefined" {
 		s.ReasonReference = []byte(reasonReferenceResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Status
 	statusResult, err := vm.RunString(` 

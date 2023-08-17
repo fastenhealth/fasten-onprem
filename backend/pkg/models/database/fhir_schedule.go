@@ -41,9 +41,6 @@ type FhirSchedule struct {
 	// The type of appointments that can be booked into associated slot(s)
 	// https://hl7.org/fhir/r4/search.html#token
 	ServiceType datatypes.JSON `gorm:"column:serviceType;type:text;serializer:json" json:"serviceType,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Type of specialty needed
 	// https://hl7.org/fhir/r4/search.html#token
 	Specialty datatypes.JSON `gorm:"column:specialty;type:text;serializer:json" json:"specialty,omitempty"`
@@ -69,7 +66,6 @@ func (s *FhirSchedule) GetSearchParameters() map[string]string {
 		"profile":         "reference",
 		"serviceCategory": "token",
 		"serviceType":     "token",
-		"sourceUri":       "uri",
 		"specialty":       "token",
 		"tag":             "token",
 		"text":            "string",
@@ -392,11 +388,6 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 						 `)
 	if err == nil && serviceTypeResult.String() != "undefined" {
 		s.ServiceType = []byte(serviceTypeResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Specialty
 	specialtyResult, err := vm.RunString(` 

@@ -95,9 +95,6 @@ type FhirImagingStudy struct {
 	// DICOM Series Instance UID for a series
 	// https://hl7.org/fhir/r4/search.html#token
 	Series datatypes.JSON `gorm:"column:series;type:text;serializer:json" json:"series,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// When the study was started
 	// https://hl7.org/fhir/r4/search.html#date
 	Started *time.Time `gorm:"column:started;type:datetime" json:"started,omitempty"`
@@ -136,7 +133,6 @@ func (s *FhirImagingStudy) GetSearchParameters() map[string]string {
 		"reason":      "token",
 		"referrer":    "reference",
 		"series":      "token",
-		"sourceUri":   "uri",
 		"started":     "date",
 		"status":      "token",
 		"subject":     "reference",
@@ -659,11 +655,6 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 						 `)
 	if err == nil && seriesResult.String() != "undefined" {
 		s.Series = []byte(seriesResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Started
 	startedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'ImagingStudy.started')[0]")

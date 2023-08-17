@@ -152,9 +152,6 @@ type FhirPerson struct {
 	// The Person links to this RelatedPerson
 	// https://hl7.org/fhir/r4/search.html#reference
 	Relatedperson datatypes.JSON `gorm:"column:relatedperson;type:text;serializer:json" json:"relatedperson,omitempty"`
-	// Identifies where the resource comes from
-	// https://hl7.org/fhir/r4/search.html#uri
-	SourceUri string `gorm:"column:sourceUri;type:text" json:"sourceUri,omitempty"`
 	// Tags applied to this resource
 	// https://hl7.org/fhir/r4/search.html#token
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
@@ -199,7 +196,6 @@ func (s *FhirPerson) GetSearchParameters() map[string]string {
 		"practitioner":      "reference",
 		"profile":           "reference",
 		"relatedperson":     "reference",
-		"sourceUri":         "uri",
 		"tag":               "token",
 		"telecom":           "token",
 		"text":              "string",
@@ -1024,11 +1020,6 @@ func (s *FhirPerson) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 						 `)
 	if err == nil && relatedpersonResult.String() != "undefined" {
 		s.Relatedperson = []byte(relatedpersonResult.String())
-	}
-	// extracting SourceUri
-	sourceUriResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.source')[0]")
-	if err == nil && sourceUriResult.String() != "undefined" {
-		s.SourceUri = sourceUriResult.String()
 	}
 	// extracting Tag
 	tagResult, err := vm.RunString(` 
