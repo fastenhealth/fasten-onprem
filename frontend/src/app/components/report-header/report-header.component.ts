@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {FastenApiService} from '../../services/fasten-api.service';
 import * as fhirpath from 'fhirpath';
+import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
 
 @Component({
   selector: 'report-header',
@@ -10,7 +11,7 @@ import * as fhirpath from 'fhirpath';
 })
 export class ReportHeaderComponent implements OnInit {
   patient: ResourceFhir = null
-  primaryCare: ResourceFhir = null
+  primaryCare: PractitionerModel = null
   @Input() reportHeaderTitle: string = ""
   @Input() reportHeaderSubTitle: string = "Organized by condition and encounters"
 
@@ -31,7 +32,9 @@ export class ReportHeaderComponent implements OnInit {
         if(primaryCareIdParts.length == 2) {
           console.log(primaryCareIdParts)
           this.fastenApi.getResources(primaryCareIdParts[0], this.patient.source_id,  primaryCareIdParts[1]).subscribe(primaryResults => {
-            this.primaryCare = primaryResults[0]
+            if (primaryResults.length > 0){
+              this.primaryCare = new PractitionerModel(primaryResults[0].resource_raw)
+            }
           })
         }
       }

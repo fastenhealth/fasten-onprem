@@ -13,7 +13,7 @@
     <div *ngIf="primaryCare" class="media">
       <div class="media-body">
         <label>Primary Care</label>
-        <h6>{{primaryCare | fhirPath: "Practitioner.name.family.first()"}}, {{primaryCare | fhirPath: "Practitioner.name.given.first()"}}</h6>
+        <h6 class="cursor-pointer" [ngbPopover]="primaryCarePopoverContent" placement="bottom" >{{primaryCare?.name?.[0]?.displayName }}</h6>
       </div><!-- media-body -->
     </div><!-- media -->
     <div class="media">
@@ -38,3 +38,7 @@
     <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="fas fa-ellipsis-h"></i></a>
   </nav>
 </div>
+
+<ng-template #primaryCarePopoverContent>
+  <fhir-resource [displayModel]="primaryCare"></fhir-resource>
+</ng-template>
