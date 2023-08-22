@@ -29,6 +29,15 @@ func GetDashboard(c *gin.Context) {
 
 	if dashboardLocations := appConfig.GetStringSlice("dashboard.location"); dashboardLocations != nil && len(dashboardLocations) > 0 {
 		logger.Infof("Loading dashboard(s) from %v", dashboardLocations)
+
+		// TODO: these should be populated from the user settings table (each user can have their own dashboards).
+		// TODO: when enabled, used the following algorithm:
+		//- validate that the url is to a github gist, no other locations are supported
+		//- download the gist metadata
+		//- if more than 1 file found, look for a dashboard.json
+		//- check if the file sha exists on the file system  (content-addressible file system)
+		//- if it doesnt,
+
 		for _, dashboardLocation := range dashboardLocations {
 			if strings.HasPrefix(dashboardLocation, "http") {
 				c.JSON(http.StatusOK, gin.H{"success": false, "error": fmt.Sprintf("Remote Dashboard URL's are not supported yet: %v", dashboardLocations)})

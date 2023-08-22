@@ -121,6 +121,16 @@
         <h6>About this Source</h6>
         <p >{{modalSelectedSourceListItem?.metadata?.patient_access_description}}</p>
       </ng-container>
+      <ng-container *ngIf="modalSelectedSourceListItem?.metadata.aliases?.length > 0">
+        <h6>Aliases</h6>
+        <ul>
+          <li *ngFor="let alias of modalSelectedSourceListItem?.metadata?.aliases">{{alias}}</li>
+        </ul>
+      </ng-container>
+      <ng-container *ngIf="modalSelectedSourceListItem?.metadata.platform_type">
+        <h6>Platform Type</h6>
+        <p>{{modalSelectedSourceListItem?.metadata.platform_type}}</p>
+      </ng-container>
       <ng-container *ngIf="modalSelectedSourceListItem?.metadata?.category?.length > 0">
         <h6>Categories</h6>
         <ul>

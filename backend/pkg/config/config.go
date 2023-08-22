@@ -24,6 +24,9 @@ func (c *configuration) Init() error {
 	c.SetDefault("web.listen.port", "8080")
 	c.SetDefault("web.listen.host", "0.0.0.0")
 	c.SetDefault("web.listen.basepath", "")
+
+	// allow unsafe endpoints should never be enabled in Production.
+	// It enables direct API access to healthcare providers without authentication.
 	c.SetDefault("web.allow_unsafe_endpoints", false)
 
 	c.SetDefault("web.src.frontend.path", "/opt/fasten/web")
