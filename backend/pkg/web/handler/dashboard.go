@@ -36,7 +36,9 @@ func GetDashboard(c *gin.Context) {
 		//- download the gist metadata
 		//- if more than 1 file found, look for a dashboard.json
 		//- check if the file sha exists on the file system  (content-addressible file system)
-		//- if it doesnt,
+		//- if its not present, download it
+		//- if its not json, throw an error
+		//- if it doesnt match the dashboard config schema, throw an error.
 
 		for _, dashboardLocation := range dashboardLocations {
 			if strings.HasPrefix(dashboardLocation, "http") {
