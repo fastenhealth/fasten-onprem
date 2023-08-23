@@ -26,6 +26,10 @@ export class MedicalSourcesFilterComponent implements OnInit {
     console.log("SELECTED CATEGORY", category)
     this.filterService.filterForm.patchValue({'categories': {[category]: true}})
   }
+  platformTypeSelected(platformType: string){
+    console.log("SELECTED PLATFORMTYPE", platformType)
+    this.filterService.filterForm.patchValue({'platformTypes': {[platformType]: true}})
+  }
 
   bucketDocCount(aggregationData: LighthouseSourceSearchAggregation, key): number {
     return aggregationData?.buckets?.find(bucket => bucket.key === key)?.doc_count

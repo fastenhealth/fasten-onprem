@@ -160,9 +160,8 @@ export class MedicalSourcesFilterService {
 
     //ensure that checkbox list values exist before trying to "patch" them in.
     if(updateData.platformTypes){
-      var currentFileTypes = this.filterForm.get('platformTypes').value;
       Object.keys(updateData.platformTypes).forEach((bucketKey) => {
-        if(!currentFileTypes.hasOwnProperty(bucketKey)){
+        if(!this.filterForm.get('platformTypes').get(bucketKey)){
           (this.filterForm.get('platformTypes') as FormGroup).addControl(bucketKey, new FormControl(false))
         }
       })

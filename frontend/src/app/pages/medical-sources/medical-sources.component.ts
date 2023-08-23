@@ -183,6 +183,13 @@ export class MedicalSourcesComponent implements OnInit {
             }
           })
 
+          var currentPlatformTypes = this.filterForm.get('platformTypes').value;
+          this.resultLimits.platformTypesBuckets.buckets.forEach((bucketData) => {
+            if(!currentPlatformTypes.hasOwnProperty(bucketData.key)){
+              (this.filterForm.get('platformTypes') as FormGroup).addControl(bucketData.key, new FormControl(false))
+            }
+          })
+
           //
           // this.resultLimits.categoryBuckets.forEach((bucketData) => {
           //   if(!this.globalLimits.categories.some((category) => { return category.id === bucketData.key})){
