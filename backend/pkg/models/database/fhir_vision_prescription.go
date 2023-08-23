@@ -99,17 +99,22 @@ type FhirVisionPrescription struct {
 
 func (s *FhirVisionPrescription) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
-		"datewritten": "date",
-		"encounter":   "reference",
-		"identifier":  "token",
-		"language":    "token",
-		"lastUpdated": "date",
-		"prescriber":  "reference",
-		"profile":     "reference",
-		"status":      "token",
-		"tag":         "token",
-		"text":        "string",
-		"type":        "special",
+		"datewritten":          "date",
+		"encounter":            "reference",
+		"id":                   "keyword",
+		"identifier":           "token",
+		"language":             "token",
+		"lastUpdated":          "date",
+		"prescriber":           "reference",
+		"profile":              "reference",
+		"source_id":            "keyword",
+		"source_resource_id":   "keyword",
+		"source_resource_type": "keyword",
+		"source_uri":           "keyword",
+		"status":               "token",
+		"tag":                  "token",
+		"text":                 "string",
+		"type":                 "special",
 	}
 	return searchParameters
 }

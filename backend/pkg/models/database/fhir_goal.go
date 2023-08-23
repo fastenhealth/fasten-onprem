@@ -90,19 +90,24 @@ type FhirGoal struct {
 
 func (s *FhirGoal) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
-		"achievementStatus": "token",
-		"category":          "token",
-		"identifier":        "token",
-		"language":          "token",
-		"lastUpdated":       "date",
-		"lifecycleStatus":   "token",
-		"profile":           "reference",
-		"startDate":         "date",
-		"subject":           "reference",
-		"tag":               "token",
-		"targetDate":        "date",
-		"text":              "string",
-		"type":              "special",
+		"achievementStatus":    "token",
+		"category":             "token",
+		"id":                   "keyword",
+		"identifier":           "token",
+		"language":             "token",
+		"lastUpdated":          "date",
+		"lifecycleStatus":      "token",
+		"profile":              "reference",
+		"source_id":            "keyword",
+		"source_resource_id":   "keyword",
+		"source_resource_type": "keyword",
+		"source_uri":           "keyword",
+		"startDate":            "date",
+		"subject":              "reference",
+		"tag":                  "token",
+		"targetDate":           "date",
+		"text":                 "string",
+		"type":                 "special",
 	}
 	return searchParameters
 }

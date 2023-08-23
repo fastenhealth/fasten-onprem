@@ -180,6 +180,41 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveOrderBy
 	})
 }
 
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithKeywordOrderByAggregation() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select:       []string{},
+		Where:        map[string]interface{}{},
+		From:         "CarePlan",
+		Aggregations: &models.QueryResourceAggregations{OrderBy: "id"},
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT fhir.*",
+			"FROM fhir_care_plan as fhir",
+			"WHERE (user_id = ?)",
+			"GROUP BY `fhir`.`id`",
+			"ORDER BY fhir.id ASC",
+		}, " "), sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"00000000-0000-0000-0000-000000000000",
+	})
+}
+
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithComplexOrderByAggregation() {
 	//setup
 	sqliteRepo := suite.TestRepository.(*SqliteRepository)
@@ -251,6 +286,78 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveCountBy
 		}, " "), sqlString)
 	require.Equal(suite.T(), sqlParams, []interface{}{
 		"test_code", "00000000-0000-0000-0000-000000000000",
+	})
+}
+
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithKeywordCountByAggregation() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select: []string{},
+		Where: map[string]interface{}{
+			"activityCode": "test_code",
+		},
+		From:         "CarePlan",
+		Aggregations: &models.QueryResourceAggregations{CountBy: "source_resource_type"},
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT fhir.source_resource_type as label, count(*) as value",
+			"FROM fhir_care_plan as fhir, json_each(fhir.activityCode) as activityCodeJson",
+			"WHERE ((activityCodeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
+			"GROUP BY `fhir`.`source_resource_type`",
+			"ORDER BY count(*) DESC",
+		}, " "), sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"test_code", "00000000-0000-0000-0000-000000000000",
+	})
+}
+
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithWildcardCountByAggregation() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select:       []string{},
+		Where:        map[string]interface{}{},
+		From:         "CarePlan",
+		Aggregations: &models.QueryResourceAggregations{CountBy: "*"},
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT fhir.source_resource_type as label, count(*) as value",
+			"FROM fhir_care_plan as fhir",
+			"WHERE (user_id = ?)",
+			"GROUP BY `fhir`.`source_resource_type`",
+			"ORDER BY count(*) DESC",
+		}, " "), sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"00000000-0000-0000-0000-000000000000",
 	})
 }
 

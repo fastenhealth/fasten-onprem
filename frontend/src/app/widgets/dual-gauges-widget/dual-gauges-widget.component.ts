@@ -5,10 +5,11 @@ import {DashboardWidgetComponent} from '../dashboard-widget/dashboard-widget.com
 import {ChartConfiguration} from 'chart.js/dist/types';
 import {LoadingWidgetComponent} from '../loading-widget/loading-widget.component';
 import {EmptyWidgetComponent} from '../empty-widget/empty-widget.component';
+import {PipesModule} from '../../pipes/pipes.module';
 
 @Component({
   standalone: true,
-  imports: [NgChartsModule,CommonModule, LoadingWidgetComponent, EmptyWidgetComponent],
+  imports: [NgChartsModule,CommonModule, LoadingWidgetComponent, EmptyWidgetComponent, PipesModule],
   selector: 'dual-gauges-widget',
   templateUrl: './dual-gauges-widget.component.html',
   styleUrls: ['./dual-gauges-widget.component.scss']

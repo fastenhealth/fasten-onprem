@@ -54,18 +54,23 @@ type FhirCoverageEligibilityRequest struct {
 
 func (s *FhirCoverageEligibilityRequest) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
-		"created":     "date",
-		"enterer":     "reference",
-		"facility":    "reference",
-		"identifier":  "token",
-		"language":    "token",
-		"lastUpdated": "date",
-		"profile":     "reference",
-		"provider":    "reference",
-		"status":      "token",
-		"tag":         "token",
-		"text":        "string",
-		"type":        "special",
+		"created":              "date",
+		"enterer":              "reference",
+		"facility":             "reference",
+		"id":                   "keyword",
+		"identifier":           "token",
+		"language":             "token",
+		"lastUpdated":          "date",
+		"profile":              "reference",
+		"provider":             "reference",
+		"source_id":            "keyword",
+		"source_resource_id":   "keyword",
+		"source_resource_type": "keyword",
+		"source_uri":           "keyword",
+		"status":               "token",
+		"tag":                  "token",
+		"text":                 "string",
+		"type":                 "special",
 	}
 	return searchParameters
 }

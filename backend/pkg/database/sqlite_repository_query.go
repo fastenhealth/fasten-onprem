@@ -27,6 +27,9 @@ const (
 	SearchParameterTypeQuantity  SearchParameterType = "quantity"
 	SearchParameterTypeComposite SearchParameterType = "composite"
 	SearchParameterTypeSpecial   SearchParameterType = "special"
+
+	SearchParameterTypeKeyword SearchParameterType = "keyword" //this is a literal/string primitive.
+
 )
 
 const TABLE_ALIAS = "fhir"
@@ -148,6 +151,12 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 			//populate the group by and order by clause with the count by values
 			query.Aggregations.OrderBy = "count(*) DESC"
 			query.Aggregations.GroupBy = query.Aggregations.CountBy
+
+			if query.Aggregations.GroupBy == "*" {
+				//we need to get the count of all resources, so we need to remove the group by clause and replace it by
+				// `source_resource_type` which will be the same for all resources
+				query.Aggregations.GroupBy = "source_resource_type"
+			}
 		}
 
 		//process order by clause
@@ -322,7 +331,7 @@ func ProcessSearchParameterValue(searchParameter SearchParameter, searchValueWit
 		SecondaryValues: map[string]interface{}{},
 		Value:           searchValueWithPrefix,
 	}
-	if (searchParameter.Type == SearchParameterTypeString || searchParameter.Type == SearchParameterTypeUri) && len(searchParameterValue.Value.(string)) == 0 {
+	if (searchParameter.Type == SearchParameterTypeString || searchParameter.Type == SearchParameterTypeUri || searchParameter.Type == SearchParameterTypeKeyword) && len(searchParameterValue.Value.(string)) == 0 {
 		return searchParameterValue, fmt.Errorf("invalid search parameter value: (%s=%s)", searchParameter.Name, searchParameterValue.Value)
 	}
 
@@ -533,6 +542,9 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		}
 		return fmt.Sprintf("(%s)", clause), searchClauseNamedParams, nil
 
+	case SearchParameterTypeKeyword:
+		//setup the clause
+		return fmt.Sprintf("(%s = @%s)", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)), searchClauseNamedParams, nil
 	case SearchParameterTypeReference:
 		return "", nil, fmt.Errorf("search parameter type %s not supported", searchParam.Type)
 	}
@@ -593,7 +605,7 @@ func ProcessAggregationParameter(aggregationFieldWithProperty string, searchPara
 	}
 
 	//primitive types should not have a modifier, we need to throw an error
-	if aggregationParameter.Type == SearchParameterTypeNumber || aggregationParameter.Type == SearchParameterTypeUri {
+	if aggregationParameter.Type == SearchParameterTypeNumber || aggregationParameter.Type == SearchParameterTypeUri || aggregationParameter.Type == SearchParameterTypeKeyword {
 		if len(aggregationParameter.Modifier) > 0 {
 			return aggregationParameter, fmt.Errorf("primitive aggregation parameter %s cannot have a property (%s)", aggregationParameter.Name, aggregationParameter.Modifier)
 		}

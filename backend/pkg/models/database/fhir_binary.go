@@ -36,12 +36,17 @@ type FhirBinary struct {
 
 func (s *FhirBinary) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
-		"language":    "token",
-		"lastUpdated": "date",
-		"profile":     "reference",
-		"tag":         "token",
-		"text":        "string",
-		"type":        "special",
+		"id":                   "keyword",
+		"language":             "token",
+		"lastUpdated":          "date",
+		"profile":              "reference",
+		"source_id":            "keyword",
+		"source_resource_id":   "keyword",
+		"source_resource_type": "keyword",
+		"source_uri":           "keyword",
+		"tag":                  "token",
+		"text":                 "string",
+		"type":                 "special",
 	}
 	return searchParameters
 }

@@ -57,19 +57,24 @@ type FhirSchedule struct {
 
 func (s *FhirSchedule) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
-		"active":          "token",
-		"actor":           "reference",
-		"date":            "date",
-		"identifier":      "token",
-		"language":        "token",
-		"lastUpdated":     "date",
-		"profile":         "reference",
-		"serviceCategory": "token",
-		"serviceType":     "token",
-		"specialty":       "token",
-		"tag":             "token",
-		"text":            "string",
-		"type":            "special",
+		"active":               "token",
+		"actor":                "reference",
+		"date":                 "date",
+		"id":                   "keyword",
+		"identifier":           "token",
+		"language":             "token",
+		"lastUpdated":          "date",
+		"profile":              "reference",
+		"serviceCategory":      "token",
+		"serviceType":          "token",
+		"source_id":            "keyword",
+		"source_resource_id":   "keyword",
+		"source_resource_type": "keyword",
+		"source_uri":           "keyword",
+		"specialty":            "token",
+		"tag":                  "token",
+		"text":                 "string",
+		"type":                 "special",
 	}
 	return searchParameters
 }

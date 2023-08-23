@@ -132,6 +132,7 @@ func (s *FhirFamilyMemberHistory) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"code":                  "token",
 		"date":                  "date",
+		"id":                    "keyword",
 		"identifier":            "token",
 		"instantiatesCanonical": "reference",
 		"instantiatesUri":       "uri",
@@ -140,6 +141,10 @@ func (s *FhirFamilyMemberHistory) GetSearchParameters() map[string]string {
 		"profile":               "reference",
 		"relationship":          "token",
 		"sex":                   "token",
+		"source_id":             "keyword",
+		"source_resource_id":    "keyword",
+		"source_resource_type":  "keyword",
+		"source_uri":            "keyword",
 		"status":                "token",
 		"tag":                   "token",
 		"text":                  "string",

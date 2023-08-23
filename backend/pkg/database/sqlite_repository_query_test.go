@@ -28,6 +28,7 @@ func TestProcessSearchParameter(t *testing.T) {
 		{"unknown:doesntmatter", map[string]string{"test": "string"}, SearchParameter{}, true}, //unknown search parameter shoudl throw error
 		{"unknown", map[string]string{"test": "string"}, SearchParameter{}, true},              //unknown search parameter shoudl throw error
 		{"test", map[string]string{"test": "faketype"}, SearchParameter{Type: "faketype", Name: "test", Modifier: ""}, false},
+		{"id", map[string]string{"id": "keyword"}, SearchParameter{Type: "keyword", Name: "id", Modifier: ""}, false},
 
 		{"given", map[string]string{"given": "string"}, SearchParameter{Type: "string", Name: "given", Modifier: ""}, false},
 		{"given:contains", map[string]string{"given": "string"}, SearchParameter{Type: "string", Name: "given", Modifier: "contains"}, false},
@@ -112,6 +113,8 @@ func TestProcessSearchParameterValue(t *testing.T) {
 		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, "ap5.4|http://unitsofmeasure.org|mg|additional", SearchParameterValue{Value: float64(5.4), Prefix: "ap", SecondaryValues: map[string]interface{}{"valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg|additional"}}, false},
 		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, "5.4||", SearchParameterValue{Value: float64(5.4), Prefix: "", SecondaryValues: map[string]interface{}{}}, false},
 		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, "", SearchParameterValue{}, true},
+
+		{SearchParameter{Type: "keyword", Name: "id", Modifier: ""}, "1234", SearchParameterValue{Value: "1234", SecondaryValues: map[string]interface{}{}}, false},
 	}
 
 	//test && assert
@@ -155,6 +158,8 @@ func TestSearchCodeToWhereClause(t *testing.T) {
 		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, SearchParameterValue{Value: "ha125", Prefix: "", SecondaryValues: map[string]interface{}{"codeSystem": "http://acme.org/conditions/codes"}}, "0_0", "(codeJson.value ->> '$.code' = @code_0_0 AND codeJson.value ->> '$.system' = @codeSystem_0_0)", map[string]interface{}{"code_0_0": "ha125", "codeSystem_0_0": "http://acme.org/conditions/codes"}, false},
 		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, SearchParameterValue{Value: "ha125", Prefix: "", SecondaryValues: map[string]interface{}{}}, "0_0", "(codeJson.value ->> '$.code' = @code_0_0)", map[string]interface{}{"code_0_0": "ha125"}, false},
 		{SearchParameter{Type: "token", Name: "identifier", Modifier: "otype"}, SearchParameterValue{Value: "MR|446053", Prefix: "", SecondaryValues: map[string]interface{}{"identifierSystem": "http://terminology.hl7.org/CodeSystem/v2-0203"}}, "0_0", "(identifierJson.value ->> '$.code' = @identifier_0_0 AND identifierJson.value ->> '$.system' = @identifierSystem_0_0)", map[string]interface{}{"identifier_0_0": "MR|446053", "identifierSystem_0_0": "http://terminology.hl7.org/CodeSystem/v2-0203"}, false},
+
+		{SearchParameter{Type: "keyword", Name: "id", Modifier: ""}, SearchParameterValue{Value: "1234", Prefix: "", SecondaryValues: map[string]interface{}{}}, "0_0", "(id = @id_0_0)", map[string]interface{}{"id_0_0": "1234"}, false},
 	}
 
 	//test && assert
@@ -181,6 +186,7 @@ func TestSearchCodeToFromClause(t *testing.T) {
 	}{
 		{SearchParameter{Type: "number", Name: "probability", Modifier: ""}, "", false},
 		{SearchParameter{Type: "date", Name: "issueDate", Modifier: ""}, "", false},
+		{SearchParameter{Type: "keyword", Name: "id", Modifier: ""}, "", false},
 		{SearchParameter{Type: "token", Name: "hello", Modifier: ""}, "json_each(fhir.hello) as helloJson", false},
 	}
 

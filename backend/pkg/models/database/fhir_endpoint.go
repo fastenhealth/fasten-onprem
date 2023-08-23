@@ -54,18 +54,23 @@ type FhirEndpoint struct {
 
 func (s *FhirEndpoint) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
-		"connectionType": "token",
-		"identifier":     "token",
-		"language":       "token",
-		"lastUpdated":    "date",
-		"name":           "string",
-		"organization":   "reference",
-		"payloadType":    "token",
-		"profile":        "reference",
-		"status":         "token",
-		"tag":            "token",
-		"text":           "string",
-		"type":           "special",
+		"connectionType":       "token",
+		"id":                   "keyword",
+		"identifier":           "token",
+		"language":             "token",
+		"lastUpdated":          "date",
+		"name":                 "string",
+		"organization":         "reference",
+		"payloadType":          "token",
+		"profile":              "reference",
+		"source_id":            "keyword",
+		"source_resource_id":   "keyword",
+		"source_resource_type": "keyword",
+		"source_uri":           "keyword",
+		"status":               "token",
+		"tag":                  "token",
+		"text":                 "string",
+		"type":                 "special",
 	}
 	return searchParameters
 }

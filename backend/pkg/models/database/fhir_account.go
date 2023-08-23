@@ -54,18 +54,23 @@ type FhirAccount struct {
 
 func (s *FhirAccount) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
-		"identifier":  "token",
-		"language":    "token",
-		"lastUpdated": "date",
-		"name":        "string",
-		"owner":       "reference",
-		"period":      "date",
-		"profile":     "reference",
-		"status":      "token",
-		"subject":     "reference",
-		"tag":         "token",
-		"text":        "string",
-		"type":        "special",
+		"id":                   "keyword",
+		"identifier":           "token",
+		"language":             "token",
+		"lastUpdated":          "date",
+		"name":                 "string",
+		"owner":                "reference",
+		"period":               "date",
+		"profile":              "reference",
+		"source_id":            "keyword",
+		"source_resource_id":   "keyword",
+		"source_resource_type": "keyword",
+		"source_uri":           "keyword",
+		"status":               "token",
+		"subject":              "reference",
+		"tag":                  "token",
+		"text":                 "string",
+		"type":                 "special",
 	}
 	return searchParameters
 }

@@ -203,6 +203,13 @@ func main() {
 					fieldNameLowerCamel := strcase.ToLowerCamel(fieldName)
 					d[jen.Lit(fieldNameLowerCamel)] = jen.Lit(fieldInfo.FieldType)
 				}
+
+				d[jen.Lit("id")] = jen.Lit("keyword")
+				d[jen.Lit("source_id")] = jen.Lit("keyword")
+				d[jen.Lit("source_uri")] = jen.Lit("keyword")
+				d[jen.Lit("source_resource_id")] = jen.Lit("keyword")
+				d[jen.Lit("source_resource_type")] = jen.Lit("keyword")
+
 			}))
 			g.Return(jen.Id("searchParameters"))
 		})

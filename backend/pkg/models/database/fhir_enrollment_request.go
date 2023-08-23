@@ -45,15 +45,20 @@ type FhirEnrollmentRequest struct {
 
 func (s *FhirEnrollmentRequest) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
-		"identifier":  "token",
-		"language":    "token",
-		"lastUpdated": "date",
-		"profile":     "reference",
-		"status":      "token",
-		"subject":     "reference",
-		"tag":         "token",
-		"text":        "string",
-		"type":        "special",
+		"id":                   "keyword",
+		"identifier":           "token",
+		"language":             "token",
+		"lastUpdated":          "date",
+		"profile":              "reference",
+		"source_id":            "keyword",
+		"source_resource_id":   "keyword",
+		"source_resource_type": "keyword",
+		"source_uri":           "keyword",
+		"status":               "token",
+		"subject":              "reference",
+		"tag":                  "token",
+		"text":                 "string",
+		"type":                 "special",
 	}
 	return searchParameters
 }

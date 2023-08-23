@@ -110,19 +110,24 @@ type FhirCareTeam struct {
 
 func (s *FhirCareTeam) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
-		"category":    "token",
-		"date":        "date",
-		"encounter":   "reference",
-		"identifier":  "token",
-		"language":    "token",
-		"lastUpdated": "date",
-		"participant": "reference",
-		"profile":     "reference",
-		"status":      "token",
-		"subject":     "reference",
-		"tag":         "token",
-		"text":        "string",
-		"type":        "special",
+		"category":             "token",
+		"date":                 "date",
+		"encounter":            "reference",
+		"id":                   "keyword",
+		"identifier":           "token",
+		"language":             "token",
+		"lastUpdated":          "date",
+		"participant":          "reference",
+		"profile":              "reference",
+		"source_id":            "keyword",
+		"source_resource_id":   "keyword",
+		"source_resource_type": "keyword",
+		"source_uri":           "keyword",
+		"status":               "token",
+		"subject":              "reference",
+		"tag":                  "token",
+		"text":                 "string",
+		"type":                 "special",
 	}
 	return searchParameters
 }
