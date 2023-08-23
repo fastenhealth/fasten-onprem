@@ -59,7 +59,9 @@ It's pretty basic right now, but it's designed with a easily extensible core aro
 - Uses OAuth2 (Smart-on-FHIR) authentication (no passwords necessary)
 - Uses OAuth's `offline_access` scope (where possible) to automatically pull changes/updates
 - Multi-user support for household/family use
-- (Future) Dashboards & tracking for diagnostic tests
+- Condition specific user Dashboards & tracking for diagnostic tests
+- (Future) Vaccination & condition specific recommendations using NIH/WHO clinical care guidelines (HEDIS/CQL) 
+- (Future) ChatGPT-style interface to query your own medical history (offline)
 - (Future) Integration with smart-devices & wearables
 
 # Getting Started
