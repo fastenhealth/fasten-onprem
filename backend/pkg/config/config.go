@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+const DB_USER_SETTINGS_SUBKEY = "user"
+
 // When initializing this class the following methods must be called:
 // Config.New
 // Config.Init
@@ -30,8 +32,6 @@ func (c *configuration) Init() error {
 	c.SetDefault("web.allow_unsafe_endpoints", false)
 
 	c.SetDefault("web.src.frontend.path", "/opt/fasten/web")
-	c.SetDefault("dashboard.location", []string{})
-
 	c.SetDefault("database.location", "/opt/fasten/db/fasten.db")
 
 	c.SetDefault("jwt.issuer.key", "thisismysupersecuressessionsecretlength")
