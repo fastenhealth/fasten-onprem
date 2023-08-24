@@ -5,6 +5,7 @@ import (
 	sourcePkg "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/google/uuid"
 )
 
 //go:generate mockgen -source=interface.go -destination=mock/mock_database.go
@@ -40,6 +41,11 @@ type DatabaseRepository interface {
 
 	CreateGlossaryEntry(ctx context.Context, glossaryEntry *models.Glossary) error
 	GetGlossaryEntry(ctx context.Context, code string, codeSystem string) (*models.Glossary, error)
+
+	//settings
+	LoadUserSettings(ctx context.Context) (*models.UserSettings, error)
+	SaveUserSettings(context.Context, *models.UserSettings) error
+	PopulateDefaultUserSettings(ctx context.Context, userId uuid.UUID) error
 
 	//used by fasten-sources Clients
 	UpsertRawResource(ctx context.Context, sourceCredentials sourcePkg.SourceCredential, rawResource sourcePkg.RawResourceFhir) (bool, error)

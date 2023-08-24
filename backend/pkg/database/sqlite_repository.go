@@ -99,6 +99,7 @@ func (sr *SqliteRepository) Migrate() error {
 		&models.User{},
 		&models.SourceCredential{},
 		&models.Glossary{},
+		&models.UserSettingEntry{},
 	)
 	if err != nil {
 		return fmt.Errorf("Failed to automigrate! - %v", err)
@@ -121,6 +122,12 @@ func (sr *SqliteRepository) CreateUser(ctx context.Context, user *models.User) e
 	record := sr.GormClient.Create(user)
 	if record.Error != nil {
 		return record.Error
+	}
+
+	//create user settings
+	err := sr.PopulateDefaultUserSettings(ctx, user.ID)
+	if err != nil {
+		return err
 	}
 	return nil
 }
