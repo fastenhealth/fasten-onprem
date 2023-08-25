@@ -36,6 +36,7 @@ export class DashboardComponent implements OnInit {
   //dashboardLocation is used to store the location of the dashboard that we're trying to add
   addDashboardLoading: boolean = false
   dashboardLocation: string = ''
+  dashboardLocationError: string = ''
 
   @ViewChild(GridstackComponent) gridComp?: GridstackComponent;
 
@@ -140,6 +141,7 @@ export class DashboardComponent implements OnInit {
 
   public addDashboardLocation(){
     this.addDashboardLoading = true
+    this.dashboardLocationError = ''
     this.fastenApi.addDashboardLocation(this.dashboardLocation).subscribe((result) => {
       console.log("Added Remote Dashboard", result)
       this.addDashboardLoading = false
@@ -151,7 +153,9 @@ export class DashboardComponent implements OnInit {
     }, (error) => {
       console.log("Error Adding Remote Dashboard", error)
       this.addDashboardLoading = false
-    },
+      this.dashboardLocationError = error
+
+      },
     () => {
       console.log("Completed Adding Remote Dashboard")
       this.addDashboardLoading = false

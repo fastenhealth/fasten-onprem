@@ -79,16 +79,34 @@
             id="remoteDashboardLocation"
             class="form-control"
             placeholder="https://gist.github.com/..."
+            pattern="https://gist.github.com/.*"
             name="remoteDashboardLocation"
             type="url"
             [(ngModel)]="dashboardLocation"
+            #dashboardLocationField="ngModel"
           />
         </div>
       </div>
+
+      <div *ngIf="dashboardLocationField.invalid && (dashboardLocationField.dirty || dashboardLocationField.touched)"
+           class="alert alert-danger">
+
+        <div *ngIf="dashboardLocationField.errors?.['required']">
+          Dashboard Location is required.
+        </div>
+        <div *ngIf="dashboardLocationField.errors?.['pattern']">
+          Dashboard Location must be a valid github gist url.
+        </div>
+      </div>
+
+      <div *ngIf="dashboardLocationError" class="alert alert-danger">
+        {{dashboardLocationError}}
+      </div>
+
     </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" [disabled]="addDashboardLoading" (click)="addDashboardLocation()">Add</button>
+    <button type="button" class="btn  btn-outline-indigo" [disabled]="addDashboardLoading" (click)="addDashboardLocation()">Add</button>
   </div>
 </ng-template>
 
