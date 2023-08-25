@@ -123,8 +123,9 @@ describe('DashboardWidgetComponent', () => {
               "from": "Immunization",
               "where": {},
 
-              "aggregation_params":["resourceType"],
-              "aggregation_type":"countBy"
+              "aggregations":{
+                "count_by": "source_resource_type"
+              },
             }
           },
             {
@@ -136,8 +137,9 @@ describe('DashboardWidgetComponent', () => {
                 "from": "Claim",
                 "where": {},
 
-                "aggregation_params":["resourceType"],
-                "aggregation_type":"countBy"
+                "aggregations":{
+                  "count_by": "source_resource_type"
+                },
               }
             }],
           "parsing": {

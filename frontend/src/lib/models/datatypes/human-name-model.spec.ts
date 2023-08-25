@@ -13,8 +13,9 @@ describe('HumanNameModel', () => {
     expectedHumanName.familyName = 'Windsor'
     expectedHumanName.suffix = ''
     expectedHumanName.use = 'maiden'
-    expectedHumanName.header = 'Peter, James Windsor'
+    // expectedHumanName.header = 'Peter, James Windsor'
 
     expect(new HumanNameModel(fixture)).toEqual(expectedHumanName);
+    expect('Peter, James Windsor').toEqual(expectedHumanName.displayName);
   });
 });

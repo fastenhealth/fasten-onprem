@@ -240,9 +240,11 @@ export class MedicalSourcesConnectedComponent implements OnInit {
    * @param tokenResponse
    * @param env
    */
-  private getAccessTokenExpiration(tokenResponse: any): number
+  public getAccessTokenExpiration(tokenResponse: any): number
   {
     const now = Math.floor(Date.now() / 1000);
+    let expires_at = 0;
+
 
     // Option 1 - using the expires_in property of the token response
     if (tokenResponse.expires_in) {
