@@ -31,4 +31,18 @@ describe('MedicalSourcesConnectedComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should handle nanosecond and microsecond token expirations', () => {
+    var tokenResponse = {
+      token_type: "Bearer",
+      expires_in: "3600",
+      access_token: "OXgK8mrfvMrxIMK38T6CAjKiLMDV",
+      refresh_token: "5Oq5ZgcTgi9-xxxxxxx",
+      patient: "a-80000.xxxx"
+    }
+
+    var expiresAt = component.getAccessTokenExpiration(tokenResponse)
+    expect(expiresAt.toString().length).toEqual(10)
+  })
+
 });

@@ -243,19 +243,18 @@ export class MedicalSourcesConnectedComponent implements OnInit {
   public getAccessTokenExpiration(tokenResponse: any): number
   {
     const now = Math.floor(Date.now() / 1000);
-    let expires_at = 0;
-
 
     // Option 1 - using the expires_in property of the token response
     if (tokenResponse.expires_in) {
-      return now + tokenResponse.expires_in;
+      return now + parseInt(tokenResponse.expires_in);
     }
 
     // Option 2 - using the exp property of JWT tokens (must not assume JWT!)
     if (tokenResponse.access_token) {
+
       let tokenBody = this.jwtDecode(tokenResponse.access_token);
       if (tokenBody && tokenBody['exp']) {
-        return tokenBody['exp'];
+        return parseInt(tokenBody['exp']);
       }
     }
 
