@@ -64,12 +64,21 @@
 
 <ng-template #addDashboard let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+    <h4 class="modal-title" id="modal-basic-title">Add Dashboard</h4>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">×</span>
     </button>
   </div>
   <div class="modal-body">
+    <p>
+      Users can create personalized dashboards tracking the information they care about, by querying their own medical records using a SQL-like syntax.
+    </p>
+    <p>
+      Fasten comes with a few <a target="_blank" href="https://github.com/fastenhealth/fasten-onprem/tree/main/backend/pkg/web/handler/dashboard">pre-built dashboards</a> to get you started. You can also add your own dashboards by providing a link to a Github Gist containing a JSON representation of your dashboard.
+    </p>
+    <p>
+      See <a target="_blank" href="https://docs.fastenhealth.com/dashboard/configuration.html">Dashboard Configuration Documentation</a> for more information.
+    </p>
     <form>
       <div class="mb-3">
         <label for="remoteDashboardLocation">Remote Dashboard Location (Github Gist)<span ngbTooltip="required" class="text-danger">*</span></label>
