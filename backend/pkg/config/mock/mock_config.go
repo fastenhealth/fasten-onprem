@@ -146,6 +146,20 @@ func (mr *MockInterfaceMockRecorder) IsSet(key interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsSet", reflect.TypeOf((*MockInterface)(nil).IsSet), key)
 }
 
+// MergeConfigMap mocks base method.
+func (m *MockInterface) MergeConfigMap(cfg map[string]interface{}) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MergeConfigMap", cfg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// MergeConfigMap indicates an expected call of MergeConfigMap.
+func (mr *MockInterfaceMockRecorder) MergeConfigMap(cfg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MergeConfigMap", reflect.TypeOf((*MockInterface)(nil).MergeConfigMap), cfg)
+}
+
 // ReadConfig mocks base method.
 func (m *MockInterface) ReadConfig(configFilePath string) error {
 	m.ctrl.T.Helper()

@@ -12,6 +12,7 @@ import (
 	pkg "github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
 	models0 "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	gomock "github.com/golang/mock/gomock"
+	uuid "github.com/google/uuid"
 )
 
 // MockDatabaseRepository is a mock of DatabaseRepository interface.
@@ -316,6 +317,21 @@ func (mr *MockDatabaseRepositoryMockRecorder) ListResources(arg0, arg1 interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListResources", reflect.TypeOf((*MockDatabaseRepository)(nil).ListResources), arg0, arg1)
 }
 
+// LoadUserSettings mocks base method.
+func (m *MockDatabaseRepository) LoadUserSettings(ctx context.Context) (*models0.UserSettings, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LoadUserSettings", ctx)
+	ret0, _ := ret[0].(*models0.UserSettings)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// LoadUserSettings indicates an expected call of LoadUserSettings.
+func (mr *MockDatabaseRepositoryMockRecorder) LoadUserSettings(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadUserSettings", reflect.TypeOf((*MockDatabaseRepository)(nil).LoadUserSettings), ctx)
+}
+
 // Migrate mocks base method.
 func (m *MockDatabaseRepository) Migrate() error {
 	m.ctrl.T.Helper()
@@ -330,11 +346,25 @@ func (mr *MockDatabaseRepositoryMockRecorder) Migrate() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Migrate", reflect.TypeOf((*MockDatabaseRepository)(nil).Migrate))
 }
 
+// PopulateDefaultUserSettings mocks base method.
+func (m *MockDatabaseRepository) PopulateDefaultUserSettings(ctx context.Context, userId uuid.UUID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PopulateDefaultUserSettings", ctx, userId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// PopulateDefaultUserSettings indicates an expected call of PopulateDefaultUserSettings.
+func (mr *MockDatabaseRepositoryMockRecorder) PopulateDefaultUserSettings(ctx, userId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PopulateDefaultUserSettings", reflect.TypeOf((*MockDatabaseRepository)(nil).PopulateDefaultUserSettings), ctx, userId)
+}
+
 // QueryResources mocks base method.
-func (m *MockDatabaseRepository) QueryResources(ctx context.Context, query models0.QueryResource) ([]models0.ResourceBase, error) {
+func (m *MockDatabaseRepository) QueryResources(ctx context.Context, query models0.QueryResource) (interface{}, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "QueryResources", ctx, query)
-	ret0, _ := ret[0].([]models0.ResourceBase)
+	ret0, _ := ret[0].(interface{})
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -357,6 +387,20 @@ func (m *MockDatabaseRepository) RemoveResourceAssociation(ctx context.Context, 
 func (mr *MockDatabaseRepositoryMockRecorder) RemoveResourceAssociation(ctx, source, resourceType, resourceId, relatedSource, relatedResourceType, relatedResourceId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveResourceAssociation", reflect.TypeOf((*MockDatabaseRepository)(nil).RemoveResourceAssociation), ctx, source, resourceType, resourceId, relatedSource, relatedResourceType, relatedResourceId)
+}
+
+// SaveUserSettings mocks base method.
+func (m *MockDatabaseRepository) SaveUserSettings(arg0 context.Context, arg1 *models0.UserSettings) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SaveUserSettings", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SaveUserSettings indicates an expected call of SaveUserSettings.
+func (mr *MockDatabaseRepositoryMockRecorder) SaveUserSettings(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveUserSettings", reflect.TypeOf((*MockDatabaseRepository)(nil).SaveUserSettings), arg0, arg1)
 }
 
 // UpdateSource mocks base method.

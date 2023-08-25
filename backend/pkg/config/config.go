@@ -10,8 +10,6 @@ import (
 	"strings"
 )
 
-const DB_USER_SETTINGS_SUBKEY = "user"
-
 // When initializing this class the following methods must be called:
 // Config.New
 // Config.Init
