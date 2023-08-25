@@ -65,7 +65,7 @@ func GetDashboard(c *gin.Context) {
 			return
 		}
 
-		dashboards, err = getDashboardFromDir(dirEntries, os.ReadFile)
+		dashboards, err = getDashboardFromDir(cacheDir, dirEntries, os.ReadFile)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 			return
@@ -77,7 +77,7 @@ func GetDashboard(c *gin.Context) {
 			return
 		}
 
-		dashboards, err = getDashboardFromDir(dirEntries, dashboardFS.ReadFile)
+		dashboards, err = getDashboardFromDir("dashboard", dirEntries, dashboardFS.ReadFile)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 			return
@@ -87,10 +87,17 @@ func GetDashboard(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": dashboards})
 }
 
-func SaveDashboardLocations(c *gin.Context) {
+func AddDashboardLocation(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	//appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	var dashboardLocation map[string]string
+	if err := c.ShouldBindJSON(&dashboardLocation); err != nil {
+		logger.Errorln("An error occurred while parsing new dashboard location", err)
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
+	}
 
 	//load settings from database
 	logger.Infof("Loading User Settings..")
@@ -99,8 +106,9 @@ func SaveDashboardLocations(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
+
 	//override locations with new locations
-	userSettings.DashboardLocations = c.PostFormArray("dashboardLocations")
+	userSettings.DashboardLocations = append(userSettings.DashboardLocations, dashboardLocation["location"])
 
 	logger.Debugf("User Settings: %v", userSettings)
 
@@ -130,11 +138,15 @@ func SaveDashboardLocations(c *gin.Context) {
 		}
 		cacheDashboards = append(cacheDashboards, filepath.Base(cacheDashboardLocation))
 	}
-
+	if len(cacheErrors) > 0 {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": fmt.Errorf("error caching dashboards: %v", cacheErrors)})
+		return
+	}
 	//cleanup any files in the cache that are no longer in the dashboard locations
+	logger.Infof("Cleaning cache dir: %v", cacheDir)
 	dirEntries, err := os.ReadDir(cacheDir)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": fmt.Errorf("error before cleaning cache dir: %v", err)})
 		return
 	}
 	for _, dirEntry := range dirEntries {
@@ -147,18 +159,13 @@ func SaveDashboardLocations(c *gin.Context) {
 		}
 	}
 
-	if len(cacheErrors) > 0 {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": cacheErrors})
+	err = databaseRepo.SaveUserSettings(c, userSettings)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": fmt.Errorf("error saving user settings: %v", err)})
 		return
-	} else {
-		err = databaseRepo.SaveUserSettings(c, userSettings)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{"success": true})
 	}
-
+	c.JSON(http.StatusOK, gin.H{"success": true})
+	return
 }
 
 //private functions
@@ -187,10 +194,17 @@ func cacheCustomDashboard(logger *logrus.Entry, githubClient *github.Client, cac
 
 	logger.Infof("Processing custom dashboard from %v", remoteDashboardLocation)
 
-	gist, _, err := githubClient.Gists.Get(context.Background(), remoteDashboardLocation)
+	gistSlug := strings.TrimPrefix(remoteDashboardLocation, "https://gist.github.com/")
+	gistSlugParts := strings.Split(gistSlug, "/")
+	if len(gistSlugParts) != 2 {
+		return "", fmt.Errorf("invalid gist slug: %v", gistSlug)
+	}
+
+	gist, _, err := githubClient.Gists.Get(context.Background(), gistSlugParts[1])
 	if err != nil {
 		return "", fmt.Errorf("error retrieving remote gist: %v", err)
 	}
+	logger.Debugf("Got Gist %v, files: %d", gist.GetID(), len(gist.GetFiles()))
 
 	//check if gist has more than 1 file
 	var dashboardJsonFile github.GistFile
@@ -216,20 +230,28 @@ func cacheCustomDashboard(logger *logrus.Entry, githubClient *github.Client, cac
 	}
 
 	//ensure that the file is valid json
+	logger.Debugf("validating dashboard gist json")
 	var dashboardJson map[string]interface{}
 	err = json.Unmarshal([]byte(dashboardJsonFile.GetContent()), &dashboardJson)
 	if err != nil {
 		return "", fmt.Errorf("error unmarshalling dashboard configuration (invalid JSON?): %v", err)
 	}
 
+	dashboardJson["source"] = remoteDashboardLocation
+	dashboardJson["id"] = gist.GetID()
+
 	//TODO: validate against DashboardConfigSchema
 
-	absCacheFileLocation := filepath.Join(cacheDir, gist.GetID())
+	absCacheFileLocation := filepath.Join(cacheDir, fmt.Sprintf("%s.json", gist.GetID()))
 	//write it to filesystem
 	logger.Infof("Writing new dashboard configuration to filesystem: %v", remoteDashboardLocation)
 
 	//write file to cache
-	err = os.WriteFile(absCacheFileLocation, []byte(dashboardJsonFile.GetContent()), 0644)
+	dashboardJsonBytes, err := json.MarshalIndent(dashboardJson, "", "  ")
+	if err != nil {
+		return "", fmt.Errorf("error marshalling dashboard configuration: %v", err)
+	}
+	err = os.WriteFile(absCacheFileLocation, dashboardJsonBytes, 0644)
 	if err != nil {
 		return "", fmt.Errorf("error writing dashboard configuration to cache: %v", err)
 	}
@@ -237,7 +259,7 @@ func cacheCustomDashboard(logger *logrus.Entry, githubClient *github.Client, cac
 	return absCacheFileLocation, nil
 }
 
-func getDashboardFromDir(dirEntries []fs.DirEntry, fsReadFile func(name string) ([]byte, error)) ([]map[string]interface{}, error) {
+func getDashboardFromDir(parentDir string, dirEntries []fs.DirEntry, fsReadFile func(name string) ([]byte, error)) ([]map[string]interface{}, error) {
 	dashboards := []map[string]interface{}{}
 
 	for _, file := range dirEntries {
@@ -246,7 +268,7 @@ func getDashboardFromDir(dirEntries []fs.DirEntry, fsReadFile func(name string) 
 		}
 
 		//unmarshal file into map
-		embeddedFile, err := fsReadFile("dashboard/" + file.Name())
+		embeddedFile, err := fsReadFile(filepath.Join(parentDir, file.Name()))
 		if err != nil {
 			return nil, err
 		}

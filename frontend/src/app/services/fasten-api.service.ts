@@ -197,6 +197,18 @@ export class FastenApiService {
       );
   }
 
+  addDashboardLocation(location: string): Observable<ResponseWrapper> {
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/dashboards`, {
+      "location": location
+    })
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("RESPONSE", response)
+          return response
+        })
+      );
+  }
+
   //this method allows a user to manually group related FHIR resources together (conditions, encounters, etc).
   createResourceComposition(title: string, resources: ResourceFhir[]){
     return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/composition`, {

@@ -5,6 +5,7 @@ export class DashboardConfig {
   schema_version: string //increment this number when the config schema changes, not controlled by user.
   title: string
   description?: string
+  source?: string //remote dashboard source (not present for default/embedded dashboards)
 
   widgets: DashboardWidgetConfig[]
 }
