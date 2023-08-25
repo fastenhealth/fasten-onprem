@@ -28,29 +28,29 @@
 
       <div class="az-dashboard-nav">
         <nav class="nav">
+          <a *ngFor="let dashboardConfig of dashboardConfigs; let i = index"
+             class="nav-link"
+             [class.active]="selectedDashboardConfigNdx === i"
+             (click)="changeSelectedDashboard(i)"
+          >{{dashboardConfig.title}}</a>
         </nav>
 
         <nav class="nav">
           <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-save"></i> Export</a>
-          <a class="nav-link" routerLink="/" ngbTooltip="not yet implemented"><i class="far fa-file-pdf"></i> Create</a>
-          <a class="nav-link" (click)="toggleEditableGrid()"><i class="fas fa-edit"></i> Edit </a>
+          <a class="nav-link" (click)="showAddDashboardLocationModal(addDashboard)"><i class="fas fa-plus"></i> Add</a>
+          <a class="nav-link" (click)="showDashboardSettingsModal(dashboardSettings)"><i class="fas fa-sliders-h"></i> Settings</a>
           <a class="nav-link"><i class="fas fa-ellipsis"></i></a>
         </nav>
       </div>
 
       <div class="row mt-5 mb-3">
         <div class="col-12">
-
-          <div class="alert alert-warning" role="alert">
-            <strong>Warning!</strong> Fasten Health is in the process of implementing a customizable widget based dashboard.
+          <div class="alert alert-info" role="alert">
+            <strong>Description:</strong> {{dashboardConfigs?.[selectedDashboardConfigNdx]?.description}}
             <br/>
-            <ul>
-              <li>Users will be able to add, remove, and re-organize widgets on their dashboard.</li>
-              <li>Users will be able to create multiple dashboards, and switch between them.</li>
-              <li>Users will be able to share their dashboards with other users.</li>
-            </ul>
-            <br/>
-            <strong>This functionality is not yet fully completed</strong> but this example dashboard below will give you a sense of what this may look like. Widgets in yellow only contain placeholder data.
+            <span *ngIf="dashboardConfigs?.[selectedDashboardConfigNdx]?.source">
+              <strong>Source:</strong> <a [href]="dashboardConfigs?.[selectedDashboardConfigNdx]?.source" target="_blank">{{dashboardConfigs?.[selectedDashboardConfigNdx]?.source}}</a>
+            </span>
           </div>
         </div>
       </div>
@@ -61,3 +61,72 @@
     </div><!-- az-content-body -->
   </div>
 </div><!-- az-content -->
+
+<ng-template #addDashboard let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="mb-3">
+        <label for="remoteDashboardLocation">Remote Dashboard Location (Github Gist)<span ngbTooltip="required" class="text-danger">*</span></label>
+        <div class="input-group">
+          <input
+            required
+            id="remoteDashboardLocation"
+            class="form-control"
+            placeholder="https://gist.github.com/..."
+            name="remoteDashboardLocation"
+            type="url"
+            [(ngModel)]="dashboardLocation"
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" [disabled]="addDashboardLoading" (click)="addDashboardLocation()">Add</button>
+  </div>
+</ng-template>
+
+
+<ng-template #dashboardSettings let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{dashboardConfigs?.[selectedDashboardConfigNdx]?.title}} Settings</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12">
+        <p>{{dashboardConfigs?.[selectedDashboardConfigNdx]?.description}}</p>
+      </div>
+    </div>
+
+
+    <div class="row row-xs align-items-center mg-b-20">
+      <div class="col-12">
+        <h6>Editor Mode</h6>
+        <p>Editor mode allows you to reorganize widgets on your dashboard</p>
+        <div (click)="toggleEditableGrid()" [class.on]="!this.gridEditDisabled" class="az-toggle"><span></span></div>
+      </div><!-- col -->
+    </div>
+    <div *ngIf="dashboardConfigs?.[selectedDashboardConfigNdx]?.source" class="row row-xs align-items-center mg-b-20">
+      <div class="col-12">
+        <h6>Refresh</h6>
+        <p>Click to refresh your dashboard configuration. Only applicable to remote dashboards.</p>
+      </div><!-- col -->
+      <div class="col-4">
+        <button ngbTooltip="not yet implemented" class="btn btn-outline-indigo">Refresh</button>
+      </div><!-- col -->
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger mr-auto" ngbTooltip="not yet implemented">Delete</button>
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+  </div>
+</ng-template>

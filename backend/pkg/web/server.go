@@ -64,6 +64,7 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 				secure.POST("/resource/composition", handler.CreateResourceComposition)
 
 				secure.GET("/dashboards", handler.GetDashboard)
+				secure.POST("/dashboards", handler.AddDashboardLocation)
 				//secure.GET("/dashboard/:dashboardId", handler.GetDashboard)
 
 				secure.POST("/query", handler.QueryResourceFhir)

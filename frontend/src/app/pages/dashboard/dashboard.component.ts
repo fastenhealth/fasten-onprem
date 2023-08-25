@@ -9,6 +9,7 @@ import {LighthouseService} from '../../services/lighthouse.service';
 import { GridStack, GridStackOptions, GridStackWidget } from 'gridstack';
 import {GridstackComponent, NgGridStackOptions} from '../../components/gridstack/gridstack.component';
 import {DashboardConfig} from '../../models/widget/dashboard-config';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 
 // unique ids sets for each item for correct ngFor updating
@@ -30,6 +31,11 @@ export class DashboardComponent implements OnInit {
 
   metadataSource: { [name: string]: MetadataSource }
   dashboardConfigs: DashboardConfig[] = []
+  selectedDashboardConfigNdx: number = 0
+
+  //dashboardLocation is used to store the location of the dashboard that we're trying to add
+  addDashboardLoading: boolean = false
+  dashboardLocation: string = ''
 
   @ViewChild(GridstackComponent) gridComp?: GridstackComponent;
 
@@ -39,6 +45,7 @@ export class DashboardComponent implements OnInit {
     private router: Router,
     private componentFactoryResolver: ComponentFactoryResolver,
     private vcRef: ViewContainerRef,
+    private modalService: NgbModal,
   ) { }
 
   ngOnInit() {
@@ -54,19 +61,7 @@ export class DashboardComponent implements OnInit {
 
       //setup dashboard configs
       console.log("DASHBOARDS!", this.dashboardConfigs)
-      this.dashboardConfigs?.[0].widgets.forEach((widgetConfig) => {
-        console.log("Adding Widgets to Dashboard Grid")
-
-        this.gridComp?.grid?.addWidget({
-          x: widgetConfig.x,
-          y: widgetConfig.y,
-          w: widgetConfig.width,
-          h: widgetConfig.height,
-          // @ts-ignore
-          type: widgetConfig.item_type,
-          widgetConfig: !!widgetConfig?.queries?.length ? widgetConfig : undefined,
-        })
-      })
+      this.changeSelectedDashboard(0)
 
     }, error => {
       this.loading = false
@@ -116,6 +111,25 @@ export class DashboardComponent implements OnInit {
     children: [],
   }
 
+  public changeSelectedDashboard(selectedDashboardNdx: number){
+    this.selectedDashboardConfigNdx = selectedDashboardNdx
+    this.gridComp?.grid?.removeAll() //clear the grid
+
+    this.dashboardConfigs?.[this.selectedDashboardConfigNdx]?.widgets?.forEach((widgetConfig) => {
+      console.log("Adding Widgets to Dashboard Grid")
+
+      this.gridComp?.grid?.addWidget({
+        x: widgetConfig.x,
+        y: widgetConfig.y,
+        w: widgetConfig.width,
+        h: widgetConfig.height,
+        // @ts-ignore
+        type: widgetConfig.item_type,
+        widgetConfig: !!widgetConfig?.queries?.length ? widgetConfig : undefined,
+      })
+    })
+  }
+
   public toggleEditableGrid() {
     this.gridEditDisabled = !this.gridEditDisabled;
     console.log('toggle - is disabled', this.gridEditDisabled)
@@ -123,4 +137,47 @@ export class DashboardComponent implements OnInit {
     this.gridEditDisabled ? this.gridComp.grid?.disable(true) : this.gridComp.grid?.enable(true);
 
   }
+
+  public addDashboardLocation(){
+    this.addDashboardLoading = true
+    this.fastenApi.addDashboardLocation(this.dashboardLocation).subscribe((result) => {
+      console.log("Added Remote Dashboard", result)
+      this.addDashboardLoading = false
+
+      this.modalService.dismissAll()
+
+      //reload the page
+      window.location.reload()
+    }, (error) => {
+      console.log("Error Adding Remote Dashboard", error)
+      this.addDashboardLoading = false
+    },
+    () => {
+      console.log("Completed Adding Remote Dashboard")
+      this.addDashboardLoading = false
+    })
+  }
+
+  public showAddDashboardLocationModal(content) {
+    this.dashboardLocation = ''
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
+      (result) => {
+        console.log(`Closed with: ${result}`)
+      },
+      (reason) => {
+        console.log(`Dismissed ${reason}`)
+      },
+    );
+  }
+  public showDashboardSettingsModal(content) {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
+      (result) => {
+        console.log(`Closed with: ${result}`)
+      },
+      (reason) => {
+        console.log(`Dismissed ${reason}`)
+      },
+    );
+  }
+
 }
