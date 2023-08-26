@@ -17,7 +17,7 @@
 
 **Fasten securely connects your healthcare providers together, creating a personal health record that never leaves your hands**
 
-> NOTE: Fasten is a Work-in-Progress and can only communicate with a limited number of Healthcare Instutions (approx 10,000 at last count).
+> NOTE: Fasten is a Work-in-Progress and can only communicate with a limited number of Healthcare Instutions (approx 25,000 at last count).
 > Please fill out this [Google Form](https://forms.gle/SNsYX9BNMXB6TuTw6) if you'd like to be kept up-to-date on Fasten 
 
 # Introduction
