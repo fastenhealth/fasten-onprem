@@ -7,7 +7,7 @@ require (
 	github.com/dave/jennifer v1.6.1
 	github.com/dominikbraun/graph v0.15.0
 	github.com/dop251/goja v0.0.0-20230605162241-28ee0ee714f3
-	github.com/fastenhealth/fasten-sources v0.2.9
+	github.com/fastenhealth/fasten-sources v0.2.13
 	github.com/fastenhealth/gofhir-models v0.0.5
 	github.com/gin-gonic/gin v1.9.0
 	github.com/glebarez/sqlite v1.5.0
@@ -17,7 +17,6 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/lestrrat-go/jwx/v2 v2.0.11
-	github.com/mitchellh/mapstructure v1.5.0
 	github.com/philips-software/go-hsdp-api v0.81.0
 	github.com/samber/lo v1.35.0
 	github.com/sirupsen/logrus v1.9.0
@@ -73,6 +72,7 @@ require (
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
+	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
