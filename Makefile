@@ -55,13 +55,16 @@ dep-frontend:
 
 .PHONY: build-frontend-sandbox
 build-frontend-sandbox: dep-frontend
-	cd frontend
-	yarn run build -- --configuration sandbox --output-path=../dist
+	cd frontend && yarn build -- -c sandbox
 
 .PHONY: build-frontend-prod
 build-frontend-prod: dep-frontend
-	cd frontend
-	yarn run build -- --configuration prod --output-path=../dist
+	cd frontend && yarn build -- -c prod
+
+.PHONY: build-frontend-desktop
+build-frontend-desktop: dep-frontend
+	cd frontend && yarn build -- -c desktop
+
 
 .PHONY: test-frontend
 # reduce logging, disable angular-cli analytics for ci environment
