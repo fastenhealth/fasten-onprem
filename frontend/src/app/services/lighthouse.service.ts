@@ -145,14 +145,21 @@ export class LighthouseService {
    */
   redirectWithOriginAndDestination(destUrl: string, sourceType: string, callbackUri: string): void {
     const originUrlParts = new URL(window.location.href)
-    originUrlParts.hash = "" //reset hash in-case its present.
-    originUrlParts.pathname = this.pathJoin([originUrlParts.pathname, `callback/${sourceType}`])
 
+    if(environment.environment_desktop){
+      //hash based routing
+      originUrlParts.hash = this.pathJoin([originUrlParts.hash, `callback/${sourceType}`])
+    } else {
+      //path based routing
+      originUrlParts.hash = "" //reset hash in-case its present.
+      originUrlParts.pathname = this.pathJoin([originUrlParts.pathname, `callback/${sourceType}`])
+    }
 
     const redirectUrlParts = new URL(callbackUri.replace("/callback/", "/redirect/"));
     const redirectParams = new URLSearchParams()
     redirectParams.set("origin_url", originUrlParts.toString())
     redirectParams.set("dest_url", destUrl)
+    redirectParams.set("desktop_mode", environment.environment_desktop ? "true" : "false")
     redirectUrlParts.search = redirectParams.toString()
     console.log(redirectUrlParts.toString());
 

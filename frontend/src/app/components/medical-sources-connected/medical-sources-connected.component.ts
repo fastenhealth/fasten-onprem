@@ -79,7 +79,8 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
         //get required parameters from the URI and local storage
         const callbackUrlParts = new URL(window.location.href)
-        const fragmentParams = new URLSearchParams(callbackUrlParts.hash.substring(1))
+        //in desktop mode, we're using fragment routing, and the callback params are in the fragment.
+        const fragmentParams = new URLSearchParams(callbackUrlParts.hash.split('?')?.[1] || '')
         const callbackCode = callbackUrlParts.searchParams.get("code") || fragmentParams.get("code")
         const callbackState = callbackUrlParts.searchParams.get("state") || fragmentParams.get("state")
         const callbackError = callbackUrlParts.searchParams.get("error") || fragmentParams.get("error")

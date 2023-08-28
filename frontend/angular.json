@@ -127,11 +127,11 @@
                 }
               ]
             },
-            "desktop": {
+            "desktop_sandbox": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.desktop.ts"
+                  "with": "src/environments/environment.desktop_sandbox.ts"
                 }
               ],
               "optimization": true,
@@ -171,8 +171,8 @@
             "cloud_sandbox": {
               "browserTarget": "fastenhealth:build:cloud_sandbox"
             },
-            "desktop": {
-              "browserTarget": "fastenhealth:build:desktop"
+            "desktop_sandbox": {
+              "browserTarget": "fastenhealth:build:desktop_sandbox"
             }
           }
         },

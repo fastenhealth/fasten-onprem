@@ -1,6 +1,7 @@
 package web
 
 import (
+	"embed"
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/handler"
@@ -16,16 +17,16 @@ type AppEngine struct {
 	Logger *logrus.Entry
 }
 
-func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
+func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	r := gin.New()
 
-	r.Use(middleware.LoggerMiddleware(logger))
-	r.Use(middleware.RepositoryMiddleware(ae.Config, logger))
+	r.Use(middleware.LoggerMiddleware(ae.Logger))
+	r.Use(middleware.RepositoryMiddleware(ae.Config, ae.Logger))
 	r.Use(middleware.ConfigMiddleware(ae.Config))
 	r.Use(gin.Recovery())
 
 	basePath := ae.Config.GetString("web.listen.basepath")
-	logger.Debugf("basepath: %s", basePath)
+	ae.Logger.Debugf("basepath: %s", basePath)
 
 	base := r.Group(basePath)
 	{
@@ -95,24 +96,50 @@ func (ae *AppEngine) Setup(logger *logrus.Entry) *gin.Engine {
 		}
 	}
 
+	return base, r
+}
+
+func (ae *AppEngine) SetupFrontendRouting(base *gin.RouterGroup, router *gin.Engine) *gin.Engine {
 	//Static request routing
 	base.StaticFS("/web", http.Dir(ae.Config.GetString("web.src.frontend.path")))
 
 	//redirect base url to /web
 	base.GET("/", func(c *gin.Context) {
-		c.Redirect(http.StatusFound, basePath+"/web")
+		c.Redirect(http.StatusFound, ae.Config.GetString("web.listen.basepath")+"/web")
 	})
 
 	//catch-all, serve index page.
-	r.NoRoute(func(c *gin.Context) {
+	router.NoRoute(func(c *gin.Context) {
 		path := c.Request.URL.Path
-		if strings.HasPrefix(path, "/api") || strings.HasPrefix(path, "/api") {
+		if strings.HasPrefix(path, "/api") {
 			c.JSON(http.StatusNotFound, gin.H{"success": false, "error": "404 endpoint not found"})
 		} else {
 			c.File(fmt.Sprintf("%s/index.html", ae.Config.GetString("web.src.frontend.path")))
 		}
 	})
-	return r
+	return router
+}
+
+func (ae *AppEngine) SetupEmbeddedFrontendRouting(embeddedAssetsFS embed.FS, base *gin.RouterGroup, router *gin.Engine) *gin.Engine {
+	//Static request routing
+	base.StaticFS("/web", http.FS(embeddedAssetsFS))
+
+	//redirect base url to /web
+	base.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusFound, ae.Config.GetString("web.listen.basepath")+"/web")
+	})
+
+	//catch-all, serve index page.
+	router.NoRoute(func(c *gin.Context) {
+		path := c.Request.URL.Path
+		if strings.HasPrefix(path, "/api") {
+			c.JSON(http.StatusNotFound, gin.H{"success": false, "error": "404 endpoint not found"})
+		} else {
+			ae.Logger.Infof("could not find %s, fallback to index.html", path)
+			c.FileFromFS("index.html", http.FS(embeddedAssetsFS))
+		}
+	})
+	return router
 }
 
 func (ae *AppEngine) Start() error {
@@ -122,7 +149,8 @@ func (ae *AppEngine) Start() error {
 		gin.SetMode(gin.DebugMode)
 	}
 
-	r := ae.Setup(ae.Logger)
+	baseRouterGroup, ginRouter := ae.Setup()
+	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
 
 	return r.Run(fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port")))
 }

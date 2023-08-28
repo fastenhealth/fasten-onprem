@@ -14,6 +14,7 @@ import {MedicalHistoryComponent} from './pages/medical-history/medical-history.c
 import {ReportLabsComponent} from './pages/report-labs/report-labs.component';
 import {ResourceCreatorComponent} from './pages/resource-creator/resource-creator.component';
 import {ExploreComponent} from './pages/explore/explore.component';
+import {environment} from '../environments/environment';
 
 const routes: Routes = [
 
@@ -50,7 +51,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes),
+    RouterModule.forRoot(routes,  {useHash: environment.environment_desktop}),
     CommonModule,
     BrowserModule,
   ],

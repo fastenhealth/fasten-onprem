@@ -9,6 +9,9 @@ export const environment = {
   // is the application running in the cloud? (enables 3rd party IdP's and token based couchdb authentication)
   environment_cloud: false,
 
+  // is the application running in a desktop environment (Wails). If so we will use hash based routing
+  environment_desktop: false,
+
   // the environment name, `sandbox`, `prod`, `beta`
   environment_name: "sandbox",
 
