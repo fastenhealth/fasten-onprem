@@ -63,7 +63,7 @@ build-frontend-prod: dep-frontend
 
 .PHONY: build-frontend-desktop
 build-frontend-desktop: dep-frontend
-	cd frontend && yarn build -- -c desktop
+	cd frontend && yarn build -- -c desktop_sandbox
 
 
 .PHONY: test-frontend
