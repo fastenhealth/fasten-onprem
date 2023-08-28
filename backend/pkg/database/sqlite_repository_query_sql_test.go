@@ -3,9 +3,9 @@ package database
 import (
 	"context"
 	"fmt"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
-	mock_config "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config/mock"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/golang/mock/gomock"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"

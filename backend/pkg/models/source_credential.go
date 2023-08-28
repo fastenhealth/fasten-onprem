@@ -3,8 +3,8 @@ package models
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/jwk"
 	"github.com/fastenhealth/fasten-sources/pkg"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/jwk"
 	"github.com/google/uuid"
 	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwt"

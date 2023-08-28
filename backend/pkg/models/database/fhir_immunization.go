@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	goja "github.com/dop251/goja"
-	models "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	models "github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	datatypes "gorm.io/datatypes"
 	"time"
 )

@@ -158,7 +158,7 @@ func main() {
 		structName := "Fhir" + strings.Title(resourceName)
 		file.Type().Id(structName).StructFunc(func(g *jen.Group) {
 			//Add the OriginBase embedded struct
-			g.Qual("github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models", "ResourceBase")
+			g.Qual("github.com/fastenhealth/fasten-onprem/backend/pkg/models", "ResourceBase")
 
 			sort.Strings(keys)
 			for _, fieldName := range keys {

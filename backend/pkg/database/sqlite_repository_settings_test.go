@@ -3,9 +3,9 @@ package database
 import (
 	"context"
 	"fmt"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"

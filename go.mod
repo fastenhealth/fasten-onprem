@@ -1,4 +1,4 @@
-module github.com/fastenhealth/fastenhealth-onprem
+module github.com/fastenhealth/fasten-onprem
 
 go 1.18
 

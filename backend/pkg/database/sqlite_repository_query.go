@@ -3,8 +3,8 @@ package database
 import (
 	"context"
 	"fmt"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
-	databaseModel "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models/database"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	"github.com/iancoleman/strcase"
 	"github.com/samber/lo"
 	"golang.org/x/exp/maps"

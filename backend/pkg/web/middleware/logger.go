@@ -3,7 +3,7 @@ package middleware
 import (
 	"bytes"
 	"fmt"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"io"

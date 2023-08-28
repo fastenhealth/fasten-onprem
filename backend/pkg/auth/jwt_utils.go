@@ -3,7 +3,7 @@ package auth
 import (
 	"errors"
 	"fmt"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/golang-jwt/jwt/v4"
 	"strings"
 	"time"

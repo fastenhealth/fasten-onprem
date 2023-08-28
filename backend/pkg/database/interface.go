@@ -2,9 +2,9 @@ package database
 
 import (
 	"context"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	sourcePkg "github.com/fastenhealth/fasten-sources/clients/models"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
 	"github.com/google/uuid"
 )
 

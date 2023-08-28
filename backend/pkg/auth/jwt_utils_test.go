@@ -1,8 +1,8 @@
 package auth_test
 
 import (
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/auth"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/auth"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/stretchr/testify/require"
 	"testing"
 )

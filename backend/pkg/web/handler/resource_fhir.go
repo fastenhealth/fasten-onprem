@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/utils"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"

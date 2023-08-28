@@ -8,9 +8,9 @@ import (
 	context "context"
 	reflect "reflect"
 
-	models "github.com/fastenhealth/fasten-sources/clients/models"
-	pkg "github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
-	models0 "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	pkg "github.com/fastenhealth/fasten-onprem/backend/pkg"
+	models "github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	models0 "github.com/fastenhealth/fasten-sources/clients/models"
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
 )
@@ -39,7 +39,7 @@ func (m *MockDatabaseRepository) EXPECT() *MockDatabaseRepositoryMockRecorder {
 }
 
 // AddResourceAssociation mocks base method.
-func (m *MockDatabaseRepository) AddResourceAssociation(ctx context.Context, source *models0.SourceCredential, resourceType, resourceId string, relatedSource *models0.SourceCredential, relatedResourceType, relatedResourceId string) error {
+func (m *MockDatabaseRepository) AddResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType, resourceId string, relatedSource *models.SourceCredential, relatedResourceType, relatedResourceId string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddResourceAssociation", ctx, source, resourceType, resourceId, relatedSource, relatedResourceType, relatedResourceId)
 	ret0, _ := ret[0].(error)
@@ -53,7 +53,7 @@ func (mr *MockDatabaseRepositoryMockRecorder) AddResourceAssociation(ctx, source
 }
 
 // AddResourceComposition mocks base method.
-func (m *MockDatabaseRepository) AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models0.ResourceBase) error {
+func (m *MockDatabaseRepository) AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceBase) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddResourceComposition", ctx, compositionTitle, resources)
 	ret0, _ := ret[0].(error)
@@ -81,7 +81,7 @@ func (mr *MockDatabaseRepositoryMockRecorder) Close() *gomock.Call {
 }
 
 // CreateGlossaryEntry mocks base method.
-func (m *MockDatabaseRepository) CreateGlossaryEntry(ctx context.Context, glossaryEntry *models0.Glossary) error {
+func (m *MockDatabaseRepository) CreateGlossaryEntry(ctx context.Context, glossaryEntry *models.Glossary) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateGlossaryEntry", ctx, glossaryEntry)
 	ret0, _ := ret[0].(error)
@@ -95,7 +95,7 @@ func (mr *MockDatabaseRepositoryMockRecorder) CreateGlossaryEntry(ctx, glossaryE
 }
 
 // CreateSource mocks base method.
-func (m *MockDatabaseRepository) CreateSource(arg0 context.Context, arg1 *models0.SourceCredential) error {
+func (m *MockDatabaseRepository) CreateSource(arg0 context.Context, arg1 *models.SourceCredential) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateSource", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -109,7 +109,7 @@ func (mr *MockDatabaseRepositoryMockRecorder) CreateSource(arg0, arg1 interface{
 }
 
 // CreateUser mocks base method.
-func (m *MockDatabaseRepository) CreateUser(arg0 context.Context, arg1 *models0.User) error {
+func (m *MockDatabaseRepository) CreateUser(arg0 context.Context, arg1 *models.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -123,10 +123,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) CreateUser(arg0, arg1 interface{})
 }
 
 // FindResourceAssociationsByTypeAndId mocks base method.
-func (m *MockDatabaseRepository) FindResourceAssociationsByTypeAndId(ctx context.Context, source *models0.SourceCredential, resourceType, resourceId string) ([]models0.RelatedResource, error) {
+func (m *MockDatabaseRepository) FindResourceAssociationsByTypeAndId(ctx context.Context, source *models.SourceCredential, resourceType, resourceId string) ([]models.RelatedResource, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindResourceAssociationsByTypeAndId", ctx, source, resourceType, resourceId)
-	ret0, _ := ret[0].([]models0.RelatedResource)
+	ret0, _ := ret[0].([]models.RelatedResource)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -138,10 +138,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) FindResourceAssociationsByTypeAndI
 }
 
 // GetCurrentUser mocks base method.
-func (m *MockDatabaseRepository) GetCurrentUser(ctx context.Context) (*models0.User, error) {
+func (m *MockDatabaseRepository) GetCurrentUser(ctx context.Context) (*models.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCurrentUser", ctx)
-	ret0, _ := ret[0].(*models0.User)
+	ret0, _ := ret[0].(*models.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -153,10 +153,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetCurrentUser(ctx interface{}) *g
 }
 
 // GetFlattenedResourceGraph mocks base method.
-func (m *MockDatabaseRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType) (map[string][]*models0.ResourceBase, error) {
+func (m *MockDatabaseRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType) (map[string][]*models.ResourceBase, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetFlattenedResourceGraph", ctx, graphType)
-	ret0, _ := ret[0].(map[string][]*models0.ResourceBase)
+	ret0, _ := ret[0].(map[string][]*models.ResourceBase)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -168,10 +168,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetFlattenedResourceGraph(ctx, gra
 }
 
 // GetGlossaryEntry mocks base method.
-func (m *MockDatabaseRepository) GetGlossaryEntry(ctx context.Context, code, codeSystem string) (*models0.Glossary, error) {
+func (m *MockDatabaseRepository) GetGlossaryEntry(ctx context.Context, code, codeSystem string) (*models.Glossary, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetGlossaryEntry", ctx, code, codeSystem)
-	ret0, _ := ret[0].(*models0.Glossary)
+	ret0, _ := ret[0].(*models.Glossary)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -183,10 +183,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetGlossaryEntry(ctx, code, codeSy
 }
 
 // GetPatientForSources mocks base method.
-func (m *MockDatabaseRepository) GetPatientForSources(ctx context.Context) ([]models0.ResourceBase, error) {
+func (m *MockDatabaseRepository) GetPatientForSources(ctx context.Context) ([]models.ResourceBase, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPatientForSources", ctx)
-	ret0, _ := ret[0].([]models0.ResourceBase)
+	ret0, _ := ret[0].([]models.ResourceBase)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -198,10 +198,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetPatientForSources(ctx interface
 }
 
 // GetResourceByResourceTypeAndId mocks base method.
-func (m *MockDatabaseRepository) GetResourceByResourceTypeAndId(arg0 context.Context, arg1, arg2 string) (*models0.ResourceBase, error) {
+func (m *MockDatabaseRepository) GetResourceByResourceTypeAndId(arg0 context.Context, arg1, arg2 string) (*models.ResourceBase, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetResourceByResourceTypeAndId", arg0, arg1, arg2)
-	ret0, _ := ret[0].(*models0.ResourceBase)
+	ret0, _ := ret[0].(*models.ResourceBase)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -213,10 +213,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetResourceByResourceTypeAndId(arg
 }
 
 // GetResourceBySourceId mocks base method.
-func (m *MockDatabaseRepository) GetResourceBySourceId(arg0 context.Context, arg1, arg2 string) (*models0.ResourceBase, error) {
+func (m *MockDatabaseRepository) GetResourceBySourceId(arg0 context.Context, arg1, arg2 string) (*models.ResourceBase, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetResourceBySourceId", arg0, arg1, arg2)
-	ret0, _ := ret[0].(*models0.ResourceBase)
+	ret0, _ := ret[0].(*models.ResourceBase)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -228,10 +228,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetResourceBySourceId(arg0, arg1, 
 }
 
 // GetSource mocks base method.
-func (m *MockDatabaseRepository) GetSource(arg0 context.Context, arg1 string) (*models0.SourceCredential, error) {
+func (m *MockDatabaseRepository) GetSource(arg0 context.Context, arg1 string) (*models.SourceCredential, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSource", arg0, arg1)
-	ret0, _ := ret[0].(*models0.SourceCredential)
+	ret0, _ := ret[0].(*models.SourceCredential)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -243,10 +243,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetSource(arg0, arg1 interface{}) 
 }
 
 // GetSourceSummary mocks base method.
-func (m *MockDatabaseRepository) GetSourceSummary(arg0 context.Context, arg1 string) (*models0.SourceSummary, error) {
+func (m *MockDatabaseRepository) GetSourceSummary(arg0 context.Context, arg1 string) (*models.SourceSummary, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSourceSummary", arg0, arg1)
-	ret0, _ := ret[0].(*models0.SourceSummary)
+	ret0, _ := ret[0].(*models.SourceSummary)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -258,10 +258,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetSourceSummary(arg0, arg1 interf
 }
 
 // GetSources mocks base method.
-func (m *MockDatabaseRepository) GetSources(arg0 context.Context) ([]models0.SourceCredential, error) {
+func (m *MockDatabaseRepository) GetSources(arg0 context.Context) ([]models.SourceCredential, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSources", arg0)
-	ret0, _ := ret[0].([]models0.SourceCredential)
+	ret0, _ := ret[0].([]models.SourceCredential)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -273,10 +273,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetSources(arg0 interface{}) *gomo
 }
 
 // GetSummary mocks base method.
-func (m *MockDatabaseRepository) GetSummary(ctx context.Context) (*models0.Summary, error) {
+func (m *MockDatabaseRepository) GetSummary(ctx context.Context) (*models.Summary, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSummary", ctx)
-	ret0, _ := ret[0].(*models0.Summary)
+	ret0, _ := ret[0].(*models.Summary)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -288,10 +288,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetSummary(ctx interface{}) *gomoc
 }
 
 // GetUserByUsername mocks base method.
-func (m *MockDatabaseRepository) GetUserByUsername(arg0 context.Context, arg1 string) (*models0.User, error) {
+func (m *MockDatabaseRepository) GetUserByUsername(arg0 context.Context, arg1 string) (*models.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserByUsername", arg0, arg1)
-	ret0, _ := ret[0].(*models0.User)
+	ret0, _ := ret[0].(*models.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -303,10 +303,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetUserByUsername(arg0, arg1 inter
 }
 
 // ListResources mocks base method.
-func (m *MockDatabaseRepository) ListResources(arg0 context.Context, arg1 models0.ListResourceQueryOptions) ([]models0.ResourceBase, error) {
+func (m *MockDatabaseRepository) ListResources(arg0 context.Context, arg1 models.ListResourceQueryOptions) ([]models.ResourceBase, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListResources", arg0, arg1)
-	ret0, _ := ret[0].([]models0.ResourceBase)
+	ret0, _ := ret[0].([]models.ResourceBase)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -318,10 +318,10 @@ func (mr *MockDatabaseRepositoryMockRecorder) ListResources(arg0, arg1 interface
 }
 
 // LoadUserSettings mocks base method.
-func (m *MockDatabaseRepository) LoadUserSettings(ctx context.Context) (*models0.UserSettings, error) {
+func (m *MockDatabaseRepository) LoadUserSettings(ctx context.Context) (*models.UserSettings, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LoadUserSettings", ctx)
-	ret0, _ := ret[0].(*models0.UserSettings)
+	ret0, _ := ret[0].(*models.UserSettings)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -361,7 +361,7 @@ func (mr *MockDatabaseRepositoryMockRecorder) PopulateDefaultUserSettings(ctx, u
 }
 
 // QueryResources mocks base method.
-func (m *MockDatabaseRepository) QueryResources(ctx context.Context, query models0.QueryResource) (interface{}, error) {
+func (m *MockDatabaseRepository) QueryResources(ctx context.Context, query models.QueryResource) (interface{}, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "QueryResources", ctx, query)
 	ret0, _ := ret[0].(interface{})
@@ -376,7 +376,7 @@ func (mr *MockDatabaseRepositoryMockRecorder) QueryResources(ctx, query interfac
 }
 
 // RemoveResourceAssociation mocks base method.
-func (m *MockDatabaseRepository) RemoveResourceAssociation(ctx context.Context, source *models0.SourceCredential, resourceType, resourceId string, relatedSource *models0.SourceCredential, relatedResourceType, relatedResourceId string) error {
+func (m *MockDatabaseRepository) RemoveResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType, resourceId string, relatedSource *models.SourceCredential, relatedResourceType, relatedResourceId string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RemoveResourceAssociation", ctx, source, resourceType, resourceId, relatedSource, relatedResourceType, relatedResourceId)
 	ret0, _ := ret[0].(error)
@@ -390,7 +390,7 @@ func (mr *MockDatabaseRepositoryMockRecorder) RemoveResourceAssociation(ctx, sou
 }
 
 // SaveUserSettings mocks base method.
-func (m *MockDatabaseRepository) SaveUserSettings(arg0 context.Context, arg1 *models0.UserSettings) error {
+func (m *MockDatabaseRepository) SaveUserSettings(arg0 context.Context, arg1 *models.UserSettings) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SaveUserSettings", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -404,7 +404,7 @@ func (mr *MockDatabaseRepositoryMockRecorder) SaveUserSettings(arg0, arg1 interf
 }
 
 // UpdateSource mocks base method.
-func (m *MockDatabaseRepository) UpdateSource(ctx context.Context, sourceCreds *models0.SourceCredential) error {
+func (m *MockDatabaseRepository) UpdateSource(ctx context.Context, sourceCreds *models.SourceCredential) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateSource", ctx, sourceCreds)
 	ret0, _ := ret[0].(error)
@@ -418,7 +418,7 @@ func (mr *MockDatabaseRepositoryMockRecorder) UpdateSource(ctx, sourceCreds inte
 }
 
 // UpsertRawResource mocks base method.
-func (m *MockDatabaseRepository) UpsertRawResource(ctx context.Context, sourceCredentials models.SourceCredential, rawResource models.RawResourceFhir) (bool, error) {
+func (m *MockDatabaseRepository) UpsertRawResource(ctx context.Context, sourceCredentials models0.SourceCredential, rawResource models0.RawResourceFhir) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpsertRawResource", ctx, sourceCredentials, rawResource)
 	ret0, _ := ret[0].(bool)

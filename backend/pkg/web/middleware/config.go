@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/gin-gonic/gin"
 )
 

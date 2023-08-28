@@ -2,11 +2,11 @@ package handler
 
 import (
 	"fmt"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/auth"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/database"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/auth"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

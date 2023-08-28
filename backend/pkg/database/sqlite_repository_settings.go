@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/google/uuid"
 )
 

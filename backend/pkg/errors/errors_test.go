@@ -1,7 +1,7 @@
 package errors_test
 
 import (
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/errors"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
 	"github.com/stretchr/testify/require"
 	"testing"
 )

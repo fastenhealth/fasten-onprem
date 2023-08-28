@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/analogj/go-util/utils"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/config"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/errors"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/version"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/web"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/version"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/web"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"io"
@@ -48,7 +48,7 @@ func main() {
 		},
 		Before: func(c *cli.Context) error {
 
-			packagrUrl := "github.com/fastenhealth/fastenhealth-onprem"
+			packagrUrl := "github.com/fastenhealth/fasten-onprem"
 
 			versionInfo := fmt.Sprintf("%s.%s-%s", goos, goarch, version.VERSION)
 

@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"sort"
 )
 

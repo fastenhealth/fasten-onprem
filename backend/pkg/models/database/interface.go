@@ -2,7 +2,7 @@ package database
 
 import (
 	"encoding/json"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"gorm.io/datatypes"
 	"time"
 )

@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 	"github.com/analogj/go-util/utils"
-	"github.com/fastenhealth/fastenhealth-onprem/backend/pkg/errors"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
 	"github.com/spf13/viper"
 	"log"
 	"os"
