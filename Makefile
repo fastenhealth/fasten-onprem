@@ -50,8 +50,7 @@ test-backend-coverage: dep-backend
 ########################################################################################################################
 .PHONY: dep-frontend
 dep-frontend:
-	cd frontend
-	yarn install --frozen-lockfile
+	cd frontend && yarn install --frozen-lockfile
 
 .PHONY: build-frontend-sandbox
 build-frontend-sandbox: dep-frontend
