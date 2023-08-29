@@ -36,7 +36,7 @@
 
         <div class="form-group">
           <label>Username</label>
-          <input [(ngModel)]="newUser.username" name="username" #username="ngModel" required minlength="4" type="text" class="form-control" placeholder="Enter your username">
+          <input [(ngModel)]="newUser.username" name="username" #username="ngModel" required minlength="4" type="text" class="form-control" autocapitalize="none" placeholder="Enter your username">
 
           <div *ngIf="username.invalid && (username.dirty || username.touched)" class="alert alert-danger">
             <div *ngIf="username.errors?.['required']">

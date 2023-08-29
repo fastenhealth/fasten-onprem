@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/v54/github"
@@ -23,7 +24,7 @@ var dashboardFS embed.FS
 
 func GetDashboard(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
-	//appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
+	appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	var dirEntries []fs.DirEntry
@@ -52,7 +53,7 @@ func GetDashboard(c *gin.Context) {
 		logger.Infof("Loading dashboard(s) from %v", userSettings.DashboardLocations)
 
 		// initialize the cache directory
-		cacheDir, err := getCacheDir(currentUser.ID.String())
+		cacheDir, err := getCacheDir(appConfig, currentUser.ID.String())
 		if err != nil {
 			logger.Errorf("Error creating cache directory: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
@@ -89,7 +90,7 @@ func GetDashboard(c *gin.Context) {
 
 func AddDashboardLocation(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
-	//appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
+	appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	var dashboardLocation map[string]string
@@ -119,7 +120,7 @@ func AddDashboardLocation(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
-	cacheDir, err := getCacheDir(currentUser.ID.String())
+	cacheDir, err := getCacheDir(appConfig, currentUser.ID.String())
 	if err != nil {
 		logger.Errorf("Error creating cache directory: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
@@ -169,9 +170,9 @@ func AddDashboardLocation(c *gin.Context) {
 }
 
 //private functions
-func getCacheDir(currentUserId string) (string, error) {
+func getCacheDir(appConfig config.Interface, currentUserId string) (string, error) {
 	// initialize the cache directory
-	cacheDir := filepath.Join("cache", currentUserId, "dashboard")
+	cacheDir := filepath.Join(appConfig.GetString("cache.location"), currentUserId, "dashboard")
 	err := os.MkdirAll(cacheDir, 0755)
 	if err != nil {
 		return "", fmt.Errorf("error creating cache directory: %v", err)

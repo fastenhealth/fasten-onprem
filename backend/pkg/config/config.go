@@ -31,6 +31,7 @@ func (c *configuration) Init() error {
 
 	c.SetDefault("web.src.frontend.path", "/opt/fasten/web")
 	c.SetDefault("database.location", "/opt/fasten/db/fasten.db")
+	c.SetDefault("cache.location", "/opt/fasten/cache/")
 
 	c.SetDefault("jwt.issuer.key", "thisismysupersecuressessionsecretlength")
 

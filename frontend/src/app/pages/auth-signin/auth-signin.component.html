@@ -26,7 +26,7 @@
       <form  *ngIf="!showExternalIdP" (ngSubmit)="signinSubmit()" #userForm="ngForm">
         <div class="form-group">
           <label>Username</label>
-          <input [(ngModel)]="existingUser.username" name="username" #username="ngModel" required minlength="2" type="text" class="form-control" placeholder="Enter your username">
+          <input [(ngModel)]="existingUser.username" name="username" #username="ngModel" required autocapitalize="none" minlength="2" type="text" class="form-control" placeholder="Enter your username">
 
           <div *ngIf="username.invalid && (username.dirty || username.touched)" class="alert alert-danger">
             <div *ngIf="username.errors?.['required']">
