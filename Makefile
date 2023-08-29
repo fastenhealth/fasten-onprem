@@ -64,6 +64,10 @@ build-frontend-prod: dep-frontend
 build-frontend-desktop: dep-frontend
 	cd frontend && yarn build -- -c desktop_sandbox
 
+.PHONY: build-frontend-desktop-prod
+build-frontend-desktop-prod: dep-frontend
+	cd frontend && yarn build -- -c desktop_prod
+
 
 .PHONY: test-frontend
 # reduce logging, disable angular-cli analytics for ci environment
