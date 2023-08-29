@@ -60,8 +60,8 @@ build-frontend-sandbox: dep-frontend
 build-frontend-prod: dep-frontend
 	cd frontend && yarn build -- -c prod
 
-.PHONY: build-frontend-desktop
-build-frontend-desktop: dep-frontend
+.PHONY: build-frontend-desktop-sandbox
+build-frontend-desktop-sandbox: dep-frontend
 	cd frontend && yarn build -- -c desktop_sandbox
 
 .PHONY: build-frontend-desktop-prod
