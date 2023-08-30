@@ -100,6 +100,11 @@ https://github.com/fastenhealth/docs/blob/main/BETA.md#connecting-a-new-source
 
 See [FAQs](https://github.com/fastenhealth/docs/blob/main/FAQs.md) for common questions (& answers) regarding Fasten
 
+# Support
+
+Have questions? Need help? Found a bug? [Create an issue](https://github.com/fastenhealth/fasten-onprem/issues/new) and we'll do our best to help you out.
+You can also join us on [Discord](https://discord.gg/Bykz6BAN8p) to chat with other Fasten users.
+
 # Contributing
 
 Please see the [CONTRIBUTING.md](CONTRIBUTING.md) for instructions for how to develop and contribute to the Fasten codebase.
