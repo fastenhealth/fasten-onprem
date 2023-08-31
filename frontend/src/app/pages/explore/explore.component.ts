@@ -33,6 +33,8 @@ export class ExploreComponent implements OnInit {
         }
         this.loading = false
       })
+      if(connectedSources.length == 0) this.loading = false
+
     }, error => {
       this.loading = false
     })

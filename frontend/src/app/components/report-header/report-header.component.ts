@@ -23,15 +23,16 @@ export class ReportHeaderComponent implements OnInit {
     this.fastenApi.getResources("Patient").subscribe(results => {
       console.log(results)
       this.patient = results[0]
+      if(!this.patient) return
 
-      let primaryCareId = fhirpath.evaluate(this.patient.resource_raw, "Patient.generalPractitioner.reference.first()")
+      let primaryCareId = fhirpath.evaluate(this.patient?.resource_raw, "Patient.generalPractitioner.reference.first()")
       console.log("GP:", primaryCareId)
       if(primaryCareId){
         let primaryCareIdStr = primaryCareId.join("")
         let primaryCareIdParts = primaryCareIdStr.split("/")
         if(primaryCareIdParts.length == 2) {
           console.log(primaryCareIdParts)
-          this.fastenApi.getResources(primaryCareIdParts[0], this.patient.source_id,  primaryCareIdParts[1]).subscribe(primaryResults => {
+          this.fastenApi.getResources(primaryCareIdParts[0], this.patient?.source_id,  primaryCareIdParts[1]).subscribe(primaryResults => {
             if (primaryResults.length > 0){
               this.primaryCare = new PractitionerModel(primaryResults[0].resource_raw)
             }

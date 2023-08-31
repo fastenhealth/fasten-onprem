@@ -66,6 +66,8 @@ web:
       path: ./dist
 database:
   location: 'fasten.db'
+cache:
+  location: ''
 log:
   file: '' #absolute or relative paths allowed, eg. web.log
   level: INFO

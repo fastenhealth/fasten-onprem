@@ -6,8 +6,7 @@
       <report-header [reportHeaderTitle]="'Explore'" [reportHeaderSubTitle]="'Explore your Medical Records'"></report-header>
 
       <ng-container [ngTemplateOutlet]="loading ? isLoadingTemplate :
-      (connectedSources.length == 0) ? emptyReport :
-      report"></ng-container>
+      (connectedSources.length == 0) ? emptyReport : report"></ng-container>
 
       <ng-template #report>
         <div class="row">
