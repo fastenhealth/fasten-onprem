@@ -1,0 +1,79 @@
+{
+  "title": "Safe FS",
+  "name": "safefs",
+  "version": "3.2.2",
+  "description": "Stop getting EMFILE errors! Open only as many files as the operating system supports.",
+  "homepage": "https://github.com/bevry/safefs",
+  "license": {
+    "type": "MIT"
+  },
+  "badges": {
+    "travis": true,
+    "npm": true,
+    "npmdownloads": true,
+    "david": true,
+    "daviddev": true,
+    "gratipay": "bevry",
+    "flattr": "344188/balupton-on-Flattr",
+    "paypal": "QB8GQPZAH84N6",
+    "bitcoin": "https://bevry.me/bitcoin",
+    "wishlist": "https://bevry.me/wishlist"
+  },
+  "keywords": [
+    "fs",
+    "path",
+    "openFile",
+    "closeFile",
+    "emfile"
+  ],
+  "author": "2013+ Bevry Pty Ltd <us@bevry.me> (http://bevry.me), 2011-2012 Benjamin Lupton <b@lupton.cc> (http://balupton.com)",
+  "maintainers": [
+    "Benjamin Lupton <b@lupton.cc> (https://github.com/balupton)"
+  ],
+  "contributors": [
+    "Benjamin Lupton <b@lupton.cc> (https://github.com/balupton)",
+    "jagill (https://github.com/jagill)",
+    "sfrdmn (https://github.com/sfrdmn)",
+    "shama (https://github.com/shama)"
+  ],
+  "bugs": {
+    "url": "https://github.com/bevry/safefs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/bevry/safefs.git"
+  },
+  "engines": {
+    "node": ">=0.4"
+  },
+  "dependencies": {
+    "graceful-fs": "*"
+  },
+  "devDependencies": {
+    "assert-helpers": "^1.0.2",
+    "babel": "^5.8.23",
+    "babel-eslint": "^4.1.1",
+    "eslint": "^1.3.1",
+    "joe": "^1.6.0",
+    "joe-reporter-console": "^1.2.1",
+    "projectz": "^0.5.0",
+    "rimraf": "^2.4.3"
+  },
+  "main": "./es6guardian.js",
+  "scripts": {
+    "clean": "node --harmony nakefile.js clean",
+    "setup": "node --harmony nakefile.js setup",
+    "compile": "node --harmony nakefile.js compile",
+    "watch": "node --harmony nakefile.js watch",
+    "verify": "node --harmony nakefile.js verify",
+    "meta": "node --harmony nakefile.js meta",
+    "prepare": "node --harmony nakefile.js prepare",
+    "release": "node --harmony nakefile.js release",
+    "test": "node --harmony ./es5/test/safefs-test.js"
+  },
+  "nakeConfiguration": {
+    "BABEL_SRC_PATH": "es6",
+    "ESLINT_SRC_PATH": "es6",
+    "YUIDOC_SRC_PATH": "es6"
+  }
+}

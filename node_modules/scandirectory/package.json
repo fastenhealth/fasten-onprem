@@ -1,0 +1,71 @@
+{
+  "name": "scandirectory",
+  "version": "2.5.0",
+  "description": "Scan a directory recursively with a lot of control and power",
+  "homepage": "https://github.com/bevry/scandirectory",
+  "license": {
+    "type": "MIT"
+  },
+  "badges": {
+    "travis": true,
+    "npm": true,
+    "npmdownloads": true,
+    "david": true,
+    "daviddev": true,
+    "gratipay": "bevry",
+    "flattr": "344188/balupton-on-Flattr",
+    "paypal": "QB8GQPZAH84N6",
+    "bitcoin": "https://coinbase.com/checkouts/9ef59f5479eec1d97d63382c9ebcb93a",
+    "wishlist": "http://amzn.com/w/2F8TXKSNAFG4V"
+  },
+  "keywords": [
+    "path",
+    "fs",
+    "scandir",
+    "scandirectory",
+    "scantree",
+    "scanlist",
+    "recursive",
+    "tree"
+  ],
+  "author": "2011+ Benjamin Lupton <b@lupton.cc> (http://balupton.com), 2014+ Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
+  "maintainers": [
+    "Benjamin Lupton <b@lupton.cc> (https://github.com/balupton)"
+  ],
+  "contributors": [
+    "Benjamin Lupton <b@lupton.cc> (https://github.com/balupton)",
+    "sfrdmn (https://github.com/sfrdmn)"
+  ],
+  "bugs": {
+    "url": "https://github.com/bevry/scandirectory/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/bevry/scandirectory.git"
+  },
+  "engines": {
+    "node": ">=0.4"
+  },
+  "dependencies": {
+    "ignorefs": "^1.0.0",
+    "safefs": "^3.1.2",
+    "taskgroup": "^4.0.5"
+  },
+  "devDependencies": {
+    "coffee-script": "~1.8.0",
+    "joe": "~1.5.0",
+    "joe-reporter-console": "~1.2.1",
+    "chai": "~1.10.0",
+    "projectz": "~0.3.17"
+  },
+  "directories": {
+    "lib": "./out/lib"
+  },
+  "scripts": {
+    "test": "node ./out/test/scandirectory-test.js"
+  },
+  "main": "./out/lib/scandirectory",
+  "cakeConfiguration": {
+    "COFFEE_SRC_PATH": "src"
+  }
+}

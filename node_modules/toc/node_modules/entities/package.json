@@ -1,0 +1,27 @@
+{
+  "name": "entities",
+  "version": "0.5.0",
+  "description": "Encode & decode XML/HTML entities with ease",
+  "author": "Felix Boehm <me@feedic.com>",
+  "keywords": [
+    "html",
+    "xml",
+    "entity",
+    "encoding"
+  ],
+  "main": "./index.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "mocha": "~1.9.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fb55/node-entities.git"
+  },
+  "license": "BSD-like"
+}
