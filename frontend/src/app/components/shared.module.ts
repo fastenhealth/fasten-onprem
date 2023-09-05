@@ -74,6 +74,8 @@ import {ListMedicationDispenseComponent} from './list-generic-resource/list-medi
 import {ListMedicationRequestComponent} from './list-generic-resource/list-medication-request.component'
 import {ListNutritionOrderComponent} from './list-generic-resource/list-nutrition-order.component';
 import {ListObservationComponent} from './list-generic-resource/list-observation.component'
+import {ListOrganizationComponent} from './list-generic-resource/list-organization.component'
+import {ListPractitionerComponent} from './list-generic-resource/list-practitioner.component'
 import {ListProcedureComponent} from './list-generic-resource/list-procedure.component'
 import {ListServiceRequestComponent} from './list-generic-resource/list-service-request.component';
 import {NgbCollapseModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
@@ -146,7 +148,9 @@ import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.
     ListMedicationRequestComponent,
     ListNutritionOrderComponent,
     ListObservationComponent,
+    ListOrganizationComponent,
     ListPatientComponent,
+    ListPractitionerComponent,
     ListProcedureComponent,
     ListServiceRequestComponent,
     ResourceListComponent,
@@ -206,7 +210,9 @@ import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.
         ListMedicationRequestComponent,
         ListNutritionOrderComponent,
         ListObservationComponent,
+        ListOrganizationComponent,
         ListPatientComponent,
+        ListPractitionerComponent,
         ListProcedureComponent,
         ListServiceRequestComponent,
         MedicalSourcesFilterComponent,

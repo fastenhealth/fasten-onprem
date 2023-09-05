@@ -28,6 +28,8 @@ import {ListMedicationDispenseComponent} from '../list-generic-resource/list-med
 import {ListMedicationRequestComponent} from '../list-generic-resource/list-medication-request.component';
 import {ListNutritionOrderComponent} from '../list-generic-resource/list-nutrition-order.component';
 import {ListObservationComponent} from '../list-generic-resource/list-observation.component';
+import {ListOrganizationComponent} from '../list-generic-resource/list-organization.component';
+import {ListPractitionerComponent} from '../list-generic-resource/list-practitioner.component';
 import {ListProcedureComponent} from '../list-generic-resource/list-procedure.component';
 import {ListServiceRequestComponent} from '../list-generic-resource/list-service-request.component';
 import {ResourceListOutletDirective} from './resource-list-outlet.directive';
@@ -149,6 +151,12 @@ export class ResourceListComponent implements OnInit, OnChanges {
       }
       case "Observation": {
         return ListObservationComponent;
+      }
+      case "Organization": {
+        return ListOrganizationComponent;
+      }
+      case "Practitioner": {
+        return ListPractitionerComponent;
       }
       case "Procedure": {
         return ListProcedureComponent;

@@ -24,6 +24,33 @@ export const FORMATTERS = {
     if(codeableConcept.text) return codeableConcept.text
     return codeableConcept.coding && codeableConcept.coding[0] ? `${codeableConcept.coding[0].code}: ${codeableConcept.coding[0].display ? codeableConcept.coding[0].display : ''}` : ''
   },
+  address: (address) => {
+    if(!address) return ''
+    var addressParts = []
+    if(address.line) addressParts.push(address.line.join(', '))
+    if(address.city) addressParts.push(address.city)
+    if(address.state) addressParts.push(address.state)
+    if(address.postalCode) addressParts.push(address.postalCode)
+    if(address.country) addressParts.push(address.country)
+    return addressParts.join(', ')
+  },
+  humanName: (humanName) => {
+    if(!humanName) return ''
+    var nameParts = []
+    if(humanName.prefix) nameParts.push(humanName.prefix.join(', '))
+    if(humanName.given) nameParts.push(humanName.given.join(' '))
+    if(humanName.family) nameParts.push(humanName.family)
+    if(humanName.suffix) nameParts.push(humanName.suffix.join(', '))
+    return nameParts.join(' ')
+  },
+  contact: (contact) => {
+    if (!contact) return ''
+    var contactParts = []
+    if (contact.system) contactParts.push(contact.system)
+    if (contact.value) contactParts.push(contact.value)
+    if (contact.use) contactParts.push(`(${contact.use})`)
+    return contactParts.join(' ')
+  },
   period: (period) => period ? `${moment(period.start).format('YYYY-MM-DD - h:mm a')} -> ${moment(period.end).format('YYYY-MM-DD - h:mm a')}` : ''
 };
 
