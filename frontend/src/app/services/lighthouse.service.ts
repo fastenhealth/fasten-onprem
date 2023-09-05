@@ -1,8 +1,8 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, of, throwError, fromEvent } from 'rxjs';
 import {environment} from '../../environments/environment';
-import {map, tap} from 'rxjs/operators';
+import {concatMap, delay, retryWhen, timeout, first, map, filter, catchError, tap} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
 import {LighthouseSourceMetadata} from '../models/lighthouse/lighthouse-source-metadata';
 import * as Oauth from '@panva/oauth4webapi';
@@ -12,6 +12,8 @@ import {uuidV4} from '../../lib/utils/uuid';
 import {LighthouseSourceSearch} from '../models/lighthouse/lighthouse-source-search';
 import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
 import {MedicalSourcesFilter} from './medical-sources-filter.service';
+
+export const sourceConnectDesktopTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
 
 @Injectable({
   providedIn: 'root'
@@ -163,8 +165,23 @@ export class LighthouseService {
     redirectUrlParts.search = redirectParams.toString()
     console.log(redirectUrlParts.toString());
 
-    // Simulate a mouse click:
-    window.location.href = redirectUrlParts.toString();
+
+    //if we're in desktop mode, we can open a new window, rather than redirecting the current window (which is an app frame)
+    if(environment.environment_desktop && environment.popup_source_auth){
+      //@ts-ignore
+      let openedWindow = window.runtime.BrowserOpenURL(redirectUrlParts.toString());
+
+      this.waitForDesktopCodeOrTimeout(openedWindow, sourceType).subscribe(async (codeData) => {
+        //TODO: redirect to the callback url with the code.
+        console.log("DONE WAITING FOR CODE")
+      })
+
+      //now wait for response from the opened window
+    } else {
+      //redirect to the url in the same window
+      window.location.href = redirectUrlParts.toString();
+    }
+
   }
 
   async swapOauthToken(sourceType: string, sourceMetadata: LighthouseSourceMetadata, expectedSourceStateInfo: SourceState, code: string): Promise<any>{
@@ -234,5 +251,32 @@ export class LighthouseService {
     })
     return parts.join(separator);
   }
+
+  private waitForDesktopCodeOrTimeout(openedWindow: Window, sourceType: string): Observable<any> {
+    console.log(`waiting for postMessage notification from ${sourceType} window`)
+
+    //new code to listen to post message
+    return fromEvent(window, 'message')
+      .pipe(
+        //throw an error if we wait more than 2 minutes (this will close the window)
+        timeout(sourceConnectDesktopTimeout),
+        //make sure we're only listening to events from the "opened" window.
+        filter((event: MessageEvent) => event.source == openedWindow),
+        //after filtering, we should only have one event to handle.
+        first(),
+        map((event) => {
+          console.log(`received postMessage notification from ${sourceType} window & sending acknowledgment`, event)
+          // @ts-ignore
+          event.source.postMessage(JSON.stringify({close:true}), event.origin);
+        }),
+        catchError((err) => {
+          console.warn(`timed out waiting for notification from ${sourceType} (${sourceConnectDesktopTimeout/1000}s), closing window`)
+          openedWindow.self.close()
+          return throwError(err)
+        })
+  )
+  }
+
+
 }
 

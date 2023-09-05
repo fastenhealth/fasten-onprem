@@ -11,6 +11,8 @@ export const environment = {
 
   // is the application running in a desktop environment (Wails). If so we will use hash based routing
   environment_desktop: false,
+  //when environment_desktop=true, we can use the postMessage api to communicate with the desktop app (otherwise use redirects)
+  popup_source_auth: false,
 
   // the environment name, `sandbox`, `prod`, `beta`
   environment_name: "sandbox",

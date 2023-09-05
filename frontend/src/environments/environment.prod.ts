@@ -3,6 +3,7 @@ export const environment = {
   environment_cloud: false,
   environment_desktop: false,
   environment_name: "prod",
+  popup_source_auth: false,
 
   lighthouse_api_endpoint_base: 'https://lighthouse.fastenhealth.com/v1',
 
