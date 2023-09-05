@@ -6,76 +6,79 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { RouterModule } from '@angular/router';
 import { UtilitiesSidebarComponent } from './utilities-sidebar/utilities-sidebar.component';
 import {BrowserModule} from '@angular/platform-browser';
+import { AllergyIntoleranceComponent } from './fhir/resources/allergy-intolerance/allergy-intolerance.component';
+import { BadgeComponent } from './fhir/common/badge/badge.component';
+import { BinaryComponent } from './fhir/resources/binary/binary.component';
+import { BinaryTextComponent } from './fhir/datatypes/binary-text/binary-text.component';
+import { CodableConceptComponent } from './fhir/datatypes/codable-concept/codable-concept.component';
+import { CodingComponent } from './fhir/datatypes/coding/coding.component';
+import { DiagnosticReportComponent } from './fhir/resources/diagnostic-report/diagnostic-report.component';
+import { DicomComponent } from './fhir/datatypes/dicom/dicom.component';
+import { DocumentReferenceComponent } from './fhir/resources/document-reference/document-reference.component';
+import { FallbackComponent } from './fhir/resources/fallback/fallback.component';
+import { FhirResourceComponent } from './fhir/fhir-resource/fhir-resource.component';
+import { FhirResourceOutletDirective } from './fhir/fhir-resource/fhir-resource-outlet.directive';
+import { GlossaryLookupComponent } from './glossary-lookup/glossary-lookup.component';
+import { HtmlComponent } from './fhir/datatypes/html/html.component';
+import { ImgComponent } from './fhir/datatypes/img/img.component';
+import { ImmunizationComponent } from './fhir/resources/immunization/immunization.component';
+import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
+import { MarkdownComponent } from './fhir/datatypes/markdown/markdown.component';
+import { MediaComponent } from './fhir/resources/media/media.component';
+import { MedicalSourcesCardComponent } from './medical-sources-card/medical-sources-card.component';
+import { MedicalSourcesCategoryLookupPipe } from './medical-sources-filter/medical-sources-category-lookup.pipe';
+import { MedicalSourcesConnectedComponent } from './medical-sources-connected/medical-sources-connected.component';
+import { MedicalSourcesFilterComponent } from './medical-sources-filter/medical-sources-filter.component';
+import { MedicationComponent } from './fhir/resources/medication/medication.component';
+import { MedicationRequestComponent } from './fhir/resources/medication-request/medication-request.component';
+import { MomentModule } from 'ngx-moment';
+import { NgChartsModule } from 'ng2-charts';
+import { NlmTypeaheadComponent } from './nlm-typeahead/nlm-typeahead.component';
+import { PdfComponent } from './fhir/datatypes/pdf/pdf.component';
+import { PractitionerComponent } from './fhir/resources/practitioner/practitioner.component';
+import { ProcedureComponent } from './fhir/resources/procedure/procedure.component';
+import { ReportHeaderComponent } from './report-header/report-header.component';
+import { ReportLabsObservationComponent } from './report-labs-observation/report-labs-observation.component';
+import { ReportMedicalHistoryConditionComponent } from './report-medical-history-condition/report-medical-history-condition.component';
+import { ReportMedicalHistoryEditorComponent } from './report-medical-history-editor/report-medical-history-editor.component';
+import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medical-history-explanation-of-benefit/report-medical-history-explanation-of-benefit.component';
+import { ResourceListComponent } from './resource-list/resource-list.component';
+import { TableComponent } from './fhir/common/table/table.component';
+import { ToastComponent } from './toast/toast.component';
+import { TreeModule } from '@circlon/angular-tree-component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {GridstackComponent} from './gridstack/gridstack.component';
+import {GridstackItemComponent} from './gridstack/gridstack-item.component';
+import {HighlightModule} from 'ngx-highlightjs';
 import {ListAdverseEventComponent} from './list-generic-resource/list-adverse-event.component';
+import {ListAllergyIntoleranceComponent} from './list-generic-resource/list-allergy-intolerance.component';
+import {ListAppointmentComponent} from './list-generic-resource/list-appointment.component';
+import {ListBinaryComponent} from './list-generic-resource/list-binary.component';
+import {ListCarePlanComponent} from './list-generic-resource/list-care-plan.component';
+import {ListCareTeamComponent} from './list-generic-resource/list-care-team.component';
+import {ListCommunicationComponent} from './list-generic-resource/list-communication.component';
 import {ListConditionComponent} from './list-generic-resource/list-condition.component'
+import {ListCoverageComponent} from './list-generic-resource/list-coverage.component';
+import {ListDeviceComponent} from './list-generic-resource/list-device.component';
+import {ListDeviceRequestComponent} from './list-generic-resource/list-device-request.component';
+import {ListDiagnosticReportComponent} from './list-generic-resource/list-diagnostic-report.component';
+import {ListDocumentReferenceComponent} from './list-generic-resource/list-document-reference.component';
 import {ListEncounterComponent} from './list-generic-resource/list-encounter.component'
+import {ListFallbackComponent} from './list-generic-resource/list-fallback.component'
+import {ListGoalComponent} from './list-generic-resource/list-goal.component';
 import {ListImmunizationComponent} from './list-generic-resource/list-immunization.component'
+import {ListLocationComponent} from './list-generic-resource/list-location.component'
 import {ListMedicationAdministrationComponent} from './list-generic-resource/list-medication-administration.component';
 import {ListMedicationComponent} from './list-generic-resource/list-medication.component'
-import {ListFallbackComponent} from './list-generic-resource/list-fallback.component'
 import {ListMedicationDispenseComponent} from './list-generic-resource/list-medication-dispense.component';
 import {ListMedicationRequestComponent} from './list-generic-resource/list-medication-request.component'
 import {ListNutritionOrderComponent} from './list-generic-resource/list-nutrition-order.component';
 import {ListObservationComponent} from './list-generic-resource/list-observation.component'
 import {ListProcedureComponent} from './list-generic-resource/list-procedure.component'
-import {ListCommunicationComponent} from './list-generic-resource/list-communication.component';
-import {ListDeviceRequestComponent} from './list-generic-resource/list-device-request.component';
-import {ListCoverageComponent} from './list-generic-resource/list-coverage.component';
 import {ListServiceRequestComponent} from './list-generic-resource/list-service-request.component';
-import {ListDocumentReferenceComponent} from './list-generic-resource/list-document-reference.component';
-import { ResourceListComponent } from './resource-list/resource-list.component';
-import {ListCarePlanComponent} from './list-generic-resource/list-care-plan.component';
-import {ListAllergyIntoleranceComponent} from './list-generic-resource/list-allergy-intolerance.component';
-import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.directive';
-import {ListAppointmentComponent} from './list-generic-resource/list-appointment.component';
-import {ListDeviceComponent} from './list-generic-resource/list-device.component';
-import {ListDiagnosticReportComponent} from './list-generic-resource/list-diagnostic-report.component';
-import {ListGoalComponent} from './list-generic-resource/list-goal.component';
 import {NgbCollapseModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import { ToastComponent } from './toast/toast.component';
-import { MomentModule } from 'ngx-moment';
-import { ReportHeaderComponent } from './report-header/report-header.component';
-import { ReportMedicalHistoryEditorComponent } from './report-medical-history-editor/report-medical-history-editor.component';
-import { TreeModule } from '@circlon/angular-tree-component';
-import { ReportMedicalHistoryConditionComponent } from './report-medical-history-condition/report-medical-history-condition.component';
-import { ReportLabsObservationComponent } from './report-labs-observation/report-labs-observation.component';
-import { NgChartsModule } from 'ng2-charts';
-import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { BinaryComponent } from './fhir/resources/binary/binary.component';
-import { PdfComponent } from './fhir/datatypes/pdf/pdf.component';
-import { ImgComponent } from './fhir/datatypes/img/img.component';
-import { BinaryTextComponent } from './fhir/datatypes/binary-text/binary-text.component';
-import { MarkdownComponent } from './fhir/datatypes/markdown/markdown.component';
-import { HtmlComponent } from './fhir/datatypes/html/html.component';
-import { FhirResourceComponent } from './fhir/fhir-resource/fhir-resource.component';
-import { FhirResourceOutletDirective } from './fhir/fhir-resource/fhir-resource-outlet.directive';
-import { FallbackComponent } from './fhir/resources/fallback/fallback.component';
-import {HighlightModule} from 'ngx-highlightjs';
-import { ImmunizationComponent } from './fhir/resources/immunization/immunization.component';
-import { BadgeComponent } from './fhir/common/badge/badge.component';
-import { TableComponent } from './fhir/common/table/table.component';
-import { CodingComponent } from './fhir/datatypes/coding/coding.component';
-import { AllergyIntoleranceComponent } from './fhir/resources/allergy-intolerance/allergy-intolerance.component';
-import { MedicationComponent } from './fhir/resources/medication/medication.component';
-import { MedicationRequestComponent } from './fhir/resources/medication-request/medication-request.component';
-import { ProcedureComponent } from './fhir/resources/procedure/procedure.component';
-import { DiagnosticReportComponent } from './fhir/resources/diagnostic-report/diagnostic-report.component';
-import { PractitionerComponent } from './fhir/resources/practitioner/practitioner.component';
 import {PipesModule} from '../pipes/pipes.module';
-import { NlmTypeaheadComponent } from './nlm-typeahead/nlm-typeahead.component';
-import { DocumentReferenceComponent } from './fhir/resources/document-reference/document-reference.component';
-import { DicomComponent } from './fhir/datatypes/dicom/dicom.component';
-import { MediaComponent } from './fhir/resources/media/media.component';
-import { GlossaryLookupComponent } from './glossary-lookup/glossary-lookup.component';
-import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medical-history-explanation-of-benefit/report-medical-history-explanation-of-benefit.component';
-import {GridstackComponent} from './gridstack/gridstack.component';
-import {GridstackItemComponent} from './gridstack/gridstack-item.component';
-import { MedicalSourcesFilterComponent } from './medical-sources-filter/medical-sources-filter.component';
-import { MedicalSourcesConnectedComponent } from './medical-sources-connected/medical-sources-connected.component';
-import { MedicalSourcesCategoryLookupPipe } from './medical-sources-filter/medical-sources-category-lookup.pipe';
-import { MedicalSourcesCardComponent } from './medical-sources-card/medical-sources-card.component';
-import { CodableConceptComponent } from './fhir/datatypes/codable-concept/codable-concept.component';
+import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.directive';
 
 @NgModule({
   imports: [
@@ -119,14 +122,24 @@ import { CodableConceptComponent } from './fhir/datatypes/codable-concept/codabl
   declarations: [
     ComponentsSidebarComponent,
     UtilitiesSidebarComponent,
-    ListAllergyIntoleranceComponent,
     ListAdverseEventComponent,
+    ListAllergyIntoleranceComponent,
+    ListAppointmentComponent,
+    ListBinaryComponent,
     ListCarePlanComponent,
+    ListCareTeamComponent,
     ListCommunicationComponent,
     ListConditionComponent,
+    ListCoverageComponent,
+    ListDeviceComponent,
+    ListDeviceRequestComponent,
+    ListDiagnosticReportComponent,
+    ListDocumentReferenceComponent,
     ListEncounterComponent,
     ListGenericResourceComponent,
+    ListGoalComponent,
     ListImmunizationComponent,
+    ListLocationComponent,
     ListMedicationAdministrationComponent,
     ListMedicationComponent,
     ListMedicationDispenseComponent,
@@ -134,15 +147,8 @@ import { CodableConceptComponent } from './fhir/datatypes/codable-concept/codabl
     ListNutritionOrderComponent,
     ListObservationComponent,
     ListPatientComponent,
-    ListDeviceRequestComponent,
     ListProcedureComponent,
-    ListCoverageComponent,
     ListServiceRequestComponent,
-    ListDocumentReferenceComponent,
-    ListAppointmentComponent,
-    ListDeviceComponent,
-    ListDiagnosticReportComponent,
-    ListGoalComponent,
     ResourceListComponent,
     ResourceListOutletDirective,
     ListFallbackComponent,
@@ -179,7 +185,9 @@ import { CodableConceptComponent } from './fhir/datatypes/codable-concept/codabl
         ListAdverseEventComponent,
         ListAllergyIntoleranceComponent,
         ListAppointmentComponent,
+        ListBinaryComponent,
         ListCarePlanComponent,
+        ListCareTeamComponent,
         ListCommunicationComponent,
         ListConditionComponent,
         ListCoverageComponent,
@@ -191,6 +199,7 @@ import { CodableConceptComponent } from './fhir/datatypes/codable-concept/codabl
         ListGenericResourceComponent,
         ListGoalComponent,
         ListImmunizationComponent,
+        ListLocationComponent,
         ListMedicationAdministrationComponent,
         ListMedicationComponent,
         ListMedicationDispenseComponent,

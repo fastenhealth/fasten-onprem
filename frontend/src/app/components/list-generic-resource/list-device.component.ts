@@ -9,7 +9,9 @@ import {attributeXTime} from './utils';
 })
 export class ListDeviceComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
-    { title: 'Device', versions: '*', getter: d => d.model },
+    { title: 'Device', versions: '*', getter: d => d.deviceName?.[0]?.name || d.type?.coding?.[0]?.display || d.type?.text },
+    { title: 'Manufacturer', versions: '*', getter: d => d.manufacturer },
+    { title: 'Model', versions: '*', getter: d => d.modelNumber },
     { title: 'Type', versions: '*', format: 'codeableConcept', getter: d => d.type },
     { title: 'Unique ID', versions: '*', getter: d => d.udi?.name || d.udiCarrier?.deviceIdentifier },
   ]
