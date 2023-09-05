@@ -12,6 +12,6 @@ export class ListLocationComponent extends ListGenericResourceComponent {
     { title: 'Name', versions: '*', getter: d => d.name || d.alias },
     { title: 'Organization', versions: '*', getter: d => d.managingOrganization?.display },
     { title: 'Type', versions: '*', format: 'codeableConcept', getter: d => d.physicalType },
-    { title: 'Status', versions: '*', getter: d => d.status },
+    { title: 'Address', versions: '*', format: 'address', getter: d => d.address },
   ]
 }
