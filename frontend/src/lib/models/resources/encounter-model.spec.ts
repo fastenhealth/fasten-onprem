@@ -64,6 +64,7 @@ describe('EncounterModel', () => {
           role: undefined
         }
       ]
+      expected.code = { coding: [{ system: 'http://snomed.info/sct', code: '11429006', display: 'Consultation' }] }
 
       expect(new EncounterModel(example3Fixture)).toEqual(expected);
     });

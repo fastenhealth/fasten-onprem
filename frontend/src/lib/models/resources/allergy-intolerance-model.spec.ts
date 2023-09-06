@@ -32,6 +32,7 @@ describe('AllergyIntoleranceModel', () => {
       expected.note = [{text: 'The criticality is high becasue of the observed anaphylactic reaction when challenged with cashew extract.'}]
       expected.type = 'allergy'
       expected.category = ['food']
+      expected.code = { coding: [{ system: 'http://snomed.info/sct', code: '227493005', display: 'Cashew nuts' } ] }
       expected.patient = {reference: 'Patient/example'}
 
       expect(new AllergyIntoleranceModel(example1Fixture)).toEqual(expected);

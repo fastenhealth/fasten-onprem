@@ -101,6 +101,8 @@ describe('CarePlanModel', () => {
       // expected.periodStart = '2013-01-01'
       expected.period_end = '2017-06-01'
       expected.author = { reference: 'Practitioner/example', display: 'Dr Adam Careful' }
+      //@ts-ignore
+      expected.code = [{ text: 'Weight management plan' }]
       expect(new CarePlanModel(weightLossPlanFixture)).toEqual(expected);
     });
 

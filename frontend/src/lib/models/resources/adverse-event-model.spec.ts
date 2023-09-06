@@ -33,6 +33,7 @@ describe('AdverseEventModel', () => {
         "text": "This was a mild rash on the left forearm"
       })
       expected.has_event = true
+      expected.code = { coding: [{ system: 'http://snomed.info/sct', code: '304386008', display: 'O/E - itchy rash' } ], text: 'This was a mild rash on the left forearm' }
 
       expect(new AdverseEventModel(example1Fixture)).toEqual(expected);
     });
