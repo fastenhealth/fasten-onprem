@@ -49,6 +49,8 @@ describe('DocumentReferenceModel', () => {
         periodEnd: '2004-12-23T08:01:00+11:00'
       }
       // expected.context: any | undefined
+      expected.code = { coding: [{ system: 'http://loinc.org', code: '34108-1', display: 'Outpatient Note' }] }
+      expected.title = 'History and Physical'
 
       expect(new DocumentReferenceModel(example1Fixture)).toEqual(expected);
     });

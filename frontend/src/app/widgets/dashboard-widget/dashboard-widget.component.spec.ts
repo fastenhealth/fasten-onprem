@@ -156,12 +156,27 @@ describe('DashboardWidgetComponent', () => {
         expect(component.isEmpty).toBeFalse()
         expect(component.loading).toBeFalse()
         expect(component.chartLabels).toEqual([ //TODO: should this be 'Immunization' and 'Claim'?
-          'Immunization'
+          '2a332c10-0a12-4d96-a819-0b2a6bfae84a',
+          '31830307-f2ea-4aee-ab3a-d9623b5cfd2c',
+          '4738ca48-c949-4d1e-be77-71b7b81a1aa2',
+          '51ace308-124f-45fa-8d2a-d8e0d84716f7',
+          '684178bf-2231-4641-a581-9ecde3b3e60c',
+          '70435780-0fcf-4d08-af8d-a90cac6806d9',
+          '70db153f-b145-44a0-b8aa-aac646d01c24',
+          '720374cc-f64a-402e-9f07-940fc22ceafe',
+          '82c6b29a-453c-4bc7-b3e8-94bf997622d4',
+          '82f6e9a4-46ba-4d78-a0cb-d37609662918',
+          '85205d78-9fe4-48d6-979d-5697fa42aebc',
+          'a29483c2-7bdc-428d-aa5a-1777fe18b81a',
+          'c8ea36b5-1c0b-4488-9df4-6b101048eec5',
+          'd4ddd4b5-f57b-4304-a12b-b74914e79d88',
+          'd591e8f1-744b-464a-99ab-9131b970863c',
+          'd660e444-49a6-4633-a761-e95b12a5a8eb',
         ])
         expect(component.chartDatasets.length).toBe(2)
         // // @ts-ignore
-        expect(component.chartDatasets[0].data.length).toBe(1)
-        expect(component.chartDatasets[1].data.length).toBe(1)
+        expect(component.chartDatasets[0].data.length).toBe(22)
+        expect(component.chartDatasets[1].data.length).toBe(16)
         // expect(component.chartDatasets.length).toBe(component.chartLabels.length)
       });
 

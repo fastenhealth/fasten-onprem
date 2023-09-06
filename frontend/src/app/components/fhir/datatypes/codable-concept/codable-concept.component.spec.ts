@@ -8,7 +8,7 @@ describe('CodableConceptComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CodableConceptComponent ]
+      imports: [CodableConceptComponent],
     })
     .compileComponents();
 

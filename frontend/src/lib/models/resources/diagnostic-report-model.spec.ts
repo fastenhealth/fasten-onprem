@@ -29,6 +29,7 @@ describe('DiagnosticReportModel', () => {
       expected.conclusion = 'Core lab'
       expected.performer = { reference: 'Organization/f001', display: 'Burgers University Medical Centre' }
       expected.issued = '2013-05-15T19:32:52+01:00'
+      expected.code = { coding: [{ system: 'http://loinc.org', code: '58410-2', display: 'Complete blood count (hemogram) panel - Blood by Automated count' } ] }
 
       expect(new DiagnosticReportModel(example1Fixture)).toEqual(expected);
     });
