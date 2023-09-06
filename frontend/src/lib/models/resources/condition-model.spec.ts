@@ -36,7 +36,7 @@ describe('ConditionModel', () => {
       expected.clinical_status = 'active'
       // expected.dateRecorded: string | undefined
       expected.onset_datetime = '2012-05-24'
-
+      expected.code = { coding: [{ system: 'http://snomed.info/sct', code: '39065001', display: 'Burn of ear' } ], text: 'Burnt Ear' }
       expect(new ConditionModel(example1Fixture)).toEqual(expected);
     });
     it('should parse example2.json', () => {
@@ -51,7 +51,8 @@ describe('ConditionModel', () => {
       expected.clinical_status = 'active'
       // expected.dateRecorded: string | undefined
       // expected.onsetDateTime = '2012-05-24'
-
+      //@ts-ignore
+      expected.code = {text: 'Asthma' }
       expect(new ConditionModel(example2Fixture)).toEqual(expected);
     });
     it('should parse example3.json', () => {
@@ -67,6 +68,7 @@ describe('ConditionModel', () => {
       expected.clinical_status = 'resolved'
       expected.date_recorded = '2013-04-04'
       expected.onset_datetime =  '2013-04-02'
+      expected.code ={ coding: [{ system: 'http://snomed.info/sct', code: '386661006', display: 'Fever' }] }
 
       expect(new ConditionModel(example3Fixture)).toEqual(expected);
     });

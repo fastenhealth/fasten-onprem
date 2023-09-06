@@ -13,6 +13,7 @@ describe('HumanNameModel', () => {
     expectedHumanName.familyName = 'Windsor'
     expectedHumanName.suffix = ''
     expectedHumanName.use = 'maiden'
+    expectedHumanName.displayName = 'Peter, James Windsor'
     // expectedHumanName.header = 'Peter, James Windsor'
 
     expect(new HumanNameModel(fixture)).toEqual(expectedHumanName);

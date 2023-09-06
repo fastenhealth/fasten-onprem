@@ -49,6 +49,7 @@ describe('AllergyIntoleranceModel', () => {
       // expected.type = ''
       expected.category = ['medication']
       expected.patient = {reference: 'Patient/example'}
+      expected.code = { coding: [{ system: 'http://www.nlm.nih.gov/research/umls/rxnorm', code: '7980', display: 'Penicillin G' } ] }
 
       expect(new AllergyIntoleranceModel(example2Fixture)).toEqual(expected);
     });
@@ -64,6 +65,7 @@ describe('AllergyIntoleranceModel', () => {
       // expected.type = 'allergy'
       // expected.category = [ 'food' ]
       expected.patient = {reference: 'Patient/mom'}
+      expected.code = { coding: [{ system: 'http://snomed.info/sct', code: '716186003', display: 'No Known Allergy (situation)' } ], text: 'NKA' }
 
       expect(new AllergyIntoleranceModel(example3Fixture)).toEqual(expected);
     });
@@ -133,7 +135,7 @@ describe('AllergyIntoleranceModel', () => {
       expected.type = 'allergy'
       expected.category = ['food']
       expected.patient = {reference: 'Patient/example'}
-
+      expected.code = { coding: [ { system: 'http://snomed.info/sct', code: '227493005', display: 'Cashew nuts' } ] }
       expect(new AllergyIntoleranceModel(example1Stu3Fixture, fhirVersions.STU3)).toEqual(expected);
     });
 
@@ -149,6 +151,7 @@ describe('AllergyIntoleranceModel', () => {
       // expected.type = 'allergy'
       expected.category = ['food']
       expected.patient = {reference: 'Patient/example'}
+      expected.code = { coding: [{ system: 'http://snomed.info/sct', code: '227037002', display: 'Fish - dietary (substance)' }], text: 'Allergic to fresh fish. Tolerates canned fish' }
 
       expect(new AllergyIntoleranceModel(example2Stu3Fixture, fhirVersions.STU3)).toEqual(expected);
     });
