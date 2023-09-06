@@ -8,12 +8,16 @@ import {CommonModule} from '@angular/common';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {DashboardWidgetQuery} from '../../models/widget/dashboard-widget-query';
 import {Observable, of} from 'rxjs';
+import {ResponseWrapper} from '../../models/response-wrapper';
 
 
 class MockFastenApiService implements Partial<FastenApiService> {
-  public queryResources(query?: DashboardWidgetQuery): Observable<any[]> {
+  public queryResources(query?: DashboardWidgetQuery): Observable<ResponseWrapper> {
     console.log("CALLED MOCK")
-    return of([])
+    return of({
+      data:{},
+      success: true
+    })
   }
 }
 

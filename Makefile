@@ -83,3 +83,7 @@ test-frontend-coverage: dep-frontend
 # reduce logging, disable angular-cli analytics for ci environment
 test-frontend-coverage-ci: dep-frontend
 	cd frontend && npx ng test --watch=false --code-coverage --browsers=ChromeHeadlessCI
+
+.PHONY: test-frontend-storybook
+test-frontend-storybook:
+	cd frontend && ng run fastenhealth:storybook
