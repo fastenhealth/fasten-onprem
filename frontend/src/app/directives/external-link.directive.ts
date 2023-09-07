@@ -37,10 +37,9 @@ export class ExternalLinkDirective {
   onClick(event: MouseEvent) {
     event.preventDefault();
 
-    let url: string = (<any>event.currentTarget).getAttribute("href");
+    let url: string = (<any>event.currentTarget).getAttribute("href") || (<any>event.target).getAttribute("href");
 
     //check if wails exists and is defined
-
     if(typeof wails !== "undefined" && environment.environment_desktop){
       wails.CallByName("pkg.AppService.BrowserOpenURL", url)
     } else{

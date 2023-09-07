@@ -1,5 +1,5 @@
 <div *ngIf="!loading else isLoadingTemplate">
-  <div [innerHTML]="description"></div>
+  <div [innerHTML]="description" externalLink></div>
   <p>Source: <a [href]="url" externalLink>{{source}}</a></p>
 </div>
 
