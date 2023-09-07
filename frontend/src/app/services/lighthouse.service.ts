@@ -12,6 +12,7 @@ import {uuidV4} from '../../lib/utils/uuid';
 import {LighthouseSourceSearch} from '../models/lighthouse/lighthouse-source-search';
 import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
 import {MedicalSourcesFilter} from './medical-sources-filter.service';
+import {OpenExternalLink} from '../../lib/utils/external_link';
 
 export const sourceConnectDesktopTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
 
@@ -169,9 +170,11 @@ export class LighthouseService {
     //if we're in desktop mode, we can open a new window, rather than redirecting the current window (which is an app frame)
     if(environment.environment_desktop && environment.popup_source_auth){
       //@ts-ignore
-      let openedWindow = window.runtime.BrowserOpenURL(redirectUrlParts.toString());
 
-      this.waitForDesktopCodeOrTimeout(openedWindow, sourceType).subscribe(async (codeData) => {
+      OpenExternalLink(redirectUrlParts.toString(), environment.environment_desktop)
+      // let openedWindow = window.runtime.BrowserOpenURL(redirectUrlParts.toString());
+
+      this.waitForDesktopCodeOrTimeout(null, sourceType).subscribe(async (codeData) => {
         //TODO: redirect to the callback url with the code.
         console.log("DONE WAITING FOR CODE")
       })
