@@ -151,7 +151,7 @@ export class LighthouseService {
 
     if(environment.environment_desktop){
       //hash based routing
-      originUrlParts.hash = this.pathJoin([originUrlParts.hash, `callback/${sourceType}`])
+      originUrlParts.hash = `desktop/callback/${sourceType}`
     } else {
       //path based routing
       originUrlParts.hash = "" //reset hash in-case its present.
@@ -173,6 +173,11 @@ export class LighthouseService {
 
       OpenExternalLink(redirectUrlParts.toString(), environment.environment_desktop)
       // let openedWindow = window.runtime.BrowserOpenURL(redirectUrlParts.toString());
+
+      wails.Event.Once("wails:fasten-lighthouse:success", (code: string) => {
+        console.log("GOT CODE FROM DESKTOP", code)
+
+      })
 
       this.waitForDesktopCodeOrTimeout(null, sourceType).subscribe(async (codeData) => {
         //TODO: redirect to the callback url with the code.

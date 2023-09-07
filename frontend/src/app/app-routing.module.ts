@@ -15,6 +15,7 @@ import {ReportLabsComponent} from './pages/report-labs/report-labs.component';
 import {ResourceCreatorComponent} from './pages/resource-creator/resource-creator.component';
 import {ExploreComponent} from './pages/explore/explore.component';
 import {environment} from '../environments/environment';
+import {DesktopCallbackComponent} from './pages/desktop-callback/desktop-callback.component';
 
 const routes: Routes = [
 
@@ -36,6 +37,7 @@ const routes: Routes = [
   { path: 'sources/callback/:source_type', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'resource/create', component: ResourceCreatorComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
+  { path: 'desktop/callback/:source_id', component: DesktopCallbackComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
   { path: 'patient-profile', component: PatientProfileComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'medical-history', component: MedicalHistoryComponent, canActivate: [ IsAuthenticatedAuthGuard] },

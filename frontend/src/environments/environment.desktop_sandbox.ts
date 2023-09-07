@@ -3,7 +3,7 @@ export const environment = {
   environment_cloud: false,
   environment_desktop: true,
   environment_name: "desktop_sandbox",
-  popup_source_auth: false,
+  popup_source_auth: true,
 
   lighthouse_api_endpoint_base: 'https://lighthouse.fastenhealth.com/sandbox',
 
