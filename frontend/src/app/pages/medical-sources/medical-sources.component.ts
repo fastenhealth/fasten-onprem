@@ -5,7 +5,7 @@ import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-sourc
 import {Source} from '../../models/fasten/source';
 import {MetadataSource} from '../../models/fasten/metadata-source';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router, UrlSerializer} from '@angular/router';
 import {environment} from '../../../environments/environment';
 import {BehaviorSubject, forkJoin, Observable, of, Subject} from 'rxjs';
 import {
@@ -17,7 +17,7 @@ import {debounceTime, distinctUntilChanged, pairwise, startWith} from 'rxjs/oper
 import {MedicalSourcesFilter, MedicalSourcesFilterService} from '../../services/medical-sources-filter.service';
 import {FormControl, FormGroup} from '@angular/forms';
 import * as _ from 'lodash';
-// If you dont import this angular will import the wrong "Location"
+import {Location} from '@angular/common';
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
 
@@ -79,6 +79,9 @@ export class MedicalSourcesComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private filterService: MedicalSourcesFilterService,
     private modalService: NgbModal,
+    private router: Router,
+    private urlSerializer: UrlSerializer,
+    private location: Location,
   ) {
     this.filterService.filterChanges.subscribe((filterInfo) => {
 
@@ -284,8 +287,31 @@ export class MedicalSourcesComponent implements OnInit {
         let authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceType, sourceMetadata)
 
         console.log('authorize url:', authorizationUrl.toString());
-        // redirect to lighthouse with uri's
-        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceType, sourceMetadata.redirect_uri)
+        // redirect to lighthouse with uri's (or open a new window in desktop mode)
+        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceType, sourceMetadata.redirect_uri).subscribe((codeData) => {
+          //Note: this code will only run in Desktop mode (with popups)
+          //in non-desktop environments, the user is redirected in the same window, and this code is never executed.
+
+          //always close the modal
+          this.modalService.dismissAll()
+
+          if(!codeData){
+            //if we redirected completely, no callback data will be present.
+            return
+          }
+
+          //User was shown a popup, which was closed, and data was returned using events
+          //redirect to callback page with code
+
+          let urlTree = this.router.createUrlTree(
+            ['/sources/callback/' + sourceType],
+            { queryParams: codeData, }
+          );
+
+          let absUrl = this.location.prepareExternalUrl(this.urlSerializer.serialize(urlTree))
+          console.log(absUrl);
+          window.location.replace(absUrl)
+        })
       });
   }
 

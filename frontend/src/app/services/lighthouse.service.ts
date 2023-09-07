@@ -1,6 +1,6 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, of, throwError, fromEvent } from 'rxjs';
+import {Observable, of, throwError, bindCallback} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {concatMap, delay, retryWhen, timeout, first, map, filter, catchError, tap} from 'rxjs/operators';
 import {ResponseWrapper} from '../models/response-wrapper';
@@ -146,7 +146,7 @@ export class LighthouseService {
    * dest_url -  https://patient360la.anthem.com/.../connect/authorize?redirect_uri=https://lighthouse.fastenhealth.com/callback/anthem
    * redirect_url - lighthouse.fastenhealth.com/sandbox/redirect/anthem?origin_url=...&dest_url=...
    */
-  redirectWithOriginAndDestination(destUrl: string, sourceType: string, callbackUri: string): void {
+  redirectWithOriginAndDestination(destUrl: string, sourceType: string, callbackUri: string): Observable<any> {
     const originUrlParts = new URL(window.location.href)
 
     if(environment.environment_desktop){
@@ -171,23 +171,15 @@ export class LighthouseService {
     if(environment.environment_desktop && environment.popup_source_auth){
       //@ts-ignore
 
-      OpenExternalLink(redirectUrlParts.toString(), environment.environment_desktop)
-      // let openedWindow = window.runtime.BrowserOpenURL(redirectUrlParts.toString());
+      OpenExternalLink(redirectUrlParts.toString(), environment.environment_desktop, sourceType)
 
-      wails.Event.Once("wails:fasten-lighthouse:success", (code: string) => {
-        console.log("GOT CODE FROM DESKTOP", code)
-
-      })
-
-      this.waitForDesktopCodeOrTimeout(null, sourceType).subscribe(async (codeData) => {
-        //TODO: redirect to the callback url with the code.
-        console.log("DONE WAITING FOR CODE")
-      })
+      return this.waitForDesktopCodeOrTimeout(sourceType)
 
       //now wait for response from the opened window
     } else {
       //redirect to the url in the same window
       window.location.href = redirectUrlParts.toString();
+      return of(null) //should never happen
     }
 
   }
@@ -260,26 +252,32 @@ export class LighthouseService {
     return parts.join(separator);
   }
 
-  private waitForDesktopCodeOrTimeout(openedWindow: Window, sourceType: string): Observable<any> {
-    console.log(`waiting for postMessage notification from ${sourceType} window`)
+  private waitForDesktopCodeOrTimeout(sourceType: string): Observable<any> {
+    console.log(`waiting for wails Event notification from window`)
+
+    if(typeof wails == "undefined"){
+      return throwError("wails is not defined, this is likely because you're running in a browser.")
+    }
+
+    let fromWailsEvent = bindCallback(wails.Events.Once)
 
     //new code to listen to post message
-    return fromEvent(window, 'message')
+    return fromWailsEvent('wails:fasten-lighthouse:response')
       .pipe(
         //throw an error if we wait more than 2 minutes (this will close the window)
         timeout(sourceConnectDesktopTimeout),
         //make sure we're only listening to events from the "opened" window.
-        filter((event: MessageEvent) => event.source == openedWindow),
+        filter((eventPayload: any ) => eventPayload.sender == sourceType),
         //after filtering, we should only have one event to handle.
         first(),
         map((event) => {
-          console.log(`received postMessage notification from ${sourceType} window & sending acknowledgment`, event)
+          console.log(`received wails event notification from ${sourceType} window & sending acknowledgment`, event)
           // @ts-ignore
-          event.source.postMessage(JSON.stringify({close:true}), event.origin);
+          return event.data
         }),
         catchError((err) => {
           console.warn(`timed out waiting for notification from ${sourceType} (${sourceConnectDesktopTimeout/1000}s), closing window`)
-          openedWindow.self.close()
+          wails.Application.GetWindowByName(sourceType).Window.Close()
           return throwError(err)
         })
   )

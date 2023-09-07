@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-desktop-callback',
@@ -8,14 +9,14 @@ import { Component, OnInit } from '@angular/core';
 export class DesktopCallbackComponent implements OnInit {
 
   //This component is used to redirect the user to the desktop app after they have authenticated with a source
-  constructor() { }
+  constructor(private activatedRoute : ActivatedRoute) { }
 
   ngOnInit(): void {
-    wails.Event.Emit({
-      name: "wails:fasten-lighthouse:success",
-      data:
-
-    )
+    this.activatedRoute.queryParams.subscribe(values => {
+      wails.Events.Emit({
+        name: "wails:fasten-lighthouse:response",
+        data: values,
+      })
+    })
   }
-
 }

@@ -66,7 +66,10 @@ declare global {
   // let wails: any
 
   let wails: {
-    Event: {
+    Application: {
+      GetWindowByName: (sourceType: string) => any
+    }
+    Events: {
       Emit: (event: any) => void
       Once: (eventName, callback) => void
       On: (eventName, callback) => void

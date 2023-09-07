@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
 
   modifyHeader(event) {
     if (event instanceof NavigationEnd) {
-      if (event.url?.startsWith('/auth')) {
+      if (event.url?.startsWith('/auth') || event.url?.startsWith('/desktop')) {
         this.showHeader = false;
       } else {
         // console.log("NU")
