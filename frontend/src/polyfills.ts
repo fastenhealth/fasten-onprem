@@ -61,6 +61,17 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+//required for desktop apps
+declare global {
+  // let wails: any
+
+  let wails: {
+
+    Call: (options) => Promise<any>
+    CallByID: (methodID, ...args) => Promise<any>
+    CallByName: (name, ...args) => Promise<any>
+  }
+}
 
 //required for PouchDB
 (window as any).global = window;

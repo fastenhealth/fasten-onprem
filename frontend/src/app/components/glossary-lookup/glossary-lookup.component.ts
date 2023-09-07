@@ -4,10 +4,11 @@ import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {LoadingSpinnerComponent} from "../loading-spinner/loading-spinner.component";
 import {AuthService} from "../../services/auth.service";
 import {CommonModule} from "@angular/common";
+import {DirectivesModule} from '../../directives/directives.module';
 
 @Component({
   standalone: true,
-  imports: [LoadingSpinnerComponent, CommonModule],
+  imports: [LoadingSpinnerComponent, CommonModule, DirectivesModule],
   providers: [FastenApiService, AuthService],
   selector: 'app-glossary-lookup',
   templateUrl: './glossary-lookup.component.html',

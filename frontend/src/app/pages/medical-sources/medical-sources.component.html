@@ -13,13 +13,13 @@
         <strong>Work-in-Progress!</strong> Some sources may not be implemented correctly.
         Some sources may require frequent re-connection, as background refresh has not been implemented yet.
         <br/>
-        If you have feedback regarding healthcare sources, please <a href="https://github.com/fastenhealth/fasten-onprem/issues">file a ticket <i class="fab fa-github"></i></a>
+        If you have feedback regarding healthcare sources, please <a href="https://github.com/fastenhealth/fasten-onprem/issues" externalLink>file a ticket <i class="fab fa-github"></i></a>
 
         <span *ngIf="environment_name == 'sandbox'">
           <br/>
           <br/>
         In <strong>Sandbox mode</strong> Fasten Health cannot access real patient information. You must use Sandbox credentials when authenticating to healthcare sources.
-          <a href="https://github.com/fastenhealth/docs/blob/main/BETA.md#connecting-a-new-source">These credentials are available on Github</a>
+          <a href="https://github.com/fastenhealth/docs/blob/main/BETA.md#connecting-a-new-source" externalLink>These credentials are available on Github</a>
         </span>
       </div>
 
@@ -97,8 +97,7 @@
         <h6>{{modalSelectedSourceListItem?.metadata.display}}</h6>
         <a *ngIf="modalSelectedSourceListItem?.metadata.patient_access_url"
            [href]="modalSelectedSourceListItem.metadata?.patient_access_url"
-            target="_blank"
-           class="mg-b-0">{{modalSelectedSourceListItem?.metadata.patient_access_url | shortDomain}}</a>
+           class="mg-b-0" externalLink>{{modalSelectedSourceListItem?.metadata.patient_access_url | shortDomain}}</a>
       </div><!-- media-body -->
     </div><!-- media -->
     <button type="button" class="btn btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">
@@ -112,7 +111,7 @@
       where you can authenticate and select data to import into Fasten Health.
     </p>
     <p>
-      If the data about this institution is missing or incorrect, you can <a class="link" href="https://docs.google.com/spreadsheets/d/1ZSgwfd7kwxSnimk4yofIFcR8ZMUls0zi9SZpRiOJBx0/edit?usp=sharing">click here</a> to submit a correction.
+      If the data about this institution is missing or incorrect, you can <a class="link" href="https://docs.google.com/spreadsheets/d/1ZSgwfd7kwxSnimk4yofIFcR8ZMUls0zi9SZpRiOJBx0/edit?usp=sharing" externalLink>click here</a> to submit a correction.
     </p>
 
     <ng-container *ngIf="modalSelectedSourceListItem?.metadata?.category?.length > 0 || modalSelectedSourceListItem?.metadata?.patient_access_description">
