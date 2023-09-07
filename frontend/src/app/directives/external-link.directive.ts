@@ -39,6 +39,11 @@ export class ExternalLinkDirective {
 
     let url: string = (<any>event.currentTarget).getAttribute("href") || (<any>event.target).getAttribute("href");
 
+    //check if url starts with https, and if not, prepend it (external links are never relative)
+    if(!url.startsWith("https://") && !url.startsWith("http://")){
+      url = "https://" + url;
+    }
+
     //check if wails exists and is defined
     if(typeof wails !== "undefined" && environment.environment_desktop){
       wails.CallByName("pkg.AppService.BrowserOpenURL", url)
