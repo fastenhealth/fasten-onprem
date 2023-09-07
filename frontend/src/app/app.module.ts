@@ -36,6 +36,7 @@ import {HTTP_CLIENT_TOKEN} from "./dependency-injection";
 import {WidgetsModule} from './widgets/widgets.module';
 import { ExploreComponent } from './pages/explore/explore.component';
 import {DirectivesModule} from './directives/directives.module';
+import { DesktopCallbackComponent } from './pages/desktop-callback/desktop-callback.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import {DirectivesModule} from './directives/directives.module';
     ReportLabsComponent,
     ResourceCreatorComponent,
     ExploreComponent,
+    DesktopCallbackComponent,
   ],
   imports: [
     FormsModule,

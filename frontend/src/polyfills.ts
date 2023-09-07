@@ -66,7 +66,11 @@ declare global {
   // let wails: any
 
   let wails: {
-
+    Event: {
+      Emit: (event: any) => void
+      Once: (eventName, callback) => void
+      On: (eventName, callback) => void
+    }
     Call: (options) => Promise<any>
     CallByID: (methodID, ...args) => Promise<any>
     CallByName: (name, ...args) => Promise<any>
