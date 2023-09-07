@@ -1,6 +1,6 @@
 <div *ngIf="!loading else isLoadingTemplate">
   <div [innerHTML]="description"></div>
-  <p>Source: <a [href]="url">{{source}}</a></p>
+  <p>Source: <a [href]="url" externalLink>{{source}}</a></p>
 </div>
 
 <ng-template #isLoadingTemplate>

@@ -49,7 +49,7 @@
             <strong>Description:</strong> {{dashboardConfigs?.[selectedDashboardConfigNdx]?.description}}
             <br/>
             <span *ngIf="dashboardConfigs?.[selectedDashboardConfigNdx]?.source">
-              <strong>Source:</strong> <a [href]="dashboardConfigs?.[selectedDashboardConfigNdx]?.source" target="_blank"> {{dashboardConfigs?.[selectedDashboardConfigNdx]?.source}}</a>
+              <strong>Source:</strong> <a [href]="dashboardConfigs?.[selectedDashboardConfigNdx]?.source" externalLink> {{dashboardConfigs?.[selectedDashboardConfigNdx]?.source}}</a>
             </span>
           </div>
         </div>
@@ -74,10 +74,10 @@
       Users can create personalized dashboards tracking the information they care about, by querying their own medical records using a SQL-like syntax.
     </p>
     <p>
-      Fasten comes with a few <a target="_blank" href="https://github.com/fastenhealth/fasten-onprem/tree/main/backend/pkg/web/handler/dashboard">pre-built dashboards</a> to get you started. You can also add your own dashboards by providing a link to a Github Gist containing a JSON representation of your dashboard.
+      Fasten comes with a few <a href="https://github.com/fastenhealth/fasten-onprem/tree/main/backend/pkg/web/handler/dashboard" externalLink>pre-built dashboards</a> to get you started. You can also add your own dashboards by providing a link to a Github Gist containing a JSON representation of your dashboard.
     </p>
     <p>
-      See <a target="_blank" href="https://docs.fastenhealth.com/dashboard/configuration.html">Dashboard Configuration Documentation</a> for more information.
+      See <a href="https://docs.fastenhealth.com/dashboard/configuration.html" externalLink>Dashboard Configuration Documentation</a> for more information.
     </p>
     <form>
       <div class="mb-3">

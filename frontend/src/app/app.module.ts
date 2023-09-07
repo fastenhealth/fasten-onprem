@@ -35,6 +35,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import {HTTP_CLIENT_TOKEN} from "./dependency-injection";
 import {WidgetsModule} from './widgets/widgets.module';
 import { ExploreComponent } from './pages/explore/explore.component';
+import {DirectivesModule} from './directives/directives.module';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,8 @@ import { ExploreComponent } from './pages/explore/explore.component';
     PipesModule,
     InfiniteScrollModule,
     NgSelectModule,
-    WidgetsModule
+    WidgetsModule,
+    DirectivesModule
   ],
   providers: [
     {
@@ -94,6 +96,7 @@ import { ExploreComponent } from './pages/explore/explore.component';
       }
     }
   ],
+  exports: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {

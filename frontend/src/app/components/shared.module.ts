@@ -81,6 +81,7 @@ import {ListServiceRequestComponent} from './list-generic-resource/list-service-
 import {NgbCollapseModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {PipesModule} from '../pipes/pipes.module';
 import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.directive';
+import {DirectivesModule} from '../directives/directives.module';
 
 @NgModule({
   imports: [
@@ -96,6 +97,7 @@ import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.
     NgChartsModule,
     HighlightModule,
     PipesModule,
+    DirectivesModule,
 
     //standalone components
     LoadingSpinnerComponent,
@@ -231,7 +233,6 @@ import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.
         UtilitiesSidebarComponent,
         MedicalSourcesCardComponent,
         MedicalSourcesConnectedComponent,
-
         //standalone components
         BadgeComponent,
         TableComponent,
