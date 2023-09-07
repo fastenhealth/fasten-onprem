@@ -1,5 +1,6 @@
 import {Directive, HostBinding, HostListener, Input} from '@angular/core';
 import {environment} from '../../environments/environment';
+import {OpenExternalLink} from '../../lib/utils/external_link';
 
 // In desktop mode external links can allow the user to navigate away from the app, without any means to return.
 // We can prevent this by forcing all external links to open in a new tab
@@ -37,19 +38,8 @@ export class ExternalLinkDirective {
   onClick(event: MouseEvent) {
     event.preventDefault();
 
-    let url: string = (<any>event.currentTarget).getAttribute("href") || (<any>event.target).getAttribute("href");
+    let url: string = (<any> event.currentTarget).getAttribute("href") || (<any> event.target).getAttribute("href");
 
-    //check if url starts with https, and if not, prepend it (external links are never relative)
-    if(!url.startsWith("https://") && !url.startsWith("http://")){
-      url = "https://" + url;
-    }
-
-    //check if wails exists and is defined
-    if(typeof wails !== "undefined" && environment.environment_desktop){
-      wails.CallByName("pkg.AppService.BrowserOpenURL", url)
-    } else{
-      window.open(url, "_blank");
-    }
+    OpenExternalLink(url, environment.environment_desktop)
   }
-
 }
