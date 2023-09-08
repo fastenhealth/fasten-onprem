@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/sse"
 	"github.com/gin-gonic/gin"
 	"io"
 )
@@ -21,7 +21,7 @@ func SSEStream(c *gin.Context) {
 	if !ok {
 		return
 	}
-	clientChan, ok := v.(middleware.ClientChan)
+	clientChan, ok := v.(sse.ClientChan)
 	if !ok {
 		return
 	}

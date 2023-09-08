@@ -61,4 +61,5 @@ test.go
 
 config.dev.yaml
 .cache/
+cache/
 fasten-*.db

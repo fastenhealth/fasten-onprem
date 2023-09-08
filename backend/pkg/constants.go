@@ -9,8 +9,8 @@ const (
 	ContextKeyTypeDatabase string = "REPOSITORY"
 	ContextKeyTypeLogger   string = "LOGGER"
 
-	ContextKeyTypeSSEServer        string = "SSE_SERVER"
-	ContextKeyTypeSSEClientChannel string = "SSE_CLIENT_CHANNEL"
+	ContextKeyTypeSSEEventBusServer string = "SSE_EVENT_BUS_SERVER"
+	ContextKeyTypeSSEClientChannel  string = "SSE_CLIENT_CHANNEL"
 
 	ContextKeyTypeAuthUsername string = "AUTH_USERNAME"
 	ContextKeyTypeAuthToken    string = "AUTH_TOKEN"

@@ -3,8 +3,8 @@ package middleware
 import (
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/sse"
 	"github.com/gin-gonic/gin"
-	"log"
 	"time"
 )
 
@@ -18,10 +18,10 @@ func SSEHeaderMiddleware() gin.HandlerFunc {
 	}
 }
 
-func SSEServerMiddleware() gin.HandlerFunc {
+func SSEEventBusServerMiddleware() gin.HandlerFunc {
 
-	// Initialize new streaming server
-	stream := NewSSEServer()
+	// get reference to streaming server singleton
+	bus := sse.GetEventBusServer()
 
 	///TODO: testing only
 	go func() {
@@ -31,90 +31,25 @@ func SSEServerMiddleware() gin.HandlerFunc {
 			currentTime := fmt.Sprintf("The Current Time Is %v", now)
 
 			// Send current time to clients message channel
-			stream.Message <- currentTime
+			bus.Message <- currentTime
 		}
 	}()
 
 	return func(c *gin.Context) {
 		// Initialize client channel
-		clientChan := make(ClientChan)
+		clientChan := make(sse.ClientChan)
 
 		// Send new connection to event server
-		stream.NewClients <- clientChan
+		bus.NewClients <- clientChan
 
 		defer func() {
 			// Send closed connection to event server
-			stream.ClosedClients <- clientChan
+			bus.ClosedClients <- clientChan
 		}()
 
-		c.Set(pkg.ContextKeyTypeSSEServer, stream)
+		c.Set(pkg.ContextKeyTypeSSEEventBusServer, bus)
 		c.Set(pkg.ContextKeyTypeSSEClientChannel, clientChan)
 
 		c.Next()
-	}
-}
-
-//####################################################################################################
-//TODO: this should all be moved into its own package
-//####################################################################################################
-
-// New event messages are broadcast to all registered client connection channels
-// TODO: change this to be use specific channels.
-type ClientChan chan string
-
-// Initialize event and Start procnteessing requests
-// this should be a singleton, to ensure that we're always broadcasting to the same clients
-// see: https://refactoring.guru/design-patterns/singleton/go/example
-func NewSSEServer() (event *SSEvent) {
-	event = &SSEvent{
-		Message:       make(chan string),
-		NewClients:    make(chan chan string),
-		ClosedClients: make(chan chan string),
-		TotalClients:  make(map[chan string]bool),
-	}
-
-	go event.listen()
-
-	return
-}
-
-// It keeps a list of clients those are currently attached
-// and broadcasting events to those clients.
-type SSEvent struct {
-	// Events are pushed to this channel by the main events-gathering routine
-	Message chan string
-
-	// New client connections
-	NewClients chan chan string
-
-	// Closed client connections
-	ClosedClients chan chan string
-
-	// Total client connections
-	TotalClients map[chan string]bool
-}
-
-// It Listens all incoming requests from clients.
-// Handles addition and removal of clients and broadcast messages to clients.
-func (stream *SSEvent) listen() {
-	for {
-		select {
-		// Add new available client
-		case client := <-stream.NewClients:
-			stream.TotalClients[client] = true
-			log.Printf("Client added. %d registered clients", len(stream.TotalClients))
-
-		// Remove closed client
-		case client := <-stream.ClosedClients:
-			delete(stream.TotalClients, client)
-			close(client)
-			log.Printf("Removed client. %d registered clients", len(stream.TotalClients))
-
-		// Broadcast message to client
-		case eventMsg := <-stream.Message:
-			for clientMessageChan := range stream.TotalClients {
-				clientMessageChan <- eventMsg
-			}
-		}
 	}
 }
