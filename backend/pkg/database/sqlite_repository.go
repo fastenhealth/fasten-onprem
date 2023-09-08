@@ -357,7 +357,10 @@ func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceM
 		//wrappedFhirResourceModel.SetResourceRaw(wrappedResourceModel.ResourceRaw)
 	}
 
-	sr.EventBus.Message <- fmt.Sprintf("resource.upsert %s/%s", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID)
+	sr.EventBus.Message <- sse.EventBusMessage{
+		Message: fmt.Sprintf("resource.upsert %s/%s", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID),
+		UserID:  currentUser.ID.String(),
+	}
 	createResult := sr.GormClient.WithContext(ctx).Where(models.OriginBase{
 		SourceID:           wrappedFhirResourceModel.GetSourceID(),
 		SourceResourceID:   wrappedFhirResourceModel.GetSourceResourceID(),

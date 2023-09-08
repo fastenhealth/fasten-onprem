@@ -1,7 +1,9 @@
 package middleware
 
 import (
+	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/sse"
 	"github.com/gin-gonic/gin"
 )
@@ -22,19 +24,31 @@ func SSEEventBusServerMiddleware() gin.HandlerFunc {
 	bus := sse.GetEventBusServer()
 
 	return func(c *gin.Context) {
+		//get a reference to the current user
+		databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+		foundUser, err := databaseRepo.GetCurrentUser(c)
+		if err != nil || foundUser == nil {
+			c.Error(fmt.Errorf("could not find user"))
+			return
+		}
+
 		// Initialize client channel
-		clientChan := make(sse.ClientChan)
+		clientListener := sse.EventBusListener{
+			ResponseChan: make(chan string),
+			UserID:       foundUser.ID.String(),
+		}
 
 		// Send new connection to event server
-		bus.NewClients <- clientChan
+		bus.NewListener <- clientListener
 
 		defer func() {
 			// Send closed connection to event server
-			bus.ClosedClients <- clientChan
+			bus.ClosedListener <- clientListener
 		}()
 
 		c.Set(pkg.ContextKeyTypeSSEEventBusServer, bus)
-		c.Set(pkg.ContextKeyTypeSSEClientChannel, clientChan)
+		c.Set(pkg.ContextKeyTypeSSEClientChannel, clientListener)
 
 		c.Next()
 	}

@@ -24,10 +24,10 @@ func GetEventBusServer() *EventBus {
 		if singletonEventBusInstance == nil {
 			fmt.Println("Creating single instance now.")
 			singletonEventBusInstance = &EventBus{
-				Message:       make(chan string),
-				NewClients:    make(chan chan string),
-				ClosedClients: make(chan chan string),
-				TotalClients:  make(map[chan string]bool),
+				Message:            make(chan EventBusMessage),
+				NewListener:        make(chan EventBusListener),
+				ClosedListener:     make(chan EventBusListener),
+				TotalRoomListeners: make(map[string][]EventBusListener),
 			}
 
 			// Start processing requests
@@ -46,16 +46,26 @@ func GetEventBusServer() *EventBus {
 // and broadcasting events to those clients.
 type EventBus struct {
 	// Events are pushed to this channel by the main events-gathering routine
-	Message chan string
+	Message chan EventBusMessage
 
 	// New client connections
-	NewClients chan chan string
+	NewListener chan EventBusListener
 
 	// Closed client connections
-	ClosedClients chan chan string
+	ClosedListener chan EventBusListener
 
 	// Total client connections
-	TotalClients map[chan string]bool
+	TotalRoomListeners map[string][]EventBusListener
+}
+
+type EventBusListener struct {
+	ResponseChan chan string
+	UserID       string
+}
+
+type EventBusMessage struct {
+	UserID  string
+	Message string
 }
 
 // It Listens all incoming requests from clients.
@@ -65,21 +75,42 @@ func (bus *EventBus) listen() {
 	for {
 		select {
 		// Add new available client
-		case client := <-bus.NewClients:
-			bus.TotalClients[client] = true
-			log.Printf("Client added. %d registered clients", len(bus.TotalClients))
+		case listener := <-bus.NewListener:
+			//check if this userId room already exists, or create it
+			if _, exists := bus.TotalRoomListeners[listener.UserID]; !exists {
+				bus.TotalRoomListeners[listener.UserID] = []EventBusListener{}
+			}
+			bus.TotalRoomListeners[listener.UserID] = append(bus.TotalRoomListeners[listener.UserID], listener)
+			log.Printf("Listener added to room: `%s`. %d registered listeners", listener.UserID, len(bus.TotalRoomListeners[listener.UserID]))
 
 		// Remove closed client
-		case client := <-bus.ClosedClients:
-			delete(bus.TotalClients, client)
-			close(client)
-			log.Printf("Removed client. %d registered clients", len(bus.TotalClients))
+		case listener := <-bus.ClosedListener:
+			if _, exists := bus.TotalRoomListeners[listener.UserID]; !exists {
+				log.Printf("Room `%s` not found", listener.UserID)
+				continue
+			} else {
+				//loop through all the listeners in the room and remove the one that matches
+				for i, v := range bus.TotalRoomListeners[listener.UserID] {
+					if v.ResponseChan == listener.ResponseChan {
+						bus.TotalRoomListeners[listener.UserID] = append(bus.TotalRoomListeners[listener.UserID][:i], bus.TotalRoomListeners[listener.UserID][i+1:]...)
+						close(listener.ResponseChan)
+						log.Printf("Removed listener from room: `%s`. %d registered clients", listener.UserID, len(bus.TotalRoomListeners[listener.UserID]))
+						break
+					}
+				}
+			}
 
 		// Broadcast message to client
 		case eventMsg := <-bus.Message:
-			for clientMessageChan := range bus.TotalClients {
-				clientMessageChan <- eventMsg
+			if _, exists := bus.TotalRoomListeners[eventMsg.UserID]; !exists {
+				log.Printf("Room `%s` not found, could not send message: `%s`", eventMsg.UserID, eventMsg.Message)
+				continue
+			} else {
+				for _, roomListener := range bus.TotalRoomListeners[eventMsg.UserID] {
+					roomListener.ResponseChan <- eventMsg.Message
+				}
 			}
+
 		}
 	}
 }

@@ -39,7 +39,10 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				// check if access to database
 
 				bus := sse.GetEventBusServer()
-				bus.Message <- "sse heartbeat"
+				bus.Message <- sse.EventBusMessage{
+					UserID:  "heartbeat",
+					Message: "sse heartbeat",
+				}
 
 				c.JSON(http.StatusOK, gin.H{
 					"success": true,
