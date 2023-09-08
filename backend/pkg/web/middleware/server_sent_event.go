@@ -1,11 +1,9 @@
 package middleware
 
 import (
-	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/sse"
 	"github.com/gin-gonic/gin"
-	"time"
 )
 
 func SSEHeaderMiddleware() gin.HandlerFunc {
@@ -22,18 +20,6 @@ func SSEEventBusServerMiddleware() gin.HandlerFunc {
 
 	// get reference to streaming server singleton
 	bus := sse.GetEventBusServer()
-
-	///TODO: testing only
-	go func() {
-		for {
-			time.Sleep(time.Second * 10)
-			now := time.Now().Format("2006-01-02 15:04:05")
-			currentTime := fmt.Sprintf("The Current Time Is %v", now)
-
-			// Send current time to clients message channel
-			bus.Message <- currentTime
-		}
-	}()
 
 	return func(c *gin.Context) {
 		// Initialize client channel
