@@ -22,6 +22,7 @@ import * as fhirpath from 'fhirpath';
 import _ from 'lodash';
 import {DashboardConfig} from '../models/widget/dashboard-config';
 import {DashboardWidgetQuery} from '../models/widget/dashboard-widget-query';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 @Injectable({
   providedIn: 'root'
@@ -53,6 +54,29 @@ export class FastenApiService {
   /*
   SECURE ENDPOINTS
   */
+
+  listenEventBus(): Observable<any> {
+    let eventStreamUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/events/stream`
+
+    return new Observable(observer => {
+      fetchEventSource(eventStreamUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.authService.GetAuthToken()}`
+        },
+        onmessage(ev) {
+          observer.next(ev.data);
+        },
+        onerror(event) {
+          observer.error(event)
+        },
+      }).then(
+        () => observer.complete(),
+        error => observer.error(error)
+      )
+    });
+  }
 
   getDashboards(): Observable<DashboardConfig[]> {
     return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/dashboards`, )
