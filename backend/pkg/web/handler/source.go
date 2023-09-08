@@ -141,8 +141,9 @@ func CreateSource(c *gin.Context) {
 		return
 	}
 
-	// after creating the source, we should do a bulk import
-	summary, err := SyncSourceResources(c, logger, databaseRepo, &sourceCred)
+	// after creating the source, we should do a bulk import (in the background)
+
+	summary, err := SyncSourceResources(context.WithValue(c.Request.Context(), pkg.ContextKeyTypeAuthUsername, c.Value(pkg.ContextKeyTypeAuthUsername).(string)), logger, databaseRepo, &sourceCred)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
@@ -164,8 +165,8 @@ func SourceSync(c *gin.Context) {
 		return
 	}
 
-	// after creating the source, we should do a bulk import
-	summary, err := SyncSourceResources(c, logger, databaseRepo, sourceCred)
+	// after creating the source, we should do a bulk import (in the background)
+	summary, err := SyncSourceResources(context.WithValue(c.Request.Context(), pkg.ContextKeyTypeAuthUsername, c.Value(pkg.ContextKeyTypeAuthUsername).(string)), logger, databaseRepo, sourceCred)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return

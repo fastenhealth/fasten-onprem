@@ -6,6 +6,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/handler"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/sse"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -36,6 +37,10 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				//TODO:
 				// check if the /web folder is populated.
 				// check if access to database
+
+				bus := sse.GetEventBusServer()
+				bus.Message <- "sse heartbeat"
+
 				c.JSON(http.StatusOK, gin.H{
 					"success": true,
 				})
