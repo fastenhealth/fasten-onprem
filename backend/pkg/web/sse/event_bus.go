@@ -60,6 +60,7 @@ type EventBus struct {
 
 // It Listens all incoming requests from clients.
 // Handles addition and removal of clients and broadcast messages to clients.
+// TODO: determine how to route messages based on authenticated client
 func (bus *EventBus) listen() {
 	for {
 		select {
