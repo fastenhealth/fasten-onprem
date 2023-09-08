@@ -70,6 +70,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 				secure.POST("/query", handler.QueryResourceFhir)
 
+				//server-side-events handler
+				secure.GET("/sse/stream", middleware.SSEHeaderMiddleware(), middleware.SSEServerMiddleware(), handler.SSEStream)
 			}
 
 			if ae.Config.GetBool("web.allow_unsafe_endpoints") {
