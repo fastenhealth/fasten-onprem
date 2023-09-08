@@ -17,7 +17,7 @@ type ClientChan chan string
 // Get a reference to the EventBus singleton Start procnteessing requests
 // this should be a singleton, to ensure that we're always broadcasting to the same clients
 // see: https://refactoring.guru/design-patterns/singleton/go/example
-func GetEventBusServer() (bus *EventBus) {
+func GetEventBusServer() *EventBus {
 	if singletonEventBusInstance == nil {
 		eventBusLock.Lock()
 		defer eventBusLock.Unlock()
@@ -31,7 +31,7 @@ func GetEventBusServer() (bus *EventBus) {
 			}
 
 			// Start processing requests
-			go bus.listen()
+			go singletonEventBusInstance.listen()
 		} else {
 			fmt.Println("Single instance already created.")
 		}
