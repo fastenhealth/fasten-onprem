@@ -5,6 +5,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/sse"
 	"github.com/gin-gonic/gin"
 	"io"
+	"log"
 )
 
 // SSEStream is a handler for the server sent event stream (notifications from background processes)
@@ -19,15 +20,16 @@ func SSEStream(c *gin.Context) {
 	//databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 	v, ok := c.Get(pkg.ContextKeyTypeSSEClientChannel)
 	if !ok {
+		log.Printf("could not get client channel from context")
 		return
 	}
-	clientChan, ok := v.(sse.ClientChan)
+	listener, ok := v.(sse.EventBusListener)
 	if !ok {
 		return
 	}
 	c.Stream(func(w io.Writer) bool {
 		// Stream message to client from message channel
-		if msg, ok := <-clientChan; ok {
+		if msg, ok := <-listener.ResponseChan; ok {
 			c.SSEvent("message", msg)
 			return true
 		}
