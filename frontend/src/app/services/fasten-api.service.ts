@@ -62,7 +62,6 @@ export class FastenApiService {
       fetchEventSource(eventStreamUrl, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${this.authService.GetAuthToken()}`
         },
         onmessage(ev) {
