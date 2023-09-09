@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/sse"
 	sourceModel "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/gin-gonic/gin"
 	"github.com/glebarez/sqlite"
@@ -62,7 +62,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 		AppConfig:  appConfig,
 		Logger:     globalLogger,
 		GormClient: database,
-		EventBus:   sse.GetEventBusServer(),
+		EventBus:   event_bus.GetEventBusServer(globalLogger),
 	}
 
 	//TODO: automigrate for now, this should be replaced with a migration tool once the DB has stabilized.
@@ -95,7 +95,7 @@ type SqliteRepository struct {
 
 	GormClient *gorm.DB
 
-	EventBus *sse.EventBus
+	EventBus *event_bus.EventBus
 }
 
 func (sr *SqliteRepository) Migrate() error {
@@ -357,10 +357,18 @@ func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceM
 		//wrappedFhirResourceModel.SetResourceRaw(wrappedResourceModel.ResourceRaw)
 	}
 
-	sr.EventBus.Message <- sse.EventBusMessage{
-		Message: fmt.Sprintf("resource.upsert %s/%s", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID),
-		UserID:  currentUser.ID.String(),
+	eventSourceSync := models.NewEventSourceSync(
+		currentUser.ID.String(),
+		wrappedFhirResourceModel.GetSourceID().String(),
+		wrappedFhirResourceModel.GetSourceResourceType(),
+		wrappedFhirResourceModel.GetSourceResourceID(),
+	)
+
+	err = sr.EventBus.PublishMessage(eventSourceSync)
+	if err != nil {
+		sr.Logger.Warnf("ignoring: an error occurred while publishing event to EventBus (%s/%s): %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID, err)
 	}
+
 	createResult := sr.GormClient.WithContext(ctx).Where(models.OriginBase{
 		SourceID:           wrappedFhirResourceModel.GetSourceID(),
 		SourceResourceID:   wrappedFhirResourceModel.GetSourceResourceID(),

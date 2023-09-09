@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/sse"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 func SSEHeaderMiddleware() gin.HandlerFunc {
@@ -18,10 +19,10 @@ func SSEHeaderMiddleware() gin.HandlerFunc {
 	}
 }
 
-func SSEEventBusServerMiddleware() gin.HandlerFunc {
+func SSEEventBusServerMiddleware(logger *logrus.Entry) gin.HandlerFunc {
 
 	// get reference to streaming server singleton
-	bus := sse.GetEventBusServer()
+	bus := event_bus.GetEventBusServer(logger)
 
 	return func(c *gin.Context) {
 		//get a reference to the current user
@@ -34,7 +35,7 @@ func SSEEventBusServerMiddleware() gin.HandlerFunc {
 		}
 
 		// Initialize client channel
-		clientListener := sse.EventBusListener{
+		clientListener := event_bus.EventBusListener{
 			ResponseChan: make(chan string),
 			UserID:       foundUser.ID.String(),
 		}

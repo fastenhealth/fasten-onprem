@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/sse"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/gin-gonic/gin"
 	"io"
 	"log"
@@ -23,7 +23,7 @@ func SSEStream(c *gin.Context) {
 		log.Printf("could not get client channel from context")
 		return
 	}
-	listener, ok := v.(sse.EventBusListener)
+	listener, ok := v.(event_bus.EventBusListener)
 	if !ok {
 		return
 	}
