@@ -1,7 +1,10 @@
-package sse
+package event_bus
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/sirupsen/logrus"
 	"log"
 	"sync"
 )
@@ -17,13 +20,14 @@ type ClientChan chan string
 // Get a reference to the EventBus singleton Start procnteessing requests
 // this should be a singleton, to ensure that we're always broadcasting to the same clients
 // see: https://refactoring.guru/design-patterns/singleton/go/example
-func GetEventBusServer() *EventBus {
+func GetEventBusServer(logger logrus.FieldLogger) *EventBus {
 	if singletonEventBusInstance == nil {
 		eventBusLock.Lock()
 		defer eventBusLock.Unlock()
 		if singletonEventBusInstance == nil {
 			fmt.Println("Creating single instance now.")
 			singletonEventBusInstance = &EventBus{
+				Logger:             logger,
 				Message:            make(chan EventBusMessage),
 				NewListener:        make(chan EventBusListener),
 				ClosedListener:     make(chan EventBusListener),
@@ -45,6 +49,8 @@ func GetEventBusServer() *EventBus {
 // It keeps a list of clients those are currently attached
 // and broadcasting events to those clients.
 type EventBus struct {
+	Logger logrus.FieldLogger
+
 	// Events are pushed to this channel by the main events-gathering routine
 	Message chan EventBusMessage
 
@@ -113,4 +119,17 @@ func (bus *EventBus) listen() {
 
 		}
 	}
+}
+
+func (bus *EventBus) PublishMessage(eventMsg models.EventInterface) error {
+	bus.Logger.Infof("Publishing message to room: `%s`", eventMsg.GetUserID())
+	payload, err := json.Marshal(eventMsg)
+	if err != nil {
+		return err
+	}
+	bus.Message <- EventBusMessage{
+		UserID:  eventMsg.GetUserID(),
+		Message: string(payload),
+	}
+	return nil
 }

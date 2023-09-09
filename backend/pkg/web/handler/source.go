@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/jwk"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-sources/clients/factory"
@@ -143,7 +144,7 @@ func CreateSource(c *gin.Context) {
 
 	// after creating the source, we should do a bulk import (in the background)
 
-	summary, err := SyncSourceResources(context.WithValue(c.Request.Context(), pkg.ContextKeyTypeAuthUsername, c.Value(pkg.ContextKeyTypeAuthUsername).(string)), logger, databaseRepo, &sourceCred)
+	summary, err := SyncSourceResources(GetBackgroundContext(c), logger, databaseRepo, &sourceCred)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
@@ -166,11 +167,24 @@ func SourceSync(c *gin.Context) {
 	}
 
 	// after creating the source, we should do a bulk import (in the background)
-	summary, err := SyncSourceResources(context.WithValue(c.Request.Context(), pkg.ContextKeyTypeAuthUsername, c.Value(pkg.ContextKeyTypeAuthUsername).(string)), logger, databaseRepo, sourceCred)
+	summary, err := SyncSourceResources(GetBackgroundContext(c), logger, databaseRepo, sourceCred)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
 	}
+
+	//publish event
+	currentUser, _ := databaseRepo.GetCurrentUser(c)
+	err = event_bus.GetEventBusServer(logger).PublishMessage(
+		models.NewEventSourceComplete(
+			currentUser.ID.String(),
+			sourceCred.ID.String(),
+		),
+	)
+	if err != nil {
+		logger.Warnf("ignoring: an error occurred while publishing sync complete event: %v", err)
+	}
+
 	c.JSON(http.StatusOK, gin.H{"success": true, "source": sourceCred, "data": summary})
 }
 
@@ -243,7 +257,21 @@ func CreateManualSource(c *gin.Context) {
 		return
 	}
 
+	//publish event
+	currentUser, _ := databaseRepo.GetCurrentUser(c)
+
+	err = event_bus.GetEventBusServer(logger).PublishMessage(
+		models.NewEventSourceComplete(
+			currentUser.ID.String(),
+			manualSourceCredential.ID.String(),
+		),
+	)
+	if err != nil {
+		logger.Warnf("ignoring: an error occurred while publishing sync complete event: %v", err)
+	}
+
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": summary, "source": manualSourceCredential})
+
 }
 
 func GetSource(c *gin.Context) {
@@ -313,4 +341,10 @@ func SyncSourceResources(c context.Context, logger *logrus.Entry, databaseRepo d
 	}
 
 	return summary, nil
+}
+
+//
+
+func GetBackgroundContext(ginContext *gin.Context) context.Context {
+	return context.WithValue(ginContext.Request.Context(), pkg.ContextKeyTypeAuthUsername, ginContext.Value(pkg.ContextKeyTypeAuthUsername).(string))
 }

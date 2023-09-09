@@ -4,9 +4,9 @@ import (
 	"embed"
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/handler"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/sse"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -38,8 +38,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				// check if the /web folder is populated.
 				// check if access to database
 
-				bus := sse.GetEventBusServer()
-				bus.Message <- sse.EventBusMessage{
+				bus := event_bus.GetEventBusServer(ae.Logger)
+				bus.Message <- event_bus.EventBusMessage{
 					UserID:  "heartbeat",
 					Message: "sse heartbeat",
 				}
@@ -79,7 +79,11 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.POST("/query", handler.QueryResourceFhir)
 
 				//server-side-events handler
-				secure.GET("/events/stream", middleware.SSEHeaderMiddleware(), middleware.SSEEventBusServerMiddleware(), handler.SSEStream)
+				secure.GET("/events/stream",
+					middleware.SSEHeaderMiddleware(),
+					middleware.SSEEventBusServerMiddleware(ae.Logger),
+					handler.SSEStream,
+				)
 			}
 
 			if ae.Config.GetBool("web.allow_unsafe_endpoints") {
