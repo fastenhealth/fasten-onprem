@@ -30,6 +30,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
     "@fortawesome/free-regular-svg-icons": "^6.2.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
+    "@microsoft/fetch-event-source": "^2.0.1",
     "@ng-bootstrap/ng-bootstrap": "10.0.0",
     "@ng-select/ng-select": "9.1.0",
     "@panva/oauth4webapi": "1.2.0",
