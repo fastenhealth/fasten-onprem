@@ -66,7 +66,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         .then(console.log)
     }
 
-    this.eventBusService.eventBusSourceSyncMessages.subscribe((event) => {
+    this.eventBusService.SourceSyncMessages.subscribe((event) => {
       this.status[event.source_id] = "token"
     })
 

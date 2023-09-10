@@ -29,6 +29,9 @@ import { fetchEventSource } from '@microsoft/fetch-event-source';
 })
 export class FastenApiService {
 
+  private _eventBus: Observable<Event>
+  private _eventBusAbortController: AbortController
+
   constructor(@Inject(HTTP_CLIENT_TOKEN) private _httpClient: HttpClient,  private router: Router, private authService: AuthService) {
   }
 
@@ -55,27 +58,7 @@ export class FastenApiService {
   SECURE ENDPOINTS
   */
 
-  listenEventBus(): Observable<any> {
-    let eventStreamUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/events/stream`
-
-    return new Observable(observer => {
-      fetchEventSource(eventStreamUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${this.authService.GetAuthToken()}`
-        },
-        onmessage(ev) {
-          observer.next(JSON.parse(ev.data));
-        },
-        onerror(event) {
-          observer.error(event)
-        },
-      }).then(
-        () => observer.complete(),
-        error => observer.error(error)
-      )
-    });
-  }
+  //TODO: Any significant API changes here should also be reflected in EventBusService
 
   getDashboards(): Observable<DashboardConfig[]> {
     return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/dashboards`, )
