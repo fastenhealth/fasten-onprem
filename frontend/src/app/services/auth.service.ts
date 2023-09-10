@@ -10,6 +10,7 @@ import * as jose from 'jose';
 import {UserRegisteredClaims} from '../models/fasten/user-registered-claims';
 import {uuidV4} from '../../lib/utils/uuid';
 import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
 export class AuthService {
 
   FASTEN_JWT_LOCALSTORAGE_KEY = 'token';
-
+  public IsAuthenticatedSubject = new BehaviorSubject<boolean>(false)
   constructor(@Inject(HTTP_CLIENT_TOKEN) private _httpClient: HttpClient) {
   }
 
@@ -129,17 +130,21 @@ export class AuthService {
     this.setAuthToken(resp.data)
   }
 
-
   //TODO: now that we've moved to remote-first database, we can refactor and simplify this function significantly.
   public async IsAuthenticated(): Promise<boolean> {
     let authToken = this.GetAuthToken()
     let hasAuthToken = !!authToken
     if(!hasAuthToken){
+      this.publishAuthenticationState(false)
       return false
     }
 
-    //todo: check if the authToken has expired
-    return true
+    //check if the authToken has expired
+    let jwtClaims = jose.decodeJwt(authToken)
+    let valid = Date.now() < (jwtClaims.exp * 1000);
+    this.publishAuthenticationState(valid)
+    return valid
+
 
     // //check if the authToken has expired.
     // let databaseEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.couchdb_endpoint_base)
@@ -180,6 +185,7 @@ export class AuthService {
   }
 
   public async Logout(): Promise<any> {
+    this.publishAuthenticationState(false)
     return localStorage.removeItem(this.FASTEN_JWT_LOCALSTORAGE_KEY)
     // // let remotePouchDb = new PouchDB(this.getRemoteUserDb(localStorage.getItem("current_user")), {skip_setup: true});
     // if(this.pouchDb){
@@ -192,6 +198,13 @@ export class AuthService {
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
   private setAuthToken(token: string) {
+    this.publishAuthenticationState(true)
     localStorage.setItem(this.FASTEN_JWT_LOCALSTORAGE_KEY, token)
+  }
+
+  private publishAuthenticationState(authenticated){
+    if(this.IsAuthenticatedSubject.value != authenticated){
+      this.IsAuthenticatedSubject.next(authenticated)
+    }
   }
 }

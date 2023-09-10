@@ -10,6 +10,7 @@ import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {ToastService} from '../../services/toast.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Location} from '@angular/common';
+import {EventBusService} from '../../services/event-bus.service';
 
 @Component({
   selector: 'app-medical-sources-connected',
@@ -33,6 +34,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private location: Location,
+    private eventBusService: EventBusService,
   ) { }
 
   ngOnInit(): void {
@@ -64,6 +66,9 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         .then(console.log)
     }
 
+    this.eventBusService.eventBusSourceSyncMessages.subscribe((event) => {
+      this.status[event.source_id] = "token"
+    })
 
   }
 
@@ -171,6 +176,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           .subscribe((resp) => {
               // const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
               delete this.status[sourceType]
+              delete this.status[resp.source.id]
               // window.location.reload();
               // this.connectedSourceList.
 
@@ -269,7 +275,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   public openModal(contentModalRef, sourceListItem: SourceListItem) {
-    if(this.status[sourceListItem.metadata.source_type] || !sourceListItem.source){
+    if(this.status[sourceListItem.metadata.source_type] || !sourceListItem.source || this.status[sourceListItem.source.id]){
       //if this source is currently "loading" dont open the modal window
       return
     }
@@ -287,15 +293,17 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
 
   public sourceSyncHandler(source: Source){
-    this.status[source.source_type] = "authorize"
+    this.status[source.id] = "authorize"
     this.modalService.dismissAll()
 
     this.fastenApi.syncSource(source.id).subscribe(
       (respData) => {
+        delete this.status[source.id]
         delete this.status[source.source_type]
         console.log("source sync response:", respData)
       },
       (err) => {
+        delete this.status[source.id]
         delete this.status[source.source_type]
         console.log(err)
       }
