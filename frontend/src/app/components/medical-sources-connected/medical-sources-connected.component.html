@@ -30,9 +30,27 @@
   </div>
 
   <div class="modal-footer">
-    <button (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>
-<!--    <button (click)="connectHandler($event, modalSelectedSourceListItem.source['source_type'])" type="button" class="btn btn-outline-light">Reconnect</button>-->
-    <button type="button" class="btn disabled btn-outline-danger">Delete</button>
+
+    <a routerLink="/explore/{{modalSelectedSourceListItem?.source?.id}}" (click)="modal.close()" type="button" class="btn btn-indigo mr-auto">Explore</a>
+
+
+    <div class="d-inline-block" ngbDropdown #actionsDrop="ngbDropdown">
+      <button
+        type="button"
+        class="btn btn-outline-indigo me-2"
+        id="dropdownManual"
+        ngbDropdownAnchor
+        (focus)="actionsDrop.open()"
+      >
+        Actions...
+      </button>
+      <div ngbDropdownMenu aria-labelledby="dropdownManual">
+        <button ngbDropdownItem (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>
+        <!--    <button ngbDropdownItem (click)="connectHandler($event, modalSelectedSourceListItem.source['source_type'])" type="button" class="btn btn-outline-light">Reconnect</button>-->
+        <button ngbDropdownItem type="button" class="btn disabled btn-outline-danger">Reconnect</button>
+        <button ngbDropdownItem type="button" class="btn disabled btn-outline-danger">Delete</button>
+      </div>
+    </div>
     <button (click)="modal.dismiss('Close click')" type="button" class="btn btn-outline-light">Close</button>
   </div>
 </ng-template>
