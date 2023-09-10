@@ -50,7 +50,7 @@ test-backend-coverage: dep-backend
 ########################################################################################################################
 .PHONY: dep-frontend
 dep-frontend:
-	cd frontend && yarn install --frozen-lockfile
+	cd frontend && yarn install --frozen-lockfile --network-timeout 1000000
 
 .PHONY: build-frontend-sandbox
 build-frontend-sandbox: dep-frontend
