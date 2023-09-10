@@ -65,7 +65,7 @@ export class FastenApiService {
           'Authorization': `Bearer ${this.authService.GetAuthToken()}`
         },
         onmessage(ev) {
-          observer.next(ev.data);
+          observer.next(JSON.parse(ev.data));
         },
         onerror(event) {
           observer.error(event)

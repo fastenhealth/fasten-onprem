@@ -5,7 +5,7 @@
   <app-medical-sources-card class="col-sm-3 mg-b-20 px-3"
                             *ngFor="let sourceData of connectedSourceList"
                             [sourceInfo]="sourceData"
-                            [status]="status[sourceData.metadata.source_type]"
+                            [status]="status[sourceData.source.id] || status[sourceData.metadata.source_type]"
                             (onClick)="openModal(contentModalRef, $event)"
   ></app-medical-sources-card>
 </div>
