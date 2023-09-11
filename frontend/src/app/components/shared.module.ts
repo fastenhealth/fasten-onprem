@@ -78,7 +78,7 @@ import {ListOrganizationComponent} from './list-generic-resource/list-organizati
 import {ListPractitionerComponent} from './list-generic-resource/list-practitioner.component'
 import {ListProcedureComponent} from './list-generic-resource/list-procedure.component'
 import {ListServiceRequestComponent} from './list-generic-resource/list-service-request.component';
-import {NgbCollapseModule, NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbCollapseModule, NgbModule, NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
 import {PipesModule} from '../pipes/pipes.module';
 import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.directive';
 import {DirectivesModule} from '../directives/directives.module';
@@ -89,6 +89,7 @@ import {DirectivesModule} from '../directives/directives.module';
     BrowserModule,
     NgxDatatableModule,
     NgbModule,
+    NgbDropdownModule,
     NgbCollapseModule,
     FormsModule,
     ReactiveFormsModule,
