@@ -34,15 +34,13 @@
     <a routerLink="/explore/{{modalSelectedSourceListItem?.source?.id}}" (click)="modal.close()" class="btn btn-indigo mr-auto">Explore</a>
 
 
-    <div class="d-inline-block" ngbDropdown #actionsDrop="ngbDropdown">
+    <div class="d-inline-block" ngbDropdown>
       <button
         type="button"
         class="btn btn-outline-indigo"
         id="dropdownManual"
-        ngbDropdownAnchor
-        (focus)="actionsDrop.open()"
-      >
-        Actions...
+        ngbDropdownToggle>
+        Actions
       </button>
       <div ngbDropdownMenu aria-labelledby="dropdownManual">
         <button ngbDropdownItem (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>
