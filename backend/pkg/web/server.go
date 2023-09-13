@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"runtime"
 	"strings"
 )
 
@@ -78,12 +79,15 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 				secure.POST("/query", handler.QueryResourceFhir)
 
-				//server-side-events handler
-				secure.GET("/events/stream",
-					middleware.SSEHeaderMiddleware(),
-					middleware.SSEEventBusServerMiddleware(ae.Logger),
-					handler.SSEStream,
-				)
+				//server-side-events handler (only supported on mac/linux)
+				// TODO: causes deadlock on Windows
+				if runtime.GOOS != "windows" {
+					secure.GET("/events/stream",
+						middleware.SSEHeaderMiddleware(),
+						middleware.SSEEventBusServerMiddleware(ae.Logger),
+						handler.SSEStream,
+					)
+				}
 			}
 
 			if ae.Config.GetBool("web.allow_unsafe_endpoints") {
