@@ -15,6 +15,7 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -169,7 +170,7 @@ func AddDashboardLocation(c *gin.Context) {
 	return
 }
 
-//private functions
+// private functions
 func getCacheDir(appConfig config.Interface, currentUserId string) (string, error) {
 	// initialize the cache directory
 	cacheDir := filepath.Join(appConfig.GetString("cache.location"), currentUserId, "dashboard")
@@ -269,7 +270,8 @@ func getDashboardFromDir(parentDir string, dirEntries []fs.DirEntry, fsReadFile 
 		}
 
 		//unmarshal file into map
-		embeddedFile, err := fsReadFile(filepath.Join(parentDir, file.Name()))
+		//have to use path (not filepath.Join) because of  https://github.com/golang/go/issues/45230
+		embeddedFile, err := fsReadFile(path.Join(parentDir, file.Name()))
 		if err != nil {
 			return nil, err
 		}
