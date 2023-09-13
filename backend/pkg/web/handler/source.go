@@ -346,5 +346,6 @@ func SyncSourceResources(c context.Context, logger *logrus.Entry, databaseRepo d
 //
 
 func GetBackgroundContext(ginContext *gin.Context) context.Context {
+	//TODO: this should be a background context
 	return context.WithValue(ginContext.Request.Context(), pkg.ContextKeyTypeAuthUsername, ginContext.Value(pkg.ContextKeyTypeAuthUsername).(string))
 }
