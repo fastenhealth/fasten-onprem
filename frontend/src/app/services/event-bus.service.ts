@@ -37,6 +37,7 @@ export class EventBusService {
     this.authService.IsAuthenticatedSubject.subscribe((isAuthenticated) => {
       console.log("isAuthenticated changed:", isAuthenticated)
       if(isAuthenticated){
+        console.log("Started listening to event bus")
         this.eventBusSubscription = this.listenEventBus().subscribe((event: Event | EventSourceSync | EventSourceComplete)=>{
           console.log("eventbus event:", event)
           //TODO: start toasts.
@@ -48,6 +49,7 @@ export class EventBusService {
         })
       } else {
         //no longer authenticated, unsubscribe from eventbus and abort/terminate connection
+        console.log("Stopped listening to event bus")
         this.abortEventBus()
       }
     });
