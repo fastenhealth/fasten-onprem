@@ -3,6 +3,7 @@ package models
 type EventSourceSyncStatus string
 
 const (
+	EventTypeKeepAlive      EventSourceSyncStatus = "keep_alive"
 	EventTypeSourceSync     EventSourceSyncStatus = "source_sync"
 	EventTypeSourceComplete EventSourceSyncStatus = "source_complete"
 )

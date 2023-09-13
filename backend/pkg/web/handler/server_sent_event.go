@@ -23,7 +23,7 @@ func SSEStream(c *gin.Context) {
 		log.Printf("could not get client channel from context")
 		return
 	}
-	listener, ok := v.(event_bus.EventBusListener)
+	listener, ok := v.(*event_bus.EventBusListener)
 	if !ok {
 		return
 	}

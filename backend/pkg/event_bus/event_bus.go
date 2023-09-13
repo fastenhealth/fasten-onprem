@@ -29,13 +29,23 @@ func GetEventBusServer(logger logrus.FieldLogger) *EventBus {
 			singletonEventBusInstance = &EventBus{
 				Logger:             logger,
 				Message:            make(chan EventBusMessage),
-				NewListener:        make(chan EventBusListener),
-				ClosedListener:     make(chan EventBusListener),
-				TotalRoomListeners: make(map[string][]EventBusListener),
+				NewListener:        make(chan *EventBusListener),
+				ClosedListener:     make(chan *EventBusListener),
+				TotalRoomListeners: make(map[string][]*EventBusListener),
 			}
 
 			// Start processing requests
 			go singletonEventBusInstance.listen()
+
+			//background keep-alive for testing
+			//go func() {
+			//	for {
+			//		time.Sleep(time.Second * 10)
+			//		// Send current time
+			//		singletonEventBusInstance.PublishMessage(models.NewEventKeepAlive("keep-alive"))
+			//	}
+			//}()
+
 		} else {
 			fmt.Println("Single instance already created.")
 		}
@@ -55,13 +65,13 @@ type EventBus struct {
 	Message chan EventBusMessage
 
 	// New client connections
-	NewListener chan EventBusListener
+	NewListener chan *EventBusListener
 
 	// Closed client connections
-	ClosedListener chan EventBusListener
+	ClosedListener chan *EventBusListener
 
 	// Total client connections
-	TotalRoomListeners map[string][]EventBusListener
+	TotalRoomListeners map[string][]*EventBusListener
 }
 
 type EventBusListener struct {
@@ -84,7 +94,7 @@ func (bus *EventBus) listen() {
 		case listener := <-bus.NewListener:
 			//check if this userId room already exists, or create it
 			if _, exists := bus.TotalRoomListeners[listener.UserID]; !exists {
-				bus.TotalRoomListeners[listener.UserID] = []EventBusListener{}
+				bus.TotalRoomListeners[listener.UserID] = []*EventBusListener{}
 			}
 			bus.TotalRoomListeners[listener.UserID] = append(bus.TotalRoomListeners[listener.UserID], listener)
 			log.Printf("Listener added to room: `%s`. %d registered listeners", listener.UserID, len(bus.TotalRoomListeners[listener.UserID]))

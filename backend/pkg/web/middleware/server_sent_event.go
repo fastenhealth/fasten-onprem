@@ -41,15 +41,15 @@ func SSEEventBusServerMiddleware(logger *logrus.Entry) gin.HandlerFunc {
 		}
 
 		// Send new connection to event server
-		bus.NewListener <- clientListener
+		bus.NewListener <- &clientListener
 
 		defer func() {
 			// Send closed connection to event server
-			bus.ClosedListener <- clientListener
+			bus.ClosedListener <- &clientListener
 		}()
 
-		c.Set(pkg.ContextKeyTypeSSEEventBusServer, bus)
-		c.Set(pkg.ContextKeyTypeSSEClientChannel, clientListener)
+		c.Set(pkg.ContextKeyTypeSSEEventBusServer, &bus)
+		c.Set(pkg.ContextKeyTypeSSEClientChannel, &clientListener)
 
 		c.Next()
 	}
