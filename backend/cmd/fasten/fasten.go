@@ -3,6 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
+	"os"
+	"time"
+
 	"github.com/analogj/go-util/utils"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
@@ -10,10 +15,6 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"io"
-	"log"
-	"os"
-	"time"
 )
 
 var goos string
@@ -28,7 +29,8 @@ func main() {
 	}
 
 	//we're going to load the config file manually, since we need to validate it.
-	err = appconfig.ReadConfig("config.yaml")             // Find and read the config file
+	// err = appconfig.ReadConfig("config.yaml")             // Find and read the config file
+	err = appconfig.ReadConfig("config.dev.yaml")
 	if _, ok := err.(errors.ConfigFileMissingError); ok { // Handle errors reading the config file
 		//ignore "could not find config file"
 	} else if err != nil {
@@ -72,7 +74,9 @@ func main() {
 				Name:  "start",
 				Usage: "Start the fasten server",
 				Action: func(c *cli.Context) error {
-					//fmt.Fprintln(c.App.Writer, c.Command.Usage)
+					// fmt.Fprintln(c.App.Writer, c.Command.Usage)
+					fmt.Printf("HERE")
+
 					if c.IsSet("config") {
 						err = appconfig.ReadConfig(c.String("config")) // Find and read the config file
 						if err != nil {                                // Handle errors reading the config file
