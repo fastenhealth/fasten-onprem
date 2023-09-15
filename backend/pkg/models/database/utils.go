@@ -3,6 +3,7 @@ package database
 import (
 	_ "embed"
 	"fmt"
+
 	gorm "gorm.io/gorm"
 )
 
@@ -11,7 +12,9 @@ var fhirPathJs string
 
 // Generates all tables in the database associated with these models
 func Migrate(gormClient *gorm.DB) error {
+	// err := gormClient.AutoMigrate(&FhirAccount{}, &FhirAdverseEvent{}, &FhirAllergyIntolerance{}, &FhirAppointment{}, &FhirBinary{}, &FhirCarePlan{}, &FhirCareTeam{}, &FhirClaim{}, &FhirClaimResponse{}, &FhirComposition{}, &FhirCondition{}, &FhirConsent{}, &FhirCoverage{}, &FhirCoverageEligibilityRequest{}, &FhirCoverageEligibilityResponse{}, &FhirDevice{}, &FhirDeviceRequest{}, &FhirDiagnosticReport{}, &FhirDocumentManifest{}, &FhirDocumentReference{}, &FhirEncounter{}, &FhirEndpoint{}, &FhirEnrollmentRequest{}, &FhirEnrollmentResponse{}, &FhirExplanationOfBenefit{}, &FhirFamilyMemberHistory{}, &FhirGoal{}, &FhirImagingStudy{}, &FhirImmunization{}, &FhirInsurancePlan{}, &FhirLocation{}, &FhirMedia{}, &FhirMedication{}, &FhirMedicationAdministration{}, &FhirMedicationDispense{}, &FhirMedicationRequest{}, &FhirMedicationStatement{}, &FhirNutritionOrder{}, &FhirObservation{}, &FhirOrganization{}, &FhirOrganizationAffiliation{}, &FhirPatient{}, &FhirPerson{}, &FhirPractitioner{}, &FhirPractitionerRole{}, &FhirProcedure{}, &FhirProvenance{}, &FhirQuestionnaire{}, &FhirQuestionnaireResponse{}, &FhirRelatedPerson{}, &FhirSchedule{}, &FhirServiceRequest{}, &FhirSlot{}, &FhirSpecimen{}, &FhirVisionPrescription{})
 	err := gormClient.AutoMigrate(&FhirAccount{}, &FhirAdverseEvent{}, &FhirAllergyIntolerance{}, &FhirAppointment{}, &FhirBinary{}, &FhirCarePlan{}, &FhirCareTeam{}, &FhirClaim{}, &FhirClaimResponse{}, &FhirComposition{}, &FhirCondition{}, &FhirConsent{}, &FhirCoverage{}, &FhirCoverageEligibilityRequest{}, &FhirCoverageEligibilityResponse{}, &FhirDevice{}, &FhirDeviceRequest{}, &FhirDiagnosticReport{}, &FhirDocumentManifest{}, &FhirDocumentReference{}, &FhirEncounter{}, &FhirEndpoint{}, &FhirEnrollmentRequest{}, &FhirEnrollmentResponse{}, &FhirExplanationOfBenefit{}, &FhirFamilyMemberHistory{}, &FhirGoal{}, &FhirImagingStudy{}, &FhirImmunization{}, &FhirInsurancePlan{}, &FhirLocation{}, &FhirMedia{}, &FhirMedication{}, &FhirMedicationAdministration{}, &FhirMedicationDispense{}, &FhirMedicationRequest{}, &FhirMedicationStatement{}, &FhirNutritionOrder{}, &FhirObservation{}, &FhirOrganization{}, &FhirOrganizationAffiliation{}, &FhirPatient{}, &FhirPerson{}, &FhirPractitioner{}, &FhirPractitionerRole{}, &FhirProcedure{}, &FhirProvenance{}, &FhirQuestionnaire{}, &FhirQuestionnaireResponse{}, &FhirRelatedPerson{}, &FhirSchedule{}, &FhirServiceRequest{}, &FhirSlot{}, &FhirSpecimen{}, &FhirVisionPrescription{})
+
 	if err != nil {
 		return err
 	}

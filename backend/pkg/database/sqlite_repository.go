@@ -50,8 +50,10 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	// }), &gorm.Config{})
 
 	// dsn := "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
-	dsn := "host=ec2-3-232-218-211.compute-1.amazonaws.com user=hrbrnvpimacpqu password=13515fc469e360c529c522a530ae42eeb23fc6a0053ad49d4c8b9d4842cc082e dbname=d3m2nshldrn501 port=5432 sslmode=require TimeZone=Asia/Shanghai"
-	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	dsn := "host=ec2-3-232-218-211.compute-1.amazonaws.com user=ebfggwkhpwkqyz password=f661aa9733da500528b702923fe55fb01823acf27d903514f02b10eb6c03868d dbname=d7vo38e896j3nl port=5432 sslmode=require TimeZone=Asia/Shanghai"
+	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		DisableForeignKeyConstraintWhenMigrating: true,
+	})
 
 	if strings.ToUpper(appConfig.GetString("log.level")) == "DEBUG" {
 		database = database.Debug() //set debug globally

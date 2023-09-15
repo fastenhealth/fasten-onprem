@@ -9,7 +9,7 @@ import {ToastService} from './services/toast.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'fastenhealth';
+  title = 'quenchhealth';
 
   public layoutOption: string;
   showHeader:boolean = false;

@@ -1,8 +1,9 @@
 package models
 
 import (
-	"gorm.io/datatypes"
 	"time"
+
+	"gorm.io/datatypes"
 )
 
 type ResourceBase struct {

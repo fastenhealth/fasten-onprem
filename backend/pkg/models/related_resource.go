@@ -2,7 +2,7 @@ package models
 
 import "github.com/google/uuid"
 
-//this model is used by the DB (see ResourceAssociation for web model)
+// this model is used by the DB (see ResourceAssociation for web model)
 type RelatedResource struct {
 	ResourceBaseUserID             uuid.UUID `gorm:"resource_base_user_id"`
 	ResourceBaseSourceID           uuid.UUID `gorm:"resource_base_source_id"`

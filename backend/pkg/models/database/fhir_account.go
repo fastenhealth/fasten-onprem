@@ -22,7 +22,7 @@ type FhirAccount struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// Human-readable label
 	// https://hl7.org/fhir/r4/search.html#string
 	Name datatypes.JSON `gorm:"column:name;type:text;serializer:json" json:"name,omitempty"`
@@ -31,7 +31,7 @@ type FhirAccount struct {
 	Owner datatypes.JSON `gorm:"column:owner;type:text;serializer:json" json:"owner,omitempty"`
 	// Transaction window
 	// https://hl7.org/fhir/r4/search.html#date
-	Period *time.Time `gorm:"column:period;type:datetime" json:"period,omitempty"`
+	Period *time.Time `gorm:"column:period;type:timestamptz" json:"period,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
