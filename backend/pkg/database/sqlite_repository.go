@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
+	"strings"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
@@ -13,22 +16,20 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
 	sourceModel "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/gin-gonic/gin"
-	"github.com/glebarez/sqlite"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"gorm.io/datatypes"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"net/url"
-	"strings"
 )
 
 func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) (DatabaseRepository, error) {
 	//backgroundContext := context.Background()
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Gorm/SQLite setup
+	// Gorm/PostgreSQL setup
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	globalLogger.Infof("Trying to connect to sqlite db: %s\n", appConfig.GetString("database.location"))
+	globalLogger.Infof("Trying to connect to PostgreSQL db: %s\n", appConfig.GetString("database.location"))
 
 	// When a transaction cannot lock the database, because it is already locked by another one,
 	// SQLite by default throws an error: database is locked. This behavior is usually not appropriate when
@@ -39,15 +40,18 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	// https://rsqlite.r-dbi.org/reference/sqlitesetbusyhandler
 	// retrying for 30000 milliseconds, 30seconds - this would be unreasonable for a distributed multi-tenant application,
 	// but should be fine for local usage.
-	pragmaStr := sqlitePragmaString(map[string]string{
-		"busy_timeout": "30000",
-		"foreign_keys": "ON",
-	})
-	database, err := gorm.Open(sqlite.Open(appConfig.GetString("database.location")+pragmaStr), &gorm.Config{
-		//TODO: figure out how to log database queries again.
-		//Logger: Logger
-		DisableForeignKeyConstraintWhenMigrating: true,
-	})
+	// pragmaStr := sqlitePragmaString(map[string]string{
+	// 	"busy_timeout": "30000",
+	// 	"foreign_keys": "ON",
+	// })
+	// database, err := gorm.Open(postgres.New(postgres.Config{
+	// 	DSN: "user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai",
+	// 	PreferSimpleProtocol: true, // disables implicit prepared statement usage
+	// }), &gorm.Config{})
+
+	// dsn := "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
+	dsn := "host=ec2-3-232-218-211.compute-1.amazonaws.com user=hrbrnvpimacpqu password=13515fc469e360c529c522a530ae42eeb23fc6a0053ad49d4c8b9d4842cc082e dbname=d3m2nshldrn501 port=5432 sslmode=require TimeZone=Asia/Shanghai"
+	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if strings.ToUpper(appConfig.GetString("log.level")) == "DEBUG" {
 		database = database.Debug() //set debug globally
@@ -56,7 +60,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	if err != nil {
 		return nil, fmt.Errorf("Failed to connect to database! - %v", err)
 	}
-	globalLogger.Infof("Successfully connected to fasten sqlite db: %s\n", appConfig.GetString("database.location"))
+	globalLogger.Infof("Successfully connected to Quench PostgreSQL db: %s\n", appConfig.GetString("database.location"))
 
 	fastenRepo := SqliteRepository{
 		AppConfig:  appConfig,
