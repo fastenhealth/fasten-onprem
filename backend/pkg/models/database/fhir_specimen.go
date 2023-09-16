@@ -22,7 +22,7 @@ type FhirSpecimen struct {
 	Bodysite datatypes.JSON `gorm:"column:bodysite;type:text;serializer:json" json:"bodysite,omitempty"`
 	// The date the specimen was collected
 	// https://hl7.org/fhir/r4/search.html#date
-	Collected *time.Time `gorm:"column:collected;type:datetime" json:"collected,omitempty"`
+	Collected *time.Time `gorm:"column:collected;type:timestamptz" json:"collected,omitempty"`
 	// Who collected the specimen
 	// https://hl7.org/fhir/r4/search.html#reference
 	Collector datatypes.JSON `gorm:"column:collector;type:text;serializer:json" json:"collector,omitempty"`
@@ -40,7 +40,7 @@ type FhirSpecimen struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// The parent of the specimen
 	// https://hl7.org/fhir/r4/search.html#reference
 	Parent datatypes.JSON `gorm:"column:parent;type:text;serializer:json" json:"parent,omitempty"`

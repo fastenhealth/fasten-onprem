@@ -62,7 +62,7 @@ type FhirProcedure struct {
 	   * [SupplyRequest](supplyrequest.html): When the request was made
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:timestamptz" json:"date,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -128,7 +128,7 @@ type FhirProcedure struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// Where the procedure happened
 	// https://hl7.org/fhir/r4/search.html#reference
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`

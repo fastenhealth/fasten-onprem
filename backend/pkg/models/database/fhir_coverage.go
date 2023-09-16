@@ -34,7 +34,7 @@ type FhirCoverage struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// The identity of the insurer or party paying for services
 	// https://hl7.org/fhir/r4/search.html#reference
 	Payor datatypes.JSON `gorm:"column:payor;type:text;serializer:json" json:"payor,omitempty"`

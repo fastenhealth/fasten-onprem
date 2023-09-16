@@ -36,7 +36,7 @@ type FhirImmunization struct {
 	   * [SupplyRequest](supplyrequest.html): When the request was made
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:timestamptz" json:"date,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -78,7 +78,7 @@ type FhirImmunization struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// The service delivery location or facility in which the vaccine was / was to be administered
 	// https://hl7.org/fhir/r4/search.html#reference
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
@@ -99,7 +99,7 @@ type FhirImmunization struct {
 	Reaction datatypes.JSON `gorm:"column:reaction;type:text;serializer:json" json:"reaction,omitempty"`
 	// When reaction started
 	// https://hl7.org/fhir/r4/search.html#date
-	ReactionDate *time.Time `gorm:"column:reactionDate;type:datetime" json:"reactionDate,omitempty"`
+	ReactionDate *time.Time `gorm:"column:reactionDate;type:timestamptz" json:"reactionDate,omitempty"`
 	// Reason why the vaccine was administered
 	// https://hl7.org/fhir/r4/search.html#token
 	ReasonCode datatypes.JSON `gorm:"column:reasonCode;type:text;serializer:json" json:"reasonCode,omitempty"`

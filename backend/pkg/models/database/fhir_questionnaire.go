@@ -28,7 +28,7 @@ type FhirQuestionnaire struct {
 	ContextType datatypes.JSON `gorm:"column:contextType;type:text;serializer:json" json:"contextType,omitempty"`
 	// The questionnaire publication date
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:timestamptz" json:"date,omitempty"`
 	// ElementDefinition - details for the item
 	// https://hl7.org/fhir/r4/search.html#uri
 	Definition string `gorm:"column:definition;type:text" json:"definition,omitempty"`
@@ -37,7 +37,7 @@ type FhirQuestionnaire struct {
 	Description datatypes.JSON `gorm:"column:description;type:text;serializer:json" json:"description,omitempty"`
 	// The time during which the questionnaire is intended to be in use
 	// https://hl7.org/fhir/r4/search.html#date
-	Effective *time.Time `gorm:"column:effective;type:datetime" json:"effective,omitempty"`
+	Effective *time.Time `gorm:"column:effective;type:timestamptz" json:"effective,omitempty"`
 	// External identifier for the questionnaire
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
@@ -49,7 +49,7 @@ type FhirQuestionnaire struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// Computationally friendly name of the questionnaire
 	// https://hl7.org/fhir/r4/search.html#string
 	Name datatypes.JSON `gorm:"column:name;type:text;serializer:json" json:"name,omitempty"`

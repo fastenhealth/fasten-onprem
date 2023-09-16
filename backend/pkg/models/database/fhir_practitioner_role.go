@@ -19,7 +19,7 @@ type FhirPractitionerRole struct {
 	Active datatypes.JSON `gorm:"column:active;type:text;serializer:json" json:"active,omitempty"`
 	// The period during which the practitioner is authorized to perform in these role(s)
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:timestamptz" json:"date,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -42,7 +42,7 @@ type FhirPractitionerRole struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// One of the locations at which this practitioner provides care
 	// https://hl7.org/fhir/r4/search.html#reference
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`

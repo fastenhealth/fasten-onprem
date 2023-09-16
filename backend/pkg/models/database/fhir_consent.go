@@ -51,7 +51,7 @@ type FhirConsent struct {
 	   * [SupplyRequest](supplyrequest.html): When the request was made
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:timestamptz" json:"date,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -93,13 +93,13 @@ type FhirConsent struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// Custodian of the consent
 	// https://hl7.org/fhir/r4/search.html#reference
 	Organization datatypes.JSON `gorm:"column:organization;type:text;serializer:json" json:"organization,omitempty"`
 	// Timeframe for this rule
 	// https://hl7.org/fhir/r4/search.html#date
-	Period *time.Time `gorm:"column:period;type:datetime" json:"period,omitempty"`
+	Period *time.Time `gorm:"column:period;type:timestamptz" json:"period,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`

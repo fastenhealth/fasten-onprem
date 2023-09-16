@@ -16,7 +16,7 @@ type FhirMedicationRequest struct {
 	models.ResourceBase
 	// Return prescriptions written on this date
 	// https://hl7.org/fhir/r4/search.html#date
-	Authoredon *time.Time `gorm:"column:authoredon;type:datetime" json:"authoredon,omitempty"`
+	Authoredon *time.Time `gorm:"column:authoredon;type:timestamptz" json:"authoredon,omitempty"`
 	// Returns prescriptions with different categories
 	// https://hl7.org/fhir/r4/search.html#token
 	Category datatypes.JSON `gorm:"column:category;type:text;serializer:json" json:"category,omitempty"`
@@ -46,7 +46,7 @@ type FhirMedicationRequest struct {
 	   * [MedicationRequest](medicationrequest.html): Returns medication request to be administered on a specific date
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:timestamptz" json:"date,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -107,7 +107,7 @@ type FhirMedicationRequest struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	/*
 	   Multiple Resources:
 

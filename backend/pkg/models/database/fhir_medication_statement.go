@@ -42,7 +42,7 @@ type FhirMedicationStatement struct {
 	Context datatypes.JSON `gorm:"column:context;type:text;serializer:json" json:"context,omitempty"`
 	// Date when patient was taking (or not taking) the medication
 	// https://hl7.org/fhir/r4/search.html#date
-	Effective *time.Time `gorm:"column:effective;type:datetime" json:"effective,omitempty"`
+	Effective *time.Time `gorm:"column:effective;type:timestamptz" json:"effective,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -84,7 +84,7 @@ type FhirMedicationStatement struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	/*
 	   Multiple Resources:
 

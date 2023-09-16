@@ -19,7 +19,7 @@ type FhirCarePlan struct {
 	ActivityCode datatypes.JSON `gorm:"column:activityCode;type:text;serializer:json" json:"activityCode,omitempty"`
 	// Specified date occurs within period specified by CarePlan.activity.detail.scheduled[x]
 	// https://hl7.org/fhir/r4/search.html#date
-	ActivityDate *time.Time `gorm:"column:activityDate;type:datetime" json:"activityDate,omitempty"`
+	ActivityDate *time.Time `gorm:"column:activityDate;type:timestamptz" json:"activityDate,omitempty"`
 	// Activity details defined in specific resource
 	// https://hl7.org/fhir/r4/search.html#reference
 	ActivityReference datatypes.JSON `gorm:"column:activityReference;type:text;serializer:json" json:"activityReference,omitempty"`
@@ -57,7 +57,7 @@ type FhirCarePlan struct {
 	   * [SupplyRequest](supplyrequest.html): When the request was made
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:timestamptz" json:"date,omitempty"`
 	// Encounter created as part of
 	// https://hl7.org/fhir/r4/search.html#reference
 	Encounter datatypes.JSON `gorm:"column:encounter;type:text;serializer:json" json:"encounter,omitempty"`
@@ -114,7 +114,7 @@ type FhirCarePlan struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// Part of referenced CarePlan
 	// https://hl7.org/fhir/r4/search.html#reference
 	PartOf datatypes.JSON `gorm:"column:partOf;type:text;serializer:json" json:"partOf,omitempty"`

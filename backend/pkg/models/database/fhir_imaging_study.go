@@ -76,7 +76,7 @@ type FhirImagingStudy struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// The modality of the series
 	// https://hl7.org/fhir/r4/search.html#token
 	Modality datatypes.JSON `gorm:"column:modality;type:text;serializer:json" json:"modality,omitempty"`
@@ -97,7 +97,7 @@ type FhirImagingStudy struct {
 	Series datatypes.JSON `gorm:"column:series;type:text;serializer:json" json:"series,omitempty"`
 	// When the study was started
 	// https://hl7.org/fhir/r4/search.html#date
-	Started *time.Time `gorm:"column:started;type:datetime" json:"started,omitempty"`
+	Started *time.Time `gorm:"column:started;type:timestamptz" json:"started,omitempty"`
 	// The status of the study
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`

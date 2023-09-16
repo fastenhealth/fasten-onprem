@@ -82,7 +82,7 @@ type FhirPerson struct {
 	   * [RelatedPerson](relatedperson.html): The Related Person's date of birth
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Birthdate *time.Time `gorm:"column:birthdate;type:datetime" json:"birthdate,omitempty"`
+	Birthdate *time.Time `gorm:"column:birthdate;type:timestamptz" json:"birthdate,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -112,7 +112,7 @@ type FhirPerson struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// Any link has this Patient, Person, RelatedPerson or Practitioner reference
 	// https://hl7.org/fhir/r4/search.html#reference
 	Link datatypes.JSON `gorm:"column:link;type:text;serializer:json" json:"link,omitempty"`

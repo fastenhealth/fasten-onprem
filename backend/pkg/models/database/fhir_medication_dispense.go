@@ -81,7 +81,7 @@ type FhirMedicationDispense struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -135,10 +135,10 @@ type FhirMedicationDispense struct {
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 	// Returns dispenses handed over on this date
 	// https://hl7.org/fhir/r4/search.html#date
-	Whenhandedover *time.Time `gorm:"column:whenhandedover;type:datetime" json:"whenhandedover,omitempty"`
+	Whenhandedover *time.Time `gorm:"column:whenhandedover;type:timestamptz" json:"whenhandedover,omitempty"`
 	// Returns dispenses prepared on this date
 	// https://hl7.org/fhir/r4/search.html#date
-	Whenprepared *time.Time `gorm:"column:whenprepared;type:datetime" json:"whenprepared,omitempty"`
+	Whenprepared *time.Time `gorm:"column:whenprepared;type:timestamptz" json:"whenprepared,omitempty"`
 }
 
 func (s *FhirMedicationDispense) GetSearchParameters() map[string]string {

@@ -19,7 +19,7 @@ type FhirQuestionnaireResponse struct {
 	Author datatypes.JSON `gorm:"column:author;type:text;serializer:json" json:"author,omitempty"`
 	// When the questionnaire response was last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	Authored *time.Time `gorm:"column:authored;type:datetime" json:"authored,omitempty"`
+	Authored *time.Time `gorm:"column:authored;type:timestamptz" json:"authored,omitempty"`
 	// Plan/proposal/order fulfilled by this questionnaire response
 	// https://hl7.org/fhir/r4/search.html#reference
 	BasedOn datatypes.JSON `gorm:"column:basedOn;type:text;serializer:json" json:"basedOn,omitempty"`
@@ -34,7 +34,7 @@ type FhirQuestionnaireResponse struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// Procedure or observation this questionnaire response was performed as a part of
 	// https://hl7.org/fhir/r4/search.html#reference
 	PartOf datatypes.JSON `gorm:"column:partOf;type:text;serializer:json" json:"partOf,omitempty"`

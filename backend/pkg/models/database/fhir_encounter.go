@@ -48,7 +48,7 @@ type FhirEncounter struct {
 	   * [SupplyRequest](supplyrequest.html): When the request was made
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:timestamptz" json:"date,omitempty"`
 	// The diagnosis or procedure relevant to the encounter
 	// https://hl7.org/fhir/r4/search.html#reference
 	Diagnosis datatypes.JSON `gorm:"column:diagnosis;type:text;serializer:json" json:"diagnosis,omitempty"`
@@ -96,7 +96,7 @@ type FhirEncounter struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// Length of encounter in days
 	// https://hl7.org/fhir/r4/search.html#quantity
 	Length datatypes.JSON `gorm:"column:length;type:text;serializer:json" json:"length,omitempty"`
@@ -105,7 +105,7 @@ type FhirEncounter struct {
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`
 	// Time period during which the patient was present at the location
 	// https://hl7.org/fhir/r4/search.html#date
-	LocationPeriod *time.Time `gorm:"column:locationPeriod;type:datetime" json:"locationPeriod,omitempty"`
+	LocationPeriod *time.Time `gorm:"column:locationPeriod;type:timestamptz" json:"locationPeriod,omitempty"`
 	// Another Encounter this encounter is part of
 	// https://hl7.org/fhir/r4/search.html#reference
 	PartOf datatypes.JSON `gorm:"column:partOf;type:text;serializer:json" json:"partOf,omitempty"`

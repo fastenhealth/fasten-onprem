@@ -16,7 +16,7 @@ type FhirClaimResponse struct {
 	models.ResourceBase
 	// The creation date
 	// https://hl7.org/fhir/r4/search.html#date
-	Created *time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
+	Created *time.Time `gorm:"column:created;type:timestamptz" json:"created,omitempty"`
 	// The contents of the disposition message
 	// https://hl7.org/fhir/r4/search.html#string
 	Disposition datatypes.JSON `gorm:"column:disposition;type:text;serializer:json" json:"disposition,omitempty"`
@@ -31,13 +31,13 @@ type FhirClaimResponse struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// The processing outcome
 	// https://hl7.org/fhir/r4/search.html#token
 	Outcome datatypes.JSON `gorm:"column:outcome;type:text;serializer:json" json:"outcome,omitempty"`
 	// The expected payment date
 	// https://hl7.org/fhir/r4/search.html#date
-	PaymentDate *time.Time `gorm:"column:paymentDate;type:datetime" json:"paymentDate,omitempty"`
+	PaymentDate *time.Time `gorm:"column:paymentDate;type:timestamptz" json:"paymentDate,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`

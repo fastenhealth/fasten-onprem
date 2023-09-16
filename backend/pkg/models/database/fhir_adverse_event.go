@@ -22,7 +22,7 @@ type FhirAdverseEvent struct {
 	Category datatypes.JSON `gorm:"column:category;type:text;serializer:json" json:"category,omitempty"`
 	// When the event occurred
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:timestamptz" json:"date,omitempty"`
 	// Type of the event itself in relation to the subject
 	// https://hl7.org/fhir/r4/search.html#token
 	Event datatypes.JSON `gorm:"column:event;type:text;serializer:json" json:"event,omitempty"`
@@ -31,7 +31,7 @@ type FhirAdverseEvent struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// Location where adverse event occurred
 	// https://hl7.org/fhir/r4/search.html#reference
 	Location datatypes.JSON `gorm:"column:location;type:text;serializer:json" json:"location,omitempty"`

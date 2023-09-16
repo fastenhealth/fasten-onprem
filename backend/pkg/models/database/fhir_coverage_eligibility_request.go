@@ -16,7 +16,7 @@ type FhirCoverageEligibilityRequest struct {
 	models.ResourceBase
 	// The creation date for the EOB
 	// https://hl7.org/fhir/r4/search.html#date
-	Created *time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
+	Created *time.Time `gorm:"column:created;type:timestamptz" json:"created,omitempty"`
 	// The party who is responsible for the request
 	// https://hl7.org/fhir/r4/search.html#reference
 	Enterer datatypes.JSON `gorm:"column:enterer;type:text;serializer:json" json:"enterer,omitempty"`
@@ -31,7 +31,7 @@ type FhirCoverageEligibilityRequest struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// Profiles this resource claims to conform to
 	// https://hl7.org/fhir/r4/search.html#reference
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`

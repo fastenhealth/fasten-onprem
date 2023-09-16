@@ -36,7 +36,7 @@ type FhirMedication struct {
 	Code datatypes.JSON `gorm:"column:code;type:text;serializer:json" json:"code,omitempty"`
 	// Returns medications in a batch with this expiration date
 	// https://hl7.org/fhir/r4/search.html#date
-	ExpirationDate *time.Time `gorm:"column:expirationDate;type:datetime" json:"expirationDate,omitempty"`
+	ExpirationDate *time.Time `gorm:"column:expirationDate;type:timestamptz" json:"expirationDate,omitempty"`
 	// Returns medications for a specific dose form
 	// https://hl7.org/fhir/r4/search.html#token
 	Form datatypes.JSON `gorm:"column:form;type:text;serializer:json" json:"form,omitempty"`
@@ -54,7 +54,7 @@ type FhirMedication struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// Returns medications in a batch with this lot number
 	// https://hl7.org/fhir/r4/search.html#token
 	LotNumber datatypes.JSON `gorm:"column:lotNumber;type:text;serializer:json" json:"lotNumber,omitempty"`

@@ -61,7 +61,7 @@ type FhirGoal struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// proposed | planned | accepted | active | on-hold | completed | cancelled | entered-in-error | rejected
 	// https://hl7.org/fhir/r4/search.html#token
 	LifecycleStatus datatypes.JSON `gorm:"column:lifecycleStatus;type:text;serializer:json" json:"lifecycleStatus,omitempty"`
@@ -70,7 +70,7 @@ type FhirGoal struct {
 	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
 	// When goal pursuit begins
 	// https://hl7.org/fhir/r4/search.html#date
-	StartDate *time.Time `gorm:"column:startDate;type:datetime" json:"startDate,omitempty"`
+	StartDate *time.Time `gorm:"column:startDate;type:timestamptz" json:"startDate,omitempty"`
 	// Who this goal is intended for
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
@@ -79,7 +79,7 @@ type FhirGoal struct {
 	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Reach goal on or before
 	// https://hl7.org/fhir/r4/search.html#date
-	TargetDate *time.Time `gorm:"column:targetDate;type:datetime" json:"targetDate,omitempty"`
+	TargetDate *time.Time `gorm:"column:targetDate;type:timestamptz" json:"targetDate,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
 	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`

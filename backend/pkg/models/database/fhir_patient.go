@@ -85,10 +85,10 @@ type FhirPatient struct {
 	   * [RelatedPerson](relatedperson.html): The Related Person's date of birth
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Birthdate *time.Time `gorm:"column:birthdate;type:datetime" json:"birthdate,omitempty"`
+	Birthdate *time.Time `gorm:"column:birthdate;type:timestamptz" json:"birthdate,omitempty"`
 	// The date of death has been provided and satisfies this search value
 	// https://hl7.org/fhir/r4/search.html#date
-	DeathDate *time.Time `gorm:"column:deathDate;type:datetime" json:"deathDate,omitempty"`
+	DeathDate *time.Time `gorm:"column:deathDate;type:timestamptz" json:"deathDate,omitempty"`
 	// This patient has been marked as deceased, or has a death date entered
 	// https://hl7.org/fhir/r4/search.html#token
 	Deceased datatypes.JSON `gorm:"column:deceased;type:text;serializer:json" json:"deceased,omitempty"`
@@ -140,7 +140,7 @@ type FhirPatient struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// All patients linked to the given patient
 	// https://hl7.org/fhir/r4/search.html#reference
 	Link datatypes.JSON `gorm:"column:link;type:text;serializer:json" json:"link,omitempty"`

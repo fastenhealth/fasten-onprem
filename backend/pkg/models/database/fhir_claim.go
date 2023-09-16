@@ -19,7 +19,7 @@ type FhirClaim struct {
 	CareTeam datatypes.JSON `gorm:"column:careTeam;type:text;serializer:json" json:"careTeam,omitempty"`
 	// The creation date for the Claim
 	// https://hl7.org/fhir/r4/search.html#date
-	Created *time.Time `gorm:"column:created;type:datetime" json:"created,omitempty"`
+	Created *time.Time `gorm:"column:created;type:timestamptz" json:"created,omitempty"`
 	// UDI associated with a line item, detail product or service
 	// https://hl7.org/fhir/r4/search.html#reference
 	DetailUdi datatypes.JSON `gorm:"column:detailUdi;type:text;serializer:json" json:"detailUdi,omitempty"`
@@ -46,7 +46,7 @@ type FhirClaim struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// The party receiving any payment for the Claim
 	// https://hl7.org/fhir/r4/search.html#reference
 	Payee datatypes.JSON `gorm:"column:payee;type:text;serializer:json" json:"payee,omitempty"`

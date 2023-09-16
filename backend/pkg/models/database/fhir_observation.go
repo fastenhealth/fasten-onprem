@@ -89,7 +89,7 @@ type FhirObservation struct {
 	   * [SupplyRequest](supplyrequest.html): When the request was made
 	*/
 	// https://hl7.org/fhir/r4/search.html#date
-	Date *time.Time `gorm:"column:date;type:datetime" json:"date,omitempty"`
+	Date *time.Time `gorm:"column:date;type:timestamptz" json:"date,omitempty"`
 	// Related measurements the observation is made from
 	// https://hl7.org/fhir/r4/search.html#reference
 	DerivedFrom datatypes.JSON `gorm:"column:derivedFrom;type:text;serializer:json" json:"derivedFrom,omitempty"`
@@ -161,7 +161,7 @@ type FhirObservation struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	LastUpdated *time.Time `gorm:"column:lastUpdated;type:timestamptz" json:"lastUpdated,omitempty"`
 	// The method used for the observation
 	// https://hl7.org/fhir/r4/search.html#token
 	Method datatypes.JSON `gorm:"column:method;type:text;serializer:json" json:"method,omitempty"`
@@ -197,7 +197,7 @@ type FhirObservation struct {
 	ValueConcept datatypes.JSON `gorm:"column:valueConcept;type:text;serializer:json" json:"valueConcept,omitempty"`
 	// The value of the observation, if the value is a date or period of time
 	// https://hl7.org/fhir/r4/search.html#date
-	ValueDate *time.Time `gorm:"column:valueDate;type:datetime" json:"valueDate,omitempty"`
+	ValueDate *time.Time `gorm:"column:valueDate;type:timestamptz" json:"valueDate,omitempty"`
 	// The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data)
 	// https://hl7.org/fhir/r4/search.html#quantity
 	ValueQuantity datatypes.JSON `gorm:"column:valueQuantity;type:text;serializer:json" json:"valueQuantity,omitempty"`
