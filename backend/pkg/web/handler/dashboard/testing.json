@@ -1,0 +1,17 @@
+{
+  "id": "updated",
+  "schema_version": "1.0",
+  "title": "Updated Dashboard",
+  "description": "An example dashboard to show-off the power of Fasten widgets",
+  "widgets": [
+    {
+      "title_text": "Records Summary",
+      "description_text": "Track key metrics for your chronic disease (eg. Diabetes). The data within this widget is not reflective of your health record, and is only present for demonstrational purposes.",
+      "x": 0,
+      "y": 0,
+      "width": 8,
+      "height": 6,
+      "item_type": "records-summary-widget"
+    }
+  ]
+}

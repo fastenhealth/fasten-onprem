@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import {Component, NgModule, Type} from '@angular/core';
 import {ComplexLineWidgetComponent} from './complex-line-widget/complex-line-widget.component';
 import {DonutChartWidgetComponent} from './donut-chart-widget/donut-chart-widget.component';
 import {DualGaugesWidgetComponent} from './dual-gauges-widget/dual-gauges-widget.component';
@@ -9,6 +9,7 @@ import {TableWidgetComponent} from './table-widget/table-widget.component';
 import { LoadingWidgetComponent } from './loading-widget/loading-widget.component';
 import { EmptyWidgetComponent } from './empty-widget/empty-widget.component';
 import {DashboardWidgetComponent} from './dashboard-widget/dashboard-widget.component';
+import { RecordsSummaryWidgetComponent } from './records-summary-widget/records-summary-widget.component';
 @NgModule({
   imports: [
 
@@ -18,13 +19,15 @@ import {DashboardWidgetComponent} from './dashboard-widget/dashboard-widget.comp
     DualGaugesWidgetComponent,
     GroupedBarChartWidgetComponent,
     PatientVitalsWidgetComponent,
+    RecordsSummaryWidgetComponent,
     SimpleLineChartWidgetComponent,
     TableWidgetComponent,
     LoadingWidgetComponent,
     EmptyWidgetComponent
 
   ],
-  declarations: [],
+  declarations: [
+  ],
   exports: [
     //standalone components
     ComplexLineWidgetComponent,
@@ -32,6 +35,7 @@ import {DashboardWidgetComponent} from './dashboard-widget/dashboard-widget.comp
     DualGaugesWidgetComponent,
     GroupedBarChartWidgetComponent,
     PatientVitalsWidgetComponent,
+    RecordsSummaryWidgetComponent,
     SimpleLineChartWidgetComponent,
     TableWidgetComponent,
     LoadingWidgetComponent,
@@ -41,3 +45,20 @@ import {DashboardWidgetComponent} from './dashboard-widget/dashboard-widget.comp
 })
 
 export class WidgetsModule { }
+
+//when adding widgets to this list, you must also register the widget id in
+// frontend/src/app/models/widget/dashboard-widget-config.ts
+export function WidgetComponents():  Type<Object>[] {
+  return [
+    ComplexLineWidgetComponent,
+    DonutChartWidgetComponent,
+    DualGaugesWidgetComponent,
+    GroupedBarChartWidgetComponent,
+    PatientVitalsWidgetComponent,
+    RecordsSummaryWidgetComponent,
+    SimpleLineChartWidgetComponent,
+    TableWidgetComponent,
+    LoadingWidgetComponent,
+    EmptyWidgetComponent
+  ]
+}

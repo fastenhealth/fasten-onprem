@@ -1,0 +1,48 @@
+<svg id="Icon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #ffd67b;
+      }
+
+      .cls-2 {
+        fill: #fdba19;
+      }
+
+      .cls-3 {
+        fill: #fffbd5;
+      }
+
+      .cls-4 {
+        fill: #243147;
+      }
+
+      .cls-5 {
+        fill: #1eb37a;
+      }
+
+      .cls-6 {
+        fill: #14866d;
+      }
+
+      .cls-7 {
+        fill: #c0c7d2;
+      }
+    </style>
+  </defs>
+  <g>
+    <g>
+      <path class="cls-1" d="M11,10H41a7,7,0,0,1,7,7V49a7,7,0,0,1-7,7H16L4,44V17A7,7,0,0,1,11,10Z"/>
+      <path class="cls-2" d="M10.82,44H4L16,56V49.18A5.18,5.18,0,0,0,10.82,44Z"/>
+      <rect class="cls-3" x="9" y="17" width="27" height="3" transform="translate(45 37) rotate(-180)"/>
+      <rect class="cls-3" x="9" y="22" width="17" height="3" transform="translate(35 47) rotate(-180)"/>
+      <rect class="cls-3" x="9" y="28" width="11" height="3" transform="translate(29 59) rotate(-180)"/>
+    </g>
+    <g>
+      <path class="cls-4" d="M24.35,40.66h2.24a0,0,0,0,1,0,0v5.6a1.12,1.12,0,0,1-1.12,1.12h0a1.12,1.12,0,0,1-1.12-1.12v-5.6a0,0,0,0,1,0,0Z" transform="translate(38.59 -5.12) rotate(45)"/>
+      <path class="cls-5" d="M57.17,18.67,32.6,43.23a4.47,4.47,0,0,1-6.33,0h0a4.48,4.48,0,0,1,0-6.34L50.83,12.33Z"/>
+      <path class="cls-6" d="M58,11.54a4.48,4.48,0,0,0-6.34,0l-2.18,2.18,6.34,6.34L58,17.88A4.48,4.48,0,0,0,58,11.54Z"/>
+      <path class="cls-7" d="M59.27,21.42l-8.75-8.76-1.75,1.76,8.75,8.75L47.89,32.8a1.24,1.24,0,0,0,1.75,1.75l9.63-9.63h0a2.47,2.47,0,0,0,0-3.5Z"/>
+    </g>
+  </g>
+</svg>

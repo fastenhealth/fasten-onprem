@@ -1,0 +1,29 @@
+<svg id="Icon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #976cea;
+      }
+
+      .cls-2 {
+        fill: #d6e3ff;
+      }
+
+      .cls-3 {
+        fill: #b387ff;
+      }
+    </style>
+  </defs>
+  <rect class="cls-1" x="38.35" y="5.06" width="4.53" height="36.66" rx="1.91" transform="translate(28.43 -21.87) rotate(45)"/>
+  <rect class="cls-1" x="45.19" y="8.92" width="15.84" height="3.93" rx="1.17" transform="translate(23.26 -34.37) rotate(45)"/>
+  <rect class="cls-2" x="20.91" y="9.81" width="18.1" height="48.45" rx="4.39" transform="translate(32.84 -11.22) rotate(45)"/>
+  <rect class="cls-1" x="34.39" y="16.33" width="22.63" height="3.93" rx="1.4" transform="translate(26.32 -26.96) rotate(45)"/>
+  <polygon class="cls-1" points="10.3 48.63 8.19 54.23 9.69 55.74 15.23 53.57 10.3 48.63"/>
+  <path class="cls-1" d="M12.12,50.46,4.59,57.83a1.15,1.15,0,0,0-.13,1.63h0a1.16,1.16,0,0,0,1.62-.12l7.46-7.46Z"/>
+  <path class="cls-3" d="M12.78,33.48H28.62a0,0,0,0,1,0,0V49.21a3.9,3.9,0,0,1-3.9,3.9h-8a3.9,3.9,0,0,1-3.9-3.9V33.48a0,0,0,0,1,0,0Z" transform="translate(36.68 -1.96) rotate(45)"/>
+  <rect class="cls-1" x="36.32" y="16.61" width="2.07" height="5.66" transform="translate(-2.81 32.11) rotate(-45)"/>
+  <rect class="cls-1" x="30.77" y="22.17" width="2.07" height="5.66" transform="translate(-8.36 29.81) rotate(-45)"/>
+  <rect class="cls-1" x="25.21" y="27.72" width="2.07" height="5.66" transform="translate(-13.92 27.51) rotate(-45)"/>
+  <rect class="cls-1" x="19.66" y="33.28" width="2.07" height="5.66" transform="translate(-19.47 25.21) rotate(-45)"/>
+  <rect class="cls-1" x="14.1" y="38.84" width="2.07" height="5.66" transform="translate(-25.03 22.91) rotate(-45)"/>
+</svg>
