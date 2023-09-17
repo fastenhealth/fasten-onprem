@@ -29,28 +29,9 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Gorm/PostgreSQL setup
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	globalLogger.Infof("Trying to connect to PostgreSQL db: %s\n", appConfig.GetString("database.location"))
+	dsn := appConfig.GetString("database.connectionString")
+	globalLogger.Infof("Trying to connect to PostgreSQL db: %s\n", dsn)
 
-	// When a transaction cannot lock the database, because it is already locked by another one,
-	// SQLite by default throws an error: database is locked. This behavior is usually not appropriate when
-	// concurrent access is needed, typically when multiple processes write to the same database.
-	// PRAGMA busy_timeout lets you set a timeout or a handler for these events. When setting a timeout,
-	// SQLite will try the transaction multiple times within this timeout.
-	// fixes #341
-	// https://rsqlite.r-dbi.org/reference/sqlitesetbusyhandler
-	// retrying for 30000 milliseconds, 30seconds - this would be unreasonable for a distributed multi-tenant application,
-	// but should be fine for local usage.
-	// pragmaStr := sqlitePragmaString(map[string]string{
-	// 	"busy_timeout": "30000",
-	// 	"foreign_keys": "ON",
-	// })
-	// database, err := gorm.Open(postgres.New(postgres.Config{
-	// 	DSN: "user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai",
-	// 	PreferSimpleProtocol: true, // disables implicit prepared statement usage
-	// }), &gorm.Config{})
-
-	// dsn := "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
-	dsn := "host=ec2-3-232-218-211.compute-1.amazonaws.com user=ebfggwkhpwkqyz password=f661aa9733da500528b702923fe55fb01823acf27d903514f02b10eb6c03868d dbname=d7vo38e896j3nl port=5432 sslmode=require TimeZone=Asia/Shanghai"
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
@@ -62,7 +43,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	if err != nil {
 		return nil, fmt.Errorf("Failed to connect to database! - %v", err)
 	}
-	globalLogger.Infof("Successfully connected to Quench PostgreSQL db: %s\n", appConfig.GetString("database.location"))
+	globalLogger.Infof("Successfully connected to Quench PostgreSQL db: %s\n", dsn)
 
 	fastenRepo := SqliteRepository{
 		AppConfig:  appConfig,

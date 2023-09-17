@@ -20,6 +20,7 @@ web:
     frontend:
       path: /opt/fasten/web
 database:
+  connectionString: 'host=xxxx user=xxxx password=xxxx dbname=xxxx port=5432 sslmode=require TimeZone=Asia/Shanghai'
   location: '/opt/fasten/db/fasten.db'
 log:
   file: '' #absolute or relative paths allowed, eg. web.log
