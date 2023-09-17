@@ -1,0 +1,14 @@
+tbody {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+}
+
+/* Borders */
+/* The margin declarations are used to simulate border-collapse:collapse */
+tr {
+  margin: 0 0 -1px -1px;
+  //border: 1px solid black;
+}
+tbody:not(:empty) {
+  margin: 0 0 1px 1px;
+}
