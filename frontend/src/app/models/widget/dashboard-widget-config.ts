@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 
 export class DashboardWidgetConfig {
   id?: string
-  item_type: "complex-line-widget" | "donut-chart-widget" | "dual-gauges-widget" | "grouped-bar-chart-widget" | "patient-vitals-widget" | "simple-line-chart-widget" | "table-widget" | "records-summary-widget"
+  item_type: "image-list-group-widget" | "complex-line-widget" | "donut-chart-widget" | "dual-gauges-widget" | "grouped-bar-chart-widget" | "patient-vitals-widget" | "simple-line-chart-widget" | "table-widget" | "records-summary-widget"
 
   title_text: string
   description_text: string

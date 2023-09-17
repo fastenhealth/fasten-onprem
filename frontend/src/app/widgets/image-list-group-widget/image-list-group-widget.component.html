@@ -1,0 +1,35 @@
+<ng-container [ngTemplateOutlet]="loading ? showLoading : (!loading && isEmpty) ? showEmpty : showChart"></ng-container>
+
+<ng-template #showLoading>
+  <loading-widget></loading-widget>
+</ng-template>
+
+<ng-template #showEmpty>
+  <empty-widget></empty-widget>
+</ng-template>
+
+<ng-template #showChart>
+  <ul class="list-group">
+    <li class="list-group-item d-flex align-items-center">
+      <img src="../img/faces/face6.jpg" class="wd-30 rounded-circle mg-r-15" alt="">
+      <div>
+        <h6 class="tx-13 tx-inverse tx-semibold mg-b-0">Dr. Ester Howard</h6>
+        <span class="d-block tx-11 text-muted">Neurologist, UCSF</span>
+      </div>
+    </li>
+    <li class="list-group-item d-flex align-items-center">
+      <img src="../img/faces/face7.jpg" class="wd-30 rounded-circle mg-r-15" alt="">
+      <div>
+        <h6 class="tx-13 tx-inverse tx-semibold mg-b-0">Dr. Joel Mendez</h6>
+        <span class="d-block tx-11 text-muted">General Medicine, Kaiser</span>
+      </div>
+    </li>
+    <li class="list-group-item d-flex align-items-center">
+      <img src="../img/faces/face8.jpg" class="wd-30 rounded-circle mg-r-15" alt="">
+      <div>
+        <h6 class="tx-13 tx-inverse tx-semibold mg-b-0">Dr. Marianne Audrey</h6>
+        <span class="d-block tx-11 text-muted">orthopedic surgeon, UCSF</span>
+      </div>
+    </li>
+  </ul>
+</ng-template><!-- card -->

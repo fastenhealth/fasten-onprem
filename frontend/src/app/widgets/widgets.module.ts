@@ -10,6 +10,7 @@ import { LoadingWidgetComponent } from './loading-widget/loading-widget.componen
 import { EmptyWidgetComponent } from './empty-widget/empty-widget.component';
 import {DashboardWidgetComponent} from './dashboard-widget/dashboard-widget.component';
 import { RecordsSummaryWidgetComponent } from './records-summary-widget/records-summary-widget.component';
+import { ImageListGroupWidgetComponent } from './image-list-group-widget/image-list-group-widget.component';
 @NgModule({
   imports: [
 
@@ -20,14 +21,14 @@ import { RecordsSummaryWidgetComponent } from './records-summary-widget/records-
     GroupedBarChartWidgetComponent,
     PatientVitalsWidgetComponent,
     RecordsSummaryWidgetComponent,
+    ImageListGroupWidgetComponent,
     SimpleLineChartWidgetComponent,
     TableWidgetComponent,
     LoadingWidgetComponent,
     EmptyWidgetComponent
 
   ],
-  declarations: [
-  ],
+  declarations: [],
   exports: [
     //standalone components
     ComplexLineWidgetComponent,
@@ -36,6 +37,7 @@ import { RecordsSummaryWidgetComponent } from './records-summary-widget/records-
     GroupedBarChartWidgetComponent,
     PatientVitalsWidgetComponent,
     RecordsSummaryWidgetComponent,
+    ImageListGroupWidgetComponent,
     SimpleLineChartWidgetComponent,
     TableWidgetComponent,
     LoadingWidgetComponent,
@@ -56,6 +58,7 @@ export function WidgetComponents():  Type<Object>[] {
     GroupedBarChartWidgetComponent,
     PatientVitalsWidgetComponent,
     RecordsSummaryWidgetComponent,
+    ImageListGroupWidgetComponent,
     SimpleLineChartWidgetComponent,
     TableWidgetComponent,
     LoadingWidgetComponent,
