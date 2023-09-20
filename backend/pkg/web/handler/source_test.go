@@ -36,6 +36,7 @@ type SourceHandlerTestSuite struct {
 
 	AppConfig     *mock_config.MockInterface
 	AppRepository database.DatabaseRepository
+	AppEventBus   event_bus.Interface
 }
 
 // BeforeTest has a function to be executed right before the test starts and receives the suite and test names as input
@@ -55,6 +56,8 @@ func (suite *SourceHandlerTestSuite) BeforeTest(suiteName, testName string) {
 
 	appRepo, err := database.NewRepository(suite.AppConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	suite.AppRepository = appRepo
+
+	suite.AppEventBus = event_bus.NewNoopEventBusServer()
 
 	appRepo.CreateUser(context.Background(), &models.User{
 		Username: "test_username",
@@ -82,6 +85,7 @@ func (suite *SourceHandlerTestSuite) TestCreateManualSourceHandler() {
 	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", suite.T().Name()))
 	ctx.Set(pkg.ContextKeyTypeDatabase, suite.AppRepository)
 	ctx.Set(pkg.ContextKeyTypeConfig, suite.AppConfig)
+	ctx.Set(pkg.ContextKeyTypeEventBusServer, suite.AppEventBus)
 	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_username")
 
 	//test
