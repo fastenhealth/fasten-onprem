@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/gin-gonic/gin"
 	"io"
-	"log"
 )
 
 // SSEStream is a handler for the server sent event stream (notifications from background processes)
@@ -14,25 +15,41 @@ import (
 //
 // test using:
 // curl -N -H "Authorization: Bearer xxxxx" http://localhost:9090/api/secure/sse/stream
-func SSEStream(c *gin.Context) {
 
-	//logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
-	//databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
-	v, ok := c.Get(pkg.ContextKeyTypeSSEClientChannel)
-	if !ok {
-		log.Printf("could not get client channel from context")
-		return
-	}
-	listener, ok := v.(*event_bus.EventBusListener)
-	if !ok {
-		return
-	}
-	c.Stream(func(w io.Writer) bool {
-		// Stream message to client from message channel
-		if msg, ok := <-listener.ResponseChan; ok {
-			c.SSEvent("message", msg)
-			return true
+func SSEEventBusServerHandler(eventBus event_bus.Interface) gin.HandlerFunc {
+
+	return func(c *gin.Context) {
+		//get a reference to the current user
+		databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+		foundUser, err := databaseRepo.GetCurrentUser(c)
+		if err != nil || foundUser == nil {
+			c.Error(fmt.Errorf("could not find user"))
+			return
 		}
-		return false
-	})
+
+		// Initialize client channel
+		clientListener := event_bus.EventBusListener{
+			ResponseChan: make(chan string),
+			UserID:       foundUser.ID.String(),
+		}
+
+		// Send new connection to event server
+		eventBus.AddListener(&clientListener)
+
+		defer func() {
+			// Send closed connection to event server
+			eventBus.RemoveListener(&clientListener)
+		}()
+
+		c.Stream(func(w io.Writer) bool {
+			// Stream message to client from message channel
+			if msg, ok := <-clientListener.ResponseChan; ok {
+				c.SSEvent("message", msg)
+				return true
+			}
+			return false
+		})
+
+	}
 }

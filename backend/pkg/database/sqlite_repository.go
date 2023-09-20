@@ -22,7 +22,7 @@ import (
 	"strings"
 )
 
-func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) (DatabaseRepository, error) {
+func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, eventBus event_bus.Interface) (DatabaseRepository, error) {
 	//backgroundContext := context.Background()
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 	})
 	database, err := gorm.Open(sqlite.Open(appConfig.GetString("database.location")+pragmaStr), &gorm.Config{
 		//TODO: figure out how to log database queries again.
-		//Logger: Logger
+		//logger: logger
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 
@@ -62,7 +62,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger) 
 		AppConfig:  appConfig,
 		Logger:     globalLogger,
 		GormClient: database,
-		EventBus:   event_bus.GetEventBusServer(globalLogger),
+		EventBus:   eventBus,
 	}
 
 	//TODO: automigrate for now, this should be replaced with a migration tool once the DB has stabilized.
@@ -95,7 +95,7 @@ type SqliteRepository struct {
 
 	GormClient *gorm.DB
 
-	EventBus *event_bus.EventBus
+	EventBus event_bus.Interface
 }
 
 func (sr *SqliteRepository) Migrate() error {
@@ -366,7 +366,7 @@ func (sr *SqliteRepository) UpsertResource(ctx context.Context, wrappedResourceM
 
 	err = sr.EventBus.PublishMessage(eventSourceSync)
 	if err != nil {
-		sr.Logger.Warnf("ignoring: an error occurred while publishing event to EventBus (%s/%s): %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID, err)
+		sr.Logger.Warnf("ignoring: an error occurred while publishing event to eventBus (%s/%s): %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID, err)
 	}
 
 	createResult := sr.GormClient.WithContext(ctx).Where(models.OriginBase{

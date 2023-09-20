@@ -156,6 +156,7 @@ func CreateSource(c *gin.Context) {
 func SourceSync(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+	eventBus := c.MustGet(pkg.ContextKeyTypeEventBusServer).(event_bus.Interface)
 
 	logger.Infof("Get SourceCredential Credentials: %v", c.Param("sourceId"))
 
@@ -175,7 +176,7 @@ func SourceSync(c *gin.Context) {
 
 	//publish event
 	currentUser, _ := databaseRepo.GetCurrentUser(c)
-	err = event_bus.GetEventBusServer(logger).PublishMessage(
+	err = eventBus.PublishMessage(
 		models.NewEventSourceComplete(
 			currentUser.ID.String(),
 			sourceCred.ID.String(),
@@ -191,6 +192,7 @@ func SourceSync(c *gin.Context) {
 func CreateManualSource(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+	eventBus := c.MustGet(pkg.ContextKeyTypeEventBusServer).(event_bus.Interface)
 
 	// single file
 	file, err := c.FormFile("file")
@@ -260,7 +262,7 @@ func CreateManualSource(c *gin.Context) {
 	//publish event
 	currentUser, _ := databaseRepo.GetCurrentUser(c)
 
-	err = event_bus.GetEventBusServer(logger).PublishMessage(
+	err = eventBus.PublishMessage(
 		models.NewEventSourceComplete(
 			currentUser.ID.String(),
 			manualSourceCredential.ID.String(),

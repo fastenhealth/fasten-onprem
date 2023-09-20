@@ -6,6 +6,7 @@ import (
 	"github.com/analogj/go-util/utils"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/version"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web"
 	"github.com/sirupsen/logrus"
@@ -104,7 +105,11 @@ func main() {
 					settingsData, err := json.Marshal(appconfig.AllSettings())
 					appLogger.Debug(string(settingsData), err)
 
-					webServer := web.AppEngine{Config: appconfig, Logger: appLogger}
+					webServer := web.AppEngine{
+						Config:   appconfig,
+						Logger:   appLogger,
+						EventBus: event_bus.NewEventBusServer(appLogger),
+					}
 					return webServer.Start()
 				},
 

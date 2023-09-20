@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/handler"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
 	"github.com/gin-gonic/gin"
@@ -15,16 +16,18 @@ import (
 )
 
 type AppEngine struct {
-	Config config.Interface
-	Logger *logrus.Entry
+	Config   config.Interface
+	Logger   *logrus.Entry
+	EventBus event_bus.Interface
 }
 
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	r := gin.New()
 
 	r.Use(middleware.LoggerMiddleware(ae.Logger))
-	r.Use(middleware.RepositoryMiddleware(ae.Config, ae.Logger))
+	r.Use(middleware.RepositoryMiddleware(ae.Config, ae.Logger, ae.EventBus))
 	r.Use(middleware.ConfigMiddleware(ae.Config))
+	r.Use(middleware.EventBusMiddleware(ae.EventBus))
 	r.Use(gin.Recovery())
 
 	basePath := ae.Config.GetString("web.listen.basepath")
@@ -39,14 +42,11 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				// check if the /web folder is populated.
 				// check if access to database
 
-				bus := event_bus.GetEventBusServer(ae.Logger)
-				bus.Message <- event_bus.EventBusMessage{
-					UserID:  "heartbeat",
-					Message: "sse heartbeat",
-				}
+				keepAliveMsg := models.NewEventKeepAlive("heartbeat")
+				err := ae.EventBus.PublishMessage(keepAliveMsg)
 
 				c.JSON(http.StatusOK, gin.H{
-					"success": true,
+					"success": err == nil,
 				})
 			})
 
@@ -84,8 +84,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				if runtime.GOOS != "windows" {
 					secure.GET("/events/stream",
 						middleware.SSEHeaderMiddleware(),
-						middleware.SSEEventBusServerMiddleware(ae.Logger),
-						handler.SSEStream,
+						handler.SSEEventBusServerHandler(ae.EventBus),
 					)
 				}
 			}
