@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/fastenhealth/gofhir-models/fhir401"
@@ -74,7 +75,7 @@ func (suite *RepositoryTestSuite) TestNewRepository() {
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 
 	//test
-	_, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	_, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 
 	//assert
 	require.NoError(suite.T(), err)
@@ -85,7 +86,7 @@ func (suite *RepositoryTestSuite) TestCreateUser() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	//test
@@ -105,7 +106,7 @@ func (suite *RepositoryTestSuite) TestCreateUser_WithExitingUser_ShouldFail() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	//test
@@ -127,13 +128,13 @@ func (suite *RepositoryTestSuite) TestCreateUser_WithExitingUser_ShouldFail() {
 	require.Error(suite.T(), err)
 }
 
-//TODO: ensure user's cannot specify the ID when creating a user.
+// TODO: ensure user's cannot specify the ID when creating a user.
 func (suite *RepositoryTestSuite) TestCreateUser_WithUserProvidedId_ShouldBeReplaced() {
 	//setup
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	//test
@@ -158,7 +159,7 @@ func (suite *RepositoryTestSuite) TestGetUserByUsername() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	userModel := &models.User{
 		Username: "test_username",
@@ -181,7 +182,7 @@ func (suite *RepositoryTestSuite) TestGetUserByUsername_WithInvalidUsername() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	userModel := &models.User{
 		Username: "test_username",
@@ -203,7 +204,7 @@ func (suite *RepositoryTestSuite) TestGetCurrentUser_WithContextBackgroundAuthUs
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	userModel := &models.User{
 		Username: "test_username",
@@ -227,7 +228,7 @@ func (suite *RepositoryTestSuite) TestGetCurrentUser_WithGinContextBackgroundAut
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	userModel := &models.User{
 		Username: "test_username",
@@ -255,7 +256,7 @@ func (suite *RepositoryTestSuite) TestGetCurrentUser_WithContextBackgroundAuthUs
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	//test
@@ -271,7 +272,7 @@ func (suite *RepositoryTestSuite) TestCreateGlossaryEntry() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	//test
@@ -306,7 +307,7 @@ func (suite *RepositoryTestSuite) TestUpsertRawResource() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -362,7 +363,7 @@ func (suite *RepositoryTestSuite) TestUpsertRawResource_WithRelatedResourceAndDu
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -409,7 +410,7 @@ func (suite *RepositoryTestSuite) TestListResources() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -511,7 +512,7 @@ func (suite *RepositoryTestSuite) TestGetResourceByResourceTypeAndId() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -564,7 +565,7 @@ func (suite *RepositoryTestSuite) TestGetResourceBySourceId() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -617,7 +618,7 @@ func (suite *RepositoryTestSuite) TestGetPatientForSources() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -673,7 +674,7 @@ func (suite *RepositoryTestSuite) TestAddResourceAssociation() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -709,7 +710,7 @@ func (suite *RepositoryTestSuite) TestAddResourceAssociation_WithMismatchingSour
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -758,7 +759,7 @@ func (suite *RepositoryTestSuite) TestRemoveResourceAssociation() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -799,7 +800,7 @@ func (suite *RepositoryTestSuite) TestGetSourceSummary() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -879,7 +880,7 @@ func (suite *RepositoryTestSuite) TestGetSummary() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -982,7 +983,7 @@ func (suite *RepositoryTestSuite) TestAddResourceComposition() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{
@@ -1067,7 +1068,7 @@ func (suite *RepositoryTestSuite) TestAddResourceComposition_WithExistingComposi
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 
 	userModel := &models.User{

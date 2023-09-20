@@ -19,3 +19,7 @@ func NewEventBusServer(logger logrus.FieldLogger) Interface {
 	go eventBusInstance.listen()
 	return eventBusInstance
 }
+
+func NewNoopEventBusServer() Interface {
+	return &noopEventBus{}
+}

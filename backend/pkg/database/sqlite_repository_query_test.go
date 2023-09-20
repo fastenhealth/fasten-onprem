@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
@@ -13,7 +14,7 @@ import (
 	"time"
 )
 
-//mimic tests from https://hl7.org/fhir/r4/search.html#token
+// mimic tests from https://hl7.org/fhir/r4/search.html#token
 func TestProcessSearchParameter(t *testing.T) {
 	//setup
 	t.Parallel()
@@ -51,7 +52,7 @@ func TestProcessSearchParameter(t *testing.T) {
 	}
 }
 
-//mimic tests from https://hl7.org/fhir/r4/search.html#token
+// mimic tests from https://hl7.org/fhir/r4/search.html#token
 func TestProcessSearchParameterValue(t *testing.T) {
 	//setup
 	t.Parallel()
@@ -176,7 +177,7 @@ func TestSearchCodeToWhereClause(t *testing.T) {
 
 }
 
-//TODO
+// TODO
 func TestSearchCodeToFromClause(t *testing.T) {
 	//setup
 	var searchCodeToFromClauseTests = []struct {
@@ -208,7 +209,7 @@ func (suite *RepositoryTestSuite) TestQueryResources_SQL() {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
-	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	userModel := &models.User{
 		Username: "test_username",

@@ -8,6 +8,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
@@ -52,7 +53,7 @@ func (suite *SourceHandlerTestSuite) BeforeTest(suiteName, testName string) {
 	appConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	suite.AppConfig = appConfig
 
-	appRepo, err := database.NewRepository(suite.AppConfig, logrus.WithField("test", suite.T().Name()))
+	appRepo, err := database.NewRepository(suite.AppConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	suite.AppRepository = appRepo
 
 	appRepo.CreateUser(context.Background(), &models.User{
