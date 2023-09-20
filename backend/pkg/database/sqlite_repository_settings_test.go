@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
@@ -42,7 +43,7 @@ func (suite *RepositorySettingsTestSuite) BeforeTest(suiteName, testName string)
 	testConfig.SetDefault("log.level", "INFO")
 	suite.TestConfig = testConfig
 
-	dbRepo, err := NewRepository(testConfig, logrus.WithField("test", suite.T().Name()))
+	dbRepo, err := NewRepository(testConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
 	suite.TestRepository = dbRepo
 	userModel := &models.User{
