@@ -13,6 +13,30 @@
           <div class="col-6">
             <h1 class="az-dashboard-title">Observations</h1>
           </div>
+          <div class="col-6">
+
+            <div ngbDropdown class="d-inline-block float-right dropdown ml-3">
+              <button ngbTooltip="not yet implemented" type="button" class="btn btn-outline-indigo" id="dropdownReports" ngbDropdownToggle>
+                Included Reports
+              </button>
+              <div ngbDropdownMenu aria-labelledby="dropdownReports">
+                <button ngbDropdownItem>All</button>
+                <button ngbDropdownItem [disabled]="true">-----</button>
+                <button ngbDropdownItem>Report 1</button>
+                <button ngbDropdownItem>Report 2</button>
+              </div>
+            </div>
+            <div ngbDropdown class="d-inline-block float-right">
+              <button ngbTooltip="not yet implemented" type="button" class="btn btn-outline-indigo" id="dropdownSort" ngbDropdownToggle>
+                Sort By
+              </button>
+              <div ngbDropdownMenu aria-labelledby="dropdownSort">
+                <button ngbDropdownItem>Name</button>
+                <button ngbDropdownItem>Date</button>
+                <button ngbDropdownItem>Status</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Observations List -->
