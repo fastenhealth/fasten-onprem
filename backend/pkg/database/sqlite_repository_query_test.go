@@ -204,6 +204,55 @@ func TestSearchCodeToFromClause(t *testing.T) {
 
 }
 
+//Aggregation tests
+
+// mimic tests from https://hl7.org/fhir/r4/search.html#token
+func TestProcessAggregationParameter(t *testing.T) {
+	//setup
+	t.Parallel()
+	var processSearchParameterTests = []struct {
+		aggregationFieldWithFn models.QueryResourceAggregation // input
+		searchParameterLookup  map[string]string               // input (allowed search parameters)
+		expected               AggregationParameter
+		expectedError          bool // expected result
+	}{
+		//primitive types
+		{models.QueryResourceAggregation{Field: "test"}, map[string]string{"test": "keyword"}, AggregationParameter{SearchParameter: SearchParameter{Type: "keyword", Name: "test", Modifier: ""}}, false},
+		{models.QueryResourceAggregation{Field: "test"}, map[string]string{"test": "number"}, AggregationParameter{SearchParameter: SearchParameter{Type: "number", Name: "test", Modifier: ""}}, false},
+		{models.QueryResourceAggregation{Field: "test"}, map[string]string{"test": "uri"}, AggregationParameter{SearchParameter: SearchParameter{Type: "uri", Name: "test", Modifier: ""}}, false},
+		{models.QueryResourceAggregation{Field: "test"}, map[string]string{"test": "date"}, AggregationParameter{SearchParameter: SearchParameter{Type: "date", Name: "test", Modifier: ""}}, false},
+
+		{models.QueryResourceAggregation{Field: "test:hello"}, map[string]string{"test": "keyword"}, AggregationParameter{SearchParameter: SearchParameter{Type: "date", Name: "test", Modifier: ""}}, true}, //cannot have a modifier
+		{models.QueryResourceAggregation{Field: "test:hello"}, map[string]string{"test": "number"}, AggregationParameter{SearchParameter: SearchParameter{Type: "date", Name: "test", Modifier: ""}}, true},  //cannot have a modifier
+		{models.QueryResourceAggregation{Field: "test:hello"}, map[string]string{"test": "uri"}, AggregationParameter{SearchParameter: SearchParameter{Type: "date", Name: "test", Modifier: ""}}, true},     //cannot have a modifier
+		{models.QueryResourceAggregation{Field: "test:hello"}, map[string]string{"test": "date"}, AggregationParameter{SearchParameter: SearchParameter{Type: "date", Name: "test", Modifier: ""}}, true},    //cannot have a modifier
+
+		//complex types
+		{models.QueryResourceAggregation{Field: "test"}, map[string]string{"test": "reference"}, AggregationParameter{SearchParameter: SearchParameter{Type: "reference", Name: "test", Modifier: ""}}, true}, //complex types should throw an error when missing modifier
+		{models.QueryResourceAggregation{Field: "test"}, map[string]string{"test": "string"}, AggregationParameter{SearchParameter: SearchParameter{Type: "string", Name: "test", Modifier: ""}}, true},       //complex types should throw an error when missing modifier
+		{models.QueryResourceAggregation{Field: "test"}, map[string]string{"test": "quantity"}, AggregationParameter{SearchParameter: SearchParameter{Type: "quantity", Name: "test", Modifier: ""}}, true},   //complex types should throw an error when missing modifier
+
+		{models.QueryResourceAggregation{Field: "test:hello"}, map[string]string{"test": "reference"}, AggregationParameter{SearchParameter: SearchParameter{Type: "reference", Name: "test", Modifier: "hello"}}, false},
+		{models.QueryResourceAggregation{Field: "test:hello"}, map[string]string{"test": "string"}, AggregationParameter{SearchParameter: SearchParameter{Type: "string", Name: "test", Modifier: "hello"}}, false},
+		{models.QueryResourceAggregation{Field: "test:hello"}, map[string]string{"test": "quantity"}, AggregationParameter{SearchParameter: SearchParameter{Type: "quantity", Name: "test", Modifier: "hello"}}, false},
+
+		//token type
+		{models.QueryResourceAggregation{Field: "code"}, map[string]string{"code": "token"}, AggregationParameter{SearchParameter: SearchParameter{Type: "token", Name: "code", Modifier: ""}}, false},
+		{models.QueryResourceAggregation{Field: "code:code"}, map[string]string{"code": "token"}, AggregationParameter{SearchParameter: SearchParameter{Type: "token", Name: "code", Modifier: "code"}}, false},
+	}
+
+	//test && assert
+	for ndx, tt := range processSearchParameterTests {
+		actual, actualErr := ProcessAggregationParameter(tt.aggregationFieldWithFn, tt.searchParameterLookup)
+		if tt.expectedError {
+			require.Error(t, actualErr, "Expected error but got none for processAggregationParameterTests[%d] %s", ndx, tt.aggregationFieldWithFn)
+		} else {
+			require.NoError(t, actualErr, "Expected no error but got one for processAggregationParameterTests[%d] %s", ndx, tt.aggregationFieldWithFn)
+			require.Equal(t, tt.expected, actual)
+		}
+	}
+}
+
 func (suite *RepositoryTestSuite) TestQueryResources_SQL() {
 	//setup
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
@@ -245,7 +294,7 @@ func (suite *RepositoryTestSuite) TestQueryResources_SQL() {
 			"SELECT fhir.*",
 			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
 			"WHERE ((codeJson.value ->> '$.code' = ?)) AND (user_id = ?) GROUP BY `fhir`.`id`",
-			"ORDER BY fhir.sort_date ASC"}, " "))
+			"ORDER BY fhir.sort_date DESC"}, " "))
 	require.Equal(suite.T(), sqlParams, []interface{}{
 		"test_code", "00000000-0000-0000-0000-000000000000",
 	})

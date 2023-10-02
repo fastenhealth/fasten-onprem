@@ -43,7 +43,13 @@ export class ReportLabsComponent implements OnInit {
         from: "Observation",
         where: {},
         aggregations: {
-          order_by: "code:code"
+          order_by: {
+            field: "sort_date",
+            fn: "max"
+          },
+          group_by: {
+            field: "code",
+          }
         }
     }).subscribe(results => {
       console.log("OBSERVATIONS GROUPED", results)
