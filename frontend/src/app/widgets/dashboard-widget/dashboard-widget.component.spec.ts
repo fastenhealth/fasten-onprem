@@ -124,7 +124,7 @@ describe('DashboardWidgetComponent', () => {
               "where": {},
 
               "aggregations":{
-                "count_by": "source_resource_type"
+                "count_by": {"field": "source_resource_type"}
               },
             }
           },
@@ -138,7 +138,7 @@ describe('DashboardWidgetComponent', () => {
                 "where": {},
 
                 "aggregations":{
-                  "count_by": "source_resource_type"
+                  "count_by": {"field": "source_resource_type"}
                 },
               }
             }],
