@@ -74,6 +74,7 @@ func (s *FhirProvenance) GetSearchParameters() map[string]string {
 		"profile":              "reference",
 		"recorded":             "date",
 		"signatureType":        "token",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

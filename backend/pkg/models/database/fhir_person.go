@@ -197,6 +197,7 @@ func (s *FhirPerson) GetSearchParameters() map[string]string {
 		"practitioner":         "reference",
 		"profile":              "reference",
 		"relatedperson":        "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

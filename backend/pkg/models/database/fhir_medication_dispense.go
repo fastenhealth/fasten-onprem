@@ -156,6 +156,7 @@ func (s *FhirMedicationDispense) GetSearchParameters() map[string]string {
 		"profile":              "reference",
 		"receiver":             "reference",
 		"responsibleparty":     "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

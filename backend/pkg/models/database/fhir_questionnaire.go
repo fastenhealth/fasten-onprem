@@ -103,6 +103,7 @@ func (s *FhirQuestionnaire) GetSearchParameters() map[string]string {
 		"name":                 "string",
 		"profile":              "reference",
 		"publisher":            "string",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

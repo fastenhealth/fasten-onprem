@@ -169,6 +169,7 @@ func (s *FhirComposition) GetSearchParameters() map[string]string {
 		"relatedId":            "token",
 		"relatedRef":           "reference",
 		"section":              "token",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

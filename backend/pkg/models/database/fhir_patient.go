@@ -223,6 +223,7 @@ func (s *FhirPatient) GetSearchParameters() map[string]string {
 		"phone":                "token",
 		"phonetic":             "string",
 		"profile":              "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

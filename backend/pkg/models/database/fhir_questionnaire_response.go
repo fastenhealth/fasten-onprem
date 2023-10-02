@@ -77,6 +77,7 @@ func (s *FhirQuestionnaireResponse) GetSearchParameters() map[string]string {
 		"partOf":               "reference",
 		"profile":              "reference",
 		"questionnaire":        "reference",
+		"sort_date":            "date",
 		"source":               "reference",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",

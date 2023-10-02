@@ -174,6 +174,7 @@ func (s *FhirEncounter) GetSearchParameters() map[string]string {
 		"reasonCode":           "token",
 		"reasonReference":      "reference",
 		"serviceProvider":      "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

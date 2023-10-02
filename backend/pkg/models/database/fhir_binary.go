@@ -40,6 +40,7 @@ func (s *FhirBinary) GetSearchParameters() map[string]string {
 		"language":             "token",
 		"lastUpdated":          "date",
 		"profile":              "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

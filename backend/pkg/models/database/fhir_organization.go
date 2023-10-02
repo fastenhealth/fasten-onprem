@@ -88,6 +88,7 @@ func (s *FhirOrganization) GetSearchParameters() map[string]string {
 		"partof":               "reference",
 		"phonetic":             "string",
 		"profile":              "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

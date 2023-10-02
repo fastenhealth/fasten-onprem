@@ -170,6 +170,7 @@ func (s *FhirDocumentReference) GetSearchParameters() map[string]string {
 		"relation":             "token",
 		"securityLabel":        "token",
 		"setting":              "token",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

@@ -114,6 +114,7 @@ func (s *FhirDocumentManifest) GetSearchParameters() map[string]string {
 		"recipient":            "reference",
 		"relatedId":            "token",
 		"relatedRef":           "reference",
+		"sort_date":            "date",
 		"source":               "uri",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",

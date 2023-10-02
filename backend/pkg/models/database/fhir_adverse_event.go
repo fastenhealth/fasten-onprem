@@ -85,6 +85,7 @@ func (s *FhirAdverseEvent) GetSearchParameters() map[string]string {
 		"resultingcondition":   "reference",
 		"seriousness":          "token",
 		"severity":             "token",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

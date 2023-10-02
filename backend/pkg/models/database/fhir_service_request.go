@@ -182,6 +182,7 @@ func (s *FhirServiceRequest) GetSearchParameters() map[string]string {
 		"replaces":              "reference",
 		"requester":             "reference",
 		"requisition":           "token",
+		"sort_date":             "date",
 		"source_id":             "keyword",
 		"source_resource_id":    "keyword",
 		"source_resource_type":  "keyword",

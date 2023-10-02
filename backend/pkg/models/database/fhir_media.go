@@ -81,6 +81,7 @@ func (s *FhirMedia) GetSearchParameters() map[string]string {
 		"operator":             "reference",
 		"profile":              "reference",
 		"site":                 "token",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

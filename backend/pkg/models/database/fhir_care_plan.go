@@ -167,6 +167,7 @@ func (s *FhirCarePlan) GetSearchParameters() map[string]string {
 		"performer":             "reference",
 		"profile":               "reference",
 		"replaces":              "reference",
+		"sort_date":             "date",
 		"source_id":             "keyword",
 		"source_resource_id":    "keyword",
 		"source_resource_type":  "keyword",

@@ -162,7 +162,7 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 
 		//process order by clause
 		if len(query.Aggregations.OrderBy) > 0 {
-			orderAsc := true
+			orderAsc := true //default to ascending, switch to desc if parameter is a date type.
 			if !strings.HasPrefix(query.Aggregations.OrderBy, "count(*)") {
 				orderAggregationParam, err := ProcessAggregationParameter(query.Aggregations.OrderBy, searchCodeToTypeLookup)
 				if err != nil {
@@ -173,6 +173,11 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 					return nil, err
 				}
 				fromClauses = append(fromClauses, orderAggregationFromClause)
+
+				//if the order by is a date type, we need to order by DESC (most recent first)
+				if orderAggregationParam.Type == SearchParameterTypeDate {
+					orderAsc = false
+				}
 
 				orderClause = AggregationParameterToClause(orderAggregationParam)
 				if orderAsc {
@@ -619,7 +624,7 @@ func ProcessAggregationParameter(aggregationFieldWithProperty string, searchPara
 	}
 
 	//primitive types should not have a modifier, we need to throw an error
-	if aggregationParameter.Type == SearchParameterTypeNumber || aggregationParameter.Type == SearchParameterTypeUri || aggregationParameter.Type == SearchParameterTypeKeyword {
+	if aggregationParameter.Type == SearchParameterTypeNumber || aggregationParameter.Type == SearchParameterTypeUri || aggregationParameter.Type == SearchParameterTypeKeyword || aggregationParameter.Type == SearchParameterTypeDate {
 		if len(aggregationParameter.Modifier) > 0 {
 			return aggregationParameter, fmt.Errorf("primitive aggregation parameter %s cannot have a property (%s)", aggregationParameter.Name, aggregationParameter.Modifier)
 		}

@@ -74,6 +74,7 @@ func (s *FhirCoverage) GetSearchParameters() map[string]string {
 		"payor":                "reference",
 		"policyHolder":         "reference",
 		"profile":              "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

@@ -92,6 +92,7 @@ func (s *FhirMedication) GetSearchParameters() map[string]string {
 		"lotNumber":            "token",
 		"manufacturer":         "reference",
 		"profile":              "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

@@ -170,6 +170,7 @@ func (s *FhirMedicationRequest) GetSearchParameters() map[string]string {
 		"priority":              "token",
 		"profile":               "reference",
 		"requester":             "reference",
+		"sort_date":             "date",
 		"source_id":             "keyword",
 		"source_resource_id":    "keyword",
 		"source_resource_type":  "keyword",

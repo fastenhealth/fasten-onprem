@@ -167,6 +167,7 @@ func (s *FhirCondition) GetSearchParameters() map[string]string {
 		"profile":              "reference",
 		"recordedDate":         "date",
 		"severity":             "token",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",
