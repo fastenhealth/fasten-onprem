@@ -17,12 +17,39 @@ export class ReportLabsComponent implements OnInit {
 
   isEmptyReport = false
 
+  diagnosticReports: ResourceFhir[] = []
+
   constructor(
     private fastenApi: FastenApiService,
   ) { }
 
   ngOnInit(): void {
     this.loading = true
+
+    this.fastenApi.queryResources({
+      select: ["*"],
+      from: "DiagnosticReport",
+      where: {
+        "category": "http://terminology.hl7.org/CodeSystem/v2-0074|LAB",
+      },
+      limit: 5,
+    }).subscribe(results => {
+      this.diagnosticReports = results.data
+      console.log("ALL DIAGNOSTIC REPORTS", results)
+    })
+
+    this.fastenApi.queryResources({
+        select: ["*"],
+        from: "Observation",
+        where: {},
+        aggregations: {
+          order_by: "code:code"
+        }
+    }).subscribe(results => {
+      console.log("OBSERVATIONS GROUPED", results)
+    })
+
+
     this.fastenApi.getResources("Observation").subscribe(results => {
       this.loading = false
       results = results || []

@@ -34,19 +34,20 @@ const (
 
 const TABLE_ALIAS = "fhir"
 
-//Allows users to use SearchParameters to query resources
+// Allows users to use SearchParameters to query resources
 // Can generate simple or complex queries, depending on the SearchParameter type:
 //
 // eg. Simple
-//
 //
 // eg. Complex
 // SELECT fhir.*
 // FROM fhir_observation as fhir, json_each(fhir.code) as codeJson
 // WHERE (
+//
 //	(codeJson.value ->> '$.code' = "29463-7" AND codeJson.value ->> '$.system' = "http://loinc.org")
 //	OR (codeJson.value ->> '$.code' = "3141-9" AND codeJson.value ->> '$.system' = "http://loinc.org")
 //	OR (codeJson.value ->> '$.code' = "27113001" AND codeJson.value ->> '$.system' = "http://snomed.info/sct")
+//
 // )
 // AND (user_id = "6efcd7c5-3f29-4f0d-926d-a66ff68bbfc2")
 // GROUP BY `fhir`.`id`
@@ -142,7 +143,7 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 	//defaults
 	selectClauses := []string{fmt.Sprintf("%s.*", TABLE_ALIAS)}
 	groupClause := fmt.Sprintf("%s.id", TABLE_ALIAS)
-	orderClause := fmt.Sprintf("%s.sort_date ASC", TABLE_ALIAS)
+	orderClause := fmt.Sprintf("%s.sort_date DESC", TABLE_ALIAS)
 	if query.Aggregations != nil {
 
 		//Handle Aggregations
@@ -210,12 +211,21 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 	fromClauses = lo.Uniq(fromClauses)
 	fromClauses = lo.Compact(fromClauses)
 
-	return sr.GormClient.WithContext(ctx).
+	fluentQuery := sr.GormClient.WithContext(ctx).
 		Select(strings.Join(selectClauses, ", ")).
 		Where(strings.Join(whereClauses, " AND "), whereNamedParameters).
 		Group(groupClause).
-		Order(orderClause).
-		Table(strings.Join(fromClauses, ", ")), nil
+		Order(orderClause)
+
+	//add limit and offset clauses if present
+	if query.Limit != nil {
+		fluentQuery = fluentQuery.Limit(*query.Limit)
+	}
+	if query.Offset != nil {
+		fluentQuery = fluentQuery.Offset(*query.Offset)
+	}
+
+	return fluentQuery.Table(strings.Join(fromClauses, ", ")), nil
 }
 
 /// INTERNAL functionality. These functions are exported for testing, but are not available in the Interface
@@ -227,14 +237,17 @@ type SearchParameter struct {
 	Modifier string
 }
 
-//Lists in the SearchParameterValueOperatorTree are AND'd together, and items within each SearchParameterValueOperatorTree list are OR'd together
-//For example, the following would be AND'd together, and then OR'd with the next SearchParameterValueOperatorTree
-// {
-//  {SearchParameterValue{Value: "foo"}, SearchParameterValue{Value: "bar"}}
-//  {SearchParameterValue{Value: "baz"}},
-// }
-//This would result in the following SQL:
-//  (value = "foo" OR value = "bar") AND (value = "baz")
+// Lists in the SearchParameterValueOperatorTree are AND'd together, and items within each SearchParameterValueOperatorTree list are OR'd together
+// For example, the following would be AND'd together, and then OR'd with the next SearchParameterValueOperatorTree
+//
+//	{
+//	 {SearchParameterValue{Value: "foo"}, SearchParameterValue{Value: "bar"}}
+//	 {SearchParameterValue{Value: "baz"}},
+//	}
+//
+// This would result in the following SQL:
+//
+//	(value = "foo" OR value = "bar") AND (value = "baz")
 type SearchParameterValueOperatorTree [][]SearchParameterValue
 
 type SearchParameterValue struct {
@@ -243,7 +256,7 @@ type SearchParameterValue struct {
 	SecondaryValues map[string]interface{}
 }
 
-//SearchParameters are made up of parameter names and modifiers. For example, "name" and "name:exact" are both valid search parameters
+// SearchParameters are made up of parameter names and modifiers. For example, "name" and "name:exact" are both valid search parameters
 // This function will parse the searchCodeWithModifier and return the SearchParameter
 func ProcessSearchParameter(searchCodeWithModifier string, searchParamTypeLookup map[string]string) (SearchParameter, error) {
 	searchParameter := SearchParameter{}
@@ -284,8 +297,9 @@ func ProcessSearchParameter(searchCodeWithModifier string, searchParamTypeLookup
 // top level is AND'd together, and each item within the lists are OR'd together
 //
 // For example, searchParamCodeValueOrValuesWithPrefix may be:
-//  "code": "29463-7,3141-9,27113001"
-//  "code": ["le29463-7", "gt3141-9", "27113001"]
+//
+//	"code": "29463-7,3141-9,27113001"
+//	"code": ["le29463-7", "gt3141-9", "27113001"]
 func ProcessSearchParameterValueIntoOperatorTree(searchParameter SearchParameter, searchParamCodeValueOrValuesWithPrefix interface{}) (SearchParameterValueOperatorTree, error) {
 
 	searchParamCodeValuesWithPrefix := []string{}
@@ -416,7 +430,7 @@ func NamedParameterWithSuffix(parameterName string, suffix string) string {
 	return fmt.Sprintf("%s_%s", parameterName, suffix)
 }
 
-//SearchCodeToWhereClause converts a searchCode and searchCodeValue to a where clause and a map of named parameters
+// SearchCodeToWhereClause converts a searchCode and searchCodeValue to a where clause and a map of named parameters
 func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue SearchParameterValue, namedParameterSuffix string) (string, map[string]interface{}, error) {
 
 	//add named parameters to the lookup map. Basically, this is a map of all the named parameters that will be used in the where clause we're generating
@@ -575,7 +589,7 @@ func AggregationParameterToClause(aggParameter SearchParameter) string {
 	}
 }
 
-//ProcessAggregationParameter processes the aggregation parameters which are fields with optional properties:
+// ProcessAggregationParameter processes the aggregation parameters which are fields with optional properties:
 // Fields that are primitive types (number, uri) must not have any property specified:
 // eg. `probability`
 //

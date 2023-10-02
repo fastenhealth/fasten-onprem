@@ -11,6 +11,8 @@ type QueryResource struct {
 	Select []string               `json:"select"`
 	From   string                 `json:"from"`
 	Where  map[string]interface{} `json:"where"`
+	Limit  *int                   `json:"limit,omitempty"`
+	Offset *int                   `json:"offset,omitempty"`
 
 	//aggregation fields
 	Aggregations *QueryResourceAggregations `json:"aggregations"`
@@ -56,7 +58,13 @@ func (q *QueryResource) Validate() error {
 		if strings.Contains(q.Aggregations.OrderBy, " ") {
 			return fmt.Errorf("order_by cannot have spaces (or aliases)")
 		}
+	}
 
+	if q.Limit != nil && *q.Limit < 0 {
+		return fmt.Errorf("'limit' must be greater than or equal to zero")
+	}
+	if q.Offset != nil && *q.Offset < 0 {
+		return fmt.Errorf("'offset' must be greater than or equal to zero")
 	}
 
 	return nil
