@@ -417,12 +417,8 @@ func ProcessSearchParameterValue(searchParameter SearchParameter, searchValueWit
 			}
 		} else if len(searchParameterValueParts) == 2 {
 			//if theres 2 parts, first is always system, second is always the code. Either one may be emty. If both are emty this is invalid.
-			if len(searchParameterValueParts[0]) > 0 {
-				searchParameterValue.SecondaryValues[searchParameter.Name+"System"] = searchParameterValueParts[0]
-			}
-			if len(searchParameterValueParts[1]) > 0 {
-				searchParameterValue.Value = searchParameterValueParts[1]
-			}
+			searchParameterValue.SecondaryValues[searchParameter.Name+"System"] = searchParameterValueParts[0]
+			searchParameterValue.Value = searchParameterValueParts[1]
 			if len(searchParameterValueParts[0]) == 0 && len(searchParameterValueParts[1]) == 0 {
 				return searchParameterValue, fmt.Errorf("invalid search parameter value: (%s=%s)", searchParameter.Name, searchParameterValue.Value)
 			}
@@ -571,7 +567,10 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		//TODO: support ":text" modifier
 
 		//setup the clause
-		clause := fmt.Sprintf("%sJson.value ->> '$.code' = @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix))
+		clause := []string{}
+		if searchParamValue.Value.(string) != "" {
+			clause = append(clause, fmt.Sprintf("%sJson.value ->> '$.code' = @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)))
+		}
 
 		//append the code and/or system clauses (if required)
 		//this looks like unnecessary code, however its required to ensure consistent tests
@@ -580,10 +579,10 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		for _, k := range allowedSecondaryKeys {
 			namedParameterKey := fmt.Sprintf("%s%s", searchParam.Name, strings.Title(k))
 			if _, ok := searchParamValue.SecondaryValues[namedParameterKey]; ok {
-				clause += fmt.Sprintf(` AND %sJson.value ->> '$.%s' = @%s`, searchParam.Name, k, NamedParameterWithSuffix(namedParameterKey, namedParameterSuffix))
+				clause = append(clause, fmt.Sprintf(`%sJson.value ->> '$.%s' = @%s`, searchParam.Name, k, NamedParameterWithSuffix(namedParameterKey, namedParameterSuffix)))
 			}
 		}
-		return fmt.Sprintf("(%s)", clause), searchClauseNamedParams, nil
+		return fmt.Sprintf("(%s)", strings.Join(clause, " AND ")), searchClauseNamedParams, nil
 
 	case SearchParameterTypeKeyword:
 		//setup the clause

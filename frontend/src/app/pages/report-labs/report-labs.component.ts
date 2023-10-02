@@ -39,9 +39,11 @@ export class ReportLabsComponent implements OnInit {
     })
 
     this.fastenApi.queryResources({
-        select: ["*"],
+        select: [],
         from: "Observation",
-        where: {},
+        where: {
+          "code": "http://loinc.org|,urn:oid:2.16.840.1.113883.6.1|",
+        },
         aggregations: {
           order_by: {
             field: "sort_date",

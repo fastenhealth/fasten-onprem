@@ -103,6 +103,8 @@ func TestProcessSearchParameterValue(t *testing.T) {
 		{SearchParameter{Type: "token", Name: "identifier", Modifier: "otype"}, "http://terminology.hl7.org/CodeSystem/v2-0203|MR|446053", SearchParameterValue{Value: "MR|446053", Prefix: "", SecondaryValues: map[string]interface{}{"identifierSystem": "http://terminology.hl7.org/CodeSystem/v2-0203"}}, false},
 		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, "|", SearchParameterValue{}, true}, //empty value should throw an error
 		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, "", SearchParameterValue{}, true},  //empty value should throw an error
+		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, "http://acme.org/conditions/codes|", SearchParameterValue{Value: "", Prefix: "", SecondaryValues: map[string]interface{}{"codeSystem": "http://acme.org/conditions/codes"}}, false},
+		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, "|807-1", SearchParameterValue{Value: "807-1", Prefix: "", SecondaryValues: map[string]interface{}{"codeSystem": ""}}, false},
 
 		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, "5.4|http://unitsofmeasure.org|mg", SearchParameterValue{Value: float64(5.4), Prefix: "", SecondaryValues: map[string]interface{}{"valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "mg"}}, false},
 		{SearchParameter{Type: "quantity", Name: "valueQuantity", Modifier: ""}, "5.40e-3|http://unitsofmeasure.org|g", SearchParameterValue{Value: float64(0.0054), Prefix: "", SecondaryValues: map[string]interface{}{"valueQuantitySystem": "http://unitsofmeasure.org", "valueQuantityCode": "g"}}, false},
