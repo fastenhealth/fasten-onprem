@@ -98,7 +98,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL() {
 			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
 			"WHERE ((codeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
 			"GROUP BY `fhir`.`id`",
-			"ORDER BY fhir.sort_date ASC",
+			"ORDER BY fhir.sort_date DESC",
 		}, " "),
 		sqlString)
 	require.Equal(suite.T(), sqlParams, []interface{}{
@@ -136,7 +136,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithMultipleWhereCon
 			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson, json_each(fhir.category) as categoryJson",
 			"WHERE ((codeJson.value ->> '$.code' = ?)) AND ((categoryJson.value ->> '$.code' = ?)) AND (user_id = ?)",
 			"GROUP BY `fhir`.`id`",
-			"ORDER BY fhir.sort_date ASC",
+			"ORDER BY fhir.sort_date DESC",
 		}, " "),
 		sqlString)
 	require.Equal(suite.T(), sqlParams, []interface{}{
@@ -158,7 +158,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveOrderBy
 			"activityCode": "test_code",
 		},
 		From:         "CarePlan",
-		Aggregations: &models.QueryResourceAggregations{OrderBy: "instantiatesUri"},
+		Aggregations: &models.QueryResourceAggregations{OrderBy: &models.QueryResourceAggregation{Field: "instantiatesUri"}},
 	})
 	require.NoError(suite.T(), err)
 	var results []map[string]interface{}
@@ -193,7 +193,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithKeywordOrderByAg
 		Select:       []string{},
 		Where:        map[string]interface{}{},
 		From:         "CarePlan",
-		Aggregations: &models.QueryResourceAggregations{OrderBy: "id"},
+		Aggregations: &models.QueryResourceAggregations{OrderBy: &models.QueryResourceAggregation{Field: "id"}},
 	})
 	require.NoError(suite.T(), err)
 	var results []map[string]interface{}
@@ -230,7 +230,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithComplexOrderByAg
 			"code": "test_code",
 		},
 		From:         "Observation",
-		Aggregations: &models.QueryResourceAggregations{OrderBy: "valueString:value"},
+		Aggregations: &models.QueryResourceAggregations{OrderBy: &models.QueryResourceAggregation{Field: "valueString:value"}},
 	})
 	require.NoError(suite.T(), err)
 	var results []map[string]interface{}
@@ -267,7 +267,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveCountBy
 			"activityCode": "test_code",
 		},
 		From:         "CarePlan",
-		Aggregations: &models.QueryResourceAggregations{CountBy: "instantiatesUri"},
+		Aggregations: &models.QueryResourceAggregations{CountBy: &models.QueryResourceAggregation{Field: "instantiatesUri"}},
 	})
 	require.NoError(suite.T(), err)
 	var results []map[string]interface{}
@@ -304,7 +304,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithKeywordCountByAg
 			"activityCode": "test_code",
 		},
 		From:         "CarePlan",
-		Aggregations: &models.QueryResourceAggregations{CountBy: "source_resource_type"},
+		Aggregations: &models.QueryResourceAggregations{CountBy: &models.QueryResourceAggregation{Field: "source_resource_type"}},
 	})
 	require.NoError(suite.T(), err)
 	var results []map[string]interface{}
@@ -339,7 +339,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithWildcardCountByA
 		Select:       []string{},
 		Where:        map[string]interface{}{},
 		From:         "CarePlan",
-		Aggregations: &models.QueryResourceAggregations{CountBy: "*"},
+		Aggregations: &models.QueryResourceAggregations{CountBy: &models.QueryResourceAggregation{Field: "*"}},
 	})
 	require.NoError(suite.T(), err)
 	var results []map[string]interface{}
@@ -376,7 +376,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithComplexCountByAg
 			"code": "test_code",
 		},
 		From:         "Observation",
-		Aggregations: &models.QueryResourceAggregations{CountBy: "code:code"},
+		Aggregations: &models.QueryResourceAggregations{CountBy: &models.QueryResourceAggregation{Field: "code:code"}},
 	})
 	require.NoError(suite.T(), err)
 	var results []map[string]interface{}
@@ -396,5 +396,122 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithComplexCountByAg
 		}, " "), sqlString)
 	require.Equal(suite.T(), sqlParams, []interface{}{
 		"test_code", "00000000-0000-0000-0000-000000000000",
+	})
+}
+
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithComplexGroupByWithOrderByMaxFnAggregation() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select: []string{},
+		Where: map[string]interface{}{
+			"code": "test_code",
+		},
+		From: "Observation",
+		Aggregations: &models.QueryResourceAggregations{
+			GroupBy: &models.QueryResourceAggregation{Field: "code:code"},
+			OrderBy: &models.QueryResourceAggregation{Field: "sort_date", Function: "max"},
+		},
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT (codeJson.value ->> '$.code') as label, max(fhir.sort_date) as value",
+			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
+			"WHERE ((codeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
+			"GROUP BY (codeJson.value ->> '$.code')",
+			"ORDER BY max(fhir.sort_date) DESC",
+		}, " "), sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"test_code", "00000000-0000-0000-0000-000000000000",
+	})
+}
+
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithTokenGroupByNoModifier() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select: []string{},
+		Where:  map[string]interface{}{},
+		From:   "Observation",
+		Aggregations: &models.QueryResourceAggregations{
+			GroupBy: &models.QueryResourceAggregation{Field: "code"},
+		},
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT ((codeJson.value ->> '$.system') || '|' || (codeJson.value ->> '$.code')) as label, count(*) as value",
+			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
+			"WHERE (user_id = ?)",
+			"GROUP BY ((codeJson.value ->> '$.system') || '|' || (codeJson.value ->> '$.code'))",
+			"ORDER BY count(*) DESC",
+		}, " "), sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"00000000-0000-0000-0000-000000000000",
+	})
+}
+
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithTokenGroupByNoModifierWithLimit() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	limit := 10
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select: []string{},
+		Where:  map[string]interface{}{},
+		From:   "Observation",
+		Limit:  &limit,
+		Aggregations: &models.QueryResourceAggregations{
+			GroupBy: &models.QueryResourceAggregation{Field: "code"},
+		},
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT ((codeJson.value ->> '$.system') || '|' || (codeJson.value ->> '$.code')) as label, count(*) as value",
+			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
+			"WHERE (user_id = ?)",
+			"GROUP BY ((codeJson.value ->> '$.system') || '|' || (codeJson.value ->> '$.code'))",
+			"ORDER BY count(*) DESC",
+			"LIMIT 10",
+		}, " "), sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"00000000-0000-0000-0000-000000000000",
 	})
 }

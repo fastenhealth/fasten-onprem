@@ -18,18 +18,19 @@ import (
 type SearchParameterType string
 
 const (
-	SearchParameterTypeNumber    SearchParameterType = "number"
-	SearchParameterTypeDate      SearchParameterType = "date"
+	//simple types
+	SearchParameterTypeNumber  SearchParameterType = "number"
+	SearchParameterTypeDate    SearchParameterType = "date"
+	SearchParameterTypeUri     SearchParameterType = "uri"
+	SearchParameterTypeKeyword SearchParameterType = "keyword" //this is a literal/string primitive.
+
+	//complex types
 	SearchParameterTypeString    SearchParameterType = "string"
 	SearchParameterTypeToken     SearchParameterType = "token"
 	SearchParameterTypeReference SearchParameterType = "reference"
-	SearchParameterTypeUri       SearchParameterType = "uri"
 	SearchParameterTypeQuantity  SearchParameterType = "quantity"
 	SearchParameterTypeComposite SearchParameterType = "composite"
 	SearchParameterTypeSpecial   SearchParameterType = "special"
-
-	SearchParameterTypeKeyword SearchParameterType = "keyword" //this is a literal/string primitive.
-
 )
 
 const TABLE_ALIAS = "fhir"
@@ -58,7 +59,7 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 		return nil, err
 	}
 
-	if query.Aggregations != nil && (len(query.Aggregations.GroupBy) > 0 || len(query.Aggregations.CountBy) > 0) {
+	if query.Aggregations != nil && (query.Aggregations.GroupBy != nil || query.Aggregations.CountBy != nil) {
 		results := []map[string]interface{}{}
 		clientResp := sqlQuery.Find(&results)
 		return results, clientResp.Error
@@ -148,27 +149,30 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 
 		//Handle Aggregations
 
-		if len(query.Aggregations.CountBy) > 0 {
+		if query.Aggregations.CountBy != nil {
 			//populate the group by and order by clause with the count by values
-			query.Aggregations.OrderBy = "count(*) DESC"
+			query.Aggregations.OrderBy = &models.QueryResourceAggregation{
+				Field:    "*",
+				Function: "count",
+			}
 			query.Aggregations.GroupBy = query.Aggregations.CountBy
 
-			if query.Aggregations.GroupBy == "*" {
+			if query.Aggregations.GroupBy.Field == "*" {
 				//we need to get the count of all resources, so we need to remove the group by clause and replace it by
 				// `source_resource_type` which will be the same for all resources
-				query.Aggregations.GroupBy = "source_resource_type"
+				query.Aggregations.GroupBy.Field = "source_resource_type"
 			}
 		}
 
 		//process order by clause
-		if len(query.Aggregations.OrderBy) > 0 {
+		if query.Aggregations.OrderBy != nil {
 			orderAsc := true //default to ascending, switch to desc if parameter is a date type.
-			if !strings.HasPrefix(query.Aggregations.OrderBy, "count(*)") {
-				orderAggregationParam, err := ProcessAggregationParameter(query.Aggregations.OrderBy, searchCodeToTypeLookup)
+			if !(query.Aggregations.OrderBy.Field == "*") {
+				orderAggregationParam, err := ProcessAggregationParameter(*query.Aggregations.OrderBy, searchCodeToTypeLookup)
 				if err != nil {
 					return nil, err
 				}
-				orderAggregationFromClause, err := SearchCodeToFromClause(orderAggregationParam)
+				orderAggregationFromClause, err := SearchCodeToFromClause(orderAggregationParam.SearchParameter)
 				if err != nil {
 					return nil, err
 				}
@@ -186,17 +190,17 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 					orderClause = fmt.Sprintf("%s DESC", orderClause)
 				}
 			} else {
-				orderClause = query.Aggregations.OrderBy
+				orderClause = fmt.Sprintf("%s(%s) DESC", query.Aggregations.OrderBy.Function, query.Aggregations.OrderBy.Field)
 			}
 		}
 
 		//process group by clause
-		if len(query.Aggregations.GroupBy) > 0 {
-			groupAggregationParam, err := ProcessAggregationParameter(query.Aggregations.GroupBy, searchCodeToTypeLookup)
+		if query.Aggregations.GroupBy != nil {
+			groupAggregationParam, err := ProcessAggregationParameter(*query.Aggregations.GroupBy, searchCodeToTypeLookup)
 			if err != nil {
 				return nil, err
 			}
-			groupAggregationFromClause, err := SearchCodeToFromClause(groupAggregationParam)
+			groupAggregationFromClause, err := SearchCodeToFromClause(groupAggregationParam.SearchParameter)
 			if err != nil {
 				return nil, err
 			}
@@ -205,8 +209,22 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 			groupClause = AggregationParameterToClause(groupAggregationParam)
 			selectClauses = []string{
 				fmt.Sprintf("%s as %s", groupClause, "label"),
-				"count(*) as value",
 			}
+
+			if query.Aggregations.OrderBy == nil || query.Aggregations.OrderBy.Field == "*" {
+				selectClauses = append(selectClauses, fmt.Sprintf("%s as %s", "count(*)", "value"))
+				orderClause = fmt.Sprintf("%s DESC", "count(*)")
+			} else {
+				//use the orderBy aggregation as the value
+				orderAggregationParam, err := ProcessAggregationParameter(*query.Aggregations.OrderBy, searchCodeToTypeLookup)
+				if err != nil {
+					return nil, err
+				}
+
+				orderSelectClause := AggregationParameterToClause(orderAggregationParam)
+				selectClauses = append(selectClauses, fmt.Sprintf("%s as %s", orderSelectClause, "value"))
+			}
+
 		}
 	}
 
@@ -216,21 +234,22 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 	fromClauses = lo.Uniq(fromClauses)
 	fromClauses = lo.Compact(fromClauses)
 
-	fluentQuery := sr.GormClient.WithContext(ctx).
+	sqlQuery := sr.GormClient.WithContext(ctx).
 		Select(strings.Join(selectClauses, ", ")).
 		Where(strings.Join(whereClauses, " AND "), whereNamedParameters).
 		Group(groupClause).
-		Order(orderClause)
+		Order(orderClause).
+		Table(strings.Join(fromClauses, ", "))
 
 	//add limit and offset clauses if present
 	if query.Limit != nil {
-		fluentQuery = fluentQuery.Limit(*query.Limit)
+		sqlQuery = sqlQuery.Limit(*query.Limit)
 	}
 	if query.Offset != nil {
-		fluentQuery = fluentQuery.Offset(*query.Offset)
+		sqlQuery = sqlQuery.Offset(*query.Offset)
 	}
 
-	return fluentQuery.Table(strings.Join(fromClauses, ", ")), nil
+	return sqlQuery, nil
 }
 
 /// INTERNAL functionality. These functions are exported for testing, but are not available in the Interface
@@ -240,6 +259,11 @@ type SearchParameter struct {
 	Name     string
 	Type     SearchParameterType
 	Modifier string
+}
+
+type AggregationParameter struct {
+	SearchParameter
+	Function string //count, sum, avg, min, max, etc
 }
 
 // Lists in the SearchParameterValueOperatorTree are AND'd together, and items within each SearchParameterValueOperatorTree list are OR'd together
@@ -584,14 +608,31 @@ func SearchCodeToFromClause(searchParam SearchParameter) (string, error) {
 	return "", nil
 }
 
-func AggregationParameterToClause(aggParameter SearchParameter) string {
+func AggregationParameterToClause(aggParameter AggregationParameter) string {
+	var clause string
+
 	switch aggParameter.Type {
-	case SearchParameterTypeQuantity, SearchParameterTypeToken, SearchParameterTypeString:
+	case SearchParameterTypeQuantity, SearchParameterTypeString:
 		//setup the clause
-		return fmt.Sprintf("(%sJson.value ->> '$.%s')", aggParameter.Name, aggParameter.Modifier)
+		clause = fmt.Sprintf("(%sJson.value ->> '$.%s')", aggParameter.Name, aggParameter.Modifier)
+	case SearchParameterTypeToken:
+		//modifier is optional for token types.
+		if aggParameter.Modifier != "" {
+			clause = fmt.Sprintf("(%sJson.value ->> '$.%s')", aggParameter.Name, aggParameter.Modifier)
+		} else {
+			//if no modifier is specified, use the system and code to generate the clause
+			//((codeJson.value ->> '$.system') || '|' || (codeJson.value ->> '$.code'))
+			clause = fmt.Sprintf("((%sJson.value ->> '$.system') || '|' || (%sJson.value ->> '$.code'))", aggParameter.Name, aggParameter.Name)
+		}
+
 	default:
-		return fmt.Sprintf("%s.%s", TABLE_ALIAS, aggParameter.Name)
+		clause = fmt.Sprintf("%s.%s", TABLE_ALIAS, aggParameter.Name)
 	}
+
+	if len(aggParameter.Function) > 0 {
+		clause = fmt.Sprintf("%s(%s)", aggParameter.Function, clause)
+	}
+	return clause
 }
 
 // ProcessAggregationParameter processes the aggregation parameters which are fields with optional properties:
@@ -602,12 +643,15 @@ func AggregationParameterToClause(aggParameter SearchParameter) string {
 // eg. `identifier:code`
 //
 // if the a property is specified, its set as the modifier, and used when generating the SQL query groupBy, orderBy, etc clause
-func ProcessAggregationParameter(aggregationFieldWithProperty string, searchParamTypeLookup map[string]string) (SearchParameter, error) {
-	aggregationParameter := SearchParameter{}
+func ProcessAggregationParameter(aggregationFieldWithFn models.QueryResourceAggregation, searchParamTypeLookup map[string]string) (AggregationParameter, error) {
+	aggregationParameter := AggregationParameter{
+		SearchParameter: SearchParameter{},
+		Function:        aggregationFieldWithFn.Function,
+	}
 
 	//determine the searchCode searchCodeModifier
 	//TODO: this is only applicable to string, token, reference and uri type (however unknown names & modifiers are ignored)
-	if aggregationFieldParts := strings.SplitN(aggregationFieldWithProperty, ":", 2); len(aggregationFieldParts) == 2 {
+	if aggregationFieldParts := strings.SplitN(aggregationFieldWithFn.Field, ":", 2); len(aggregationFieldParts) == 2 {
 		aggregationParameter.Name = aggregationFieldParts[0]
 		aggregationParameter.Modifier = aggregationFieldParts[1]
 	} else {
@@ -618,7 +662,7 @@ func ProcessAggregationParameter(aggregationFieldWithProperty string, searchPara
 	//next, determine the searchCodeType for this Resource (or throw an error if it is unknown)
 	searchParamTypeStr, searchParamTypeOk := searchParamTypeLookup[aggregationParameter.Name]
 	if !searchParamTypeOk {
-		return aggregationParameter, fmt.Errorf("unknown search parameter: %s", aggregationParameter.Name)
+		return aggregationParameter, fmt.Errorf("unknown search parameter in aggregation: %s", aggregationParameter.Name)
 	} else {
 		aggregationParameter.Type = SearchParameterType(searchParamTypeStr)
 	}
@@ -628,6 +672,8 @@ func ProcessAggregationParameter(aggregationFieldWithProperty string, searchPara
 		if len(aggregationParameter.Modifier) > 0 {
 			return aggregationParameter, fmt.Errorf("primitive aggregation parameter %s cannot have a property (%s)", aggregationParameter.Name, aggregationParameter.Modifier)
 		}
+	} else if aggregationParameter.Type == SearchParameterTypeToken {
+		//modifier is optional for token types
 	} else {
 		//complex types must have a modifier
 		if len(aggregationParameter.Modifier) == 0 {
