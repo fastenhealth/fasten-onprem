@@ -44,6 +44,18 @@
                                      [observationCode]="observationGroup.key"
                                      [observationTitle]="observationGroupTitles[observationGroup.key]"
         ></app-report-labs-observation>
+
+
+        <!-- Pagination -->
+        <ngb-pagination
+          class="mr-auto"
+          [collectionSize]="allObservationGroups.length"
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          (pageChange)="populateObservationsForCurrentPage()"
+        >
+        </ngb-pagination>
+
       </ng-template>
 
 
