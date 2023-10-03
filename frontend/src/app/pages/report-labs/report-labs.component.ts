@@ -7,6 +7,9 @@ import {forkJoin, Observable} from 'rxjs';
 import {flatMap, map, mergeMap} from 'rxjs/operators';
 import {ResponseWrapper} from '../../models/response-wrapper';
 import {ActivatedRoute, Params} from '@angular/router';
+import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
+import {fhirModelFactory} from '../../../lib/models/factory';
+import {ResourceType} from '../../../lib/models/constants';
 
 class ObservationGroup {[key: string]: ResourceFhir[]}
 class ObservationGroupInfo {
@@ -36,6 +39,7 @@ export class ReportLabsComponent implements OnInit {
   reportSourceId: string = ''
   reportResourceType: string = ''
   reportResourceId: string = ''
+  reportDisplayModel: FastenDisplayModel = null
 
   //currentPage data
   observationGroups: ObservationGroup = {}
@@ -113,6 +117,8 @@ export class ReportLabsComponent implements OnInit {
         mergeMap((diagnosticReports) => {
           let diagnosticReport = diagnosticReports?.[0]
           console.log("diagnosticReport", diagnosticReport)
+          this.reportDisplayModel = fhirModelFactory(diagnosticReport.source_resource_type as ResourceType, diagnosticReport)
+
 
           //get a list of all the observations associated with this report
           let observationIds = fhirpath.evaluate(diagnosticReport.resource_raw, "DiagnosticReport.result.reference")

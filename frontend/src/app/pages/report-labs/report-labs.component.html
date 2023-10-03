@@ -8,6 +8,19 @@
       <ng-container [ngTemplateOutlet]="loading ? isLoadingTemplate : isEmptyReport ? emptyReport : report"></ng-container>
 
       <ng-template #report>
+
+        <!-- Report Details -->
+        <div class="row" *ngIf="reportDisplayModel">
+          <div class="col-12 mt-3 mb-3">
+            <h1 class="az-dashboard-title">Report Info</h1>
+          </div>
+          <div class="col-12">
+            <fhir-resource [displayModel]="reportDisplayModel" [showDetails]="true"></fhir-resource>
+          </div>
+        </div>
+
+
+
         <!-- Observations Title -->
         <div class="row mt-5 mb-3">
           <div class="col-6">
