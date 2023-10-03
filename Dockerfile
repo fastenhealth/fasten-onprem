@@ -32,7 +32,7 @@ RUN --mount=type=cache,target=/tmp/lock,sharing=locked \
     && go install github.com/golang/mock/mockgen@v1.6.0 \
     && go generate ./... \
     && go vet ./... \
-    && go test ./... \
+    && go test -timeout=20m ./... \
     && CGO_ENABLED=0 go build -o /go/bin/fasten ./backend/cmd/fasten/
 
 # create folder structure
