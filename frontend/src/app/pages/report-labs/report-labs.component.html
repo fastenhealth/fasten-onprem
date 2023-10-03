@@ -29,13 +29,17 @@
           <div class="col-6">
 
             <div ngbDropdown class="d-inline-block float-right dropdown ml-3">
-              <button ngbTooltip="not yet implemented" type="button" class="btn btn-outline-indigo" id="dropdownReports" ngbDropdownToggle>
+              <button type="button" class="btn btn-outline-indigo" id="dropdownReports" ngbDropdownToggle>
                 Included Reports
               </button>
               <div ngbDropdownMenu aria-labelledby="dropdownReports">
-                <button ngbDropdownItem>All</button>
+                <button ngbDropdownItem
+                        [class.active]="!reportSourceId && !reportResourceType && !reportResourceId"
+                        [routerLink]="'/labs'"
+                >All</button>
                 <button ngbDropdownItem [disabled]="true">-----</button>
                 <button
+                  [class.active]="reportSourceId == diagnosticReport?.source_id && reportResourceType == diagnosticReport?.source_resource_type && reportResourceId == diagnosticReport?.source_resource_id"
                   *ngFor="let diagnosticReport of diagnosticReports" ngbDropdownItem
                   [routerLink]="'/labs/report/'+ diagnosticReport?.source_id + '/' + diagnosticReport?.source_resource_type + '/' + diagnosticReport?.source_resource_id"
                 >{{diagnosticReport?.sort_title}} [{{diagnosticReport?.sort_date | amDateFormat: 'LL'}}]</button>
@@ -46,8 +50,8 @@
                 Sort By
               </button>
               <div ngbDropdownMenu aria-labelledby="dropdownSort">
+                <button ngbDropdownItem class="active">Date</button>
                 <button ngbDropdownItem>Name</button>
-                <button ngbDropdownItem>Date</button>
                 <button ngbDropdownItem>Status</button>
               </div>
             </div>
