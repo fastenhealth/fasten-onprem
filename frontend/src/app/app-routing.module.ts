@@ -42,6 +42,7 @@ const routes: Routes = [
   { path: 'patient-profile', component: PatientProfileComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'medical-history', component: MedicalHistoryComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'labs', component: ReportLabsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+  { path: 'labs/report/:source_id/:resource_type/:resource_id', component: ReportLabsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
   // { path: 'general-pages', loadChildren: () => import('./general-pages/general-pages.module').then(m => m.GeneralPagesModule) },
   // { path: 'ui-elements', loadChildren: () => import('./ui-elements/ui-elements.module').then(m => m.UiElementsModule) },

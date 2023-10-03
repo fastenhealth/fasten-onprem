@@ -22,7 +22,10 @@
               <div ngbDropdownMenu aria-labelledby="dropdownReports">
                 <button ngbDropdownItem>All</button>
                 <button ngbDropdownItem [disabled]="true">-----</button>
-                <button *ngFor="let diagnosticReport of diagnosticReports" ngbDropdownItem>{{diagnosticReport?.sort_title}} [{{diagnosticReport?.sort_date | amDateFormat: 'LL'}}]</button>
+                <button
+                  *ngFor="let diagnosticReport of diagnosticReports" ngbDropdownItem
+                  [routerLink]="'/labs/report/'+ diagnosticReport?.source_id + '/' + diagnosticReport?.source_resource_type + '/' + diagnosticReport?.source_resource_id"
+                >{{diagnosticReport?.sort_title}} [{{diagnosticReport?.sort_date | amDateFormat: 'LL'}}]</button>
               </div>
             </div>
             <div ngbDropdown class="d-inline-block float-right">

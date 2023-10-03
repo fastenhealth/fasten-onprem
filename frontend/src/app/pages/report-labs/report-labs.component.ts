@@ -3,10 +3,10 @@ import {FastenApiService} from '../../services/fasten-api.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import * as fhirpath from 'fhirpath';
-import {Observable} from 'rxjs';
-import {flatMap, map} from 'rxjs/operators';
+import {forkJoin, Observable} from 'rxjs';
+import {flatMap, map, mergeMap} from 'rxjs/operators';
 import {ResponseWrapper} from '../../models/response-wrapper';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Params} from '@angular/router';
 
 class ObservationGroup {[key: string]: ResourceFhir[]}
 class ObservationGroupInfo {
@@ -27,10 +27,15 @@ class LabResultCodeByDate {
 export class ReportLabsComponent implements OnInit {
   loading: boolean = false
 
-  currentPage: number = 0
+  currentPage: number = 1 //1-based index due to the way the pagination component works
   pageSize: number = 10
   allObservationGroups: string[] = []
 
+
+  //diagnostic report data
+  reportSourceId: string = ''
+  reportResourceType: string = ''
+  reportResourceId: string = ''
 
   //currentPage data
   observationGroups: ObservationGroup = {}
@@ -50,19 +55,43 @@ export class ReportLabsComponent implements OnInit {
 
     this.populateReports()
 
-    this.findLabResultCodesSortedByLatest().subscribe((data) => {
-      // this.loading = false
-        console.log("ALL lab result codes", data)
-      this.allObservationGroups = data.map((item) => item.label)
-      return this.populateObservationsForCurrentPage()
-    })
+
+    //determine if we're requesting all results or just a single report
+    //source_id/:resource_type/:resource_id
+
+    this.activatedRoute.params.subscribe((routeParams: Params) => {
+      this.reportSourceId = routeParams['source_id']
+      this.reportResourceType = routeParams['resource_type']
+      this.reportResourceId = routeParams['resource_id']
+      console.log("Selected Report changed!", this.reportSourceId,this.reportResourceType, this.reportResourceId)
+
+      if(this.reportSourceId && this.reportResourceType && this.reportResourceId){
+        //we're requesting a single report
+        console.log("REQUSTING REPORT", this.reportSourceId, this.reportResourceType, this.reportResourceId)
+        this.findLabResultCodesFilteredToReport(this.reportSourceId, this.reportResourceType, this.reportResourceId).subscribe((data) => {
+          console.log("REPORT result codes", data)
+          this.allObservationGroups = data
+          this.currentPage = 1 //reset to first page when changing report
+          return this.populateObservationsForCurrentPage()
+        })
+      } else {
+        this.findLabResultCodesSortedByLatest().subscribe((data) => {
+          // this.loading = false
+          console.log("ALL lab result codes", data)
+          this.allObservationGroups = data.map((item) => item.label)
+          return this.populateObservationsForCurrentPage()
+        })
+      }
+    });
+
   }
 
   //using the current list of allObservationGroups, retrieve a list of observations, group them by observationGroup, and set the observationGroupTitles
   populateObservationsForCurrentPage(){
 
-    let observationGroups = this.allObservationGroups.slice(this.currentPage * this.pageSize, (this.currentPage + 1) * this.pageSize)
+    let observationGroups = this.allObservationGroups.slice((this.currentPage-1) * this.pageSize, this.currentPage * this.pageSize)
 
+    console.log("FILTERED OBSERVATION GROUPS", observationGroups, (this.currentPage -1) * this.pageSize, this.currentPage * this.pageSize)
     this.loading = true
     this.getObservationsByCodes(observationGroups).subscribe((data) => {
       this.loading = false
@@ -78,8 +107,39 @@ export class ReportLabsComponent implements OnInit {
   }
 
   //get a list of all lab codes associated with a diagnostic report
-  findLabResultCodesFilteredToReport(diagnosticReport: ResourceFhir): Observable<LabResultCodeByDate[]> {
-    return null
+  findLabResultCodesFilteredToReport(sourceId, resourceType, resourceId): Observable<any[]> {
+    return this.fastenApi.getResources(resourceType, sourceId, resourceId)
+      .pipe(
+        mergeMap((diagnosticReports) => {
+          let diagnosticReport = diagnosticReports?.[0]
+          console.log("diagnosticReport", diagnosticReport)
+
+          //get a list of all the observations associated with this report
+          let observationIds = fhirpath.evaluate(diagnosticReport.resource_raw, "DiagnosticReport.result.reference")
+
+          //request each observation, and find the lab codes associated with each
+          let requests = []
+          for(let observationId of observationIds){
+            let observationIdParts = observationId.split("/")
+            requests.push(this.fastenApi.getResources(observationIdParts[0], diagnosticReport.source_id, observationIdParts[1]))
+          }
+
+          return forkJoin(requests)
+        }),
+        map((results:ResourceFhir[][]) => {
+          let allObservationGroups = []
+
+          //for each result, loop through the observations and find the loinc code
+          for(let result of results){
+            for(let observation of result){
+              let observationGroup = fhirpath.evaluate(observation.resource_raw, "Observation.code.coding.where(system='http://loinc.org').first().code")[0]
+              allObservationGroups.push('http://loinc.org|' + observationGroup)
+            }
+          }
+          console.log("FOUND REPORT LAB CODES", allObservationGroups)
+          return allObservationGroups
+        })
+      )
   }
 
   //get a list of all unique lab codes ordered by latest date
