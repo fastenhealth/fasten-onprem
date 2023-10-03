@@ -101,6 +101,7 @@ func (s *FhirAppointment) GetSearchParameters() map[string]string {
 		"serviceCategory":      "token",
 		"serviceType":          "token",
 		"slot":                 "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

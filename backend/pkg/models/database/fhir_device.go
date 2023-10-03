@@ -76,6 +76,7 @@ func (s *FhirDevice) GetSearchParameters() map[string]string {
 		"model":                "string",
 		"organization":         "reference",
 		"profile":              "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

@@ -8,10 +8,53 @@
       <ng-container [ngTemplateOutlet]="loading ? isLoadingTemplate : isEmptyReport ? emptyReport : report"></ng-container>
 
       <ng-template #report>
+
+        <!-- Report Details -->
+        <div class="row" *ngIf="reportDisplayModel">
+          <div class="col-12 mt-3 mb-3">
+            <h1 class="az-dashboard-title">Report Info</h1>
+          </div>
+          <div class="col-12">
+            <fhir-resource [displayModel]="reportDisplayModel" [showDetails]="true"></fhir-resource>
+          </div>
+        </div>
+
+
+
         <!-- Observations Title -->
         <div class="row mt-5 mb-3">
           <div class="col-6">
             <h1 class="az-dashboard-title">Observations</h1>
+          </div>
+          <div class="col-6">
+
+            <div ngbDropdown class="d-inline-block float-right dropdown ml-3">
+              <button type="button" class="btn btn-outline-indigo" id="dropdownReports" ngbDropdownToggle>
+                Included Reports
+              </button>
+              <div ngbDropdownMenu aria-labelledby="dropdownReports">
+                <button ngbDropdownItem
+                        [class.active]="!reportSourceId && !reportResourceType && !reportResourceId"
+                        [routerLink]="'/labs'"
+                >All</button>
+                <button ngbDropdownItem [disabled]="true">-----</button>
+                <button
+                  [class.active]="reportSourceId == diagnosticReport?.source_id && reportResourceType == diagnosticReport?.source_resource_type && reportResourceId == diagnosticReport?.source_resource_id"
+                  *ngFor="let diagnosticReport of diagnosticReports" ngbDropdownItem
+                  [routerLink]="'/labs/report/'+ diagnosticReport?.source_id + '/' + diagnosticReport?.source_resource_type + '/' + diagnosticReport?.source_resource_id"
+                >{{diagnosticReport?.sort_title}} [{{diagnosticReport?.sort_date | amDateFormat: 'LL'}}]</button>
+              </div>
+            </div>
+            <div ngbDropdown class="d-inline-block float-right">
+              <button ngbTooltip="not yet implemented" type="button" class="btn btn-outline-indigo" id="dropdownSort" ngbDropdownToggle>
+                Sort By
+              </button>
+              <div ngbDropdownMenu aria-labelledby="dropdownSort">
+                <button ngbDropdownItem class="active">Date</button>
+                <button ngbDropdownItem>Name</button>
+                <button ngbDropdownItem>Status</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -21,6 +64,18 @@
                                      [observationCode]="observationGroup.key"
                                      [observationTitle]="observationGroupTitles[observationGroup.key]"
         ></app-report-labs-observation>
+
+
+        <!-- Pagination -->
+        <ngb-pagination
+          class="mr-auto"
+          [collectionSize]="allObservationGroups.length"
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          (pageChange)="populateObservationsForCurrentPage()"
+        >
+        </ngb-pagination>
+
       </ng-template>
 
 

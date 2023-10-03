@@ -67,6 +67,7 @@ func (s *FhirSchedule) GetSearchParameters() map[string]string {
 		"profile":              "reference",
 		"serviceCategory":      "token",
 		"serviceType":          "token",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

@@ -134,6 +134,7 @@ func (s *FhirImagingStudy) GetSearchParameters() map[string]string {
 		"reason":               "token",
 		"referrer":             "reference",
 		"series":               "token",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

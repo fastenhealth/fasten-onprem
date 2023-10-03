@@ -18,35 +18,37 @@ import (
 type SearchParameterType string
 
 const (
-	SearchParameterTypeNumber    SearchParameterType = "number"
-	SearchParameterTypeDate      SearchParameterType = "date"
+	//simple types
+	SearchParameterTypeNumber  SearchParameterType = "number"
+	SearchParameterTypeDate    SearchParameterType = "date"
+	SearchParameterTypeUri     SearchParameterType = "uri"
+	SearchParameterTypeKeyword SearchParameterType = "keyword" //this is a literal/string primitive.
+
+	//complex types
 	SearchParameterTypeString    SearchParameterType = "string"
 	SearchParameterTypeToken     SearchParameterType = "token"
 	SearchParameterTypeReference SearchParameterType = "reference"
-	SearchParameterTypeUri       SearchParameterType = "uri"
 	SearchParameterTypeQuantity  SearchParameterType = "quantity"
 	SearchParameterTypeComposite SearchParameterType = "composite"
 	SearchParameterTypeSpecial   SearchParameterType = "special"
-
-	SearchParameterTypeKeyword SearchParameterType = "keyword" //this is a literal/string primitive.
-
 )
 
 const TABLE_ALIAS = "fhir"
 
-//Allows users to use SearchParameters to query resources
+// Allows users to use SearchParameters to query resources
 // Can generate simple or complex queries, depending on the SearchParameter type:
 //
 // eg. Simple
-//
 //
 // eg. Complex
 // SELECT fhir.*
 // FROM fhir_observation as fhir, json_each(fhir.code) as codeJson
 // WHERE (
+//
 //	(codeJson.value ->> '$.code' = "29463-7" AND codeJson.value ->> '$.system' = "http://loinc.org")
 //	OR (codeJson.value ->> '$.code' = "3141-9" AND codeJson.value ->> '$.system' = "http://loinc.org")
 //	OR (codeJson.value ->> '$.code' = "27113001" AND codeJson.value ->> '$.system' = "http://snomed.info/sct")
+//
 // )
 // AND (user_id = "6efcd7c5-3f29-4f0d-926d-a66ff68bbfc2")
 // GROUP BY `fhir`.`id`
@@ -57,7 +59,7 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 		return nil, err
 	}
 
-	if query.Aggregations != nil && (len(query.Aggregations.GroupBy) > 0 || len(query.Aggregations.CountBy) > 0) {
+	if query.Aggregations != nil && (query.Aggregations.GroupBy != nil || query.Aggregations.CountBy != nil) {
 		results := []map[string]interface{}{}
 		clientResp := sqlQuery.Find(&results)
 		return results, clientResp.Error
@@ -142,36 +144,44 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 	//defaults
 	selectClauses := []string{fmt.Sprintf("%s.*", TABLE_ALIAS)}
 	groupClause := fmt.Sprintf("%s.id", TABLE_ALIAS)
-	orderClause := fmt.Sprintf("%s.sort_date ASC", TABLE_ALIAS)
+	orderClause := fmt.Sprintf("%s.sort_date DESC", TABLE_ALIAS)
 	if query.Aggregations != nil {
 
 		//Handle Aggregations
 
-		if len(query.Aggregations.CountBy) > 0 {
+		if query.Aggregations.CountBy != nil {
 			//populate the group by and order by clause with the count by values
-			query.Aggregations.OrderBy = "count(*) DESC"
+			query.Aggregations.OrderBy = &models.QueryResourceAggregation{
+				Field:    "*",
+				Function: "count",
+			}
 			query.Aggregations.GroupBy = query.Aggregations.CountBy
 
-			if query.Aggregations.GroupBy == "*" {
+			if query.Aggregations.GroupBy.Field == "*" {
 				//we need to get the count of all resources, so we need to remove the group by clause and replace it by
 				// `source_resource_type` which will be the same for all resources
-				query.Aggregations.GroupBy = "source_resource_type"
+				query.Aggregations.GroupBy.Field = "source_resource_type"
 			}
 		}
 
 		//process order by clause
-		if len(query.Aggregations.OrderBy) > 0 {
-			orderAsc := true
-			if !strings.HasPrefix(query.Aggregations.OrderBy, "count(*)") {
-				orderAggregationParam, err := ProcessAggregationParameter(query.Aggregations.OrderBy, searchCodeToTypeLookup)
+		if query.Aggregations.OrderBy != nil {
+			orderAsc := true //default to ascending, switch to desc if parameter is a date type.
+			if !(query.Aggregations.OrderBy.Field == "*") {
+				orderAggregationParam, err := ProcessAggregationParameter(*query.Aggregations.OrderBy, searchCodeToTypeLookup)
 				if err != nil {
 					return nil, err
 				}
-				orderAggregationFromClause, err := SearchCodeToFromClause(orderAggregationParam)
+				orderAggregationFromClause, err := SearchCodeToFromClause(orderAggregationParam.SearchParameter)
 				if err != nil {
 					return nil, err
 				}
 				fromClauses = append(fromClauses, orderAggregationFromClause)
+
+				//if the order by is a date type, we need to order by DESC (most recent first)
+				if orderAggregationParam.Type == SearchParameterTypeDate {
+					orderAsc = false
+				}
 
 				orderClause = AggregationParameterToClause(orderAggregationParam)
 				if orderAsc {
@@ -180,17 +190,17 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 					orderClause = fmt.Sprintf("%s DESC", orderClause)
 				}
 			} else {
-				orderClause = query.Aggregations.OrderBy
+				orderClause = fmt.Sprintf("%s(%s) DESC", query.Aggregations.OrderBy.Function, query.Aggregations.OrderBy.Field)
 			}
 		}
 
 		//process group by clause
-		if len(query.Aggregations.GroupBy) > 0 {
-			groupAggregationParam, err := ProcessAggregationParameter(query.Aggregations.GroupBy, searchCodeToTypeLookup)
+		if query.Aggregations.GroupBy != nil {
+			groupAggregationParam, err := ProcessAggregationParameter(*query.Aggregations.GroupBy, searchCodeToTypeLookup)
 			if err != nil {
 				return nil, err
 			}
-			groupAggregationFromClause, err := SearchCodeToFromClause(groupAggregationParam)
+			groupAggregationFromClause, err := SearchCodeToFromClause(groupAggregationParam.SearchParameter)
 			if err != nil {
 				return nil, err
 			}
@@ -199,8 +209,22 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 			groupClause = AggregationParameterToClause(groupAggregationParam)
 			selectClauses = []string{
 				fmt.Sprintf("%s as %s", groupClause, "label"),
-				"count(*) as value",
 			}
+
+			if query.Aggregations.OrderBy == nil || query.Aggregations.OrderBy.Field == "*" {
+				selectClauses = append(selectClauses, fmt.Sprintf("%s as %s", "count(*)", "value"))
+				orderClause = fmt.Sprintf("%s DESC", "count(*)")
+			} else {
+				//use the orderBy aggregation as the value
+				orderAggregationParam, err := ProcessAggregationParameter(*query.Aggregations.OrderBy, searchCodeToTypeLookup)
+				if err != nil {
+					return nil, err
+				}
+
+				orderSelectClause := AggregationParameterToClause(orderAggregationParam)
+				selectClauses = append(selectClauses, fmt.Sprintf("%s as %s", orderSelectClause, "value"))
+			}
+
 		}
 	}
 
@@ -210,12 +234,22 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 	fromClauses = lo.Uniq(fromClauses)
 	fromClauses = lo.Compact(fromClauses)
 
-	return sr.GormClient.WithContext(ctx).
+	sqlQuery := sr.GormClient.WithContext(ctx).
 		Select(strings.Join(selectClauses, ", ")).
 		Where(strings.Join(whereClauses, " AND "), whereNamedParameters).
 		Group(groupClause).
 		Order(orderClause).
-		Table(strings.Join(fromClauses, ", ")), nil
+		Table(strings.Join(fromClauses, ", "))
+
+	//add limit and offset clauses if present
+	if query.Limit != nil {
+		sqlQuery = sqlQuery.Limit(*query.Limit)
+	}
+	if query.Offset != nil {
+		sqlQuery = sqlQuery.Offset(*query.Offset)
+	}
+
+	return sqlQuery, nil
 }
 
 /// INTERNAL functionality. These functions are exported for testing, but are not available in the Interface
@@ -227,14 +261,22 @@ type SearchParameter struct {
 	Modifier string
 }
 
-//Lists in the SearchParameterValueOperatorTree are AND'd together, and items within each SearchParameterValueOperatorTree list are OR'd together
-//For example, the following would be AND'd together, and then OR'd with the next SearchParameterValueOperatorTree
-// {
-//  {SearchParameterValue{Value: "foo"}, SearchParameterValue{Value: "bar"}}
-//  {SearchParameterValue{Value: "baz"}},
-// }
-//This would result in the following SQL:
-//  (value = "foo" OR value = "bar") AND (value = "baz")
+type AggregationParameter struct {
+	SearchParameter
+	Function string //count, sum, avg, min, max, etc
+}
+
+// Lists in the SearchParameterValueOperatorTree are AND'd together, and items within each SearchParameterValueOperatorTree list are OR'd together
+// For example, the following would be AND'd together, and then OR'd with the next SearchParameterValueOperatorTree
+//
+//	{
+//	 {SearchParameterValue{Value: "foo"}, SearchParameterValue{Value: "bar"}}
+//	 {SearchParameterValue{Value: "baz"}},
+//	}
+//
+// This would result in the following SQL:
+//
+//	(value = "foo" OR value = "bar") AND (value = "baz")
 type SearchParameterValueOperatorTree [][]SearchParameterValue
 
 type SearchParameterValue struct {
@@ -243,7 +285,7 @@ type SearchParameterValue struct {
 	SecondaryValues map[string]interface{}
 }
 
-//SearchParameters are made up of parameter names and modifiers. For example, "name" and "name:exact" are both valid search parameters
+// SearchParameters are made up of parameter names and modifiers. For example, "name" and "name:exact" are both valid search parameters
 // This function will parse the searchCodeWithModifier and return the SearchParameter
 func ProcessSearchParameter(searchCodeWithModifier string, searchParamTypeLookup map[string]string) (SearchParameter, error) {
 	searchParameter := SearchParameter{}
@@ -284,8 +326,9 @@ func ProcessSearchParameter(searchCodeWithModifier string, searchParamTypeLookup
 // top level is AND'd together, and each item within the lists are OR'd together
 //
 // For example, searchParamCodeValueOrValuesWithPrefix may be:
-//  "code": "29463-7,3141-9,27113001"
-//  "code": ["le29463-7", "gt3141-9", "27113001"]
+//
+//	"code": "29463-7,3141-9,27113001"
+//	"code": ["le29463-7", "gt3141-9", "27113001"]
 func ProcessSearchParameterValueIntoOperatorTree(searchParameter SearchParameter, searchParamCodeValueOrValuesWithPrefix interface{}) (SearchParameterValueOperatorTree, error) {
 
 	searchParamCodeValuesWithPrefix := []string{}
@@ -374,12 +417,8 @@ func ProcessSearchParameterValue(searchParameter SearchParameter, searchValueWit
 			}
 		} else if len(searchParameterValueParts) == 2 {
 			//if theres 2 parts, first is always system, second is always the code. Either one may be emty. If both are emty this is invalid.
-			if len(searchParameterValueParts[0]) > 0 {
-				searchParameterValue.SecondaryValues[searchParameter.Name+"System"] = searchParameterValueParts[0]
-			}
-			if len(searchParameterValueParts[1]) > 0 {
-				searchParameterValue.Value = searchParameterValueParts[1]
-			}
+			searchParameterValue.SecondaryValues[searchParameter.Name+"System"] = searchParameterValueParts[0]
+			searchParameterValue.Value = searchParameterValueParts[1]
 			if len(searchParameterValueParts[0]) == 0 && len(searchParameterValueParts[1]) == 0 {
 				return searchParameterValue, fmt.Errorf("invalid search parameter value: (%s=%s)", searchParameter.Name, searchParameterValue.Value)
 			}
@@ -416,7 +455,7 @@ func NamedParameterWithSuffix(parameterName string, suffix string) string {
 	return fmt.Sprintf("%s_%s", parameterName, suffix)
 }
 
-//SearchCodeToWhereClause converts a searchCode and searchCodeValue to a where clause and a map of named parameters
+// SearchCodeToWhereClause converts a searchCode and searchCodeValue to a where clause and a map of named parameters
 func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue SearchParameterValue, namedParameterSuffix string) (string, map[string]interface{}, error) {
 
 	//add named parameters to the lookup map. Basically, this is a map of all the named parameters that will be used in the where clause we're generating
@@ -528,7 +567,10 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		//TODO: support ":text" modifier
 
 		//setup the clause
-		clause := fmt.Sprintf("%sJson.value ->> '$.code' = @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix))
+		clause := []string{}
+		if searchParamValue.Value.(string) != "" {
+			clause = append(clause, fmt.Sprintf("%sJson.value ->> '$.code' = @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)))
+		}
 
 		//append the code and/or system clauses (if required)
 		//this looks like unnecessary code, however its required to ensure consistent tests
@@ -537,10 +579,10 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		for _, k := range allowedSecondaryKeys {
 			namedParameterKey := fmt.Sprintf("%s%s", searchParam.Name, strings.Title(k))
 			if _, ok := searchParamValue.SecondaryValues[namedParameterKey]; ok {
-				clause += fmt.Sprintf(` AND %sJson.value ->> '$.%s' = @%s`, searchParam.Name, k, NamedParameterWithSuffix(namedParameterKey, namedParameterSuffix))
+				clause = append(clause, fmt.Sprintf(`%sJson.value ->> '$.%s' = @%s`, searchParam.Name, k, NamedParameterWithSuffix(namedParameterKey, namedParameterSuffix)))
 			}
 		}
-		return fmt.Sprintf("(%s)", clause), searchClauseNamedParams, nil
+		return fmt.Sprintf("(%s)", strings.Join(clause, " AND ")), searchClauseNamedParams, nil
 
 	case SearchParameterTypeKeyword:
 		//setup the clause
@@ -565,17 +607,34 @@ func SearchCodeToFromClause(searchParam SearchParameter) (string, error) {
 	return "", nil
 }
 
-func AggregationParameterToClause(aggParameter SearchParameter) string {
+func AggregationParameterToClause(aggParameter AggregationParameter) string {
+	var clause string
+
 	switch aggParameter.Type {
-	case SearchParameterTypeQuantity, SearchParameterTypeToken, SearchParameterTypeString:
+	case SearchParameterTypeQuantity, SearchParameterTypeString:
 		//setup the clause
-		return fmt.Sprintf("(%sJson.value ->> '$.%s')", aggParameter.Name, aggParameter.Modifier)
+		clause = fmt.Sprintf("(%sJson.value ->> '$.%s')", aggParameter.Name, aggParameter.Modifier)
+	case SearchParameterTypeToken:
+		//modifier is optional for token types.
+		if aggParameter.Modifier != "" {
+			clause = fmt.Sprintf("(%sJson.value ->> '$.%s')", aggParameter.Name, aggParameter.Modifier)
+		} else {
+			//if no modifier is specified, use the system and code to generate the clause
+			//((codeJson.value ->> '$.system') || '|' || (codeJson.value ->> '$.code'))
+			clause = fmt.Sprintf("((%sJson.value ->> '$.system') || '|' || (%sJson.value ->> '$.code'))", aggParameter.Name, aggParameter.Name)
+		}
+
 	default:
-		return fmt.Sprintf("%s.%s", TABLE_ALIAS, aggParameter.Name)
+		clause = fmt.Sprintf("%s.%s", TABLE_ALIAS, aggParameter.Name)
 	}
+
+	if len(aggParameter.Function) > 0 {
+		clause = fmt.Sprintf("%s(%s)", aggParameter.Function, clause)
+	}
+	return clause
 }
 
-//ProcessAggregationParameter processes the aggregation parameters which are fields with optional properties:
+// ProcessAggregationParameter processes the aggregation parameters which are fields with optional properties:
 // Fields that are primitive types (number, uri) must not have any property specified:
 // eg. `probability`
 //
@@ -583,12 +642,15 @@ func AggregationParameterToClause(aggParameter SearchParameter) string {
 // eg. `identifier:code`
 //
 // if the a property is specified, its set as the modifier, and used when generating the SQL query groupBy, orderBy, etc clause
-func ProcessAggregationParameter(aggregationFieldWithProperty string, searchParamTypeLookup map[string]string) (SearchParameter, error) {
-	aggregationParameter := SearchParameter{}
+func ProcessAggregationParameter(aggregationFieldWithFn models.QueryResourceAggregation, searchParamTypeLookup map[string]string) (AggregationParameter, error) {
+	aggregationParameter := AggregationParameter{
+		SearchParameter: SearchParameter{},
+		Function:        aggregationFieldWithFn.Function,
+	}
 
 	//determine the searchCode searchCodeModifier
 	//TODO: this is only applicable to string, token, reference and uri type (however unknown names & modifiers are ignored)
-	if aggregationFieldParts := strings.SplitN(aggregationFieldWithProperty, ":", 2); len(aggregationFieldParts) == 2 {
+	if aggregationFieldParts := strings.SplitN(aggregationFieldWithFn.Field, ":", 2); len(aggregationFieldParts) == 2 {
 		aggregationParameter.Name = aggregationFieldParts[0]
 		aggregationParameter.Modifier = aggregationFieldParts[1]
 	} else {
@@ -599,16 +661,18 @@ func ProcessAggregationParameter(aggregationFieldWithProperty string, searchPara
 	//next, determine the searchCodeType for this Resource (or throw an error if it is unknown)
 	searchParamTypeStr, searchParamTypeOk := searchParamTypeLookup[aggregationParameter.Name]
 	if !searchParamTypeOk {
-		return aggregationParameter, fmt.Errorf("unknown search parameter: %s", aggregationParameter.Name)
+		return aggregationParameter, fmt.Errorf("unknown search parameter in aggregation: %s", aggregationParameter.Name)
 	} else {
 		aggregationParameter.Type = SearchParameterType(searchParamTypeStr)
 	}
 
 	//primitive types should not have a modifier, we need to throw an error
-	if aggregationParameter.Type == SearchParameterTypeNumber || aggregationParameter.Type == SearchParameterTypeUri || aggregationParameter.Type == SearchParameterTypeKeyword {
+	if aggregationParameter.Type == SearchParameterTypeNumber || aggregationParameter.Type == SearchParameterTypeUri || aggregationParameter.Type == SearchParameterTypeKeyword || aggregationParameter.Type == SearchParameterTypeDate {
 		if len(aggregationParameter.Modifier) > 0 {
 			return aggregationParameter, fmt.Errorf("primitive aggregation parameter %s cannot have a property (%s)", aggregationParameter.Name, aggregationParameter.Modifier)
 		}
+	} else if aggregationParameter.Type == SearchParameterTypeToken {
+		//modifier is optional for token types
 	} else {
 		//complex types must have a modifier
 		if len(aggregationParameter.Modifier) == 0 {

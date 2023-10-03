@@ -51,6 +51,7 @@ func (s *FhirEnrollmentResponse) GetSearchParameters() map[string]string {
 		"lastUpdated":          "date",
 		"profile":              "reference",
 		"request":              "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

@@ -149,6 +149,7 @@ func (s *FhirImmunization) GetSearchParameters() map[string]string {
 		"reasonCode":           "token",
 		"reasonReference":      "reference",
 		"series":               "string",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

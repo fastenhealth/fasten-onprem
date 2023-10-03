@@ -141,6 +141,7 @@ func (s *FhirFamilyMemberHistory) GetSearchParameters() map[string]string {
 		"profile":               "reference",
 		"relationship":          "token",
 		"sex":                   "token",
+		"sort_date":             "date",
 		"source_id":             "keyword",
 		"source_resource_id":    "keyword",
 		"source_resource_type":  "keyword",

@@ -147,6 +147,7 @@ func (s *FhirConsent) GetSearchParameters() map[string]string {
 		"purpose":              "token",
 		"scope":                "token",
 		"securityLabel":        "token",
+		"sort_date":            "date",
 		"sourceReference":      "reference",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",

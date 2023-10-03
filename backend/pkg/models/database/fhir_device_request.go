@@ -171,6 +171,7 @@ func (s *FhirDeviceRequest) GetSearchParameters() map[string]string {
 		"priorRequest":          "reference",
 		"profile":               "reference",
 		"requester":             "reference",
+		"sort_date":             "date",
 		"source_id":             "keyword",
 		"source_resource_id":    "keyword",
 		"source_resource_type":  "keyword",

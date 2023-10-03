@@ -150,6 +150,7 @@ func (s *FhirMedicationAdministration) GetSearchParameters() map[string]string {
 		"reasonGiven":          "token",
 		"reasonNotGiven":       "token",
 		"request":              "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

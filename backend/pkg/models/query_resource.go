@@ -11,16 +11,23 @@ type QueryResource struct {
 	Select []string               `json:"select"`
 	From   string                 `json:"from"`
 	Where  map[string]interface{} `json:"where"`
+	Limit  *int                   `json:"limit,omitempty"`
+	Offset *int                   `json:"offset,omitempty"`
 
 	//aggregation fields
 	Aggregations *QueryResourceAggregations `json:"aggregations"`
 }
 
 type QueryResourceAggregations struct {
-	CountBy string `json:"count_by"` //alias for both groupby and orderby, cannot be used together
+	CountBy *QueryResourceAggregation `json:"count_by,omitempty"` //alias for both groupby and orderby, cannot be used together
 
-	GroupBy string `json:"group_by"`
-	OrderBy string `json:"order_by"`
+	GroupBy *QueryResourceAggregation `json:"group_by,omitempty"`
+	OrderBy *QueryResourceAggregation `json:"order_by,omitempty"`
+}
+
+type QueryResourceAggregation struct {
+	Field    string `json:"field"`
+	Function string `json:"fn"`
 }
 
 func (q *QueryResource) Validate() error {
@@ -36,27 +43,51 @@ func (q *QueryResource) Validate() error {
 		if len(q.Select) > 0 {
 			return fmt.Errorf("cannot use 'select' and 'aggregations' together")
 		}
-		if len(q.Aggregations.CountBy) > 0 {
-			if len(q.Aggregations.GroupBy) > 0 {
+
+		if q.Aggregations.CountBy != nil {
+			if len(q.Aggregations.CountBy.Field) == 0 {
+				return fmt.Errorf("if 'count_by' is present, field must be populated")
+			}
+			if strings.Contains(q.Aggregations.CountBy.Field, " ") {
+				return fmt.Errorf("count_by cannot have spaces (or aliases)")
+			}
+		}
+		if q.Aggregations.GroupBy != nil {
+			if len(q.Aggregations.GroupBy.Field) == 0 {
+				return fmt.Errorf("if 'group_by' is present, field must be populated")
+			}
+			if strings.Contains(q.Aggregations.GroupBy.Field, " ") {
+				return fmt.Errorf("group_by cannot have spaces (or aliases)")
+			}
+		}
+		if q.Aggregations.OrderBy != nil {
+			if len(q.Aggregations.OrderBy.Field) == 0 {
+				return fmt.Errorf("if 'order_by' is present, field must be populated")
+			}
+			if strings.Contains(q.Aggregations.OrderBy.Field, " ") {
+				return fmt.Errorf("order_by cannot have spaces (or aliases)")
+			}
+		}
+
+		if q.Aggregations.CountBy != nil {
+			if q.Aggregations.GroupBy != nil {
 				return fmt.Errorf("cannot use 'count_by' and 'group_by' together")
 			}
-			if len(q.Aggregations.OrderBy) > 0 {
+			if q.Aggregations.OrderBy != nil {
 				return fmt.Errorf("cannot use 'count_by' and 'order_by' together")
 			}
 		}
-		if len(q.Aggregations.CountBy) == 0 && len(q.Aggregations.OrderBy) == 0 && len(q.Aggregations.GroupBy) == 0 {
+		if q.Aggregations.CountBy == nil && q.Aggregations.OrderBy == nil && q.Aggregations.GroupBy == nil {
 			return fmt.Errorf("aggregations must have at least one of 'count_by', 'group_by', or 'order_by'")
 		}
-		if strings.Contains(q.Aggregations.CountBy, " ") {
-			return fmt.Errorf("count_by cannot have spaces (or aliases)")
-		}
-		if strings.Contains(q.Aggregations.GroupBy, " ") {
-			return fmt.Errorf("group_by cannot have spaces (or aliases)")
-		}
-		if strings.Contains(q.Aggregations.OrderBy, " ") {
-			return fmt.Errorf("order_by cannot have spaces (or aliases)")
-		}
 
+	}
+
+	if q.Limit != nil && *q.Limit < 0 {
+		return fmt.Errorf("'limit' must be greater than or equal to zero")
+	}
+	if q.Offset != nil && *q.Offset < 0 {
+		return fmt.Errorf("'offset' must be greater than or equal to zero")
 	}
 
 	return nil

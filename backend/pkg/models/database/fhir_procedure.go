@@ -183,6 +183,7 @@ func (s *FhirProcedure) GetSearchParameters() map[string]string {
 		"profile":               "reference",
 		"reasonCode":            "token",
 		"reasonReference":       "reference",
+		"sort_date":             "date",
 		"source_id":             "keyword",
 		"source_resource_id":    "keyword",
 		"source_resource_type":  "keyword",

@@ -102,6 +102,7 @@ func (s *FhirExplanationOfBenefit) GetSearchParameters() map[string]string {
 		"procedureUdi":         "reference",
 		"profile":              "reference",
 		"provider":             "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

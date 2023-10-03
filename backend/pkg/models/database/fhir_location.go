@@ -91,6 +91,7 @@ func (s *FhirLocation) GetSearchParameters() map[string]string {
 		"organization":         "reference",
 		"partof":               "reference",
 		"profile":              "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

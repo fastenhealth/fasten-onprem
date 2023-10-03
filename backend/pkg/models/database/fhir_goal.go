@@ -98,6 +98,7 @@ func (s *FhirGoal) GetSearchParameters() map[string]string {
 		"lastUpdated":          "date",
 		"lifecycleStatus":      "token",
 		"profile":              "reference",
+		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",

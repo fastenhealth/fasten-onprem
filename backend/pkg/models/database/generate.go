@@ -209,6 +209,7 @@ func main() {
 				d[jen.Lit("source_uri")] = jen.Lit("keyword")
 				d[jen.Lit("source_resource_id")] = jen.Lit("keyword")
 				d[jen.Lit("source_resource_type")] = jen.Lit("keyword")
+				d[jen.Lit("sort_date")] = jen.Lit("date")
 
 			}))
 			g.Return(jen.Id("searchParameters"))
@@ -563,8 +564,8 @@ func main() {
 
 }
 
-//TODO: should we do this, or allow all resources instead of just USCore?
-//The dataabase would be full of empty data, but we'd be more flexible & future-proof.. supporting other countries, etc.
+// TODO: should we do this, or allow all resources instead of just USCore?
+// The dataabase would be full of empty data, but we'd be more flexible & future-proof.. supporting other countries, etc.
 var AllowedResources = []string{
 	"Account",
 	"AdverseEvent",
@@ -623,7 +624,7 @@ var AllowedResources = []string{
 	"VisionPrescription",
 }
 
-//simple field types are not json encoded in the DB and are always single values (not arrays)
+// simple field types are not json encoded in the DB and are always single values (not arrays)
 func isSimpleFieldType(fieldType string) bool {
 	switch fieldType {
 	case "number", "uri", "date":
@@ -636,8 +637,8 @@ func isSimpleFieldType(fieldType string) bool {
 	return true
 }
 
-//https://hl7.org/fhir/search.html#token
-//https://hl7.org/fhir/r4/valueset-search-param-type.html
+// https://hl7.org/fhir/search.html#token
+// https://hl7.org/fhir/r4/valueset-search-param-type.html
 func mapFieldType(fieldType string) string {
 	switch fieldType {
 	case "number":
@@ -661,7 +662,7 @@ func mapFieldType(fieldType string) string {
 	}
 }
 
-//https://www.sqlite.org/datatype3.html
+// https://www.sqlite.org/datatype3.html
 func mapGormType(fieldType string) string {
 	// gorm:"type:text;serializer:json"
 
