@@ -21,7 +21,7 @@ jobs:
       - name: test
         uses: actions/setup-node@v1
         with:
-          node-version: 18.x
+          node-version: 20.x
       - name: Test Frontend
         run: |
           make test-frontend-coverage
