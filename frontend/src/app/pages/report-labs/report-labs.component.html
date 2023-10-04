@@ -67,14 +67,17 @@
 
 
         <!-- Pagination -->
-        <ngb-pagination
-          class="mr-auto"
-          [collectionSize]="allObservationGroups.length"
-          [(page)]="currentPage"
-          [pageSize]="pageSize"
-          (pageChange)="populateObservationsForCurrentPage()"
-        >
-        </ngb-pagination>
+        <div class="row">
+          <div class="col-12 d-flex justify-content-center flex-nowrap">
+            <ngb-pagination
+              [collectionSize]="allObservationGroups.length"
+              [(page)]="currentPage"
+              [pageSize]="pageSize"
+              (pageChange)="populateObservationsForCurrentPage()"
+            >
+            </ngb-pagination>
+          </div>
+        </div>
 
       </ng-template>
 

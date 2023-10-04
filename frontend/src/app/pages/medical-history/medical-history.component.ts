@@ -4,6 +4,7 @@ import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {ReportMedicalHistoryEditorComponent} from '../../components/report-medical-history-editor/report-medical-history-editor.component';
 import {forkJoin} from 'rxjs';
+import {ResourceGraphMetadata, ResourceGraphResponse} from '../../models/fasten/resource-graph-response';
 // import {ReportEditorRelatedComponent} from '../../components/report-editor-related/report-editor-related.component';
 
 @Component({
@@ -21,6 +22,12 @@ export class MedicalHistoryComponent implements OnInit {
   unassigned_encounters: ResourceFhir[] = []
   resourceLookup: {[name: string]: ResourceFhir} = {}
 
+  resourceGraphMetadata: ResourceGraphMetadata = {
+    total_elements: 0,
+    page_size: 0,
+    page: 1
+  }
+
   constructor(
     private fastenApi: FastenApiService,
     private modalService: NgbModal
@@ -28,12 +35,21 @@ export class MedicalHistoryComponent implements OnInit {
 
 
   ngOnInit(): void {
+    //load the first page
+    this.pageChange(1)
+  }
+
+  pageChange(page: number){
     this.loading = true
-    this.fastenApi.getResourceGraph().subscribe(results => {
+    this.fastenApi.getResourceGraph(null, page).subscribe((response: ResourceGraphResponse) => {
       this.loading = false
-      this.conditions = [].concat(results["Condition"] || [], results["Composition"] || [])
-      this.unassigned_encounters = results["Encounter"] || []
-      this.explanationOfBenefits = results["ExplanationOfBenefit"] || []
+      this.resourceGraphMetadata = response.metadata
+      //page counter is 1 indexed but the backend is 0 indexed
+      this.resourceGraphMetadata.page = this.resourceGraphMetadata.page + 1
+
+      this.conditions = [].concat(response.results["Condition"] || [], response.results["Composition"] || [])
+      this.unassigned_encounters = response.results["Encounter"] || []
+      this.explanationOfBenefits = response.results["ExplanationOfBenefit"] || []
 
       //populate a lookup table with all resources
       for(let condition of this.conditions){
@@ -65,6 +81,7 @@ export class MedicalHistoryComponent implements OnInit {
     })
 
   }
+
 
   openEditorRelated(): void {
     const modalRef = this.modalService.open(ReportMedicalHistoryEditorComponent, {
