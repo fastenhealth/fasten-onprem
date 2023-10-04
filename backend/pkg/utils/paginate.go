@@ -1,6 +1,6 @@
 package utils
 
-import "github.com/fastenhealth/fastenhealth-onprem/backend/pkg/models"
+import "github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 
 func PaginateResourceList(resourceList []models.ResourceBase, skip int, size int) []models.ResourceBase {
 	if skip > len(resourceList) {
