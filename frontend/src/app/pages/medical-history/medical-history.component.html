@@ -35,12 +35,17 @@
         <app-report-medical-history-condition *ngFor="let condition of conditions; let i = index" [conditionGroup]="condition"></app-report-medical-history-condition>
         <app-report-medical-history-explanation-of-benefit *ngFor="let eob of explanationOfBenefits; let i = index" [explanationOfBenefitGroup]="eob"></app-report-medical-history-explanation-of-benefit>
 
-        <ngb-pagination
-          *ngIf="resourceGraphMetadata.total_elements > resourceGraphMetadata.page_size"
-          [(page)]="resourceGraphMetadata.page"
-          (pageChange)="pageChange($event)"
-          [pageSize]="resourceGraphMetadata.page_size"
-          [collectionSize]="resourceGraphMetadata.total_elements"></ngb-pagination>
+        <div class="row">
+          <div class="col-12 d-flex justify-content-center flex-nowrap">
+            <ngb-pagination
+              *ngIf="resourceGraphMetadata.total_elements > resourceGraphMetadata.page_size"
+              [(page)]="resourceGraphMetadata.page"
+              (pageChange)="pageChange($event)"
+              [pageSize]="resourceGraphMetadata.page_size"
+              [collectionSize]="resourceGraphMetadata.total_elements"></ngb-pagination>
+          </div>
+        </div>
+
       </ng-template>
 
       <ng-template #emptyReport>
