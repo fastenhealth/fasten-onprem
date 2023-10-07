@@ -20,6 +20,7 @@ import (
 	"gorm.io/gorm"
 	"net/url"
 	"strings"
+	"time"
 )
 
 func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, eventBus event_bus.Interface) (DatabaseRepository, error) {
@@ -30,6 +31,7 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	globalLogger.Infof("Trying to connect to sqlite db: %s\n", appConfig.GetString("database.location"))
 
+	// BUSY TIMEOUT SETTING DOCS ---
 	// When a transaction cannot lock the database, because it is already locked by another one,
 	// SQLite by default throws an error: database is locked. This behavior is usually not appropriate when
 	// concurrent access is needed, typically when multiple processes write to the same database.
@@ -39,11 +41,20 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, 
 	// https://rsqlite.r-dbi.org/reference/sqlitesetbusyhandler
 	// retrying for 30000 milliseconds, 30seconds - this would be unreasonable for a distributed multi-tenant application,
 	// but should be fine for local usage.
+	//
+	// JOURNAL MODE WAL DOCS ---
+	//
+	// Write-Ahead Logging or WAL (New Way)
+	// In this case all writes are appended to a temporary file (write-ahead log) and this file is periodically merged with the original database. When SQLite is searching for something it would first check this temporary file and if nothing is found proceed with the main database file.
+	// As a result, readers don’t compete with writers and performance is much better compared to the Old Way.
+	// https://stackoverflow.com/questions/4060772/sqlite-concurrent-access
 	pragmaStr := sqlitePragmaString(map[string]string{
-		"busy_timeout": "30000",
+		"busy_timeout": "5000",
 		"foreign_keys": "ON",
+		"journal_mode": "wal",
 	})
-	database, err := gorm.Open(sqlite.Open(appConfig.GetString("database.location")+pragmaStr), &gorm.Config{
+	dsn := "file:" + appConfig.GetString("database.location") + pragmaStr
+	database, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{
 		//TODO: figure out how to log database queries again.
 		//logger: logger
 		DisableForeignKeyConstraintWhenMigrating: true,
@@ -56,7 +67,16 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, 
 	if err != nil {
 		return nil, fmt.Errorf("Failed to connect to database! - %v", err)
 	}
-	globalLogger.Infof("Successfully connected to fasten sqlite db: %s\n", appConfig.GetString("database.location"))
+	globalLogger.Infof("Successfully connected to fasten sqlite db: %s\n", dsn)
+
+	////verify journal mode
+	//var journalMode []map[string]interface{}
+	//resp := database.Raw("PRAGMA journal_mode;").Scan(&journalMode)
+	//if resp.Error != nil {
+	//	return nil, fmt.Errorf("Failed to verify journal mode! - %v", resp.Error)
+	//} else {
+	//	globalLogger.Infof("Journal mode: %v", journalMode)
+	//}
 
 	fastenRepo := SqliteRepository{
 		AppConfig:  appConfig,
@@ -102,6 +122,7 @@ func (sr *SqliteRepository) Migrate() error {
 	err := sr.GormClient.AutoMigrate(
 		&models.User{},
 		&models.SourceCredential{},
+		&models.BackgroundJob{},
 		&models.Glossary{},
 		&models.UserSettingEntry{},
 	)
@@ -141,8 +162,8 @@ func (sr *SqliteRepository) GetUserByUsername(ctx context.Context, username stri
 	return &foundUser, result.Error
 }
 
-//TODO: check for error, right now we return a nil which may cause a panic.
-//TODO: can we cache the current user? //SECURITY:
+// TODO: check for error, right now we return a nil which may cause a panic.
+// TODO: can we cache the current user? //SECURITY:
 func (sr *SqliteRepository) GetCurrentUser(ctx context.Context) (*models.User, error) {
 	username := ctx.Value(pkg.ContextKeyTypeAuthUsername)
 	if username == nil {
@@ -447,7 +468,7 @@ func (sr *SqliteRepository) ListResources(ctx context.Context, queryOptions mode
 	}
 }
 
-//TODO: should this be deprecated? (replaced by ListResources)
+// TODO: should this be deprecated? (replaced by ListResources)
 func (sr *SqliteRepository) GetResourceByResourceTypeAndId(ctx context.Context, sourceResourceType string, sourceResourceId string) (*models.ResourceBase, error) {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
@@ -637,13 +658,14 @@ func (sr *SqliteRepository) FindResourceAssociationsByTypeAndId(ctx context.Cont
 // - find source for each resource
 // - (SECURITY) ensure the current user and the source for each resource matches
 // - check if there is a Composition resource Type already.
-// 		- if Composition type already exists:
-// 			- update "relatesTo" field with additional data.
-// 		- else:
-//			- Create a Composition resource type (populated with "relatesTo" references to all provided Resources)
+//   - if Composition type already exists:
+//   - update "relatesTo" field with additional data.
+//   - else:
+//   - Create a Composition resource type (populated with "relatesTo" references to all provided Resources)
+//
 // - add AddResourceAssociation for all resources linked to the Composition resource
 // - store the Composition resource
-//TODO: determine if we should be using a List Resource instead of a Composition resource
+// TODO: determine if we should be using a List Resource instead of a Composition resource
 func (sr *SqliteRepository) AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceBase) error {
 	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
@@ -833,6 +855,7 @@ func (sr *SqliteRepository) UpdateSource(ctx context.Context, sourceCreds *model
 		DynamicClientId:               sourceCreds.DynamicClientId,
 		DynamicClientRegistrationMode: sourceCreds.DynamicClientRegistrationMode,
 		DynamicClientJWKS:             sourceCreds.DynamicClientJWKS,
+		LatestBackgroundJobID:         sourceCreds.LatestBackgroundJobID,
 	}).Error
 }
 
@@ -850,6 +873,7 @@ func (sr *SqliteRepository) GetSource(ctx context.Context, sourceId string) (*mo
 	var sourceCred models.SourceCredential
 	results := sr.GormClient.WithContext(ctx).
 		Where(models.SourceCredential{UserID: currentUser.ID, ModelBase: models.ModelBase{ID: sourceUUID}}).
+		Preload("LatestBackgroundJob").
 		First(&sourceCred)
 
 	return &sourceCred, results.Error
@@ -940,9 +964,185 @@ func (sr *SqliteRepository) GetSources(ctx context.Context) ([]models.SourceCred
 	var sourceCreds []models.SourceCredential
 	results := sr.GormClient.WithContext(ctx).
 		Where(models.SourceCredential{UserID: currentUser.ID}).
+		Preload("LatestBackgroundJob").
 		Find(&sourceCreds)
 
 	return sourceCreds, results.Error
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Background Job
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (sr *SqliteRepository) CreateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error {
+	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return currentUserErr
+	}
+
+	backgroundJob.UserID = currentUser.ID
+
+	record := sr.GormClient.Create(backgroundJob)
+	return record.Error
+}
+
+func (sr *SqliteRepository) GetBackgroundJob(ctx context.Context, backgroundJobId string) (*models.BackgroundJob, error) {
+	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return nil, currentUserErr
+	}
+
+	backgroundJobUUID, err := uuid.Parse(backgroundJobId)
+	if err != nil {
+		return nil, err
+	}
+
+	var backgroundJob models.BackgroundJob
+	results := sr.GormClient.WithContext(ctx).
+		Where(models.SourceCredential{UserID: currentUser.ID, ModelBase: models.ModelBase{ID: backgroundJobUUID}}).
+		First(&backgroundJob)
+
+	return &backgroundJob, results.Error
+}
+
+func (sr *SqliteRepository) UpdateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error {
+	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return currentUserErr
+	}
+	backgroundJob.UserID = currentUser.ID
+
+	return sr.GormClient.WithContext(ctx).
+		Where(models.BackgroundJob{
+			ModelBase: models.ModelBase{ID: backgroundJob.ID},
+			UserID:    backgroundJob.UserID,
+		}).Updates(models.BackgroundJob{
+		JobStatus:  backgroundJob.JobStatus,
+		LockedTime: backgroundJob.LockedTime,
+		DoneTime:   backgroundJob.DoneTime,
+		Retries:    backgroundJob.Retries,
+		Schedule:   backgroundJob.Schedule,
+	}).Error
+}
+
+func (sr *SqliteRepository) ListBackgroundJobs(ctx context.Context, queryOptions models.BackgroundJobQueryOptions) ([]models.BackgroundJob, error) {
+	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return nil, currentUserErr
+	}
+
+	queryParam := models.BackgroundJob{
+		UserID: currentUser.ID,
+	}
+
+	if queryOptions.JobType != nil {
+		queryParam.JobType = *queryOptions.JobType
+	}
+	if queryOptions.Status != nil {
+		queryParam.JobStatus = *queryOptions.Status
+	}
+
+	var backgroundJobs []models.BackgroundJob
+	query := sr.GormClient.WithContext(ctx).
+		//Group("source_id"). //broken in Postgres.
+		Where(queryParam).Limit(queryOptions.Limit).Order("locked_time DESC")
+
+	if queryOptions.Offset > 0 {
+		query = query.Offset(queryOptions.Offset)
+	}
+
+	return backgroundJobs, query.Find(&backgroundJobs).Error
+}
+
+func (sr *SqliteRepository) BackgroundJobCheckpoint(ctx context.Context, checkpointData map[string]interface{}, errorData map[string]interface{}) {
+	sr.Logger.Info("begin checkpointing background job...")
+	if len(checkpointData) == 0 && len(errorData) == 0 {
+		sr.Logger.Info("no changes detected. Skipping checkpoint")
+		return //nothing to do
+	}
+	defer sr.Logger.Info("end checkpointing background job")
+
+	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		sr.Logger.Warning("could not find current user info context. Ignoring checkpoint", currentUserErr)
+		return
+	}
+
+	//make sure we do an atomic update
+	backgroundJobId, ok := ctx.Value(pkg.ContextKeyTypeBackgroundJobID).(string)
+	if !ok {
+		sr.Logger.Warning("could not find background job id in context. Ignoring checkpoint")
+		return
+	}
+	backgroundJobUUID, err := uuid.Parse(backgroundJobId)
+	if err != nil {
+		sr.Logger.Warning("could not parse background job id. Ignoring checkpoint", err)
+		return
+	}
+	//https://gorm.io/docs/advanced_query.html#Locking-FOR-UPDATE
+	//TODO: if using another database type (not SQLITE) we need to make sure we use the correct locking strategy
+	//This is not a problem in SQLITE because it does database (or table) level locking by default
+	//var backgroundJob models.BackgroundJob
+	//sr.GormClient.Clauses(clause.Locking{Strength: "UPDATE"}).Find(&backgroundJob)
+
+	txErr := sr.GormClient.Transaction(func(tx *gorm.DB) error {
+		//retrieve the background job by id
+		var backgroundJob models.BackgroundJob
+		backgroundJobFindResults := tx.WithContext(ctx).
+			Where(models.BackgroundJob{
+				ModelBase: models.ModelBase{ID: backgroundJobUUID},
+				UserID:    currentUser.ID,
+			}).
+			First(&backgroundJob)
+		if backgroundJobFindResults.Error != nil {
+			return backgroundJobFindResults.Error
+		}
+
+		//deserialize the job data
+		var backgroundJobSyncData models.BackgroundJobSyncData
+		if backgroundJob.Data != nil {
+			err := json.Unmarshal(backgroundJob.Data, &backgroundJobSyncData)
+			if err != nil {
+				return err
+			}
+		}
+
+		//update the job data with new data provided by the calling functiion
+		changed := false
+		if len(checkpointData) > 0 {
+			backgroundJobSyncData.CheckpointData = checkpointData
+			changed = true
+		}
+		if len(errorData) > 0 {
+			backgroundJobSyncData.ErrorData = errorData
+			changed = true
+		}
+
+		//define a background job with the fields we're going to update
+		now := time.Now()
+		updatedBackgroundJob := models.BackgroundJob{
+			LockedTime: &now,
+		}
+		if changed {
+			serializedData, err := json.Marshal(backgroundJobSyncData)
+			if err != nil {
+				return err
+			}
+			updatedBackgroundJob.Data = serializedData
+
+		}
+
+		return tx.WithContext(ctx).
+			Where(models.BackgroundJob{
+				ModelBase: models.ModelBase{ID: backgroundJobUUID},
+				UserID:    currentUser.ID,
+			}).Updates(updatedBackgroundJob).Error
+	})
+
+	if txErr != nil {
+		sr.Logger.Warning("could not find or update background job. Ignoring checkpoint", txErr)
+	}
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -952,7 +1152,7 @@ func (sr *SqliteRepository) GetSources(ctx context.Context) ([]models.SourceCred
 func sqlitePragmaString(pragmas map[string]string) string {
 	q := url.Values{}
 	for key, val := range pragmas {
-		q.Add("_pragma", key+"="+val)
+		q.Add("_pragma", fmt.Sprintf("%s=%s", key, val))
 	}
 
 	queryStr := q.Encode()

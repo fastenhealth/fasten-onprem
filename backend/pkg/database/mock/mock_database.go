@@ -66,6 +66,18 @@ func (mr *MockDatabaseRepositoryMockRecorder) AddResourceComposition(ctx, compos
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddResourceComposition", reflect.TypeOf((*MockDatabaseRepository)(nil).AddResourceComposition), ctx, compositionTitle, resources)
 }
 
+// BackgroundJobCheckpoint mocks base method.
+func (m *MockDatabaseRepository) BackgroundJobCheckpoint(ctx context.Context, checkpointData, errorData map[string]interface{}) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "BackgroundJobCheckpoint", ctx, checkpointData, errorData)
+}
+
+// BackgroundJobCheckpoint indicates an expected call of BackgroundJobCheckpoint.
+func (mr *MockDatabaseRepositoryMockRecorder) BackgroundJobCheckpoint(ctx, checkpointData, errorData interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BackgroundJobCheckpoint", reflect.TypeOf((*MockDatabaseRepository)(nil).BackgroundJobCheckpoint), ctx, checkpointData, errorData)
+}
+
 // Close mocks base method.
 func (m *MockDatabaseRepository) Close() error {
 	m.ctrl.T.Helper()
@@ -78,6 +90,20 @@ func (m *MockDatabaseRepository) Close() error {
 func (mr *MockDatabaseRepositoryMockRecorder) Close() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockDatabaseRepository)(nil).Close))
+}
+
+// CreateBackgroundJob mocks base method.
+func (m *MockDatabaseRepository) CreateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateBackgroundJob", ctx, backgroundJob)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateBackgroundJob indicates an expected call of CreateBackgroundJob.
+func (mr *MockDatabaseRepositoryMockRecorder) CreateBackgroundJob(ctx, backgroundJob interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateBackgroundJob", reflect.TypeOf((*MockDatabaseRepository)(nil).CreateBackgroundJob), ctx, backgroundJob)
 }
 
 // CreateGlossaryEntry mocks base method.
@@ -153,18 +179,19 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetCurrentUser(ctx interface{}) *g
 }
 
 // GetFlattenedResourceGraph mocks base method.
-func (m *MockDatabaseRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType) (map[string][]*models.ResourceBase, error) {
+func (m *MockDatabaseRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, *models.ResourceGraphMetadata, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetFlattenedResourceGraph", ctx, graphType)
+	ret := m.ctrl.Call(m, "GetFlattenedResourceGraph", ctx, graphType, options)
 	ret0, _ := ret[0].(map[string][]*models.ResourceBase)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(*models.ResourceGraphMetadata)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // GetFlattenedResourceGraph indicates an expected call of GetFlattenedResourceGraph.
-func (mr *MockDatabaseRepositoryMockRecorder) GetFlattenedResourceGraph(ctx, graphType interface{}) *gomock.Call {
+func (mr *MockDatabaseRepositoryMockRecorder) GetFlattenedResourceGraph(ctx, graphType, options interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFlattenedResourceGraph", reflect.TypeOf((*MockDatabaseRepository)(nil).GetFlattenedResourceGraph), ctx, graphType)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFlattenedResourceGraph", reflect.TypeOf((*MockDatabaseRepository)(nil).GetFlattenedResourceGraph), ctx, graphType, options)
 }
 
 // GetGlossaryEntry mocks base method.
@@ -302,6 +329,21 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetUserByUsername(arg0, arg1 inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUsername", reflect.TypeOf((*MockDatabaseRepository)(nil).GetUserByUsername), arg0, arg1)
 }
 
+// ListBackgroundJobs mocks base method.
+func (m *MockDatabaseRepository) ListBackgroundJobs(ctx context.Context, queryOptions models.BackgroundJobQueryOptions) ([]models.BackgroundJob, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListBackgroundJobs", ctx, queryOptions)
+	ret0, _ := ret[0].([]models.BackgroundJob)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListBackgroundJobs indicates an expected call of ListBackgroundJobs.
+func (mr *MockDatabaseRepositoryMockRecorder) ListBackgroundJobs(ctx, queryOptions interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListBackgroundJobs", reflect.TypeOf((*MockDatabaseRepository)(nil).ListBackgroundJobs), ctx, queryOptions)
+}
+
 // ListResources mocks base method.
 func (m *MockDatabaseRepository) ListResources(arg0 context.Context, arg1 models.ListResourceQueryOptions) ([]models.ResourceBase, error) {
 	m.ctrl.T.Helper()
@@ -401,6 +443,20 @@ func (m *MockDatabaseRepository) SaveUserSettings(arg0 context.Context, arg1 *mo
 func (mr *MockDatabaseRepositoryMockRecorder) SaveUserSettings(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveUserSettings", reflect.TypeOf((*MockDatabaseRepository)(nil).SaveUserSettings), arg0, arg1)
+}
+
+// UpdateBackgroundJob mocks base method.
+func (m *MockDatabaseRepository) UpdateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateBackgroundJob", ctx, backgroundJob)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateBackgroundJob indicates an expected call of UpdateBackgroundJob.
+func (mr *MockDatabaseRepositoryMockRecorder) UpdateBackgroundJob(ctx, backgroundJob interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBackgroundJob", reflect.TypeOf((*MockDatabaseRepository)(nil).UpdateBackgroundJob), ctx, backgroundJob)
 }
 
 // UpdateSource mocks base method.
