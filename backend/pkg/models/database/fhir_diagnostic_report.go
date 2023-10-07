@@ -609,7 +609,7 @@ func (s *FhirDiagnosticReport) PopulateAndExtractSearchParameters(resourceRaw js
 	if err == nil && specimenResult.String() != "undefined" {
 		s.Specimen = []byte(specimenResult.String())
 	}
-	// extracting JobStatus
+	// extracting Status
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'DiagnosticReport.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

@@ -1019,7 +1019,7 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	if err == nil && specimenResult.String() != "undefined" {
 		s.Specimen = []byte(specimenResult.String())
 	}
-	// extracting JobStatus
+	// extracting Status
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'Observation.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

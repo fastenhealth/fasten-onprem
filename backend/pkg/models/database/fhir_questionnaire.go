@@ -668,7 +668,7 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 	if err == nil && publisherResult.String() != "undefined" {
 		s.Publisher = []byte(publisherResult.String())
 	}
-	// extracting JobStatus
+	// extracting Status
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'Questionnaire.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

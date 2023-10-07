@@ -474,7 +474,7 @@ func (s *FhirFamilyMemberHistory) PopulateAndExtractSearchParameters(resourceRaw
 	if err == nil && sexResult.String() != "undefined" {
 		s.Sex = []byte(sexResult.String())
 	}
-	// extracting JobStatus
+	// extracting Status
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'FamilyMemberHistory.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

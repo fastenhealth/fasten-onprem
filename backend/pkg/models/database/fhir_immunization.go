@@ -573,7 +573,7 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 	if err == nil && seriesResult.String() != "undefined" {
 		s.Series = []byte(seriesResult.String())
 	}
-	// extracting JobStatus
+	// extracting Status
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'Immunization.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

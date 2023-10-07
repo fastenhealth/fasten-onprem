@@ -442,7 +442,7 @@ func (s *FhirCoverage) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	if err == nil && profileResult.String() != "undefined" {
 		s.Profile = []byte(profileResult.String())
 	}
-	// extracting JobStatus
+	// extracting Status
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'Coverage.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

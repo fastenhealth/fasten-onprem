@@ -802,7 +802,7 @@ func (s *FhirServiceRequest) PopulateAndExtractSearchParameters(resourceRaw json
 	if err == nil && specimenResult.String() != "undefined" {
 		s.Specimen = []byte(specimenResult.String())
 	}
-	// extracting JobStatus
+	// extracting Status
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'ServiceRequest.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

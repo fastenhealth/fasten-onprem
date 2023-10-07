@@ -675,7 +675,7 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 			}
 		}
 	}
-	// extracting JobStatus
+	// extracting Status
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'ImagingStudy.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

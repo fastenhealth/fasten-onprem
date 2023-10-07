@@ -456,7 +456,7 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 	if err == nil && sourceResult.String() != "undefined" {
 		s.Source = sourceResult.String()
 	}
-	// extracting JobStatus
+	// extracting Status
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'DocumentManifest.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

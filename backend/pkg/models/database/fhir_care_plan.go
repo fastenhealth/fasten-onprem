@@ -640,7 +640,7 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	if err == nil && replacesResult.String() != "undefined" {
 		s.Replaces = []byte(replacesResult.String())
 	}
-	// extracting JobStatus
+	// extracting Status
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'CarePlan.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

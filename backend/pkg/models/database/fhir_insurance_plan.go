@@ -753,7 +753,7 @@ func (s *FhirInsurancePlan) PopulateAndExtractSearchParameters(resourceRaw json.
 	if err == nil && profileResult.String() != "undefined" {
 		s.Profile = []byte(profileResult.String())
 	}
-	// extracting JobStatus
+	// extracting Status
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'InsurancePlan.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

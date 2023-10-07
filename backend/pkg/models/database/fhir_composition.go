@@ -662,7 +662,7 @@ func (s *FhirComposition) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	if err == nil && sectionResult.String() != "undefined" {
 		s.Section = []byte(sectionResult.String())
 	}
-	// extracting JobStatus
+	// extracting Status
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'Composition.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {
