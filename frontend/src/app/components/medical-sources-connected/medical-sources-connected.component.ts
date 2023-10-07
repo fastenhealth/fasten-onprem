@@ -19,7 +19,7 @@ import {EventBusService} from '../../services/event-bus.service';
 })
 export class MedicalSourcesConnectedComponent implements OnInit {
   loading: boolean = false
-  status: { [name: string]:  undefined | "token" | "authorize" } = {}
+  status: { [name: string]:  undefined | "token" | "authorize" | "failed" } = {}
 
   modalSelectedSourceListItem:SourceListItem = null;
   modalCloseResult = '';
@@ -47,6 +47,11 @@ export class MedicalSourcesConnectedComponent implements OnInit {
       forkJoin(connectedSources.map((source) => this.lighthouseApi.getLighthouseSource(source.source_type))).subscribe((connectedMetadata) => {
         for(const ndx in connectedSources){
           this.connectedSourceList.push({source: connectedSources[ndx], metadata: connectedMetadata[ndx]})
+          if(connectedSources[ndx].sync_status === "STARTED") {
+            this.status[connectedSources[ndx].source_type] = "token"
+          } else if (connectedSources[ndx].sync_status === "FAILED") {
+            this.status[connectedSources[ndx].source_type] = "failed"
+          }
         }
       })
     })
@@ -275,7 +280,11 @@ export class MedicalSourcesConnectedComponent implements OnInit {
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   public openModal(contentModalRef, sourceListItem: SourceListItem) {
-    if(this.status[sourceListItem.metadata.source_type] || !sourceListItem.source || this.status[sourceListItem.source.id]){
+    if(
+      (this.status[sourceListItem.metadata.source_type] && this.status[sourceListItem.metadata.source_type] != 'failed') //if this source type is currently "loading" dont open the modal window
+      || !sourceListItem.source //if there's no connected source, dont open the modal window
+      || (this.status[sourceListItem.source.id] && this.status[sourceListItem.source.id] != 'failed') //if this source type is currently "loading" dont open the modal window
+    ){
       //if this source is currently "loading" dont open the modal window
       return
     }

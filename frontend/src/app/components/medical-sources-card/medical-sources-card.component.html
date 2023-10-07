@@ -1,10 +1,13 @@
-<div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': sourceInfo?.metadata?.hidden}">
+<div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': sourceInfo?.metadata?.hidden, 'card-failed': status == 'failed'}">
   <div (click)="onCardClick()" class="card-body">
 
     <div class="h-100 d-flex align-items-center">
       <img [src]="'assets/sources/'+(sourceInfo?.metadata.brand_logo ? sourceInfo?.metadata?.brand_logo : sourceInfo?.metadata?.source_type+'.png')" [alt]="sourceInfo?.metadata?.display" class="img-fluid">
+      <div *ngIf="status == 'failed'"  class="card-img-overlay">
+        <span class="badge badge-danger">failed</span>
+      </div>
     </div>
-    <div *ngIf="status" class="progress">
+    <div *ngIf="status == 'authorize' || status  == 'token'" class="progress">
       <div [style.width]="status == 'authorize' ? '33%' : '66%'" class="bg-indigo progress-bar progress-bar-striped progress-bar-animated" role="progressbar"></div>
     </div>
   </div>

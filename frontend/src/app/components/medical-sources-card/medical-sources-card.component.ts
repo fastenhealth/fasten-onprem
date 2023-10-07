@@ -9,7 +9,7 @@ import {SourceListItem} from '../../pages/medical-sources/medical-sources.compon
 export class MedicalSourcesCardComponent implements OnInit {
 
   @Input() sourceInfo: SourceListItem;
-  @Input() status: undefined | "token" | "authorize";
+  @Input() status: undefined | "token" | "authorize" | "failed";
 
   @Output() onClick = new EventEmitter<SourceListItem>()
 
