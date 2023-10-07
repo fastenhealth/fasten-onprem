@@ -29,7 +29,7 @@
       </ul>
     </div><!-- az-header-menu -->
     <div class="az-header-right">
-      <a ngbTooltip="not yet implemented" class="az-header-search-link"><i class="fas fa-search"></i></a>
+      <a style="display:none;" ngbTooltip="not yet implemented" class="az-header-search-link"><i class="fas fa-search"></i></a>
       <div class="az-header-message">
         <a routerLink="/"><i class="typcn typcn-messages"></i></a>
       </div><!-- az-header-message -->
@@ -39,7 +39,7 @@
           <div class="az-dropdown-header mg-b-20 d-sm-none">
             <a class="az-header-arrow" (click)="closeMenu($event)"><i class="icon ion-md-arrow-back"></i></a>
           </div>
-          <h6 class="az-notification-title">Notifications</h6>
+          <h6 class="az-notification-title">Background Jobs</h6>
           <p class="az-notification-text">You have 2 unread notification</p>
           <div class="az-notification-list">
             <div class="media new">
@@ -58,7 +58,7 @@
             </div><!-- media -->
 
           </div><!-- az-notification-list -->
-          <div class="dropdown-footer"><a ngbTooltip="not yet implemented">View All Notifications</a></div>
+          <div class="dropdown-footer"><a routerLink="/background-jobs">View History</a></div>
         </div><!-- dropdown-menu -->
       </div><!-- az-header-notification -->
       <div class="dropdown az-profile-menu" ngbDropdown>

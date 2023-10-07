@@ -24,6 +24,7 @@ import {DashboardConfig} from '../models/widget/dashboard-config';
 import {DashboardWidgetQuery} from '../models/widget/dashboard-widget-query';
 import {ResourceGraphResponse} from '../models/fasten/resource-graph-response';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
+import {BackgroundJob} from '../models/fasten/background-job';
 
 @Injectable({
   providedIn: 'root'
@@ -267,5 +268,28 @@ export class FastenApiService {
     } else {
       return of(new BinaryModel(attachmentModel));
     }
+  }
+
+
+  getBackgroundJobs(jobType?: string, status?: string,  page?: number): Observable<BackgroundJob[]> {
+    let queryParams = {}
+    if(jobType){
+      queryParams["jobType"] = jobType
+    }
+    if(status){
+      queryParams["status"] = status
+    }
+
+    if(page !== undefined){
+      queryParams["page"] = page
+    }
+
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/jobs`, {params: queryParams})
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("RESPONSE", response)
+          return response.data as BackgroundJob[]
+        })
+      );
   }
 }
