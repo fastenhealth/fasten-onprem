@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {AuthService} from '../../services/auth.service';
 import {UserRegisteredClaims} from '../../models/fasten/user-registered-claims';
+import {FastenApiService} from '../../services/fasten-api.service';
+import {BackgroundJob} from '../../models/fasten/background-job';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -9,7 +11,8 @@ import {UserRegisteredClaims} from '../../models/fasten/user-registered-claims';
 })
 export class HeaderComponent implements OnInit {
   current_user_claims: UserRegisteredClaims
-  constructor(private authService: AuthService, private router: Router) { }
+  backgroundJobs: BackgroundJob[] = []
+  constructor(private authService: AuthService, private router: Router, private fastenApi: FastenApiService) { }
 
   ngOnInit() {
     try {
@@ -18,6 +21,11 @@ export class HeaderComponent implements OnInit {
       this.current_user_claims = new UserRegisteredClaims()
     }
 
+    this.fastenApi.getBackgroundJobs().subscribe((data) => {
+      this.backgroundJobs = data.filter((job) => {
+        return job.data?.checkpoint_data?.summary?.UpdatedResources?.length > 0
+      })
+    })
   }
 
   closeMenu(e) {

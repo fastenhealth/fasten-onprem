@@ -39,24 +39,16 @@
           <div class="az-dropdown-header mg-b-20 d-sm-none">
             <a class="az-header-arrow" (click)="closeMenu($event)"><i class="icon ion-md-arrow-back"></i></a>
           </div>
-          <h6 class="az-notification-title">Background Jobs</h6>
-          <p class="az-notification-text">You have 2 unread notification</p>
+          <h6 class="az-notification-title">Notifications</h6>
+          <p class="az-notification-text">Background Jobs & Updates</p>
           <div class="az-notification-list">
-            <div class="media new">
-              <div class="az-img-user"><img src="assets/sources/aetna.png" alt=""></div>
+            <a *ngFor="let backgroundJob of backgroundJobs" class="media new" routerLink="/background-jobs">
+              <div><img style="max-width:50px;" src="assets/sources/{{backgroundJob.data?.source_type}}.png" alt=""></div>
               <div class="media-body">
-                <p><strong>AETNA</strong> added 3 new records</p>
-                <span>Mar 15 12:32pm</span>
+                <p><strong>{{backgroundJob.data?.source_type}}</strong> added {{backgroundJob.data?.checkpoint_data?.summary?.UpdatedResources?.length}} new records</p>
+                <span>{{backgroundJob.done_time | amDateFormat:'MMM DD hh:mma'}}</span>
               </div><!-- media-body -->
-            </div><!-- media -->
-            <div class="media new">
-              <div class="az-img-user online"><img src="assets/sources/cigna.png" alt=""></div>
-              <div class="media-body">
-                <p><strong>CIGNA</strong> added 34 new records</p>
-                <span>Mar 13 04:16am</span>
-              </div><!-- media-body -->
-            </div><!-- media -->
-
+            </a><!-- media -->
           </div><!-- az-notification-list -->
           <div class="dropdown-footer"><a routerLink="/background-jobs">View History</a></div>
         </div><!-- dropdown-menu -->
