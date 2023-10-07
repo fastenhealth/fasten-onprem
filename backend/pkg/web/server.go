@@ -77,6 +77,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.POST("/dashboards", handler.AddDashboardLocation)
 				//secure.GET("/dashboard/:dashboardId", handler.GetDashboard)
 
+				secure.GET("/jobs", handler.ListBackgroundJobs)
+
 				secure.POST("/query", handler.QueryResourceFhir)
 
 				//server-side-events handler (only supported on mac/linux)

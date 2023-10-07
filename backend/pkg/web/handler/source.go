@@ -2,7 +2,6 @@ package handler
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
@@ -11,7 +10,6 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/jwk"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-sources/clients/factory"
-	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -144,7 +142,7 @@ func CreateSource(c *gin.Context) {
 
 	// after creating the source, we should do a bulk import (in the background)
 
-	summary, err := SyncSourceResources(GetBackgroundContext(c), logger, databaseRepo, &sourceCred)
+	summary, err := BackgroundJobSyncResources(GetBackgroundContext(c), logger, databaseRepo, &sourceCred)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
@@ -168,7 +166,7 @@ func SourceSync(c *gin.Context) {
 	}
 
 	// after creating the source, we should do a bulk import (in the background)
-	summary, err := SyncSourceResources(GetBackgroundContext(c), logger, databaseRepo, sourceCred)
+	summary, err := BackgroundJobSyncResources(GetBackgroundContext(c), logger, databaseRepo, sourceCred)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 		return
@@ -313,41 +311,4 @@ func ListSource(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceCreds})
-}
-
-func SyncSourceResources(c context.Context, logger *logrus.Entry, databaseRepo database.DatabaseRepository, sourceCred *models.SourceCredential) (sourceModels.UpsertSummary, error) {
-	// after creating the source, we should do a bulk import
-	sourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourceCred.SourceType, c, logger, sourceCred)
-	if err != nil {
-		logger.Errorln("An error occurred while initializing hub client using source credential", err)
-		return sourceModels.UpsertSummary{}, err
-	}
-
-	summary, err := sourceClient.SyncAll(databaseRepo)
-	if err != nil {
-		logger.Errorln("An error occurred while bulk import of resources from source", err)
-		return summary, err
-	}
-
-	//update source incase the access token/refresh token has been updated
-	sourceCredential := sourceClient.GetSourceCredential()
-	sourceCredentialConcrete, ok := sourceCredential.(*models.SourceCredential)
-	if !ok {
-		logger.Errorln("An error occurred while updating source credential, source credential is not of type *models.SourceCredential")
-		return summary, fmt.Errorf("source credential is not of type *models.SourceCredential")
-	}
-	err = databaseRepo.UpdateSource(c, sourceCredentialConcrete)
-	if err != nil {
-		logger.Errorf("An error occurred while updating source credential: %v", err)
-		return summary, err
-	}
-
-	return summary, nil
-}
-
-//
-
-func GetBackgroundContext(ginContext *gin.Context) context.Context {
-	//TODO: this should be a background context
-	return context.WithValue(ginContext.Request.Context(), pkg.ContextKeyTypeAuthUsername, ginContext.Value(pkg.ContextKeyTypeAuthUsername).(string))
 }
