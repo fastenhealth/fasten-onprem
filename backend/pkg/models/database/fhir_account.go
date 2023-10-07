@@ -309,7 +309,7 @@ func (s *FhirAccount) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 	if err == nil && profileResult.String() != "undefined" {
 		s.Profile = []byte(profileResult.String())
 	}
-	// extracting Status
+	// extracting JobStatus
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'Account.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

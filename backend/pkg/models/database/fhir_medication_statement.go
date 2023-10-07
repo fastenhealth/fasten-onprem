@@ -466,7 +466,7 @@ func (s *FhirMedicationStatement) PopulateAndExtractSearchParameters(resourceRaw
 	if err == nil && sourceResult.String() != "undefined" {
 		s.Source = []byte(sourceResult.String())
 	}
-	// extracting Status
+	// extracting JobStatus
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'MedicationAdministration.status | MedicationDispense.status | MedicationRequest.status | MedicationStatement.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

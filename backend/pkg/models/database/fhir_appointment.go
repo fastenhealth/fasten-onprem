@@ -642,7 +642,7 @@ func (s *FhirAppointment) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	if err == nil && specialtyResult.String() != "undefined" {
 		s.Specialty = []byte(specialtyResult.String())
 	}
-	// extracting Status
+	// extracting JobStatus
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'Appointment.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

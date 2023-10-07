@@ -47,9 +47,9 @@ export class MedicalSourcesConnectedComponent implements OnInit {
       forkJoin(connectedSources.map((source) => this.lighthouseApi.getLighthouseSource(source.source_type))).subscribe((connectedMetadata) => {
         for(const ndx in connectedSources){
           this.connectedSourceList.push({source: connectedSources[ndx], metadata: connectedMetadata[ndx]})
-          if(connectedSources[ndx].sync_status === "STARTED") {
+          if(connectedSources[ndx].latest_background_job?.job_status == "STATUS_LOCKED"){
             this.status[connectedSources[ndx].source_type] = "token"
-          } else if (connectedSources[ndx].sync_status === "FAILED") {
+          } else if (connectedSources[ndx].latest_background_job?.job_status === "STATUS_FAILED") {
             this.status[connectedSources[ndx].source_type] = "failed"
           }
         }

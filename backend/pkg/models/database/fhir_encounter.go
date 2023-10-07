@@ -709,7 +709,7 @@ func (s *FhirEncounter) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	if err == nil && specialArrangementResult.String() != "undefined" {
 		s.SpecialArrangement = []byte(specialArrangementResult.String())
 	}
-	// extracting Status
+	// extracting JobStatus
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'Encounter.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

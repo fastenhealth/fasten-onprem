@@ -639,7 +639,7 @@ func (s *FhirConsent) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 	if err == nil && sourceReferenceResult.String() != "undefined" {
 		s.SourceReference = []byte(sourceReferenceResult.String())
 	}
-	// extracting Status
+	// extracting JobStatus
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'Consent.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

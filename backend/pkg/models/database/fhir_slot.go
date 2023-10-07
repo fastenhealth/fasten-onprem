@@ -446,7 +446,7 @@ func (s *FhirSlot) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 			}
 		}
 	}
-	// extracting Status
+	// extracting JobStatus
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'Slot.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

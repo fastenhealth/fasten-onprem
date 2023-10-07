@@ -492,7 +492,7 @@ func (s *FhirNutritionOrder) PopulateAndExtractSearchParameters(resourceRaw json
 	if err == nil && providerResult.String() != "undefined" {
 		s.Provider = []byte(providerResult.String())
 	}
-	// extracting Status
+	// extracting JobStatus
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'NutritionOrder.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

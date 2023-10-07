@@ -225,7 +225,7 @@ func (s *FhirEnrollmentResponse) PopulateAndExtractSearchParameters(resourceRaw 
 	if err == nil && requestResult.String() != "undefined" {
 		s.Request = []byte(requestResult.String())
 	}
-	// extracting Status
+	// extracting JobStatus
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'EnrollmentResponse.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

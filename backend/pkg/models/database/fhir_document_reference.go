@@ -881,7 +881,7 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 	if err == nil && settingResult.String() != "undefined" {
 		s.Setting = []byte(settingResult.String())
 	}
-	// extracting Status
+	// extracting JobStatus
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'DocumentReference.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

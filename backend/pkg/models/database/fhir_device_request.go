@@ -616,7 +616,7 @@ func (s *FhirDeviceRequest) PopulateAndExtractSearchParameters(resourceRaw json.
 	if err == nil && requesterResult.String() != "undefined" {
 		s.Requester = []byte(requesterResult.String())
 	}
-	// extracting Status
+	// extracting JobStatus
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'DeviceRequest.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {

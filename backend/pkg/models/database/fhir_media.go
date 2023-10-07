@@ -406,7 +406,7 @@ func (s *FhirMedia) PopulateAndExtractSearchParameters(resourceRaw json.RawMessa
 	if err == nil && siteResult.String() != "undefined" {
 		s.Site = []byte(siteResult.String())
 	}
-	// extracting Status
+	// extracting JobStatus
 	statusResult, err := vm.RunString(` 
 							StatusResult = window.fhirpath.evaluate(fhirResource, 'Media.status')
 							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {
