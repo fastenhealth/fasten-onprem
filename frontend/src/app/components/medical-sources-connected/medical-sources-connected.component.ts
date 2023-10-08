@@ -212,6 +212,10 @@ export class MedicalSourcesConnectedComponent implements OnInit {
               toastNotification.type = ToastType.Error
               toastNotification.message = `An error occurred while accessing ${sourceType}: '${JSON.stringify(err)}'`
               toastNotification.autohide = false
+              toastNotification.link = {
+                text: "View Details",
+                url: `/background-jobs`
+              }
               this.toastService.show(toastNotification)
               console.error(err)
             });
