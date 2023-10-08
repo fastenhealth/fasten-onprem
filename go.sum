@@ -197,8 +197,8 @@ github.com/evanphx/json-patch v4.2.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLi
 github.com/evanphx/json-patch v4.5.0+incompatible h1:ouOWdg56aJriqS0huScTkVXPC5IcNrDCXZ6OoTAWu7M=
 github.com/evanphx/json-patch v4.5.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
 github.com/evanphx/json-patch/v5 v5.6.0 h1:b91NhWfaz02IuVxO9faSllyAtNXHMPkC5J8sJCLunww=
-github.com/fastenhealth/fasten-sources v0.3.3 h1:JI8fuXd6Cuq21T4aATLDS26Ubdy3foALFrQ/wa1Ylc8=
-github.com/fastenhealth/fasten-sources v0.3.3/go.mod h1:YxgwR6jSEU+edYqEDkm238n7HlvZdW3i04nIh7gSDaM=
+github.com/fastenhealth/fasten-sources v0.4.0 h1:vkfBpjZXyvJ1+jUAaxsZlgpkSZRh7oWaR9nx9PacLrc=
+github.com/fastenhealth/fasten-sources v0.4.0/go.mod h1:YxgwR6jSEU+edYqEDkm238n7HlvZdW3i04nIh7gSDaM=
 github.com/fastenhealth/gofhir-models v0.0.6 h1:yJYYaV1eJtHiGEfA1rXLsyOm/9hIi6s2cGoZzGfW1tM=
 github.com/fastenhealth/gofhir-models v0.0.6/go.mod h1:xB8ikGxu3bUq2b1JYV+CZpHqBaLXpOizFR0eFBCunis=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=

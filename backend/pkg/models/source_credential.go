@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/jwk"
-	"github.com/fastenhealth/fasten-sources/pkg"
+	sourcesPkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/google/uuid"
 	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwt"
@@ -19,10 +19,13 @@ import (
 // similar to LighthouseSourceDefinition from fasten-source
 type SourceCredential struct {
 	ModelBase
-	User       User           `json:"user,omitempty"`
-	UserID     uuid.UUID      `json:"user_id" gorm:"uniqueIndex:idx_user_source_patient"`
-	SourceType pkg.SourceType `json:"source_type" gorm:"uniqueIndex:idx_user_source_patient"`
-	Patient    string         `json:"patient" gorm:"uniqueIndex:idx_user_source_patient"`
+	User       *User                 `json:"user,omitempty"`
+	UserID     uuid.UUID             `json:"user_id" gorm:"uniqueIndex:idx_user_source_patient"`
+	SourceType sourcesPkg.SourceType `json:"source_type" gorm:"uniqueIndex:idx_user_source_patient"`
+	Patient    string                `json:"patient" gorm:"uniqueIndex:idx_user_source_patient"`
+
+	LatestBackgroundJob   *BackgroundJob `json:"latest_background_job,omitempty"`
+	LatestBackgroundJobID *uuid.UUID     `json:"-"`
 
 	//oauth endpoints
 	AuthorizationEndpoint string `json:"authorization_endpoint"`
@@ -62,7 +65,7 @@ type SourceCredential struct {
 	DynamicClientId   string              `json:"dynamic_client_id"`
 }
 
-func (s *SourceCredential) GetSourceType() pkg.SourceType {
+func (s *SourceCredential) GetSourceType() sourcesPkg.SourceType {
 	return s.SourceType
 }
 
@@ -131,7 +134,7 @@ func (s *SourceCredential) IsDynamicClient() bool {
 	return len(s.DynamicClientRegistrationMode) > 0
 }
 
-//this will set/update the AccessToken and Expiry using the dynamic client credentials
+// this will set/update the AccessToken and Expiry using the dynamic client credentials
 func (s *SourceCredential) RefreshDynamicClientAccessToken() error {
 	if len(s.DynamicClientRegistrationMode) == 0 {
 		return fmt.Errorf("dynamic client registration mode not set")

@@ -37,6 +37,7 @@ import {WidgetsModule} from './widgets/widgets.module';
 import { ExploreComponent } from './pages/explore/explore.component';
 import {DirectivesModule} from './directives/directives.module';
 import { DesktopCallbackComponent } from './pages/desktop-callback/desktop-callback.component';
+import { BackgroundJobsComponent } from './pages/background-jobs/background-jobs.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { DesktopCallbackComponent } from './pages/desktop-callback/desktop-callb
     ResourceCreatorComponent,
     ExploreComponent,
     DesktopCallbackComponent,
+    BackgroundJobsComponent,
   ],
   imports: [
     FormsModule,

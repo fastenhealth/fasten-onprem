@@ -12,6 +12,10 @@
     </ng-template>
 
     {{ toast.message }}
+    <ng-container *ngIf="toast.link">
+      <br/>
+      <a [routerLink]="toast.link.url" class="toast-link text-light tx-bold cursor-pointer">{{toast.link.text}}</a>
+    </ng-container>
   </ngb-toast>
 </div>
 

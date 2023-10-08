@@ -11,4 +11,8 @@ export class ToastNotification {
   type: ToastType = ToastType.Info
   displayClass: string = 'demo-static-toast'
   autohide: boolean = true
+  link?: {
+    text: string,
+    url: string
+  }
 }

@@ -1,0 +1,91 @@
+<div class="az-content az-content-profile">
+  <div class="container mn-ht-100p">
+    <div class="content-wrapper w-100">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Background Job History</h4>
+              <div class="row grid-margin">
+                <div class="col-12">
+                  <div class="alert alert-warning" role="alert">
+                    <strong>10 Results</strong> Only the most recent jobs are shown.
+                  </div>
+                </div>
+              </div>
+              <div class="row overflow-auto">
+                <div class="col-12">
+                  <table id="order-listing" class="table" cellspacing="0" width="100%">
+                    <thead>
+                    <tr class="text-white">
+                      <th></th>
+                      <th>Job Type</th>
+                      <th>Created At</th>
+                      <th>Status</th>
+                      <th>Last Updated</th>
+                      <th>Completed At</th>
+                      <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let backgroundJob of backgroundJobs" [class.border-left-danger]="backgroundJob.job_status == 'STATUS_FAILED'">
+                        <td>
+                          <img style="max-height:30px" [src]="'assets/sources/'+(backgroundJob?.data?.source_type + '.png')" [alt]="backgroundJob?.data?.source_type" class="img-fluid">
+                        </td>
+                        <td>{{backgroundJob.job_type}}</td>
+                        <td container="body" [ngbTooltip]="backgroundJob.created_at | amDateFormat:'YYYY-MM-DD HH:mm'">{{backgroundJob.created_at | amDateFormat:'LL'}}</td>
+                        <td><label class="badge badge-pill" [ngClass]="{
+                                      'badge-secondary': backgroundJob.job_status == 'STATUS_READY',
+                                     'badge-success': backgroundJob.job_status == 'STATUS_DONE',
+                                     'badge-warning': backgroundJob.job_status == 'STATUS_LOCKED',
+                                     'badge-danger': backgroundJob.job_status == 'STATUS_FAILED'
+                        }">{{backgroundJob.job_status}}</label></td>
+                        <td container="body" [ngbTooltip]="backgroundJob.locked_time | amDateFormat:'YYYY-MM-DD HH:mm'">{{backgroundJob.locked_time | amTimeAgo}}</td>
+                        <td container="body" [ngbTooltip]="backgroundJob.done_time | amDateFormat:'YYYY-MM-DD HH:mm'">{{backgroundJob.done_time | amTimeAgo}}</td>
+                        <td>
+                          <button (click)="openModal(content, backgroundJob)" class="btn btn-outline-indigo btn-with-icon btn-rounded"><i class="fa fa-info-circle"></i> Details</button>
+                        </td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- container -->
+</div><!-- az-content -->
+
+
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">[{{selectedBackgroundJob.job_type}}] {{selectedBackgroundJob.created_at | amDateFormat:'YYYY-MM-DD HH:mm'}}</h4>
+    <button type="button" class="btn close" aria-label="Close" (click)="modal.dismiss('Cross click')"><span aria-hidden="true">×</span></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-6"><strong>Status</strong></div>
+      <div class="col-6"><label class="badge badge-pill" [ngClass]="{
+                                      'badge-secondary': selectedBackgroundJob.job_status == 'STATUS_READY',
+                                     'badge-success': selectedBackgroundJob.job_status == 'STATUS_DONE',
+                                     'badge-warning': selectedBackgroundJob.job_status == 'STATUS_LOCKED',
+                                     'badge-danger': selectedBackgroundJob.job_status == 'STATUS_FAILED'
+                        }">{{selectedBackgroundJob.job_status}}</label></div>
+
+      <div class="col-6"><strong>Last Updated</strong></div>
+      <div class="col-6">{{selectedBackgroundJob.locked_time | amDateFormat:'YYYY-MM-DD HH:mm'}}</div>
+
+      <div class="col-6"><strong>Completed At</strong></div>
+      <div class="col-6">{{selectedBackgroundJob.done_time | amDateFormat:'YYYY-MM-DD HH:mm'}}</div>
+    </div>
+
+    <pre><code  [highlight]="selectedBackgroundJob.data | json"></code></pre>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+  </div>
+</ng-template>

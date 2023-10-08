@@ -93,6 +93,26 @@ export const LoadingToken: Story = {
   },
 };
 
+export const Failed: Story = {
+  args: {
+    sourceInfo: {
+      metadata: {
+        // aliases?: string[]
+        // brand_logo?: string
+        category: [],
+        display: "Aetna",
+        hidden: false,
+        // identifiers?: {[name:string]: string}
+        // patient_access_description?: string
+        // patient_access_url?: string
+        platform_type: "aetna",
+        source_type: "aetna"
+      }
+    },
+    status: 'failed'
+  },
+};
+
 
 export const Hidden: Story = {
   args: {
@@ -103,6 +123,25 @@ export const Hidden: Story = {
         category: [],
         display: "Aetna",
         hidden: true,
+        // identifiers?: {[name:string]: string}
+        // patient_access_description?: string
+        // patient_access_url?: string
+        platform_type: "aetna",
+        source_type: "aetna"
+      }
+    }
+  },
+};
+
+export const CustomBrandLogo: Story = {
+  args: {
+    sourceInfo: {
+      metadata: {
+        // aliases?: string[]
+        brand_logo: 'bluebutton.png',
+        category: [],
+        display: "Aetna",
+        hidden: false,
         // identifiers?: {[name:string]: string}
         // patient_access_description?: string
         // patient_access_url?: string

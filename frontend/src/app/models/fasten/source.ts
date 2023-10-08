@@ -1,9 +1,11 @@
 import {LighthouseSourceMetadata} from '../lighthouse/lighthouse-source-metadata';
+import {BackgroundJob} from './background-job';
 
 export class Source extends LighthouseSourceMetadata{
   id?: string
   user_id?: number
   source_type: string
+  latest_background_job?: BackgroundJob
 
   patient: string
   access_token:          string

@@ -16,6 +16,7 @@ import {ResourceCreatorComponent} from './pages/resource-creator/resource-creato
 import {ExploreComponent} from './pages/explore/explore.component';
 import {environment} from '../environments/environment';
 import {DesktopCallbackComponent} from './pages/desktop-callback/desktop-callback.component';
+import {BackgroundJobsComponent} from './pages/background-jobs/background-jobs.component';
 
 const routes: Routes = [
 
@@ -39,6 +40,7 @@ const routes: Routes = [
 
   { path: 'desktop/callback/:source_id', component: DesktopCallbackComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
+  { path: 'background-jobs', component: BackgroundJobsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'patient-profile', component: PatientProfileComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'medical-history', component: MedicalHistoryComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'labs', component: ReportLabsComponent, canActivate: [ IsAuthenticatedAuthGuard] },

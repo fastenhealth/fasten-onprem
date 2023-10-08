@@ -8,6 +8,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
+	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/fastenhealth/gofhir-models/fhir401"
 	fhirutils "github.com/fastenhealth/gofhir-models/fhir401/utils"
 	"github.com/gin-gonic/gin"
@@ -22,6 +23,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestSourceCredentialInterface(t *testing.T) {
@@ -1221,4 +1223,160 @@ func (suite *RepositoryTestSuite) TestAddResourceComposition_WithExistingComposi
 		},
 	}, associations)
 
+}
+
+func (suite *RepositoryTestSuite) TestCreateBackgroundJob_Sync() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	//test
+	sourceCredential := models.SourceCredential{ModelBase: models.ModelBase{ID: uuid.New()}, SourceType: sourcePkg.SourceType("bluebutton")}
+	backgroundJob := models.NewSyncBackgroundJob(sourceCredential)
+	err = dbRepo.CreateBackgroundJob(
+		context.WithValue(authContext, pkg.ContextKeyTypeAuthUsername, "test_username"),
+		backgroundJob,
+	)
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.NotEqual(suite.T(), uuid.Nil, backgroundJob.ID)
+	require.Equal(suite.T(), pkg.BackgroundJobTypeSync, backgroundJob.JobType)
+	require.Equal(suite.T(), pkg.BackgroundJobStatusLocked, backgroundJob.JobStatus)
+	require.NotNil(suite.T(), backgroundJob.LockedTime)
+	require.Nil(suite.T(), backgroundJob.DoneTime)
+	require.Equal(suite.T(), userModel.ID, backgroundJob.UserID)
+}
+
+func (suite *RepositoryTestSuite) TestListBackgroundJobs() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	otherUserModel := &models.User{
+		Username: "test_other_username",
+		Password: "testpassword",
+		Email:    "testother@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), otherUserModel)
+	require.NoError(suite.T(), err)
+
+	testSourceCredential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: userModel.ID,
+	}
+
+	backgroundJob := models.NewSyncBackgroundJob(testSourceCredential)
+	err = dbRepo.CreateBackgroundJob(
+		context.WithValue(authContext, pkg.ContextKeyTypeAuthUsername, "test_username"),
+		backgroundJob,
+	)
+
+	backgroundJob2 := models.NewSyncBackgroundJob(testSourceCredential)
+	backgroundJob2.JobType = pkg.BackgroundJobTypeScheduledSync
+	err = dbRepo.CreateBackgroundJob(
+		context.WithValue(authContext, pkg.ContextKeyTypeAuthUsername, "test_username"),
+		backgroundJob2,
+	)
+
+	backgroundJob3 := models.NewSyncBackgroundJob(testSourceCredential)
+	backgroundJob3.JobStatus = pkg.BackgroundJobStatusFailed
+	err = dbRepo.CreateBackgroundJob(
+		context.WithValue(authContext, pkg.ContextKeyTypeAuthUsername, "test_username"),
+		backgroundJob3,
+	)
+
+	require.NoError(suite.T(), err)
+
+	//test
+	foundAllBackgroundJobs, err := dbRepo.ListBackgroundJobs(authContext, models.BackgroundJobQueryOptions{})
+	require.NoError(suite.T(), err)
+
+	syncJobType := pkg.BackgroundJobTypeSync
+	foundBackgroundJobsByType, err := dbRepo.ListBackgroundJobs(authContext, models.BackgroundJobQueryOptions{
+		JobType: &syncJobType,
+	})
+	require.NoError(suite.T(), err)
+
+	syncFailedStatus := pkg.BackgroundJobStatusFailed
+	foundBackgroundJobsByStatus, err := dbRepo.ListBackgroundJobs(authContext, models.BackgroundJobQueryOptions{
+		Status: &syncFailedStatus,
+	})
+	require.NoError(suite.T(), err)
+
+	//assert
+	require.Equal(suite.T(), len(foundAllBackgroundJobs), 3)
+	require.Equal(suite.T(), len(foundBackgroundJobsByType), 2)
+	require.Equal(suite.T(), len(foundBackgroundJobsByStatus), 1)
+}
+
+func (suite *RepositoryTestSuite) TestUpdateBackgroundJob() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sourceCredential := models.SourceCredential{ModelBase: models.ModelBase{ID: uuid.New()}, SourceType: sourcePkg.SourceType("bluebutton")}
+	backgroundJob := models.NewSyncBackgroundJob(sourceCredential)
+	err = dbRepo.CreateBackgroundJob(
+		context.WithValue(authContext, pkg.ContextKeyTypeAuthUsername, "test_username"),
+		backgroundJob,
+	)
+
+	//test
+	now := time.Now()
+	backgroundJob.JobStatus = pkg.BackgroundJobStatusFailed
+	backgroundJob.DoneTime = &now
+
+	err = dbRepo.UpdateBackgroundJob(
+		authContext,
+		backgroundJob,
+	)
+	require.NoError(suite.T(), err)
+
+	//list all records and ensure that the updated record is the same
+	foundAllBackgroundJobs, err := dbRepo.ListBackgroundJobs(authContext, models.BackgroundJobQueryOptions{})
+	require.NoError(suite.T(), err)
+
+	//assert
+	require.Equal(suite.T(), 1, len(foundAllBackgroundJobs))
+	require.Equal(suite.T(), backgroundJob.ID, foundAllBackgroundJobs[0].ID)
+	require.Equal(suite.T(), pkg.BackgroundJobStatusFailed, foundAllBackgroundJobs[0].JobStatus)
+	require.NotNil(suite.T(), foundAllBackgroundJobs[0].DoneTime)
 }

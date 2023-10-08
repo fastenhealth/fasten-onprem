@@ -42,6 +42,12 @@ type DatabaseRepository interface {
 	CreateGlossaryEntry(ctx context.Context, glossaryEntry *models.Glossary) error
 	GetGlossaryEntry(ctx context.Context, code string, codeSystem string) (*models.Glossary, error)
 
+	//background jobs
+	CreateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error
+	GetBackgroundJob(ctx context.Context, backgroundJobId string) (*models.BackgroundJob, error)
+	UpdateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error
+	ListBackgroundJobs(ctx context.Context, queryOptions models.BackgroundJobQueryOptions) ([]models.BackgroundJob, error)
+
 	//settings
 	LoadUserSettings(ctx context.Context) (*models.UserSettings, error)
 	SaveUserSettings(context.Context, *models.UserSettings) error
@@ -49,4 +55,5 @@ type DatabaseRepository interface {
 
 	//used by fasten-sources Clients
 	UpsertRawResource(ctx context.Context, sourceCredentials sourcePkg.SourceCredential, rawResource sourcePkg.RawResourceFhir) (bool, error)
+	BackgroundJobCheckpoint(ctx context.Context, checkpointData map[string]interface{}, errorData map[string]interface{})
 }
