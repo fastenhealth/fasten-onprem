@@ -22,7 +22,7 @@ export class BackgroundJobsComponent implements OnInit {
 
   openModal(content, backgroundJob: BackgroundJob) {
     this.selectedBackgroundJob = backgroundJob
-    this.modalService.open(content, { size: 'lg' });
+    this.modalService.open(content, { size: 'lg', scrollable: true });
   }
 
 }
