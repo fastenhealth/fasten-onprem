@@ -9,7 +9,7 @@
               <div class="row grid-margin">
                 <div class="col-12">
                   <div class="alert alert-warning" role="alert">
-                    <strong>Heads up!</strong> This alert needs your attention, but it's not super important.
+                    <strong>10 Results</strong> Only the most recent jobs are shown.
                   </div>
                 </div>
               </div>
@@ -28,7 +28,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let backgroundJob of backgroundJobs">
+                      <tr *ngFor="let backgroundJob of backgroundJobs" [class.border-left-danger]="backgroundJob.job_status == 'STATUS_FAILED'">
                         <td>
                           <img style="max-height:30px" [src]="'assets/sources/'+(backgroundJob?.data?.source_type + '.png')" [alt]="backgroundJob?.data?.source_type" class="img-fluid">
                         </td>

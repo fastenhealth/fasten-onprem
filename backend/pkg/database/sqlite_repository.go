@@ -1018,6 +1018,7 @@ func (sr *SqliteRepository) UpdateBackgroundJob(ctx context.Context, backgroundJ
 			UserID:    backgroundJob.UserID,
 		}).Updates(models.BackgroundJob{
 		JobStatus:  backgroundJob.JobStatus,
+		Data:       backgroundJob.Data,
 		LockedTime: backgroundJob.LockedTime,
 		DoneTime:   backgroundJob.DoneTime,
 		Retries:    backgroundJob.Retries,

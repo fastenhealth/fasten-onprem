@@ -1,5 +1,5 @@
-<div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': sourceInfo?.metadata?.hidden, 'card-failed': status == 'failed'}">
-  <div (click)="onCardClick()" class="card-body">
+<div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': sourceInfo?.metadata?.hidden}">
+  <div (click)="onCardClick()" class="card-body" [class.border-left-danger]="status == 'failed'">
 
     <div class="h-100 d-flex align-items-center">
       <img [src]="'assets/sources/'+(sourceInfo?.metadata.brand_logo ? sourceInfo?.metadata?.brand_logo : sourceInfo?.metadata?.source_type+'.png')" [alt]="sourceInfo?.metadata?.display" class="img-fluid">

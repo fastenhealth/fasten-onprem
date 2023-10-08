@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
@@ -39,8 +40,8 @@ func BackgroundJobSyncResources(parentContext context.Context, logger *logrus.En
 	backgroundJob = models.NewSyncBackgroundJob(*sourceCred)
 	err := databaseRepo.CreateBackgroundJob(parentContext, backgroundJob)
 	if err != nil {
-		logger.Errorln("An error occurred while creating background job", err)
-		resultErr = err
+		resultErr = fmt.Errorf("an error occurred while creating background job: %w", err)
+		logger.Errorln(resultErr)
 		return sourceModels.UpsertSummary{}, resultErr
 	}
 	backgroundJobContext := CreateBackgroundJobContext(parentContext, backgroundJob.ID.String())
@@ -56,8 +57,8 @@ func BackgroundJobSyncResources(parentContext context.Context, logger *logrus.En
 	// after creating the client, we should do a bulk import
 	sourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourceCred.SourceType, backgroundJobContext, logger, sourceCred)
 	if err != nil {
-		logger.Errorln("An error occurred while initializing hub client using source credential", err)
-		resultErr = err
+		resultErr = fmt.Errorf("an error occurred while initializing hub client using source credential: %w", err)
+		logger.Errorln(resultErr)
 		return sourceModels.UpsertSummary{}, resultErr
 	}
 
@@ -84,18 +85,37 @@ func BackgroundJobSyncResources(parentContext context.Context, logger *logrus.En
 			return
 		} else {
 
-			//TODO: find a way to push error message to the background job if necessary.
+			//first, try to update the background job with the latest data
+			updatedBackgroundJob, err := databaseRepo.GetBackgroundJob(backgroundJobContext, backgroundJob.ID.String())
+			if err == nil {
+				//replace the current background job, with the updated one.
+				backgroundJob = updatedBackgroundJob
+			}
 
 			if resultErr == nil {
 				backgroundJob.JobStatus = pkg.BackgroundJobStatusDone
 			} else {
+				//if there's an error that we need to store, lets unmarshal the data from the backgroundjob
+				var backgroundJobSyncData models.BackgroundJobSyncData
+				if backgroundJob.Data != nil {
+					err = json.Unmarshal(backgroundJob.Data, &backgroundJobSyncData)
+				}
+
+				//ensure there's a map to store the error data
+				if backgroundJobSyncData.ErrorData == nil {
+					backgroundJobSyncData.ErrorData = map[string]interface{}{}
+				}
+				backgroundJobSyncData.ErrorData["final"] = resultErr.Error()
+
+				//marshal the new background job data
+				backgroundJob.Data, err = json.Marshal(backgroundJobSyncData)
 				backgroundJob.JobStatus = pkg.BackgroundJobStatusFailed
 			}
 			now := time.Now()
 			backgroundJob.DoneTime = &now
 			backgroundJob.LockedTime = nil
 
-			err := databaseRepo.UpdateBackgroundJob(backgroundJobContext, backgroundJob)
+			err = databaseRepo.UpdateBackgroundJob(backgroundJobContext, backgroundJob)
 			if err != nil {
 				logger.Errorln("sync status finalizer failed updating background job, ignoring", err)
 			}
@@ -106,8 +126,8 @@ func BackgroundJobSyncResources(parentContext context.Context, logger *logrus.En
 
 	summary, err := sourceClient.SyncAll(databaseRepo)
 	if err != nil {
-		logger.Errorln("An error occurred while bulk import of resources from source", err)
-		resultErr = err
+		resultErr = fmt.Errorf("an error occurred while bulk importing resources from source: %w", err)
+		logger.Errorln(resultErr)
 		return summary, resultErr
 	}
 
@@ -115,8 +135,8 @@ func BackgroundJobSyncResources(parentContext context.Context, logger *logrus.En
 	sourceCredential := sourceClient.GetSourceCredential()
 	sourceCredentialConcrete, ok := sourceCredential.(*models.SourceCredential)
 	if !ok {
-		logger.Errorln("An error occurred while updating source credential, source credential is not of type *models.SourceCredential")
-		resultErr = fmt.Errorf("source credential is not of type *models.SourceCredential")
+		resultErr = fmt.Errorf("an error occurred while updating source credential, source credential is not of type *models.SourceCredential")
+		logger.Errorln(resultErr)
 		return summary, resultErr
 	}
 	sourceCred = sourceCredentialConcrete

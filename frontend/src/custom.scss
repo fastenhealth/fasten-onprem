@@ -20,6 +20,10 @@ select > optgroup > .divider {
   cursor: auto !important;
 }
 
+.border-left-danger {
+  border-left: 5px solid #dc3545 !important;
+}
+
 // if text is too long, we can truncate
 .truncate {
   white-space: nowrap;

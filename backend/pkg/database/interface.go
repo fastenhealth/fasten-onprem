@@ -44,6 +44,7 @@ type DatabaseRepository interface {
 
 	//background jobs
 	CreateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error
+	GetBackgroundJob(ctx context.Context, backgroundJobId string) (*models.BackgroundJob, error)
 	UpdateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error
 	ListBackgroundJobs(ctx context.Context, queryOptions models.BackgroundJobQueryOptions) ([]models.BackgroundJob, error)
 
