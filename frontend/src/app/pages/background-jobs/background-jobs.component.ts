@@ -1,13 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {BackgroundJob} from '../../models/fasten/background-job';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {interval, Observable, Subscription, timer} from 'rxjs';
+import {mergeMap} from 'rxjs/operators';
 @Component({
   selector: 'app-background-jobs',
   templateUrl: './background-jobs.component.html',
   styleUrls: ['./background-jobs.component.scss']
 })
-export class BackgroundJobsComponent implements OnInit {
+export class BackgroundJobsComponent implements OnInit, OnDestroy {
+  backgroundJobsSubscription: Subscription = null
   backgroundJobs: BackgroundJob[] = []
   selectedBackgroundJob: BackgroundJob = null
 
@@ -15,9 +18,22 @@ export class BackgroundJobsComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.fastenApi.getBackgroundJobs().subscribe((jobs) => {
-      this.backgroundJobs = jobs
-    })
+
+    //update every minute
+    this.backgroundJobsSubscription = timer(0, 60*1000)
+      .pipe(
+        mergeMap(() => this.fastenApi.getBackgroundJobs())
+      )
+      .subscribe((jobs) => {
+        console.log("Background jobs updated")
+        this.backgroundJobs = jobs
+      })
+  }
+
+  ngOnDestroy() {
+    if(this.backgroundJobsSubscription){
+      this.backgroundJobsSubscription.unsubscribe()
+    }
   }
 
   openModal(content, backgroundJob: BackgroundJob) {
