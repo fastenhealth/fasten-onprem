@@ -37,6 +37,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	{
 		api := base.Group("/api")
 		{
+			api.Use(middleware.CacheMiddleware())
 			api.GET("/health", func(c *gin.Context) {
 				//TODO:
 				// check if the /web folder is populated.
