@@ -25,6 +25,7 @@ import {DashboardWidgetQuery} from '../models/widget/dashboard-widget-query';
 import {ResourceGraphResponse} from '../models/fasten/resource-graph-response';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import {BackgroundJob} from '../models/fasten/background-job';
+import {SupportRequest} from '../models/fasten/support-request';
 
 @Injectable({
   providedIn: 'root'
@@ -292,4 +293,17 @@ export class FastenApiService {
         })
       );
   }
+
+
+  supportRequest(request: SupportRequest): Observable<any> {
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/support/request`, request)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("Support request response", response)
+          // @ts-ignore
+          return {}
+        })
+      );
+  }
+
 }

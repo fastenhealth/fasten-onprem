@@ -58,6 +58,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 			//r.GET("/cors/*proxyPath", handler.CORSProxy)
 			//r.OPTIONS("/cors/*proxyPath", handler.CORSProxy)
 			api.GET("/glossary/code", handler.GlossarySearchByCode)
+			api.POST("/support/request", handler.SupportRequest)
 
 			secure := api.Group("/secure").Use(middleware.RequireAuth())
 			{

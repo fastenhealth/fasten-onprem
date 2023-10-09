@@ -67,10 +67,121 @@
             <span>Adminstrator</span>
           </div><!-- az-header-profile -->
 
-          <a ngbTooltip="not yet implemented" class="dropdown-item"><i class="typcn typcn-time"></i> Activity Logs</a>
-          <a (click)="signOut($event)" class="dropdown-item"><i class="typcn typcn-power-outline"></i> Sign Out</a>
+          <a (click)="openSupportForm(content)" class="dropdown-item  cursor-pointer"><i style="font-size: medium;" class="fas fa-question-circle"></i> Get Support</a>
+          <a class="dropdown-item cursor-pointer" href="https://docs.fastenhealth.com/FUNDRAISING.html" externalLink><i style="font-size: medium;" class="fas fa-hand-holding-medical"></i> Donate</a>
+          <a (click)="signOut($event)" class="dropdown-item  cursor-pointer"><i style="font-size: medium;" class="fas fa-power-off"></i> Sign Out</a>
         </div><!-- dropdown-menu -->
       </div>
     </div><!-- az-header-right -->
   </div><!-- container -->
 </div><!-- az-header -->
+
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Get Support</h4>
+    <button type="button" class="btn close" aria-label="Close" (click)="modal.dismiss('Cross click')"><span aria-hidden="true">×</span></button>
+  </div>
+  <div class="modal-body">
+    <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0">
+      <ngb-panel title="File an Issue">
+        <ng-template ngbPanelContent>
+
+          <p>If you're having issues with Fasten Health, you can use this form to file a ticket.</p>
+          <div class="alert alert-warning" role="alert">
+            <strong>Your Privacy is Important</strong> None of the information provided in this form will be made public,
+            however we will anonymize & summarize the content before creating a <a href="https://github.com/fastenhealth/fasten-onprem/issues" externalLink><i class="fab fa-github"></i> Github Issue</a> for tracking purposes.
+          </div>
+
+          <form *ngIf="!submitSuccess; else supportRequestSuccess" (ngSubmit)="submitSupportForm()" #supportRequestForm="ngForm">
+
+            <div class="form-group">
+              <div class="row">
+                <div class="col-6">
+                  <label class="az-content-label tx-11 tx-medium tx-gray-600">Name</label>
+                  <input [(ngModel)]="newSupportRequest.full_name" name="full_name" #full_name="ngModel" required minlength="2" type="text" class="form-control" placeholder="Enter your name">
+
+                  <div *ngIf="full_name.invalid && (full_name.dirty || full_name.touched)" class="alert alert-danger">
+                    <div *ngIf="full_name.errors?.['required']">
+                      Name is required.
+                    </div>
+                    <div *ngIf="full_name.errors?.['minlength']">
+                      Name must be at least 2 characters long.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label class="az-content-label tx-11 tx-medium tx-gray-600">Email Address</label>
+                  <input [(ngModel)]="newSupportRequest.email" email  name="emailAddr" #emailAddr="ngModel" required minlength="4" type="text" class="form-control" autocapitalize="none" placeholder="Enter your email address">
+
+                  <div *ngIf="emailAddr.invalid && (emailAddr.dirty || emailAddr.touched)" class="alert alert-danger">
+                    <div *ngIf="emailAddr.errors?.['required']">
+                      Email Address is required.
+                    </div>
+                    <div *ngIf="emailAddr.errors?.['minlength']">
+                      Email Address must be at least 4 characters long.
+                    </div>
+                    <div *ngIf="emailAddr.errors?.['email']">
+                      Email Address must be a valid email address.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div><!-- form-group -->
+
+            <div class="form-group">
+              <label class="az-content-label tx-11 tx-medium tx-gray-600">Issue Description</label>
+              <textarea [(ngModel)]="newSupportRequest.request_content" name="requestContent" #requestContent="ngModel" rows="3" class="form-control" placeholder="Please provide a detailed description of the issue that you're encountering" required minlength="4"></textarea>
+
+              <div *ngIf="requestContent.invalid && (requestContent.dirty || requestContent.touched)" class="alert alert-danger">
+                <div *ngIf="requestContent.errors?.['required']">
+                  Issue Description is required.
+                </div>
+                <div *ngIf="requestContent.errors?.['minlength']">
+                  Issue Description must be at least 4 characters long.
+                </div>
+              </div>
+            </div><!-- form-group -->
+
+            <button [disabled]="!supportRequestForm.form.valid || loading" type="submit" class="btn btn-az-primary btn-block">Submit Issue</button>
+            <div *ngIf="errorMsg" class="alert alert-danger mt-3" role="alert">
+              <strong>Error</strong> {{errorMsg}}
+            </div>
+          </form>
+
+          <ng-template #supportRequestSuccess>
+            <div class="tx-center pd-y-20 pd-x-20">
+              <i class="far fa-check-square tx-100 tx-success lh-1 mg-t-20 d-inline-block"></i>
+              <h4 class="tx-success mg-b-20">Success!</h4>
+              <p class="mg-b-20 mg-x-20">Someone from the dev team will contact <br/>you shortly regarding your feedback. Thanks!</p>
+              <button type="button" (click)="resetSupportRequestForm()" class="btn btn-success pd-x-25">Continue</button>
+            </div>
+          </ng-template>
+
+        </ng-template>
+      </ngb-panel>
+      <ngb-panel title="Community Discussions & Support">
+        <ng-template ngbPanelContent>
+          <p>Whether you have a question or a suggestion, we are always happy to listen to you.</p>
+          <ul>
+            <li>
+              <a href="https://discord.gg/Bykz6BAN8p" externalLink><i class="fab fa-discord"></i> Discord Channel</a>
+            </li>
+            <li>
+              <a href="https://www.reddit.com/r/FastenHealth/" externalLink><i class="fab fa-reddit"></i> Reddit</a>
+            </li>
+            <li>
+              <a href="https://docs.fastenhealth.com/" externalLink><i class="fas fa-book"></i> Documentation</a>
+            </li>
+          </ul>
+
+
+        </ng-template>
+      </ngb-panel>
+    </ngb-accordion>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+  </div>
+</ng-template>
