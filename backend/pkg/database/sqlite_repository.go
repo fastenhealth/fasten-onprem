@@ -106,6 +106,12 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, 
 		return nil, fmt.Errorf("Failed to create admin user! - %v", err)
 	}
 
+	//fail any Locked jobs. This is necessary because the job may have been locked by a process that was killed.
+	err = fastenRepo.CancelAllLockedBackgroundJobsAndFail()
+	if err != nil {
+		return nil, err
+	}
+
 	return &fastenRepo, nil
 }
 
@@ -1143,6 +1149,19 @@ func (sr *SqliteRepository) BackgroundJobCheckpoint(ctx context.Context, checkpo
 	if txErr != nil {
 		sr.Logger.Warning("could not find or update background job. Ignoring checkpoint", txErr)
 	}
+
+}
+
+// when server restarts, we should unlock all locked jobs, and set their status to failed
+// SECURITY: this is global, and effects all users.
+func (sr *SqliteRepository) CancelAllLockedBackgroundJobsAndFail() error {
+	now := time.Now()
+	return sr.GormClient.
+		Where(models.BackgroundJob{JobStatus: pkg.BackgroundJobStatusLocked}).
+		Updates(models.BackgroundJob{
+			JobStatus: pkg.BackgroundJobStatusFailed,
+			DoneTime:  &now,
+		}).Error
 
 }
 

@@ -151,8 +151,21 @@ func ListBackgroundJobs(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
-	backgroundJobQueryOptions := models.BackgroundJobQueryOptions{
-		Limit: pkg.ResourceListPageSize,
+	backgroundJobQueryOptions := models.BackgroundJobQueryOptions{}
+	if len(c.Query("limit")) == 0 {
+		backgroundJobQueryOptions.Limit = pkg.ResourceListPageSize
+	} else {
+		limit, err := strconv.Atoi(c.Query("limit"))
+		if err != nil {
+			logger.Errorln("An error occurred while calculating limit", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+			return
+		}
+		if limit == 0 {
+			backgroundJobQueryOptions.Limit = pkg.ResourceListPageSize
+		} else {
+			backgroundJobQueryOptions.Limit = limit
+		}
 	}
 	if len(c.Query("jobType")) > 0 {
 		jobType := pkg.BackgroundJobType(c.Query("jobType"))
