@@ -323,6 +323,47 @@ export class MedicalSourcesConnectedComponent implements OnInit {
     )
   }
 
+  public sourceDeleteHandler(){
+    let source = this.modalSelectedSourceListItem.source
+    let sourceDisplayName = this.modalSelectedSourceListItem?.metadata?.display || this.modalSelectedSourceListItem?.source?.source_type || 'unknown'
+
+    this.status[source.id] = "authorize"
+    this.modalService.dismissAll()
+
+    this.fastenApi.deleteSource(source.id).subscribe(
+      (respData) => {
+        delete this.status[source.id]
+        delete this.status[source.source_type]
+
+        //delete this source from the connnected list
+        let foundIndex = this.connectedSourceList.findIndex((connectedSource) => {
+          return connectedSource?.source?.id == source.id
+        }, this)
+        if(foundIndex > -1){
+          this.connectedSourceList.splice(foundIndex, 1)
+        }
+
+        console.log("source delete response:", respData)
+
+
+        const toastNotification = new ToastNotification()
+        toastNotification.type = ToastType.Success
+        toastNotification.message = `Successfully deleted source: ${sourceDisplayName}, ${respData} row(s) effected`
+        this.toastService.show(toastNotification)
+
+      },
+      (err) => {
+        delete this.status[source.id]
+        delete this.status[source.source_type]
+
+        const toastNotification = new ToastNotification()
+        toastNotification.type = ToastType.Error
+        toastNotification.message = `An error occurred while deleting source: ${sourceDisplayName}`
+        this.toastService.show(toastNotification)
+        console.log(err)
+      })
+  }
+
 
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {

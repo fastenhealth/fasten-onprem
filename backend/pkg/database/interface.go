@@ -38,6 +38,7 @@ type DatabaseRepository interface {
 	GetSourceSummary(context.Context, string) (*models.SourceSummary, error)
 	GetSources(context.Context) ([]models.SourceCredential, error)
 	UpdateSource(ctx context.Context, sourceCreds *models.SourceCredential) error
+	DeleteSource(ctx context.Context, sourceId string) (int64, error)
 
 	CreateGlossaryEntry(ctx context.Context, glossaryEntry *models.Glossary) error
 	GetGlossaryEntry(ctx context.Context, code string, codeSystem string) (*models.Glossary, error)

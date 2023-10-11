@@ -312,3 +312,16 @@ func ListSource(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceCreds})
 }
+
+func DeleteSource(c *gin.Context) {
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	rowsEffected, err := databaseRepo.DeleteSource(c, c.Param("sourceId"))
+	if err != nil {
+		logger.Errorln("An error occurred while deleting source credential", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": rowsEffected})
+}

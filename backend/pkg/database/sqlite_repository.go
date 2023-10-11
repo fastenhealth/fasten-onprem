@@ -976,6 +976,62 @@ func (sr *SqliteRepository) GetSources(ctx context.Context) ([]models.SourceCred
 	return sourceCreds, results.Error
 }
 
+func (sr *SqliteRepository) DeleteSource(ctx context.Context, sourceId string) (int64, error) {
+	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return 0, currentUserErr
+	}
+
+	if strings.TrimSpace(sourceId) == "" {
+		return 0, fmt.Errorf("sourceId cannot be blank")
+	}
+	//delete all resources for this source
+	sourceUUID, err := uuid.Parse(sourceId)
+	if err != nil {
+		return 0, err
+	}
+
+	rowsEffected := int64(0)
+	resourceTypes := databaseModel.GetAllowedResourceTypes()
+	for _, resourceType := range resourceTypes {
+		tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
+		if err != nil {
+			return 0, err
+		}
+		results := sr.GormClient.WithContext(ctx).
+			Where(models.OriginBase{
+				UserID:   currentUser.ID,
+				SourceID: sourceUUID,
+			}).
+			Table(tableName).
+			Delete(&models.ResourceBase{})
+		rowsEffected += results.RowsAffected
+		if results.Error != nil {
+			return rowsEffected, results.Error
+		}
+	}
+
+	//delete relatedResources entries
+	results := sr.GormClient.WithContext(ctx).
+		Where(models.RelatedResource{ResourceBaseUserID: currentUser.ID, ResourceBaseSourceID: sourceUUID}).
+		Delete(&models.RelatedResource{})
+	if results.Error != nil {
+		return rowsEffected, results.Error
+	}
+
+	//soft delete the source credential
+	results = sr.GormClient.WithContext(ctx).
+		Where(models.SourceCredential{
+			ModelBase: models.ModelBase{
+				ID: sourceUUID,
+			},
+			UserID: currentUser.ID,
+		}).
+		Delete(&models.SourceCredential{})
+	rowsEffected += results.RowsAffected
+	return rowsEffected, results.Error
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Background Job
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
