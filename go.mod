@@ -7,7 +7,7 @@ require (
 	github.com/dave/jennifer v1.6.1
 	github.com/dominikbraun/graph v0.15.0
 	github.com/dop251/goja v0.0.0-20230605162241-28ee0ee714f3
-	github.com/fastenhealth/fasten-sources v0.4.1
+	github.com/fastenhealth/fasten-sources v0.4.2
 	github.com/fastenhealth/gofhir-models v0.0.6
 	github.com/gin-gonic/gin v1.9.0
 	github.com/glebarez/sqlite v1.5.0
