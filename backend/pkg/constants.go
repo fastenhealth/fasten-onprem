@@ -5,6 +5,8 @@ type BackgroundJobStatus string
 type BackgroundJobType string
 type BackgroundJobSchedule string
 
+type DatabaseRepositoryType string
+
 const (
 	ResourceListPageSize int = 20
 
@@ -36,4 +38,7 @@ const (
 	BackgroundJobScheduleWeekly   BackgroundJobSchedule = "WEEKLY"
 	BackgroundJobScheduleBiWeekly BackgroundJobSchedule = "BIWEEKLY"
 	BackgroundJobScheduleMonthly  BackgroundJobSchedule = "MONTHLY"
+
+	DatabaseRepositoryTypeSqlite   DatabaseRepositoryType = "sqlite"
+	DatabaseRepositoryTypePostgres DatabaseRepositoryType = "postgres"
 )

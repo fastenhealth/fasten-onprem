@@ -30,6 +30,7 @@ func (c *configuration) Init() error {
 	c.SetDefault("web.allow_unsafe_endpoints", false)
 
 	c.SetDefault("web.src.frontend.path", "/opt/fasten/web")
+	c.SetDefault("database.type", "sqlite")
 	c.SetDefault("database.location", "/opt/fasten/db/fasten.db")
 	c.SetDefault("cache.location", "/opt/fasten/cache/")
 

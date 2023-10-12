@@ -23,7 +23,7 @@ import (
 	"time"
 )
 
-func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, eventBus event_bus.Interface) (DatabaseRepository, error) {
+func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, eventBus event_bus.Interface) (DatabaseRepository, error) {
 	//backgroundContext := context.Background()
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
