@@ -53,16 +53,6 @@ func UnsafeRequestSource(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
-	//TODO: if source has been updated, we should save the access/refresh token.
-	//if updatedSource != nil {
-	//	logger.Warnf("TODO: source credential has been updated, we should store it in the database: %v", updatedSource)
-	//	//	err := databaseRepo.CreateSource(c, updatedSource)
-	//	//	if err != nil {
-	//	//		logger.Errorf("An error occurred while updating source credential %v", err)
-	//	//		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
-	//	//		return
-	//	//	}
-	//}
 
 	var resp map[string]interface{}
 

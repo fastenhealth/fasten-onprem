@@ -11,6 +11,7 @@ import {ToastService} from '../../services/toast.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Location} from '@angular/common';
 import {EventBusService} from '../../services/event-bus.service';
+import {SourceState} from '../../models/fasten/source-state';
 
 @Component({
   selector: 'app-medical-sources-connected',
@@ -102,7 +103,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         });
         this.location.replaceState(urlTree.toString());
 
-        const expectedSourceStateInfo = JSON.parse(localStorage.getItem(callbackState))
+        const expectedSourceStateInfo = JSON.parse(localStorage.getItem(callbackState)) as SourceState
         localStorage.removeItem(callbackState)
 
         if(callbackError && !callbackCode){
@@ -147,6 +148,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         //Create FHIR Client
 
         const dbSourceCredential = new Source({
+          id: expectedSourceStateInfo.reconnect_source_id,
           source_type: sourceType,
 
           authorization_endpoint: sourceMetadata.authorization_endpoint,
@@ -364,6 +366,29 @@ export class MedicalSourcesConnectedComponent implements OnInit {
       })
   }
 
+  //this is similar to the connectHandler in the MedicalSourcesComponent
+  public sourceReconnectHandler(selectedSourceListItem: SourceListItem){
+
+    let sourceType = selectedSourceListItem.metadata.source_type
+    this.lighthouseApi.getLighthouseSource(sourceType)
+      .then(async (sourceMetadata: LighthouseSourceMetadata) => {
+        console.log(sourceMetadata);
+        let authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceType, sourceMetadata, selectedSourceListItem.source.id)
+
+        console.log('authorize url:', authorizationUrl.toString());
+        // redirect to lighthouse with uri's (or open a new window in desktop mode)
+        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceType, sourceMetadata.redirect_uri).subscribe((codeData) => {
+          //Note: this code will only run in Desktop mode (with popups)
+          //in non-desktop environments, the user is redirected in the same window, and this code is never executed.
+
+          //always close the modal
+          this.modalService.dismissAll()
+
+          //redirect the browser back to this page with the code in the query string parameters
+          this.lighthouseApi.redirectWithDesktopCode(sourceType, codeData)
+        })
+      });
+  }
 
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
