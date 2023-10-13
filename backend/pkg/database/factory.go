@@ -12,6 +12,8 @@ func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, 
 	switch pkg.DatabaseRepositoryType(appConfig.GetString("database.type")) {
 	case pkg.DatabaseRepositoryTypeSqlite:
 		return newSqliteRepository(appConfig, globalLogger, eventBus)
+	case pkg.DatabaseRepositoryTypePostgres:
+		return newPostgresRepository(appConfig, globalLogger, eventBus)
 	default:
 		return nil, errors.DatabaseTypeNotSupportedError(appConfig.GetString("database.type"))
 	}

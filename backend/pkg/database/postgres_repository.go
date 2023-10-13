@@ -13,11 +13,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, eventBus event_bus.Interface) (DatabaseRepository, error) {
+func newPostgresRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, eventBus event_bus.Interface) (DatabaseRepository, error) {
 	//backgroundContext := context.Background()
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Gorm/SQLite setup
+	// Gorm/PostgreSQL setup
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	globalLogger.Infof("Trying to connect to sqlite db: %s\n", appConfig.GetString("database.location"))
 
@@ -38,12 +38,13 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 	// In this case all writes are appended to a temporary file (write-ahead log) and this file is periodically merged with the original database. When SQLite is searching for something it would first check this temporary file and if nothing is found proceed with the main database file.
 	// As a result, readers don’t compete with writers and performance is much better compared to the Old Way.
 	// https://stackoverflow.com/questions/4060772/sqlite-concurrent-access
-	pragmaStr := sqlitePragmaString(map[string]string{
-		"busy_timeout": "5000",
-		"foreign_keys": "ON",
-		"journal_mode": "wal",
-	})
-	dsn := "file:" + appConfig.GetString("database.location") + pragmaStr
+	// pragmaStr := sqlitePragmaString(map[string]string{
+	// 	"busy_timeout": "5000",
+	// 	"foreign_keys": "ON",
+	// 	"journal_mode": "wal",
+	// })
+	// dsn := "file:" + appConfig.GetString("database.location") + pragmaStr
+	dsn := appConfig.GetString("database.location")
 	database, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{
 		//TODO: figure out how to log database queries again.
 		//logger: logger
@@ -57,7 +58,7 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 	if err != nil {
 		return nil, fmt.Errorf("Failed to connect to database! - %v", err)
 	}
-	globalLogger.Infof("Successfully connected to fasten sqlite db: %s\n", dsn)
+	globalLogger.Infof("Successfully connected to fasten postgres db: %s\n", dsn)
 
 	////verify journal mode
 	//var journalMode []map[string]interface{}
