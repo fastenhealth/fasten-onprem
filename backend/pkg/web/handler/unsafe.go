@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
@@ -65,25 +64,27 @@ func UnsafeRequestSource(c *gin.Context) {
 	//make sure we include all query string parameters with the raw request.
 	parsedUrl.RawQuery = c.Request.URL.Query().Encode()
 
+	//make sure we store the source credential information in the database, even if the request fails
+	defer func() {
+		//update source incase the access token/refresh token has been updated
+		sourceCredential := client.GetSourceCredential()
+		sourceCredentialConcrete, ok := sourceCredential.(*models.SourceCredential)
+		if !ok {
+			logger.Errorln("An error occurred while updating source credential, source credential is not of type *models.SourceCredential")
+			return
+		}
+		err = databaseRepo.UpdateSource(c, sourceCredentialConcrete)
+		if err != nil {
+			logger.Errorf("An error occurred while updating source credential: %v", err)
+			return
+		}
+		logger.Info("Successfully updated source credential")
+	}()
+
 	_, err = client.GetRequest(parsedUrl.String(), &resp)
 	if err != nil {
 		logger.Errorf("Error making raw request, %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error(), "data": resp})
-		return
-	}
-
-	//update source incase the access token/refresh token has been updated
-	sourceCredential := client.GetSourceCredential()
-	sourceCredentialConcrete, ok := sourceCredential.(*models.SourceCredential)
-	if !ok {
-		logger.Errorln("An error occurred while updating source credential, source credential is not of type *models.SourceCredential")
-		c.JSON(http.StatusOK, gin.H{"success": false, "data": resp, "error": fmt.Errorf("An error occurred while updating source credential, source credential is not of type *models.SourceCredential")})
-		return
-	}
-	err = databaseRepo.UpdateSource(c, sourceCredentialConcrete)
-	if err != nil {
-		logger.Errorf("An error occurred while updating source credential: %v", err)
-		c.JSON(http.StatusOK, gin.H{"success": false, "data": resp, "error": fmt.Errorf("An error occurred while updating source credential: %v", err)})
 		return
 	}
 
