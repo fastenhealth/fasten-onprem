@@ -3,6 +3,8 @@ import {BackgroundJob} from './background-job';
 
 export class Source extends LighthouseSourceMetadata{
   id?: string
+  created_at?: string
+  updated_at?: string
   user_id?: number
   source_type: string
   latest_background_job?: BackgroundJob
