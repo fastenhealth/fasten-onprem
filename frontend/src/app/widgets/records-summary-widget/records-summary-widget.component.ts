@@ -166,42 +166,49 @@ export class RecordsSummaryWidgetComponent extends DashboardWidgetComponent impl
 
     } as DashboardWidgetConfig
     super.ngOnInit();
-    this.loading = true
-    this.isEmpty = true
+    this.chartProcessQueryResults(null)
+  }
+
+  chartProcessQueryResults(queryResults: any[]) {
 
     this.fastenApi.getSummary().subscribe((summary: Summary) => {
-      this.summary = summary
+        this.summary = summary
+        for (let resourceTypeCount of summary.resource_type_counts) {
+          let foundGroup = false
+          for (let groupKey in this.groupLookup) {
+            let group = this.groupLookup[groupKey]
+            if (group.resourceTypes.indexOf(resourceTypeCount.resource_type) > -1) {
+              foundGroup = true
+              this.groupLookup[groupKey].count += resourceTypeCount.count
+              this.groupLookup[groupKey].includedResourceTypes.push(resourceTypeCount.resource_type)
+            }
+          }
 
-      for(let resourceTypeCount of summary.resource_type_counts){
-        let foundGroup = false
-        for(let groupKey in this.groupLookup){
-          let group = this.groupLookup[groupKey]
-          if(group.resourceTypes.indexOf(resourceTypeCount.resource_type) > -1){
-            foundGroup = true
-            this.groupLookup[groupKey].count += resourceTypeCount.count
-            this.groupLookup[groupKey].includedResourceTypes.push(resourceTypeCount.resource_type)
+          if (!foundGroup) {
+            this.groupLookup[resourceTypeCount.resource_type] = {
+              displayName: resourceTypeCount.resource_type,
+
+              resourceTypes: [resourceTypeCount.resource_type],
+              count: resourceTypeCount.count
+            }
           }
         }
 
-        if(!foundGroup){
-          console.log('no group found for ' + resourceTypeCount.resource_type)
-          this.groupLookup[resourceTypeCount.resource_type] = {
-            displayName: resourceTypeCount.resource_type,
+        //filter any groups with 0 counts
+        this.groupLookup = this.groupLookup.filter((group) => {
+          return group.count > 0
+        })
 
-            resourceTypes: [resourceTypeCount.resource_type],
-            count: resourceTypeCount.count
-          }
+        if(this.summary.resource_type_counts.length > 0){
+          this.isEmpty = false
         }
-      }
-
-      //filter any groups with 0 counts
-      this.groupLookup = this.groupLookup.filter((group) => {
-        return group.count > 0
+        this.loading = false
+      },
+      (error) => {
+        this.loading = false
+      },
+      () => {
+        console.log('completed getting summary')
       })
-
-    })
-    //call Summary endpoint
-    this.loading = false
-    this.isEmpty = false
   }
 }

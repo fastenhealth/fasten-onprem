@@ -1,8 +1,8 @@
 {
-  "id": "updated",
+  "id": "secondary",
   "schema_version": "1.0",
-  "title": "Updated Dashboard",
-  "description": "An example dashboard to show-off the power of Fasten widgets",
+  "title": "Secondary Dashboard",
+  "description": "An second dashboard to show-off the flexibility of the dashboard system.",
   "widgets": [
     {
       "title_text": "Records Summary",
