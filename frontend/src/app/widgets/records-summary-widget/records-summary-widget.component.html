@@ -20,150 +20,20 @@
           <div class="table-responsive">
             <table class="table mg-b-0">
               <tbody>
-              <tr>
+                <tr *ngFor="let groupInfo of groupLookup">
                 <td>
-                  <div class="az-img-user"><img src="assets/icons/allergies.svg" alt=""></div>
+                  <div class="az-img-user"><img src="assets/icons/{{groupInfo.imageName}}.svg" alt=""></div>
                 </td>
                 <td>
-                  <h6 class="mg-b-0 tx-inverse">Allergies</h6>
+                  <h6 class="mg-b-0 tx-inverse">{{groupInfo.displayName}}</h6>
+                  <small class="tx-11 tx-gray-500" *ngIf="groupInfo.includedResourceTypes.length > 1">
+                    <span *ngFor="let resourceTypes of groupInfo.includedResourceTypes">
+                      {{resourceTypes}}<br/>
+                    </span>
+                  </small>
                 </td>
                 <td>
-                  <h6 class="mg-b-0 tx-inverse">7</h6>
-                  <small class="tx-11 tx-gray-500">Records</small>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="az-img-user"><img src="assets/icons/clinicalnotes.svg" alt=""></div>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">Clinical Notes</h6>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">85</h6>
-                  <small class="tx-11 tx-gray-500">Records</small>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="az-img-user"><img src="assets/icons/careplans.svg" alt=""></div>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">Care Plans</h6>
-                  <small class="tx-11 tx-gray-500">Appointments<br/>Medical Conditions<br/>Health Goals<br/>Orders</small>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">83</h6>
-                  <small class="tx-11 tx-gray-500">Records</small>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="az-img-user"><img src="assets/icons/careteam.svg" alt=""></div>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">Care Team</h6>
-                  <small class="tx-11 tx-gray-500">Primary Care Provider<br/>Provider Details</small>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">8</h6>
-                  <small class="tx-11 tx-gray-500">Records</small>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="az-img-user"><img src="assets/icons/demographics.svg" alt=""></div>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">Demographic Information</h6>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">3</h6>
-                  <small class="tx-11 tx-gray-500">Records</small>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="az-img-user"><img src="assets/icons/labresults.svg" alt=""></div>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">Lab Results</h6>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">3</h6>
-                  <small class="tx-11 tx-gray-500">Records</small>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="az-img-user"><img src="assets/icons/healthgoals.svg" alt=""></div>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">Health Goals</h6>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">2</h6>
-                  <small class="tx-11 tx-gray-500">Records</small>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="az-img-user"><img src="assets/icons/conditions.svg" alt=""></div>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">Health Issues</h6>
-                  <small class="tx-11 tx-gray-500">Conditions</small>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">6</h6>
-                  <small class="tx-11 tx-gray-500">Records</small>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="az-img-user"><img src="assets/icons/immunizations.svg" alt=""></div>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">Immunizations</h6>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">9</h6>
-                  <small class="tx-11 tx-gray-500">Records</small>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="az-img-user"><img src="assets/icons/implants.svg" alt=""></div>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">Implants</h6>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">22</h6>
-                  <small class="tx-11 tx-gray-500">Records</small>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="az-img-user"><img src="assets/icons/medications.svg" alt=""></div>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">Medications</h6>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">22</h6>
-                  <small class="tx-11 tx-gray-500">Records</small>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="az-img-user"><img src="assets/icons/procedures.svg" alt=""></div>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">Procedures</h6>
-                </td>
-                <td>
-                  <h6 class="mg-b-0 tx-inverse">22</h6>
+                  <h6 class="mg-b-0 tx-inverse">{{groupInfo.count}}</h6>
                   <small class="tx-11 tx-gray-500">Records</small>
                 </td>
               </tr>
