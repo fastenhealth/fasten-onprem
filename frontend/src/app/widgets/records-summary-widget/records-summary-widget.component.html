@@ -1,0 +1,47 @@
+<ng-container [ngTemplateOutlet]="loading ? showLoading : (!loading && isEmpty) ? showEmpty : showChart"></ng-container>
+
+<ng-template #showLoading>
+  <loading-widget></loading-widget>
+</ng-template>
+
+<ng-template #showEmpty>
+  <empty-widget></empty-widget>
+</ng-template>
+
+<ng-template #showChart>
+  <div class="card card-dashboard-sixteen">
+    <div class="card-header">
+      <h6 class="card-title">Medical Records</h6>
+    </div><!-- card-header -->
+    <div class="card-body">
+
+      <div class="row">
+        <div class="col-12">
+          <div class="table-responsive">
+            <table class="table mg-b-0">
+              <tbody>
+                <tr *ngFor="let groupInfo of groupLookup">
+                <td>
+                  <div class="az-img-user"><img src="assets/icons/{{groupInfo.imageName}}.svg" alt=""></div>
+                </td>
+                <td>
+                  <h6 class="mg-b-0 tx-inverse">{{groupInfo.displayName}}</h6>
+                  <small class="tx-11 tx-gray-500" *ngIf="groupInfo.includedResourceTypes.length > 1">
+                    <span *ngFor="let resourceTypes of groupInfo.includedResourceTypes">
+                      {{resourceTypes}}<br/>
+                    </span>
+                  </small>
+                </td>
+                <td>
+                  <h6 class="mg-b-0 tx-inverse">{{groupInfo.count}}</h6>
+                  <small class="tx-11 tx-gray-500">Records</small>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div><!-- card-body -->
+  </div>
+</ng-template><!-- card -->

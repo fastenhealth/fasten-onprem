@@ -1,0 +1,45 @@
+<svg id="Icon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #c0c7d2;
+      }
+
+      .cls-2 {
+        fill: #dfe3e8;
+      }
+
+      .cls-3 {
+        fill: #f8f9fb;
+      }
+
+      .cls-4 {
+        fill: #fb7373;
+      }
+
+      .cls-5 {
+        fill: #bde9ff;
+      }
+
+      .cls-6 {
+        fill: #d1d6dd;
+      }
+    </style>
+  </defs>
+  <g>
+    <path class="cls-1" d="M51,58H13a7,7,0,0,1-7-7V21H58V51A7,7,0,0,1,51,58Z"/>
+    <path class="cls-2" d="M51,57H13a7,7,0,0,1-7-7V20H58V50A7,7,0,0,1,51,57Z"/>
+    <path class="cls-3" d="M51,55H13a7,7,0,0,1-7-7V19H58V48A7,7,0,0,1,51,55Z"/>
+    <path class="cls-4" d="M13,8H51a7,7,0,0,1,7,7v7a0,0,0,0,1,0,0H6a0,0,0,0,1,0,0V15A7,7,0,0,1,13,8Z"/>
+    <g>
+      <rect class="cls-4" x="40" y="39" width="10" height="10" rx="2.14"/>
+      <rect class="cls-5" x="26.5" y="39" width="10" height="10" rx="2.14"/>
+      <rect class="cls-5" x="13.5" y="39" width="10" height="10" rx="2.14"/>
+      <rect class="cls-5" x="40" y="26" width="10" height="10" rx="2.14"/>
+      <rect class="cls-5" x="26.5" y="26" width="10" height="10" rx="2.14"/>
+      <rect class="cls-5" x="13.5" y="26" width="10" height="10" rx="2.14"/>
+    </g>
+    <rect class="cls-6" x="16.82" y="4" width="5.36" height="8.93" rx="2.61"/>
+    <rect class="cls-6" x="41.82" y="4" width="5.36" height="8.93" rx="2.61"/>
+  </g>
+</svg>

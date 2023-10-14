@@ -1,0 +1,33 @@
+<svg id="Icon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fb7373;
+      }
+
+      .cls-2 {
+        fill: #ffb1c0;
+      }
+
+      .cls-3 {
+        fill: #fff;
+        stroke: #ffb1c0;
+        stroke-miterlimit: 10;
+        stroke-width: 2px;
+      }
+
+      .cls-4 {
+        fill: #fedada;
+        opacity: 0.25;
+      }
+    </style>
+  </defs>
+  <g>
+    <rect class="cls-1" x="6" y="6" width="52" height="52" rx="7.58"/>
+    <path class="cls-2" d="M53.41,19.59a2,2,0,0,0-2.82,0L32,38.17,19.41,25.59a2,2,0,0,0-2.82,0L6,36.17v5.66l12-12L30.59,42.41a2,2,0,0,0,2.82,0l20-20A2,2,0,0,0,53.41,19.59Z"/>
+    <circle class="cls-3" cx="18" cy="28" r="4"/>
+    <circle class="cls-3" cx="32" cy="41" r="4"/>
+    <circle class="cls-3" cx="52.5" cy="20.5" r="4"/>
+    <rect class="cls-4" x="6" y="24" width="52" height="18"/>
+  </g>
+</svg>

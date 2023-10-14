@@ -5,124 +5,29 @@
   "description": "An example dashboard to show-off the power of Fasten widgets",
   "widgets": [
     {
-      "title_text": "Diabetes Tracking",
+      "title_text": "Records Summary",
       "description_text": "Track key metrics for your chronic disease (eg. Diabetes). The data within this widget is not reflective of your health record, and is only present for demonstrational purposes.",
       "x": 0,
       "y": 0,
       "width": 8,
-      "height": 5,
-      "item_type": "complex-line-widget"
-    },
-    {
-      "title_text": "Weight",
-      "description_text": "",
-      "x": 8,
-      "y": 0,
-      "width": 2,
-      "height": 2,
-      "item_type": "simple-line-chart-widget",
-      "queries": [{
-        "q": {
-          "select": [
-            "valueQuantity.value as data",
-            "valueQuantity.unit as unit",
-            "(effectiveDateTime | issued).first() as label"
-          ],
-          "from": "Observation",
-          "where": {
-           "code": "http://loinc.org|29463-7,http://loinc.org|3141-9,http://snomed.info/sct|27113001"
-          }
-        }
-      }],
-      "parsing": {
-        "xAxisKey": "label",
-        "yAxisKey": "data"
-      }
-    },
-    {
-      "title_text": "Height",
-      "description_text": "",
-      "x": 10,
-      "y": 0,
-      "width": 2,
-      "height": 2,
-      "item_type": "simple-line-chart-widget",
-      "queries": [{
-        "q": {
-          "select": [
-            "valueQuantity.value as data",
-            "valueQuantity.unit as unit",
-            "(effectiveDateTime | issued).first() as label"
-          ],
-          "from": "Observation",
-          "where": {
-            "code": "http://loinc.org|8302-2"
-          }
-        }
-      }],
-      "parsing": {
-        "xAxisKey": "label",
-        "yAxisKey": "data"
-      }
-    },
-    {
-      "title_text": "Blood Pressure",
-      "description_text": "How much pressure your blood is exerting against your artery walls when the heart beats",
-      "x": 8,
-      "y": 2,
-      "width": 4,
-      "height": 3,
-      "item_type": "grouped-bar-chart-widget",
-      "queries": [
-        {
-          "q": {
-            "select": [
-              "component.where(code.coding.system = 'http://loinc.org' and code.coding.code = '8462-4').valueQuantity.value as data",
-              "component.where(code.coding.system = 'http://loinc.org' and code.coding.code = '8462-4').valueQuantity.unit as unit"
-            ],
-            "from": "Observation",
-            "where": {
-              "componentCode": "http://loinc.org|8462-4"
-            }
-          },
-          "dataset_options": {
-            "label": "Diastolic"
-          }
-        },
-        {
-          "q": {
-            "select": [
-              "component.where(code.coding.system = 'http://loinc.org' and code.coding.code = '8480-6').valueQuantity.value as data",
-              "component.where(code.coding.system = 'http://loinc.org' and code.coding.code = '8480-6').valueQuantity.unit as unit"
-            ],
-            "from": "Observation",
-            "where": {
-              "componentCode": "http://loinc.org|8480-6"
-            }
-          },
-          "dataset_options": {
-            "label": "Systolic"
-          }
-        }],
-      "parsing": {
-        "xAxisKey": "id",
-        "yAxisKey": "data"
-      }
+      "height": 6,
+      "item_type": "records-summary-widget"
     },
     {
       "title_text": "Patient Vitals",
       "description_text": "",
-      "x": 0,
-      "y": 5,
+      "x": 8,
+      "y": 0,
       "width": 4,
-      "height": 5,
+      "height": 6,
       "item_type": "patient-vitals-widget"
     },
+
     {
       "title_text": "Observations by Type",
       "description_text": "",
-      "x": 4,
-      "y": 5,
+      "x": 0,
+      "y": 6,
       "width": 8,
       "height": 5,
       "item_type": "donut-chart-widget",
@@ -141,11 +46,113 @@
         "key": "value"
       }
     },
+
+    {
+      "title_text": "Weight",
+      "description_text": "",
+      "x": 8,
+      "y": 6,
+      "width": 2,
+      "height": 2,
+      "item_type": "simple-line-chart-widget",
+      "queries": [{
+        "q": {
+          "select": [
+            "valueQuantity.value as data",
+            "valueQuantity.unit as unit",
+            "(effectiveDateTime | issued).first() as label"
+          ],
+          "from": "Observation",
+          "where": {
+           "code": "http://loinc.org|29463-7,http://loinc.org|3141-9,http://snomed.info/sct|27113001"
+          },
+          "limit": 50
+        }
+      }],
+      "parsing": {
+        "xAxisKey": "label",
+        "yAxisKey": "data"
+      }
+    },
+    {
+      "title_text": "Height",
+      "description_text": "",
+      "x": 10,
+      "y": 6,
+      "width": 2,
+      "height": 2,
+      "item_type": "simple-line-chart-widget",
+      "queries": [{
+        "q": {
+          "select": [
+            "valueQuantity.value as data",
+            "valueQuantity.unit as unit",
+            "(effectiveDateTime | issued).first() as label"
+          ],
+          "from": "Observation",
+          "where": {
+            "code": "http://loinc.org|8302-2"
+          },
+          "limit": 50
+        }
+      }],
+      "parsing": {
+        "xAxisKey": "label",
+        "yAxisKey": "data"
+      }
+    },
+    {
+      "title_text": "Blood Pressure",
+      "description_text": "How much pressure your blood is exerting against your artery walls when the heart beats",
+      "x": 8,
+      "y": 8,
+      "width": 4,
+      "height": 3,
+      "item_type": "grouped-bar-chart-widget",
+      "queries": [
+        {
+          "q": {
+            "select": [
+              "component.where(code.coding.system = 'http://loinc.org' and code.coding.code = '8462-4').valueQuantity.value as data",
+              "component.where(code.coding.system = 'http://loinc.org' and code.coding.code = '8462-4').valueQuantity.unit as unit"
+            ],
+            "from": "Observation",
+            "where": {
+              "componentCode": "http://loinc.org|8462-4"
+            },
+            "limit": 50
+          },
+          "dataset_options": {
+            "label": "Diastolic"
+          }
+        },
+        {
+          "q": {
+            "select": [
+              "component.where(code.coding.system = 'http://loinc.org' and code.coding.code = '8480-6').valueQuantity.value as data",
+              "component.where(code.coding.system = 'http://loinc.org' and code.coding.code = '8480-6').valueQuantity.unit as unit"
+            ],
+            "from": "Observation",
+            "where": {
+              "componentCode": "http://loinc.org|8480-6"
+            },
+            "limit": 50
+          },
+          "dataset_options": {
+            "label": "Systolic"
+          }
+        }],
+      "parsing": {
+        "xAxisKey": "id",
+        "yAxisKey": "data"
+      }
+    },
+
     {
       "title_text": "Compliance",
       "description_text": "Use to track important healthcare and medical tasks.",
       "x": 0,
-      "y": 10,
+      "y": 11,
       "width": 4,
       "height": 2,
       "item_type": "dual-gauges-widget",
@@ -184,7 +191,7 @@
       "title_text": "Recent Encounters",
       "description_text": "Recent interactions with healthcare providers",
       "x": 4,
-      "y": 10,
+      "y": 11,
       "width": 8,
       "height": 4,
       "item_type": "table-widget",
@@ -197,7 +204,8 @@
             "participant.individual.display as provider"
           ],
           "from": "Encounter",
-          "where": {}
+          "where": {},
+          "limit": 50
         }
       }],
       "parsing": {

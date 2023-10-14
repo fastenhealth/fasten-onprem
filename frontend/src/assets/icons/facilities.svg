@@ -1,0 +1,38 @@
+<svg id="Icon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #706e85;
+      }
+
+      .cls-2 {
+        fill: #c0c7d2;
+      }
+    </style>
+  </defs>
+  <rect class="cls-1" x="4" y="57" width="56" height="3" rx="1.38"/>
+  <path class="cls-2" d="M16.65,8.73H47.35A4.65,4.65,0,0,1,52,13.38V57a0,0,0,0,1,0,0H12a0,0,0,0,1,0,0V13.38A4.65,4.65,0,0,1,16.65,8.73Z"/>
+  <g>
+    <rect class="cls-1" x="16.55" y="22.66" width="4.88" height="5.77" rx="0.65"/>
+    <rect class="cls-1" x="16.55" y="31.31" width="4.88" height="5.77" rx="0.65"/>
+    <rect class="cls-1" x="16.55" y="39.97" width="4.88" height="5.77" rx="0.65"/>
+    <rect class="cls-1" x="25.57" y="22.66" width="4.88" height="5.77" rx="0.65"/>
+    <rect class="cls-1" x="25.57" y="31.31" width="4.88" height="5.77" rx="0.65"/>
+    <rect class="cls-1" x="25.57" y="39.97" width="4.88" height="5.77" rx="0.65"/>
+  </g>
+  <g>
+    <rect class="cls-1" x="34.55" y="22.66" width="4.88" height="5.77" rx="0.65"/>
+    <rect class="cls-1" x="34.55" y="31.31" width="4.88" height="5.77" rx="0.65"/>
+    <rect class="cls-1" x="34.55" y="39.97" width="4.88" height="5.77" rx="0.65"/>
+    <rect class="cls-1" x="43.57" y="22.66" width="4.88" height="5.77" rx="0.65"/>
+    <rect class="cls-1" x="43.57" y="31.31" width="4.88" height="5.77" rx="0.65"/>
+    <rect class="cls-1" x="43.57" y="39.97" width="4.88" height="5.77" rx="0.65"/>
+  </g>
+  <rect class="cls-1" x="34.55" y="14.14" width="4.88" height="5.77" rx="0.65"/>
+  <rect class="cls-1" x="26" y="49" width="13" height="7" rx="1.17"/>
+  <rect class="cls-1" x="43.57" y="14.14" width="4.88" height="5.77" rx="0.65"/>
+  <rect class="cls-1" x="16.55" y="14.14" width="4.88" height="5.77" rx="0.65"/>
+  <rect class="cls-1" x="25.57" y="14.14" width="4.88" height="5.77" rx="0.65"/>
+  <path class="cls-2" d="M21.87,5.89H44.13a.87.87,0,0,1,.87.87v2a0,0,0,0,1,0,0H21a0,0,0,0,1,0,0v-2A.87.87,0,0,1,21.87,5.89Z"/>
+  <path class="cls-2" d="M25.58,4H40.42a.58.58,0,0,1,.58.58V5.89a0,0,0,0,1,0,0H25a0,0,0,0,1,0,0V4.58A.58.58,0,0,1,25.58,4Z"/>
+</svg>

@@ -11,15 +11,7 @@ import { GridHTMLElement, GridItemHTMLElement, GridStack, GridStackNode, GridSta
 
 import { GridItemCompHTMLElement, GridstackItemComponent } from './gridstack-item.component';
 import {CommonModule} from '@angular/common';
-import {WidgetsModule} from '../../widgets/widgets.module';
-import {ComplexLineWidgetComponent} from '../../widgets/complex-line-widget/complex-line-widget.component';
-import {DashboardWidgetComponent} from '../../widgets/dashboard-widget/dashboard-widget.component';
-import {DonutChartWidgetComponent} from '../../widgets/donut-chart-widget/donut-chart-widget.component';
-import {DualGaugesWidgetComponent} from '../../widgets/dual-gauges-widget/dual-gauges-widget.component';
-import {GroupedBarChartWidgetComponent} from '../../widgets/grouped-bar-chart-widget/grouped-bar-chart-widget.component';
-import {PatientVitalsWidgetComponent} from '../../widgets/patient-vitals-widget/patient-vitals-widget.component';
-import {SimpleLineChartWidgetComponent} from '../../widgets/simple-line-chart-widget/simple-line-chart-widget.component';
-import {TableWidgetComponent} from '../../widgets/table-widget/table-widget.component';
+import {WidgetsModule, WidgetComponents} from '../../widgets/widgets.module';
 import {DashboardWidgetComponentInterface} from '../../widgets/dashboard-widget-component-interface';
 
 /** events handlers emitters signature for different events */
@@ -137,16 +129,7 @@ export class GridstackComponent implements OnInit, AfterContentInit, OnDestroy {
   ) {
 
     // register all our dynamic components created in the grid
-    GridstackComponent.addComponentToSelectorType([
-      ComplexLineWidgetComponent,
-      DashboardWidgetComponent,
-      DonutChartWidgetComponent,
-      DualGaugesWidgetComponent,
-      GroupedBarChartWidgetComponent,
-      PatientVitalsWidgetComponent,
-      SimpleLineChartWidgetComponent,
-      TableWidgetComponent,
-    ]);
+    GridstackComponent.addComponentToSelectorType(WidgetComponents());
     // set globally our method to create the right widget type
     GridStack.addRemoveCB = gsCreateNgComponents;
     GridStack.saveCB = gsSaveAdditionalNgInfo;
