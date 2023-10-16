@@ -10,6 +10,8 @@ import {attributeXTime} from './utils';
 export class ListBinaryComponent extends ListGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
     { title: 'Content-Type', versions: '*', getter: c => c.contentType },
+    { title: 'ID', versions: '*', getter: c => c.id },
+    { title: 'Last Updated', versions: '*', getter: c => c.meta?.lastUpdated },
     { title: 'Size', versions: '*', getter: c => Math.floor((c.data?.length *4 +2)/3) }
   ]
 }
