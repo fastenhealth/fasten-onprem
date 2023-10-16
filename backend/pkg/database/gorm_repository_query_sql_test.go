@@ -3,6 +3,12 @@ package database
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"os"
+	"strings"
+	"testing"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
@@ -12,11 +18,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"gorm.io/gorm"
-	"io/ioutil"
-	"log"
-	"os"
-	"strings"
-	"testing"
 )
 
 // Define the suite, and absorb the built-in basic suite
@@ -42,6 +43,7 @@ func (suite *RepositorySqlTestSuite) BeforeTest(suiteName, testName string) {
 
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
@@ -71,7 +73,7 @@ func TestRepositorySqlTestSuite(t *testing.T) {
 
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL() {
 	//setup
-	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo := suite.TestRepository.(*GormRepository)
 	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
 
 	//test
@@ -108,7 +110,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL() {
 
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithMultipleWhereConditions() {
 	//setup
-	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo := suite.TestRepository.(*GormRepository)
 	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
 
 	//test
@@ -146,7 +148,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithMultipleWhereCon
 
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveOrderByAggregation() {
 	//setup
-	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo := suite.TestRepository.(*GormRepository)
 	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
 
 	//test
@@ -183,7 +185,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveOrderBy
 
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithKeywordOrderByAggregation() {
 	//setup
-	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo := suite.TestRepository.(*GormRepository)
 	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
 
 	//test
@@ -218,7 +220,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithKeywordOrderByAg
 
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithComplexOrderByAggregation() {
 	//setup
-	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo := suite.TestRepository.(*GormRepository)
 	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
 
 	//test
@@ -255,7 +257,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithComplexOrderByAg
 
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveCountByAggregation() {
 	//setup
-	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo := suite.TestRepository.(*GormRepository)
 	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
 
 	//test
@@ -292,7 +294,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveCountBy
 
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithKeywordCountByAggregation() {
 	//setup
-	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo := suite.TestRepository.(*GormRepository)
 	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
 
 	//test
@@ -329,7 +331,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithKeywordCountByAg
 
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithWildcardCountByAggregation() {
 	//setup
-	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo := suite.TestRepository.(*GormRepository)
 	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
 
 	//test
@@ -364,7 +366,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithWildcardCountByA
 
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithComplexCountByAggregation() {
 	//setup
-	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo := suite.TestRepository.(*GormRepository)
 	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
 
 	//test
@@ -401,7 +403,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithComplexCountByAg
 
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithComplexGroupByWithOrderByMaxFnAggregation() {
 	//setup
-	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo := suite.TestRepository.(*GormRepository)
 	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
 
 	//test
@@ -441,7 +443,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithComplexGroupByWi
 
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithTokenGroupByNoModifier() {
 	//setup
-	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo := suite.TestRepository.(*GormRepository)
 	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
 
 	//test
@@ -478,7 +480,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithTokenGroupByNoMo
 
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithTokenGroupByNoModifierWithLimit() {
 	//setup
-	sqliteRepo := suite.TestRepository.(*SqliteRepository)
+	sqliteRepo := suite.TestRepository.(*GormRepository)
 	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
 
 	//test

@@ -2,6 +2,10 @@ package database
 
 import (
 	"context"
+	"strings"
+	"testing"
+	"time"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
@@ -9,9 +13,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
-	"strings"
-	"testing"
-	"time"
 )
 
 // mimic tests from https://hl7.org/fhir/r4/search.html#token
@@ -259,6 +260,7 @@ func (suite *RepositoryTestSuite) TestQueryResources_SQL() {
 	//setup
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
@@ -270,7 +272,7 @@ func (suite *RepositoryTestSuite) TestQueryResources_SQL() {
 	err = dbRepo.CreateUser(context.Background(), userModel)
 	require.NoError(suite.T(), err)
 
-	sqliteRepo := dbRepo.(*SqliteRepository)
+	sqliteRepo := dbRepo.(*GormRepository)
 	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
 
 	//test

@@ -3,19 +3,20 @@ package database
 import (
 	"context"
 	"fmt"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/google/uuid"
 )
 
 // LoadSettings will retrieve settings from the database, store them in the AppConfig object, and return a Settings struct
-func (sr *SqliteRepository) LoadUserSettings(ctx context.Context) (*models.UserSettings, error) {
-	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
+func (gr *GormRepository) LoadUserSettings(ctx context.Context) (*models.UserSettings, error) {
+	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
 		return nil, currentUserErr
 	}
 
 	settingsEntries := []models.UserSettingEntry{}
-	if err := sr.GormClient.
+	if err := gr.GormClient.
 		WithContext(ctx).
 		Where(models.UserSettingEntry{
 			UserID: currentUser.ID,
@@ -38,8 +39,8 @@ func (sr *SqliteRepository) LoadUserSettings(ctx context.Context) (*models.UserS
 // testing
 // curl -d '{"metrics": { "notify_level": 5, "status_filter_attributes": 5, "status_threshold": 5 }}' -H "Content-Type: application/json" -X POST http://localhost:9090/api/settings
 // SaveSettings will update settings in AppConfig object, then save the settings to the database.
-func (sr *SqliteRepository) SaveUserSettings(ctx context.Context, newSettings *models.UserSettings) error {
-	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
+func (gr *GormRepository) SaveUserSettings(ctx context.Context, newSettings *models.UserSettings) error {
+	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
 		return currentUserErr
 	}
@@ -47,7 +48,7 @@ func (sr *SqliteRepository) SaveUserSettings(ctx context.Context, newSettings *m
 	//retrieve current settings from the database
 	currentSettingsEntries := []models.UserSettingEntry{}
 
-	if err := sr.GormClient.
+	if err := gr.GormClient.
 		WithContext(ctx).
 		Where(models.UserSettingEntry{
 			UserID: currentUser.ID,
@@ -66,8 +67,8 @@ func (sr *SqliteRepository) SaveUserSettings(ctx context.Context, newSettings *m
 	for ndx, settingsEntry := range newSettingsEntries {
 
 		// store in database.
-		//TODO: this should be `sr.gormClient.Updates(&settingsEntries).Error`
-		err := sr.GormClient.
+		//TODO: this should be `gr.gormClient.Updates(&settingsEntries).Error`
+		err := gr.GormClient.
 			WithContext(ctx).
 			Model(&models.UserSettingEntry{}).
 			Where([]uuid.UUID{settingsEntry.ID}).
@@ -80,7 +81,7 @@ func (sr *SqliteRepository) SaveUserSettings(ctx context.Context, newSettings *m
 	return nil
 }
 
-func (sr *SqliteRepository) PopulateDefaultUserSettings(ctx context.Context, userId uuid.UUID) error {
+func (gr *GormRepository) PopulateDefaultUserSettings(ctx context.Context, userId uuid.UUID) error {
 
 	//retrieve current settings from the database
 	settingsEntries := []models.UserSettingEntry{}
@@ -92,6 +93,6 @@ func (sr *SqliteRepository) PopulateDefaultUserSettings(ctx context.Context, use
 		SettingValueArray:     []string{},
 	})
 
-	return sr.GormClient.WithContext(ctx).Create(settingsEntries).Error
+	return gr.GormClient.WithContext(ctx).Create(settingsEntries).Error
 
 }

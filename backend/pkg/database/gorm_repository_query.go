@@ -3,6 +3,10 @@ package database
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	"github.com/iancoleman/strcase"
@@ -10,9 +14,6 @@ import (
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
 	"gorm.io/gorm"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type SearchParameterType string
@@ -52,9 +53,9 @@ const TABLE_ALIAS = "fhir"
 // )
 // AND (user_id = "6efcd7c5-3f29-4f0d-926d-a66ff68bbfc2")
 // GROUP BY `fhir`.`id`
-func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.QueryResource) (interface{}, error) {
+func (gr *GormRepository) QueryResources(ctx context.Context, query models.QueryResource) (interface{}, error) {
 
-	sqlQuery, err := sr.sqlQueryResources(ctx, query)
+	sqlQuery, err := gr.sqlQueryResources(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +75,7 @@ func (sr *SqliteRepository) QueryResources(ctx context.Context, query models.Que
 
 // see QueryResources
 // this function has all the logic, but should only be called directly for testing
-func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.QueryResource) (*gorm.DB, error) {
+func (gr *GormRepository) sqlQueryResources(ctx context.Context, query models.QueryResource) (*gorm.DB, error) {
 	//todo, until we actually parse the select statement, we will just return all resources based on "from"
 
 	//SECURITY: this is required to ensure that only valid resource types are queried (since it's controlled by the user)
@@ -134,7 +135,7 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 	}
 
 	//SECURITY: for safety, we will always add/override the current user_id to the where clause. This is to ensure that the user doesnt attempt to override this value in their own where clause
-	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
+	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
 		return nil, currentUserErr
 	}
@@ -234,7 +235,7 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 	fromClauses = lo.Uniq(fromClauses)
 	fromClauses = lo.Compact(fromClauses)
 
-	sqlQuery := sr.GormClient.WithContext(ctx).
+	sqlQuery := gr.GormClient.WithContext(ctx).
 		Select(strings.Join(selectClauses, ", ")).
 		Where(strings.Join(whereClauses, " AND "), whereNamedParameters).
 		Group(groupClause).
@@ -253,7 +254,7 @@ func (sr *SqliteRepository) sqlQueryResources(ctx context.Context, query models.
 }
 
 /// INTERNAL functionality. These functions are exported for testing, but are not available in the Interface
-//TODO: dont export these, instead use casting to convert the interface to the SqliteRepository struct, then call ehese functions directly
+//TODO: dont export these, instead use casting to convert the interface to the GormRepository struct, then call ehese functions directly
 
 type SearchParameter struct {
 	Name     string

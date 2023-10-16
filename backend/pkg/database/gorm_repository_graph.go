@@ -3,14 +3,15 @@ package database
 import (
 	"context"
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/dominikbraun/graph"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
 	"golang.org/x/exp/slices"
-	"log"
-	"strings"
 )
 
 type VertexResourcePlaceholder struct {
@@ -28,8 +29,8 @@ func (rp *VertexResourcePlaceholder) ID() string {
 // Retrieve a list of all fhir resources (vertex), and a list of all associations (edge)
 // Generate a graph
 // return list of root nodes, and their flattened related resources.
-func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, *models.ResourceGraphMetadata, error) {
-	currentUser, currentUserErr := sr.GetCurrentUser(ctx)
+func (gr *GormRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, *models.ResourceGraphMetadata, error) {
+	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
 		return nil, nil, currentUserErr
 	}
@@ -45,7 +46,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 	var relatedResourceRelationships []models.RelatedResource
 
 	// SELECT * FROM related_resources WHERE user_id = "53c1e930-63af-46c9-b760-8e83cbc1abd9";
-	result := sr.GormClient.WithContext(ctx).
+	result := gr.GormClient.WithContext(ctx).
 		Where(models.RelatedResource{
 			ResourceBaseUserID: currentUser.ID,
 		}).
@@ -59,7 +60,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 	g := graph.New(resourceVertexId, graph.Directed(), graph.Acyclic(), graph.Rooted())
 
 	//// Get list of all resources TODO - REPLACED THIS
-	//wrappedResourceModels, err := sr.ListResources(ctx, models.ListResourceQueryOptions{})
+	//wrappedResourceModels, err := gr.ListResources(ctx, models.ListResourceQueryOptions{})
 	//if err != nil {
 	//	return nil, err
 	//}
@@ -109,7 +110,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 	}
 
 	//add recriprocial relationships (depending on the graph type)
-	relatedResourceRelationships = sr.PopulateGraphTypeReciprocalRelationships(graphType, relatedResourceRelationships)
+	relatedResourceRelationships = gr.PopulateGraphTypeReciprocalRelationships(graphType, relatedResourceRelationships)
 
 	//add edges to graph
 	for _, relationship := range relatedResourceRelationships {
@@ -121,7 +122,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 
 		if err != nil {
 			//this may occur because vertices may not exist
-			sr.Logger.Warnf("ignoring, an error occurred while adding edge: %v", err)
+			gr.Logger.Warnf("ignoring, an error occurred while adding edge: %v", err)
 		}
 	}
 
@@ -200,7 +201,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 	// Step 2: now that we've created a relationship graph using placeholders, we need to determine which page of resources to return
 	// and look up the actual resources from the database.
 
-	resourceListDictionary, totalElements, err := sr.InflateResourceGraphAtPage(resourcePlaceholderListDictionary, options.Page)
+	resourceListDictionary, totalElements, err := gr.InflateResourceGraphAtPage(resourcePlaceholderListDictionary, options.Page)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error while paginating & inflating resource graph: %v", err)
 	}
@@ -215,7 +216,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 			SourceID:     resource.SourceID.String(),
 			UserID:       resource.UserID.String(),
 		})
-		sr.Logger.Debugf("populating resourcePlaceholder: %s", vertexId)
+		gr.Logger.Debugf("populating resourcePlaceholder: %s", vertexId)
 
 		resource.RelatedResource = []*models.ResourceBase{}
 
@@ -226,9 +227,9 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 			//skip the current resourcePlaceholder if it's referenced in this list.
 			//also skip the current resourcePlaceholder if its a Binary resourcePlaceholder (which is a special case)
 			if vertexId != resourceVertexId(relatedResourcePlaceholder) && relatedResourcePlaceholder.ResourceType != "Binary" {
-				relatedResource, err := sr.GetResourceByResourceTypeAndId(ctx, relatedResourcePlaceholder.ResourceType, relatedResourcePlaceholder.ResourceID)
+				relatedResource, err := gr.GetResourceByResourceTypeAndId(ctx, relatedResourcePlaceholder.ResourceType, relatedResourcePlaceholder.ResourceID)
 				if err != nil {
-					sr.Logger.Warnf("ignoring, cannot safely handle error which occurred while getting related resource: %v", err)
+					gr.Logger.Warnf("ignoring, cannot safely handle error which occurred while getting related resource: %v", err)
 					return true
 				}
 				resource.RelatedResource = append(
@@ -268,9 +269,9 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 				vertexId := resourceKeysVertexId(currentResource.SourceID.String(), currentResource.SourceResourceType, currentResource.SourceResourceID)
 				for relatedVertexId, _ := range adjacencyMap[vertexId] {
 					relatedResourcePlaceholder, _ := g.Vertex(relatedVertexId)
-					relatedResourceFhir, err := sr.GetResourceByResourceTypeAndId(ctx, relatedResourcePlaceholder.ResourceType, relatedResourcePlaceholder.ResourceID)
+					relatedResourceFhir, err := gr.GetResourceByResourceTypeAndId(ctx, relatedResourcePlaceholder.ResourceType, relatedResourcePlaceholder.ResourceID)
 					if err != nil {
-						sr.Logger.Warnf("ignoring, cannot safely handle error which occurred while getting related resource (flatten=false): %v", err)
+						gr.Logger.Warnf("ignoring, cannot safely handle error which occurred while getting related resource (flatten=false): %v", err)
 						continue
 					}
 					flattenRelatedResourcesFn(relatedResourceFhir)
@@ -295,7 +296,7 @@ func (sr *SqliteRepository) GetFlattenedResourceGraph(ctx context.Context, graph
 // - sort the root resources by date, desc
 // - use the page number + page size to determine which root resources to return
 // - return a dictionary of "source" resource lists
-func (sr *SqliteRepository) InflateResourceGraphAtPage(resourcePlaceholderListDictionary map[string][]*VertexResourcePlaceholder, page int) (map[string][]*models.ResourceBase, int, error) {
+func (gr *GormRepository) InflateResourceGraphAtPage(resourcePlaceholderListDictionary map[string][]*VertexResourcePlaceholder, page int) (map[string][]*models.ResourceBase, int, error) {
 	totalElements := 0
 	// Step 3a: since we cant calulate the sort order until the resources are loaded, we need to load all the root resources first.
 
@@ -319,7 +320,7 @@ func (sr *SqliteRepository) InflateResourceGraphAtPage(resourcePlaceholderListDi
 			return nil, totalElements, err
 		}
 		var tableWrappedResourceModels []models.ResourceBase
-		sr.GormClient.
+		gr.GormClient.
 			Where("(user_id, source_id, source_resource_type, source_resource_id) IN ?", selectList).
 			Table(tableName).
 			Find(&tableWrappedResourceModels)
@@ -351,15 +352,15 @@ func (sr *SqliteRepository) InflateResourceGraphAtPage(resourcePlaceholderListDi
 	return resourceListDictionary, totalElements, nil
 }
 
-//We need to support the following types of graphs:
+// We need to support the following types of graphs:
 // - Medical History
 // - AddressBook (contacts)
 // - Medications
 // - Billing Report
-//edges are always "strongly connected", however "source" nodes (roots, like Condition or Encounter -- depending on ) are only one way.
-//add an edge from every resource to its related resource. Keep in mind that FHIR resources may not contain reciprocal edges, so we ensure the graph is rooted by flipping any
-//related resources that are "Condition" or "Encounter"
-func (sr *SqliteRepository) PopulateGraphTypeReciprocalRelationships(graphType pkg.ResourceGraphType, relationships []models.RelatedResource) []models.RelatedResource {
+// edges are always "strongly connected", however "source" nodes (roots, like Condition or Encounter -- depending on ) are only one way.
+// add an edge from every resource to its related resource. Keep in mind that FHIR resources may not contain reciprocal edges, so we ensure the graph is rooted by flipping any
+// related resources that are "Condition" or "Encounter"
+func (gr *GormRepository) PopulateGraphTypeReciprocalRelationships(graphType pkg.ResourceGraphType, relationships []models.RelatedResource) []models.RelatedResource {
 	reciprocalRelationships := []models.RelatedResource{}
 
 	//prioritized lists of sources and sinks for the graph. We will use these to determine which resources are "root" nodes.
@@ -469,7 +470,7 @@ func getSourcesAndSinksForGraphType(graphType pkg.ResourceGraphType) ([][]string
 	return sources, sinks, sourceFlattenRelated
 }
 
-//source resource types are resources that are at the root of the graph, nothing may reference them directly
+// source resource types are resources that are at the root of the graph, nothing may reference them directly
 // loop though the list of source resource types, and see if the checkResourceType is one of them
 func foundResourceGraphSource(checkResourceType string, sourceResourceTypes [][]string) int {
 	found := -1
@@ -482,7 +483,7 @@ func foundResourceGraphSource(checkResourceType string, sourceResourceTypes [][]
 	return found
 }
 
-//sink resource types are the leaves of the graph, they must not reference anything else. (only be referenced)
+// sink resource types are the leaves of the graph, they must not reference anything else. (only be referenced)
 func foundResourceGraphSink(checkResourceType string, sinkResourceTypes [][]string) int {
 	found := -1
 	for i, sinkResourceType := range sinkResourceTypes {

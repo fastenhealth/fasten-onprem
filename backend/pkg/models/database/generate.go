@@ -6,13 +6,17 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dave/jennifer/jen"
-	"github.com/iancoleman/strcase"
-	"golang.org/x/exp/slices"
 	"io/ioutil"
 	"log"
+	"os"
 	"sort"
 	"strings"
+
+	"github.com/dave/jennifer/jen"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
+	"github.com/iancoleman/strcase"
+	"golang.org/x/exp/slices"
 )
 
 type SearchParameter struct {
@@ -47,6 +51,22 @@ PLEASE DO NOT EDIT BY HAND
 `, "\n"), "\n")
 
 func main() {
+	// Read config file for database type
+	appconfig, err := config.Create()
+	if err != nil {
+		fmt.Printf("FATAL: %+v\n", err)
+		os.Exit(1)
+	}
+
+	// Find and read the config file
+	err = appconfig.ReadConfig("../../../../config.yaml")
+	if _, ok := err.(errors.ConfigFileMissingError); ok { // Handle errors reading the config file
+		//ignore "could not find config file"
+	} else if err != nil {
+		os.Exit(1)
+	}
+	databaseType := appconfig.GetString("database.type")
+
 	// Read the search-parameters.json file
 	searchParamsData, err := ioutil.ReadFile("search-parameters.json")
 	if err != nil {
@@ -188,10 +208,18 @@ func main() {
 						golangFieldStatement = g.Id(fieldName).Id(golangFieldType)
 					}
 				}
-				golangFieldStatement.Tag(map[string]string{
-					"json": fmt.Sprintf("%s,omitempty", strcase.ToLowerCamel(fieldName)),
-					"gorm": fmt.Sprintf("column:%s;%s", strcase.ToLowerCamel(fieldName), mapGormType(fieldInfo.FieldType)),
-				})
+
+				if databaseType == "sqlite" {
+					golangFieldStatement.Tag(map[string]string{
+						"json": fmt.Sprintf("%s,omitempty", strcase.ToLowerCamel(fieldName)),
+						"gorm": fmt.Sprintf("column:%s;%s", strcase.ToLowerCamel(fieldName), mapGormTypeSqlite(fieldInfo.FieldType)),
+					})
+				} else {
+					golangFieldStatement.Tag(map[string]string{
+						"json": fmt.Sprintf("%s,omitempty", strcase.ToLowerCamel(fieldName)),
+						"gorm": fmt.Sprintf("column:%s;%s", strcase.ToLowerCamel(fieldName), mapGormTypePostgres(fieldInfo.FieldType)),
+					})
+				}
 			}
 		})
 
@@ -663,7 +691,7 @@ func mapFieldType(fieldType string) string {
 }
 
 // https://www.sqlite.org/datatype3.html
-func mapGormType(fieldType string) string {
+func mapGormTypeSqlite(fieldType string) string {
 	// gorm:"type:text;serializer:json"
 
 	switch fieldType {
@@ -675,6 +703,29 @@ func mapGormType(fieldType string) string {
 		return "type:text;serializer:json"
 	case "date":
 		return "type:datetime"
+	case "string":
+		return "type:text;serializer:json"
+	case "uri":
+		return "type:text"
+	case "special":
+		return "type:text;serializer:json"
+	case "quantity":
+		return "type:text;serializer:json"
+	default:
+		return "type:text"
+	}
+}
+
+func mapGormTypePostgres(fieldType string) string {
+	switch fieldType {
+	case "number":
+		return "type:real"
+	case "token":
+		return "type:text;serializer:json"
+	case "reference":
+		return "type:text;serializer:json"
+	case "date":
+		return "type:timestamptz"
 	case "string":
 		return "type:text;serializer:json"
 	case "uri":
