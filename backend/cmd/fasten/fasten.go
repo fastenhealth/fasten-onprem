@@ -21,7 +21,8 @@ var goos string
 var goarch string
 
 func main() {
-
+	log.Print("Starting fasten-onprem")
+	defer log.Print("Finished fasten-onprem")
 	appconfig, err := config.Create()
 	if err != nil {
 		fmt.Printf("FATAL: %+v\n", err)

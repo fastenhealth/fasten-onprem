@@ -13,7 +13,7 @@
   </div>
   <div class="card-footer text-center p-1" style="width:100%">
     <small class="tx-gray-700">
-      {{sourceInfo?.metadata.display}}
+      {{sourceInfo?.metadata?.display || getSourceDisplayName(sourceInfo)}}
     </small>
   </div>
 </div>

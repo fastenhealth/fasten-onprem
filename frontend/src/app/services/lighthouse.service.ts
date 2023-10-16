@@ -13,6 +13,8 @@ import {LighthouseSourceSearch} from '../models/lighthouse/lighthouse-source-sea
 import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
 import {MedicalSourcesFilter} from './medical-sources-filter.service';
 import {OpenExternalLink} from '../../lib/utils/external_link';
+import {Router, UrlSerializer} from '@angular/router';
+import {Location} from '@angular/common';
 
 export const sourceConnectDesktopTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
 
@@ -21,8 +23,12 @@ export const sourceConnectDesktopTimeout = 24*5000 //wait 2 minutes (5 * 24 = 12
 })
 export class LighthouseService {
 
-  constructor(@Inject(HTTP_CLIENT_TOKEN) private _httpClient: HttpClient) {
-  }
+  constructor(
+    @Inject(HTTP_CLIENT_TOKEN) private _httpClient: HttpClient,
+    private router: Router,
+    private urlSerializer: UrlSerializer,
+    private location: Location,
+  ) {}
 
   public searchLighthouseSources(filter: MedicalSourcesFilter): Observable<LighthouseSourceSearch> {
     if(filter.searchAfter){
@@ -87,11 +93,15 @@ export class LighthouseService {
   }
 
 
-  async generateSourceAuthorizeUrl(sourceType: string, lighthouseSource: LighthouseSourceMetadata): Promise<URL> {
+  async generateSourceAuthorizeUrl(sourceType: string, lighthouseSource: LighthouseSourceMetadata, reconnectSourceId?: string): Promise<URL> {
     const state = uuidV4()
     let sourceStateInfo = new SourceState()
     sourceStateInfo.state = state
     sourceStateInfo.source_type = sourceType
+    if(reconnectSourceId){
+      //if the source already exists, and we want to re-connect it (because of an expiration), we need to pass the existing source id
+      sourceStateInfo.reconnect_source_id = reconnectSourceId
+    }
 
     // generate the authorization url
     const authorizationUrl = new URL(lighthouseSource.authorization_endpoint);
@@ -283,6 +293,28 @@ export class LighthouseService {
   )
   }
 
+  //after waiting for the desktop code, we need to redirect to the callback page with the code in the query params
+  // (which is what would have happened if we were in a browser and we were redirected as usual)
+  redirectWithDesktopCode(sourceType: string, codeData: any){
+
+    if(!codeData){
+      //if we redirected completely, no callback data will be present.
+      return
+    }
+
+    //User was shown a popup, which was closed, and data was returned using events
+    //redirect to callback page with code
+
+    let urlTree = this.router.createUrlTree(
+      ['/sources/callback/' + sourceType],
+      { queryParams: codeData, }
+    );
+
+    let absUrl = this.location.prepareExternalUrl(this.urlSerializer.serialize(urlTree))
+    console.log(absUrl);
+    window.location.replace(absUrl)
+
+  }
 
 }
 

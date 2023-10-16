@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {SourceListItem} from '../../pages/medical-sources/medical-sources.component';
+import moment from 'moment/moment';
 
 @Component({
   selector: 'app-medical-sources-card',
@@ -20,6 +21,16 @@ export class MedicalSourcesCardComponent implements OnInit {
 
   onCardClick(){
     this.onClick.emit(this.sourceInfo)
+  }
+
+  getSourceDisplayName(sourceItem: SourceListItem): string {
+    if(sourceItem.metadata?.display) {
+      return sourceItem.metadata?.display
+    }
+    if(sourceItem.source?.source_type == 'manual') {
+      return 'Uploaded ' + moment(sourceItem.source?.created_at).format('MMM DD, YYYY')
+    }
+    return "Unknown"
   }
 
 }

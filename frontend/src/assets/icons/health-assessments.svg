@@ -1,0 +1,31 @@
+<svg id="Icon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #de9c76;
+      }
+
+      .cls-2 {
+        fill: #f8f9fb;
+      }
+
+      .cls-3 {
+        fill: #9eacc3;
+      }
+
+      .cls-4 {
+        fill: #c0c7d2;
+      }
+    </style>
+  </defs>
+  <rect class="cls-1" x="10" y="6" width="44" height="52" rx="3.44"/>
+  <g>
+    <rect class="cls-1" x="10" y="6" width="44" height="52" rx="7"/>
+    <rect class="cls-2" x="15" y="9" width="34" height="45" rx="2.07"/>
+    <path class="cls-3" d="M21.75,6h20.5a0,0,0,0,1,0,0V9.2a1.92,1.92,0,0,1-1.92,1.92H23.67A1.92,1.92,0,0,1,21.75,9.2V6A0,0,0,0,1,21.75,6Z"/>
+  </g>
+  <rect class="cls-4" x="20" y="18" width="25" height="3"/>
+  <rect class="cls-4" x="20" y="24" width="25" height="3"/>
+  <rect class="cls-4" x="20" y="30" width="25" height="3"/>
+  <rect class="cls-4" x="20" y="36" width="25" height="3"/>
+</svg>

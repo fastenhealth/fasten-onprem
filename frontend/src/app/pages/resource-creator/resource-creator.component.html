@@ -28,7 +28,9 @@
       </div>
 
       <div class="az-content-label mg-b-5">Condition</div>
-      <p class="mg-b-20">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna </p>
+      <p class="mg-b-20">
+        A condition is a disease, illness, or injury that needs to be managed over time. A condition may be a comorbidity (a co-occurring condition), or it may be a main diagnosis.
+      </p>
 
 
       <form (ngSubmit)="onSubmit()" [formGroup]="form">
@@ -75,7 +77,9 @@
               <div class="card-header" (click)="collapsePanel['medication'] = !collapsePanel['medication']">
                 <div>
                   <h6 class="card-title">Medications</h6>
-                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+                  <p class="card-text">
+                    Medications are substances that are taken to treat or prevent disease or illness. Medications are generally characterized by their chemical composition and the way they are administered.
+                  </p>
                 </div>
               </div>
               <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['medication']" class="card-body">
@@ -173,7 +177,9 @@
               <div class="card-header" (click)="collapsePanel['procedure'] = !collapsePanel['procedure']">
                 <div>
                   <h6 class="card-title">Major Surgeries and Implants</h6>
-                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+                  <p class="card-text">
+                    Implants, devices, major surgeries and other procedures that are part of a patient's history.
+                  </p>
                 </div>
               </div>
               <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['procedure']" class="card-body">
@@ -262,7 +268,7 @@
               <div class="card-header" (click)="collapsePanel['practitioner'] = !collapsePanel['practitioner']">
                 <div>
                   <h6 class="card-title">Medical Practitioners</h6>
-                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+                  <p class="card-text">Practitioners involved in the care of the patient.</p>
                 </div>
               </div>
               <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['practitioner']" class="card-body">
@@ -332,7 +338,8 @@
               <div class="card-header" (click)="collapsePanel['organization'] = !collapsePanel['organization']">
                 <div>
                   <h6 class="card-title">Medical Location/Organizations</h6>
-                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+                  <p class="card-text">Locations and Organizations involved in the care of the patient.
+                  </p>
                 </div>
               </div>
               <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['organization']" class="card-body">
@@ -397,7 +404,9 @@
               <div class="card-header" (click)="collapsePanel['attachments'] = !collapsePanel['attachments']">
                 <div>
                   <h6 class="card-title">Notes & Attachments</h6>
-                  <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+                  <p class="card-text">
+                    Files and notes related to medications, procedures, or the current condition.
+                  </p>
                 </div>
               </div>
               <div #collapse="ngbCollapse" [(ngbCollapse)]="collapsePanel['attachments']" class="card-body">

@@ -1,0 +1,26 @@
+{
+  "id": "secondary",
+  "schema_version": "1.0",
+  "title": "Secondary Dashboard",
+  "description": "An second dashboard to show-off the flexibility of the dashboard system.",
+  "widgets": [
+    {
+      "title_text": "Records Summary",
+      "description_text": "Track key metrics for your chronic disease (eg. Diabetes). The data within this widget is not reflective of your health record, and is only present for demonstrational purposes.",
+      "x": 0,
+      "y": 0,
+      "width": 8,
+      "height": 6,
+      "item_type": "records-summary-widget"
+    },
+    {
+      "title_text": "Care Team",
+      "description_text": "Track key metrics for your chronic disease (eg. Diabetes). The data within this widget is not reflective of your health record, and is only present for demonstrational purposes.",
+      "x": 8,
+      "y": 0,
+      "width": 4,
+      "height": 6,
+      "item_type": "image-list-group-widget"
+    }
+  ]
+}

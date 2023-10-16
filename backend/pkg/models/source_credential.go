@@ -1,6 +1,7 @@
 package models
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/jwk"
@@ -134,7 +135,90 @@ func (s *SourceCredential) IsDynamicClient() bool {
 	return len(s.DynamicClientRegistrationMode) > 0
 }
 
+// This method will generate a new keypair, register a new dynamic client with the provider
+// it will set the following fields:
+// - DynamicClientJWKS
+// - DynamicClientId
+func (s *SourceCredential) RegisterDynamicClient() error {
+
+	//this source requires dynamic client registration
+	// see https://fhir.epic.com/Documentation?docId=Oauth2&section=Standalone-Oauth2-OfflineAccess-0
+
+	// Generate a public-private key pair
+	// Must be 2048 bits (larger keys will silently fail when used with Epic, untested on other providers)
+	sourceSpecificClientKeyPair, err := jwk.JWKGenerate()
+	if err != nil {
+		return fmt.Errorf("an error occurred while generating device-specific keypair for dynamic client: %w", err)
+	}
+
+	//store in sourceCredential
+	serializedKeypair, err := jwk.JWKSerialize(sourceSpecificClientKeyPair)
+	if err != nil {
+		return fmt.Errorf("an error occurred while serializing keypair for dynamic client: %w", err)
+	}
+	s.DynamicClientJWKS = []map[string]string{
+		serializedKeypair,
+	}
+
+	//generate dynamic client registration request
+	payload := ClientRegistrationRequest{
+		SoftwareId: s.ClientId,
+		Jwks: ClientRegistrationRequestJwks{
+			Keys: []ClientRegistrationRequestJwksKey{
+				{
+					KeyType:        "RSA",
+					KeyId:          serializedKeypair["kid"],
+					Modulus:        serializedKeypair["n"],
+					PublicExponent: serializedKeypair["e"],
+				},
+			},
+		},
+	}
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("an error occurred while marshalling dynamic client registration request: %w", err)
+	}
+
+	//http.Post("https://fhir.epic.com/interconnect-fhir-oauth/oauth2/token", "application/x-www-form-urlencoded", bytes.NewBuffer([]byte(fmt.Sprintf("grant_type=client_credentials&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&client_assertion=%s&scope=system/Patient.read", sourceSpecificClientKeyPair))))
+	req, err := http.NewRequest(http.MethodPost, s.RegistrationEndpoint, bytes.NewBuffer(payloadBytes))
+	if err != nil {
+		return fmt.Errorf("an error occurred while generating dynamic client registration request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.AccessToken))
+
+	registrationResponse, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		return fmt.Errorf("an error occurred while sending dynamic client registration request: %w", err)
+	}
+	defer registrationResponse.Body.Close()
+	if registrationResponse.StatusCode >= 300 || registrationResponse.StatusCode < 200 {
+		b, err := io.ReadAll(registrationResponse.Body)
+		if err == nil {
+			log.Printf("Error Response body: %s", string(b))
+		}
+		return fmt.Errorf("an error occurred while reading dynamic client registration response, status code was not 200: %d", registrationResponse.StatusCode)
+
+	}
+
+	//read response
+	var registrationResponseBytes ClientRegistrationResponse
+	err = json.NewDecoder(registrationResponse.Body).Decode(&registrationResponseBytes)
+	if err != nil {
+		return fmt.Errorf("an error occurred while parsing dynamic client registration response: %w", err)
+	}
+
+	//store the dynamic client id
+	s.DynamicClientId = registrationResponseBytes.ClientId
+	return nil
+}
+
 // this will set/update the AccessToken and Expiry using the dynamic client credentials
+// it will set the following fields:
+// - AccessToken
+// - ExpiresAt
 func (s *SourceCredential) RefreshDynamicClientAccessToken() error {
 	if len(s.DynamicClientRegistrationMode) == 0 {
 		return fmt.Errorf("dynamic client registration mode not set")

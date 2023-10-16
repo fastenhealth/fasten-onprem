@@ -64,10 +64,11 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 			{
 				secure.GET("/summary", handler.GetSummary)
 
-				secure.POST("/source", handler.CreateSource)
+				secure.POST("/source", handler.CreateReconnectSource)
 				secure.POST("/source/manual", handler.CreateManualSource)
 				secure.GET("/source", handler.ListSource)
 				secure.GET("/source/:sourceId", handler.GetSource)
+				secure.DELETE("/source/:sourceId", handler.DeleteSource)
 				secure.POST("/source/:sourceId/sync", handler.SourceSync)
 				secure.GET("/source/:sourceId/summary", handler.GetSourceSummary)
 				secure.GET("/resource/fhir", handler.ListResourceFhir)

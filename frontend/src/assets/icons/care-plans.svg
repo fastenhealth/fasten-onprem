@@ -1,0 +1,26 @@
+<svg id="Icon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #1eb37a;
+      }
+
+      .cls-2 {
+        fill: #a5f3ca;
+      }
+
+      .cls-3 {
+        fill: #0e6b5a;
+      }
+    </style>
+  </defs>
+  <circle class="cls-1" cx="32" cy="32" r="28"/>
+  <circle class="cls-2" cx="32" cy="32" r="22"/>
+  <circle class="cls-1" cx="32" cy="32" r="17"/>
+  <circle class="cls-2" cx="32" cy="32" r="12"/>
+  <circle class="cls-1" cx="32" cy="32" r="7"/>
+  <path class="cls-3" d="M32.67,28.82h0a3.83,3.83,0,0,1,.62-1.4L43,14l4.17,4L36.63,29.32a5,5,0,0,1-1.46,1.09l-.26.14A1.57,1.57,0,0,1,32.67,28.82Z"/>
+  <polygon class="cls-3" points="43 14 43 11 48.17 4 50 11 45 17 43 14"/>
+  <polygon class="cls-3" points="47 18 50 18 57 11.83 50 11 44 17 47 18"/>
+  <polygon class="cls-3" points="33.5 29 32 32 35 30 33.5 29"/>
+</svg>

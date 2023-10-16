@@ -42,10 +42,9 @@
         Actions
       </button>
       <div ngbDropdownMenu aria-labelledby="dropdownManual">
-        <button ngbDropdownItem (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>
-        <!--    <button ngbDropdownItem (click)="connectHandler($event, modalSelectedSourceListItem.source['source_type'])" type="button" class="btn btn-outline-light">Reconnect</button>-->
-        <button ngbDropdownItem type="button" class="btn disabled btn-outline-danger">Reconnect</button>
-        <button ngbDropdownItem type="button" class="btn disabled btn-outline-danger">Delete</button>
+        <button *ngIf="modalSelectedSourceListItem.source?.source_type != 'manual'" ngbDropdownItem (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>
+        <button *ngIf="modalSelectedSourceListItem.source?.source_type != 'manual'" ngbDropdownItem (click)="sourceReconnectHandler(modalSelectedSourceListItem)" type="button" class="btn btn-danger">Reconnect</button>
+        <button ngbDropdownItem (click)="sourceDeleteHandler()" type="button" class="btn btn-danger">Delete</button>
       </div>
     </div>
     <button (click)="modal.dismiss('Close click')" type="button" class="btn btn-outline-light">Close</button>

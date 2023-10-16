@@ -137,6 +137,15 @@ export class FastenApiService {
       );
   }
 
+  deleteSource(sourceId: string): Observable<number> {
+    return this._httpClient.delete<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/source/${sourceId}`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as number
+        })
+      );
+  }
+
   syncSource(sourceId: string): Observable<any> {
     return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/source/${sourceId}/sync`, {})
       .pipe(
