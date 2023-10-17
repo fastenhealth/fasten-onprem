@@ -32,20 +32,6 @@ type GormRepository struct {
 	EventBus event_bus.Interface
 }
 
-func (gr *GormRepository) Migrate() error {
-	err := gr.GormClient.AutoMigrate(
-		&models.User{},
-		&models.SourceCredential{},
-		&models.BackgroundJob{},
-		&models.Glossary{},
-		&models.UserSettingEntry{},
-	)
-	if err != nil {
-		return fmt.Errorf("Failed to automigrate! - %v", err)
-	}
-	return nil
-}
-
 func (gr *GormRepository) Close() error {
 	return nil
 }

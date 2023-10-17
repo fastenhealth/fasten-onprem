@@ -7,7 +7,6 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
-	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -46,12 +45,6 @@ func newPostgresRepository(appConfig config.Interface, globalLogger logrus.Field
 
 	//TODO: automigrate for now, this should be replaced with a migration tool once the DB has stabilized.
 	err = fastenRepo.Migrate()
-	if err != nil {
-		return nil, err
-	}
-
-	//automigrate Fhir Resource Tables
-	err = databaseModel.Migrate(fastenRepo.GormClient)
 	if err != nil {
 		return nil, err
 	}
