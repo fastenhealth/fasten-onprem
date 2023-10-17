@@ -135,14 +135,14 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithMultipleWhereCon
 	require.Equal(suite.T(),
 		strings.Join([]string{
 			"SELECT fhir.*",
-			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson, json_each(fhir.category) as categoryJson",
-			"WHERE ((codeJson.value ->> '$.code' = ?)) AND ((categoryJson.value ->> '$.code' = ?)) AND (user_id = ?)",
+			"FROM fhir_observation as fhir, json_each(fhir.category) as categoryJson, json_each(fhir.code) as codeJson",
+			"WHERE ((categoryJson.value ->> '$.code' = ?)) AND ((codeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
 			"GROUP BY `fhir`.`id`",
 			"ORDER BY fhir.sort_date DESC",
 		}, " "),
 		sqlString)
 	require.Equal(suite.T(), sqlParams, []interface{}{
-		"test_code", "12345", "00000000-0000-0000-0000-000000000000",
+		"12345", "test_code", "00000000-0000-0000-0000-000000000000",
 	})
 }
 
@@ -281,7 +281,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveCountBy
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(),
 		strings.Join([]string{
-			"SELECT fhir.instantiatesUri as label, count(*) as value",
+			"SELECT count(*) as value, fhir.instantiatesUri as label",
 			"FROM fhir_care_plan as fhir, json_each(fhir.activityCode) as activityCodeJson",
 			"WHERE ((activityCodeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
 			"GROUP BY `fhir`.`instantiatesUri`",
@@ -318,7 +318,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithKeywordCountByAg
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(),
 		strings.Join([]string{
-			"SELECT fhir.source_resource_type as label, count(*) as value",
+			"SELECT count(*) as value, fhir.source_resource_type as label",
 			"FROM fhir_care_plan as fhir, json_each(fhir.activityCode) as activityCodeJson",
 			"WHERE ((activityCodeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
 			"GROUP BY `fhir`.`source_resource_type`",
@@ -353,7 +353,7 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithWildcardCountByA
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(),
 		strings.Join([]string{
-			"SELECT fhir.source_resource_type as label, count(*) as value",
+			"SELECT count(*) as value, fhir.source_resource_type as label",
 			"FROM fhir_care_plan as fhir",
 			"WHERE (user_id = ?)",
 			"GROUP BY `fhir`.`source_resource_type`",

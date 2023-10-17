@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -232,8 +233,11 @@ func (gr *GormRepository) sqlQueryResources(ctx context.Context, query models.Qu
 	//ensure Where and From clauses are unique
 	whereClauses = lo.Uniq(whereClauses)
 	whereClauses = lo.Compact(whereClauses)
+	sort.Strings(whereClauses)
 	fromClauses = lo.Uniq(fromClauses)
 	fromClauses = lo.Compact(fromClauses)
+	sort.Strings(fromClauses)
+	sort.Strings(selectClauses)
 
 	sqlQuery := gr.GormClient.WithContext(ctx).
 		Select(strings.Join(selectClauses, ", ")).
