@@ -72,3 +72,15 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             FASTEN_ENV=${{ matrix.flavor == 'sandbox' && 'sandbox' || 'prod' }}
+          sbom: true
+          sbom-dir: ./sbom-output
+      - name: upload SBOM directory as a build artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          path: ./sbom-output
+          name: 'SBOM'
+
+      - name: upload spdx dependency
+        uses: advanced-security/spdx-dependency-submission-action@v0.0.1
+        with:
+          filePath: ./sbom-output/
