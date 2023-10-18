@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/url"
 	"strings"
 	"time"
 
@@ -1118,19 +1117,6 @@ func (gr *GormRepository) CancelAllLockedBackgroundJobsAndFail() error {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utilities
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-func sqlitePragmaString(pragmas map[string]string) string {
-	q := url.Values{}
-	for key, val := range pragmas {
-		q.Add("_pragma", fmt.Sprintf("%s=%s", key, val))
-	}
-
-	queryStr := q.Encode()
-	if len(queryStr) > 0 {
-		return "?" + queryStr
-	}
-	return ""
-}
 
 // Internal function
 // This function will return a list of resources from all FHIR tables in the database
