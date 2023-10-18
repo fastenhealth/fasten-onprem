@@ -112,6 +112,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					//http://localhost:9090/api/unsafe/testuser1/3508f8cf-6eb9-4e4b-8174-dd69a493a2b4/Patient/smart-1288992
 					unsafe.GET("/:username/:sourceId/*path", handler.UnsafeRequestSource)
 					unsafe.GET("/:username/graph/:graphType", handler.UnsafeResourceGraph)
+					unsafe.GET("/:username/sync/:sourceId", handler.UnsafeSyncResourceNames)
 
 				}
 			}
