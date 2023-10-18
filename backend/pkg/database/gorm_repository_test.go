@@ -1190,7 +1190,7 @@ func (suite *RepositoryTestSuite) TestAddResourceComposition_WithExistingComposi
 
 	//assert that the associations were created
 	associations, err := dbRepo.FindResourceAssociationsByTypeAndId(authContext,
-		&models.SourceCredential{UserID: userModel.ID, ModelBase: models.ModelBase{ID: uuid.MustParse("00000000-0000-0000-0000-000000000000")}}, //Compositions have a unique/placeholder credential ID
+		&models.SourceCredential{UserID: userModel.ID, ModelBase: models.ModelBase{ID: uuid.Nil}}, //Compositions have a unique/placeholder credential ID
 		"Composition", compositions[0].SourceResourceID)
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(), 5, len(associations))

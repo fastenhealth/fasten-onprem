@@ -573,7 +573,7 @@ func (gr *GormRepository) AddResourceComposition(ctx context.Context, compositio
 	}
 
 	//generate placeholder source
-	placeholderSource := models.SourceCredential{UserID: currentUser.ID, SourceType: "manual", ModelBase: models.ModelBase{ID: uuid.MustParse("00000000-0000-0000-0000-000000000000")}}
+	placeholderSource := models.SourceCredential{UserID: currentUser.ID, SourceType: "manual", ModelBase: models.ModelBase{ID: uuid.Nil}}
 
 	existingCompositionResources := []*models.ResourceBase{}
 	rawResourceLookupTable := map[string]*models.ResourceBase{}
