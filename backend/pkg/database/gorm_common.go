@@ -484,7 +484,7 @@ func (gr *GormRepository) AddResourceAssociation(ctx context.Context, source *mo
 		"related_resource_source_resource_type": relatedResourceType,
 		"related_resource_source_resource_id":   relatedResourceId,
 	}).Error
-	uniqueConstraintError := errors.New("constraint failed: UNIQUE constraint failed")
+	uniqueConstraintError := errors.New("UNIQUE constraint failed")
 	if err != nil {
 		if strings.HasPrefix(err.Error(), uniqueConstraintError.Error()) {
 			gr.Logger.Warnf("Ignoring an error when creating a related_resource association for %s/%s: %v", resourceType, resourceId, err)

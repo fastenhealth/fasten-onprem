@@ -2,13 +2,13 @@ package database
 
 import (
 	"fmt"
-	"net/url"
-	"strings"
-
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/sirupsen/logrus"
+	"net/url"
+	"strings"
+
 	//"github.com/glebarez/sqlite"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -51,6 +51,8 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 		"_foreign_keys": "on",
 		"_journal_mode": "WAL",
 	}
+
+	//validation of encryption key happens in ValidateConfig method
 	if appConfig.IsSet("database.encryption.key") {
 		pragmaOpts["_cipher"] = "sqlcipher"
 		pragmaOpts["_legacy"] = "3"
@@ -69,12 +71,15 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 
+	if err != nil {
+		if strings.Contains(err.Error(), "file is not a database") {
+			return nil, fmt.Errorf("failed to connect to database! encryption key may be incorrect - %w", err)
+		}
+
+		return nil, fmt.Errorf("failed to connect to database! - %w", err)
+	}
 	if strings.ToUpper(appConfig.GetString("log.level")) == "DEBUG" {
 		database = database.Debug() //set debug globally
-	}
-
-	if err != nil {
-		return nil, fmt.Errorf("Failed to connect to database! - %v", err)
 	}
 	globalLogger.Infof("Successfully connected to fasten sqlite db: %s\n", dsn)
 

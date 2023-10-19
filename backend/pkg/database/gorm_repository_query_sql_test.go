@@ -44,6 +44,7 @@ func (suite *RepositorySqlTestSuite) BeforeTest(suiteName, testName string) {
 	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
@@ -62,6 +63,8 @@ func (suite *RepositorySqlTestSuite) BeforeTest(suiteName, testName string) {
 func (suite *RepositorySqlTestSuite) AfterTest(suiteName, testName string) {
 	suite.MockCtrl.Finish()
 	os.Remove(suite.TestDatabase.Name())
+	os.Remove(suite.TestDatabase.Name() + "-shm")
+	os.Remove(suite.TestDatabase.Name() + "-wal")
 }
 
 // In order for 'go test' to run this suite, we need to create
