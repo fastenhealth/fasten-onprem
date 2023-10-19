@@ -1001,8 +1001,11 @@ func (gr *GormRepository) ListBackgroundJobs(ctx context.Context, queryOptions m
 	var backgroundJobs []models.BackgroundJob
 	query := gr.GormClient.WithContext(ctx).
 		//Group("source_id"). //broken in Postgres.
-		Where(queryParam).Limit(queryOptions.Limit).Order("locked_time DESC")
+		Where(queryParam).Order("locked_time DESC")
 
+	if queryOptions.Limit > 0 {
+		query = query.Limit(queryOptions.Limit)
+	}
 	if queryOptions.Offset > 0 {
 		query = query.Offset(queryOptions.Offset)
 	}

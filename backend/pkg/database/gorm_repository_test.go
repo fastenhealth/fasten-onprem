@@ -61,9 +61,9 @@ func (suite *RepositoryTestSuite) BeforeTest(suiteName, testName string) {
 // AfterTest has a function to be executed right after the test finishes and receives the suite and test names as input
 func (suite *RepositoryTestSuite) AfterTest(suiteName, testName string) {
 	suite.MockCtrl.Finish()
-	os.Remove(suite.TestDatabase.Name())
-	os.Remove(suite.TestDatabase.Name() + "-shm")
-	os.Remove(suite.TestDatabase.Name() + "-wal")
+	//os.Remove(suite.TestDatabase.Name())
+	//os.Remove(suite.TestDatabase.Name() + "-shm")
+	//os.Remove(suite.TestDatabase.Name() + "-wal")
 }
 
 // In order for 'go test' to run this suite, we need to create
