@@ -54,22 +54,10 @@ func TestFhirPatient_ExtractSearchParameters(t *testing.T) {
 	var testTelecom []interface{}
 	err = json.Unmarshal(json.RawMessage(patientModel.Telecom), &testTelecom)
 	require.NoError(t, err)
-	telecom_1 := map[string]interface{}{
-		"code": "(03) 5555 6473",
-		"system": "phone",
-	}
-	telecom_2 := map[string]interface{}{
-		"code": "(03) 3410 5613",
-		"system": "phone",
-	}
-	telecom_3 := map[string]interface{}{
-		"code":"(03) 5555 8834",
-		"system": "phone",
-	}
 	require.Equal(t, []interface{}{
-		telecom_1,
-		telecom_2,
-		telecom_3,
+		map[string]interface{}{"code": "(03) 5555 6473","system": "phone"},
+		map[string]interface{}{"code": "(03) 3410 5613","system": "phone"},
+		map[string]interface{}{"code":"(03) 5555 8834","system": "phone"},
 	}, testTelecom)
 
 	var testIdentifier []interface{}
