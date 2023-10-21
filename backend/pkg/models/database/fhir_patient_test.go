@@ -2,10 +2,11 @@ package database
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestFhirPatient_ExtractSearchParameters(t *testing.T) {
@@ -49,6 +50,25 @@ func TestFhirPatient_ExtractSearchParameters(t *testing.T) {
 	require.Equal(t, []string{
 		"534 Erewhon St PleasantVille Vic 3999",
 	}, testAddress)
+
+	var testTelecom []interface{}
+	err = json.Unmarshal(json.RawMessage(patientModel.Telecom), &testTelecom)
+	require.NoError(t, err)
+	require.Equal(t, []interface{}{
+		map[string]interface{}{"code": "(03) 5555 6473","system": "phone"},
+		map[string]interface{}{"code": "(03) 3410 5613","system": "phone"},
+		map[string]interface{}{"code":"(03) 5555 8834","system": "phone"},
+	}, testTelecom)
+
+	var testIdentifier []interface{}
+	err = json.Unmarshal(json.RawMessage(patientModel.Identifier), &testIdentifier)
+	require.NoError(t, err)
+	require.Equal(t, []interface{}{
+		map[string]interface{}{
+			"code": "12345",
+			"system": "urn:oid:1.2.36.146.595.217.0.1",
+		},
+	}, testIdentifier)
 
 	require.Equal(t, time.Date(1974, 12, 25, 0, 0, 0, 0, time.UTC), *patientModel.Birthdate)
 
