@@ -7,13 +7,9 @@
 # Fasten - On Premise/Self-Hosted
 
 [![CI](https://github.com/fastenhealth/fasten-onprem/actions/workflows/ci.yaml/badge.svg)](https://github.com/fastenhealth/fasten-onprem/actions/workflows/ci.yaml)
-[![codecov](https://codecov.io/gh/fastenhealth/fasten-onprem/branch/main/graph/badge.svg?token=6O0ZUABEHT&style=flat-square)](https://codecov.io/gh/fastenhealth/fasten-onprem)
-[![GitHub license](https://img.shields.io/github/license/fastenhealth/fasten-onprem?style=flat-square)](https://github.com/fastenhealth/fasten-onprem/blob/main/LICENSE.md)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/fastenhealth/fasten-onprem?style=flat-square)](https://github.com/fastenhealth/fasten-onprem/releases/latest)
-[![Discord Join](https://img.shields.io/badge/discord-join-blueviolet?style=flat-square&logo=discord)](https://discord.gg/Bykz6BAN8p)
+[![Discord Join](https://img.shields.io/discord/1023634406935642223?style=flat-square&logo=discord)](https://discord.gg/Bykz6BAN8p)
 [![Request Providers](https://img.shields.io/static/v1?label=request+providers&message=form&color=orange&style=flat-square)](https://forms.gle/4oU8372y4KyM8DbdA)
-[![Join Mailing List](https://img.shields.io/static/v1?label=join&message=mailing+list&color=blue&style=flat-square)](https://forms.gle/SNsYX9BNMXB6TuTw6)
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/analogj?style=flat-square)](https://github.com/sponsors/AnalogJ/)
+[![Join Newsletter](https://img.shields.io/static/v1?label=join&message=mailing+list&color=blue&style=flat-square)](https://forms.gle/SNsYX9BNMXB6TuTw6)
 
 **Fasten securely connects your healthcare providers together, creating a personal health record that never leaves your hands**
 
@@ -26,6 +22,30 @@
 >
 > Got questions or want to learn more about our fundraising experiment? [Click here to dive into the details & FAQs](https://docs.fastenhealth.com/FUNDRAISING.html) 
 
+
+<p align="center">
+  <br/>
+  <br/>
+  <a target="_blank" href="https://cosmos-cloud.io/">
+    <img height="44px" alt="newsletter" src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/buttons/newsletter.png" />
+  </a>
+  <a target="_blank" href="https://docs.fastenhealth.com">
+    <img height="44px" alt="documentation" src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/buttons/documentation.png" />
+  </a>
+  <a target="_blank" style="display:none;" href="https://demo.fastenhealth.com">
+    <img height="44px" src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/buttons/demo.png" />
+  </a>
+  <br/>
+  <br/>
+</p>
+
+<p align="center">
+  <a href="https://imgur.com/a/vfgojBD">
+  <img alt="fasten_view" src="https://i.imgur.com/UaZyEbN.png">
+  </a>
+  <br/>
+  <a href="https://imgur.com/a/vfgojBD">See more Fasten screenshots</a>
+</p>
 
 
 # Introduction
@@ -45,17 +65,6 @@ I wanted a single (private) location to store our medical records, and I just co
 So, I built it
 
 **Fasten is an open-source, self-hosted, personal/family electronic medical record aggregator, designed to integrate with 1000's of insurances/hospitals/clinics**
-
-Here's a couple of screenshots that'll give you an idea of what it looks like:
-
-
-<p align="center">
-  <a href="https://imgur.com/a/vfgojBD">
-  <img alt="fasten_view" src="https://i.imgur.com/UaZyEbN.png">
-  </a>
-  <br/>
-  <a href="https://imgur.com/a/vfgojBD">See more Fasten screenshots</a>
-</p>
 
 # Features
 
@@ -79,6 +88,9 @@ There are 2 flavors of Fasten:
 - `ghcr.io/fastenhealth/fasten-onprem:main` - This version allows you to connect to 25,000+ different Healthcare providers, using your existing accounts. It will allow you to connect and retrieve your personal electronic medical record and store it within Fasten. **Be careful, this is YOUR health data**
 
 ## Instructions
+
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/fastenhealth/fasten-onprem?style=flat-square)](https://github.com/fastenhealth/fasten-onprem/releases/latest)
+
 
 Run the following commands to download and start the Fasten docker container.
 ```
@@ -113,7 +125,12 @@ See [FAQs](https://github.com/fastenhealth/docs/blob/main/FAQs.md) for common qu
 Have questions? Need help? Found a bug? [Create an issue](https://github.com/fastenhealth/fasten-onprem/issues/new) and we'll do our best to help you out.
 You can also join us on [Discord](https://discord.gg/Bykz6BAN8p) to chat with other Fasten users.
 
+[![Discord Join](https://img.shields.io/discord/1023634406935642223?style=flat-square&logo=discord)](https://discord.gg/Bykz6BAN8p)
+
 # Contributing
+
+[![CI](https://github.com/fastenhealth/fasten-onprem/actions/workflows/ci.yaml/badge.svg)](https://github.com/fastenhealth/fasten-onprem/actions/workflows/ci.yaml)
+[![codecov](https://codecov.io/gh/fastenhealth/fasten-onprem/branch/main/graph/badge.svg?token=6O0ZUABEHT&style=flat-square)](https://codecov.io/gh/fastenhealth/fasten-onprem)
 
 Please see the [CONTRIBUTING.md](CONTRIBUTING.md) for instructions for how to develop and contribute to the Fasten codebase.
 
@@ -131,7 +148,7 @@ Jason Kulatunga - Initial Development - @AnalogJ
 
 # Licenses
 
-- GPLv3
+[![GitHub license](https://img.shields.io/github/license/fastenhealth/fasten-onprem?style=flat-square)](https://github.com/fastenhealth/fasten-onprem/blob/main/LICENSE.md)
 
 # Fundraising & Sponsorships
 
@@ -144,3 +161,4 @@ Got questions or want to learn more about our fundraising experiment? [Click her
 I'd also like to thank the following Corporate Sponsors:
 
 <a href="https://depot.dev/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/depot.png" height="100px" /></a>
+<a style="padding-left:5px" href="https://www.macminivault.com/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/macminivault.png" height="100px" /></a>
