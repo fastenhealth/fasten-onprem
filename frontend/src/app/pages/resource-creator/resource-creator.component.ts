@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   ResourceCreateAttachment,
@@ -27,6 +27,12 @@ export enum ContactType {
   ContactTypeManual = 'manual',
 }
 
+interface FormValidationErrors {
+  controlName: string;
+  errorName: string;
+  errorValue: any;
+}
+
 @Component({
   selector: 'app-resource-creator',
   templateUrl: './resource-creator.component.html',
@@ -36,6 +42,7 @@ export class ResourceCreatorComponent implements OnInit {
   debugMode = false;
   collapsePanel: {[name: string]: boolean} = {}
 
+  public errors: FormValidationErrors[] = [];
 
   @Input() form!: FormGroup;
   get isValid() { return true; }
@@ -80,7 +87,41 @@ export class ResourceCreatorComponent implements OnInit {
 
     this.resetOrganizationForm()
     // this.resetPractitionerForm()
+
+    this.form.valueChanges.subscribe(() => {
+      this.errors = [];
+      this.calculateErrors(this.form);
+    });
   }
+
+  calculateErrors(form: FormGroup | FormArray) {
+    Object.keys(form.controls).forEach(field => {
+      const control = form.get(field);
+      if (control instanceof FormGroup || control instanceof FormArray) {
+        this.errors = this.errors.concat(this.calculateErrors(control));
+        return;
+      }
+
+      const controlErrors: ValidationErrors = control.errors;
+      if (controlErrors !== null) {
+        Object.keys(controlErrors).forEach(keyError => {
+          console.log("Found Error", field, keyError, controlErrors[keyError], controlErrors);
+          this.errors.push({
+            controlName: field,
+            errorName: keyError,
+            errorValue: controlErrors[keyError]
+          });
+        });
+      }
+    });
+
+    // This removes duplicates
+    this.errors = this.errors.filter((error, index, self) => self.findIndex(t => {
+      return t.controlName === error.controlName && t.errorName === error.errorName;
+    }) === index);
+    return this.errors;
+  }
+
 
   get medications(): FormArray {
     return this.form.controls["medications"] as FormArray;
@@ -216,16 +257,15 @@ export class ResourceCreatorComponent implements OnInit {
       let bundle = GenerateR4Bundle(this.form.getRawValue());
 
       let bundleJsonStr = JSON.stringify(bundle);
-      let bundleBlob = new Blob([bundleJsonStr], { type: 'application/json' });
-      let bundleFile = new File([ bundleBlob ], 'bundle.json');
+      let bundleBlob = new Blob([bundleJsonStr], {type: 'application/json'});
+      let bundleFile = new File([bundleBlob], 'bundle.json');
       this.fastenApi.createManualSource(bundleFile).subscribe((resp) => {
         console.log(resp)
         this.router.navigate(['/medical-history'])
       })
-
+    } else {
+      this.calculateErrors(this.form);
     }
-
-
   }
 
   //Modal Helpers

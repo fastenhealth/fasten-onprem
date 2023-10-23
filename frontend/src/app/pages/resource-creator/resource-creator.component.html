@@ -2,14 +2,13 @@
   <div class="container">
     <div class="az-content-body pd-lg-l-40 d-flex flex-column">
       <div class="az-content-breadcrumb">
-        <span>Components</span>
-        <span>Forms</span>
-        <span>Form Elements</span>
+        <span>Create Record</span>
+        <span>Condition</span>
       </div>
-      <h2 class="az-content-title">Create a Record</h2>
+      <h2 class="az-content-title">Condition Wizard</h2>
 
       <!-- Editor Button -->
-      <div class="row mt-5 mb-3">
+      <div class="row">
         <div class="col-12">
 
           <div class="alert alert-warning" role="alert">
@@ -27,16 +26,17 @@
         </div>
       </div>
 
-      <p>While Fasten Health is designed to pull your health records automatically from your healthcare institutions, in some cases you may be unable to do so due to various limitations:</p>
+
+      <p>Fasten Health is meant to automatically retrieve your health records from your healthcare providers. However, you might face limitations in these situations:</p>
       <ul>
-        <li>Your healthcare institution is unsupported</li>
-        <li>Your records are too old and no longer exist in the system</li>
-        <li>You have additional information you'd like to associate with your medical condition (Imaging Results, Notes, etc)</li>
+        <li>Your healthcare provider isn't supported.</li>
+        <li>Your records are too old and no longer available in the system.</li>
+        <li>You want to include extra information related to your medical condition, like imaging results or notes.</li>
       </ul>
 
-      <p>In such cases, you can use this form to manually add records to Fasten.</p>
+      <p>If any of these apply to you, you can use this form to manually input your records into Fasten.</p>
 
-      <div class="az-content-label mg-b-5">Condition</div>
+      <div class="az-content-label mg-t-2 mg-b-5">Condition</div>
       <p class="mg-b-20">
         A condition is a disease, illness, or injury that needs to be managed over time. A condition may be a comorbidity (a co-occurring condition), or it may be a main diagnosis.
       </p>
@@ -462,6 +462,14 @@
                 <a class="float-right" (click)="collapsePanel['attachments'] = !collapsePanel['attachments']">{{collapsePanel['attachments'] ? 'expand' : 'collapse'}}</a>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div *ngIf="!form.valid" class="row">
+          <div class="col-12">
+            <ul>
+              <li *ngFor="let error of errors" class="text-danger">{{error.controlName}} {{error.errorName}} {{error.errorValue}}</li>
+            </ul>
           </div>
         </div>
 
