@@ -32,9 +32,6 @@
   <a target="_blank" href="https://docs.fastenhealth.com">
     <img height="44px" alt="documentation" src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/buttons/documentation.png" />
   </a>
-  <a target="_blank" style="display:none;" href="https://demo.fastenhealth.com">
-    <img height="44px" src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/buttons/demo.png" />
-  </a>
   <br/>
   <br/>
 </p>
