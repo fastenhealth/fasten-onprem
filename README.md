@@ -26,7 +26,7 @@
 <p align="center">
   <br/>
   <br/>
-  <a target="_blank" href="https://cosmos-cloud.io/">
+  <a target="_blank" href="https://forms.gle/SNsYX9BNMXB6TuTw6">
     <img height="44px" alt="newsletter" src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/buttons/newsletter.png" />
   </a>
   <a target="_blank" href="https://docs.fastenhealth.com">
