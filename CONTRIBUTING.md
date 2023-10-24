@@ -216,7 +216,7 @@ a CDN or minimal Nginx deployment.
 
 
 ### How do I change the default encryption key and admin credentials
-- FASTEN_ISSUER_JWT_KEY
+- FASTEN_JWT_ISSUER_KEY
 
 
 ### Generate JWT for local use

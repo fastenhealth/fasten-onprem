@@ -4,6 +4,12 @@
   </a>
 </p>
 
+<p align="center">
+  <a href="https://cloud.digitalocean.com/apps/new?repo=https://github.com/cfu288/fasten-onprem/tree/add-deploy-to-digital-ocean-button">
+    <img src="https://www.deploytodo.com/do-btn-blue.svg" alt="Deploy to DO">
+  </a>
+</p>
+
 # Fasten - On Premise/Self-Hosted
 
 [![CI](https://github.com/fastenhealth/fasten-onprem/actions/workflows/ci.yaml/badge.svg)](https://github.com/fastenhealth/fasten-onprem/actions/workflows/ci.yaml)

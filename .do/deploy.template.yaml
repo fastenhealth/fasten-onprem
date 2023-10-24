@@ -1,0 +1,14 @@
+spec:
+  name: fasten-onprem
+  services:
+    - dockerfile_path: Dockerfile
+      name: app
+      git:
+        branch: add-deploy-to-digital-ocean-button
+        repo_clone_url: https://github.com/cfu288/fasten-onprem.git
+      envs:
+        - key: FASTEN_ENV
+          scope: BUILD_TIME
+          value: prod
+        - key: FASTEN_JWT_ISSUER_KEY
+          scope: RUN_TIME
