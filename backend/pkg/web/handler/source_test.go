@@ -26,6 +26,9 @@ import (
 	"testing"
 )
 
+// Go through this page to understand how this file is structured.
+// https://pkg.go.dev/github.com/stretchr/testify/suite#section-documentation
+
 // Define the suite, and absorb the built-in basic suite
 // functionality from testify - including a T() method which
 // returns the current testing context
@@ -73,6 +76,34 @@ func (suite *SourceHandlerTestSuite) AfterTest(suiteName, testName string) {
 	os.Remove(suite.TestDatabase.Name())
 }
 
+
+func CreateManualSourceHttpRequestFromFile(fileName string) (*http.Request, error) {
+	
+	file, err := os.Open(fileName)
+	if err!= nil {
+        log.Fatal("Could not open file ", err.Error())
+		return nil, err
+	}
+	defer file.Close()
+
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, _ := writer.CreateFormFile("file", filepath.Base(file.Name()))
+	io.Copy(part, file)
+	writer.Close()
+
+
+	req, err := http.NewRequest("POST", "/source/manual", body)
+	if err!= nil {
+        log.Fatal("Could not make http request ", err.Error())
+		return nil, err
+	}
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+
+	return req, nil
+}
+
 // In order for 'go test' to run this suite, we need to create
 // a normal test function and pass our suite to suite.Run
 func TestSourceHandlerTestSuite(t *testing.T) {
@@ -90,19 +121,8 @@ func (suite *SourceHandlerTestSuite) TestCreateManualSourceHandler() {
 	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_username")
 
 	//test
-	file, err := os.Open("testdata/Tania553_Harris789_545c2380-b77f-4919-ab5d-0f615f877250.json")
-	require.NoError(suite.T(), err)
-	defer file.Close()
-
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-	part, _ := writer.CreateFormFile("file", filepath.Base(file.Name()))
-	io.Copy(part, file)
-	writer.Close()
-
-	req, err := http.NewRequest("POST", "/source/manual", body)
-	require.NoError(suite.T(), err)
-	req.Header.Add("Content-Type", writer.FormDataContentType())
+	req, err := CreateManualSourceHttpRequestFromFile("testdata/Tania553_Harris789_545c2380-b77f-4919-ab5d-0f615f877250.json")
+	require.NoError(suite.T(),err)
 	ctx.Request = req
 
 	CreateManualSource(ctx)
