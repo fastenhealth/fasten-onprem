@@ -24,6 +24,7 @@ export class MedicalSourcesCardComponent implements OnInit {
   }
 
   getSourceDisplayName(sourceItem: SourceListItem): string {
+    if(!sourceItem) return "Unknown"
     if(sourceItem.metadata?.display) {
       return sourceItem.metadata?.display
     }

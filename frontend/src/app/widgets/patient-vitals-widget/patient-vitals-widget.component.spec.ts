@@ -16,7 +16,6 @@ describe('PatientVitalsWidgetComponent', () => {
 
   beforeEach(async () => {
     mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['queryResources'])
-
     await TestBed.configureTestingModule({
       imports: [ PatientVitalsWidgetComponent, RouterTestingModule ],
       providers: [
