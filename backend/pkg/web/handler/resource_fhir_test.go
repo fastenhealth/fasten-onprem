@@ -127,23 +127,31 @@ func (suite *ResourcFhirHandlerTestSuite) TestGetResourceFhirHandler() {
 	require.Equal(suite.T(),suite.SourceId, respWrapper.Data.SourceID)
 	require.Equal(suite.T(),"57959813-8cd2-4e3c-8970-e4364b74980a", respWrapper.Data.SourceResourceID)
 	
-	// passing invalid sourceId & responseId
-	w.Body.Reset()
-	ctx.Params = []gin.Param {
-		{
-			Key: "sourceId", 
-			Value: "57959813-9999-4e3c-8970-e4364b74980a",
-		},
-		{
-			Key: "resourceId", 
-			Value: "57959813-9999-4e3c-8970-e4364b74980a",
-		},
-	}
+}
+
+func (suite *ResourcFhirHandlerTestSuite) TestGetResourceFhirHandler_WithInvalidSourceResourceId() {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", suite.T().Name()))
+	ctx.Set(pkg.ContextKeyTypeDatabase, suite.AppRepository)
+	ctx.Set(pkg.ContextKeyTypeConfig, suite.AppConfig)
+	ctx.Set(pkg.ContextKeyTypeEventBusServer, suite.AppEventBus)
+	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_user")
+
+	ctx.AddParam("sourceId", "-1")
+	ctx.AddParam("resourceId", "57959813-9999-4e3c-8970-e4364b74980a")
 	
 	GetResourceFhir(ctx)
 
-	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	type ResponseWrapper struct {
+		Data *models.ResourceBase  `json:"data"`
+		Success bool               `json:"success"`
+	}
+	var respWrapper ResponseWrapper
+	err := json.Unmarshal(w.Body.Bytes(), &respWrapper)
 	require.NoError(suite.T(),err)
+	
 	require.Equal(suite.T(),false,respWrapper.Success)
+	require.Nil(suite.T(),respWrapper.Data)
+	
 }
-
