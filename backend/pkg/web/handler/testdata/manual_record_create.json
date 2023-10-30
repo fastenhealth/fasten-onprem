@@ -1,0 +1,306 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:b4802ec7-3d07-46df-b928-8cf33675292a",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "b4802ec7-3d07-46df-b928-8cf33675292a",
+        "name": [
+          {
+            "family": "Placeholder",
+            "given": [
+              "Patient"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:4f3bbe93-2d54-4e45-acc1-215a2cfe427e",
+      "resource": {
+        "subject": {
+          "reference": "urn:uuid:b4802ec7-3d07-46df-b928-8cf33675292a"
+        },
+        "resourceType": "Condition",
+        "id": "4f3bbe93-2d54-4e45-acc1-215a2cfe427e",
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10",
+              "code": "R09.1",
+              "display": "Pleurisy"
+            }
+          ],
+          "text": "Pleurisy"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+              "code": "active"
+            }
+          ]
+        },
+        "onsetDateTime": "2023-10-04T07:00:00.000Z",
+        "abatementDateTime": "2023-10-27T07:00:00.000Z",
+        "recordedDate": "2023-10-30T20:33:29.307Z",
+        "note": [
+          {
+            "text": "testing condition description"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:27b5733f-994c-4c25-b9fa-785bc4fb6553",
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "27b5733f-994c-4c25-b9fa-785bc4fb6553",
+        "status": "finished",
+        "subject": {
+          "reference": "urn:uuid:b4802ec7-3d07-46df-b928-8cf33675292a"
+        },
+        "participant": [
+          {
+            "individual": {
+              "reference": "urn:uuid:02b9d20d-20c5-4c82-a0a8-b2a6bdc6bc84"
+            }
+          }
+        ],
+        "period": {
+          "start": "2023-10-05T07:00:00.000Z",
+          "end": "2023-10-11T07:00:00.000Z"
+        },
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:4f3bbe93-2d54-4e45-acc1-215a2cfe427e"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:741f40d7-6aa2-4388-9764-d66deeec9b55",
+      "resource": {
+        "id": "741f40d7-6aa2-4388-9764-d66deeec9b55",
+        "resourceType": "Binary",
+        "contentType": "text/plain",
+        "data": "aGVsbG8gd29ybGQ="
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:6a7d995e-ab75-4654-97e9-d25e192d6202",
+      "resource": {
+        "id": "6a7d995e-ab75-4654-97e9-d25e192d6202",
+        "resourceType": "DocumentReference",
+        "status": "current",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://loinc.org",
+                "code": "47046-8"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "reference": "urn:uuid:b4802ec7-3d07-46df-b928-8cf33675292a"
+        },
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/plain",
+              "url": "urn:uuid:741f40d7-6aa2-4388-9764-d66deeec9b55",
+              "title": "hello world"
+            }
+          }
+        ],
+        "context": [
+          {
+            "related": [
+              {
+                "reference": "urn:uuid:4f3bbe93-2d54-4e45-acc1-215a2cfe427e"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:347c6696-b56d-4aa8-a2b4-b3abfa70a3cd",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "347c6696-b56d-4aa8-a2b4-b3abfa70a3cd",
+        "name": "UCSF",
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "1396094272",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "NPI"
+                }
+              ]
+            }
+          }
+        ],
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "http://nucc.org/provider-taxonomy",
+                "code": "261QA0600X; 282N00000X",
+                "display": "Clinic/Center"
+              }
+            ]
+          }
+        ],
+        "address": [
+          {
+            "line": [
+              "1701 DIVISADERO ST",
+              "STE 480"
+            ],
+            "city": "SAN FRANCISCO",
+            "state": "CA",
+            "postalCode": "94115",
+            "country": "US"
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(415) 353-9539"
+          },
+          {
+            "system": "fax",
+            "value": "(415) 353-9539"
+          },
+          {
+            "system": "email",
+            "value": "ucsftest@example.com"
+          }
+        ],
+        "active": true
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:02b9d20d-20c5-4c82-a0a8-b2a6bdc6bc84",
+      "resource": {
+        "resourceType": "Practitioner",
+        "id": "02b9d20d-20c5-4c82-a0a8-b2a6bdc6bc84",
+        "name": [
+          {
+            "text": "DOC, UNKNOWN"
+          }
+        ],
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "1851994321",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "NPI"
+                }
+              ]
+            }
+          }
+        ],
+        "address": [
+          {
+            "line": [
+              "620 W GRAND AVE",
+              null
+            ],
+            "city": "DAYTON",
+            "state": "OH",
+            "postalCode": "45406",
+            "country": "US"
+          }
+        ],
+        "telecom": [
+          {
+            "system": "phone",
+            "value": "(610) 555-3578"
+          },
+          {
+            "system": "fax",
+            "value": "123 456 7891"
+          },
+          {
+            "system": "email",
+            "value": "test@example.com"
+          }
+        ],
+        "active": true,
+        "qualification": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://nucc.org/provider-taxonomy",
+                  "code": "3747A0650X",
+                  "display": "Technician"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:4a6bd467-3fe7-4cce-847d-c4b675b68394",
+      "resource": {
+        "id": "4a6bd467-3fe7-4cce-847d-c4b675b68394",
+        "resourceType": "MedicationRequest",
+        "status": "active",
+        "statusReason": {
+          "coding": []
+        },
+        "intent": "order",
+        "medicationCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/rxnorm",
+              "code": "1187315",
+              "display": "TYLENOL (Oral Pill)"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "urn:uuid:b4802ec7-3d07-46df-b928-8cf33675292a"
+        },
+        "encounter": {
+          "reference": "urn:uuid:27b5733f-994c-4c25-b9fa-785bc4fb6553"
+        },
+        "authoredOn": "2023-10-05T07:00:00.000Z",
+        "requester": {
+          "reference": "urn:uuid:02b9d20d-20c5-4c82-a0a8-b2a6bdc6bc84"
+        },
+        "supportingInformation": [],
+        "reasonReference": [
+          {
+            "reference": "urn:uuid:4f3bbe93-2d54-4e45-acc1-215a2cfe427e"
+          }
+        ],
+        "note": [
+          {
+            "text": "testing medication instructions"
+          }
+        ],
+        "dispenseRequest": {
+          "validityPeriod": {
+            "start": "2023-10-05T07:00:00.000Z",
+            "end": "2023-10-11T07:00:00.000Z"
+          }
+        }
+      }
+    }
+  ]
+}
