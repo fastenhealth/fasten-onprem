@@ -29,7 +29,7 @@ func CreateReconnectSource(c *gin.Context) {
 	logger.Infof("Parsed Create SourceCredential Credentials Payload: %v", sourceCred)
 
 	if sourceCred.DynamicClientRegistrationMode == "user-authenticated" {
-		logger.Warnf("This client requires a dynamice client registration, starting registration process")
+		logger.Warnf("This client requires a dynamic client registration, starting registration process")
 
 		if len(sourceCred.RegistrationEndpoint) == 0 {
 			logger.Errorln("Empty registration endpoint, cannot be used with dynamic-client registration mode:", sourceCred.DynamicClientRegistrationMode)
