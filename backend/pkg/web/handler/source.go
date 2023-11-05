@@ -32,22 +32,25 @@ func CreateReconnectSource(c *gin.Context) {
 		logger.Warnf("This client requires a dynamic client registration, starting registration process")
 
 		if len(sourceCred.RegistrationEndpoint) == 0 {
-			logger.Errorln("Empty registration endpoint, cannot be used with dynamic-client registration mode:", sourceCred.DynamicClientRegistrationMode)
-			c.JSON(http.StatusBadRequest, gin.H{"success": false})
+			err := fmt.Errorf("this client requires dynamic registration, but does not provide a registration endpoint: %s", sourceCred.DynamicClientRegistrationMode)
+			logger.Errorln(err)
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
 			return
 		}
 
 		err := sourceCred.RegisterDynamicClient()
 		if err != nil {
-			logger.Errorln("An error occurred while registering dynamic client", err)
-			c.JSON(http.StatusBadRequest, gin.H{"success": false})
+			err = fmt.Errorf("an error occurred while registering dynamic client: %w", err)
+			logger.Errorln(err)
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
 			return
 		}
 		//generate a JWT token and then use it to get an access token for the dynamic client
 		err = sourceCred.RefreshDynamicClientAccessToken()
 		if err != nil {
-			logger.Errorln("An error occurred while retrieving access token for dynamic client", err)
-			c.JSON(http.StatusBadRequest, gin.H{"success": false})
+			err = fmt.Errorf("an error occurred while retrieving access token for dynamic client: %w", err)
+			logger.Errorln(err)
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
 			return
 		}
 	}
@@ -56,16 +59,18 @@ func CreateReconnectSource(c *gin.Context) {
 		//reconnect
 		err := databaseRepo.UpdateSource(c, &sourceCred)
 		if err != nil {
-			logger.Errorln("An error occurred while reconnecting source credential", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+			err = fmt.Errorf("an error occurred while reconnecting source credential: %w", err)
+			logger.Errorln(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 			return
 		}
 	} else {
 		//create source for the first time
 		err := databaseRepo.CreateSource(c, &sourceCred)
 		if err != nil {
-			logger.Errorln("An error occurred while storing source credential", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+			err = fmt.Errorf("an error occurred while storing source credential: %w", err)
+			logger.Errorln(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 			return
 		}
 	}
