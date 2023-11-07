@@ -1,8 +1,5 @@
 module github.com/fastenhealth/fasten-onprem
 
-//replace github.com/fastenhealth/fasten-sources => ../fasten-sources
-//replace github.com/fastenhealth/gofhir-models => ../gofhir-models
-
 go 1.18
 
 //replace github.com/fastenhealth/fasten-sources => ../fasten-sources
