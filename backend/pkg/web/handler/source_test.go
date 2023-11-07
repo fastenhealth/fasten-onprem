@@ -55,6 +55,7 @@ func (suite *SourceHandlerTestSuite) BeforeTest(suiteName, testName string) {
 	appConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	appConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	appConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	appConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
 	appConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	suite.AppConfig = appConfig
 

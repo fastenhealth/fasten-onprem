@@ -33,35 +33,35 @@ type ResourcFhirHandlerTestSuite struct {
 	AppConfig     *mock_config.MockInterface
 	AppRepository database.DatabaseRepository
 	AppEventBus   event_bus.Interface
-	SourceId 	  uuid.UUID
+	SourceId      uuid.UUID
 }
 
-
-func (suite *ResourcFhirHandlerTestSuite) BeforeTest(suiteName string, testName string){
+func (suite *ResourcFhirHandlerTestSuite) BeforeTest(suiteName string, testName string) {
 	suite.MockCtrl = gomock.NewController(suite.T())
-	
+
 	// ioutils is deprecated, used os.CreateTemp
-	dbFile, err := os.CreateTemp("",fmt.Sprintf("%s.*.db",suiteName))
-	if err!=nil {
+	dbFile, err := os.CreateTemp("", fmt.Sprintf("%s.*.db", suiteName))
+	if err != nil {
 		log.Fatal(err)
 	}
 	suite.TestDatabase = dbFile
 
-    appConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	appConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	appConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	appConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	appConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
 	appConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	suite.AppConfig = appConfig
 
-	appRepo, err := database.NewRepository(suite.AppConfig,logrus.WithField("test",suite.T().Name()),event_bus.NewNoopEventBusServer())
+	appRepo, err := database.NewRepository(suite.AppConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	suite.AppRepository = appRepo
 
 	suite.AppEventBus = event_bus.NewNoopEventBusServer()
-	appRepo.CreateUser(context.Background(),&models.User{
+	appRepo.CreateUser(context.Background(), &models.User{
 		Username: "test_user",
 		Password: "test",
 	})
-	
+
 	//Pre adding the source data
 	w := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(w)
@@ -76,8 +76,8 @@ func (suite *ResourcFhirHandlerTestSuite) BeforeTest(suiteName string, testName 
 	ctx.Request = req
 
 	CreateManualSource(ctx)
-	//assert 
-	require.Equal(suite.T(), http.StatusOK, w.Code)	
+	//assert
+	require.Equal(suite.T(), http.StatusOK, w.Code)
 	type ResponseWrapper struct {
 		Success bool                    `json:"success"`
 		Source  models.SourceCredential `json:"source"`
@@ -86,10 +86,9 @@ func (suite *ResourcFhirHandlerTestSuite) BeforeTest(suiteName string, testName 
 	var respWrapper ResponseWrapper
 	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
 	require.NoError(suite.T(), err)
-	
+
 	suite.SourceId = respWrapper.Source.ID
 }
-
 
 // AfterTest has a function to be executed right after the test finishes and receives the suite and test names as input
 func (suite *ResourcFhirHandlerTestSuite) AfterTest(suiteName, testName string) {
@@ -112,21 +111,21 @@ func (suite *ResourcFhirHandlerTestSuite) TestGetResourceFhirHandler() {
 
 	ctx.AddParam("sourceId", suite.SourceId.String())
 	ctx.AddParam("resourceId", "57959813-8cd2-4e3c-8970-e4364b74980a")
-	
+
 	GetResourceFhir(ctx)
 
 	type ResponseWrapper struct {
-		Data *models.ResourceBase  `json:"data"`
-		Success bool               `json:"success"`
+		Data    *models.ResourceBase `json:"data"`
+		Success bool                 `json:"success"`
 	}
 	var respWrapper ResponseWrapper
 	err := json.Unmarshal(w.Body.Bytes(), &respWrapper)
-	require.NoError(suite.T(),err)
-	require.Equal(suite.T(),true,respWrapper.Success)
-	require.Equal(suite.T(),"Patient",respWrapper.Data.SourceResourceType)
-	require.Equal(suite.T(),suite.SourceId, respWrapper.Data.SourceID)
-	require.Equal(suite.T(),"57959813-8cd2-4e3c-8970-e4364b74980a", respWrapper.Data.SourceResourceID)
-	
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), true, respWrapper.Success)
+	require.Equal(suite.T(), "Patient", respWrapper.Data.SourceResourceType)
+	require.Equal(suite.T(), suite.SourceId, respWrapper.Data.SourceID)
+	require.Equal(suite.T(), "57959813-8cd2-4e3c-8970-e4364b74980a", respWrapper.Data.SourceResourceID)
+
 }
 
 func (suite *ResourcFhirHandlerTestSuite) TestGetResourceFhirHandler_WithInvalidSourceResourceId() {
@@ -140,18 +139,18 @@ func (suite *ResourcFhirHandlerTestSuite) TestGetResourceFhirHandler_WithInvalid
 
 	ctx.AddParam("sourceId", "-1")
 	ctx.AddParam("resourceId", "57959813-9999-4e3c-8970-e4364b74980a")
-	
+
 	GetResourceFhir(ctx)
 
 	type ResponseWrapper struct {
-		Data *models.ResourceBase  `json:"data"`
-		Success bool               `json:"success"`
+		Data    *models.ResourceBase `json:"data"`
+		Success bool                 `json:"success"`
 	}
 	var respWrapper ResponseWrapper
 	err := json.Unmarshal(w.Body.Bytes(), &respWrapper)
-	require.NoError(suite.T(),err)
-	
-	require.Equal(suite.T(),false,respWrapper.Success)
-	require.Nil(suite.T(),respWrapper.Data)
-	
+	require.NoError(suite.T(), err)
+
+	require.Equal(suite.T(), false, respWrapper.Success)
+	require.Nil(suite.T(), respWrapper.Data)
+
 }
