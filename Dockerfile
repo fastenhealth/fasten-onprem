@@ -33,7 +33,7 @@ RUN --mount=type=cache,target=/tmp/lock,sharing=locked \
     && go generate ./... \
     && go vet ./... \
     && go test -timeout=20m ./... \
-    && CGO_ENABLED=0 go build -o /go/bin/fasten ./backend/cmd/fasten/
+    && go build -o /go/bin/fasten ./backend/cmd/fasten/
 
 # create folder structure
 RUN mkdir -p /opt/fasten/db \
