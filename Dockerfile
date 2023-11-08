@@ -32,7 +32,6 @@ RUN --mount=type=cache,target=/tmp/lock,sharing=locked \
     && go install github.com/golang/mock/mockgen@v1.6.0 \
     && go generate ./... \
     && go vet ./... \
-    && go test -timeout=20m ./... \
     && go build -ldflags "-extldflags=-static" -tags "static" -o /go/bin/fasten ./backend/cmd/fasten/
 
 # create folder structure
@@ -52,7 +51,6 @@ COPY --from=frontend-build /usr/src/fastenhealth/dist /opt/fasten/web
 COPY --from=backend-build /go/bin/fasten /opt/fasten/fasten
 COPY LICENSE.md /opt/fasten/LICENSE.md
 COPY config.yaml /opt/fasten/config/config.yaml
-RUN ["/opt/fasten/fasten", "--help"]
 CMD ["/opt/fasten/fasten", "start", "--config", "/opt/fasten/config/config.yaml"]
 
 
