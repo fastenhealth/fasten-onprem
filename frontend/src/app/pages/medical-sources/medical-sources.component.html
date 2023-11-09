@@ -33,7 +33,7 @@
 
       <div class="row row-sm">
         <div class="col-lg">
-          <ngx-dropzone [multiple]="false" (change)="uploadSourceBundleHandler($event)" accept=".json">
+          <ngx-dropzone [multiple]="false" (change)="uploadSourceBundleHandler($event)" accept=".json,.phr,.ndjson,.jsonl">
             <ngx-dropzone-label>Select your EMR/EHR bundle. Must be in JSON format</ngx-dropzone-label>
             <ngx-dropzone-preview *ngFor="let f of uploadedFile" [removable]="false">
               <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
