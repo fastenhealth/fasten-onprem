@@ -31,7 +31,7 @@ export class LighthouseService {
   ) {}
 
   public searchLighthouseSources(filter: MedicalSourcesFilter): Observable<LighthouseSourceSearch> {
-    if(filter.searchAfter){
+    if((typeof filter.searchAfter === 'string' || filter.searchAfter instanceof String) && (filter.searchAfter as string).length > 0){
       filter.searchAfter = (filter.searchAfter as string).split(',')
     } else {
       filter.searchAfter = []
