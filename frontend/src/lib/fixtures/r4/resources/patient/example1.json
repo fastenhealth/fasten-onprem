@@ -81,7 +81,7 @@
       }
     ]
   },
-  "deceasedBoolean": false,
+  "deceasedBoolean": true,
   "address": [
     {
       "use": "home",
