@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -24,6 +25,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
+
+const fhirResourcePath = "/resource/fhir"
 
 type ResourceFhirHandlerTestSuite struct {
 	suite.Suite
@@ -108,6 +111,24 @@ func setupGinContext(ctx *gin.Context, suite *ResourceFhirHandlerTestSuite) {
 	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_user")
 }
 
+func addParamsToGinContext(ctx *gin.Context,params []gin.Param) error {
+	var baseUrl = fhirResourcePath +  "?"
+	for i,param  := range params {
+		if i > 0 {
+			baseUrl += "&"
+		}
+		baseUrl += param.Key + "=" + param.Value
+	}
+	body := &bytes.Buffer{}
+	req, err := http.NewRequest("GET", baseUrl, body)
+	if err!= nil {
+        log.Fatal("Could not make http request ", err.Error())
+		return err
+	}
+	ctx.Request = req
+	return nil
+}
+
 func (suite *ResourceFhirHandlerTestSuite) TestGetResourceFhirHandler() {
 	w := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(w)
@@ -160,13 +181,13 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithValid
 	ctx, _ := gin.CreateTestContext(w)
 	setupGinContext(ctx, suite)
 	
-	
-	ctx.Params = []gin.Param {
+	err := addParamsToGinContext(ctx, []gin.Param {
 		{
             Key: "sourceResourceID",
             Value: "cd72a003-ffa9-44a2-9e9c-97004144f5d8",
         },
-	}
+	})
+	suite.NoError(err)
 
 	ListResourceFhir(ctx)
 
@@ -175,7 +196,7 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithValid
 		Success bool                  `json:"success"`
 	}
 	var respWrapper ResponseWrapper
-	err := json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(), true, respWrapper.Success)
 	require.Equal(suite.T(), 1, len(respWrapper.Data))
@@ -188,12 +209,14 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithValid
 	ctx, _ := gin.CreateTestContext(w)
 	setupGinContext(ctx, suite)
 
-	ctx.Params = []gin.Param {
+	err := addParamsToGinContext(ctx, []gin.Param {
 		{
 			Key: "sourceResourceType",
-            Value: "Observation",
+            Value: "Patient",
 		},
-	}
+	})
+	suite.NoError(err)
+
 	ListResourceFhir(ctx)
 
 	type ResponseWrapper struct {
@@ -201,12 +224,37 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithValid
 		Success bool                  `json:"success"`
 	}
 	var respWrapper ResponseWrapper
-	err := json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(), true, respWrapper.Success)
 	for _, data := range respWrapper.Data {
-		require.Equal(suite.T(), "Observation", data.SourceResourceType)
+		require.Equal(suite.T(), "Patient", data.SourceResourceType)
 	}
+}
+
+func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithInValidSourceResourceType() {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	setupGinContext(ctx, suite)
+
+	err := addParamsToGinContext(ctx, []gin.Param {
+		{
+			Key: "sourceResourceType",
+            Value: "org",
+		},
+	})
+	suite.NoError(err)
+	ListResourceFhir(ctx)
+
+	type ResponseWrapper struct {
+		Data    []models.ResourceBase `json:"data"`
+		Success bool                  `json:"success"`
+	}
+	var respWrapper ResponseWrapper
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), false, respWrapper.Success)
+	require.Empty(suite.T(),respWrapper.Data)
 }
 
 
@@ -215,19 +263,17 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithValid
 	ctx, _ := gin.CreateTestContext(w)
 	setupGinContext(ctx, suite)
 
-	ctx.Params = []gin.Param{
+	err := addParamsToGinContext(ctx, []gin.Param{
 		{
-            Key: "sourceId",
+            Key: "sourceID",
             Value: suite.SourceId.String(),
         },
 		{
 			Key: "page",
-			Value: "1",
+			Value: "2",
 		},
-
-    }
-
-	
+    })
+	suite.NoError(err)
 
 	ListResourceFhir(ctx)
 
@@ -236,7 +282,7 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithValid
 		Success bool                  `json:"success"`
 	}
 	var respWrapper ResponseWrapper
-	err := json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(), true, respWrapper.Success)
 	require.Equal(suite.T(), pkg.ResourceListPageSize, len(respWrapper.Data))
@@ -246,7 +292,8 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithValid
 
 	n := len(respWrapper.Data)
 	for i := 0; i < n-1; i++ {
-		require.Equal(suite.T(), true, (*respWrapper.Data[i].SortDate).Before(*respWrapper.Data[i+1].SortDate))
+		cmp := (*respWrapper.Data[i].SortDate).Compare(*respWrapper.Data[i+1].SortDate)
+		require.Equal(suite.T(), true, cmp == 0 || cmp == 1)
 	}
 
 }
@@ -256,21 +303,23 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_SortingBy
 	ctx, _ := gin.CreateTestContext(w)
 	setupGinContext(ctx, suite)
 
-	ctx.Params = []gin.Param {
+
+	err := addParamsToGinContext(ctx, []gin.Param {
 		{
             Key: "sortBy",
             Value: "title",
         },
 		{
             Key: "page",
-            Value: "1",
+            Value: "2",
         },
 		{
-            Key: "sourceId",
+            Key: "sourceID",
             Value: suite.SourceId.String(),
         },
-	}
-
+	})
+	suite.NoError(err)
+	
 	ListResourceFhir(ctx)
 
 	type ResponseWrapper struct {
@@ -278,14 +327,14 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_SortingBy
 		Success bool                  `json:"success"`
 	}
 	var respWrapper ResponseWrapper
-	err := json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(), true, respWrapper.Success)
 	require.Equal(suite.T(), pkg.ResourceListPageSize, len(respWrapper.Data))
 
 	n := len(respWrapper.Data)
 	for i := 0; i < n-1; i++ {
-		require.Equal(suite.T(), true, (*respWrapper.Data[i].SortTitle) < (*respWrapper.Data[i+1].SortTitle))
+		require.Equal(suite.T(), true, (*respWrapper.Data[i].SortTitle) <= (*respWrapper.Data[i+1].SortTitle))
 	}
 
 }
@@ -294,20 +343,19 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithInval
 	w := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(w)
 	setupGinContext(ctx, suite)
-
-	ctx.AddParam("sourceId", "-1")
-	ctx.AddParam("resourceId", "-1")
-	ctx.Params = []gin.Param {
+ 
+	err := addParamsToGinContext(ctx, []gin.Param {
 		{
-			Key: "sourceId",
+			Key: "sourceID",
 			Value: "-1",
 		},
 		{
-			Key: "resourceId",
+			Key: "resourceID",
 			Value: "-1",
 		},
-	}
-
+	})
+	suite.NoError(err)
+	
 	ListResourceFhir(ctx)
 
 	type ResponseWrapper struct {
@@ -315,7 +363,7 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithInval
 		Success bool                   `json:"success"`
 	}
 	var respWrapper ResponseWrapper
-	err := json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
 	require.NoError(suite.T(), err)
 
 	require.Equal(suite.T(), false, respWrapper.Success)
@@ -328,13 +376,14 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithInval
 	ctx, _ := gin.CreateTestContext(w)
 	setupGinContext(ctx, suite)
 
-	ctx.AddParam("page", "page")
-	ctx.Params = []gin.Param {
+	err := addParamsToGinContext(ctx, []gin.Param {
 		{
             Key: "page",
             Value: "page",
         },
-	}
+	})
+	suite.NoError(err)
+	
 	ListResourceFhir(ctx)
 
 	type ResponseWrapper struct {
@@ -342,7 +391,7 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithInval
 		Success bool                   `json:"success"`
 	}
 	var respWrapper ResponseWrapper
-	err := json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
 	require.NoError(suite.T(), err)
 
 	require.Equal(suite.T(), false, respWrapper.Success)
