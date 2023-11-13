@@ -70,6 +70,46 @@ func TestFhirPatient_ExtractSearchParameters(t *testing.T) {
 		},
 	}, testIdentifier)
 
+	var testGender []interface{}
+	err = json.Unmarshal(json.RawMessage(patientModel.Gender), &testGender)
+	require.NoError(t, err)
+	require.Equal(t, []interface{}{
+		map[string]interface{}{"code": "male"},
+	}, testGender)
+	
+	// TODO: Fix the Goja query issues for handling the deceasedBoolean field and them uncomment this unit test
+	// var testDeceased []interface{}
+	// err = json.Unmarshal(json.RawMessage(patientModel.Deceased), &testDeceased)
+	// require.NoError(t, err)
+	// require.Equal(t, []interface{}{
+	// 	map[string]interface{}{"code": true},
+	// }, testDeceased)
+
+	var testfamily []string
+	err = json.Unmarshal(json.RawMessage(patientModel.Family), &testfamily)
+	require.NoError(t, err)
+	require.Equal(t, []string{
+		"Chalmers", "Windsor",
+	}, testfamily)
+
+	var testPhonetic []string
+	err = json.Unmarshal(json.RawMessage(patientModel.Phonetic), &testPhonetic)
+	require.NoError(t, err)
+	require.Equal(t, []string{
+		"Peter James Chalmers","Jim", "Peter James Windsor",
+	}, testPhonetic)
+
+	var testOrganisation []interface{}
+	err = json.Unmarshal(json.RawMessage(patientModel.Organization), &testOrganisation)
+	require.NoError(t, err)
+	require.Equal(t, []interface{}{
+		map[string]interface{}{
+			"reference": "Organization/1",
+			"__path__": "Patient.managingOrganization",
+		},
+	}, testOrganisation)
+
+
 	require.Equal(t, time.Date(1974, 12, 25, 0, 0, 0, 0, time.UTC), *patientModel.Birthdate)
 
 }
