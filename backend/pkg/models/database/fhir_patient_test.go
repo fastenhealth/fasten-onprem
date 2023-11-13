@@ -77,7 +77,7 @@ func TestFhirPatient_ExtractSearchParameters(t *testing.T) {
 		map[string]interface{}{"code": "male"},
 	}, testGender)
 	
-	// To Do: Fix the Goja query issues for handling the deceasedBoolean field and them uncomment this unit test
+	// TODO: Fix the Goja query issues for handling the deceasedBoolean field and them uncomment this unit test
 	// var testDeceased []interface{}
 	// err = json.Unmarshal(json.RawMessage(patientModel.Deceased), &testDeceased)
 	// require.NoError(t, err)
