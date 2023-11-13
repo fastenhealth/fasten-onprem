@@ -2,9 +2,10 @@ package database
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestFhirObservation_ExtractSearchParameters(t *testing.T) {
@@ -47,4 +48,25 @@ func TestFhirObservation_ExtractSearchParameters(t *testing.T) {
 			System: "http://acme.org/devices/clinical-codes",
 		},
 	}, testCodeSystem)
+
+	var testCategory []CodeSystemType
+	require.NoError(t, err)
+	err = json.Unmarshal(json.RawMessage(observationModel.Category), &testCategory)
+	require.NoError(t, err)
+	require.Equal(t, []CodeSystemType{
+		{
+			Code:   "vital-signs",
+			System: "http://terminology.hl7.org/CodeSystem/observation-category",
+		},
+	}, testCategory)
+
+	var testStatus []interface{}
+	require.NoError(t, err)
+	err = json.Unmarshal(json.RawMessage(observationModel.Status), &testStatus)
+	require.NoError(t, err)
+	require.Equal(t, []interface{}{
+		map[string]interface{}{
+			"code": "final",
+		},
+	}, testStatus)
 }
