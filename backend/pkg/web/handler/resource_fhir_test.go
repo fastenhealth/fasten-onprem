@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -25,7 +26,9 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type ResourcFhirHandlerTestSuite struct {
+const fhirResourcePath = "/resource/fhir"
+
+type ResourceFhirHandlerTestSuite struct {
 	suite.Suite
 	MockCtrl     *gomock.Controller
 	TestDatabase *os.File
@@ -35,8 +38,35 @@ type ResourcFhirHandlerTestSuite struct {
 	AppEventBus   event_bus.Interface
 	SourceId      uuid.UUID
 }
+func setupGinContext(ctx *gin.Context, suite *ResourceFhirHandlerTestSuite) {
+	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", suite.T().Name()))
+	ctx.Set(pkg.ContextKeyTypeDatabase, suite.AppRepository)
+	ctx.Set(pkg.ContextKeyTypeConfig, suite.AppConfig)
+	ctx.Set(pkg.ContextKeyTypeEventBusServer, suite.AppEventBus)
+	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_user")
+}
 
-func (suite *ResourcFhirHandlerTestSuite) BeforeTest(suiteName string, testName string) {
+func addParamsToGinContext(ctx *gin.Context,params []gin.Param) error {
+	var baseUrl = fhirResourcePath +  "?"
+	for i,param  := range params {
+		if i > 0 {
+			baseUrl += "&"
+		}
+		baseUrl += param.Key + "=" + param.Value
+	}
+	body := &bytes.Buffer{}
+	req, err := http.NewRequest("GET", baseUrl, body)
+	if err!= nil {
+        log.Fatal("Could not make http request ", err.Error())
+		return err
+	}
+	ctx.Request = req
+	return nil
+}
+
+//SetupAllSuite has a SetupSuite method, which will run before the tests in the suite are run.
+func (suite *ResourceFhirHandlerTestSuite) SetupSuite() {
+	suiteName  := suite.T().Name()
 	suite.MockCtrl = gomock.NewController(suite.T())
 
 	// ioutils is deprecated, used os.CreateTemp
@@ -60,8 +90,7 @@ func (suite *ResourcFhirHandlerTestSuite) BeforeTest(suiteName string, testName 
 	appRepo.CreateUser(context.Background(), &models.User{
 		Username: "test_user",
 		Password: "test",
-	})
-
+	})	
 	//Pre adding the source data
 	w := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(w)
@@ -90,24 +119,21 @@ func (suite *ResourcFhirHandlerTestSuite) BeforeTest(suiteName string, testName 
 	suite.SourceId = respWrapper.Source.ID
 }
 
-// AfterTest has a function to be executed right after the test finishes and receives the suite and test names as input
-func (suite *ResourcFhirHandlerTestSuite) AfterTest(suiteName, testName string) {
+// TearDownAllSuite has a TearDownSuite method, which will run after all the tests in the suite have been run.
+func (suite *ResourceFhirHandlerTestSuite) TearDownSuite() {
 	suite.MockCtrl.Finish()
 	os.Remove(suite.TestDatabase.Name())
 }
 
 func TestResourceHandlerTestSuite(t *testing.T) {
-	suite.Run(t, new(ResourcFhirHandlerTestSuite))
+	suite.Run(t, new(ResourceFhirHandlerTestSuite))
 }
 
-func (suite *ResourcFhirHandlerTestSuite) TestGetResourceFhirHandler() {
+
+func (suite *ResourceFhirHandlerTestSuite) TestGetResourceFhirHandler() {
 	w := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(w)
-	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", suite.T().Name()))
-	ctx.Set(pkg.ContextKeyTypeDatabase, suite.AppRepository)
-	ctx.Set(pkg.ContextKeyTypeConfig, suite.AppConfig)
-	ctx.Set(pkg.ContextKeyTypeEventBusServer, suite.AppEventBus)
-	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_user")
+	setupGinContext(ctx,suite)
 
 	ctx.AddParam("sourceId", suite.SourceId.String())
 	ctx.AddParam("resourceId", "57959813-8cd2-4e3c-8970-e4364b74980a")
@@ -128,14 +154,10 @@ func (suite *ResourcFhirHandlerTestSuite) TestGetResourceFhirHandler() {
 
 }
 
-func (suite *ResourcFhirHandlerTestSuite) TestGetResourceFhirHandler_WithInvalidSourceResourceId() {
+func (suite *ResourceFhirHandlerTestSuite) TestGetResourceFhirHandler_WithInvalidSourceResourceId() {
 	w := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(w)
-	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", suite.T().Name()))
-	ctx.Set(pkg.ContextKeyTypeDatabase, suite.AppRepository)
-	ctx.Set(pkg.ContextKeyTypeConfig, suite.AppConfig)
-	ctx.Set(pkg.ContextKeyTypeEventBusServer, suite.AppEventBus)
-	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_user")
+	setupGinContext(ctx,suite)
 
 	ctx.AddParam("sourceId", "-1")
 	ctx.AddParam("resourceId", "57959813-9999-4e3c-8970-e4364b74980a")
@@ -148,9 +170,232 @@ func (suite *ResourcFhirHandlerTestSuite) TestGetResourceFhirHandler_WithInvalid
 	}
 	var respWrapper ResponseWrapper
 	err := json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	require.NoError(suite.T(),err)
+	
+	require.Equal(suite.T(),false,respWrapper.Success)
+	require.Nil(suite.T(),respWrapper.Data)
+	
+}
+
+func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithValidSourceResourceId() {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	setupGinContext(ctx, suite)
+	
+	err := addParamsToGinContext(ctx, []gin.Param {
+		{
+            Key: "sourceResourceID",
+            Value: "cd72a003-ffa9-44a2-9e9c-97004144f5d8",
+        },
+	})
+	suite.NoError(err)
+
+	ListResourceFhir(ctx)
+
+	type ResponseWrapper struct {
+		Data    []models.ResourceBase `json:"data"`
+		Success bool                  `json:"success"`
+	}
+	var respWrapper ResponseWrapper
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), true, respWrapper.Success)
+	require.Equal(suite.T(), 1, len(respWrapper.Data))
+	require.Equal(suite.T(), suite.SourceId, respWrapper.Data[0].SourceID)
+	require.Equal(suite.T(), "cd72a003-ffa9-44a2-9e9c-97004144f5d8", respWrapper.Data[0].SourceResourceID)
+}
+
+func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithValidSourceResourceType() {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	setupGinContext(ctx, suite)
+
+	err := addParamsToGinContext(ctx, []gin.Param {
+		{
+			Key: "sourceResourceType",
+            Value: "Patient",
+		},
+	})
+	suite.NoError(err)
+
+	ListResourceFhir(ctx)
+
+	type ResponseWrapper struct {
+		Data    []models.ResourceBase `json:"data"`
+		Success bool                  `json:"success"`
+	}
+	var respWrapper ResponseWrapper
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), true, respWrapper.Success)
+	for _, data := range respWrapper.Data {
+		require.Equal(suite.T(), "Patient", data.SourceResourceType)
+	}
+}
+
+func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithInValidSourceResourceType() {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	setupGinContext(ctx, suite)
+
+	err := addParamsToGinContext(ctx, []gin.Param {
+		{
+			Key: "sourceResourceType",
+            Value: "org",
+		},
+	})
+	suite.NoError(err)
+	ListResourceFhir(ctx)
+
+	type ResponseWrapper struct {
+		Data    []models.ResourceBase `json:"data"`
+		Success bool                  `json:"success"`
+	}
+	var respWrapper ResponseWrapper
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), false, respWrapper.Success)
+	require.Empty(suite.T(),respWrapper.Data)
+}
+
+
+func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithValidSourceIdAndPageAndSort() {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	setupGinContext(ctx, suite)
+
+	err := addParamsToGinContext(ctx, []gin.Param{
+		{
+            Key: "sourceID",
+            Value: suite.SourceId.String(),
+        },
+		{
+			Key: "page",
+			Value: "2",
+		},
+    })
+	suite.NoError(err)
+
+	ListResourceFhir(ctx)
+
+	type ResponseWrapper struct {
+		Data    []models.ResourceBase `json:"data"`
+		Success bool                  `json:"success"`
+	}
+	var respWrapper ResponseWrapper
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), true, respWrapper.Success)
+	require.Equal(suite.T(), pkg.ResourceListPageSize, len(respWrapper.Data))
+	for _, data := range respWrapper.Data {
+		require.Equal(suite.T(), suite.SourceId, data.SourceID)
+	}
+
+	n := len(respWrapper.Data)
+	for i := 0; i < n-1; i++ {
+		cmp := (*respWrapper.Data[i].SortDate).Compare(*respWrapper.Data[i+1].SortDate)
+		require.Equal(suite.T(), true, cmp == 0 || cmp == 1)
+	}
+
+}
+
+func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_SortingByTitle() {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	setupGinContext(ctx, suite)
+
+
+	err := addParamsToGinContext(ctx, []gin.Param {
+		{
+            Key: "sortBy",
+            Value: "title",
+        },
+		{
+            Key: "page",
+            Value: "2",
+        },
+		{
+            Key: "sourceID",
+            Value: suite.SourceId.String(),
+        },
+	})
+	suite.NoError(err)
+	
+	ListResourceFhir(ctx)
+
+	type ResponseWrapper struct {
+		Data    []models.ResourceBase `json:"data"`
+		Success bool                  `json:"success"`
+	}
+	var respWrapper ResponseWrapper
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), true, respWrapper.Success)
+	require.Equal(suite.T(), pkg.ResourceListPageSize, len(respWrapper.Data))
+
+	n := len(respWrapper.Data)
+	for i := 0; i < n-1; i++ {
+		require.Equal(suite.T(), true, (*respWrapper.Data[i].SortTitle) <= (*respWrapper.Data[i+1].SortTitle))
+	}
+
+}
+
+func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithInvalidSourceResourceId() {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	setupGinContext(ctx, suite)
+ 
+	err := addParamsToGinContext(ctx, []gin.Param {
+		{
+			Key: "sourceID",
+			Value: "-1",
+		},
+		{
+			Key: "resourceID",
+			Value: "-1",
+		},
+	})
+	suite.NoError(err)
+	
+	ListResourceFhir(ctx)
+
+	type ResponseWrapper struct {
+		Data    *[]models.ResourceBase `json:"data"`
+		Success bool                   `json:"success"`
+	}
+	var respWrapper ResponseWrapper
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
 	require.NoError(suite.T(), err)
 
 	require.Equal(suite.T(), false, respWrapper.Success)
-	require.Nil(suite.T(), respWrapper.Data)
+	require.Empty(suite.T(), respWrapper.Data)
+
+}
+
+func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithInvalidPage() {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	setupGinContext(ctx, suite)
+
+	err := addParamsToGinContext(ctx, []gin.Param {
+		{
+            Key: "page",
+            Value: "page",
+        },
+	})
+	suite.NoError(err)
+	
+	ListResourceFhir(ctx)
+
+	type ResponseWrapper struct {
+		Data    *[]models.ResourceBase `json:"data"`
+		Success bool                   `json:"success"`
+	}
+	var respWrapper ResponseWrapper
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	require.NoError(suite.T(), err)
+
+	require.Equal(suite.T(), false, respWrapper.Success)
+	require.Empty(suite.T(), respWrapper.Data)
 
 }
