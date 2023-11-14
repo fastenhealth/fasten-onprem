@@ -32,6 +32,7 @@ func (c *configuration) Init() error {
 	c.SetDefault("web.src.frontend.path", "/opt/fasten/web")
 	c.SetDefault("database.type", "sqlite")
 	c.SetDefault("database.location", "/opt/fasten/db/fasten.db")
+	//c.SetDefault("database.encryption.key", "") //encryption key must be set by the user.
 	c.SetDefault("cache.location", "/opt/fasten/cache/")
 
 	c.SetDefault("jwt.issuer.key", "thisismysupersecuressessionsecretlength")
@@ -80,6 +81,14 @@ func (c *configuration) ReadConfig(configFilePath string) error {
 
 // This function ensures that required configuration keys (that must be manually set) are present
 func (c *configuration) ValidateConfig() error {
-
+	if c.IsSet("database.encryption.key") {
+		key := c.GetString("database.encryption.key")
+		if key == "" {
+			return errors.ConfigValidationError("database.encryption.key cannot be empty")
+		}
+		if len(key) < 10 {
+			return errors.ConfigValidationError("database.encryption.key must be at least 10 characters")
+		}
+	}
 	return nil
 }

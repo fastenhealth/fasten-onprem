@@ -31,7 +31,7 @@ export class LighthouseService {
   ) {}
 
   public searchLighthouseSources(filter: MedicalSourcesFilter): Observable<LighthouseSourceSearch> {
-    if(filter.searchAfter){
+    if((typeof filter.searchAfter === 'string' || filter.searchAfter instanceof String) && (filter.searchAfter as string).length > 0){
       filter.searchAfter = (filter.searchAfter as string).split(',')
     } else {
       filter.searchAfter = []
@@ -45,28 +45,6 @@ export class LighthouseService {
         })
       );
   }
-
-  //deprecated
-  // public findLighthouseSources(searchTerm: string, scrollId= "", showHidden = false): Observable<LighthouseSourceSearch> {
-  //   const endpointUrl = new URL(`${environment.lighthouse_api_endpoint_base}/list/search`);
-  //   if(showHidden){
-  //     endpointUrl.searchParams.set('show_hidden', 'true');
-  //   }
-  //   if(scrollId){
-  //     endpointUrl.searchParams.set('scroll_id', scrollId);
-  //   }
-  //   if(searchTerm){
-  //     endpointUrl.searchParams.set('query', searchTerm);
-  //   }
-  //
-  //   return this._httpClient.get<ResponseWrapper>(endpointUrl.toString())
-  //     .pipe(
-  //       map((response: ResponseWrapper) => {
-  //         console.log("Metadata RESPONSE", response)
-  //         return response.data as LighthouseSourceSearch
-  //       })
-  //     );
-  // }
 
   public getLighthouseSourceMetadataMap(showHidden = false): Observable<{[name: string]: MetadataSource}> {
     const endpointUrl = new URL(`${environment.lighthouse_api_endpoint_base}/list`);

@@ -212,7 +212,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
               const toastNotification = new ToastNotification()
               toastNotification.type = ToastType.Error
-              toastNotification.message = `An error occurred while accessing ${sourceType}: '${JSON.stringify(err)}'`
+              toastNotification.message = `An error occurred while accessing ${sourceType}: '${this.extractErrorFromResponse(err)}'`
               toastNotification.autohide = false
               toastNotification.link = {
                 text: "View Details",
@@ -235,6 +235,15 @@ export class MedicalSourcesConnectedComponent implements OnInit {
       })
   }
 
+  extractErrorFromResponse(errResp: any): string {
+    let errMsg = ""
+    if(errResp.name == "HttpErrorResponse" && errResp.error && errResp.error?.error){
+      errMsg = errResp.error.error
+    } else {
+      errMsg = JSON.stringify(errResp)
+    }
+    return errMsg
+  }
 
 
   /**

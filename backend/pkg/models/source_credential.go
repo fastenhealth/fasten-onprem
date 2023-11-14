@@ -199,7 +199,7 @@ func (s *SourceCredential) RegisterDynamicClient() error {
 		if err == nil {
 			log.Printf("Error Response body: %s", string(b))
 		}
-		return fmt.Errorf("an error occurred while reading dynamic client registration response, status code was not 200: %d", registrationResponse.StatusCode)
+		return fmt.Errorf("this institution may not support dynamic client registration, meaning that we cannot automatically fetch your records. Please contact support@fastenhealth.com and we'll modify this provider to use our Legacy integration: %d", registrationResponse.StatusCode)
 
 	}
 

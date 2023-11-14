@@ -38,6 +38,31 @@ type ResourceFhirHandlerTestSuite struct {
 	AppEventBus   event_bus.Interface
 	SourceId      uuid.UUID
 }
+func setupGinContext(ctx *gin.Context, suite *ResourceFhirHandlerTestSuite) {
+	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", suite.T().Name()))
+	ctx.Set(pkg.ContextKeyTypeDatabase, suite.AppRepository)
+	ctx.Set(pkg.ContextKeyTypeConfig, suite.AppConfig)
+	ctx.Set(pkg.ContextKeyTypeEventBusServer, suite.AppEventBus)
+	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_user")
+}
+
+func addParamsToGinContext(ctx *gin.Context,params []gin.Param) error {
+	var baseUrl = fhirResourcePath +  "?"
+	for i,param  := range params {
+		if i > 0 {
+			baseUrl += "&"
+		}
+		baseUrl += param.Key + "=" + param.Value
+	}
+	body := &bytes.Buffer{}
+	req, err := http.NewRequest("GET", baseUrl, body)
+	if err!= nil {
+        log.Fatal("Could not make http request ", err.Error())
+		return err
+	}
+	ctx.Request = req
+	return nil
+}
 
 //SetupAllSuite has a SetupSuite method, which will run before the tests in the suite are run.
 func (suite *ResourceFhirHandlerTestSuite) SetupSuite() {
@@ -54,6 +79,7 @@ func (suite *ResourceFhirHandlerTestSuite) SetupSuite() {
 	appConfig := mock_config.NewMockInterface(suite.MockCtrl)
 	appConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	appConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	appConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
 	appConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	suite.AppConfig = appConfig
 
@@ -103,31 +129,6 @@ func TestResourceHandlerTestSuite(t *testing.T) {
 	suite.Run(t, new(ResourceFhirHandlerTestSuite))
 }
 
-func setupGinContext(ctx *gin.Context, suite *ResourceFhirHandlerTestSuite) {
-	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", suite.T().Name()))
-	ctx.Set(pkg.ContextKeyTypeDatabase, suite.AppRepository)
-	ctx.Set(pkg.ContextKeyTypeConfig, suite.AppConfig)
-	ctx.Set(pkg.ContextKeyTypeEventBusServer, suite.AppEventBus)
-	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_user")
-}
-
-func addParamsToGinContext(ctx *gin.Context,params []gin.Param) error {
-	var baseUrl = fhirResourcePath +  "?"
-	for i,param  := range params {
-		if i > 0 {
-			baseUrl += "&"
-		}
-		baseUrl += param.Key + "=" + param.Value
-	}
-	body := &bytes.Buffer{}
-	req, err := http.NewRequest("GET", baseUrl, body)
-	if err!= nil {
-        log.Fatal("Could not make http request ", err.Error())
-		return err
-	}
-	ctx.Request = req
-	return nil
-}
 
 func (suite *ResourceFhirHandlerTestSuite) TestGetResourceFhirHandler() {
 	w := httptest.NewRecorder()
@@ -136,21 +137,21 @@ func (suite *ResourceFhirHandlerTestSuite) TestGetResourceFhirHandler() {
 
 	ctx.AddParam("sourceId", suite.SourceId.String())
 	ctx.AddParam("resourceId", "57959813-8cd2-4e3c-8970-e4364b74980a")
-	
+
 	GetResourceFhir(ctx)
 
 	type ResponseWrapper struct {
-		Data *models.ResourceBase  `json:"data"`
-		Success bool               `json:"success"`
+		Data    *models.ResourceBase `json:"data"`
+		Success bool                 `json:"success"`
 	}
 	var respWrapper ResponseWrapper
 	err := json.Unmarshal(w.Body.Bytes(), &respWrapper)
-	require.NoError(suite.T(),err)
-	require.Equal(suite.T(),true,respWrapper.Success)
-	require.Equal(suite.T(),"Patient",respWrapper.Data.SourceResourceType)
-	require.Equal(suite.T(),suite.SourceId, respWrapper.Data.SourceID)
-	require.Equal(suite.T(),"57959813-8cd2-4e3c-8970-e4364b74980a", respWrapper.Data.SourceResourceID)
-	
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), true, respWrapper.Success)
+	require.Equal(suite.T(), "Patient", respWrapper.Data.SourceResourceType)
+	require.Equal(suite.T(), suite.SourceId, respWrapper.Data.SourceID)
+	require.Equal(suite.T(), "57959813-8cd2-4e3c-8970-e4364b74980a", respWrapper.Data.SourceResourceID)
+
 }
 
 func (suite *ResourceFhirHandlerTestSuite) TestGetResourceFhirHandler_WithInvalidSourceResourceId() {
@@ -160,12 +161,12 @@ func (suite *ResourceFhirHandlerTestSuite) TestGetResourceFhirHandler_WithInvali
 
 	ctx.AddParam("sourceId", "-1")
 	ctx.AddParam("resourceId", "57959813-9999-4e3c-8970-e4364b74980a")
-	
+
 	GetResourceFhir(ctx)
 
 	type ResponseWrapper struct {
-		Data *models.ResourceBase  `json:"data"`
-		Success bool               `json:"success"`
+		Data    *models.ResourceBase `json:"data"`
+		Success bool                 `json:"success"`
 	}
 	var respWrapper ResponseWrapper
 	err := json.Unmarshal(w.Body.Bytes(), &respWrapper)

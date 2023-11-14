@@ -2,16 +2,19 @@ package database
 
 import (
 	"fmt"
-	"strings"
-
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
-	"github.com/glebarez/sqlite"
 	"github.com/sirupsen/logrus"
+	"net/url"
+	"strings"
+
+	//"github.com/glebarez/sqlite"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
+// uses github.com/mattn/go-sqlite3 driver (warning, uses CGO)
 func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, eventBus event_bus.Interface) (DatabaseRepository, error) {
 	//backgroundContext := context.Background()
 
@@ -37,11 +40,30 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 	// In this case all writes are appended to a temporary file (write-ahead log) and this file is periodically merged with the original database. When SQLite is searching for something it would first check this temporary file and if nothing is found proceed with the main database file.
 	// As a result, readers don’t compete with writers and performance is much better compared to the Old Way.
 	// https://stackoverflow.com/questions/4060772/sqlite-concurrent-access
-	pragmaStr := sqlitePragmaString(map[string]string{
-		"busy_timeout": "5000",
-		"foreign_keys": "ON",
-		"journal_mode": "wal",
-	})
+	//
+	// NOTE: this schema is driver specific, and may not work with other drivers.
+	// eg.https://github.com/mattn/go-sqlite3 uses `?_journal_mode=WAL` prefixes
+	// https://github.com/glebarez/sqlite uses `?_pragma=journal_mode(WAL)`
+	// see https://github.com/mattn/go-sqlite3/compare/master...jgiannuzzi:go-sqlite3:sqlite3mc
+	// see https://github.com/mattn/go-sqlite3/pull/1109
+	pragmaOpts := map[string]string{
+		"_busy_timeout": "5000",
+		"_foreign_keys": "on",
+		"_journal_mode": "WAL",
+	}
+
+	//validation of encryption key happens in ValidateConfig method
+	if appConfig.IsSet("database.encryption.key") {
+		pragmaOpts["_cipher"] = "sqlcipher"
+		pragmaOpts["_legacy"] = "3"
+		pragmaOpts["_hmac_use"] = "off"
+		pragmaOpts["_kdf_iter"] = "4000"
+		pragmaOpts["_legacy_page_size"] = "1024"
+		pragmaOpts["_key"] = appConfig.GetString("database.encryption.key")
+	}
+
+	pragmaStr := sqlitePragmaString(pragmaOpts)
+
 	dsn := "file:" + appConfig.GetString("database.location") + pragmaStr
 	database, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{
 		//TODO: figure out how to log database queries again.
@@ -49,12 +71,15 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 
+	if err != nil {
+		if strings.Contains(err.Error(), "file is not a database") {
+			return nil, fmt.Errorf("failed to connect to database! encryption key may be incorrect - %w", err)
+		}
+
+		return nil, fmt.Errorf("failed to connect to database! - %w", err)
+	}
 	if strings.ToUpper(appConfig.GetString("log.level")) == "DEBUG" {
 		database = database.Debug() //set debug globally
-	}
-
-	if err != nil {
-		return nil, fmt.Errorf("Failed to connect to database! - %v", err)
 	}
 	globalLogger.Infof("Successfully connected to fasten sqlite db: %s\n", dsn)
 
@@ -95,4 +120,18 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 	}
 
 	return &fastenRepo, nil
+}
+
+func sqlitePragmaString(pragmas map[string]string) string {
+	q := url.Values{}
+	for key, val := range pragmas {
+		//q.Add("_pragma", fmt.Sprintf("%s=%s", key, val))
+		q.Add(key, val)
+	}
+
+	queryStr := q.Encode()
+	if len(queryStr) > 0 {
+		return "?" + queryStr
+	}
+	return ""
 }

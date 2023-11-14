@@ -235,3 +235,28 @@ curl -H "Authorization: Bearer ${JWT_TOKEN_HERE}" http://localhost:5984/_session
 ```bash
 ng run fastenhealth:storybook
 ```
+
+
+# Access Encrypted SQLite Database with IntelliJ
+
+- Download the latest `sqlite-jdbc-crypt` jar from https://github.com/Willena/sqlite-jdbc-crypt/releases
+- Open IntelliJ -> Data Source Properties -> Driver Tab
+- Find & Select `Sqlite` -> Right Click -> Duplicate
+- Rename to `Sqlite (Encrypted)`
+- Find `Driver Files` -> Select `sqlite-jdbc-crypt` jar that you downloaded previously
+- Remove `Xerial Sqlite JDBC` jar
+- Click `Apply` -> Click `OK`
+- Create New Data Source -> Select `Sqlite (Encrypted)` -> Change Connection Type to `Url only`
+- Specify the following connection url: `jdbc:sqlite:fasten.db?cipher=sqlcipher&legacy=3&hmac_use=0&kdf_iter=4000&legacy_page_size=1024&key=123456789012345678901234567890`
+- Replace `key` with the encryption key specified in your config file (`database.encryption_key`)
+- Click `Test Connection` -> Should be successful
+- Click `Apply` -> Click `OK`
+
+# Flush SQLite Write-Ahead-Log (WAL) to Database
+
+```sqlite
+PRAGMA wal_checkpoint(TRUNCATE);
+```
+
+See: https://sqlite.org/forum/info/fefd56014e2135589ea57825b0e2aa3e2df5daf53b5e41aa6a9d8f0c29d0b8e5
+TODO: check if https://www.sqlite.org/pragma.html#pragma_wal_checkpoint can be used to do this automatically. 
