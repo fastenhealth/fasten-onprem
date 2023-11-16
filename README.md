@@ -20,7 +20,7 @@
 >
 > - [Fasten Self-Hosted Lifetime License - **$200**](https://buy.stripe.com/fZe00deiUexS58Y4gg)
 >
-> Got questions or want to learn more about our fundraising experiment? [Click here to dive into the details & FAQs](https://docs.fastenhealth.com/FUNDRAISING.html) 
+> Got questions or want to learn more about our fundraising experiment? [Click here to dive into the details & FAQs](https://docs.fastenhealth.com/funding.html) 
 
 
 <p align="center">
@@ -115,7 +115,7 @@ https://github.com/fastenhealth/docs/blob/main/BETA.md#connecting-a-new-source
 
 # FAQ's
 
-See [FAQs](https://github.com/fastenhealth/docs/blob/main/FAQs.md) for common questions (& answers) regarding Fasten
+See [FAQs](https://docs.fastenhealth.com/faqs.html) for common questions (& answers) regarding Fasten
 
 # Support
 
