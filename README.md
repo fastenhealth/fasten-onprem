@@ -115,7 +115,7 @@ https://github.com/fastenhealth/docs/blob/main/BETA.md#connecting-a-new-source
 
 # FAQ's
 
-See [FAQs](https://github.com/fastenhealth/docs/blob/main/FAQs.md) for common questions (& answers) regarding Fasten
+See [FAQs](https://docs.fastenhealth.com/faqs.html) for common questions (& answers) regarding Fasten
 
 # Support
 
