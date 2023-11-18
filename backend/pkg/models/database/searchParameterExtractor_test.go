@@ -80,6 +80,31 @@ func (suite *SearchParameterExtractorTestSuite) TestFhirpathEvaluate() {
 
 // Testing Date extraction
 
+func (suite *SearchParameterExtractorTestSuite) TestExtractDateSearchParameters_Date() {
+	suite.T().Skip("TODO: this is broken. Observation.effective does not correctly extract Observation.effectiveDateTime")
+	//setup
+	resourceRaw := []byte(`
+{
+  "resourceType" : "Observation",
+  "id" : "2",
+  "effectiveDateTime": "2016-03-28"
+}
+	`)
+	var resourceRawMap map[string]interface{}
+	err := json.Unmarshal(resourceRaw, &resourceRawMap)
+	if err != nil {
+		require.NoError(suite.T(), err)
+	}
+	err = suite.VM.Set("fhirResource", resourceRawMap)
+	require.NoError(suite.T(), err)
+
+	//test
+	result, err := suite.VM.RunString("extractTokenSearchParameters(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effective | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effective | Procedure.performed | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')")
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), "2016-03-28", result.String())
+	//TODO: this is broken
+}
+
 // Testing String extraction
 
 func (suite *SearchParameterExtractorTestSuite) TestExtractStringSearchParameters_Simple() {
@@ -248,7 +273,6 @@ func (suite *SearchParameterExtractorTestSuite) TestExtractTokenSearchParameters
 		Text:   "Housekeeping",
 	}}, resultSearchParameter)
 }
-
 func (suite *SearchParameterExtractorTestSuite) TestExtractTokenSearchParameters_Nil() {
 	//setup
 	resourceRaw := []byte(`
@@ -273,7 +297,6 @@ func (suite *SearchParameterExtractorTestSuite) TestExtractTokenSearchParameters
 	//assert
 	require.Nil(suite.T(), resultSearchParameter)
 }
-
 func (suite *SearchParameterExtractorTestSuite) TestExtractTokenSearchParameters_CodableConcept() {
 	//setup
 	resourceRaw := []byte(`
@@ -319,7 +342,6 @@ func (suite *SearchParameterExtractorTestSuite) TestExtractTokenSearchParameters
 		Text:   "Dutch",
 	}}, resultSearchParameter)
 }
-
 func (suite *SearchParameterExtractorTestSuite) TestExtractTokenSearchParameters_Identifier() {
 	//setup
 	resourceRaw := []byte(`
@@ -371,7 +393,6 @@ func (suite *SearchParameterExtractorTestSuite) TestExtractTokenSearchParameters
 		Text:   "",
 	}}, resultSearchParameter)
 }
-
 func (suite *SearchParameterExtractorTestSuite) TestExtractTokenSearchParameters_ContactPoint() {
 	//setup
 	resourceRaw := []byte(`
@@ -439,7 +460,6 @@ func (suite *SearchParameterExtractorTestSuite) TestExtractTokenSearchParameters
 		},
 	}, resultSearchParameter)
 }
-
 func (suite *SearchParameterExtractorTestSuite) TestExtractTokenSearchParameters_code() {
 	//setup
 	resourceRaw := []byte(`
