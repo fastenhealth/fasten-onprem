@@ -54,10 +54,12 @@ func TestFhirCondition_ExtractSearchParameters(t *testing.T) {
 		{
 			Code:   "encounter-diagnosis",
 			System: "http://terminology.hl7.org/CodeSystem/condition-category",
+			Text:   "Encounter Diagnosis",
 		},
 		{
 			Code:   "439401001",
 			System: "http://snomed.info/sct",
+			Text:   "Diagnosis",
 		},
 	}, testCategory)
 
@@ -69,6 +71,7 @@ func TestFhirCondition_ExtractSearchParameters(t *testing.T) {
 		{
 			Code:   "24484000",
 			System: "http://snomed.info/sct",
+			Text:   "Severe",
 		},
 	}, testSeverity)
 
@@ -80,6 +83,7 @@ func TestFhirCondition_ExtractSearchParameters(t *testing.T) {
 		{
 			Code:   "39065001",
 			System: "http://snomed.info/sct",
+			Text:   "Burn of ear",
 		},
 	}, testCodeSystem)
 
@@ -91,6 +95,7 @@ func TestFhirCondition_ExtractSearchParameters(t *testing.T) {
 		{
 			Code:   "49521004",
 			System: "http://snomed.info/sct",
+			Text:   "Left external ear structure",
 		},
 	}, testBodySite)
 
@@ -143,6 +148,7 @@ func TestFhirCondition2_ExtractSearchParameters(t *testing.T) {
 		{
 			Code:   "problem-list-item",
 			System: "http://terminology.hl7.org/CodeSystem/condition-category",
+			Text:   "Problem List Item",
 		},
 	}, testCategory)
 
@@ -154,6 +160,7 @@ func TestFhirCondition2_ExtractSearchParameters(t *testing.T) {
 		{
 			Code:   "255604002",
 			System: "http://snomed.info/sct",
+			Text:   "Mild",
 		},
 	}, testSeverity)
 

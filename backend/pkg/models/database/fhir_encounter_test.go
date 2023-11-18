@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestFhirEncounter_ExtractSearchParameters(t *testing.T) {
@@ -42,8 +43,6 @@ func TestFhirEncounter2_ExtractSearchParameters(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, SearchParameterTokenType{{Code: "finished"}}, testStatus)
 
-	//TODO: this is incorrect.
-	require.Nil(t, encounterModel.Date)
-	//require.Equal(t, time.Date(2015, 1, 17, 16, 0, 0, 0, time.UTC), *encounterModel.Date)
+	require.Equal(t, time.Date(2015, time.January, 17, 16, 0, 0, 0, time.UTC), *encounterModel.Date)
 
 }
