@@ -75,7 +75,7 @@ function extractTokenSearchParameters(fhirResource, expression){
                 accumulator.push({
                     "code": coding.code,
                     "system": coding.system,
-                    "text": currentValue.text
+                    "text": coding.display || currentValue.text
                 })
             })
         } else if (currentValue.value) {
