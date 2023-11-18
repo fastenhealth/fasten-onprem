@@ -133,7 +133,7 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Created
-	createdResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'ClaimResponse.created')")
+	createdResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'ClaimResponse.created')")
 	if err == nil && createdResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, createdResult.String())
 		if err == nil {
@@ -166,7 +166,7 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {
@@ -199,7 +199,7 @@ func (s *FhirClaimResponse) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.Outcome = []byte(outcomeResult.String())
 	}
 	// extracting PaymentDate
-	paymentDateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'ClaimResponse.payment.date')")
+	paymentDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'ClaimResponse.payment.date')")
 	if err == nil && paymentDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, paymentDateResult.String())
 		if err == nil {

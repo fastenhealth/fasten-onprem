@@ -226,7 +226,7 @@ func (s *FhirDeviceRequest) PopulateAndExtractSearchParameters(resourceRaw json.
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting AuthoredOn
-	authoredOnResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'DeviceRequest.authoredOn')")
+	authoredOnResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'DeviceRequest.authoredOn')")
 	if err == nil && authoredOnResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, authoredOnResult.String())
 		if err == nil {
@@ -259,7 +259,7 @@ func (s *FhirDeviceRequest) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.Encounter = []byte(encounterResult.String())
 	}
 	// extracting EventDate
-	eventDateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, '(DeviceRequest.occurrenceDateTime) | (DeviceRequest.occurrencePeriod)')")
+	eventDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, '(DeviceRequest.occurrenceDateTime) | (DeviceRequest.occurrencePeriod)')")
 	if err == nil && eventDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, eventDateResult.String())
 		if err == nil {
@@ -307,7 +307,7 @@ func (s *FhirDeviceRequest) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

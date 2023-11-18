@@ -143,7 +143,7 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		s.Bodysite = []byte(bodysiteResult.String())
 	}
 	// extracting Collected
-	collectedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Specimen.collection.collectedDateTime | Specimen.collection.collectedPeriod')")
+	collectedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Specimen.collection.collectedDateTime | Specimen.collection.collectedPeriod')")
 	if err == nil && collectedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, collectedResult.String())
 		if err == nil {
@@ -181,7 +181,7 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

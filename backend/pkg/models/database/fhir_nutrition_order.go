@@ -190,7 +190,7 @@ func (s *FhirNutritionOrder) PopulateAndExtractSearchParameters(resourceRaw json
 		s.Additive = []byte(additiveResult.String())
 	}
 	// extracting Datetime
-	datetimeResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'NutritionOrder.dateTime')")
+	datetimeResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'NutritionOrder.dateTime')")
 	if err == nil && datetimeResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, datetimeResult.String())
 		if err == nil {
@@ -233,7 +233,7 @@ func (s *FhirNutritionOrder) PopulateAndExtractSearchParameters(resourceRaw json
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

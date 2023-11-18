@@ -174,7 +174,7 @@ func (s *FhirPractitionerRole) PopulateAndExtractSearchParameters(resourceRaw js
 		s.Active = []byte(activeResult.String())
 	}
 	// extracting Date
-	dateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'PractitionerRole.period')")
+	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'PractitionerRole.period')")
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
@@ -212,7 +212,7 @@ func (s *FhirPractitionerRole) PopulateAndExtractSearchParameters(resourceRaw js
 		s.Location = []byte(locationResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

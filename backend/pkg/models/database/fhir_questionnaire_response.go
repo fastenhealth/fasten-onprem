@@ -138,7 +138,7 @@ func (s *FhirQuestionnaireResponse) PopulateAndExtractSearchParameters(resourceR
 		s.Author = []byte(authorResult.String())
 	}
 	// extracting Authored
-	authoredResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'QuestionnaireResponse.authored')")
+	authoredResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'QuestionnaireResponse.authored')")
 	if err == nil && authoredResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, authoredResult.String())
 		if err == nil {
@@ -171,7 +171,7 @@ func (s *FhirQuestionnaireResponse) PopulateAndExtractSearchParameters(resourceR
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

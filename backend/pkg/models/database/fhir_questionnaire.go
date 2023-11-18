@@ -181,7 +181,7 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.ContextType = []byte(contextTypeResult.String())
 	}
 	// extracting Date
-	dateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Questionnaire.date')")
+	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Questionnaire.date')")
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
@@ -204,7 +204,7 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.Description = []byte(descriptionResult.String())
 	}
 	// extracting Effective
-	effectiveResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Questionnaire.effectivePeriod')")
+	effectiveResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Questionnaire.effectivePeriod')")
 	if err == nil && effectiveResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, effectiveResult.String())
 		if err == nil {
@@ -232,7 +232,7 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

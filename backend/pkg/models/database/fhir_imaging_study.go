@@ -235,7 +235,7 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {
@@ -288,7 +288,7 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Series = []byte(seriesResult.String())
 	}
 	// extracting Started
-	startedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'ImagingStudy.started')")
+	startedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'ImagingStudy.started')")
 	if err == nil && startedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, startedResult.String())
 		if err == nil {

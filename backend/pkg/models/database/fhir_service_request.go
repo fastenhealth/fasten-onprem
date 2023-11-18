@@ -238,7 +238,7 @@ func (s *FhirServiceRequest) PopulateAndExtractSearchParameters(resourceRaw json
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Authored
-	authoredResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'ServiceRequest.authoredOn')")
+	authoredResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'ServiceRequest.authoredOn')")
 	if err == nil && authoredResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, authoredResult.String())
 		if err == nil {
@@ -301,7 +301,7 @@ func (s *FhirServiceRequest) PopulateAndExtractSearchParameters(resourceRaw json
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {
@@ -329,7 +329,7 @@ func (s *FhirServiceRequest) PopulateAndExtractSearchParameters(resourceRaw json
 		s.MetaVersionId = metaVersionIdResult.String()
 	}
 	// extracting Occurrence
-	occurrenceResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'ServiceRequest.occurrenceDateTime | ServiceRequest.occurrencePeriod | ServiceRequest.occurrenceTiming')")
+	occurrenceResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'ServiceRequest.occurrenceDateTime | ServiceRequest.occurrencePeriod | ServiceRequest.occurrenceTiming')")
 	if err == nil && occurrenceResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, occurrenceResult.String())
 		if err == nil {

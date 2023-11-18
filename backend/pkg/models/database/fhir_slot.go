@@ -140,7 +140,7 @@ func (s *FhirSlot) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {
@@ -188,7 +188,7 @@ func (s *FhirSlot) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 		s.Specialty = []byte(specialtyResult.String())
 	}
 	// extracting Start
-	startResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Slot.start')")
+	startResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Slot.start')")
 	if err == nil && startResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, startResult.String())
 		if err == nil {

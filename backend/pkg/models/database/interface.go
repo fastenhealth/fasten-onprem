@@ -27,3 +27,9 @@ type SearchParameterTokenType []struct {
 }
 
 type SearchParameterStringType []string
+
+type SearchParameterDateType []struct {
+	StartDate string `json:"start"`
+	EndDate   string `json:"end"`
+	Instant   bool   `json:"instant"`
+}

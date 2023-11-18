@@ -151,7 +151,7 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Category = []byte(categoryResult.String())
 	}
 	// extracting Date
-	dateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'AdverseEvent.date')")
+	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AdverseEvent.date')")
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
@@ -179,7 +179,7 @@ func (s *FhirAdverseEvent) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Location = []byte(locationResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

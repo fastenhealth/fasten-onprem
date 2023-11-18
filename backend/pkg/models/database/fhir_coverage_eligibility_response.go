@@ -125,7 +125,7 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Created
-	createdResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'CoverageEligibilityResponse.created')")
+	createdResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'CoverageEligibilityResponse.created')")
 	if err == nil && createdResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, createdResult.String())
 		if err == nil {
@@ -158,7 +158,7 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

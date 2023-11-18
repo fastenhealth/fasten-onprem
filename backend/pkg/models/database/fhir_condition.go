@@ -228,7 +228,7 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 		s.AbatementAge = []byte(abatementAgeResult.String())
 	}
 	// extracting AbatementDate
-	abatementDateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Condition.abatementDateTime | Condition.abatementPeriod')")
+	abatementDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Condition.abatementDateTime | Condition.abatementPeriod')")
 	if err == nil && abatementDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, abatementDateResult.String())
 		if err == nil {
@@ -296,7 +296,7 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {
@@ -329,7 +329,7 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 		s.OnsetAge = []byte(onsetAgeResult.String())
 	}
 	// extracting OnsetDate
-	onsetDateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Condition.onsetDateTime | Condition.onsetPeriod')")
+	onsetDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Condition.onsetDateTime | Condition.onsetPeriod')")
 	if err == nil && onsetDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, onsetDateResult.String())
 		if err == nil {
@@ -347,7 +347,7 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 		s.OnsetInfo = []byte(onsetInfoResult.String())
 	}
 	// extracting RecordedDate
-	recordedDateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Condition.recordedDate')")
+	recordedDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Condition.recordedDate')")
 	if err == nil && recordedDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, recordedDateResult.String())
 		if err == nil {

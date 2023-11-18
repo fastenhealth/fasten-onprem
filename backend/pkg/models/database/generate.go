@@ -383,6 +383,11 @@ func main() {
 						//strings are unusual in that they can contain HumanName and Address types, which are not actually simple types
 						//we need to do some additional processing,
 						r.Lit(fmt.Sprintf("extractStringSearchParameters(fhirResource, '%s')", fieldInfo.FHIRPathExpression))
+					} else if fieldInfo.FieldType == "date" {
+						//dates are unusual in that they can contain Period types, which are actually a range of Date/DateTimes
+						//we need to do some additional processing
+						//our naiive solution is to drop the "end" of the Period range.
+						r.Lit(fmt.Sprintf("extractDateSearchParameters(fhirResource, '%s')", fieldInfo.FHIRPathExpression))
 					} else if isSimpleFieldType(fieldInfo.FieldType) {
 						//"Don't JSON.stringfy simple types"
 						r.Lit(fmt.Sprintf("extractSimpleSearchParameters(fhirResource, '%s')", fieldInfo.FHIRPathExpression))

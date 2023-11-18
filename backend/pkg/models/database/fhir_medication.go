@@ -151,7 +151,7 @@ func (s *FhirMedication) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 		s.Code = []byte(codeResult.String())
 	}
 	// extracting ExpirationDate
-	expirationDateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Medication.batch.expirationDate')")
+	expirationDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Medication.batch.expirationDate')")
 	if err == nil && expirationDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, expirationDateResult.String())
 		if err == nil {
@@ -199,7 +199,7 @@ func (s *FhirMedication) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 		s.Manufacturer = []byte(manufacturerResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

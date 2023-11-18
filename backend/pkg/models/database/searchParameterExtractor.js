@@ -120,6 +120,36 @@ function extractReferenceSearchParameters(fhirResource, expression){
     }
 }
 
+//this is not ideal, we're extracting only the start or end of the period
+function extractDateSearchParameters(fhirResource, expression){
+    let result = fhirpathEvaluate(fhirResource, expression)
+
+    let processed = result.reduce((accumulator, currentValue) => {
+        if (typeof currentValue === 'string') {
+            //basic datetime string
+            accumulator.push(currentValue)
+        } else if (currentValue.start  || currentValue.end) {
+            //Period http://hl7.org/fhir/R4/datatypes.html#Period
+
+            if (currentValue.start) {
+                accumulator.push(currentValue.start)
+            } else if (currentValue.end) {
+                accumulator.push(currentValue.end)
+            }
+        } else {
+            //ignore, this is unknown or unsupported type (or Timing)
+        }
+        return accumulator
+    }, [])
+
+    if(processed.length === 0) {
+        return "undefined"
+    }
+    else {
+        return processed[0]
+    }
+}
+
 function extractCatchallSearchParameters(fhirResource, expression){
     let result = fhirpathEvaluate(fhirResource, expression)
     return JSON.stringify(result)

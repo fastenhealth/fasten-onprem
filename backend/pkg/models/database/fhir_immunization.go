@@ -206,7 +206,7 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Date
-	dateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effectiveDateTime | DiagnosticReport.effectivePeriod | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effectiveDateTime | Observation.effectivePeriod | Observation.effectiveTiming | Observation.effectiveInstant | Procedure.performedDateTime | Procedure.performedPeriod | Procedure.performedString | Procedure.performedAge | Procedure.performedRange | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')")
+	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effectiveDateTime | DiagnosticReport.effectivePeriod | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effectiveDateTime | Observation.effectivePeriod | Observation.effectiveTiming | Observation.effectiveInstant | Procedure.performedDateTime | Procedure.performedPeriod | Procedure.performedString | Procedure.performedAge | Procedure.performedRange | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')")
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
@@ -244,7 +244,7 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Manufacturer = []byte(manufacturerResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {
@@ -282,7 +282,7 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Reaction = []byte(reactionResult.String())
 	}
 	// extracting ReactionDate
-	reactionDateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Immunization.reaction.date')")
+	reactionDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Immunization.reaction.date')")
 	if err == nil && reactionDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, reactionDateResult.String())
 		if err == nil {

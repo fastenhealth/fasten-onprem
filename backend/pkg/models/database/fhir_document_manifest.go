@@ -175,7 +175,7 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 		s.Author = []byte(authorResult.String())
 	}
 	// extracting Created
-	createdResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'DocumentManifest.created')")
+	createdResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'DocumentManifest.created')")
 	if err == nil && createdResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, createdResult.String())
 		if err == nil {
@@ -208,7 +208,7 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

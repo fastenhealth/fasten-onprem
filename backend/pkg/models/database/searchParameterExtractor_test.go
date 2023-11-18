@@ -81,7 +81,6 @@ func (suite *SearchParameterExtractorTestSuite) TestFhirpathEvaluate() {
 // Testing Date extraction
 
 func (suite *SearchParameterExtractorTestSuite) TestExtractDateSearchParameters_Date() {
-	suite.T().Skip("TODO: this is broken. Observation.effective does not correctly extract Observation.effectiveDateTime")
 	//setup
 	resourceRaw := []byte(`
 {
@@ -103,6 +102,30 @@ func (suite *SearchParameterExtractorTestSuite) TestExtractDateSearchParameters_
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(), "2016-03-28", result.String())
 	//TODO: this is broken
+}
+func (suite *SearchParameterExtractorTestSuite) TestExtractDateSearchParameters_Period() {
+	//setup
+	resourceRaw := []byte(`
+{
+  "resourceType" : "Observation",
+  "id" : "2",
+  "effectivePeriod": {
+    "start": "2013-04-02T09:30:10+01:00"
+  }
+}
+	`)
+	var resourceRawMap map[string]interface{}
+	err := json.Unmarshal(resourceRaw, &resourceRawMap)
+	if err != nil {
+		require.NoError(suite.T(), err)
+	}
+	err = suite.VM.Set("fhirResource", resourceRawMap)
+	require.NoError(suite.T(), err)
+
+	//test
+	result, err := suite.VM.RunString("extractDateSearchParameters(fhirResource,  'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effectiveDateTime | DiagnosticReport.effectivePeriod | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effectiveDateTime | Observation.effectivePeriod | Observation.effectiveTiming | Observation.effectiveInstant | Procedure.performedDateTime | Procedure.performedPeriod | Procedure.performedString | Procedure.performedAge | Procedure.performedRange | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')")
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), "2013-04-02T09:30:10+01:00", result.String())
 }
 
 // Testing String extraction

@@ -131,7 +131,7 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		s.Actor = []byte(actorResult.String())
 	}
 	// extracting Date
-	dateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Schedule.planningHorizon')")
+	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Schedule.planningHorizon')")
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
@@ -154,7 +154,7 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

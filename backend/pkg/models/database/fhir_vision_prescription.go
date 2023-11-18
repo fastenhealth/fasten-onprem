@@ -161,7 +161,7 @@ func (s *FhirVisionPrescription) PopulateAndExtractSearchParameters(resourceRaw 
 	}
 	// execute the fhirpath expression for each search parameter
 	// extracting Datewritten
-	datewrittenResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'VisionPrescription.dateWritten')")
+	datewrittenResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'VisionPrescription.dateWritten')")
 	if err == nil && datewrittenResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, datewrittenResult.String())
 		if err == nil {
@@ -189,7 +189,7 @@ func (s *FhirVisionPrescription) PopulateAndExtractSearchParameters(resourceRaw 
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

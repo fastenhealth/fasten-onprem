@@ -162,7 +162,7 @@ func (s *FhirClaim) PopulateAndExtractSearchParameters(resourceRaw json.RawMessa
 		s.CareTeam = []byte(careTeamResult.String())
 	}
 	// extracting Created
-	createdResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Claim.created')")
+	createdResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Claim.created')")
 	if err == nil && createdResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, createdResult.String())
 		if err == nil {
@@ -215,7 +215,7 @@ func (s *FhirClaim) PopulateAndExtractSearchParameters(resourceRaw json.RawMessa
 		s.Language = []byte(languageResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

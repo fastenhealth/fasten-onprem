@@ -159,7 +159,7 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 		s.Location = []byte(locationResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {
@@ -187,7 +187,7 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 		s.MetaVersionId = metaVersionIdResult.String()
 	}
 	// extracting Recorded
-	recordedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Provenance.recorded')")
+	recordedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Provenance.recorded')")
 	if err == nil && recordedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, recordedResult.String())
 		if err == nil {
@@ -215,7 +215,7 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 		s.Text = textResult.String()
 	}
 	// extracting When
-	whenResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, '(Provenance.occurredDateTime)')")
+	whenResult, err := vm.RunString("extractDateSearchParameters(fhirResource, '(Provenance.occurredDateTime)')")
 	if err == nil && whenResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, whenResult.String())
 		if err == nil {

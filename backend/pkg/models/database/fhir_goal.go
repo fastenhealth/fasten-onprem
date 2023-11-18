@@ -179,7 +179,7 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 		s.LifecycleStatus = []byte(lifecycleStatusResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {
@@ -207,7 +207,7 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 		s.MetaVersionId = metaVersionIdResult.String()
 	}
 	// extracting StartDate
-	startDateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, '(Goal.startDate)')")
+	startDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, '(Goal.startDate)')")
 	if err == nil && startDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, startDateResult.String())
 		if err == nil {
@@ -225,7 +225,7 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting TargetDate
-	targetDateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, '(Goal.target.dueDate)')")
+	targetDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, '(Goal.target.dueDate)')")
 	if err == nil && targetDateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, targetDateResult.String())
 		if err == nil {

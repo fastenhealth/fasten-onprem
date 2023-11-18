@@ -250,7 +250,7 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 		s.Custodian = []byte(custodianResult.String())
 	}
 	// extracting Date
-	dateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'DocumentReference.date')")
+	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'DocumentReference.date')")
 	if err == nil && dateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, dateResult.String())
 		if err == nil {
@@ -303,7 +303,7 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 		s.Location = locationResult.String()
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {
@@ -331,7 +331,7 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 		s.MetaVersionId = metaVersionIdResult.String()
 	}
 	// extracting Period
-	periodResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'DocumentReference.context.period')")
+	periodResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'DocumentReference.context.period')")
 	if err == nil && periodResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, periodResult.String())
 		if err == nil {

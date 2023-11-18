@@ -243,7 +243,7 @@ func (s *FhirMedicationDispense) PopulateAndExtractSearchParameters(resourceRaw 
 		s.Medication = []byte(medicationResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {
@@ -306,7 +306,7 @@ func (s *FhirMedicationDispense) PopulateAndExtractSearchParameters(resourceRaw 
 		s.Text = textResult.String()
 	}
 	// extracting Whenhandedover
-	whenhandedoverResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'MedicationDispense.whenHandedOver')")
+	whenhandedoverResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'MedicationDispense.whenHandedOver')")
 	if err == nil && whenhandedoverResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, whenhandedoverResult.String())
 		if err == nil {
@@ -319,7 +319,7 @@ func (s *FhirMedicationDispense) PopulateAndExtractSearchParameters(resourceRaw 
 		}
 	}
 	// extracting Whenprepared
-	whenpreparedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'MedicationDispense.whenPrepared')")
+	whenpreparedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'MedicationDispense.whenPrepared')")
 	if err == nil && whenpreparedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, whenpreparedResult.String())
 		if err == nil {

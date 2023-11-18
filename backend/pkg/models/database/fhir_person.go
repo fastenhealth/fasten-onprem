@@ -281,7 +281,7 @@ func (s *FhirPerson) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 		s.AddressUse = []byte(addressUseResult.String())
 	}
 	// extracting Birthdate
-	birthdateResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Patient.birthDate | Person.birthDate | RelatedPerson.birthDate')")
+	birthdateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Patient.birthDate | Person.birthDate | RelatedPerson.birthDate')")
 	if err == nil && birthdateResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, birthdateResult.String())
 		if err == nil {
@@ -319,7 +319,7 @@ func (s *FhirPerson) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 		s.Link = []byte(linkResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {

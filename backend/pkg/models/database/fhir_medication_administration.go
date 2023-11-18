@@ -220,7 +220,7 @@ func (s *FhirMedicationAdministration) PopulateAndExtractSearchParameters(resour
 		s.Device = []byte(deviceResult.String())
 	}
 	// extracting EffectiveTime
-	effectiveTimeResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'MedicationAdministration.effectiveDateTime | MedicationAdministration.effectivePeriod')")
+	effectiveTimeResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'MedicationAdministration.effectiveDateTime | MedicationAdministration.effectivePeriod')")
 	if err == nil && effectiveTimeResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, effectiveTimeResult.String())
 		if err == nil {
@@ -248,7 +248,7 @@ func (s *FhirMedicationAdministration) PopulateAndExtractSearchParameters(resour
 		s.Medication = []byte(medicationResult.String())
 	}
 	// extracting MetaLastUpdated
-	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {
