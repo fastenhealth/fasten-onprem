@@ -220,7 +220,7 @@ func (s *FhirMedicationAdministration) PopulateAndExtractSearchParameters(resour
 		s.Device = []byte(deviceResult.String())
 	}
 	// extracting EffectiveTime
-	effectiveTimeResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'MedicationAdministration.effective')")
+	effectiveTimeResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'MedicationAdministration.effectiveDateTime | MedicationAdministration.effectivePeriod')")
 	if err == nil && effectiveTimeResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, effectiveTimeResult.String())
 		if err == nil {

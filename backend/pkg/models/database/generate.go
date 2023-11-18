@@ -6,6 +6,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/samber/lo"
 	"io/ioutil"
 	"log"
 	"os"
@@ -76,6 +77,17 @@ func main() {
 	// Parse the search-parameters.json file
 	var searchParamsBundle SearchParameterBundle
 	err = json.Unmarshal(searchParamsData, &searchParamsBundle)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Parse the choiceTypePaths.json file
+	choiceTypePathsData, err := ioutil.ReadFile("choiceTypePaths.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	var choiceTypePathsLookup map[string][]string
+	err = json.Unmarshal(choiceTypePathsData, &choiceTypePathsLookup)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -339,6 +351,22 @@ func main() {
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, " as ", "")
 					//remove `Resource.` prefix from resource expression
 					fieldInfo.FHIRPathExpression = strings.ReplaceAll(fieldInfo.FHIRPathExpression, "Resource.", "")
+
+					//next, lets see if this fhir path expression is missing choices, and if so, lets add them
+					newFHIRPathExpressionParts := []string{}
+					lo.ForEach(strings.Split(fieldInfo.FHIRPathExpression, " | "), func(expression string, i int) {
+						normalizedExpression := strings.Trim(strings.TrimSpace(expression), "()")
+						if choiceTypesPathSuffixes, ok := choiceTypePathsLookup[normalizedExpression]; ok {
+							//this is a choice type (Observation.value[x]), lets add all the choice types to the expression
+							lo.ForEach(choiceTypesPathSuffixes, func(choiceTypeSufix string, i int) {
+								newFHIRPathExpressionParts = append(newFHIRPathExpressionParts, fmt.Sprintf("%s%s", normalizedExpression, choiceTypeSufix))
+							})
+						} else {
+							//do nothing, this is not a choice type
+							newFHIRPathExpressionParts = append(newFHIRPathExpressionParts, expression)
+						}
+					})
+					fieldInfo.FHIRPathExpression = strings.Join(newFHIRPathExpressionParts, " | ")
 				}
 
 				g.Comment(fmt.Sprintf("extracting %s", fieldName))

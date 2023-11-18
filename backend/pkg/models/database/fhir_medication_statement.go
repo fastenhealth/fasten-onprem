@@ -212,7 +212,7 @@ func (s *FhirMedicationStatement) PopulateAndExtractSearchParameters(resourceRaw
 		s.Context = []byte(contextResult.String())
 	}
 	// extracting Effective
-	effectiveResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'MedicationStatement.effective')")
+	effectiveResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'MedicationStatement.effectiveDateTime | MedicationStatement.effectivePeriod')")
 	if err == nil && effectiveResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, effectiveResult.String())
 		if err == nil {

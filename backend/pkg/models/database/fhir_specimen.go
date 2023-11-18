@@ -143,7 +143,7 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		s.Bodysite = []byte(bodysiteResult.String())
 	}
 	// extracting Collected
-	collectedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Specimen.collection.collected')")
+	collectedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Specimen.collection.collectedDateTime | Specimen.collection.collectedPeriod')")
 	if err == nil && collectedResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, collectedResult.String())
 		if err == nil {

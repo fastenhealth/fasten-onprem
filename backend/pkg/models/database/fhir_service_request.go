@@ -329,7 +329,7 @@ func (s *FhirServiceRequest) PopulateAndExtractSearchParameters(resourceRaw json
 		s.MetaVersionId = metaVersionIdResult.String()
 	}
 	// extracting Occurrence
-	occurrenceResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'ServiceRequest.occurrence')")
+	occurrenceResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'ServiceRequest.occurrenceDateTime | ServiceRequest.occurrencePeriod | ServiceRequest.occurrenceTiming')")
 	if err == nil && occurrenceResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, occurrenceResult.String())
 		if err == nil {

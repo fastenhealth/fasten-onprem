@@ -142,7 +142,7 @@ func (s *FhirMedia) PopulateAndExtractSearchParameters(resourceRaw json.RawMessa
 		s.BasedOn = []byte(basedOnResult.String())
 	}
 	// extracting Created
-	createdResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Media.created')")
+	createdResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Media.createdDateTime | Media.createdPeriod')")
 	if err == nil && createdResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, createdResult.String())
 		if err == nil {
