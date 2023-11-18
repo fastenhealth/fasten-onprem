@@ -124,7 +124,7 @@ type FhirAllergyIntolerance struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	MetaTag datatypes.JSON `gorm:"column:metaTag;type:text;serializer:json" json:"metaTag,omitempty"`
 	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#keyword
+	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
 	// Date(/time) when manifestations showed
 	// https://hl7.org/fhir/r4/search.html#date
@@ -139,8 +139,8 @@ type FhirAllergyIntolerance struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	Severity datatypes.JSON `gorm:"column:severity;type:text;serializer:json" json:"severity,omitempty"`
 	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
+	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -175,7 +175,7 @@ func (s *FhirAllergyIntolerance) GetSearchParameters() map[string]string {
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",
 		"source_uri":           "keyword",
-		"text":                 "string",
+		"text":                 "keyword",
 		"type":                 "special",
 		"verificationStatus":   "token",
 	}
@@ -339,6 +339,11 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	severityResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'AllergyIntolerance.reaction.severity')")
 	if err == nil && severityResult.String() != "undefined" {
 		s.Severity = []byte(severityResult.String())
+	}
+	// extracting Text
+	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	if err == nil && textResult.String() != "undefined" {
+		s.Text = textResult.String()
 	}
 	// extracting VerificationStatus
 	verificationStatusResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'AllergyIntolerance.verificationStatus')")

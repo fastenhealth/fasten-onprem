@@ -166,8 +166,9 @@ func main() {
 			FHIRPathExpression: "Resource.meta.tag",
 		}
 		fieldMap["Text"] = DBField{
-			FieldType:   "string",
-			Description: "Text search against the narrative",
+			FieldType:          "keyword",
+			Description:        "Text search against the narrative",
+			FHIRPathExpression: "text",
 		}
 		fieldMap["Type"] = DBField{
 			FieldType:   "special",
@@ -202,7 +203,12 @@ func main() {
 				fieldInfo := fieldMap[fieldName]
 
 				g.Comment(fieldInfo.Description)
-				g.Comment(fmt.Sprintf("https://hl7.org/fhir/r4/search.html#%s", fieldInfo.FieldType))
+
+				if fieldInfo.FieldType == "keyword" {
+					g.Comment("This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific")
+				} else {
+					g.Comment(fmt.Sprintf("https://hl7.org/fhir/r4/search.html#%s", fieldInfo.FieldType))
+				}
 				golangFieldType := mapFieldType(fieldInfo.FieldType)
 				var isPointer bool
 				if strings.HasPrefix(golangFieldType, "*") {

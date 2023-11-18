@@ -57,7 +57,7 @@ type FhirQuestionnaire struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	MetaTag datatypes.JSON `gorm:"column:metaTag;type:text;serializer:json" json:"metaTag,omitempty"`
 	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#keyword
+	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
 	// Computationally friendly name of the questionnaire
 	// https://hl7.org/fhir/r4/search.html#string
@@ -72,8 +72,8 @@ type FhirQuestionnaire struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	SubjectType datatypes.JSON `gorm:"column:subjectType;type:text;serializer:json" json:"subjectType,omitempty"`
 	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
+	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
 	// The human-friendly name of the questionnaire
 	// https://hl7.org/fhir/r4/search.html#string
 	Title datatypes.JSON `gorm:"column:title;type:text;serializer:json" json:"title,omitempty"`
@@ -115,7 +115,7 @@ func (s *FhirQuestionnaire) GetSearchParameters() map[string]string {
 		"source_uri":           "keyword",
 		"status":               "token",
 		"subjectType":          "token",
-		"text":                 "string",
+		"text":                 "keyword",
 		"title":                "string",
 		"type":                 "special",
 		"url":                  "uri",
@@ -278,6 +278,11 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 	subjectTypeResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Questionnaire.subjectType')")
 	if err == nil && subjectTypeResult.String() != "undefined" {
 		s.SubjectType = []byte(subjectTypeResult.String())
+	}
+	// extracting Text
+	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	if err == nil && textResult.String() != "undefined" {
+		s.Text = textResult.String()
 	}
 	// extracting Title
 	titleResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Questionnaire.title')")

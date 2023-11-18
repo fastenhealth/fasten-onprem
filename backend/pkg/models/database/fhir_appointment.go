@@ -45,7 +45,7 @@ type FhirAppointment struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	MetaTag datatypes.JSON `gorm:"column:metaTag;type:text;serializer:json" json:"metaTag,omitempty"`
 	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#keyword
+	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
 	// The Participation status of the subject, or other participant on the appointment. Can be used to locate participants that have not responded to meeting requests.
 	// https://hl7.org/fhir/r4/search.html#token
@@ -78,8 +78,8 @@ type FhirAppointment struct {
 	// https://hl7.org/fhir/r4/search.html#reference
 	SupportingInfo datatypes.JSON `gorm:"column:supportingInfo;type:text;serializer:json" json:"supportingInfo,omitempty"`
 	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
+	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -114,7 +114,7 @@ func (s *FhirAppointment) GetSearchParameters() map[string]string {
 		"specialty":            "token",
 		"status":               "token",
 		"supportingInfo":       "reference",
-		"text":                 "string",
+		"text":                 "keyword",
 		"type":                 "special",
 	}
 	return searchParameters
@@ -276,6 +276,11 @@ func (s *FhirAppointment) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	supportingInfoResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Appointment.supportingInformation')")
 	if err == nil && supportingInfoResult.String() != "undefined" {
 		s.SupportingInfo = []byte(supportingInfoResult.String())
+	}
+	// extracting Text
+	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	if err == nil && textResult.String() != "undefined" {
+		s.Text = textResult.String()
 	}
 	return nil
 }

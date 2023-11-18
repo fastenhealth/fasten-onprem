@@ -33,7 +33,7 @@ type FhirEndpoint struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	MetaTag datatypes.JSON `gorm:"column:metaTag;type:text;serializer:json" json:"metaTag,omitempty"`
 	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#keyword
+	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
 	// A name that this endpoint can be identified by
 	// https://hl7.org/fhir/r4/search.html#string
@@ -48,8 +48,8 @@ type FhirEndpoint struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
 	// Text search against the narrative
-	// https://hl7.org/fhir/r4/search.html#string
-	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
+	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
+	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
 	// A resource type filter
 	// https://hl7.org/fhir/r4/search.html#special
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
@@ -74,7 +74,7 @@ func (s *FhirEndpoint) GetSearchParameters() map[string]string {
 		"source_resource_type": "keyword",
 		"source_uri":           "keyword",
 		"status":               "token",
-		"text":                 "string",
+		"text":                 "keyword",
 		"type":                 "special",
 	}
 	return searchParameters
@@ -178,6 +178,11 @@ func (s *FhirEndpoint) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	statusResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Endpoint.status')")
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
+	}
+	// extracting Text
+	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	if err == nil && textResult.String() != "undefined" {
+		s.Text = textResult.String()
 	}
 	return nil
 }
