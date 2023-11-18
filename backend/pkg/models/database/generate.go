@@ -128,7 +128,7 @@ func main() {
 
 	//add default fields to all resources
 	for resourceName, fieldMap := range resourceFieldMap {
-		fieldMap["LastUpdated"] = DBField{
+		fieldMap["MetaLastUpdated"] = DBField{
 			FieldType:          "date",
 			Description:        "When the resource version last changed",
 			FHIRPathExpression: "Resource.meta.lastUpdated",
@@ -138,12 +138,17 @@ func main() {
 			Description:        "Language of the resource content",
 			FHIRPathExpression: "Resource.language",
 		}
-		fieldMap["Profile"] = DBField{
+		fieldMap["MetaProfile"] = DBField{
 			FieldType:          "reference",
 			Description:        "Profiles this resource claims to conform to",
 			FHIRPathExpression: "Resource.meta.profile",
 		}
-		fieldMap["Tag"] = DBField{
+		fieldMap["MetaVersionId"] = DBField{
+			FieldType:          "keyword",
+			Description:        "Tags applied to this resource",
+			FHIRPathExpression: "Resource.meta.versionId",
+		}
+		fieldMap["MetaTag"] = DBField{
 			FieldType:          "token",
 			Description:        "Tags applied to this resource",
 			FHIRPathExpression: "Resource.meta.tag",
@@ -274,8 +279,20 @@ func main() {
 				e.Return(jen.Err())
 			})
 
+			g.Comment("compile the searchParametersExtractor library")
+			g.List(jen.Id("searchParametersExtractorJsProgram"), jen.Id("err")).Op(":=").Qual("github.com/dop251/goja", "Compile").Call(jen.Lit("searchParameterExtractor.js"), jen.Id("searchParameterExtractorJs"), jen.True())
+			g.If(jen.Err().Op("!=").Nil()).BlockFunc(func(e *jen.Group) {
+				e.Return(jen.Err())
+			})
+
 			g.Comment("add the fhirpath library in the goja vm")
 			g.List(jen.Id("_"), jen.Id("err")).Op("=").Id("vm").Dot("RunProgram").Call(jen.Id("fhirPathJsProgram"))
+			g.If(jen.Err().Op("!=").Nil()).BlockFunc(func(e *jen.Group) {
+				e.Return(jen.Err())
+			})
+
+			g.Comment("add the searchParametersExtractor library in the goja vm")
+			g.List(jen.Id("_"), jen.Id("err")).Op("=").Id("vm").Dot("RunProgram").Call(jen.Id("searchParametersExtractorJsProgram"))
 			g.If(jen.Err().Op("!=").Nil()).BlockFunc(func(e *jen.Group) {
 				e.Return(jen.Err())
 			})
@@ -328,130 +345,19 @@ func main() {
 				fieldNameVar := fmt.Sprintf("%sResult", strcase.ToLowerCamel(fieldName))
 				g.List(jen.Id(fieldNameVar), jen.Id("err")).Op(":=").Id("vm").Dot("RunString").CallFunc(func(r *jen.Group) {
 
-					script := fmt.Sprintf("window.fhirpath.evaluate(fhirResource, '%s')", fieldInfo.FHIRPathExpression)
-
 					if fieldInfo.FieldType == "string" {
 						//strings are unusual in that they can contain HumanName and Address types, which are not actually simple types
 						//we need to do some additional processing,
-						r.Op("`").Id(fmt.Sprintf(`
-							%sResult = %s
-							%sProcessed = %sResult.reduce((accumulator, currentValue) => {
-								if (typeof currentValue === 'string') {
-									//basic string
-									accumulator.push(currentValue)
-								} else if (currentValue.family  || currentValue.given) {
-									//HumanName http://hl7.org/fhir/R4/datatypes.html#HumanName
-									var humanNameParts = []
-									if (currentValue.prefix) {
-										humanNameParts = humanNameParts.concat(currentValue.prefix)
-									}
-									if (currentValue.given) {	
-										humanNameParts = humanNameParts.concat(currentValue.given)
-									}	
-									if (currentValue.family) {	
-										humanNameParts.push(currentValue.family)	
-									}	
-									if (currentValue.suffix) {	
-										humanNameParts = humanNameParts.concat(currentValue.suffix)	
-									}
-									accumulator.push(humanNameParts.join(" "))
-								} else if (currentValue.city || currentValue.state || currentValue.country || currentValue.postalCode) {
-									//Address http://hl7.org/fhir/R4/datatypes.html#Address
-									var addressParts = []		
-									if (currentValue.line) {
-										addressParts = addressParts.concat(currentValue.line)
-									}
-									if (currentValue.city) {
-										addressParts.push(currentValue.city)
-									}	
-									if (currentValue.state) {	
-										addressParts.push(currentValue.state)
-									}	
-									if (currentValue.postalCode) {
-										addressParts.push(currentValue.postalCode)
-									}	
-									if (currentValue.country) {
-										addressParts.push(currentValue.country)	
-									}	
-									accumulator.push(addressParts.join(" "))
-								} else {
-									//string, boolean
-									accumulator.push(currentValue)
-								}
-								return accumulator
-							}, [])
-						
-							if(%sProcessed.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(%sProcessed)
-							}
-						`, fieldName, script, fieldName, fieldName, fieldName, fieldName)).Op("`")
-
+						r.Lit(fmt.Sprintf("extractStringSearchParameters(fhirResource, '%s')", fieldInfo.FHIRPathExpression))
 					} else if isSimpleFieldType(fieldInfo.FieldType) {
-						//TODO: we may end up losing some information here, as we are only returning the first element of the array
-						script += "[0]"
 						//"Don't JSON.stringfy simple types"
-						r.Lit(script)
+						r.Lit(fmt.Sprintf("extractSimpleSearchParameters(fhirResource, '%s')", fieldInfo.FHIRPathExpression))
 					} else if fieldInfo.FieldType == "token" {
-						r.Op("`").Id(fmt.Sprintf(`
-							%sResult = %s
-							%sProcessed = %sResult.reduce((accumulator, currentValue) => {
-								if (currentValue.coding) {
-									//CodeableConcept
-									currentValue.coding.map((coding) => {
-										accumulator.push({
-											"code": coding.code,	
-											"system": coding.system,
-											"text": currentValue.text
-										})
-									})
-								} else if (currentValue.value) {
-									//ContactPoint, Identifier
-									accumulator.push({
-										"code": currentValue.value,
-										"system": currentValue.system,
-										"text": currentValue.type?.text
-									})
-								} else if (currentValue.code) {
-									//Coding
-									accumulator.push({
-										"code": currentValue.code,
-										"system": currentValue.system,
-										"text": currentValue.display
-									})
-								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
-									//string, boolean
-									accumulator.push({
-										"code": currentValue,
-									})
-								}
-								return accumulator
-							}, [])
-						
-				
-							if(%sProcessed.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(%sProcessed)
-							}
-						`, fieldName, script, fieldName, fieldName, fieldName, fieldName)).Op("`")
+						r.Lit(fmt.Sprintf("extractTokenSearchParameters(fhirResource, '%s')", fieldInfo.FHIRPathExpression))
 					} else if fieldInfo.FieldType == "reference" {
-						r.Op("`").Id(fmt.Sprintf(`
-							%sResult = %s
-						
-							if(%sResult.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(%sResult)
-							}
-						`, fieldName, script, fieldName, fieldName)).Op("`")
-
+						r.Lit(fmt.Sprintf("extractReferenceSearchParameters(fhirResource, '%s')", fieldInfo.FHIRPathExpression))
 					} else {
-						r.Lit(fmt.Sprintf(`JSON.stringify(%s)`, script))
+						r.Lit(fmt.Sprintf("extractCatchallSearchParameters(fhirResource, '%s')", fieldInfo.FHIRPathExpression))
 					}
 				})
 				g.If(jen.Err().Op("==").Nil().Op("&&").Id(fieldNameVar).Dot("String").Call().Op("!=").Lit("undefined")).BlockFunc(func(i *jen.Group) {
@@ -514,6 +420,10 @@ func main() {
 	utilsFile.Anon("embed")
 	utilsFile.Comment("//go:embed fhirpath.min.js")
 	utilsFile.Var().Id("fhirPathJs").String()
+
+	utilsFile.Anon("embed")
+	utilsFile.Comment("//go:embed searchParameterExtractor.js")
+	utilsFile.Var().Id("searchParameterExtractorJs").String()
 
 	utilsFile.Comment("Generates all tables in the database associated with these models")
 	utilsFile.Func().Id("Migrate").Params(
@@ -655,7 +565,7 @@ var AllowedResources = []string{
 // simple field types are not json encoded in the DB and are always single values (not arrays)
 func isSimpleFieldType(fieldType string) bool {
 	switch fieldType {
-	case "number", "uri", "date":
+	case "number", "uri", "date", "keyword":
 		return true
 	case "token", "reference", "special", "quantity", "string":
 		return false
@@ -685,6 +595,8 @@ func mapFieldType(fieldType string) string {
 		return "gorm.io/datatypes#JSON"
 	case "quantity":
 		return "gorm.io/datatypes#JSON"
+	case "keyword":
+		return "string"
 	default:
 		return "string"
 	}
@@ -711,6 +623,8 @@ func mapGormTypeSqlite(fieldType string) string {
 		return "type:text;serializer:json"
 	case "quantity":
 		return "type:text;serializer:json"
+	case "keyword":
+		return "type:text"
 	default:
 		return "type:text"
 	}
@@ -734,6 +648,8 @@ func mapGormTypePostgres(fieldType string) string {
 		return "type:text;serializer:json"
 	case "quantity":
 		return "type:text;serializer:json"
+	case "keyword":
+		return "type:text"
 	default:
 		return "type:text"
 	}

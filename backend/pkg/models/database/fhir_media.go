@@ -34,16 +34,22 @@ type FhirMedia struct {
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
 	// When the resource version last changed
 	// https://hl7.org/fhir/r4/search.html#date
-	LastUpdated *time.Time `gorm:"column:lastUpdated;type:datetime" json:"lastUpdated,omitempty"`
+	MetaLastUpdated *time.Time `gorm:"column:metaLastUpdated;type:datetime" json:"metaLastUpdated,omitempty"`
+	// Profiles this resource claims to conform to
+	// https://hl7.org/fhir/r4/search.html#reference
+	MetaProfile datatypes.JSON `gorm:"column:metaProfile;type:text;serializer:json" json:"metaProfile,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#token
+	MetaTag datatypes.JSON `gorm:"column:metaTag;type:text;serializer:json" json:"metaTag,omitempty"`
+	// Tags applied to this resource
+	// https://hl7.org/fhir/r4/search.html#keyword
+	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
 	// The type of acquisition equipment/process
 	// https://hl7.org/fhir/r4/search.html#token
 	Modality datatypes.JSON `gorm:"column:modality;type:text;serializer:json" json:"modality,omitempty"`
 	// The person who generated the image
 	// https://hl7.org/fhir/r4/search.html#reference
 	Operator datatypes.JSON `gorm:"column:operator;type:text;serializer:json" json:"operator,omitempty"`
-	// Profiles this resource claims to conform to
-	// https://hl7.org/fhir/r4/search.html#reference
-	Profile datatypes.JSON `gorm:"column:profile;type:text;serializer:json" json:"profile,omitempty"`
 	// Observed body part
 	// https://hl7.org/fhir/r4/search.html#token
 	Site datatypes.JSON `gorm:"column:site;type:text;serializer:json" json:"site,omitempty"`
@@ -53,9 +59,6 @@ type FhirMedia struct {
 	// Who/What this Media is a record of
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
-	// Tags applied to this resource
-	// https://hl7.org/fhir/r4/search.html#token
-	Tag datatypes.JSON `gorm:"column:tag;type:text;serializer:json" json:"tag,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
 	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
@@ -76,10 +79,12 @@ func (s *FhirMedia) GetSearchParameters() map[string]string {
 		"id":                   "keyword",
 		"identifier":           "token",
 		"language":             "token",
-		"lastUpdated":          "date",
+		"metaLastUpdated":      "date",
+		"metaProfile":          "reference",
+		"metaTag":              "token",
+		"metaVersionId":        "keyword",
 		"modality":             "token",
 		"operator":             "reference",
-		"profile":              "reference",
 		"site":                 "token",
 		"sort_date":            "date",
 		"source_id":            "keyword",
@@ -88,7 +93,6 @@ func (s *FhirMedia) GetSearchParameters() map[string]string {
 		"source_uri":           "keyword",
 		"status":               "token",
 		"subject":              "reference",
-		"tag":                  "token",
 		"text":                 "string",
 		"type":                 "special",
 		"view":                 "token",
@@ -116,28 +120,29 @@ func (s *FhirMedia) PopulateAndExtractSearchParameters(resourceRaw json.RawMessa
 	if err != nil {
 		return err
 	}
+	// compile the searchParametersExtractor library
+	searchParametersExtractorJsProgram, err := goja.Compile("searchParameterExtractor.js", searchParameterExtractorJs, true)
+	if err != nil {
+		return err
+	}
 	// add the fhirpath library in the goja vm
 	_, err = vm.RunProgram(fhirPathJsProgram)
 	if err != nil {
 		return err
 	}
+	// add the searchParametersExtractor library in the goja vm
+	_, err = vm.RunProgram(searchParametersExtractorJsProgram)
+	if err != nil {
+		return err
+	}
 	// execute the fhirpath expression for each search parameter
 	// extracting BasedOn
-	basedOnResult, err := vm.RunString(` 
-							BasedOnResult = window.fhirpath.evaluate(fhirResource, 'Media.basedOn')
-						
-							if(BasedOnResult.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(BasedOnResult)
-							}
-						 `)
+	basedOnResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Media.basedOn')")
 	if err == nil && basedOnResult.String() != "undefined" {
 		s.BasedOn = []byte(basedOnResult.String())
 	}
 	// extracting Created
-	createdResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'Media.created')[0]")
+	createdResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'Media.created')")
 	if err == nil && createdResult.String() != "undefined" {
 		t, err := time.Parse(time.RFC3339, createdResult.String())
 		if err == nil {
@@ -150,414 +155,80 @@ func (s *FhirMedia) PopulateAndExtractSearchParameters(resourceRaw json.RawMessa
 		}
 	}
 	// extracting Device
-	deviceResult, err := vm.RunString(` 
-							DeviceResult = window.fhirpath.evaluate(fhirResource, 'Media.device')
-						
-							if(DeviceResult.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(DeviceResult)
-							}
-						 `)
+	deviceResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Media.device')")
 	if err == nil && deviceResult.String() != "undefined" {
 		s.Device = []byte(deviceResult.String())
 	}
 	// extracting Encounter
-	encounterResult, err := vm.RunString(` 
-							EncounterResult = window.fhirpath.evaluate(fhirResource, 'Media.encounter')
-						
-							if(EncounterResult.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(EncounterResult)
-							}
-						 `)
+	encounterResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Media.encounter')")
 	if err == nil && encounterResult.String() != "undefined" {
 		s.Encounter = []byte(encounterResult.String())
 	}
 	// extracting Identifier
-	identifierResult, err := vm.RunString(` 
-							IdentifierResult = window.fhirpath.evaluate(fhirResource, 'Media.identifier')
-							IdentifierProcessed = IdentifierResult.reduce((accumulator, currentValue) => {
-								if (currentValue.coding) {
-									//CodeableConcept
-									currentValue.coding.map((coding) => {
-										accumulator.push({
-											"code": coding.code,	
-											"system": coding.system,
-											"text": currentValue.text
-										})
-									})
-								} else if (currentValue.value) {
-									//ContactPoint, Identifier
-									accumulator.push({
-										"code": currentValue.value,
-										"system": currentValue.system,
-										"text": currentValue.type?.text
-									})
-								} else if (currentValue.code) {
-									//Coding
-									accumulator.push({
-										"code": currentValue.code,
-										"system": currentValue.system,
-										"text": currentValue.display
-									})
-								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
-									//string, boolean
-									accumulator.push({
-										"code": currentValue,
-									})
-								}
-								return accumulator
-							}, [])
-						
-				
-							if(IdentifierProcessed.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(IdentifierProcessed)
-							}
-						 `)
+	identifierResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Media.identifier')")
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
 	}
 	// extracting Language
-	languageResult, err := vm.RunString(` 
-							LanguageResult = window.fhirpath.evaluate(fhirResource, 'language')
-							LanguageProcessed = LanguageResult.reduce((accumulator, currentValue) => {
-								if (currentValue.coding) {
-									//CodeableConcept
-									currentValue.coding.map((coding) => {
-										accumulator.push({
-											"code": coding.code,	
-											"system": coding.system,
-											"text": currentValue.text
-										})
-									})
-								} else if (currentValue.value) {
-									//ContactPoint, Identifier
-									accumulator.push({
-										"code": currentValue.value,
-										"system": currentValue.system,
-										"text": currentValue.type?.text
-									})
-								} else if (currentValue.code) {
-									//Coding
-									accumulator.push({
-										"code": currentValue.code,
-										"system": currentValue.system,
-										"text": currentValue.display
-									})
-								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
-									//string, boolean
-									accumulator.push({
-										"code": currentValue,
-									})
-								}
-								return accumulator
-							}, [])
-						
-				
-							if(LanguageProcessed.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(LanguageProcessed)
-							}
-						 `)
+	languageResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'language')")
 	if err == nil && languageResult.String() != "undefined" {
 		s.Language = []byte(languageResult.String())
 	}
-	// extracting LastUpdated
-	lastUpdatedResult, err := vm.RunString("window.fhirpath.evaluate(fhirResource, 'meta.lastUpdated')[0]")
-	if err == nil && lastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastUpdatedResult.String())
+	// extracting MetaLastUpdated
+	metaLastUpdatedResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.lastUpdated')")
+	if err == nil && metaLastUpdatedResult.String() != "undefined" {
+		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
 		if err == nil {
-			s.LastUpdated = &t
+			s.MetaLastUpdated = &t
 		} else if err != nil {
-			d, err := time.Parse("2006-01-02", lastUpdatedResult.String())
+			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
 			if err == nil {
-				s.LastUpdated = &d
+				s.MetaLastUpdated = &d
 			}
 		}
 	}
+	// extracting MetaProfile
+	metaProfileResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'meta.profile')")
+	if err == nil && metaProfileResult.String() != "undefined" {
+		s.MetaProfile = []byte(metaProfileResult.String())
+	}
+	// extracting MetaTag
+	metaTagResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'meta.tag')")
+	if err == nil && metaTagResult.String() != "undefined" {
+		s.MetaTag = []byte(metaTagResult.String())
+	}
+	// extracting MetaVersionId
+	metaVersionIdResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.versionId')")
+	if err == nil && metaVersionIdResult.String() != "undefined" {
+		s.MetaVersionId = metaVersionIdResult.String()
+	}
 	// extracting Modality
-	modalityResult, err := vm.RunString(` 
-							ModalityResult = window.fhirpath.evaluate(fhirResource, 'Media.modality')
-							ModalityProcessed = ModalityResult.reduce((accumulator, currentValue) => {
-								if (currentValue.coding) {
-									//CodeableConcept
-									currentValue.coding.map((coding) => {
-										accumulator.push({
-											"code": coding.code,	
-											"system": coding.system,
-											"text": currentValue.text
-										})
-									})
-								} else if (currentValue.value) {
-									//ContactPoint, Identifier
-									accumulator.push({
-										"code": currentValue.value,
-										"system": currentValue.system,
-										"text": currentValue.type?.text
-									})
-								} else if (currentValue.code) {
-									//Coding
-									accumulator.push({
-										"code": currentValue.code,
-										"system": currentValue.system,
-										"text": currentValue.display
-									})
-								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
-									//string, boolean
-									accumulator.push({
-										"code": currentValue,
-									})
-								}
-								return accumulator
-							}, [])
-						
-				
-							if(ModalityProcessed.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(ModalityProcessed)
-							}
-						 `)
+	modalityResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Media.modality')")
 	if err == nil && modalityResult.String() != "undefined" {
 		s.Modality = []byte(modalityResult.String())
 	}
 	// extracting Operator
-	operatorResult, err := vm.RunString(` 
-							OperatorResult = window.fhirpath.evaluate(fhirResource, 'Media.operator')
-						
-							if(OperatorResult.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(OperatorResult)
-							}
-						 `)
+	operatorResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Media.operator')")
 	if err == nil && operatorResult.String() != "undefined" {
 		s.Operator = []byte(operatorResult.String())
 	}
-	// extracting Profile
-	profileResult, err := vm.RunString(` 
-							ProfileResult = window.fhirpath.evaluate(fhirResource, 'meta.profile')
-						
-							if(ProfileResult.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(ProfileResult)
-							}
-						 `)
-	if err == nil && profileResult.String() != "undefined" {
-		s.Profile = []byte(profileResult.String())
-	}
 	// extracting Site
-	siteResult, err := vm.RunString(` 
-							SiteResult = window.fhirpath.evaluate(fhirResource, 'Media.bodySite')
-							SiteProcessed = SiteResult.reduce((accumulator, currentValue) => {
-								if (currentValue.coding) {
-									//CodeableConcept
-									currentValue.coding.map((coding) => {
-										accumulator.push({
-											"code": coding.code,	
-											"system": coding.system,
-											"text": currentValue.text
-										})
-									})
-								} else if (currentValue.value) {
-									//ContactPoint, Identifier
-									accumulator.push({
-										"code": currentValue.value,
-										"system": currentValue.system,
-										"text": currentValue.type?.text
-									})
-								} else if (currentValue.code) {
-									//Coding
-									accumulator.push({
-										"code": currentValue.code,
-										"system": currentValue.system,
-										"text": currentValue.display
-									})
-								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
-									//string, boolean
-									accumulator.push({
-										"code": currentValue,
-									})
-								}
-								return accumulator
-							}, [])
-						
-				
-							if(SiteProcessed.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(SiteProcessed)
-							}
-						 `)
+	siteResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Media.bodySite')")
 	if err == nil && siteResult.String() != "undefined" {
 		s.Site = []byte(siteResult.String())
 	}
 	// extracting Status
-	statusResult, err := vm.RunString(` 
-							StatusResult = window.fhirpath.evaluate(fhirResource, 'Media.status')
-							StatusProcessed = StatusResult.reduce((accumulator, currentValue) => {
-								if (currentValue.coding) {
-									//CodeableConcept
-									currentValue.coding.map((coding) => {
-										accumulator.push({
-											"code": coding.code,	
-											"system": coding.system,
-											"text": currentValue.text
-										})
-									})
-								} else if (currentValue.value) {
-									//ContactPoint, Identifier
-									accumulator.push({
-										"code": currentValue.value,
-										"system": currentValue.system,
-										"text": currentValue.type?.text
-									})
-								} else if (currentValue.code) {
-									//Coding
-									accumulator.push({
-										"code": currentValue.code,
-										"system": currentValue.system,
-										"text": currentValue.display
-									})
-								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
-									//string, boolean
-									accumulator.push({
-										"code": currentValue,
-									})
-								}
-								return accumulator
-							}, [])
-						
-				
-							if(StatusProcessed.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(StatusProcessed)
-							}
-						 `)
+	statusResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Media.status')")
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
 	}
 	// extracting Subject
-	subjectResult, err := vm.RunString(` 
-							SubjectResult = window.fhirpath.evaluate(fhirResource, 'Media.subject')
-						
-							if(SubjectResult.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(SubjectResult)
-							}
-						 `)
+	subjectResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Media.subject')")
 	if err == nil && subjectResult.String() != "undefined" {
 		s.Subject = []byte(subjectResult.String())
 	}
-	// extracting Tag
-	tagResult, err := vm.RunString(` 
-							TagResult = window.fhirpath.evaluate(fhirResource, 'meta.tag')
-							TagProcessed = TagResult.reduce((accumulator, currentValue) => {
-								if (currentValue.coding) {
-									//CodeableConcept
-									currentValue.coding.map((coding) => {
-										accumulator.push({
-											"code": coding.code,	
-											"system": coding.system,
-											"text": currentValue.text
-										})
-									})
-								} else if (currentValue.value) {
-									//ContactPoint, Identifier
-									accumulator.push({
-										"code": currentValue.value,
-										"system": currentValue.system,
-										"text": currentValue.type?.text
-									})
-								} else if (currentValue.code) {
-									//Coding
-									accumulator.push({
-										"code": currentValue.code,
-										"system": currentValue.system,
-										"text": currentValue.display
-									})
-								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
-									//string, boolean
-									accumulator.push({
-										"code": currentValue,
-									})
-								}
-								return accumulator
-							}, [])
-						
-				
-							if(TagProcessed.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(TagProcessed)
-							}
-						 `)
-	if err == nil && tagResult.String() != "undefined" {
-		s.Tag = []byte(tagResult.String())
-	}
 	// extracting View
-	viewResult, err := vm.RunString(` 
-							ViewResult = window.fhirpath.evaluate(fhirResource, 'Media.view')
-							ViewProcessed = ViewResult.reduce((accumulator, currentValue) => {
-								if (currentValue.coding) {
-									//CodeableConcept
-									currentValue.coding.map((coding) => {
-										accumulator.push({
-											"code": coding.code,	
-											"system": coding.system,
-											"text": currentValue.text
-										})
-									})
-								} else if (currentValue.value) {
-									//ContactPoint, Identifier
-									accumulator.push({
-										"code": currentValue.value,
-										"system": currentValue.system,
-										"text": currentValue.type?.text
-									})
-								} else if (currentValue.code) {
-									//Coding
-									accumulator.push({
-										"code": currentValue.code,
-										"system": currentValue.system,
-										"text": currentValue.display
-									})
-								} else if ((typeof currentValue === 'string') || (typeof currentValue === 'boolean')) {
-									//string, boolean
-									accumulator.push({
-										"code": currentValue,
-									})
-								}
-								return accumulator
-							}, [])
-						
-				
-							if(ViewProcessed.length == 0) {
-								"undefined"
-							}
- 							else {
-								JSON.stringify(ViewProcessed)
-							}
-						 `)
+	viewResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Media.view')")
 	if err == nil && viewResult.String() != "undefined" {
 		s.View = []byte(viewResult.String())
 	}
