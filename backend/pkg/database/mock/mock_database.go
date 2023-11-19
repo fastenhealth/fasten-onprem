@@ -148,6 +148,21 @@ func (mr *MockDatabaseRepositoryMockRecorder) CreateUser(arg0, arg1 interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockDatabaseRepository)(nil).CreateUser), arg0, arg1)
 }
 
+// DeleteSource mocks base method.
+func (m *MockDatabaseRepository) DeleteSource(ctx context.Context, sourceId string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteSource", ctx, sourceId)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteSource indicates an expected call of DeleteSource.
+func (mr *MockDatabaseRepositoryMockRecorder) DeleteSource(ctx, sourceId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSource", reflect.TypeOf((*MockDatabaseRepository)(nil).DeleteSource), ctx, sourceId)
+}
+
 // FindResourceAssociationsByTypeAndId mocks base method.
 func (m *MockDatabaseRepository) FindResourceAssociationsByTypeAndId(ctx context.Context, source *models.SourceCredential, resourceType, resourceId string) ([]models.RelatedResource, error) {
 	m.ctrl.T.Helper()
@@ -161,6 +176,21 @@ func (m *MockDatabaseRepository) FindResourceAssociationsByTypeAndId(ctx context
 func (mr *MockDatabaseRepositoryMockRecorder) FindResourceAssociationsByTypeAndId(ctx, source, resourceType, resourceId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindResourceAssociationsByTypeAndId", reflect.TypeOf((*MockDatabaseRepository)(nil).FindResourceAssociationsByTypeAndId), ctx, source, resourceType, resourceId)
+}
+
+// GetBackgroundJob mocks base method.
+func (m *MockDatabaseRepository) GetBackgroundJob(ctx context.Context, backgroundJobId string) (*models.BackgroundJob, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBackgroundJob", ctx, backgroundJobId)
+	ret0, _ := ret[0].(*models.BackgroundJob)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBackgroundJob indicates an expected call of GetBackgroundJob.
+func (mr *MockDatabaseRepositoryMockRecorder) GetBackgroundJob(ctx, backgroundJobId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBackgroundJob", reflect.TypeOf((*MockDatabaseRepository)(nil).GetBackgroundJob), ctx, backgroundJobId)
 }
 
 // GetCurrentUser mocks base method.

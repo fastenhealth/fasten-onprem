@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestFhirEncounter_ExtractSearchParameters(t *testing.T) {
@@ -19,10 +20,10 @@ func TestFhirEncounter_ExtractSearchParameters(t *testing.T) {
 	err = encounterModel.PopulateAndExtractSearchParameters(encounterBytes)
 
 	//assert
-	var testStatus []SearchParameterTokenType
+	var testStatus SearchParameterTokenType
 	err = json.Unmarshal(json.RawMessage(encounterModel.Status), &testStatus)
 	require.NoError(t, err)
-	require.Equal(t, []SearchParameterTokenType{{Code: "in-progress"}}, testStatus)
+	require.Equal(t, SearchParameterTokenType{{Code: "in-progress"}}, testStatus)
 }
 
 func TestFhirEncounter2_ExtractSearchParameters(t *testing.T) {
@@ -37,13 +38,11 @@ func TestFhirEncounter2_ExtractSearchParameters(t *testing.T) {
 	err = encounterModel.PopulateAndExtractSearchParameters(encounterBytes)
 
 	//assert
-	var testStatus []SearchParameterTokenType
+	var testStatus SearchParameterTokenType
 	err = json.Unmarshal(json.RawMessage(encounterModel.Status), &testStatus)
 	require.NoError(t, err)
-	require.Equal(t, []SearchParameterTokenType{{Code: "finished"}}, testStatus)
+	require.Equal(t, SearchParameterTokenType{{Code: "finished"}}, testStatus)
 
-	//TODO: this is incorrect.
-	require.Nil(t, encounterModel.Date)
-	//require.Equal(t, time.Date(2015, 1, 17, 16, 0, 0, 0, time.UTC), *encounterModel.Date)
+	require.Equal(t, time.Date(2015, time.January, 17, 16, 0, 0, 0, time.UTC), *encounterModel.Date)
 
 }

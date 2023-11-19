@@ -9,13 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type SearchParameterTokenType struct {
-	System string `json:"system"`
-	Code   string `json:"code"`
-}
-
-type SearchParameterStringType []string
-
 func TestFhirCondition_ExtractSearchParameters(t *testing.T) {
 	t.Parallel()
 	//setup
@@ -31,73 +24,78 @@ func TestFhirCondition_ExtractSearchParameters(t *testing.T) {
 
 	//assert
 
-	var testClinicalStatus []SearchParameterTokenType
+	var testClinicalStatus SearchParameterTokenType
 	require.NoError(t, err)
 	err = json.Unmarshal(json.RawMessage(conditionModel.ClinicalStatus), &testClinicalStatus)
 	require.NoError(t, err)
-	require.Equal(t, []SearchParameterTokenType{
+	require.Equal(t, SearchParameterTokenType{
 		{
 			Code:   "active",
 			System: "http://terminology.hl7.org/CodeSystem/condition-clinical",
 		},
 	}, testClinicalStatus)
 
-	var testVerificationStatus []SearchParameterTokenType
+	var testVerificationStatus SearchParameterTokenType
 	require.NoError(t, err)
 	err = json.Unmarshal(json.RawMessage(conditionModel.VerificationStatus), &testVerificationStatus)
 	require.NoError(t, err)
-	require.Equal(t, []SearchParameterTokenType{
+	require.Equal(t, SearchParameterTokenType{
 		{
 			Code:   "confirmed",
 			System: "http://terminology.hl7.org/CodeSystem/condition-ver-status",
 		},
 	}, testVerificationStatus)
 
-	var testCategory []SearchParameterTokenType
+	var testCategory SearchParameterTokenType
 	require.NoError(t, err)
 	err = json.Unmarshal(json.RawMessage(conditionModel.Category), &testCategory)
 	require.NoError(t, err)
-	require.Equal(t, []SearchParameterTokenType{
+	require.Equal(t, SearchParameterTokenType{
 		{
 			Code:   "encounter-diagnosis",
 			System: "http://terminology.hl7.org/CodeSystem/condition-category",
+			Text:   "Encounter Diagnosis",
 		},
 		{
 			Code:   "439401001",
 			System: "http://snomed.info/sct",
+			Text:   "Diagnosis",
 		},
 	}, testCategory)
 
-	var testSeverity []SearchParameterTokenType
+	var testSeverity SearchParameterTokenType
 	require.NoError(t, err)
 	err = json.Unmarshal(json.RawMessage(conditionModel.Severity), &testSeverity)
 	require.NoError(t, err)
-	require.Equal(t, []SearchParameterTokenType{
+	require.Equal(t, SearchParameterTokenType{
 		{
 			Code:   "24484000",
 			System: "http://snomed.info/sct",
+			Text:   "Severe",
 		},
 	}, testSeverity)
 
-	var testCodeSystem []SearchParameterTokenType
+	var testCodeSystem SearchParameterTokenType
 	require.NoError(t, err)
 	err = json.Unmarshal(json.RawMessage(conditionModel.Code), &testCodeSystem)
 	require.NoError(t, err)
-	require.Equal(t, []SearchParameterTokenType{
+	require.Equal(t, SearchParameterTokenType{
 		{
 			Code:   "39065001",
 			System: "http://snomed.info/sct",
+			Text:   "Burn of ear",
 		},
 	}, testCodeSystem)
 
-	var testBodySite []SearchParameterTokenType
+	var testBodySite SearchParameterTokenType
 	require.NoError(t, err)
 	err = json.Unmarshal(json.RawMessage(conditionModel.BodySite), &testBodySite)
 	require.NoError(t, err)
-	require.Equal(t, []SearchParameterTokenType{
+	require.Equal(t, SearchParameterTokenType{
 		{
 			Code:   "49521004",
 			System: "http://snomed.info/sct",
+			Text:   "Left external ear structure",
 		},
 	}, testBodySite)
 
@@ -120,47 +118,49 @@ func TestFhirCondition2_ExtractSearchParameters(t *testing.T) {
 
 	//assert
 
-	var testClinicalStatus []SearchParameterTokenType
+	var testClinicalStatus SearchParameterTokenType
 	require.NoError(t, err)
 	err = json.Unmarshal(json.RawMessage(conditionModel.ClinicalStatus), &testClinicalStatus)
 	require.NoError(t, err)
-	require.Equal(t, []SearchParameterTokenType{
+	require.Equal(t, SearchParameterTokenType{
 		{
 			Code:   "active",
 			System: "http://terminology.hl7.org/CodeSystem/condition-clinical",
 		},
 	}, testClinicalStatus)
 
-	var testVerificationStatus []SearchParameterTokenType
+	var testVerificationStatus SearchParameterTokenType
 	require.NoError(t, err)
 	err = json.Unmarshal(json.RawMessage(conditionModel.VerificationStatus), &testVerificationStatus)
 	require.NoError(t, err)
-	require.Equal(t, []SearchParameterTokenType{
+	require.Equal(t, SearchParameterTokenType{
 		{
 			Code:   "confirmed",
 			System: "http://terminology.hl7.org/CodeSystem/condition-ver-status",
 		},
 	}, testVerificationStatus)
 
-	var testCategory []SearchParameterTokenType
+	var testCategory SearchParameterTokenType
 	require.NoError(t, err)
 	err = json.Unmarshal(json.RawMessage(conditionModel.Category), &testCategory)
 	require.NoError(t, err)
-	require.Equal(t, []SearchParameterTokenType{
+	require.Equal(t, SearchParameterTokenType{
 		{
 			Code:   "problem-list-item",
 			System: "http://terminology.hl7.org/CodeSystem/condition-category",
+			Text:   "Problem List Item",
 		},
 	}, testCategory)
 
-	var testSeverity []SearchParameterTokenType
+	var testSeverity SearchParameterTokenType
 	require.NoError(t, err)
 	err = json.Unmarshal(json.RawMessage(conditionModel.Severity), &testSeverity)
 	require.NoError(t, err)
-	require.Equal(t, []SearchParameterTokenType{
+	require.Equal(t, SearchParameterTokenType{
 		{
 			Code:   "255604002",
 			System: "http://snomed.info/sct",
+			Text:   "Mild",
 		},
 	}, testSeverity)
 
