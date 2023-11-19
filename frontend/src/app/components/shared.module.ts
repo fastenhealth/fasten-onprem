@@ -82,6 +82,7 @@ import {NgbCollapseModule, NgbModule, NgbDropdownModule, NgbAccordionModule} fro
 import {PipesModule} from '../pipes/pipes.module';
 import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.directive';
 import {DirectivesModule} from '../directives/directives.module';
+import { ReportMedicalHistoryTimelinePanelComponent } from './report-medical-history-timeline-panel/report-medical-history-timeline-panel.component';
 
 @NgModule({
   imports: [
@@ -165,6 +166,7 @@ import {DirectivesModule} from '../directives/directives.module';
     ReportMedicalHistoryEditorComponent,
     ReportMedicalHistoryConditionComponent,
     ReportLabsObservationComponent,
+    ReportMedicalHistoryTimelinePanelComponent,
 
     FhirResourceComponent,
     FhirResourceOutletDirective,
@@ -235,7 +237,9 @@ import {DirectivesModule} from '../directives/directives.module';
         UtilitiesSidebarComponent,
         MedicalSourcesCardComponent,
         MedicalSourcesConnectedComponent,
-        //standalone components
+        ReportMedicalHistoryTimelinePanelComponent,
+
+      //standalone components
         BadgeComponent,
         TableComponent,
         CodingComponent,
