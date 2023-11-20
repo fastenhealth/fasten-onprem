@@ -119,3 +119,70 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph() {
 	require.Equal(suite.T(), 27, len(flattenedGraph["Encounter"][0].RelatedResource))
 
 }
+
+// Bug: the Epic enounter graph was not consistently return the same related resources
+func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph_NDJson() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	require.NotEmpty(suite.T(), userModel.ID)
+	require.NotEqual(suite.T(), uuid.Nil, userModel.ID)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	testSourceCredential := models.SourceCredential{
+		ModelBase: models.ModelBase{
+			ID: uuid.New(),
+		},
+		UserID: userModel.ID,
+	}
+	err = dbRepo.CreateSource(authContext, &testSourceCredential)
+	require.NoError(suite.T(), err)
+
+	bundleFile, err := os.Open("./testdata/epic_fhircamila.ndjson")
+	require.NoError(suite.T(), err)
+
+	testLogger := logrus.WithFields(logrus.Fields{
+		"type": "test",
+	})
+
+	manualClient, err := sourceFactory.GetSourceClient(sourcePkg.FastenLighthouseEnvSandbox, sourcePkg.SourceTypeManual, authContext, testLogger, &testSourceCredential)
+
+	summary, err := manualClient.SyncAllBundle(dbRepo, bundleFile, sourcePkg.FhirVersion401)
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), 58, summary.TotalResources)
+	require.Equal(suite.T(), 58, len(summary.UpdatedResources))
+
+	//test
+	options := models.ResourceGraphOptions{
+		ResourcesIds: []models.OriginBase{
+			{
+				SourceID:           testSourceCredential.ID,
+				SourceResourceType: "Encounter",
+				SourceResourceID:   "eGmO0h.1.UQQrExl4bfM7OQ3",
+			},
+		},
+	}
+
+	flattenedGraph, err := dbRepo.GetFlattenedResourceGraph(authContext, pkg.ResourceGraphTypeMedicalHistory, options)
+	require.NoError(suite.T(), err)
+	require.NotNil(suite.T(), flattenedGraph)
+	//validated using http://clinfhir.com/bundleVisualizer.html
+
+	require.Equal(suite.T(), 1, len(flattenedGraph["Encounter"]))
+	//REGRESSION: in some cases the flattened graph was not correctly returning 7 related, instead only retuning 1 or 4. Bug in Graph generation
+	require.Equal(suite.T(), 7, len(flattenedGraph["Encounter"][0].RelatedResource))
+
+}
