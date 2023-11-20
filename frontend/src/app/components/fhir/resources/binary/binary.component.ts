@@ -56,6 +56,7 @@ export class BinaryComponent implements OnInit, FhirResourceComponentInterface {
           this.markForCheck()
         }, (error) => {
           this.loading = false
+          console.error("Failed to lookup binary resource from attachment:", error)
           this.markForCheck()
         })
     }
