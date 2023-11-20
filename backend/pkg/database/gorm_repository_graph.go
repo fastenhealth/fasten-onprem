@@ -29,17 +29,10 @@ func (rp *VertexResourcePlaceholder) ID() string {
 // Retrieve a list of all fhir resources (vertex), and a list of all associations (edge)
 // Generate a graph
 // return list of root nodes, and their flattened related resources.
-func (gr *GormRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, *models.ResourceGraphMetadata, error) {
+func (gr *GormRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, error) {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
-		return nil, nil, currentUserErr
-	}
-
-	//initialize the graph results metadata
-	resourceGraphMetadata := models.ResourceGraphMetadata{
-		TotalElements: 0,
-		PageSize:      20, //TODO: replace this with pkg.DefaultPageSize
-		Page:          options.Page,
+		return nil, currentUserErr
 	}
 
 	// Get list of all (non-reciprocal) relationships
@@ -52,18 +45,12 @@ func (gr *GormRepository) GetFlattenedResourceGraph(ctx context.Context, graphTy
 		}).
 		Find(&relatedResourceRelationships)
 	if result.Error != nil {
-		return nil, nil, result.Error
+		return nil, result.Error
 	}
 
 	//Generate Graph
 	// TODO optimization: eventually cache the graph in a database/storage, and update when new resources are added.
 	g := graph.New(resourceVertexId, graph.Directed(), graph.Acyclic(), graph.Rooted())
-
-	//// Get list of all resources TODO - REPLACED THIS
-	//wrappedResourceModels, err := gr.ListResources(ctx, models.ListResourceQueryOptions{})
-	//if err != nil {
-	//	return nil, err
-	//}
 
 	//add vertices to the graph (must be done first)
 	//we don't want to request all resources from the database, so we will create a placeholder vertex for each resource.
@@ -105,7 +92,7 @@ func (gr *GormRepository) GetFlattenedResourceGraph(ctx context.Context, graphTy
 			&resourcePlaceholder,
 		)
 		if err != nil {
-			return nil, nil, fmt.Errorf("an error occurred while adding vertex: %v", err)
+			return nil, fmt.Errorf("an error occurred while adding vertex: %v", err)
 		}
 	}
 
@@ -142,7 +129,7 @@ func (gr *GormRepository) GetFlattenedResourceGraph(ctx context.Context, graphTy
 	//	}
 	adjacencyMap, err := g.AdjacencyMap()
 	if err != nil {
-		return nil, nil, fmt.Errorf("error while generating AdjacencyMap: %v", err)
+		return nil, fmt.Errorf("error while generating AdjacencyMap: %v", err)
 	}
 
 	// For a directed graph, PredecessorMap is the complement of AdjacencyMap. This is because in a directed graph, only
@@ -151,12 +138,12 @@ func (gr *GormRepository) GetFlattenedResourceGraph(ctx context.Context, graphTy
 	// ie. "empty" verticies in this map are "root" nodes.
 	predecessorMap, err := g.PredecessorMap()
 	if err != nil {
-		return nil, nil, fmt.Errorf("error while generating PredecessorMap: %v", err)
+		return nil, fmt.Errorf("error while generating PredecessorMap: %v", err)
 	}
 
 	// Doing this in one massive function, because passing graph by reference is difficult due to generics.
 
-	// Step 1: use predecessorMap to find all "root" resources (eg. MedicalHistory - encounters and conditions). store those nodes in their respective lists.
+	// Step 1: use predecessorMap to find all "root" resources (eg. MedicalHistory - encounters and EOB). store those nodes in their respective lists.
 	resourcePlaceholderListDictionary := map[string][]*VertexResourcePlaceholder{}
 	sources, _, sourceFlattenLevel := getSourcesAndSinksForGraphType(graphType)
 
@@ -201,11 +188,10 @@ func (gr *GormRepository) GetFlattenedResourceGraph(ctx context.Context, graphTy
 	// Step 2: now that we've created a relationship graph using placeholders, we need to determine which page of resources to return
 	// and look up the actual resources from the database.
 
-	resourceListDictionary, totalElements, err := gr.InflateResourceGraphAtPage(resourcePlaceholderListDictionary, options.Page)
+	resourceListDictionary, err := gr.InflateSelectedResourcesInResourceGraph(currentUser, resourcePlaceholderListDictionary, options)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error while paginating & inflating resource graph: %v", err)
+		return nil, fmt.Errorf("error while paginating & inflating resource graph: %v", err)
 	}
-	resourceGraphMetadata.TotalElements = totalElements
 
 	// Step 3: define a function. When given a resource, should find all related resources, flatten the heirarchy and set the RelatedResourceFhir list
 	flattenRelatedResourcesFn := func(resource *models.ResourceBase) {
@@ -288,27 +274,38 @@ func (gr *GormRepository) GetFlattenedResourceGraph(ctx context.Context, graphTy
 
 	// Step 5: return the populated resource list dictionary
 
-	return resourceListDictionary, &resourceGraphMetadata, nil
+	return resourceListDictionary, nil
 }
 
-// LoadResourceGraphAtPage - this function will take a dictionary of placeholder "sources" graph and load the actual resources from the database, for a specific page
+// InflateSelectedResourcesInResourceGraph - this function will take a dictionary of placeholder "sources" graph and load the selected resources (and their descendants) from the database.
 // - first, it will load all the "source" resources (eg. Encounter, Condition, etc)
 // - sort the root resources by date, desc
 // - use the page number + page size to determine which root resources to return
 // - return a dictionary of "source" resource lists
-func (gr *GormRepository) InflateResourceGraphAtPage(resourcePlaceholderListDictionary map[string][]*VertexResourcePlaceholder, page int) (map[string][]*models.ResourceBase, int, error) {
-	totalElements := 0
-	// Step 3a: since we cant calulate the sort order until the resources are loaded, we need to load all the root resources first.
+func (gr *GormRepository) InflateSelectedResourcesInResourceGraph(currentUser *models.User, resourcePlaceholderListDictionary map[string][]*VertexResourcePlaceholder, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, error) {
+
+	// Step 3a: group the selected resources by type, so we only need to do 1 query per type
+	selectedResourceIdsByResourceType := map[string][]models.OriginBase{}
+
+	for _, resourceId := range options.ResourcesIds {
+		if _, ok := selectedResourceIdsByResourceType[resourceId.SourceResourceType]; !ok {
+			selectedResourceIdsByResourceType[resourceId.SourceResourceType] = []models.OriginBase{}
+		}
+		selectedResourceIdsByResourceType[resourceId.SourceResourceType] = append(selectedResourceIdsByResourceType[resourceId.SourceResourceType], resourceId)
+	}
+
+	// Step 3b: query the database for all the selected resources
 
 	//TODO: maybe its more performant to query each resource by type/id/source, since they are indexed already?
 	rootWrappedResourceModels := []models.ResourceBase{}
-	for resourceType, _ := range resourcePlaceholderListDictionary {
-		// resourcePlaceholderListDictionary contains top level resource types (eg. Encounter, Condition, etc)
+	for resourceType, _ := range selectedResourceIdsByResourceType {
+		// selectedResourceIdsByResourceType contains selected resources grouped by ty[e types (eg. Encounter, Condition, etc)
 
+		//convert these to a list of interface{} for the query
 		selectList := [][]interface{}{}
-		for ndx, _ := range resourcePlaceholderListDictionary[resourceType] {
+		for ndx, _ := range selectedResourceIdsByResourceType[resourceType] {
 			selectList = append(selectList, []interface{}{
-				resourcePlaceholderListDictionary[resourceType][ndx].UserID,
+				currentUser.ID,
 				resourcePlaceholderListDictionary[resourceType][ndx].SourceID,
 				resourcePlaceholderListDictionary[resourceType][ndx].ResourceType,
 				resourcePlaceholderListDictionary[resourceType][ndx].ResourceID,
@@ -317,7 +314,7 @@ func (gr *GormRepository) InflateResourceGraphAtPage(resourcePlaceholderListDict
 
 		tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
 		if err != nil {
-			return nil, totalElements, err
+			return nil, err
 		}
 		var tableWrappedResourceModels []models.ResourceBase
 		gr.GormClient.
@@ -332,13 +329,7 @@ func (gr *GormRepository) InflateResourceGraphAtPage(resourcePlaceholderListDict
 	//sort
 	rootWrappedResourceModels = utils.SortResourceListByDate(rootWrappedResourceModels)
 
-	//calculate total elements
-	totalElements = len(rootWrappedResourceModels)
-
-	//paginate (by calculating window for the slice)
-	rootWrappedResourceModels = utils.PaginateResourceList(rootWrappedResourceModels, page, 20) //todo: replace size with pkg.ResourceListPageSize
-
-	// Step 3b: now that we have the root resources, lets generate a dictionary of resource lists, keyed by resource type
+	// Step 3c: now that we have the selected root resources, lets generate a dictionary of resource lists, keyed by resource type
 	resourceListDictionary := map[string][]*models.ResourceBase{}
 	for ndx, _ := range rootWrappedResourceModels {
 		resourceType := rootWrappedResourceModels[ndx].SourceResourceType
@@ -349,7 +340,7 @@ func (gr *GormRepository) InflateResourceGraphAtPage(resourcePlaceholderListDict
 	}
 
 	// Step 4: return the populated resource list dictionary
-	return resourceListDictionary, totalElements, nil
+	return resourceListDictionary, nil
 }
 
 // We need to support the following types of graphs:
@@ -445,11 +436,10 @@ func getSourcesAndSinksForGraphType(graphType pkg.ResourceGraphType) ([][]string
 	switch graphType {
 	case pkg.ResourceGraphTypeMedicalHistory:
 		sources = [][]string{
-			{"condition", "composition"},
 			{"encounter", "explanationofbenefit"},
 		}
 		sinks = [][]string{
-			{"location", "device", "organization", "practitioner", "medication", "patient", "coverage"}, //resources that are shared across multiple conditions
+			{"condition", "composition", "location", "device", "organization", "practitioner", "medication", "patient", "coverage"}, //resources that are shared across multiple conditions
 			{"binary"},
 		}
 		sourceFlattenRelated = map[string]bool{

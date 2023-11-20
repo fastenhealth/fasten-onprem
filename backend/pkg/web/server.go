@@ -72,7 +72,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.POST("/source/:sourceId/sync", handler.SourceSync)
 				secure.GET("/source/:sourceId/summary", handler.GetSourceSummary)
 				secure.GET("/resource/fhir", handler.ListResourceFhir)
-				secure.GET("/resource/graph/:graphType", handler.GetResourceFhirGraph)
+				secure.POST("/resource/graph/:graphType", handler.GetResourceFhirGraph)
 				secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
 				secure.POST("/resource/composition", handler.CreateResourceComposition)
 

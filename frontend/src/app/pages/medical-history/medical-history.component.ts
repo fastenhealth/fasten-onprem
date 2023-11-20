@@ -4,7 +4,7 @@ import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {ReportMedicalHistoryEditorComponent} from '../../components/report-medical-history-editor/report-medical-history-editor.component';
 import {forkJoin} from 'rxjs';
-import {ResourceGraphMetadata, ResourceGraphResponse} from '../../models/fasten/resource-graph-response';
+import {ResourceGraphResponse} from '../../models/fasten/resource-graph-response';
 // import {ReportEditorRelatedComponent} from '../../components/report-editor-related/report-editor-related.component';
 
 @Component({
@@ -24,11 +24,6 @@ export class MedicalHistoryComponent implements OnInit {
 
   encounters: ResourceFhir[] = []
 
-  resourceGraphMetadata: ResourceGraphMetadata = {
-    total_elements: 0,
-    page_size: 0,
-    page: 1
-  }
 
   constructor(
     private fastenApi: FastenApiService,
@@ -47,7 +42,22 @@ export class MedicalHistoryComponent implements OnInit {
     this.fastenApi.getResources('Encounter').subscribe(
       (response: ResourceFhir[]) => {
         this.loading = false
-        this.encounters = response
+
+        let selectedResourceIds = response.map((resource: ResourceFhir): Partial<ResourceFhir> => {
+          return {
+            source_id: resource.source_id,
+            source_resource_type: resource.source_resource_type,
+            source_resource_id: resource.source_resource_id,
+          }
+        })
+
+        this.fastenApi.getResourceGraph(null, selectedResourceIds).subscribe((graphResponse: ResourceGraphResponse) => {
+          console.log("FLATTENED RESOURCES RESPONSE", graphResponse)
+          this.encounters = graphResponse.results["Encounter"] || []
+
+        })
+
+
       },
       error => {
         this.loading = false
