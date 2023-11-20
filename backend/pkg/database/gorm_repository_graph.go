@@ -47,6 +47,7 @@ func (gr *GormRepository) GetFlattenedResourceGraph(ctx context.Context, graphTy
 	if result.Error != nil {
 		return nil, result.Error
 	}
+	log.Printf("found %d related resources", len(relatedResourceRelationships))
 
 	//Generate Graph
 	// TODO optimization: eventually cache the graph in a database/storage, and update when new resources are added.
