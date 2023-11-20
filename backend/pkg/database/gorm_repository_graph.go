@@ -51,7 +51,7 @@ func (gr *GormRepository) GetFlattenedResourceGraph(ctx context.Context, graphTy
 
 	//Generate Graph
 	// TODO optimization: eventually cache the graph in a database/storage, and update when new resources are added.
-	g := graph.New(resourceVertexId, graph.Directed(), graph.Acyclic(), graph.Rooted())
+	g := graph.New(resourceVertexId, graph.Directed(), graph.Rooted())
 
 	//add vertices to the graph (must be done first)
 	//we don't want to request all resources from the database, so we will create a placeholder vertex for each resource.
@@ -207,22 +207,30 @@ func (gr *GormRepository) GetFlattenedResourceGraph(ctx context.Context, graphTy
 
 		resource.RelatedResource = []*models.ResourceBase{}
 
+		//make sure we don't keep traversing the same node over and over again
+		visited := map[string]bool{
+			vertexId: true,
+		}
+
 		//get all the resource placeholders associated with this node
 		//TODO: handle error?
 		graph.DFS(g, vertexId, func(relatedVertexId string) bool {
+
 			relatedResourcePlaceholder, _ := g.Vertex(relatedVertexId)
 			//skip the current resourcePlaceholder if it's referenced in this list.
+			//skip any "visted" nodes
 			//also skip the current resourcePlaceholder if its a Binary resourcePlaceholder (which is a special case)
-			if vertexId != resourceVertexId(relatedResourcePlaceholder) && relatedResourcePlaceholder.ResourceType != "Binary" {
+			if _, hasVisited := visited[resourceVertexId(relatedResourcePlaceholder)]; !hasVisited && relatedResourcePlaceholder.ResourceType != "Binary" {
 				relatedResource, err := gr.GetResourceByResourceTypeAndId(ctx, relatedResourcePlaceholder.ResourceType, relatedResourcePlaceholder.ResourceID)
 				if err != nil {
-					gr.Logger.Warnf("ignoring, cannot safely handle error which occurred while getting related resource: %v", err)
-					return true
+					gr.Logger.Warnf("ignoring, cannot safely handle error which occurred while getting related resource (%s/%s): %v", relatedResourcePlaceholder.ResourceType, relatedResourcePlaceholder.ResourceID, err)
+					return false
 				}
 				resource.RelatedResource = append(
 					resource.RelatedResource,
 					relatedResource,
 				)
+				visited[resourceVertexId(relatedResourcePlaceholder)] = true
 			}
 			return false
 		})

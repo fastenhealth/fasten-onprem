@@ -183,6 +183,10 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph_NDJson() {
 
 	require.Equal(suite.T(), 1, len(flattenedGraph["Encounter"]))
 	//REGRESSION: in some cases the flattened graph was not correctly returning 7 related, instead only retuning 1 or 4. Bug in Graph generation
+
+	for ndx, found := range flattenedGraph["Encounter"][0].RelatedResource {
+		suite.T().Logf("ndx: %d, found: %s/%s", ndx, found.SourceResourceType, found.SourceResourceID)
+	}
 	require.Equal(suite.T(), 7, len(flattenedGraph["Encounter"][0].RelatedResource))
 
 }
