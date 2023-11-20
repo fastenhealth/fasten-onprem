@@ -35,12 +35,50 @@
     </p>
   </div>
   <div class="timeline-body">
-    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá ,
-      depois divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum
-      girarzis, nisi eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma
-      pindureta quium dia nois paga. Sapien in monti palavris qui num significa nadis i
-      pareci latim. Interessantiss quisso pudia ce receita de bolis, mais bolis eu num gostis.
-    </p>
+    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+
+    <div *ngIf="displayModel?.related_resources?.MedicationRequest || displayModel?.related_resources?.Medication">
+      <strong>Medications:</strong>
+      <ul>
+        <li class="cursor-pointer" [ngbPopover]="medicationRequestPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let medication of displayModel?.related_resources?.MedicationRequest">
+          {{medication.display }}
+
+          <ng-template #medicationRequestPopoverContent>
+            <fhir-resource [displayModel]="medication"></fhir-resource>
+          </ng-template>
+        </li>
+        <li class="cursor-pointer" [ngbPopover]="medicationPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let medication of displayModel?.related_resources?.Medication">
+          {{medication.title }}
+
+          <ng-template #medicationPopoverContent>
+            <fhir-resource [displayModel]="medication"></fhir-resource>
+          </ng-template>
+        </li>
+      </ul>
+    </div>
+
+
+    <div *ngIf="displayModel?.related_resources?.Procedure as procedures">
+      <strong>Procedures:</strong>
+      <ul>
+        <li class="cursor-pointer" [ngbPopover]="procedurePopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover"  *ngFor="let procedure of procedures">
+          {{procedure.display}}
+
+          <ng-template #procedurePopoverContent>
+            <fhir-resource [displayModel]="procedure"></fhir-resource>
+          </ng-template>
+        </li>
+      </ul>
+    </div>
+
+    <div *ngIf="displayModel?.related_resources?.Device as devices">
+      <strong>Device:</strong>
+      <ul>
+        <li routerLink="/explore/{{device?.source_id}}/resource/{{device?.source_resource_id}}" *ngFor="let device of devices" role="link">
+          {{device.model}}
+        </li>
+      </ul>
+    </div>
 
     <hr>
 
@@ -56,7 +94,7 @@
         <button
           *ngFor="let diagnosticReport of displayModel.related_resources['DiagnosticReport']" ngbDropdownItem
           routerLink="/labs/report/{{diagnosticReport?.source_id}}/DiagnosticReport/{{diagnosticReport?.source_resource_id}}"
-        >{{diagnosticReport?.sort_title}}</button>
+        >Lab Report - {{diagnosticReport?.sort_title}}</button>
       </div>
     </div>
 
