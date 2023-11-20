@@ -40,9 +40,15 @@ func (gr *GormRepository) Migrate() error {
 	})
 
 	if err := m.Migrate(); err != nil {
-		gr.Logger.Errorf("Database migration failed with error. \n Please open a github issue at https://github.com/fastenhealth/fasten-onprem and attach a copy of your fasten.db file. \n %v", err)
+		gr.Logger.Errorf("Database migration failed with error. \n Please open a github issue at https://github.com/fastenhealth/fasten-onprem. \n %v", err)
 		return err
 	}
+
+	//TODO: final migration step. This should not be necessary once we do true migrations for the databaseModels.
+	if err := databaseModel.Migrate(gr.GormClient); err != nil {
+		gr.Logger.Errorf("Final Database migration failed with error.\n Please open a github issue at https://github.com/fastenhealth/fasten-onprem. \n %v", err)
+	}
+
 	gr.Logger.Infoln("Database migration completed successfully")
 	return nil
 }
