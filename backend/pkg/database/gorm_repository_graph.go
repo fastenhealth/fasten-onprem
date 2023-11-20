@@ -304,11 +304,14 @@ func (gr *GormRepository) InflateSelectedResourcesInResourceGraph(currentUser *m
 		//convert these to a list of interface{} for the query
 		selectList := [][]interface{}{}
 		for ndx, _ := range selectedResourceIdsByResourceType[resourceType] {
+
+			selectedResource := selectedResourceIdsByResourceType[resourceType][ndx]
+
 			selectList = append(selectList, []interface{}{
 				currentUser.ID,
-				resourcePlaceholderListDictionary[resourceType][ndx].SourceID,
-				resourcePlaceholderListDictionary[resourceType][ndx].ResourceType,
-				resourcePlaceholderListDictionary[resourceType][ndx].ResourceID,
+				selectedResource.SourceID,
+				selectedResource.SourceResourceType,
+				selectedResource.SourceResourceID,
 			})
 		}
 

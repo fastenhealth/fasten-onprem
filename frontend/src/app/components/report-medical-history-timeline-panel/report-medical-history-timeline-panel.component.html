@@ -1,13 +1,78 @@
-<div class="timeline-badge">AUG 20</div>
+<div class="timeline-badge">
+  <p>
+    <small>Aug</small>
+  </p>
+</div>
 <div class="timeline-panel">
   <div class="timeline-heading">
-    <h4 class="timeline-title">{{displayModel.sort_title}}</h4>
+    <a style="color:black;" routerLink="/explore/{{displayModel?.source_id}}/resource/{{displayModel?.source_resource_id}}">
+      <h4 class="timeline-title">
+        {{displayModel.sort_title}}
+      </h4>
+    </a>
     <p>
-      <small class="text-muted pd-r-15"><i class="fas fa-user-md"></i> {{displayModel.participant | json}}</small>
-      <small class="text-muted pd-r-15"><i class="fas fa-map-marker-alt"></i> {{displayModel.location_display}}</small>
+      <small class="cursor-pointer text-muted pd-r-15" placement="bottom-left" popoverClass="card-fhir-resource-popover" [ngbPopover]="practitionerPopoverContent" *ngFor="let practitioner of displayModel.related_resources['Practitioner']">
+        <i class="fas fa-user-md"></i> {{practitioner.sort_title}}
+        <ng-template #practitionerPopoverContent>
+          <fhir-resource [displayModel]="practitioner"></fhir-resource>
+        </ng-template>
+      </small>
+
+      <small class="cursor-pointer text-muted pd-r-15" placement="bottom-left" popoverClass="card-fhir-resource-popover" [ngbPopover]="organizationPopoverContent" *ngFor="let organization of displayModel.related_resources['Organization']">
+        <i class="fas fa-hospital"></i> {{organization.sort_title}}
+        <ng-template #organizationPopoverContent>
+          <fhir-resource [displayModel]="organization"></fhir-resource>
+        </ng-template>
+      </small>
+
+      <small class="cursor-pointer text-muted pd-r-15" placement="bottom-left" popoverClass="card-fhir-resource-popover" [ngbPopover]="locationPopoverContent" *ngFor="let location of displayModel.related_resources['Location']">
+        <i class="fas fa-map-marker-alt"></i> {{location.sort_title}}
+        <ng-template #locationPopoverContent>
+          <fhir-resource [displayModel]="location"></fhir-resource>
+        </ng-template>
+      </small>
+
     </p>
   </div>
   <div class="timeline-body">
-    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+    <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá ,
+      depois divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum
+      girarzis, nisi eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma
+      pindureta quium dia nois paga. Sapien in monti palavris qui num significa nadis i
+      pareci latim. Interessantiss quisso pudia ce receita de bolis, mais bolis eu num gostis.
+    </p>
+
+    <hr>
+
+    <div *ngIf="displayModel?.related_resources?.['DocumentReference']?.length > 0 || displayModel?.related_resources?.['DiagnosticReport']?.length > 0" ngbDropdown class="d-inline-block dropdown ml-3">
+      <button type="button" class="btn btn-outline-indigo" id="dropdownReports" ngbDropdownToggle>
+        Clinical Reports
+      </button>
+      <div ngbDropdownMenu aria-labelledby="dropdownReports">
+        <button
+          *ngFor="let documentReference of displayModel.related_resources['DocumentReference']" ngbDropdownItem
+          routerLink="/explore/{{documentReference?.source_id}}/resource/{{documentReference?.source_resource_id}}"
+        >{{documentReference?.sort_title}}</button>
+        <button
+          *ngFor="let diagnosticReport of displayModel.related_resources['DiagnosticReport']" ngbDropdownItem
+          routerLink="/labs/report/{{diagnosticReport?.source_id}}/DiagnosticReport/{{diagnosticReport?.source_resource_id}}"
+        >{{diagnosticReport?.sort_title}}</button>
+      </div>
+    </div>
+
+
+    <div ngbDropdown class="d-inline-block dropdown ml-3 float-right">
+      <button type="button" class="btn text-muted" id="dropdownAll" ngbDropdownToggle>
+        Show All
+      </button>
+      <div ngbDropdownMenu aria-labelledby="dropdownReports">
+        <ng-container *ngFor="let resourceEntry of displayModel?.related_resources | keyvalue">
+          <button
+            *ngFor="let resourceListItem of resourceEntry.value" ngbDropdownItem
+            routerLink="/explore/{{resourceListItem?.source_id}}/resource/{{resourceListItem?.source_resource_id}}"
+          >{{resourceListItem.source_resource_type}} {{resourceListItem.sort_title ? '- '+resourceListItem.sort_title : '' }}</button>
+        </ng-container>
+      </div>
+    </div>
   </div>
 </div>

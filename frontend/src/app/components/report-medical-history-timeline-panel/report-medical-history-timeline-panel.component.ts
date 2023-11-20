@@ -2,6 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {EncounterModel} from '../../../lib/models/resources/encounter-model';
 import {RecResourceRelatedDisplayModel} from '../../../lib/utils/resource_related_display_model';
+import {LocationModel} from '../../../lib/models/resources/location-model';
+import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
+import {OrganizationModel} from '../../../lib/models/resources/organization-model';
 
 @Component({
   selector: 'app-report-medical-history-timeline-panel',

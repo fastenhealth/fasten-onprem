@@ -23,6 +23,8 @@ export class EncounterModel extends FastenDisplayModel {
     periodStart?:string
   }[] | undefined
 
+  reasonCode: CodableConceptModel[] | undefined
+
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
     this.source_resource_type = ResourceType.Encounter
@@ -39,6 +41,7 @@ export class EncounterModel extends FastenDisplayModel {
     );
     this.encounter_type = _.get(fhirResource, 'type');
     this.has_participant = _.has(fhirResource, 'participant');
+    this.reasonCode = _.get(fhirResource, 'reasonCode');
   };
 
   dstu2DTO(fhirResource:any){
