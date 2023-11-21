@@ -3,6 +3,12 @@
     <small>Aug</small>
   </p>
 </div>
+
+<nav class="nav nav-tabs timeline-tabs">
+  <a class="nav-link active" data-bs-toggle="tab" href="#tabCont1">Home</a>
+  <a class="nav-link" data-bs-toggle="tab" href="#tabCont2">About</a>
+  <a class="nav-link" data-bs-toggle="tab" href="#tabCont3">Contact</a>
+</nav>
 <div class="timeline-panel">
   <div class="timeline-heading">
     <a style="color:black;" routerLink="/explore/{{displayModel?.source_id}}/resource/{{displayModel?.source_resource_id}}">
@@ -35,7 +41,6 @@
     </p>
   </div>
   <div class="timeline-body">
-    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
 
     <div *ngIf="displayModel?.related_resources?.MedicationRequest || displayModel?.related_resources?.Medication">
       <strong>Medications:</strong>
@@ -71,6 +76,19 @@
       </ul>
     </div>
 
+    <div *ngIf="displayModel?.related_resources?.Immunization as immunizations">
+      <strong>Immunizations:</strong>
+      <ul>
+        <li class="cursor-pointer" [ngbPopover]="immunizationPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover"  *ngFor="let immunization of immunizations">
+          {{immunization.sort_title}}
+
+          <ng-template #immunizationPopoverContent>
+            <fhir-resource [displayModel]="immunization"></fhir-resource>
+          </ng-template>
+        </li>
+      </ul>
+    </div>
+
     <div *ngIf="displayModel?.related_resources?.Device as devices">
       <strong>Device:</strong>
       <ul>
@@ -87,28 +105,28 @@
         Clinical Reports
       </button>
       <div ngbDropdownMenu aria-labelledby="dropdownReports">
-        <button
+        <a class="dropdown-item"
           *ngFor="let documentReference of displayModel.related_resources['DocumentReference']" ngbDropdownItem
           routerLink="/explore/{{documentReference?.source_id}}/resource/{{documentReference?.source_resource_id}}"
-        >{{documentReference?.sort_title}}</button>
-        <button
+        >{{documentReference?.sort_title}}</a>
+        <a class="dropdown-item"
           *ngFor="let diagnosticReport of displayModel.related_resources['DiagnosticReport']" ngbDropdownItem
           routerLink="/labs/report/{{diagnosticReport?.source_id}}/DiagnosticReport/{{diagnosticReport?.source_resource_id}}"
-        >Lab Report - {{diagnosticReport?.sort_title}}</button>
+        >Lab Report - {{diagnosticReport?.sort_title}}</a>
       </div>
     </div>
 
 
     <div ngbDropdown class="d-inline-block dropdown ml-3 float-right">
       <button type="button" class="btn text-muted" id="dropdownAll" ngbDropdownToggle>
-        Show All
+        View Related
       </button>
       <div ngbDropdownMenu aria-labelledby="dropdownReports">
         <ng-container *ngFor="let resourceEntry of displayModel?.related_resources | keyvalue">
-          <button
+          <a class="dropdown-item"
             *ngFor="let resourceListItem of resourceEntry.value" ngbDropdownItem
             routerLink="/explore/{{resourceListItem?.source_id}}/resource/{{resourceListItem?.source_resource_id}}"
-          >{{resourceListItem.source_resource_type}} {{resourceListItem.sort_title ? '- '+resourceListItem.sort_title : '' }}</button>
+          >{{resourceListItem.source_resource_type}} {{resourceListItem.sort_title ? '- '+resourceListItem.sort_title : '' }}</a>
         </ng-container>
       </div>
     </div>
