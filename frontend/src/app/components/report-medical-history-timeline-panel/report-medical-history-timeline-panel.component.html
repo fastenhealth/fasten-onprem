@@ -5,9 +5,13 @@
 </div>
 
 <nav class="nav nav-tabs timeline-tabs">
-  <a class="nav-link active" data-bs-toggle="tab" href="#tabCont1">Home</a>
-  <a class="nav-link" data-bs-toggle="tab" href="#tabCont2">About</a>
-  <a class="nav-link" data-bs-toggle="tab" href="#tabCont3">Contact</a>
+  <a class="nav-link active" data-bs-toggle="tab" href="#tabCont1">{{displayModel?.resource_class}}</a>
+  <ng-container *ngIf="displayModel?.related_resources?.Condition as conditions; else addConditionTab">
+    <a *ngFor="let condition of conditions" class="nav-link" data-bs-toggle="tab" href="#tabCont2">{{condition.sort_title}}</a>
+  </ng-container>
+  <ng-template #addConditionTab>
+    <a class="nav-link" data-bs-toggle="tab" href="#tabCont2"><i class="fas fa-folder-plus"></i> Add Condition</a>
+  </ng-template>
 </nav>
 <div class="timeline-panel">
   <div class="timeline-heading">
@@ -128,6 +132,14 @@
             routerLink="/explore/{{resourceListItem?.source_id}}/resource/{{resourceListItem?.source_resource_id}}"
           >{{resourceListItem.source_resource_type}} {{resourceListItem.sort_title ? '- '+resourceListItem.sort_title : '' }}</a>
         </ng-container>
+
+        <ng-container *ngIf="!displayModel?.related_resources?.Condition">
+          <a class="dropdown-item" ngbDropdownItem [disabled]="true">-----</a>
+          <a class="dropdown-item" ngbDropdownItem>
+            <i class="fas fa-folder-plus"></i> Add Condition
+          </a>
+        </ng-container>
+
       </div>
     </div>
   </div>
