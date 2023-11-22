@@ -83,6 +83,8 @@ import {PipesModule} from '../pipes/pipes.module';
 import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.directive';
 import {DirectivesModule} from '../directives/directives.module';
 import { ReportMedicalHistoryTimelinePanelComponent } from './report-medical-history-timeline-panel/report-medical-history-timeline-panel.component';
+import { OrganizationComponent } from './fhir/resources/organization/organization.component';
+import { LocationComponent } from './fhir/resources/location/location.component';
 
 @NgModule({
   imports: [
@@ -103,27 +105,29 @@ import { ReportMedicalHistoryTimelinePanelComponent } from './report-medical-his
     DirectivesModule,
 
     //standalone components
-    LoadingSpinnerComponent,
-    GlossaryLookupComponent,
-    BadgeComponent,
-    TableComponent,
-    CodingComponent,
     AllergyIntoleranceComponent,
-    MedicationComponent,
-    MedicationRequestComponent,
-    PractitionerComponent,
-    ProcedureComponent,
-    ImmunizationComponent,
-    BinaryTextComponent,
-    HtmlComponent,
-    ImgComponent,
-    PdfComponent,
-    MarkdownComponent,
-    DicomComponent,
+    BadgeComponent,
     BinaryComponent,
+    BinaryTextComponent,
+    CodableConceptComponent,
+    CodingComponent,
+    DicomComponent,
+    GlossaryLookupComponent,
     GridstackComponent,
     GridstackItemComponent,
-    CodableConceptComponent
+    HtmlComponent,
+    ImgComponent,
+    ImmunizationComponent,
+    LoadingSpinnerComponent,
+    LocationComponent,
+    MarkdownComponent,
+    MedicationComponent,
+    MedicationRequestComponent,
+    OrganizationComponent,
+    PdfComponent,
+    PractitionerComponent,
+    ProcedureComponent,
+    TableComponent,
 
   ],
   declarations: [
@@ -240,22 +244,24 @@ import { ReportMedicalHistoryTimelinePanelComponent } from './report-medical-his
         ReportMedicalHistoryTimelinePanelComponent,
 
       //standalone components
-        BadgeComponent,
-        TableComponent,
-        CodingComponent,
-        LoadingSpinnerComponent,
-        GlossaryLookupComponent,
         AllergyIntoleranceComponent,
-        MedicationComponent,
-        MedicationRequestComponent,
-        PractitionerComponent,
-        ProcedureComponent,
-        ImmunizationComponent,
+        BadgeComponent,
         BinaryComponent,
+        CodableConceptComponent,
+        CodingComponent,
+        GlossaryLookupComponent,
         GridstackComponent,
         GridstackItemComponent,
+        ImmunizationComponent,
+        LoadingSpinnerComponent,
+        LocationComponent,
         MedicalSourcesCategoryLookupPipe,
-        CodableConceptComponent,
+        MedicationComponent,
+        MedicationRequestComponent,
+        OrganizationComponent,
+        PractitionerComponent,
+        ProcedureComponent,
+        TableComponent,
 
     ]
 })

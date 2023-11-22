@@ -5,13 +5,14 @@ import {ReferenceModel} from '../datatypes/reference-model';
 import {CodingModel} from '../datatypes/coding-model';
 import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
+import {AddressModel} from '../datatypes/address-model';
 
 export class OrganizationModel extends FastenDisplayModel {
 
-  identifier: string|undefined
+  identifier: CodingModel[]|undefined
   name: string|undefined
-  addresses: string|undefined
-  telecom: string|undefined
+  addresses: AddressModel[]|undefined
+  telecom: { system?: string, value?: string, use?: string }[]|undefined
   type_codings: any[]|undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
