@@ -32,13 +32,11 @@
         </div>
 
         <!-- Condition List -->
-        <div class="container">
-          <ul class="timeline">
-            <li *ngFor="let encounter of encounters">
-              <app-report-medical-history-timeline-panel [resourceFhir]="encounter" ></app-report-medical-history-timeline-panel>
-            </li>
-          </ul>
-        </div>
+        <ul class="timeline">
+          <li *ngFor="let encounter of encounters">
+            <app-report-medical-history-timeline-panel [resourceFhir]="encounter" ></app-report-medical-history-timeline-panel>
+          </li>
+        </ul>
 
 
       </ng-template>

@@ -1,26 +1,28 @@
-<div class="timeline-badge">
-  <p>
-    <small>Aug</small>
-  </p>
+<!-- begin timeline-time -->
+<div class="timeline-time">
+  <span class="date">{{displayModel.period_start | amDateFormat:'YYYY' }}</span>
+  <span class="time">{{displayModel.period_start | amDateFormat:'MMM DD' }}</span>
 </div>
-
-<nav class="nav nav-tabs timeline-tabs">
-  <a class="nav-link active" data-bs-toggle="tab" href="#tabCont1">{{displayModel?.resource_class}}</a>
-  <ng-container *ngIf="displayModel?.related_resources?.Condition as conditions; else addConditionTab">
-    <a *ngFor="let condition of conditions" class="nav-link" data-bs-toggle="tab" href="#tabCont2">{{condition.sort_title}}</a>
-  </ng-container>
-  <ng-template #addConditionTab>
-    <a class="nav-link" data-bs-toggle="tab" href="#tabCont2"><i class="fas fa-folder-plus"></i> Add Condition</a>
-  </ng-template>
-</nav>
-<div class="timeline-panel">
-  <div class="timeline-heading">
-    <a style="color:black;" routerLink="/explore/{{displayModel?.source_id}}/resource/{{displayModel?.source_resource_id}}">
-      <h4 class="timeline-title">
+<!-- end timeline-time -->
+<!-- begin timeline-icon -->
+<div class="timeline-icon">
+  <a href="javascript:;">&nbsp;</a>
+</div>
+<!-- end timeline-icon -->
+<!-- begin timeline-body -->
+<div class="timeline-body card">
+  <div class="timeline-header">
+    <span class="username">
+      <a style="color:black;font-size: 1.3125rem;font-weight: 500;" routerLink="/explore/{{displayModel?.source_id}}/resource/{{displayModel?.source_resource_id}}">
         {{displayModel.sort_title}}
-      </h4>
-    </a>
-    <p>
+      </a>
+      <small></small>
+    </span>
+    <span class="float-right text-muted">
+      <span class="badge badge-primary"><i class="fas fa-folder-plus"></i> | Primary</span>
+    </span>
+    <br/>
+    <span>
       <small class="cursor-pointer text-muted pd-r-15" placement="bottom-left" popoverClass="card-fhir-resource-popover" [ngbPopover]="practitionerPopoverContent" *ngFor="let practitioner of displayModel.related_resources['Practitioner']">
         <i class="fas fa-user-md"></i> {{practitioner.sort_title}}
         <ng-template #practitionerPopoverContent>
@@ -41,11 +43,9 @@
           <fhir-resource [displayModel]="location"></fhir-resource>
         </ng-template>
       </small>
-
-    </p>
+    </span>
   </div>
-  <div class="timeline-body">
-
+  <div class="timeline-content">
     <div *ngIf="displayModel?.related_resources?.MedicationRequest || displayModel?.related_resources?.Medication">
       <strong>Medications:</strong>
       <ul>
@@ -101,25 +101,23 @@
         </li>
       </ul>
     </div>
-
-    <hr>
-
+  </div>
+  <div class="timeline-footer">
     <div *ngIf="displayModel?.related_resources?.['DocumentReference']?.length > 0 || displayModel?.related_resources?.['DiagnosticReport']?.length > 0" ngbDropdown class="d-inline-block dropdown ml-3">
       <button type="button" class="btn btn-outline-indigo" id="dropdownReports" ngbDropdownToggle>
         Clinical Reports
       </button>
       <div ngbDropdownMenu aria-labelledby="dropdownReports">
         <a class="dropdown-item"
-          *ngFor="let documentReference of displayModel.related_resources['DocumentReference']" ngbDropdownItem
-          routerLink="/explore/{{documentReference?.source_id}}/resource/{{documentReference?.source_resource_id}}"
+           *ngFor="let documentReference of displayModel.related_resources['DocumentReference']" ngbDropdownItem
+           routerLink="/explore/{{documentReference?.source_id}}/resource/{{documentReference?.source_resource_id}}"
         >{{documentReference?.sort_title}}</a>
         <a class="dropdown-item"
-          *ngFor="let diagnosticReport of displayModel.related_resources['DiagnosticReport']" ngbDropdownItem
-          routerLink="/labs/report/{{diagnosticReport?.source_id}}/DiagnosticReport/{{diagnosticReport?.source_resource_id}}"
+           *ngFor="let diagnosticReport of displayModel.related_resources['DiagnosticReport']" ngbDropdownItem
+           routerLink="/labs/report/{{diagnosticReport?.source_id}}/DiagnosticReport/{{diagnosticReport?.source_resource_id}}"
         >Lab Report - {{diagnosticReport?.sort_title}}</a>
       </div>
     </div>
-
 
     <div ngbDropdown class="d-inline-block dropdown ml-3 float-right">
       <button type="button" class="btn text-muted" id="dropdownAll" ngbDropdownToggle>
@@ -128,8 +126,8 @@
       <div ngbDropdownMenu aria-labelledby="dropdownReports">
         <ng-container *ngFor="let resourceEntry of displayModel?.related_resources | keyvalue">
           <a class="dropdown-item"
-            *ngFor="let resourceListItem of resourceEntry.value" ngbDropdownItem
-            routerLink="/explore/{{resourceListItem?.source_id}}/resource/{{resourceListItem?.source_resource_id}}"
+             *ngFor="let resourceListItem of resourceEntry.value" ngbDropdownItem
+             routerLink="/explore/{{resourceListItem?.source_id}}/resource/{{resourceListItem?.source_resource_id}}"
           >{{resourceListItem.source_resource_type}} {{resourceListItem.sort_title ? '- '+resourceListItem.sort_title : '' }}</a>
         </ng-container>
 
@@ -143,4 +141,17 @@
       </div>
     </div>
   </div>
+  <div class="timeline-comment-box">
+    <div class="user text-muted d-flex align-items-center">
+      <i class="fas fa-lg fa-paperclip"></i>
+    </div>
+    <div class="input">
+      <form action="">
+        <div class="input-group">
+          <input type="text" class="form-control rounded-corner" placeholder="Write a private note...">
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
+<!-- end timeline-body -->

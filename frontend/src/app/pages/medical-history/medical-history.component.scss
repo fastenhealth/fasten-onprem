@@ -1,36 +1,23 @@
 .timeline {
-  list-style: none;
-  padding: 20px 0 20px;
-  position: relative;
-  width:100%
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  position: relative
 }
+
 .timeline:before {
-  top: 0;
-  bottom: 0;
+  content: '';
   position: absolute;
-  content: " ";
-  width: 3px;
-  background-color: #eeeeee;
-  right: 25px;
-  margin-left: -1.5px;
+  top: 5px;
+  bottom: 5px;
+  width: 5px;
+  background: #2d353c;
+  left: 20%;
+  margin-left: -2.5px
 }
-.timeline > li {
-  margin-bottom: 20px;
+
+.timeline>li {
   position: relative;
-}
-.timeline > li:before,
-.timeline > li:after {
-  content: " ";
-  display: table;
-}
-.timeline > li:after {
-  clear: both;
-}
-.timeline > li:before,
-.timeline > li:after {
-  content: " ";
-  display: table;
-}
-.timeline > li:after {
-  clear: both;
+  min-height: 50px;
+  padding: 20px 0
 }
