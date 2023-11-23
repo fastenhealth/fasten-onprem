@@ -39,6 +39,19 @@
         </ul>
 
 
+        <!-- Pagination -->
+        <div class="row">
+          <div class="col-12 d-flex justify-content-center flex-nowrap">
+            <ngb-pagination
+              [collectionSize]="allEncounterGroups.length"
+              [(page)]="currentPage"
+              [pageSize]="pageSize"
+              (pageChange)="pageChange()"
+            >
+            </ngb-pagination>
+          </div>
+        </div>
+
       </ng-template>
 
       <ng-template #emptyReport>

@@ -15,6 +15,10 @@ import {ResourceGraphResponse} from '../../models/fasten/resource-graph-response
 export class MedicalHistoryComponent implements OnInit {
   loading: boolean = false
 
+  currentPage: number = 1 //1-based index due to the way the pagination component works
+  pageSize: number = 10
+  allEncounterGroups: string[] = []
+
   closeResult = '';
   // conditions: ResourceFhir[] = []
   // explanationOfBenefits: ResourceFhir[] = []
@@ -33,6 +37,8 @@ export class MedicalHistoryComponent implements OnInit {
 
   ngOnInit(): void {
     //load the first page
+    this.loading = true
+
     this.pageChange(1)
   }
 
@@ -41,7 +47,6 @@ export class MedicalHistoryComponent implements OnInit {
 
     this.fastenApi.getResources('Encounter').subscribe(
       (response: ResourceFhir[]) => {
-        this.loading = false
 
         let selectedResourceIds = response.map((resource: ResourceFhir): Partial<ResourceFhir> => {
           return {
@@ -52,9 +57,14 @@ export class MedicalHistoryComponent implements OnInit {
         })
 
         this.fastenApi.getResourceGraph(null, selectedResourceIds).subscribe((graphResponse: ResourceGraphResponse) => {
+          this.loading = false
+
           console.log("FLATTENED RESOURCES RESPONSE", graphResponse)
           this.encounters = graphResponse.results["Encounter"] || []
 
+        },
+          error => {
+          this.loading = false
         })
 
 
