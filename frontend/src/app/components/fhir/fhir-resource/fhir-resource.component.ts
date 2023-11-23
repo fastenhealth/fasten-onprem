@@ -25,6 +25,10 @@ import {DiagnosticReportComponent} from '../resources/diagnostic-report/diagnost
 import {PractitionerComponent} from '../resources/practitioner/practitioner.component';
 import {DocumentReferenceComponent} from '../resources/document-reference/document-reference.component';
 import {MediaComponent} from '../resources/media/media.component';
+import {LocationComponent} from '../resources/location/location.component';
+import {OrganizationComponent} from '../resources/organization/organization.component';
+import {ObservationComponent} from '../resources/observation/observation.component';
+
 
 @Component({
   selector: 'fhir-resource',
@@ -119,6 +123,9 @@ export class FhirResourceComponent implements OnInit, OnChanges {
       case "Immunization": {
         return ImmunizationComponent;
       }
+      case "Location": {
+        return LocationComponent;
+      }
       case "Media": {
         return MediaComponent;
       }
@@ -137,9 +144,12 @@ export class FhirResourceComponent implements OnInit, OnChanges {
       // case "NutritionOrder": {
       //   return ListNutritionOrderComponent;
       // }
-      // case "Observation": {
-      //   return ListObservationComponent;
-      // }
+      case "Observation": {
+        return ObservationComponent;
+      }
+      case "Organization": {
+        return OrganizationComponent;
+      }
       case "Procedure": {
         return ProcedureComponent;
       }

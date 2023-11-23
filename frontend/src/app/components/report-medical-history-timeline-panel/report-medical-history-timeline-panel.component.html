@@ -1,0 +1,157 @@
+<!-- begin timeline-time -->
+<div class="timeline-time">
+  <span class="date">{{displayModel.period_start | amDateFormat:'YYYY' }}</span>
+  <span class="time">{{displayModel.period_start | amDateFormat:'MMM DD' }}</span>
+</div>
+<!-- end timeline-time -->
+<!-- begin timeline-icon -->
+<div class="timeline-icon">
+  <a href="javascript:;">&nbsp;</a>
+</div>
+<!-- end timeline-icon -->
+<!-- begin timeline-body -->
+<div class="timeline-body card">
+  <div class="timeline-header">
+    <span class="username">
+      <a style="color:black;font-size: 1.3125rem;font-weight: 500;" routerLink="/explore/{{displayModel?.source_id}}/resource/{{displayModel?.source_resource_id}}">
+        {{displayModel.sort_title}}
+      </a>
+      <small></small>
+    </span>
+    <span class="float-right text-muted">
+      <span class="badge badge-primary"><i class="fas fa-folder-plus"></i> | Primary</span>
+    </span>
+    <br/>
+    <span>
+      <small class="cursor-pointer text-muted pd-r-15" placement="bottom-left" popoverClass="card-fhir-resource-popover" [ngbPopover]="practitionerPopoverContent" *ngFor="let practitioner of displayModel.related_resources['Practitioner']">
+        <i class="fas fa-user-md"></i> {{practitioner.sort_title}}
+        <ng-template #practitionerPopoverContent>
+          <fhir-resource [displayModel]="practitioner"></fhir-resource>
+        </ng-template>
+      </small>
+
+      <small class="cursor-pointer text-muted pd-r-15" placement="bottom-left" popoverClass="card-fhir-resource-popover" [ngbPopover]="organizationPopoverContent" *ngFor="let organization of displayModel.related_resources['Organization']">
+        <i class="fas fa-hospital"></i> {{organization.sort_title}}
+        <ng-template #organizationPopoverContent>
+          <fhir-resource [displayModel]="organization"></fhir-resource>
+        </ng-template>
+      </small>
+
+      <small class="cursor-pointer text-muted pd-r-15" placement="bottom-left" popoverClass="card-fhir-resource-popover" [ngbPopover]="locationPopoverContent" *ngFor="let location of displayModel.related_resources['Location']">
+        <i class="fas fa-map-marker-alt"></i> {{location.sort_title}}
+        <ng-template #locationPopoverContent>
+          <fhir-resource [displayModel]="location"></fhir-resource>
+        </ng-template>
+      </small>
+    </span>
+  </div>
+  <div class="timeline-content">
+    <div *ngIf="displayModel?.related_resources?.MedicationRequest || displayModel?.related_resources?.Medication">
+      <strong>Medications:</strong>
+      <ul>
+        <li class="cursor-pointer" [ngbPopover]="medicationRequestPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let medication of displayModel?.related_resources?.MedicationRequest">
+          {{medication.display }}
+
+          <ng-template #medicationRequestPopoverContent>
+            <fhir-resource [displayModel]="medication"></fhir-resource>
+          </ng-template>
+        </li>
+        <li class="cursor-pointer" [ngbPopover]="medicationPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let medication of displayModel?.related_resources?.Medication">
+          {{medication.title }}
+
+          <ng-template #medicationPopoverContent>
+            <fhir-resource [displayModel]="medication"></fhir-resource>
+          </ng-template>
+        </li>
+      </ul>
+    </div>
+
+
+    <div *ngIf="displayModel?.related_resources?.Procedure as procedures">
+      <strong>Procedures:</strong>
+      <ul>
+        <li class="cursor-pointer" [ngbPopover]="procedurePopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover"  *ngFor="let procedure of procedures">
+          {{procedure.display}}
+
+          <ng-template #procedurePopoverContent>
+            <fhir-resource [displayModel]="procedure"></fhir-resource>
+          </ng-template>
+        </li>
+      </ul>
+    </div>
+
+    <div *ngIf="displayModel?.related_resources?.Immunization as immunizations">
+      <strong>Immunizations:</strong>
+      <ul>
+        <li class="cursor-pointer" [ngbPopover]="immunizationPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover"  *ngFor="let immunization of immunizations">
+          {{immunization.sort_title}}
+
+          <ng-template #immunizationPopoverContent>
+            <fhir-resource [displayModel]="immunization"></fhir-resource>
+          </ng-template>
+        </li>
+      </ul>
+    </div>
+
+    <div *ngIf="displayModel?.related_resources?.Device as devices">
+      <strong>Device:</strong>
+      <ul>
+        <li routerLink="/explore/{{device?.source_id}}/resource/{{device?.source_resource_id}}" *ngFor="let device of devices" role="link">
+          {{device.model}}
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="timeline-footer">
+    <div *ngIf="displayModel?.related_resources?.['DocumentReference']?.length > 0 || displayModel?.related_resources?.['DiagnosticReport']?.length > 0" ngbDropdown class="d-inline-block dropdown ml-3">
+      <button type="button" class="btn btn-outline-indigo" id="dropdownReports" ngbDropdownToggle>
+        Clinical Reports
+      </button>
+      <div ngbDropdownMenu aria-labelledby="dropdownReports">
+        <a class="dropdown-item"
+           *ngFor="let documentReference of displayModel.related_resources['DocumentReference']" ngbDropdownItem
+           routerLink="/explore/{{documentReference?.source_id}}/resource/{{documentReference?.source_resource_id}}"
+        >{{documentReference?.sort_title}}</a>
+        <a class="dropdown-item"
+           *ngFor="let diagnosticReport of displayModel.related_resources['DiagnosticReport']" ngbDropdownItem
+           [routerLink]="diagnosticReportLink(diagnosticReport)"
+        >Lab Report - {{diagnosticReport?.sort_title}}</a>
+      </div>
+    </div>
+
+    <div ngbDropdown class="d-inline-block dropdown ml-3 float-right">
+      <button type="button" class="btn text-muted" id="dropdownAll" ngbDropdownToggle>
+        View Related
+      </button>
+      <div ngbDropdownMenu aria-labelledby="dropdownReports">
+        <ng-container *ngFor="let resourceEntry of displayModel?.related_resources | keyvalue">
+          <a class="dropdown-item"
+             *ngFor="let resourceListItem of resourceEntry.value" ngbDropdownItem
+             routerLink="/explore/{{resourceListItem?.source_id}}/resource/{{resourceListItem?.source_resource_id}}"
+          >{{resourceListItem.source_resource_type}} {{resourceListItem.sort_title ? '- '+resourceListItem.sort_title : '' }}</a>
+        </ng-container>
+
+        <ng-container *ngIf="!displayModel?.related_resources?.Condition">
+          <a class="dropdown-item" ngbDropdownItem [disabled]="true">-----</a>
+          <a class="dropdown-item" ngbDropdownItem>
+            <i class="fas fa-folder-plus"></i> Add Condition
+          </a>
+        </ng-container>
+
+      </div>
+    </div>
+  </div>
+  <div class="timeline-comment-box">
+    <div class="input">
+      <form action="">
+        <div ngbTooltip="not yet implemented" class="input-group">
+          <span class="input-group-btn p-l-10">
+            <button class="btn f-s-12 text-muted rounded-corner" type="button"><i class="cursor-pointer fas fa-lg fa-paperclip"></i></button>
+          </span>
+          <input type="text" class="form-control rounded-corner" placeholder="Write a private note...">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- end timeline-body -->

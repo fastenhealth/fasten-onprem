@@ -1,5 +1,5 @@
 package models
 
 type ResourceGraphOptions struct {
-	Page int
+	ResourcesIds []OriginBase `json:"resource_ids"`
 }

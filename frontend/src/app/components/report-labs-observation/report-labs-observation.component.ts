@@ -23,7 +23,7 @@ export class ReportLabsObservationComponent implements OnInit {
   // https://stackoverflow.com/questions/62711919/chart-js-horizontal-lines-per-bar
 
 
-  chartHeight = 45
+  chartHeight = 60
 
   barChartData =[
     // {
@@ -127,7 +127,7 @@ export class ReportLabsObservationComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let currentValues = []
+    let currentValues: number[] = []
 
     let referenceRanges = []
 
@@ -144,6 +144,12 @@ export class ReportLabsObservationComponent implements OnInit {
       )
 
       //get current value
+      // let currentValue = fhirpath.evaluate(observation.resource_raw, "Observation.valueQuantity.value")[0]
+      // if(currentValue != null){
+      //   currentValues.push([currentValue, currentValue])
+      // } else {
+      //   currentValues.push([])
+      // }
       currentValues.push(fhirpath.evaluate(observation.resource_raw, "Observation.valueQuantity.value")[0])
 
       //set chart x-axis label
@@ -158,6 +164,13 @@ export class ReportLabsObservationComponent implements OnInit {
 
 
       //add low/high ref value blocks
+      // let referenceLow = fhirpath.evaluate(observation.resource_raw, "Observation.referenceRange.low.value")[0]
+      // let referenceHigh = fhirpath.evaluate(observation.resource_raw, "Observation.referenceRange.high.value")[0]
+      // if (referenceLow != null && referenceHigh != null){
+      //   referenceRanges.push([referenceLow, referenceHigh])
+      // } else {
+      //   referenceRanges.push([0,0])
+      // }
       referenceRanges.push([
         fhirpath.evaluate(observation.resource_raw, "Observation.referenceRange.low.value")[0],
         fhirpath.evaluate(observation.resource_raw, "Observation.referenceRange.high.value")[0]
@@ -169,6 +182,13 @@ export class ReportLabsObservationComponent implements OnInit {
     // @ts-ignore
     this.barChartData[0].data = referenceRanges
     this.barChartData[1].data = currentValues.map(v => [v, v])
+    // this.barChartData[1].data = currentValues
+
+    let suggestedMax = Math.max(...currentValues) * 1.1;
+    this.barChartOptions.scales['x']['suggestedMax'] = suggestedMax
+
+    console.log(this.observationTitle, this.barChartData[0].data, this.barChartData[1].data)
+
 
     if(currentValues.length > 1){
       this.chartHeight = 30 * currentValues.length

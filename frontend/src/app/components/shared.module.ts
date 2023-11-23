@@ -82,6 +82,10 @@ import {NgbCollapseModule, NgbModule, NgbDropdownModule, NgbAccordionModule} fro
 import {PipesModule} from '../pipes/pipes.module';
 import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.directive';
 import {DirectivesModule} from '../directives/directives.module';
+import { ReportMedicalHistoryTimelinePanelComponent } from './report-medical-history-timeline-panel/report-medical-history-timeline-panel.component';
+import { OrganizationComponent } from './fhir/resources/organization/organization.component';
+import { LocationComponent } from './fhir/resources/location/location.component';
+import { ObservationComponent } from './fhir/resources/observation/observation.component';
 
 @NgModule({
   imports: [
@@ -102,27 +106,30 @@ import {DirectivesModule} from '../directives/directives.module';
     DirectivesModule,
 
     //standalone components
-    LoadingSpinnerComponent,
-    GlossaryLookupComponent,
-    BadgeComponent,
-    TableComponent,
-    CodingComponent,
     AllergyIntoleranceComponent,
-    MedicationComponent,
-    MedicationRequestComponent,
-    PractitionerComponent,
-    ProcedureComponent,
-    ImmunizationComponent,
-    BinaryTextComponent,
-    HtmlComponent,
-    ImgComponent,
-    PdfComponent,
-    MarkdownComponent,
-    DicomComponent,
+    BadgeComponent,
     BinaryComponent,
+    BinaryTextComponent,
+    CodableConceptComponent,
+    CodingComponent,
+    DicomComponent,
+    GlossaryLookupComponent,
     GridstackComponent,
     GridstackItemComponent,
-    CodableConceptComponent
+    HtmlComponent,
+    ImgComponent,
+    ImmunizationComponent,
+    LoadingSpinnerComponent,
+    LocationComponent,
+    MarkdownComponent,
+    MedicationComponent,
+    MedicationRequestComponent,
+    OrganizationComponent,
+    ObservationComponent,
+    PdfComponent,
+    PractitionerComponent,
+    ProcedureComponent,
+    TableComponent,
 
   ],
   declarations: [
@@ -165,6 +172,7 @@ import {DirectivesModule} from '../directives/directives.module';
     ReportMedicalHistoryEditorComponent,
     ReportMedicalHistoryConditionComponent,
     ReportLabsObservationComponent,
+    ReportMedicalHistoryTimelinePanelComponent,
 
     FhirResourceComponent,
     FhirResourceOutletDirective,
@@ -235,23 +243,28 @@ import {DirectivesModule} from '../directives/directives.module';
         UtilitiesSidebarComponent,
         MedicalSourcesCardComponent,
         MedicalSourcesConnectedComponent,
-        //standalone components
-        BadgeComponent,
-        TableComponent,
-        CodingComponent,
-        LoadingSpinnerComponent,
-        GlossaryLookupComponent,
+        ReportMedicalHistoryTimelinePanelComponent,
+
+      //standalone components
         AllergyIntoleranceComponent,
-        MedicationComponent,
-        MedicationRequestComponent,
-        PractitionerComponent,
-        ProcedureComponent,
-        ImmunizationComponent,
+        BadgeComponent,
         BinaryComponent,
+        CodableConceptComponent,
+        CodingComponent,
+        GlossaryLookupComponent,
         GridstackComponent,
         GridstackItemComponent,
+        ImmunizationComponent,
+        LoadingSpinnerComponent,
+        LocationComponent,
         MedicalSourcesCategoryLookupPipe,
-        CodableConceptComponent,
+        MedicationComponent,
+        MedicationRequestComponent,
+        OrganizationComponent,
+        ObservationComponent,
+        PractitionerComponent,
+        ProcedureComponent,
+        TableComponent,
 
     ]
 })

@@ -32,12 +32,12 @@ export class DiagnosticReportComponent implements OnInit, FhirResourceComponentI
         data: this.displayModel?.issued,
         enabled: !!this.displayModel?.issued,
       },
-      {
-        label: 'Category',
-        data: this.displayModel?.category_coding,
-        data_type: TableRowItemDataType.CodingList,
-        enabled: this.displayModel?.has_category_coding,
-      },
+      // {
+      //   label: 'Category',
+      //   data: this.displayModel?.category_coding,
+      //   data_type: TableRowItemDataType.CodingList,
+      //   enabled: this.displayModel?.has_category_coding,
+      // },
       {
         label: 'Performer',
         data: this.displayModel?.performer,
@@ -50,6 +50,15 @@ export class DiagnosticReportComponent implements OnInit, FhirResourceComponentI
         enabled: !!this.displayModel?.conclusion,
       },
     ];
+
+    for(let categoryCodeable of (this.displayModel?.category_coding || [])){
+      this.tableData.push({
+        label: `Category`,
+        data_type: TableRowItemDataType.CodableConcept,
+        data: categoryCodeable,
+        enabled: true,
+      })
+    }
   }
   markForCheck(){
     this.changeRef.markForCheck()

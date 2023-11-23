@@ -13,7 +13,7 @@ export class DiagnosticReportModel extends FastenDisplayModel {
   title: string | undefined
   status: string | undefined
   effective_datetime: string | undefined
-  category_coding: CodingModel[] | undefined
+  category_coding: CodableConceptModel[] | undefined
   code_coding: CodingModel[] | undefined
   has_category_coding: boolean | undefined
   has_performer: boolean | undefined
@@ -21,6 +21,8 @@ export class DiagnosticReportModel extends FastenDisplayModel {
   performer: ReferenceModel | undefined
   issued: string | undefined
   presented_form: AttachmentModel[] | undefined
+  is_category_lab_report: boolean = false
+
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
@@ -36,12 +38,16 @@ export class DiagnosticReportModel extends FastenDisplayModel {
       _.get(fhirResource, 'code.coding.0.display', null);
     this.status = _.get(fhirResource, 'status', '');
     this.effective_datetime = _.get(fhirResource, 'effectiveDateTime');
-    this.category_coding = _.get(fhirResource, 'category.coding');
+    this.category_coding = _.get(fhirResource, 'category');
     this.code_coding = _.get(fhirResource, 'code.coding');
     this.has_category_coding = Array.isArray(this.category_coding);
     this.conclusion = _.get(fhirResource, 'conclusion');
     this.issued = _.get(fhirResource, 'issued');
-
+    this.is_category_lab_report = _.some(fhirResource.category, function(codableConceptModel: CodableConceptModel){
+      return _.some(codableConceptModel.coding, function(codingModel: CodingModel){
+        return codingModel.code === 'LAB' && codingModel.system === 'http://terminology.hl7.org/CodeSystem/v2-0074';
+      })
+    });
   };
 
   dstu2DTO(fhirResource:any){

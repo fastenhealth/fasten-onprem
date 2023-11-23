@@ -1,0 +1,28 @@
+<div class="card card-fhir-resource" >
+  <div class="card-header" (click)="isCollapsed = ! isCollapsed">
+    <div>
+      <h6 class="card-title">{{displayModel?.sort_title}}</h6>
+    </div>
+    <fhir-ui-badge class="float-right" [status]="displayModel?.status">{{displayModel?.status}}</fhir-ui-badge>
+    <!--    <div class="btn-group">-->
+    <!--      <button class="btn active">Day</button>-->
+    <!--      <button class="btn">Week</button>-->
+    <!--      <button class="btn">Month</button>-->
+    <!--    </div>-->
+  </div>
+  <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed" class="card-body">
+    <p class="az-content-text mg-b-20">Observations are a central element in healthcare, used to support diagnosis, monitor progress, determine baselines and patterns and even capture demographic characteristics.</p>
+    <fhir-ui-table [displayModel]="displayModel" [tableData]="tableData"></fhir-ui-table>
+
+    <canvas baseChart
+            [height]="chartHeight"
+            [type]="'bar'"
+            [datasets]="barChartData"
+            [labels]="barChartLabels"
+            [options]="barChartOptions"
+    ></canvas>
+  </div>
+  <div *ngIf="showDetails" class="card-footer">
+    <a class="float-right" routerLink="/explore/{{displayModel?.source_id}}/resource/{{displayModel?.source_resource_id}}">details</a>
+  </div>
+</div>

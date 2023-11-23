@@ -190,17 +190,12 @@ export class FastenApiService {
     return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/query`, query)
   }
 
-  getResourceGraph(graphType?: string, page?:number): Observable<ResourceGraphResponse> {
+  getResourceGraph(graphType?: string, selectedResourceIds?: Partial<ResourceFhir>[]): Observable<ResourceGraphResponse> {
     if(!graphType){
       graphType = "MedicalHistory"
     }
-    let queryParams = {}
-    if(page){
-      //the backend is 0 indexed, but the frontend is 1 indexed
-      queryParams["page"] = page - 1
-    }
 
-    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/graph/${graphType}`, {params: queryParams})
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/graph/${graphType}`, {resource_ids: selectedResourceIds})
       .pipe(
         map((response: ResponseWrapper) => {
           console.log("RESPONSE", response)
@@ -253,12 +248,11 @@ export class FastenApiService {
       let resourceType = "Binary"
       let resourceId = ""
       let binaryUrl = attachmentModel.url
-
       //strip out the urn prefix (if this is an embedded id, eg. urn:uuid:2a35e080-c5f7-4dde-b0cf-8210505708f1)
       if (binaryUrl.startsWith(urnPrefix)) {
         // PREFIX is exactly at the beginning
         resourceId = binaryUrl.slice(urnPrefix.length);
-      } else if(binaryUrl.startsWith("http://") || binaryUrl.startsWith("https://")){
+      } else if(binaryUrl.startsWith("http://") || binaryUrl.startsWith("https://") || binaryUrl.startsWith("Binary/")){
         //this is an absolute URL (which could be a FHIR url with Binary/xxx-xxx-xxx-xxx or a direct link to a file)
         let urlParts = binaryUrl.split("Binary/");
         if(urlParts.length > 1){
@@ -269,7 +263,6 @@ export class FastenApiService {
           resourceId = btoa(binaryUrl)
         }
       }
-
       return this.getResourceBySourceId(sourceId, resourceId).pipe(
         map((resourceFhir: ResourceFhir) => {
           return new BinaryModel(resourceFhir.resource_raw)

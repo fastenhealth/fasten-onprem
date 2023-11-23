@@ -76,7 +76,7 @@ func ListResourceFhir(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": wrappedResourceModels})
 }
 
-//this endpoint retrieves a specific resource by its ID
+// this endpoint retrieves a specific resource by its ID
 func GetResourceFhir(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
@@ -129,18 +129,20 @@ func GetResourceFhirGraph(c *gin.Context) {
 
 	graphType := strings.Trim(c.Param("graphType"), "/")
 
-	graphOptions := models.ResourceGraphOptions{}
-	if len(c.Query("page")) > 0 {
-		pageNumb, err := strconv.Atoi(c.Query("page"))
-		if err != nil {
-			logger.Errorln("An error occurred while calculating page number", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
-			return
-		}
-		graphOptions.Page = pageNumb
+	var graphOptions models.ResourceGraphOptions
+	if err := c.ShouldBindJSON(&graphOptions); err != nil {
+		logger.Errorln("An error occurred while parsing resource graph query options", err)
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
 	}
 
-	resourceListDictionary, resourceListMetadata, err := databaseRepo.GetFlattenedResourceGraph(c, pkg.ResourceGraphType(graphType), graphOptions)
+	if len(graphOptions.ResourcesIds) == 0 {
+		logger.Errorln("No resource ids specified")
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
+	}
+
+	resourceListDictionary, err := databaseRepo.GetFlattenedResourceGraph(c, pkg.ResourceGraphType(graphType), graphOptions)
 	if err != nil {
 		logger.Errorln("An error occurred while retrieving list of resources", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
@@ -148,7 +150,6 @@ func GetResourceFhirGraph(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": map[string]interface{}{
-		"results":  resourceListDictionary,
-		"metadata": resourceListMetadata,
+		"results": resourceListDictionary,
 	}})
 }

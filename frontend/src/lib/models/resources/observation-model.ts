@@ -12,14 +12,22 @@ export class ObservationModel extends FastenDisplayModel {
   effective_date: string
   code_coding_display: string
   code_text: string
-  value_quantity_value: string
+  value_quantity_value: number | string
   value_quantity_unit: string
   status: string
   value_codeable_concept_text: string
   value_codeable_concept_coding_display: string
   value_codeable_concept_coding: string
-  value_quantity_value_number: string
-  subject: string
+  value_quantity_value_number: number
+  subject: ReferenceModel | undefined
+  reference_range: {
+    low: {
+      value: number
+    }
+    high: {
+      value: number
+    }
+  }[] | undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
@@ -46,8 +54,7 @@ export class ObservationModel extends FastenDisplayModel {
       [],
     );
 
-    this.value_quantity_value_number = this.value_quantity_value;
-
+    this.reference_range = _.get(fhirResource, 'referenceRange', []);
     this.subject = _.get(fhirResource, 'subject');
   }
 }
