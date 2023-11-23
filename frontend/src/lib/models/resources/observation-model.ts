@@ -19,7 +19,7 @@ export class ObservationModel extends FastenDisplayModel {
   value_codeable_concept_coding_display: string
   value_codeable_concept_coding: string
   value_quantity_value_number: string
-  subject: string
+  subject: ReferenceModel | undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)

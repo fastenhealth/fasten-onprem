@@ -27,6 +27,7 @@ import {DocumentReferenceComponent} from '../resources/document-reference/docume
 import {MediaComponent} from '../resources/media/media.component';
 import {LocationComponent} from '../resources/location/location.component';
 import {OrganizationComponent} from '../resources/organization/organization.component';
+import {ObservationComponent} from '../resources/observation/observation.component';
 
 
 @Component({
@@ -143,9 +144,9 @@ export class FhirResourceComponent implements OnInit, OnChanges {
       // case "NutritionOrder": {
       //   return ListNutritionOrderComponent;
       // }
-      // case "Observation": {
-      //   return ListObservationComponent;
-      // }
+      case "Observation": {
+        return ObservationComponent;
+      }
       case "Organization": {
         return OrganizationComponent;
       }

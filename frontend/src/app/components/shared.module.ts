@@ -85,6 +85,7 @@ import {DirectivesModule} from '../directives/directives.module';
 import { ReportMedicalHistoryTimelinePanelComponent } from './report-medical-history-timeline-panel/report-medical-history-timeline-panel.component';
 import { OrganizationComponent } from './fhir/resources/organization/organization.component';
 import { LocationComponent } from './fhir/resources/location/location.component';
+import { ObservationComponent } from './fhir/resources/observation/observation.component';
 
 @NgModule({
   imports: [
@@ -124,6 +125,7 @@ import { LocationComponent } from './fhir/resources/location/location.component'
     MedicationComponent,
     MedicationRequestComponent,
     OrganizationComponent,
+    ObservationComponent,
     PdfComponent,
     PractitionerComponent,
     ProcedureComponent,
@@ -259,6 +261,7 @@ import { LocationComponent } from './fhir/resources/location/location.component'
         MedicationComponent,
         MedicationRequestComponent,
         OrganizationComponent,
+        ObservationComponent,
         PractitionerComponent,
         ProcedureComponent,
         TableComponent,
