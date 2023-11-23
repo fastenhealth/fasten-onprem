@@ -114,7 +114,7 @@
         >{{documentReference?.sort_title}}</a>
         <a class="dropdown-item"
            *ngFor="let diagnosticReport of displayModel.related_resources['DiagnosticReport']" ngbDropdownItem
-           routerLink="/labs/report/{{diagnosticReport?.source_id}}/DiagnosticReport/{{diagnosticReport?.source_resource_id}}"
+           [routerLink]="diagnosticReportLink(diagnosticReport)"
         >Lab Report - {{diagnosticReport?.sort_title}}</a>
       </div>
     </div>
