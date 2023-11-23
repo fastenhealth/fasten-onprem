@@ -56,6 +56,7 @@ export class ObservationComponent implements OnInit {
     legend:{
       display: false,
     },
+    autoPadding: true,
     //add padding to fix tooltip cutoff
     layout: {
       padding: {
@@ -88,7 +89,6 @@ export class ObservationComponent implements OnInit {
           min: 0,
           // max: 80
         },
-
       },
     }
   } as ChartConfiguration<'bar'>['options']
@@ -120,6 +120,16 @@ export class ObservationComponent implements OnInit {
         data: this.displayModel?.code,
         data_type: TableRowItemDataType.Coding,
         enabled: !!this.displayModel?.code,
+      },
+      {
+        label: 'Value',
+        data: [this.displayModel?.value_quantity_value,this.displayModel?.value_quantity_unit].join(" "),
+        enabled: !!this.displayModel?.value_quantity_value,
+      },
+      {
+        label: 'Reference',
+        data: [this.displayModel?.reference_range?.[0]?.low?.value,this.displayModel?.reference_range?.[0]?.high?.value].join(" "),
+        enabled: !!this.displayModel?.reference_range,
       })
 
 
@@ -129,8 +139,12 @@ export class ObservationComponent implements OnInit {
       formatDate(this.displayModel.effective_date, "mediumDate", "en-US", undefined)
     )
 
-    this.barChartData[0].data = [[this.displayModel.reference_range[0]?.low.value, this.displayModel.reference_range[0]?.high.value]]
+    this.barChartData[0].data = [[this.displayModel.reference_range?.[0]?.low?.value, this.displayModel.reference_range?.[0]?.high?.value]]
     this.barChartData[1].data = [[this.displayModel.value_quantity_value as number, this.displayModel.value_quantity_value as number]]
+
+    let suggestedMax = (this.displayModel.value_quantity_value as number) * 1.1;
+    this.barChartOptions.scales['x']['suggestedMax'] = suggestedMax
+
     console.log("Observation chart data: ", this.barChartData[0].data, this.barChartData[1].data)
   }
   markForCheck(){

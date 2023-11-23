@@ -23,7 +23,7 @@ export class ReportLabsObservationComponent implements OnInit {
   // https://stackoverflow.com/questions/62711919/chart-js-horizontal-lines-per-bar
 
 
-  chartHeight = 45
+  chartHeight = 60
 
   barChartData =[
     // {
@@ -127,7 +127,7 @@ export class ReportLabsObservationComponent implements OnInit {
 
   ngOnInit(): void {
 
-    let currentValues = []
+    let currentValues: number[] = []
 
     let referenceRanges = []
 
@@ -183,6 +183,9 @@ export class ReportLabsObservationComponent implements OnInit {
     this.barChartData[0].data = referenceRanges
     this.barChartData[1].data = currentValues.map(v => [v, v])
     // this.barChartData[1].data = currentValues
+
+    let suggestedMax = Math.max(...currentValues) * 1.1;
+    this.barChartOptions.scales['x']['suggestedMax'] = suggestedMax
 
     console.log(this.observationTitle, this.barChartData[0].data, this.barChartData[1].data)
 
