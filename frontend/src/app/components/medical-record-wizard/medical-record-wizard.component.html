@@ -1,0 +1,142 @@
+<div class="modal-header">
+  <h4 class="modal-title"> Medical Encounter Wizard</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"><span aria-hidden="true">×</span></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col-12">
+      <div class="alert alert-info" role="alert">
+        <strong>Manual Entry</strong> If you are unable to retrieve your health records automatically, you can enter them manually using this form.
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="d-flex">
+    <div ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-pills flex-column col-lg-2 col-md-4 bg-gray-200 pd-20" orientation="vertical">
+      <ng-container ngbNavItem="visit">
+        <a class="nav-link" ngbNavLink>Visit</a>
+        <ng-template ngbNavContent>
+          <p>
+            Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth
+            master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro
+            keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip placeat
+            salvia cillum iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi qui.
+          </p>
+        </ng-template>
+      </ng-container>
+      <ng-container ngbNavItem="medications">
+        <a class="nav-link" ngbNavLink>Medications</a>
+        <ng-template ngbNavContent>
+          <p>
+            Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko
+            farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts
+            ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar
+            helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson
+            8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester
+            stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed echo park.
+          </p>
+        </ng-template>
+      </ng-container>
+      <ng-container ngbNavItem="procedures">
+        <a class="nav-link" ngbNavLink>Procedures</a>
+        <ng-template ngbNavContent>
+          <p>
+            Sed commodo, leo at suscipit dictum, quam est porttitor sapien, eget sodales nibh elit id diam. Nulla
+            facilisi. Donec egestas ligula vitae odio interdum aliquet. Duis lectus turpis, luctus eget tincidunt eu,
+            congue et odio. Duis pharetra et nisl at faucibus. Quisque luctus pulvinar arcu, et molestie lectus ultrices
+            et. Sed diam urna, egestas ut ipsum vel, volutpat volutpat neque. Praesent fringilla tortor arcu. Vivamus
+            faucibus nisl enim, nec tristique ipsum euismod facilisis. Morbi ut bibendum est, eu tincidunt odio. Orci
+            varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris aliquet odio ac lorem
+            aliquet ultricies in eget neque. Phasellus nec tortor vel tellus pulvinar feugiat.
+          </p>
+        </ng-template>
+      </ng-container>
+      <ng-container ngbNavItem="practitioners">
+        <a class="nav-link" ngbNavLink>Practitioners</a>
+        <ng-template ngbNavContent>
+          <p>
+            Sed commodo, leo at suscipit dictum, quam est porttitor sapien, eget sodales nibh elit id diam. Nulla
+            facilisi. Donec egestas ligula vitae odio interdum aliquet. Duis lectus turpis, luctus eget tincidunt eu,
+            congue et odio. Duis pharetra et nisl at faucibus. Quisque luctus pulvinar arcu, et molestie lectus ultrices
+            et. Sed diam urna, egestas ut ipsum vel, volutpat volutpat neque. Praesent fringilla tortor arcu. Vivamus
+            faucibus nisl enim, nec tristique ipsum euismod facilisis. Morbi ut bibendum est, eu tincidunt odio. Orci
+            varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris aliquet odio ac lorem
+            aliquet ultricies in eget neque. Phasellus nec tortor vel tellus pulvinar feugiat.
+          </p>
+        </ng-template>
+      </ng-container>
+      <ng-container ngbNavItem="organizations">
+        <a class="nav-link" ngbNavLink>Organizations</a>
+        <ng-template ngbNavContent>
+          <p>
+            Sed commodo, leo at suscipit dictum, quam est porttitor sapien, eget sodales nibh elit id diam. Nulla
+            facilisi. Donec egestas ligula vitae odio interdum aliquet. Duis lectus turpis, luctus eget tincidunt eu,
+            congue et odio. Duis pharetra et nisl at faucibus. Quisque luctus pulvinar arcu, et molestie lectus ultrices
+            et. Sed diam urna, egestas ut ipsum vel, volutpat volutpat neque. Praesent fringilla tortor arcu. Vivamus
+            faucibus nisl enim, nec tristique ipsum euismod facilisis. Morbi ut bibendum est, eu tincidunt odio. Orci
+            varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris aliquet odio ac lorem
+            aliquet ultricies in eget neque. Phasellus nec tortor vel tellus pulvinar feugiat.
+          </p>
+        </ng-template>
+      </ng-container>
+      <ng-container ngbNavItem="labresults">
+        <a class="nav-link" ngbNavLink>Lab Results</a>
+        <ng-template ngbNavContent>
+          <p>
+            Sed commodo, leo at suscipit dictum, quam est porttitor sapien, eget sodales nibh elit id diam. Nulla
+            facilisi. Donec egestas ligula vitae odio interdum aliquet. Duis lectus turpis, luctus eget tincidunt eu,
+            congue et odio. Duis pharetra et nisl at faucibus. Quisque luctus pulvinar arcu, et molestie lectus ultrices
+            et. Sed diam urna, egestas ut ipsum vel, volutpat volutpat neque. Praesent fringilla tortor arcu. Vivamus
+            faucibus nisl enim, nec tristique ipsum euismod facilisis. Morbi ut bibendum est, eu tincidunt odio. Orci
+            varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris aliquet odio ac lorem
+            aliquet ultricies in eget neque. Phasellus nec tortor vel tellus pulvinar feugiat.
+          </p>
+        </ng-template>
+      </ng-container>
+      <ng-container ngbNavItem="attachments">
+        <a class="nav-link" ngbNavLink>Attachments</a>
+        <ng-template ngbNavContent>
+          <p>
+            Sed commodo, leo at suscipit dictum, quam est porttitor sapien, eget sodales nibh elit id diam. Nulla
+            facilisi. Donec egestas ligula vitae odio interdum aliquet. Duis lectus turpis, luctus eget tincidunt eu,
+            congue et odio. Duis pharetra et nisl at faucibus. Quisque luctus pulvinar arcu, et molestie lectus ultrices
+            et. Sed diam urna, egestas ut ipsum vel, volutpat volutpat neque. Praesent fringilla tortor arcu. Vivamus
+            faucibus nisl enim, nec tristique ipsum euismod facilisis. Morbi ut bibendum est, eu tincidunt odio. Orci
+            varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris aliquet odio ac lorem
+            aliquet ultricies in eget neque. Phasellus nec tortor vel tellus pulvinar feugiat.
+          </p>
+        </ng-template>
+      </ng-container>
+    </div>
+
+    <div [ngbNavOutlet]="nav" class="col-lg-10 col-md-8"></div>
+  </div>
+
+<!--  <div class="row">-->
+<!--    <div class="col-2">-->
+<!--      <div class="pd-20 bg-gray-200">-->
+<!--        <nav class="nav nav-pills flex-column">-->
+<!--          <a class="nav-link active" data-bs-toggle="tab" href="#">Visit</a>-->
+<!--          <a class="nav-link" data-bs-toggle="tab" href="#">Medications</a>-->
+<!--          <a class="nav-link" data-bs-toggle="tab" href="#">Procedures</a>-->
+<!--          <a class="nav-link" data-bs-toggle="tab" href="#">Practitioners</a>-->
+<!--          <a class="nav-link" data-bs-toggle="tab" href="#">Organizations</a>-->
+<!--          <a class="nav-link" data-bs-toggle="tab" href="#">Lab Results</a>-->
+<!--          <a class="nav-link" data-bs-toggle="tab" href="#">Attachments</a>-->
+<!--        </nav>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="col-10">-->
+<!--      <span>BODY CONTENT</span>-->
+<!--    </div>-->
+<!--  </div>-->
+
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-indigo" >Save</button>
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+</div>
+
+

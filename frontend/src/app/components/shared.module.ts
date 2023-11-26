@@ -78,7 +78,7 @@ import {ListOrganizationComponent} from './list-generic-resource/list-organizati
 import {ListPractitionerComponent} from './list-generic-resource/list-practitioner.component'
 import {ListProcedureComponent} from './list-generic-resource/list-procedure.component'
 import {ListServiceRequestComponent} from './list-generic-resource/list-service-request.component';
-import {NgbCollapseModule, NgbModule, NgbDropdownModule, NgbAccordionModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbCollapseModule, NgbModule, NgbDropdownModule, NgbAccordionModule, NgbNavModule} from '@ng-bootstrap/ng-bootstrap';
 import {PipesModule} from '../pipes/pipes.module';
 import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.directive';
 import {DirectivesModule} from '../directives/directives.module';
@@ -86,6 +86,7 @@ import { ReportMedicalHistoryTimelinePanelComponent } from './report-medical-his
 import { OrganizationComponent } from './fhir/resources/organization/organization.component';
 import { LocationComponent } from './fhir/resources/location/location.component';
 import { ObservationComponent } from './fhir/resources/observation/observation.component';
+import { MedicalRecordWizardComponent } from './medical-record-wizard/medical-record-wizard.component';
 
 @NgModule({
   imports: [
@@ -96,6 +97,7 @@ import { ObservationComponent } from './fhir/resources/observation/observation.c
     NgbDropdownModule,
     NgbCollapseModule,
     NgbAccordionModule,
+    NgbNavModule,
     FormsModule,
     ReactiveFormsModule,
     MomentModule,
@@ -130,6 +132,7 @@ import { ObservationComponent } from './fhir/resources/observation/observation.c
     PractitionerComponent,
     ProcedureComponent,
     TableComponent,
+    MedicalRecordWizardComponent,
 
   ],
   declarations: [
@@ -265,6 +268,7 @@ import { ObservationComponent } from './fhir/resources/observation/observation.c
         PractitionerComponent,
         ProcedureComponent,
         TableComponent,
+      MedicalRecordWizardComponent,
 
     ]
 })
