@@ -17,7 +17,7 @@ export class MedicalHistoryComponent implements OnInit {
 
   currentPage: number = 1 //1-based index due to the way the pagination component works
   pageSize: number = 10
-  allEncounterGroups: string[] = []
+  allEncountersIds: any[] = []
 
   closeResult = '';
   // conditions: ResourceFhir[] = []
@@ -39,16 +39,11 @@ export class MedicalHistoryComponent implements OnInit {
     //load the first page
     this.loading = true
 
-    this.pageChange(1)
-  }
-
-  pageChange(page: number){
-    this.loading = true
 
     this.fastenApi.getResources('Encounter').subscribe(
       (response: ResourceFhir[]) => {
 
-        let selectedResourceIds = response.map((resource: ResourceFhir): Partial<ResourceFhir> => {
+        this.allEncountersIds = response.map((resource: ResourceFhir): Partial<ResourceFhir> => {
           return {
             source_id: resource.source_id,
             source_resource_type: resource.source_resource_type,
@@ -56,23 +51,29 @@ export class MedicalHistoryComponent implements OnInit {
           }
         })
 
-        this.fastenApi.getResourceGraph(null, selectedResourceIds).subscribe((graphResponse: ResourceGraphResponse) => {
-          this.loading = false
+        this.pageChange()
 
-          console.log("FLATTENED RESOURCES RESPONSE", graphResponse)
-          this.encounters = graphResponse.results["Encounter"] || []
 
-        },
-          error => {
-          this.loading = false
-        })
 
+      })
+
+  }
+
+  pageChange(){
+    this.loading = true
+
+    let encounterIds = this.allEncountersIds.slice((this.currentPage-1) * this.pageSize, this.currentPage * this.pageSize)
+
+    this.fastenApi.getResourceGraph(null, encounterIds).subscribe((graphResponse: ResourceGraphResponse) => {
+        this.loading = false
+
+        console.log("FLATTENED RESOURCES RESPONSE", graphResponse)
+        this.encounters = graphResponse.results["Encounter"] || []
 
       },
       error => {
         this.loading = false
-      }
-    )
+      })
 
     // this.fastenApi.getResourceGraph(null, page).subscribe((response: ResourceGraphResponse) => {
     //   this.loading = false

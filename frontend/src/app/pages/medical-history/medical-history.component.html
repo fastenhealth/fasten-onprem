@@ -8,6 +8,7 @@
       <ng-container [ngTemplateOutlet]="loading ? isLoadingTemplate : (encounters.length == 0) ? emptyReport : report"></ng-container>
 
       <ng-template #report>
+
         <!-- Editor Button -->
         <div class="row mt-5 mb-3">
           <div class="col-12">
@@ -43,7 +44,7 @@
         <div class="row">
           <div class="col-12 d-flex justify-content-center flex-nowrap">
             <ngb-pagination
-              [collectionSize]="allEncounterGroups.length"
+              [collectionSize]="allEncountersIds.length"
               [(page)]="currentPage"
               [pageSize]="pageSize"
               (pageChange)="pageChange()"
