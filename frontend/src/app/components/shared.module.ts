@@ -6,44 +6,21 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { RouterModule } from '@angular/router';
 import { UtilitiesSidebarComponent } from './utilities-sidebar/utilities-sidebar.component';
 import {BrowserModule} from '@angular/platform-browser';
-import { AllergyIntoleranceComponent } from './fhir/resources/allergy-intolerance/allergy-intolerance.component';
-import { BadgeComponent } from './fhir/common/badge/badge.component';
-import { BinaryComponent } from './fhir/resources/binary/binary.component';
-import { BinaryTextComponent } from './fhir/datatypes/binary-text/binary-text.component';
-import { CodableConceptComponent } from './fhir/datatypes/codable-concept/codable-concept.component';
-import { CodingComponent } from './fhir/datatypes/coding/coding.component';
-import { DiagnosticReportComponent } from './fhir/resources/diagnostic-report/diagnostic-report.component';
-import { DicomComponent } from './fhir/datatypes/dicom/dicom.component';
-import { DocumentReferenceComponent } from './fhir/resources/document-reference/document-reference.component';
-import { FallbackComponent } from './fhir/resources/fallback/fallback.component';
-import { FhirResourceComponent } from './fhir/fhir-resource/fhir-resource.component';
-import { FhirResourceOutletDirective } from './fhir/fhir-resource/fhir-resource-outlet.directive';
 import { GlossaryLookupComponent } from './glossary-lookup/glossary-lookup.component';
-import { HtmlComponent } from './fhir/datatypes/html/html.component';
-import { ImgComponent } from './fhir/datatypes/img/img.component';
-import { ImmunizationComponent } from './fhir/resources/immunization/immunization.component';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
-import { MarkdownComponent } from './fhir/datatypes/markdown/markdown.component';
-import { MediaComponent } from './fhir/resources/media/media.component';
 import { MedicalSourcesCardComponent } from './medical-sources-card/medical-sources-card.component';
 import { MedicalSourcesCategoryLookupPipe } from './medical-sources-filter/medical-sources-category-lookup.pipe';
 import { MedicalSourcesConnectedComponent } from './medical-sources-connected/medical-sources-connected.component';
 import { MedicalSourcesFilterComponent } from './medical-sources-filter/medical-sources-filter.component';
-import { MedicationComponent } from './fhir/resources/medication/medication.component';
-import { MedicationRequestComponent } from './fhir/resources/medication-request/medication-request.component';
 import { MomentModule } from 'ngx-moment';
 import { NgChartsModule } from 'ng2-charts';
 import { NlmTypeaheadComponent } from './nlm-typeahead/nlm-typeahead.component';
-import { PdfComponent } from './fhir/datatypes/pdf/pdf.component';
-import { PractitionerComponent } from './fhir/resources/practitioner/practitioner.component';
-import { ProcedureComponent } from './fhir/resources/procedure/procedure.component';
 import { ReportHeaderComponent } from './report-header/report-header.component';
 import { ReportLabsObservationComponent } from './report-labs-observation/report-labs-observation.component';
 import { ReportMedicalHistoryConditionComponent } from './report-medical-history-condition/report-medical-history-condition.component';
 import { ReportMedicalHistoryEditorComponent } from './report-medical-history-editor/report-medical-history-editor.component';
 import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medical-history-explanation-of-benefit/report-medical-history-explanation-of-benefit.component';
 import { ResourceListComponent } from './resource-list/resource-list.component';
-import { TableComponent } from './fhir/common/table/table.component';
 import { ToastComponent } from './toast/toast.component';
 import { TreeModule } from '@circlon/angular-tree-component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -83,13 +60,11 @@ import {PipesModule} from '../pipes/pipes.module';
 import {ResourceListOutletDirective} from './resource-list/resource-list-outlet.directive';
 import {DirectivesModule} from '../directives/directives.module';
 import { ReportMedicalHistoryTimelinePanelComponent } from './report-medical-history-timeline-panel/report-medical-history-timeline-panel.component';
-import { OrganizationComponent } from './fhir/resources/organization/organization.component';
-import { LocationComponent } from './fhir/resources/location/location.component';
-import { ObservationComponent } from './fhir/resources/observation/observation.component';
 import { MedicalRecordWizardComponent } from './medical-record-wizard/medical-record-wizard.component';
 import { MedicalRecordWizardAddPractitionerComponent } from './medical-record-wizard-add-practitioner/medical-record-wizard-add-practitioner.component';
 import { MedicalRecordWizardAddOrganizationComponent } from './medical-record-wizard-add-organization/medical-record-wizard-add-organization.component';
 import { MedicalRecordWizardAddAttachmentComponent } from './medical-record-wizard-add-attachment/medical-record-wizard-add-attachment.component';
+import {FhirResourceModule} from './fhir/fhir-resource.module';
 
 @NgModule({
   imports: [
@@ -109,32 +84,13 @@ import { MedicalRecordWizardAddAttachmentComponent } from './medical-record-wiza
     HighlightModule,
     PipesModule,
     DirectivesModule,
+    FhirResourceModule,
 
     //standalone components
-    AllergyIntoleranceComponent,
-    BadgeComponent,
-    BinaryComponent,
-    BinaryTextComponent,
-    CodableConceptComponent,
-    CodingComponent,
-    DicomComponent,
     GlossaryLookupComponent,
     GridstackComponent,
     GridstackItemComponent,
-    HtmlComponent,
-    ImgComponent,
-    ImmunizationComponent,
     LoadingSpinnerComponent,
-    LocationComponent,
-    MarkdownComponent,
-    MedicationComponent,
-    MedicationRequestComponent,
-    OrganizationComponent,
-    ObservationComponent,
-    PdfComponent,
-    PractitionerComponent,
-    ProcedureComponent,
-    TableComponent,
     MedicalRecordWizardComponent,
     NlmTypeaheadComponent,
     MedicalRecordWizardAddPractitionerComponent,
@@ -184,13 +140,7 @@ import { MedicalRecordWizardAddAttachmentComponent } from './medical-record-wiza
     ReportLabsObservationComponent,
     ReportMedicalHistoryTimelinePanelComponent,
 
-    FhirResourceComponent,
-    FhirResourceOutletDirective,
-    FallbackComponent,
     ListFallbackComponent,
-    DiagnosticReportComponent,
-    DocumentReferenceComponent,
-    MediaComponent,
     ReportMedicalHistoryExplanationOfBenefitComponent,
     MedicalSourcesFilterComponent,
     MedicalSourcesConnectedComponent,
@@ -198,15 +148,8 @@ import { MedicalRecordWizardAddAttachmentComponent } from './medical-record-wiza
     MedicalSourcesCardComponent,
   ],
     exports: [
-        BinaryComponent,
         ComponentsSidebarComponent,
-        DiagnosticReportComponent,
-        DocumentReferenceComponent,
-        FallbackComponent,
         ListFallbackComponent,
-        FhirResourceComponent,
-        FhirResourceOutletDirective,
-        ImmunizationComponent,
         ListAdverseEventComponent,
         ListAllergyIntoleranceComponent,
         ListAppointmentComponent,
@@ -237,10 +180,7 @@ import { MedicalRecordWizardAddAttachmentComponent } from './medical-record-wiza
         ListProcedureComponent,
         ListServiceRequestComponent,
         MedicalSourcesFilterComponent,
-        MedicationRequestComponent,
         NlmTypeaheadComponent,
-        PractitionerComponent,
-        ProcedureComponent,
         ReportHeaderComponent,
         ReportLabsObservationComponent,
         ReportMedicalHistoryConditionComponent,
@@ -255,30 +195,16 @@ import { MedicalRecordWizardAddAttachmentComponent } from './medical-record-wiza
         ReportMedicalHistoryTimelinePanelComponent,
 
       //standalone components
-        AllergyIntoleranceComponent,
-        BadgeComponent,
-        BinaryComponent,
-        CodableConceptComponent,
-        CodingComponent,
         GlossaryLookupComponent,
         GridstackComponent,
         GridstackItemComponent,
-        ImmunizationComponent,
         LoadingSpinnerComponent,
-        LocationComponent,
         MedicalSourcesCategoryLookupPipe,
-        MedicationComponent,
-        MedicationRequestComponent,
-        OrganizationComponent,
-        ObservationComponent,
-        PractitionerComponent,
-        ProcedureComponent,
-        TableComponent,
-      MedicalRecordWizardComponent,
-      NlmTypeaheadComponent,
-      MedicalRecordWizardAddPractitionerComponent,
-      MedicalRecordWizardAddOrganizationComponent,
-      MedicalRecordWizardAddAttachmentComponent,
+        MedicalRecordWizardComponent,
+        NlmTypeaheadComponent,
+        MedicalRecordWizardAddPractitionerComponent,
+        MedicalRecordWizardAddOrganizationComponent,
+        MedicalRecordWizardAddAttachmentComponent,
 
     ]
 })

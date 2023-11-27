@@ -28,6 +28,7 @@ import {
 import {GenerateR4Bundle} from '../../pages/resource-creator/resource-creator.utilities';
 import {EncounterModel} from '../../../lib/models/resources/encounter-model';
 import {SharedModule} from '../shared.module';
+import {FhirResourceModule} from '../fhir/fhir-resource.module';
 
 @Component({
   standalone: true,
@@ -42,6 +43,7 @@ import {SharedModule} from '../shared.module';
     NlmTypeaheadComponent,
     NgSelectModule,
     HighlightModule,
+    FhirResourceModule
   ],
   selector: 'app-medical-record-wizard',
   templateUrl: './medical-record-wizard.component.html',

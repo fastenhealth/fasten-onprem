@@ -1,12 +1,19 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {DocumentReferenceModel} from '../../../../../lib/models/resources/document-reference-model';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
-import {Router} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
 import {MediaModel} from '../../../../../lib/models/resources/media-model';
+import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
+import {CommonModule} from '@angular/common';
+import {BadgeComponent} from '../../common/badge/badge.component';
+import {TableComponent} from '../../common/table/table.component';
+import {BinaryComponent} from '../binary/binary.component';
 
 @Component({
-  selector: 'app-media',
+  standalone: true,
+  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, RouterModule, BinaryComponent],
+  selector: 'fhir-media',
   templateUrl: './media.component.html',
   styleUrls: ['./media.component.scss']
 })
