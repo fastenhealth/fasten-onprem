@@ -26,6 +26,7 @@ import {PractitionerComponent} from './resources/practitioner/practitioner.compo
 import {ProcedureComponent} from './resources/procedure/procedure.component';
 import {FhirResourceComponent} from './fhir-resource/fhir-resource.component';
 import {FhirResourceOutletDirective} from './fhir-resource/fhir-resource-outlet.directive';
+import { EncounterComponent } from './resources/encounter/encounter.component';
 
 
 
@@ -49,6 +50,7 @@ import {FhirResourceOutletDirective} from './fhir-resource/fhir-resource-outlet.
     BinaryComponent,
     DiagnosticReportComponent,
     DocumentReferenceComponent,
+    EncounterComponent,
     FallbackComponent,
     ImmunizationComponent,
     LocationComponent,
@@ -85,6 +87,7 @@ import {FhirResourceOutletDirective} from './fhir-resource/fhir-resource-outlet.
     BinaryComponent,
     DiagnosticReportComponent,
     DocumentReferenceComponent,
+    EncounterComponent,
     FallbackComponent,
     ImmunizationComponent,
     LocationComponent,
