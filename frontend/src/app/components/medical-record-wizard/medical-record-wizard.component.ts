@@ -26,6 +26,8 @@ import {
   MedicalRecordWizardAddAttachmentComponent
 } from '../medical-record-wizard-add-attachment/medical-record-wizard-add-attachment.component';
 import {GenerateR4Bundle} from '../../pages/resource-creator/resource-creator.utilities';
+import {EncounterModel} from '../../../lib/models/resources/encounter-model';
+import {SharedModule} from '../shared.module';
 
 @Component({
   standalone: true,
@@ -46,7 +48,9 @@ import {GenerateR4Bundle} from '../../pages/resource-creator/resource-creator.ut
   styleUrls: ['./medical-record-wizard.component.scss']
 })
 export class MedicalRecordWizardComponent implements OnInit {
-  active = 'visit';
+  @Input() existingEncounter: EncounterModel;
+
+  active = 'encounter';
   debugMode = false;
   submitWizardLoading = false;
   @Input() form!: FormGroup;

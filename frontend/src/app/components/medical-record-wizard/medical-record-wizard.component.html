@@ -23,15 +23,19 @@
     <div>
       <div class="d-flex">
         <div ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-pills flex-column col-lg-2 col-md-4 bg-gray-200 pd-20" orientation="vertical">
-        <ng-container ngbNavItem="visit">
-          <a class="nav-link" ngbNavLink>Visit</a>
+        <ng-container ngbNavItem="encounter">
+          <a class="nav-link" ngbNavLink>Encounter</a>
           <ng-template ngbNavContent>
-            <p>
-              Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth
-              master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro
-              keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip placeat
-              salvia cillum iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi qui.
-            </p>
+            <div>
+              <h6 class="card-title">Encounter</h6>
+              <p class="card-text">
+                An Encounter refers to a meeting or interaction with a healthcare provider, such as a doctor's appointment, surgery or a visit to discuss and address your health concerns
+              </p>
+            </div>
+
+<!--            <fhir-resource [displayModel]="existingEncounter"></fhir-resource>-->
+
+
           </ng-template>
         </ng-container>
         <ng-container ngbNavItem="medications">

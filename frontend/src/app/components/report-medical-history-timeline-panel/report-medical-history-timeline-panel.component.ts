@@ -46,7 +46,7 @@ export class ReportMedicalHistoryTimelinePanelComponent implements OnInit {
     // const modalRef = this.modalService.open(ReportMedicalHistoryEditorComponent, {
       size: 'xl',
     });
-    modalRef.componentInstance.encounter = this.displayModel;
+    modalRef.componentInstance.existingEncounter = this.displayModel;
   }
 
 }
