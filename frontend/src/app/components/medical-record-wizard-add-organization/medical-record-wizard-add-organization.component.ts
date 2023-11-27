@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NlmTypeaheadComponent} from '../nlm-typeahead/nlm-typeahead.component';
 import {HighlightModule} from 'ngx-highlightjs';
-import {NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbActiveModal, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   standalone: true,
@@ -20,8 +20,12 @@ import {NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./medical-record-wizard-add-organization.component.scss']
 })
 export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
+  debugMode = false;
 
-  constructor() { }
+  newOrganizationTypeaheadForm: FormGroup
+  newOrganizationForm: FormGroup //ResourceCreateOrganization
+
+  constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
   }

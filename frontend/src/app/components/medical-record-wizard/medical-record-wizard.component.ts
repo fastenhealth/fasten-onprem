@@ -18,6 +18,12 @@ import {uuidV4} from '../../../lib/utils/uuid';
 import {
   MedicalRecordWizardAddPractitionerComponent
 } from '../medical-record-wizard-add-practitioner/medical-record-wizard-add-practitioner.component';
+import {
+  MedicalRecordWizardAddOrganizationComponent
+} from '../medical-record-wizard-add-organization/medical-record-wizard-add-organization.component';
+import {
+  MedicalRecordWizardAddAttachmentComponent
+} from '../medical-record-wizard-add-attachment/medical-record-wizard-add-attachment.component';
 
 @Component({
   standalone: true,
@@ -71,19 +77,19 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
 
   //<editor-fold desc="Getters">
-  get medications(): FormArray {
+  get medications(): FormArray<FormGroup> {
     return this.form.controls["medications"] as FormArray;
   }
-  get procedures(): FormArray {
+  get procedures(): FormArray<FormGroup> {
     return this.form.controls["procedures"] as FormArray;
   }
-  get practitioners(): FormArray {
+  get practitioners(): FormArray<FormGroup> {
     return this.form.controls["practitioners"] as FormArray;
   }
-  get organizations(): FormArray {
+  get organizations(): FormArray<FormGroup> {
     return this.form.controls["organizations"] as FormArray;
   }
-  get attachments(): FormArray {
+  get attachments(): FormArray<FormGroup> {
     return this.form.controls["attachments"] as FormArray;
   }
   //</editor-fold>
@@ -194,6 +200,71 @@ export class MedicalRecordWizardComponent implements OnInit {
       },
     );
   }
+
+  openOrganizationModal(formGroup?: AbstractControl, controlName?: string) {
+    // this.resetOrganizationForm()
+
+    // this.modalService.open(MedicalRecordWizardAddOrganizationComponent, {
+    this.modalService.open(MedicalRecordWizardAddOrganizationComponent, {
+      ariaLabelledBy: 'modal-organization',
+      beforeDismiss: () => {
+        console.log("validate Organization form")
+        // this.newOrganizationForm.markAllAsTouched()
+        // this.newOrganizationTypeaheadForm.markAllAsTouched()
+        // return this.newOrganizationForm.valid
+        return true
+      },
+    }).result.then(
+      () => {
+        console.log('Closed without saving');
+      },
+      () => {
+        console.log('Closing, saving form');
+        //add this to the list of organization
+        // let result = this.newOrganizationForm.getRawValue()
+        // result.id = uuidV4();
+        // this.addOrganization(result);
+        // if(formGroup && controlName){
+        //   //set this practitioner to the current select box
+        //   formGroup.get(controlName).setValue(result.id);
+        // }
+      },
+    );
+  }
+
+  openAttachmentModal(formGroup?: AbstractControl, controlName?: string) {
+    // this.resetAttachmentForm()
+
+    this.modalService.open(MedicalRecordWizardAddAttachmentComponent, {
+      ariaLabelledBy: 'modal-attachment',
+      beforeDismiss: () => {
+        console.log("validate Attachment form")
+        // this.newAttachmentForm.markAllAsTouched()
+        // return this.newAttachmentForm.valid
+        return true
+      },
+    }).result.then(
+      () => {
+        console.log('Closed without saving');
+      },
+      () => {
+        console.log('Closing, saving form');
+        //add this to the list of organization
+        // let result = this.newAttachmentForm.getRawValue()
+        // result.id = uuidV4();
+        // this.addAttachment(result);
+        //
+        // if(formGroup && controlName){
+        //
+        //   //add this attachment id to the current FormArray
+        //   let controlArrayVal = formGroup.get(controlName).getRawValue();
+        //   controlArrayVal.push(result.id)
+        //   formGroup.get(controlName).setValue(controlArrayVal);
+        // }
+      },
+    );
+  }
+
   //</editor-fold>
 
 

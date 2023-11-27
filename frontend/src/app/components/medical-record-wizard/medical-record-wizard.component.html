@@ -262,15 +262,55 @@
       <ng-container ngbNavItem="organizations">
         <a class="nav-link" ngbNavLink>Organizations</a>
         <ng-template ngbNavContent>
-          <p>
-            Sed commodo, leo at suscipit dictum, quam est porttitor sapien, eget sodales nibh elit id diam. Nulla
-            facilisi. Donec egestas ligula vitae odio interdum aliquet. Duis lectus turpis, luctus eget tincidunt eu,
-            congue et odio. Duis pharetra et nisl at faucibus. Quisque luctus pulvinar arcu, et molestie lectus ultrices
-            et. Sed diam urna, egestas ut ipsum vel, volutpat volutpat neque. Praesent fringilla tortor arcu. Vivamus
-            faucibus nisl enim, nec tristique ipsum euismod facilisis. Morbi ut bibendum est, eu tincidunt odio. Orci
-            varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris aliquet odio ac lorem
-            aliquet ultricies in eget neque. Phasellus nec tortor vel tellus pulvinar feugiat.
-          </p>
+          <div>
+            <h6 class="card-title">Medical Location/Organizations</h6>
+            <p class="card-text">Locations and Organizations involved in the care of the patient.
+            </p>
+          </div>
+
+          <ng-container formArrayName="organizations">
+            <div class="card mg-t-10 pd-20" [formGroup]="organizationGroup" *ngFor="let organizationGroup of organizations.controls; let i = index">
+              <div *ngIf="debugMode" class="alert alert-warning">
+                <strong>Organization Status: {{organizationGroup.status}}</strong>
+              </div>
+              <div class="tx-right">
+                <span class="cursor-pointer" (click)="deleteOrganization(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+              </div>
+
+              <div class="row row-sm">
+                <input formControlName="id" class="form-control" type="hidden">
+
+                <div class="col-lg mg-t-10 mg-lg-t-0">
+                  <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
+                  <input formControlName="name" readonly class="form-control" placeholder="Input box" type="text">
+                </div><!-- col -->
+                <div class="col-lg mg-t-10 mg-lg-t-0">
+                  <p class="mg-b-10">Type</p>
+                  <app-nlm-typeahead formControlName="type" searchType="MedicalContactOrganizationType" [debugMode]="debugMode"></app-nlm-typeahead>
+                </div><!-- col -->
+                <div class="col-lg mg-t-10 mg-lg-t-0">
+                  <p class="mg-b-10">Telephone</p>
+                  <input formControlName="phone" class="form-control" placeholder="(123) 456-7890" type="text">
+                </div><!-- col -->
+                <div class="col-lg mg-t-10 mg-lg-t-0">
+                  <p class="mg-b-10">Fax</p>
+                  <input formControlName="fax" class="form-control" placeholder="(123) 456-7890" type="text">
+                </div><!-- col -->
+                <div class="col-lg mg-t-10 mg-lg-t-0">
+                  <p class="mg-b-10">Email</p>
+                  <input formControlName="email" class="form-control" placeholder="email@example.com" type="text">
+                </div><!-- col -->
+
+              </div><!-- row -->
+
+            </div>
+          </ng-container>
+
+          <div class="row pt-2">
+            <div class="col-lg-4 col-md-4">
+              <button type="button" (click)="openOrganizationModal()" class="btn btn-outline-indigo btn-block">Add Organization</button>
+            </div>
+          </div>
         </ng-template>
       </ng-container>
       <ng-container ngbNavItem="labresults">
@@ -290,15 +330,48 @@
       <ng-container ngbNavItem="attachments">
         <a class="nav-link" ngbNavLink>Attachments</a>
         <ng-template ngbNavContent>
-          <p>
-            Sed commodo, leo at suscipit dictum, quam est porttitor sapien, eget sodales nibh elit id diam. Nulla
-            facilisi. Donec egestas ligula vitae odio interdum aliquet. Duis lectus turpis, luctus eget tincidunt eu,
-            congue et odio. Duis pharetra et nisl at faucibus. Quisque luctus pulvinar arcu, et molestie lectus ultrices
-            et. Sed diam urna, egestas ut ipsum vel, volutpat volutpat neque. Praesent fringilla tortor arcu. Vivamus
-            faucibus nisl enim, nec tristique ipsum euismod facilisis. Morbi ut bibendum est, eu tincidunt odio. Orci
-            varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris aliquet odio ac lorem
-            aliquet ultricies in eget neque. Phasellus nec tortor vel tellus pulvinar feugiat.
-          </p>
+          <div>
+            <h6 class="card-title">Notes & Attachments</h6>
+            <p class="card-text">
+              Files and notes related to medications, procedures, or the current condition.
+            </p>
+          </div>
+
+          <ng-container formArrayName="attachments">
+            <div class="card mg-t-10 pd-20" [formGroup]="attachmentGroup" *ngFor="let attachmentGroup of attachments.controls; let i = index">
+              <div *ngIf="debugMode" class="alert alert-warning">
+                <strong>Attachment Status: {{attachmentGroup.status}}</strong>
+              </div>
+              <div class="tx-right">
+                <span class="cursor-pointer" (click)="deleteAttachment(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+              </div>
+
+              <div class="row row-sm">
+                <input formControlName="id" class="form-control" type="hidden">
+
+                <div class="col-lg mg-t-10 mg-lg-t-0">
+                  <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
+                  <input formControlName="name" readonly class="form-control" placeholder="Input box" type="text">
+                </div><!-- col -->
+                <div class="col-lg mg-t-10 mg-lg-t-0">
+                  <p class="mg-b-10">Category</p>
+                  <app-nlm-typeahead formControlName="category" searchType="AttachmentCategory" [debugMode]="debugMode"></app-nlm-typeahead>
+                </div><!-- col -->
+                <div class="col-lg mg-t-10 mg-lg-t-0">
+                  <p class="mg-b-10">File Type</p>
+                  <input readonly class="form-control" formControlName="file_type"/>
+                </div><!-- col -->
+              </div><!-- row -->
+
+            </div>
+          </ng-container>
+
+          <div class="row pt-2">
+            <div class="col-lg-4 col-md-3">
+              <button type="button" (click)="openAttachmentModal()" class="btn btn-outline-indigo btn-block">Create Attachment/Document</button>
+            </div>
+          </div>
+
         </ng-template>
       </ng-container>
     </div>
