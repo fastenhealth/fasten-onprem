@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NlmTypeaheadComponent} from '../nlm-typeahead/nlm-typeahead.component';
@@ -20,7 +20,7 @@ import {NgbActiveModal, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./medical-record-wizard-add-organization.component.scss']
 })
 export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
-  debugMode = false;
+  @Input() debugMode: boolean = false;
 
   newOrganizationTypeaheadForm: FormGroup
   newOrganizationForm: FormGroup //ResourceCreateOrganization

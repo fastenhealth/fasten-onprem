@@ -1,11 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {HighlightModule} from 'ngx-highlightjs';
 import {
   NgbActiveModal,
   NgbDatepickerModule,
   NgbModal,
   NgbNavModule,
   NgbTooltipModule,
-  NgbTypeaheadModule
+  NgbTypeaheadModule,
 } from '@ng-bootstrap/ng-bootstrap';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {AbstractControl, FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -24,6 +25,7 @@ import {
 import {
   MedicalRecordWizardAddAttachmentComponent
 } from '../medical-record-wizard-add-attachment/medical-record-wizard-add-attachment.component';
+import {GenerateR4Bundle} from '../../pages/resource-creator/resource-creator.utilities';
 
 @Component({
   standalone: true,
@@ -37,7 +39,7 @@ import {
     NgbTooltipModule,
     NlmTypeaheadComponent,
     NgSelectModule,
-
+    HighlightModule,
   ],
   selector: 'app-medical-record-wizard',
   templateUrl: './medical-record-wizard.component.html',
@@ -46,6 +48,7 @@ import {
 export class MedicalRecordWizardComponent implements OnInit {
   active = 'visit';
   debugMode = false;
+  submitWizardLoading = false;
   @Input() form!: FormGroup;
 
 
@@ -201,9 +204,11 @@ export class MedicalRecordWizardComponent implements OnInit {
   //<editor-fold desc="Open Modals">
   openPractitionerModal(formGroup?: AbstractControl, controlName?: string) {
     // this.resetPractitionerForm()
-    this.modalService.open(MedicalRecordWizardAddPractitionerComponent, {
+    let modalRef = this.modalService.open(MedicalRecordWizardAddPractitionerComponent, {
       ariaLabelledBy: 'modal-practitioner',
-    }).result.then(
+    })
+    modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.result.then(
       (result) => {
         console.log('Closing, saving form', result);
         // add this to the list of organization
@@ -218,12 +223,15 @@ export class MedicalRecordWizardComponent implements OnInit {
         console.log('Closed without saving', err);
       },
     );
+
   }
 
   openOrganizationModal(formGroup?: AbstractControl, controlName?: string) {
-    this.modalService.open(MedicalRecordWizardAddOrganizationComponent, {
+    let modalRef = this.modalService.open(MedicalRecordWizardAddOrganizationComponent, {
       ariaLabelledBy: 'modal-organization',
-    }).result.then(
+    })
+    modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.result.then(
       (result) => {
         console.log('Closing, saving form', result);
         //add this to the list of organization
@@ -241,9 +249,11 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
 
   openAttachmentModal(formGroup?: AbstractControl, controlName?: string) {
-    this.modalService.open(MedicalRecordWizardAddAttachmentComponent, {
+    let modalRef = this.modalService.open(MedicalRecordWizardAddAttachmentComponent, {
       ariaLabelledBy: 'modal-attachment',
-    }).result.then(
+    })
+    modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.result.then(
       (result) => {
         console.log('Closing, saving form',  result);
         //add this to the list of organization
@@ -268,7 +278,29 @@ export class MedicalRecordWizardComponent implements OnInit {
 
 
   onSubmit() {
-    console.log(this.form.value);
-    this.activeModal.close(this.form.value);
+    console.log(this.form.getRawValue())
+    this.form.markAllAsTouched()
+    if (this.form.valid) {
+      console.log('form submitted');
+      this.submitWizardLoading = true;
+
+      let bundle = GenerateR4Bundle(this.form.getRawValue());
+
+      let bundleJsonStr = JSON.stringify(bundle);
+      let bundleBlob = new Blob([bundleJsonStr], { type: 'application/json' });
+      let bundleFile = new File([ bundleBlob ], 'bundle.json');
+      this.fastenApi.createManualSource(bundleFile).subscribe(
+        (resp) => {
+          console.log(resp)
+          this.submitWizardLoading = false;
+          this.activeModal.close()
+        },
+        (err) => {
+          console.log(err)
+          this.submitWizardLoading = false;
+        }
+      )
+
+    }
   }
 }

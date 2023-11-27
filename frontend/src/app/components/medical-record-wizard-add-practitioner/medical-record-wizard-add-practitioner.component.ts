@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal, NgbDatepickerModule, NgbNavModule, NgbTooltipModule, NgbTypeaheadModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule} from '@angular/common';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -20,7 +20,7 @@ import {HighlightModule} from 'ngx-highlightjs';
   styleUrls: ['./medical-record-wizard-add-practitioner.component.scss']
 })
 export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
-  debugMode = false;
+  @Input() debugMode: boolean = false;
 
   newPractitionerTypeaheadForm: FormGroup
   newPractitionerForm: FormGroup //ResourceCreatePractitioner
