@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NlmTypeaheadComponent} from '../nlm-typeahead/nlm-typeahead.component';
 import {HighlightModule} from 'ngx-highlightjs';
 import {NgbActiveModal, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
@@ -27,6 +27,7 @@ export class MedicalRecordWizardAddAttachmentComponent implements OnInit {
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
+    this.resetAttachmentForm()
   }
 
   onAttachmentFileChange($event){
@@ -43,5 +44,17 @@ export class MedicalRecordWizardAddAttachmentComponent implements OnInit {
       this.newAttachmentForm.get('file_name').setValue(fileInput.files[0].name)
       this.newAttachmentForm.get('file_size').setValue(fileInput.files[0].size)
     }
+  }
+
+  private resetAttachmentForm(){
+
+    this.newAttachmentForm = new FormGroup({
+      name: new FormControl(null, Validators.required),
+      category: new FormControl(null, Validators.required),
+      file_type: new FormControl(null, Validators.required),
+      file_name: new FormControl(null, Validators.required),
+      file_content: new FormControl(null, Validators.required),
+      file_size: new FormControl(null),
+    })
   }
 }

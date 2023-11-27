@@ -184,11 +184,11 @@ export class MedicalRecordWizardComponent implements OnInit {
         return true
       },
     }).result.then(
-      () => {
-        console.log('Closed without saving');
+      (data) => {
+        console.log('Closed without saving', data);
       },
-      () => {
-        console.log('Closing, saving form');
+      (err) => {
+        console.log('Closing, saving form', err);
         //add this to the list of organization
         // let result = this.newPractitionerForm.getRawValue()
         // result.id = uuidV4();
@@ -215,11 +215,11 @@ export class MedicalRecordWizardComponent implements OnInit {
         return true
       },
     }).result.then(
-      () => {
-        console.log('Closed without saving');
+      (data) => {
+        console.log('Closed without saving', data);
       },
-      () => {
-        console.log('Closing, saving form');
+      (err) => {
+        console.log('Closing, saving form', err);
         //add this to the list of organization
         // let result = this.newOrganizationForm.getRawValue()
         // result.id = uuidV4();
@@ -244,11 +244,11 @@ export class MedicalRecordWizardComponent implements OnInit {
         return true
       },
     }).result.then(
-      () => {
-        console.log('Closed without saving');
+      (data) => {
+        console.log('Closed without saving', data);
       },
-      () => {
-        console.log('Closing, saving form');
+      (err) => {
+        console.log('Closing, saving form', err);
         //add this to the list of organization
         // let result = this.newAttachmentForm.getRawValue()
         // result.id = uuidV4();

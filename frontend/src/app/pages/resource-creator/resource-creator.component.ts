@@ -377,8 +377,6 @@ export class ResourceCreatorComponent implements OnInit {
         country: new FormControl(null),
       })
     })
-
-
   }
 
   private resetOrganizationForm(){
