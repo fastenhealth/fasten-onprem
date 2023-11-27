@@ -87,6 +87,9 @@ import { OrganizationComponent } from './fhir/resources/organization/organizatio
 import { LocationComponent } from './fhir/resources/location/location.component';
 import { ObservationComponent } from './fhir/resources/observation/observation.component';
 import { MedicalRecordWizardComponent } from './medical-record-wizard/medical-record-wizard.component';
+import { MedicalRecordWizardAddPractitionerComponent } from './medical-record-wizard-add-practitioner/medical-record-wizard-add-practitioner.component';
+import { MedicalRecordWizardAddOrganizationComponent } from './medical-record-wizard-add-organization/medical-record-wizard-add-organization.component';
+import { MedicalRecordWizardAddAttachmentComponent } from './medical-record-wizard-add-attachment/medical-record-wizard-add-attachment.component';
 
 @NgModule({
   imports: [
@@ -133,6 +136,10 @@ import { MedicalRecordWizardComponent } from './medical-record-wizard/medical-re
     ProcedureComponent,
     TableComponent,
     MedicalRecordWizardComponent,
+    NlmTypeaheadComponent,
+    MedicalRecordWizardAddPractitionerComponent,
+    MedicalRecordWizardAddOrganizationComponent,
+    MedicalRecordWizardAddAttachmentComponent,
 
   ],
   declarations: [
@@ -182,7 +189,6 @@ import { MedicalRecordWizardComponent } from './medical-record-wizard/medical-re
     FallbackComponent,
     ListFallbackComponent,
     DiagnosticReportComponent,
-    NlmTypeaheadComponent,
     DocumentReferenceComponent,
     MediaComponent,
     ReportMedicalHistoryExplanationOfBenefitComponent,
@@ -269,6 +275,10 @@ import { MedicalRecordWizardComponent } from './medical-record-wizard/medical-re
         ProcedureComponent,
         TableComponent,
       MedicalRecordWizardComponent,
+      NlmTypeaheadComponent,
+      MedicalRecordWizardAddPractitionerComponent,
+      MedicalRecordWizardAddOrganizationComponent,
+      MedicalRecordWizardAddAttachmentComponent,
 
     ]
 })
