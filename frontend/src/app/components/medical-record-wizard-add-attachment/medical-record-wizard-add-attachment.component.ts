@@ -30,6 +30,13 @@ export class MedicalRecordWizardAddAttachmentComponent implements OnInit {
     this.resetAttachmentForm()
   }
 
+  submit() {
+    this.newAttachmentForm.markAllAsTouched()
+    if(this.newAttachmentForm.valid){
+      this.activeModal.close(this.newAttachmentForm.getRawValue());
+    }
+  }
+
   onAttachmentFileChange($event){
     console.log("onAttachmentFileChange")
     let fileInput = $event.target as HTMLInputElement;

@@ -31,6 +31,14 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
     this.resetOrganizationForm()
   }
 
+  submit() {
+    this.newOrganizationForm.markAllAsTouched()
+    this.newOrganizationTypeaheadForm.markAllAsTouched()
+    if(this.newOrganizationForm.valid){
+      this.activeModal.close(this.newOrganizationForm.getRawValue());
+    }
+  }
+
   private resetOrganizationForm(){
     this.newOrganizationTypeaheadForm = new FormGroup({
       data: new FormControl(null, Validators.required),

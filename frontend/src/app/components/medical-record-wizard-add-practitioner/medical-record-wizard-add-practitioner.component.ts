@@ -31,8 +31,12 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
     this.resetPractitionerForm()
   }
 
-  close() {
-    this.activeModal.close({action: 'close', data: {hello: 'world'}});
+  submit() {
+    this.newPractitionerForm.markAllAsTouched()
+    this.newPractitionerTypeaheadForm.markAllAsTouched()
+    if(this.newPractitionerForm.valid){
+      this.activeModal.close(this.newPractitionerForm.getRawValue());
+    }
   }
 
   private resetPractitionerForm(){
