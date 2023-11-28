@@ -26,7 +26,7 @@
           <div class="col-12">
             <fhir-datatable-organization
               resourceListType="Organization"
-              totalElements="100"
+              [totalElements]="totalOrganizations"
               (selectionChanged)="selectionChanged($event)"
             ></fhir-datatable-organization>
           </div>

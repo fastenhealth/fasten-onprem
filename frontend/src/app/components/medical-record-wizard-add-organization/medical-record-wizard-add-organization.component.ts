@@ -6,6 +6,8 @@ import {HighlightModule} from 'ngx-highlightjs';
 import {NgbActiveModal, NgbNavLink, NgbNavModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
 import {FhirDatatableModule} from '../fhir-datatable/fhir-datatable.module';
 import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
+import {FastenApiService} from '../../services/fasten-api.service';
+import {ResponseWrapper} from '../../models/response-wrapper';
 
 @Component({
   standalone: true,
@@ -28,15 +30,33 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
 
   activeId: string = 'find'
 
+  //create tab options
   newOrganizationTypeaheadForm: FormGroup
   newOrganizationForm: FormGroup //ResourceCreateOrganization
+
+  //find tab options
   selectedOrganization: FastenDisplayModel
-  constructor(public activeModal: NgbActiveModal) { }
+  totalOrganizations: number = 0
+  constructor(
+    public activeModal: NgbActiveModal,
+    private fastenApi: FastenApiService,
+  ) { }
 
   ngOnInit(): void {
     this.resetOrganizationForm()
-  }
 
+    //get a count of all the known organizations
+    this.fastenApi.queryResources({
+      "select": [],
+      "from": "Organization",
+      "where": {},
+      "aggregations": {
+        "count_by": {"field": "*"}
+      }
+    }).subscribe((resp: ResponseWrapper) => {
+      this.totalOrganizations = resp.data?.[0].value
+    })
+  }
   changeTab(id: string) {
     if(this.activeId != id){
       this.activeId = id
@@ -54,10 +74,21 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
   }
 
   submit() {
-    this.newOrganizationForm.markAllAsTouched()
-    this.newOrganizationTypeaheadForm.markAllAsTouched()
-    if(this.newOrganizationForm.valid){
-      this.activeModal.close(this.newOrganizationForm.getRawValue());
+    if(this.activeId == 'create'){
+      this.newOrganizationForm.markAllAsTouched()
+      if(this.newOrganizationForm.valid){
+        this.activeModal.close({
+          action: this.activeId,
+          data: this.newOrganizationForm.getRawValue()
+        });
+      }
+    } else if(this.activeId == 'find'){
+      if(this.selectedOrganization != null){
+        this.activeModal.close({
+          action: this.activeId,
+          data: this.selectedOrganization
+        });
+      }
     }
   }
 

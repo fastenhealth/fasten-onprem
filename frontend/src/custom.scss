@@ -253,6 +253,12 @@ app-medical-sources-filter > .az-content-left-components:hover{
   transition: width 0.2s ease-in-out;
 }
 
+//Fhir Datadable
+.datatable-body .datatable-body-row.active {
+  background-color: $indigo !important;
+  color: #fff;
+}
+
 // Callouts
 
 
