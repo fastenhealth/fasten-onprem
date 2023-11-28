@@ -4,6 +4,7 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {NlmTypeaheadComponent} from '../nlm-typeahead/nlm-typeahead.component';
 import {HighlightModule} from 'ngx-highlightjs';
 import {NgbActiveModal, NgbNavLink, NgbNavModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
+import {FhirDatatableModule} from '../fhir-datatable/fhir-datatable.module';
 
 @Component({
   standalone: true,
@@ -15,6 +16,7 @@ import {NgbActiveModal, NgbNavLink, NgbNavModule, NgbTooltipModule} from '@ng-bo
     HighlightModule,
     NgbTooltipModule,
     NgbNavModule,
+    FhirDatatableModule
   ],
   selector: 'app-medical-record-wizard-add-organization',
   templateUrl: './medical-record-wizard-add-organization.component.html',

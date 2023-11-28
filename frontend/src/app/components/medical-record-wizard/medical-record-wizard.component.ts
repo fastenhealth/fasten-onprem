@@ -212,6 +212,7 @@ export class MedicalRecordWizardComponent implements OnInit {
     // this.resetPractitionerForm()
     let modalRef = this.modalService.open(MedicalRecordWizardAddPractitionerComponent, {
       ariaLabelledBy: 'modal-practitioner',
+      size: 'lg',
     })
     modalRef.componentInstance.debugMode = this.debugMode;
     modalRef.result.then(
@@ -235,7 +236,8 @@ export class MedicalRecordWizardComponent implements OnInit {
   openOrganizationModal(formGroup?: AbstractControl, controlName?: string) {
     let modalRef = this.modalService.open(MedicalRecordWizardAddOrganizationComponent, {
       ariaLabelledBy: 'modal-organization',
-
+      size: 'lg',
+      scrollable: true
     })
     modalRef.componentInstance.debugMode = this.debugMode;
     modalRef.result.then(
@@ -258,6 +260,7 @@ export class MedicalRecordWizardComponent implements OnInit {
   openAttachmentModal(formGroup?: AbstractControl, controlName?: string) {
     let modalRef = this.modalService.open(MedicalRecordWizardAddAttachmentComponent, {
       ariaLabelledBy: 'modal-attachment',
+      size: 'lg'
     })
     modalRef.componentInstance.debugMode = this.debugMode;
     modalRef.result.then(
