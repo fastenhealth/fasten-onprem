@@ -31,6 +31,8 @@ import {ListPractitionerComponent} from '../list-generic-resource/list-practitio
 import {ListProcedureComponent} from '../list-generic-resource/list-procedure.component';
 import {ListServiceRequestComponent} from '../list-generic-resource/list-service-request.component';
 import {ResourceListOutletDirective} from './resource-list-outlet.directive';
+import {Router} from '@angular/router';
+import {FastenDisplayModel} from '../../../../lib/models/fasten/fasten-display-model';
 
 @Component({
   selector: 'source-resource-list',
@@ -49,7 +51,7 @@ export class ResourceListComponent implements OnInit, OnChanges {
 
   knownResourceType: boolean = true;
 
-  constructor(private fastenApi: FastenApiService) { }
+  constructor(public router: Router, private fastenApi: FastenApiService) { }
 
   ngOnInit(): void {
     this.loadComponent()
@@ -71,7 +73,9 @@ export class ResourceListComponent implements OnInit, OnChanges {
       componentRef.instance.resourceListType = this.resourceListType;
       componentRef.instance.sourceId = this.source.id;
       componentRef.instance.markForCheck()
-
+      componentRef.instance.selectionChanged.subscribe((selected: FastenDisplayModel) => {
+        this.router.navigateByUrl(`/explore/${selected?.source_id}/resource/${selected?.source_resource_id}`);
+      })
       this.knownResourceType = (componentType != ListFallbackComponent)
     }
   }

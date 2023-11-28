@@ -20,7 +20,11 @@
       <ng-template ngbNavContent>
         <div class="row row-sm pd-t-15">
           <div class="col-12">
-            <fhir-datatable-organization resourceListType="Organization" totalElements="100" ></fhir-datatable-organization>
+            <fhir-datatable-organization
+              resourceListType="Organization"
+              totalElements="100"
+              (selectionChanged)="selectionChanged($event)"
+            ></fhir-datatable-organization>
           </div>
         </div>
       </ng-template>

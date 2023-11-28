@@ -5,6 +5,7 @@ import {NlmTypeaheadComponent} from '../nlm-typeahead/nlm-typeahead.component';
 import {HighlightModule} from 'ngx-highlightjs';
 import {NgbActiveModal, NgbNavLink, NgbNavModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
 import {FhirDatatableModule} from '../fhir-datatable/fhir-datatable.module';
+import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
 
 @Component({
   standalone: true,
@@ -29,7 +30,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
 
   newOrganizationTypeaheadForm: FormGroup
   newOrganizationForm: FormGroup //ResourceCreateOrganization
-
+  selectedOrganization: FastenDisplayModel
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
@@ -40,12 +41,16 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
     if(this.activeId != id){
       this.activeId = id
       this.resetOrganizationForm()
+      this.selectedOrganization = null
     }
   }
-
+  selectionChanged(event: FastenDisplayModel) {
+    console.log("SELECTION CHANGED", event)
+    this.selectedOrganization = event
+  }
   get submitEnabled() {
     return (this.activeId == 'create' && this.newOrganizationForm.valid) ||
-      (this.activeId == 'find' && this.newOrganizationTypeaheadForm.valid)
+      (this.activeId == 'find' && this.selectedOrganization != null)
   }
 
   submit() {

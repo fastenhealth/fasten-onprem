@@ -1,17 +1,21 @@
-import {ChangeDetectorRef, Component, Input, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {DatatableComponent, ColumnMode, SelectionType} from '@swimlane/ngx-datatable';
 import {ResourceFhir} from '../../../models/fasten/resource_fhir';
 import {FORMATTERS, getPath, obsValue, attributeXTime} from './utils';
-import {Router} from '@angular/router';
-import {Observable, of} from 'rxjs';
-import {map} from 'rxjs/operators';
 import {FastenApiService} from '../../../services/fasten-api.service';
+import {FastenDisplayModel} from '../../../../lib/models/fasten/fasten-display-model';
 
 //all Resource list components must implement this Interface
 export interface ResourceListComponentInterface {
+  //inputs
   resourceListType: string;
   totalElements: number;
   sourceId: string;
+
+  //outputs
+  selectionChanged: EventEmitter<FastenDisplayModel>
+
+  //private functions
   markForCheck()
 }
 
@@ -38,6 +42,7 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
   @Input() totalElements: number;
   @Input() resourceListType: string;
   @Input() sourceId: string;
+  @Output() selectionChanged: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>();
 
   currentPage: PageInfo = {offset: 0}
   // @Input() resourceList: ResourceFhir[] = []
@@ -53,7 +58,7 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
   ColumnMode = ColumnMode;
   SelectionType = SelectionType;
 
-  constructor(public changeRef: ChangeDetectorRef, public router: Router, public fastenApi: FastenApiService) {
+  constructor(public changeRef: ChangeDetectorRef, public fastenApi: FastenApiService) {
 
   }
 
@@ -126,8 +131,7 @@ export class ListGenericResourceComponent implements OnInit, ResourceListCompone
    */
   onSelect({ selected }) {
     console.log('Select Event', selected);
-    this.router.navigateByUrl(`/explore/${selected[0].source_id}/resource/${selected[0].source_resource_id}`);
-
+    this.selectionChanged.emit(selected[0])
   }
 
 }
