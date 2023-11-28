@@ -18,8 +18,7 @@ import {TableComponent} from "../../common/table/table.component";
 export class AllergyIntoleranceComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: AllergyIntoleranceModel
   @Input() showDetails: boolean = true
-
-  isCollapsed: boolean = false
+  @Input() isCollapsed: boolean = false
 
   tableData: TableRowItem[] = []
 

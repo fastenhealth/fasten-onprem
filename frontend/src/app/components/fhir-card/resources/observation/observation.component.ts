@@ -21,8 +21,8 @@ import {NgChartsModule} from 'ng2-charts';
 export class ObservationComponent implements OnInit {
   @Input() displayModel: ObservationModel
   @Input() showDetails: boolean = true
+  @Input() isCollapsed: boolean = false
 
-  isCollapsed: boolean = false
   tableData: TableRowItem[] = []
 
   //observation chart data

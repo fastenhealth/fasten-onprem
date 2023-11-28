@@ -42,6 +42,7 @@ export class BinaryComponent implements OnInit, FhirCardComponentInterface {
   @Input() showDetails: boolean = true
   @Input() attachmentSourceId: string
   @Input() attachmentModel: AttachmentModel //can only have attachmentModel or binaryModel, not both.
+  @Input() isCollapsed: boolean = false
 
   loading: boolean = false
   constructor(public changeRef: ChangeDetectorRef, public router: Router, public fastenApi: FastenApiService) {}

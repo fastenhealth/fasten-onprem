@@ -19,8 +19,7 @@ import {TableComponent} from "../../common/table/table.component";
 export class PractitionerComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: PractitionerModel | null
   @Input() showDetails: boolean = true
-
-  isCollapsed: boolean = false
+  @Input() isCollapsed: boolean = false
 
   tableData: TableRowItem[] = []
 

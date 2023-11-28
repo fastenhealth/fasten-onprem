@@ -20,12 +20,11 @@ import * as _ from "lodash";
 export class MedicationComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: MedicationModel
   @Input() showDetails: boolean = true
+  @Input() isCollapsed: boolean = false
 
   //these are used to populate the description of the resource. May not be available for all resources
   resourceCode?: string;
   resourceCodeSystem?: string;
-
-  isCollapsed: boolean = false
 
   tableData: TableRowItem[] = []
 

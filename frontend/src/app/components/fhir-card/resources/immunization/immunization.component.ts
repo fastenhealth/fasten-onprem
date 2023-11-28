@@ -19,8 +19,7 @@ import {TableComponent} from "../../common/table/table.component";
 export class ImmunizationComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: ImmunizationModel
   @Input() showDetails: boolean = true
-
-  isCollapsed: boolean = false
+  @Input() isCollapsed: boolean = false
 
   tableData: TableRowItem[] = []
 

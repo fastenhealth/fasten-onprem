@@ -19,12 +19,11 @@ import {EncounterModel} from '../../../../../lib/models/resources/encounter-mode
 export class EncounterComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: EncounterModel | null
   @Input() showDetails: boolean = true
+  @Input() isCollapsed: boolean = false
 
   //these are used to populate the description of the resource. May not be available for all resources
   resourceCode?: string;
   resourceCodeSystem?: string;
-
-  isCollapsed: boolean = false
 
   tableData: TableRowItem[] = []
 

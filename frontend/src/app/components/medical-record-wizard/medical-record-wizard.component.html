@@ -28,24 +28,25 @@
           <ng-template ngbNavContent>
             <div>
               <h6 class="card-title">Encounter</h6>
-              <p class="card-text">
+              <p class="card-text mg-b-10">
                 An Encounter refers to a meeting or interaction with a healthcare provider, such as a doctor's appointment, surgery or a visit to discuss and address your health concerns
               </p>
             </div>
-            <fhir-card [showDetails]="false" [displayModel]="existingEncounter"></fhir-card>
+            <fhir-card [showDetails]="false" [displayModel]="existingEncounter" [isCollapsed]="true"></fhir-card>
 
           </ng-template>
         </ng-container>
         <ng-container ngbNavItem="medications">
           <a class="nav-link" ngbNavLink>Medications</a>
           <ng-template ngbNavContent>
-
             <div>
               <h6 class="card-title">Medications</h6>
-              <p class="card-text">
+              <p class="card-text mg-b-10">
                 Medications are a type of treatment, usually in the form of pills, liquids, or injections, prescribed by doctors to help your body fight off illnesses, manage symptoms, or improve overall health.
               </p>
             </div>
+
+            <fhir-card *ngFor="let medication of existingEncounter?.related_resources?.['Medication']" [showDetails]="false" [displayModel]="medication" [isCollapsed]="true"></fhir-card>
 
             <ng-container formArrayName="medications">
               <div class="card mg-t-10 pd-20" [formGroup]="medicationGroup" *ngFor="let medicationGroup of medications.controls; let i = index">
@@ -131,10 +132,13 @@
           <ng-template ngbNavContent>
             <div>
               <h6 class="card-title">Major Surgeries and Implants</h6>
-              <p class="card-text">
+              <p class="card-text mg-b-10">
                 Surgery is a medical procedure where doctors use special tools to fix, remove, or improve something inside your body to help you feel better or get healthier.
               </p>
             </div>
+
+            <fhir-card *ngFor="let procedure of existingEncounter?.related_resources?.['Procedure']" [showDetails]="false" [displayModel]="procedure" [isCollapsed]="true"></fhir-card>
+
 
             <ng-container formArrayName="procedures">
               <div class="card mg-t-10 pd-20" [formGroup]="procedureGroup" *ngFor="let procedureGroup of procedures.controls; let i = index">
@@ -214,8 +218,10 @@
           <ng-template ngbNavContent>
             <div>
               <h6 class="card-title">Medical Practitioners</h6>
-              <p class="card-text">A practitioner is a healthcare professional, such as a doctor or nurse, who is trained and qualified to provide medical care and support to help you stay healthy or manage any health concerns you may have.</p>
+              <p class="card-text mg-b-10">A practitioner is a healthcare professional, such as a doctor or nurse, who is trained and qualified to provide medical care and support to help you stay healthy or manage any health concerns you may have.</p>
             </div>
+
+            <fhir-card *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']" [showDetails]="false" [displayModel]="practitioner" [isCollapsed]="true"></fhir-card>
 
             <ng-container formArrayName="practitioners">
               <div class="card mg-t-10 pd-20" [formGroup]="practitionerGroup" *ngFor="let practitionerGroup of practitioners.controls; let i = index">
@@ -272,9 +278,11 @@
           <ng-template ngbNavContent>
             <div>
               <h6 class="card-title">Medical Location/Organizations</h6>
-              <p class="card-text">A group of healthcare professionals and staff working together, like a hospital or clinic, to provide coordinated and effective care for patients
+              <p class="card-text mg-b-10">A group of healthcare professionals and staff working together, like a hospital or clinic, to provide coordinated and effective care for patients
               </p>
             </div>
+
+            <fhir-card *ngFor="let organization of existingEncounter?.related_resources?.['Organization']" [showDetails]="false" [displayModel]="organization" [isCollapsed]="true"></fhir-card>
 
             <ng-container formArrayName="organizations">
               <div class="card mg-t-10 pd-20" [formGroup]="organizationGroup" *ngFor="let organizationGroup of organizations.controls; let i = index">

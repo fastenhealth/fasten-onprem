@@ -18,8 +18,8 @@ import {OrganizationModel} from '../../../../../lib/models/resources/organizatio
 export class OrganizationComponent implements OnInit {
   @Input() displayModel: OrganizationModel
   @Input() showDetails: boolean = true
+  @Input() isCollapsed: boolean = false
 
-  isCollapsed: boolean = false
   tableData: TableRowItem[] = []
 
   constructor(public changeRef: ChangeDetectorRef, public router: Router) { }

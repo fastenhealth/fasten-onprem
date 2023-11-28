@@ -21,7 +21,7 @@ import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.
 export class DocumentReferenceComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: DocumentReferenceModel
   @Input() showDetails: boolean = true
-  isCollapsed: boolean = false
+  @Input() isCollapsed: boolean = false
   tableData: TableRowItem[] = []
 
   constructor(public changeRef: ChangeDetectorRef, public router: Router) {}

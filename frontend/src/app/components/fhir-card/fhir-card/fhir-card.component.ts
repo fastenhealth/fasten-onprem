@@ -41,6 +41,7 @@ export class FhirCardComponent implements OnInit, OnChanges {
 
   @Input() displayModel: FastenDisplayModel
   @Input() showDetails: boolean = true
+  @Input() isCollapsed: boolean = false
 
   //location to dynamically load the displayModel
   @ViewChild(FhirCardOutletDirective, {static: true}) fhirCardOutlet!: FhirCardOutletDirective;
@@ -65,6 +66,7 @@ export class FhirCardComponent implements OnInit, OnChanges {
       const componentRef = viewContainerRef.createComponent<FhirCardComponentInterface>(componentType);
       componentRef.instance.displayModel = this.displayModel;
       componentRef.instance.showDetails = this.showDetails;
+      componentRef.instance.isCollapsed = this.isCollapsed;
       componentRef.instance.markForCheck()
 
     }
