@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
+import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
 import {AllergyIntoleranceModel} from '../../../../../lib/models/resources/allergy-intolerance-model';
@@ -15,7 +15,7 @@ import {TableComponent} from "../../common/table/table.component";
   templateUrl: './allergy-intolerance.component.html',
   styleUrls: ['./allergy-intolerance.component.scss']
 })
-export class AllergyIntoleranceComponent implements OnInit, FhirResourceComponentInterface {
+export class AllergyIntoleranceComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: AllergyIntoleranceModel
   @Input() showDetails: boolean = true
 

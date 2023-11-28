@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
+import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
 import {ProcedureModel} from '../../../../../lib/models/resources/procedure-model';
@@ -16,7 +16,7 @@ import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.
   templateUrl: './procedure.component.html',
   styleUrls: ['./procedure.component.scss']
 })
-export class ProcedureComponent implements OnInit, FhirResourceComponentInterface {
+export class ProcedureComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: ProcedureModel | null
   @Input() showDetails: boolean = true
 

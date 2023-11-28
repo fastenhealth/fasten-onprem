@@ -9,12 +9,12 @@ import {
   ViewChild
 } from '@angular/core';
 import {BinaryModel} from '../../../../lib/models/resources/binary-model';
-import {FhirResourceOutletDirective} from './fhir-resource-outlet.directive';
+import {FhirCardOutletDirective} from './fhir-card-outlet.directive';
 
 import {ResourceType} from '../../../../lib/models/constants';
 import {FallbackComponent} from '../resources/fallback/fallback.component';
 import {BinaryComponent} from '../resources/binary/binary.component';
-import {FhirResourceComponentInterface} from './fhir-resource-component-interface';
+import {FhirCardComponentInterface} from './fhir-card-component-interface';
 import {ImmunizationComponent} from '../resources/immunization/immunization.component';
 import {AllergyIntoleranceComponent} from '../resources/allergy-intolerance/allergy-intolerance.component';
 import {MedicationComponent} from '../resources/medication/medication.component';
@@ -32,18 +32,18 @@ import {EncounterComponent} from '../resources/encounter/encounter.component';
 
 
 @Component({
-  selector: 'fhir-resource',
+  selector: 'fhir-card',
   changeDetection: ChangeDetectionStrategy.Default,
-  templateUrl: './fhir-resource.component.html',
-  styleUrls: ['./fhir-resource.component.scss']
+  templateUrl: './fhir-card.component.html',
+  styleUrls: ['./fhir-card.component.scss']
 })
-export class FhirResourceComponent implements OnInit, OnChanges {
+export class FhirCardComponent implements OnInit, OnChanges {
 
   @Input() displayModel: FastenDisplayModel
   @Input() showDetails: boolean = true
 
   //location to dynamically load the displayModel
-  @ViewChild(FhirResourceOutletDirective, {static: true}) fhirResourceOutlet!: FhirResourceOutletDirective;
+  @ViewChild(FhirCardOutletDirective, {static: true}) fhirCardOutlet!: FhirCardOutletDirective;
 
   constructor() { }
 
@@ -56,13 +56,13 @@ export class FhirResourceComponent implements OnInit, OnChanges {
 
   loadComponent() {
     //clear the current outlet
-    const viewContainerRef = this.fhirResourceOutlet.viewContainerRef;
+    const viewContainerRef = this.fhirCardOutlet.viewContainerRef;
     viewContainerRef.clear();
 
     let componentType = this.typeLookup(this.displayModel?.source_resource_type)
     if(componentType != null){
       console.log("Attempting to create fhir display component", this.displayModel, componentType)
-      const componentRef = viewContainerRef.createComponent<FhirResourceComponentInterface>(componentType);
+      const componentRef = viewContainerRef.createComponent<FhirCardComponentInterface>(componentType);
       componentRef.instance.displayModel = this.displayModel;
       componentRef.instance.showDetails = this.showDetails;
       componentRef.instance.markForCheck()
@@ -70,7 +70,7 @@ export class FhirResourceComponent implements OnInit, OnChanges {
     }
   }
 
-  typeLookup(resourceType: ResourceType): Type<FhirResourceComponentInterface> {
+  typeLookup(resourceType: ResourceType): Type<FhirCardComponentInterface> {
     if(!resourceType){
       //dont try to render anything if the resourceType isnt set.
       return null

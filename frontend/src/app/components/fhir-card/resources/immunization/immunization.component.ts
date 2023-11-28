@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
+import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {Router, RouterModule} from '@angular/router';
 import {ImmunizationModel} from '../../../../../lib/models/resources/immunization-model';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
@@ -16,7 +16,7 @@ import {TableComponent} from "../../common/table/table.component";
   templateUrl: './immunization.component.html',
   styleUrls: ['./immunization.component.scss']
 })
-export class ImmunizationComponent implements OnInit, FhirResourceComponentInterface {
+export class ImmunizationComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: ImmunizationModel
   @Input() showDetails: boolean = true
 

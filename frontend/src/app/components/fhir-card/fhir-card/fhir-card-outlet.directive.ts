@@ -1,9 +1,9 @@
 import {Directive, ViewContainerRef} from '@angular/core';
 
 @Directive({
-  selector: '[fhirResourceOutlet]'
+  selector: '[fhirCardOutlet]'
 })
-export class FhirResourceOutletDirective {
+export class FhirCardOutletDirective {
 
   constructor(public viewContainerRef: ViewContainerRef) { }
 

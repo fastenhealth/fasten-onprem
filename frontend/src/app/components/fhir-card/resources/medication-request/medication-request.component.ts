@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
+import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
 import {MedicationRequestModel} from '../../../../../lib/models/resources/medication-request-model';
@@ -16,7 +16,7 @@ import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.
   templateUrl: './medication-request.component.html',
   styleUrls: ['./medication-request.component.scss']
 })
-export class MedicationRequestComponent implements OnInit, FhirResourceComponentInterface {
+export class MedicationRequestComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: MedicationRequestModel | null
   @Input() showDetails: boolean = true
   //these are used to populate the description of the resource. May not be available for all resources

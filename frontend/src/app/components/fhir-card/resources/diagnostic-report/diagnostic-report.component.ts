@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
+import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
 import {DiagnosticReportModel} from '../../../../../lib/models/resources/diagnostic-report-model';
@@ -17,7 +17,7 @@ import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.
   templateUrl: './diagnostic-report.component.html',
   styleUrls: ['./diagnostic-report.component.scss']
 })
-export class DiagnosticReportComponent implements OnInit, FhirResourceComponentInterface {
+export class DiagnosticReportComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: DiagnosticReportModel
   @Input() showDetails: boolean = true
   //these are used to populate the description of the resource. May not be available for all resources

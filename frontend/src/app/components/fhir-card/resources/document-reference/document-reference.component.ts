@@ -3,7 +3,7 @@ import {DiagnosticReportModel} from '../../../../../lib/models/resources/diagnos
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
 import {DocumentReferenceModel} from '../../../../../lib/models/resources/document-reference-model';
-import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
+import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule} from '@angular/common';
 import {BadgeComponent} from '../../common/badge/badge.component';
@@ -18,7 +18,7 @@ import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.
   templateUrl: './document-reference.component.html',
   styleUrls: ['./document-reference.component.scss']
 })
-export class DocumentReferenceComponent implements OnInit, FhirResourceComponentInterface {
+export class DocumentReferenceComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: DocumentReferenceModel
   @Input() showDetails: boolean = true
   isCollapsed: boolean = false

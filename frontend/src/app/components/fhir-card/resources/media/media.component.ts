@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {DocumentReferenceModel} from '../../../../../lib/models/resources/document-reference-model';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
-import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
+import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {MediaModel} from '../../../../../lib/models/resources/media-model';
 import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule} from '@angular/common';
@@ -17,7 +17,7 @@ import {BinaryComponent} from '../binary/binary.component';
   templateUrl: './media.component.html',
   styleUrls: ['./media.component.scss']
 })
-export class MediaComponent implements OnInit, FhirResourceComponentInterface{
+export class MediaComponent implements OnInit, FhirCardComponentInterface{
   @Input() displayModel: MediaModel
   @Input() showDetails: boolean = true
   isCollapsed: boolean = false

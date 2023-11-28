@@ -4,7 +4,7 @@ import {CommonModule} from '@angular/common';
 import {BadgeComponent} from '../../common/badge/badge.component';
 import {TableComponent} from '../../common/table/table.component';
 import {Router, RouterModule} from '@angular/router';
-import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
+import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {ImmunizationModel} from '../../../../../lib/models/resources/immunization-model';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import * as _ from 'lodash';
@@ -17,7 +17,7 @@ import {LocationModel} from '../../../../../lib/models/resources/location-model'
   templateUrl: './location.component.html',
   styleUrls: ['./location.component.scss']
 })
-export class LocationComponent implements OnInit, FhirResourceComponentInterface {
+export class LocationComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: LocationModel
   @Input() showDetails: boolean = true
 

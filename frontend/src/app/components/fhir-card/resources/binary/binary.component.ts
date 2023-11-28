@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {BinaryModel} from '../../../../../lib/models/resources/binary-model';
-import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
+import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {Router, RouterModule} from '@angular/router';
 import {AttachmentModel} from '../../../../../lib/models/datatypes/attachment-model';
 import {FastenApiService} from '../../../../services/fasten-api.service';
@@ -37,7 +37,7 @@ import {AuthService} from "../../../../services/auth.service";
   templateUrl: './binary.component.html',
   styleUrls: ['./binary.component.scss']
 })
-export class BinaryComponent implements OnInit, FhirResourceComponentInterface {
+export class BinaryComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: BinaryModel
   @Input() showDetails: boolean = true
   @Input() attachmentSourceId: string

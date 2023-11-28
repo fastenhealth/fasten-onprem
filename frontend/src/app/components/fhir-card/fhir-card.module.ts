@@ -24,8 +24,8 @@ import {ObservationComponent} from './resources/observation/observation.componen
 import {OrganizationComponent} from './resources/organization/organization.component';
 import {PractitionerComponent} from './resources/practitioner/practitioner.component';
 import {ProcedureComponent} from './resources/procedure/procedure.component';
-import {FhirResourceComponent} from './fhir-resource/fhir-resource.component';
-import {FhirResourceOutletDirective} from './fhir-resource/fhir-resource-outlet.directive';
+import {FhirCardComponent} from './fhir-card/fhir-card.component';
+import {FhirCardOutletDirective} from './fhir-card/fhir-card-outlet.directive';
 import { EncounterComponent } from './resources/encounter/encounter.component';
 
 
@@ -65,8 +65,8 @@ import { EncounterComponent } from './resources/encounter/encounter.component';
   ],
   //TODO: every component in here should be migrated to a standalone component
   declarations: [
-    FhirResourceComponent,
-    FhirResourceOutletDirective,
+    FhirCardComponent,
+    FhirCardOutletDirective,
 
   ],
   exports:[
@@ -99,8 +99,8 @@ import { EncounterComponent } from './resources/encounter/encounter.component';
     PractitionerComponent,
     ProcedureComponent,
 
-    FhirResourceComponent,
-    FhirResourceOutletDirective,
+    FhirCardComponent,
+    FhirCardOutletDirective,
   ]
 })
 export class FhirCardModule { }

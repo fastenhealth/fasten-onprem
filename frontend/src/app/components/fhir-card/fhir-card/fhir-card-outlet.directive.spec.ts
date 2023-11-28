@@ -1,4 +1,4 @@
-import { FhirResourceOutletDirective } from './fhir-resource-outlet.directive';
+import { FhirCardOutletDirective } from './fhir-card-outlet.directive';
 
 import {
   ComponentFactory, ComponentRef,
@@ -66,11 +66,11 @@ class TestViewContainerRef extends ViewContainerRef {
 }
 
 
-describe('FhirResourceOutletDirective', () => {
+describe('FhirCardOutletDirective', () => {
 
 
   it('should create an instance', () => {
-    const directive = new FhirResourceOutletDirective(new TestViewContainerRef());
+    const directive = new FhirCardOutletDirective(new TestViewContainerRef());
     expect(directive).toBeTruthy();
   });
 });

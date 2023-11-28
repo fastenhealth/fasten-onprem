@@ -6,7 +6,7 @@ import {TableComponent} from '../../common/table/table.component';
 import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.component';
 import {Router, RouterModule} from '@angular/router';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
-import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
+import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {EncounterModel} from '../../../../../lib/models/resources/encounter-model';
 
 @Component({
@@ -16,7 +16,7 @@ import {EncounterModel} from '../../../../../lib/models/resources/encounter-mode
   templateUrl: './encounter.component.html',
   styleUrls: ['./encounter.component.scss']
 })
-export class EncounterComponent implements OnInit, FhirResourceComponentInterface {
+export class EncounterComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: EncounterModel | null
   @Input() showDetails: boolean = true
 

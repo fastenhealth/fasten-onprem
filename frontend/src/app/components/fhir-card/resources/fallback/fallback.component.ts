@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {BinaryModel} from '../../../../../lib/models/resources/binary-model';
 import {Router} from '@angular/router';
-import {FhirResourceComponentInterface} from '../../fhir-resource/fhir-resource-component-interface';
+import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule} from '@angular/common';
 import {HighlightModule} from 'ngx-highlightjs';
@@ -13,7 +13,7 @@ import {HighlightModule} from 'ngx-highlightjs';
   templateUrl: './fallback.component.html',
   styleUrls: ['./fallback.component.scss']
 })
-export class FallbackComponent implements OnInit, FhirResourceComponentInterface {
+export class FallbackComponent implements OnInit, FhirCardComponentInterface {
   @Input() displayModel: BinaryModel
   @Input() showDetails: boolean = true
 

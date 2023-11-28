@@ -10,7 +10,7 @@
 
       <ng-container *ngIf="!loading else isLoadingTemplate">
 
-        <fhir-resource *ngIf="displayModel else noDisplayModel" [displayModel]="displayModel" [showDetails]="false"></fhir-resource>
+        <fhir-card *ngIf="displayModel else noDisplayModel" [displayModel]="displayModel" [showDetails]="false"></fhir-card>
 
         <ng-template #noDisplayModel>
           <p> An error occurred while parsing FHIR resource </p>
