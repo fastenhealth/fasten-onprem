@@ -3,7 +3,8 @@ import {CommonModule} from '@angular/common';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NlmTypeaheadComponent} from '../nlm-typeahead/nlm-typeahead.component';
 import {HighlightModule} from 'ngx-highlightjs';
-import {NgbActiveModal, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbActiveModal, NgbNavLink, NgbNavModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
+import {ListEncounterComponent} from '../list-generic-resource/list-encounter.component';
 
 @Component({
   standalone: true,
@@ -13,7 +14,8 @@ import {NgbActiveModal, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
     FormsModule,
     NlmTypeaheadComponent,
     HighlightModule,
-    NgbTooltipModule
+    NgbTooltipModule,
+    NgbNavModule,
   ],
   selector: 'app-medical-record-wizard-add-organization',
   templateUrl: './medical-record-wizard-add-organization.component.html',
@@ -21,6 +23,8 @@ import {NgbActiveModal, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
 })
 export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
   @Input() debugMode: boolean = false;
+
+  activeId: string = 'existing'
 
   newOrganizationTypeaheadForm: FormGroup
   newOrganizationForm: FormGroup //ResourceCreateOrganization

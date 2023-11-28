@@ -28,7 +28,7 @@ import {
 import {GenerateR4Bundle} from '../../pages/resource-creator/resource-creator.utilities';
 import {EncounterModel} from '../../../lib/models/resources/encounter-model';
 import {SharedModule} from '../shared.module';
-import {FhirResourceModule} from '../fhir/fhir-resource.module';
+import {FhirCardModule} from '../fhir-card/fhir-card.module';
 
 @Component({
   standalone: true,
@@ -43,7 +43,7 @@ import {FhirResourceModule} from '../fhir/fhir-resource.module';
     NlmTypeaheadComponent,
     NgSelectModule,
     HighlightModule,
-    FhirResourceModule
+    FhirCardModule
   ],
   selector: 'app-medical-record-wizard',
   templateUrl: './medical-record-wizard.component.html',
@@ -235,6 +235,7 @@ export class MedicalRecordWizardComponent implements OnInit {
   openOrganizationModal(formGroup?: AbstractControl, controlName?: string) {
     let modalRef = this.modalService.open(MedicalRecordWizardAddOrganizationComponent, {
       ariaLabelledBy: 'modal-organization',
+
     })
     modalRef.componentInstance.debugMode = this.debugMode;
     modalRef.result.then(

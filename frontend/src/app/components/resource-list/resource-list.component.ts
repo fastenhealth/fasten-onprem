@@ -51,6 +51,7 @@ export class ResourceListComponent implements OnInit, OnChanges {
   //location to dynamically load the resource list
   @ViewChild(ResourceListOutletDirective, {static: true}) resourceListOutlet!: ResourceListOutletDirective;
 
+  knownResourceType: boolean = true;
 
   constructor(private fastenApi: FastenApiService) { }
 
@@ -74,6 +75,8 @@ export class ResourceListComponent implements OnInit, OnChanges {
       componentRef.instance.resourceListType = this.resourceListType;
       componentRef.instance.sourceId = this.source.id;
       componentRef.instance.markForCheck()
+
+      this.knownResourceType = (componentType != ListFallbackComponent)
     }
   }
 

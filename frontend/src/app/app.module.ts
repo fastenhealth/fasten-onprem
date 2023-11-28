@@ -38,7 +38,7 @@ import { ExploreComponent } from './pages/explore/explore.component';
 import {DirectivesModule} from './directives/directives.module';
 import { DesktopCallbackComponent } from './pages/desktop-callback/desktop-callback.component';
 import { BackgroundJobsComponent } from './pages/background-jobs/background-jobs.component';
-import {FhirResourceModule} from './components/fhir/fhir-resource.module';
+import {FhirCardModule} from './components/fhir-card/fhir-card.module';
 
 @NgModule({
   declarations: [
@@ -65,7 +65,7 @@ import {FhirResourceModule} from './components/fhir/fhir-resource.module';
     BrowserModule,
     FontAwesomeModule,
     SharedModule,
-    FhirResourceModule,
+    FhirCardModule,
     AppRoutingModule,
     HttpClientModule,
     NgbModule,

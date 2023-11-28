@@ -64,7 +64,7 @@ import { MedicalRecordWizardComponent } from './medical-record-wizard/medical-re
 import { MedicalRecordWizardAddPractitionerComponent } from './medical-record-wizard-add-practitioner/medical-record-wizard-add-practitioner.component';
 import { MedicalRecordWizardAddOrganizationComponent } from './medical-record-wizard-add-organization/medical-record-wizard-add-organization.component';
 import { MedicalRecordWizardAddAttachmentComponent } from './medical-record-wizard-add-attachment/medical-record-wizard-add-attachment.component';
-import {FhirResourceModule} from './fhir/fhir-resource.module';
+import {FhirCardModule} from './fhir-card/fhir-card.module';
 
 @NgModule({
   imports: [
@@ -84,7 +84,7 @@ import {FhirResourceModule} from './fhir/fhir-resource.module';
     HighlightModule,
     PipesModule,
     DirectivesModule,
-    FhirResourceModule,
+    FhirCardModule,
 
     //standalone components
     GlossaryLookupComponent,

@@ -103,4 +103,4 @@ import { EncounterComponent } from './resources/encounter/encounter.component';
     FhirResourceOutletDirective,
   ]
 })
-export class FhirResourceModule { }
+export class FhirCardModule { }
