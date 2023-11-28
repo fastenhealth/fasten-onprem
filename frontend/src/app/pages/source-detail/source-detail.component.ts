@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Source} from '../../models/fasten/source';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
-import {getPath} from '../../components/list-generic-resource/utils';
+import {getPath} from '../../components/fhir-datatable/list-generic-resource/utils';
 
 @Component({
   selector: 'app-source-detail',
