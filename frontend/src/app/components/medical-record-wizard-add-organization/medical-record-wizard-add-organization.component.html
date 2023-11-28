@@ -1,5 +1,11 @@
 <div class="modal-header">
   <h4 class="modal-title" id="modal-location">Add Location</h4>
+
+  <div class="btn-group" role="group" aria-label="Basic example">
+    <button type="button" class="btn pd-x-25" [ngClass]="{'btn-indigo': activeId=='find', 'btn-outline-secondary': activeId!='find'}" (click)="changeTab('find')">Find</button>
+    <button type="button" class="btn pd-x-25" [ngClass]="{'btn-indigo': activeId=='create', 'btn-outline-secondary': activeId!='create'}"  (click)="changeTab('create')">Create</button>
+  </div>
+
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()"><span aria-hidden="true">×</span></button>
 </div>
 <div class="modal-body">
@@ -9,81 +15,77 @@
     <strong>New Organization Form Status: {{ newOrganizationForm.status }}</strong>
   </div>
 
-  <div>
-    <div ngbNav #nav="ngbNav" [(activeId)]="activeId" class="nav-pills bg-gray-200 pd-20">
-      <ng-container ngbNavItem="existing">
-        <a class="nav-link" ngbNavLink>Find Existing</a>
-        <ng-template ngbNavContent>
-          <div class="row row-sm pd-t-15">
-            <div class="col-12">
-              <fhir-datatable-organization resourceListType="Organization" totalElements="100" ></fhir-datatable-organization>
-            </div>
+  <div ngbNav #nav="ngbNav" [(activeId)]="activeId">
+    <ng-container ngbNavItem="find">
+      <ng-template ngbNavContent>
+        <div class="row row-sm pd-t-15">
+          <div class="col-12">
+            <fhir-datatable-organization resourceListType="Organization" totalElements="100" ></fhir-datatable-organization>
           </div>
-        </ng-template>
-      </ng-container>
-      <ng-container ngbNavItem="create">
-        <a class="nav-link" ngbNavLink>New Location</a>
-        <ng-template ngbNavContent>
-          <div class="row row-sm pd-t-15">
-            <div class="col-12">
-              <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
-              <form [formGroup]="newOrganizationTypeaheadForm">
-                <app-nlm-typeahead formControlName="data" searchType="MedicalContactOrganization" [debugMode]="debugMode"></app-nlm-typeahead>
-              </form>
-              <span *ngFor="let extId of newOrganizationForm.get('identifier').getRawValue()" class="badge badge-pill badge-primary">{{extId.type?.coding[0].code}}: {{extId.value}}</span>
+        </div>
+      </ng-template>
+    </ng-container>
+    <ng-container ngbNavItem="create">
+      <ng-template ngbNavContent>
+        <div class="row row-sm pd-t-15">
+          <div class="col-12">
+            <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
+            <form [formGroup]="newOrganizationTypeaheadForm">
+              <app-nlm-typeahead formControlName="data" searchType="MedicalContactOrganization" [debugMode]="debugMode"></app-nlm-typeahead>
+            </form>
+            <span *ngFor="let extId of newOrganizationForm.get('identifier').getRawValue()" class="badge badge-pill badge-primary">{{extId.type?.coding[0].code}}: {{extId.value}}</span>
+          </div><!-- col -->
+
+          <ng-container [formGroup]="newOrganizationForm">
+            <div class="col-6 mg-t-10 mg-lg-t-0">
+              <p class="mg-b-10">Type<span ngbTooltip="required" class="text-danger">*</span></p>
+              <app-nlm-typeahead formControlName="type" searchType="MedicalContactOrganizationType" [debugMode]="debugMode"></app-nlm-typeahead>
             </div><!-- col -->
-
-            <ng-container [formGroup]="newOrganizationForm">
-              <div class="col-6 mg-t-10 mg-lg-t-0">
-                <p class="mg-b-10">Type<span ngbTooltip="required" class="text-danger">*</span></p>
-                <app-nlm-typeahead formControlName="type" searchType="MedicalContactOrganizationType" [debugMode]="debugMode"></app-nlm-typeahead>
+            <div class="col-6 mg-t-10 mg-lg-t-0">
+              <p class="mg-b-10">Telephone</p>
+              <input formControlName="phone" class="form-control" placeholder="(123) 456-7890" type="text">
+            </div><!-- col -->
+            <div class="col-6 mg-t-10 mg-lg-t-0">
+              <p class="mg-b-10">Fax</p>
+              <input formControlName="fax" class="form-control" placeholder="(123) 456-7890" type="text">
+            </div><!-- col -->
+            <div class="col-6 mg-t-10 mg-lg-t-0">
+              <p class="mg-b-10">Email</p>
+              <input formControlName="email" class="form-control" placeholder="email@example.com" type="text" email>
+            </div><!-- col -->
+            <ng-container formGroupName="address">
+              <div class="col-12 mg-t-10 mg-lg-t-0">
+                <p class="mg-b-10">Address</p>
+                <input formControlName="line1" class="form-control" placeholder="Line 1" type="text">
+              </div><!-- col -->
+              <div class="col-12 pd-t-10 mg-t-10 mg-lg-t-0">
+                <input formControlName="line2" class="form-control" placeholder="Line 2" type="text">
               </div><!-- col -->
               <div class="col-6 mg-t-10 mg-lg-t-0">
-                <p class="mg-b-10">Telephone</p>
-                <input formControlName="phone" class="form-control" placeholder="(123) 456-7890" type="text">
+                <p class="mg-b-10">City</p>
+                <input formControlName="city" class="form-control" placeholder="City" type="text">
               </div><!-- col -->
               <div class="col-6 mg-t-10 mg-lg-t-0">
-                <p class="mg-b-10">Fax</p>
-                <input formControlName="fax" class="form-control" placeholder="(123) 456-7890" type="text">
+                <p class="mg-b-10">State</p>
+                <input formControlName="state" class="form-control" placeholder="State" type="text">
               </div><!-- col -->
               <div class="col-6 mg-t-10 mg-lg-t-0">
-                <p class="mg-b-10">Email</p>
-                <input formControlName="email" class="form-control" placeholder="email@example.com" type="text" email>
+                <p class="mg-b-10">Zip/Postal</p>
+                <input formControlName="zip" class="form-control" placeholder="Zip" type="text">
               </div><!-- col -->
-              <ng-container formGroupName="address">
-                <div class="col-12 mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Address</p>
-                  <input formControlName="line1" class="form-control" placeholder="Line 1" type="text">
-                </div><!-- col -->
-                <div class="col-12 pd-t-10 mg-t-10 mg-lg-t-0">
-                  <input formControlName="line2" class="form-control" placeholder="Line 2" type="text">
-                </div><!-- col -->
-                <div class="col-6 mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">City</p>
-                  <input formControlName="city" class="form-control" placeholder="City" type="text">
-                </div><!-- col -->
-                <div class="col-6 mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">State</p>
-                  <input formControlName="state" class="form-control" placeholder="State" type="text">
-                </div><!-- col -->
-                <div class="col-6 mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Zip/Postal</p>
-                  <input formControlName="zip" class="form-control" placeholder="Zip" type="text">
-                </div><!-- col -->
-                <div class="col-6 mg-t-10 mg-lg-t-0">
-                  <p class="mg-b-10">Country</p>
-                  <app-nlm-typeahead formControlName="country" searchType="Countries" [debugMode]="debugMode"></app-nlm-typeahead>
-                </div><!-- col -->
-              </ng-container>
+              <div class="col-6 mg-t-10 mg-lg-t-0">
+                <p class="mg-b-10">Country</p>
+                <app-nlm-typeahead formControlName="country" searchType="Countries" [debugMode]="debugMode"></app-nlm-typeahead>
+              </div><!-- col -->
             </ng-container>
-          </div>
-        </ng-template>
-      </ng-container>
-    </div>
-
-    <div [ngbNavOutlet]="nav" class="ms-4"></div>
+          </ng-container>
+        </div>
+      </ng-template>
+    </ng-container>
   </div>
+
+  <div [ngbNavOutlet]="nav" class="ms-4"></div>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-az-primary" (click)="submit()">Add Location</button>
+  <button type="button" [class.disabled]="!submitEnabled" class="btn btn-az-primary" (click)="submit()">Add Location</button>
 </div>

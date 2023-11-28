@@ -237,7 +237,6 @@ export class MedicalRecordWizardComponent implements OnInit {
     let modalRef = this.modalService.open(MedicalRecordWizardAddOrganizationComponent, {
       ariaLabelledBy: 'modal-organization',
       size: 'lg',
-      scrollable: true
     })
     modalRef.componentInstance.debugMode = this.debugMode;
     modalRef.result.then(

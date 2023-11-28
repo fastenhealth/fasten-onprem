@@ -25,7 +25,7 @@ import {FhirDatatableModule} from '../fhir-datatable/fhir-datatable.module';
 export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
   @Input() debugMode: boolean = false;
 
-  activeId: string = 'existing'
+  activeId: string = 'find'
 
   newOrganizationTypeaheadForm: FormGroup
   newOrganizationForm: FormGroup //ResourceCreateOrganization
@@ -34,6 +34,18 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
 
   ngOnInit(): void {
     this.resetOrganizationForm()
+  }
+
+  changeTab(id: string) {
+    if(this.activeId != id){
+      this.activeId = id
+      this.resetOrganizationForm()
+    }
+  }
+
+  get submitEnabled() {
+    return (this.activeId == 'create' && this.newOrganizationForm.valid) ||
+      (this.activeId == 'find' && this.newOrganizationTypeaheadForm.valid)
   }
 
   submit() {
