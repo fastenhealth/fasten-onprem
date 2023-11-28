@@ -2,8 +2,12 @@
   <h4 class="modal-title" id="modal-location">Add Location</h4>
 
   <div class="btn-group" role="group" aria-label="Basic example">
-    <button type="button" class="btn pd-x-25" [ngClass]="{'btn-indigo': activeId=='find', 'btn-outline-secondary': activeId!='find'}" (click)="changeTab('find')">Find</button>
-    <button type="button" class="btn pd-x-25" [ngClass]="{'btn-indigo': activeId=='create', 'btn-outline-secondary': activeId!='create'}"  (click)="changeTab('create')">Create</button>
+    <button type="button" class="btn pd-x-25" [ngClass]="{'btn-indigo': activeId=='find', 'btn-outline-secondary': activeId!='find'}" (click)="changeTab('find')">
+      <i class="fas fa-search"></i> Find
+    </button>
+    <button type="button" class="btn pd-x-25" [ngClass]="{'btn-indigo': activeId=='create', 'btn-outline-secondary': activeId!='create'}"  (click)="changeTab('create')">
+      <i class="fas fa-plus-circle"></i> Create
+    </button>
   </div>
 
   <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()"><span aria-hidden="true">×</span></button>

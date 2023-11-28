@@ -40,6 +40,13 @@ select > optgroup > .divider {
   z-index: 1000;
 }
 
+// text overflow add ellipsis
+.text-overflow-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 
 // Form Validation
 .form-control.ng-invalid.ng-touched {
