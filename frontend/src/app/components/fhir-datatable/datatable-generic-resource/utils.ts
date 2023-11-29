@@ -36,6 +36,9 @@ export const FORMATTERS = {
   },
   humanName: (humanName) => {
     if(!humanName) return ''
+    if(humanName.text){
+      return humanName.text
+    }
     var nameParts = []
     if(humanName.prefix) nameParts.push(humanName.prefix.join(', '))
     if(humanName.given) nameParts.push(humanName.given.join(' '))

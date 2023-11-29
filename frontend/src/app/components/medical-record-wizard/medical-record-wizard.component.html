@@ -37,7 +37,9 @@
           </ng-template>
         </ng-container>
         <ng-container ngbNavItem="medications">
-          <a class="nav-link" ngbNavLink>Medications</a>
+          <a class="nav-link" ngbNavLink>
+            Medications <span class="badge badge-pill badge-warning align-middle" *ngIf="medications.controls.length">{{medications.controls.length}}</span>
+          </a>
           <ng-template ngbNavContent>
             <div>
               <h6 class="card-title">Medications</h6>
@@ -135,7 +137,9 @@
           </ng-template>
         </ng-container>
         <ng-container ngbNavItem="procedures">
-          <a class="nav-link" ngbNavLink>Procedures</a>
+          <a class="nav-link" ngbNavLink>
+            Procedures <span class="badge badge-pill badge-warning align-middle" *ngIf="procedures.controls.length">{{procedures.controls.length}}</span>
+          </a>
           <ng-template ngbNavContent>
             <div>
               <h6 class="card-title">Major Surgeries and Implants</h6>
@@ -234,7 +238,9 @@
           </ng-template>
         </ng-container>
         <ng-container ngbNavItem="practitioners">
-          <a class="nav-link" ngbNavLink>Practitioners</a>
+          <a class="nav-link" ngbNavLink>
+            Practitioners <span class="badge badge-pill badge-warning align-middle" *ngIf="practitioners.controls.length">{{practitioners.controls.length}}</span>
+          </a>
           <ng-template ngbNavContent>
             <div>
               <h6 class="card-title">Medical Practitioners</h6>
@@ -268,7 +274,9 @@
           </ng-template>
         </ng-container>
         <ng-container ngbNavItem="organizations">
-          <a class="nav-link" ngbNavLink>Organizations</a>
+          <a class="nav-link" ngbNavLink>
+            Organizations <span class="badge badge-pill badge-warning align-middle" *ngIf="organizations.controls.length">{{organizations.controls.length}}</span>
+          </a>
           <ng-template ngbNavContent>
             <div>
               <h6 class="card-title">Medical Location/Organizations</h6>
@@ -299,7 +307,9 @@
           </ng-template>
         </ng-container>
         <ng-container ngbNavItem="labresults">
-          <a class="nav-link" ngbNavLink>Lab Results</a>
+          <a class="nav-link" ngbNavLink>
+            Lab Results
+          </a>
           <ng-template ngbNavContent>
             <div>
               <h6 class="card-title">Lab Results & Observations</h6>
@@ -321,7 +331,9 @@
           </ng-template>
         </ng-container>
         <ng-container ngbNavItem="attachments">
-          <a class="nav-link" ngbNavLink>Attachments</a>
+          <a class="nav-link" ngbNavLink>
+            Attachments <span class="badge badge-pill badge-warning align-middle" *ngIf="attachments.controls.length">{{attachments.controls.length}}</span>
+          </a>
           <ng-template ngbNavContent>
             <div>
               <h6 class="card-title">Notes & Attachments</h6>
