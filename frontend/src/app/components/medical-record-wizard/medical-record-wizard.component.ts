@@ -31,6 +31,7 @@ import {SharedModule} from '../shared.module';
 import {FhirCardModule} from '../fhir-card/fhir-card.module';
 import {OrganizationModel} from '../../../lib/models/resources/organization-model';
 import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
+import {PipesModule} from '../../pipes/pipes.module';
 
 @Component({
   standalone: true,
@@ -45,7 +46,8 @@ import {PractitionerModel} from '../../../lib/models/resources/practitioner-mode
     NlmTypeaheadComponent,
     NgSelectModule,
     HighlightModule,
-    FhirCardModule
+    FhirCardModule,
+    PipesModule
   ],
   selector: 'app-medical-record-wizard',
   templateUrl: './medical-record-wizard.component.html',

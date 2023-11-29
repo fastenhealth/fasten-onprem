@@ -67,7 +67,8 @@
                       <option value="" hidden selected>Select Status</option>
                       <option value="active">Active</option>
                       <option value="stopped">Stopped</option>
-                    </select>                </div><!-- col -->
+                    </select>
+                  </div><!-- col -->
                   <div class="col-lg-3 mg-t-10 mg-lg-t-0">
                     <p class="mg-b-10">Dosage</p>
                     <input formControlName="dosage" class="form-control" placeholder="Input box" type="text">
@@ -88,10 +89,16 @@
                     <p class="mg-b-10">Prescribing Practitioner<span ngbTooltip="required" class="text-danger">*</span></p>
                     <select class="form-control" formControlName="requester">
                       <option value="" hidden selected>Select Practitioner</option>
-  <!--                    <option value="" (click)="openPractitionerModal(practitionerCreateModal, medicationGroup, 'requester')">New Practitioner</option>-->
-                      <optgroup *ngIf="practitioners.controls.length" class="divider"></optgroup>
-                      <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.value.id">
-                        {{practitioner.value.name}} ({{practitioner.value.profession.text}})
+                      <option value="" (click)="openPractitionerModal(medicationGroup, 'requester')">New Practitioner</option>
+
+                      <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner'].length" class="divider">---</optgroup>
+                      <option *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']; let i = index" [value]="practitioner.source_resource_id">
+                        {{practitioner?.name | humanName }} ({{practitioner?.profession?.text}})
+                      </option>
+
+                      <optgroup *ngIf="practitioners.controls.length" class="divider">---</optgroup>
+                      <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.controls.data.value?.source_resource_id">
+                        {{practitioner.controls.data.value.name | humanName }} ({{practitioner.controls.data.value?.profession?.text}})
                       </option>
                     </select>
                   </div><!-- col -->
@@ -107,14 +114,14 @@
                     <p class="mg-b-10">Attachments</p>
                   </div><!-- col -->
                   <div class="col-1">
-  <!--                  <button type="button" (click)="openAttachmentModal(attachmentCreateModal, medicationGroup, 'attachments')" class="btn btn-indigo btn-with-icon">-->
-  <!--                    <i class="fas fa-paperclip"></i> Add-->
-  <!--                  </button>-->
+                    <button type="button" (click)="openAttachmentModal(medicationGroup, 'attachments')" class="btn btn-indigo btn-with-icon">
+                      <i class="fas fa-paperclip"></i> Add
+                    </button>
                   </div>
                   <div class="col-11">
-  <!--                  <ng-select class="ng-select-form-control" [readonly]="!attachments.controls.length" appendTo="body" formControlName="attachments" placeholder="Select Attachment" [multiple]="true" [hideSelected]="true">-->
-  <!--                    <ng-option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">{{attachment.value.name}} ({{attachment.value.file_name}})</ng-option>-->
-  <!--                  </ng-select>-->
+                    <ng-select class="ng-select-form-control" [readonly]="!attachments.controls.length" appendTo="body" formControlName="attachments" placeholder="Select Attachment" [multiple]="true" [hideSelected]="true">
+                      <ng-option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">{{attachment.value.name}} ({{attachment.value.file_name}})</ng-option>
+                    </ng-select>
                   </div>
                 </div>
               </div>
@@ -161,12 +168,19 @@
                     <p class="mg-b-10">Performed By</p>
                     <select class="form-control" formControlName="performer">
                       <option value="" hidden selected>Select Practitioner</option>
-  <!--                    <option value="" (click)="openPractitionerModal(practitionerCreateModal, procedureGroup, 'performer')">New Practitioner</option>-->
-                      <optgroup *ngIf="practitioners.controls.length" class="divider"></optgroup>
-                      <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.value.id">
-                        {{practitioner.value.name}} ({{practitioner.value.profession.text}})
+                      <option value="" (click)="openPractitionerModal(procedureGroup, 'performer')">New Practitioner</option>
+
+                      <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner'].length" class="divider">---</optgroup>
+                      <option *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']; let i = index" [value]="practitioner.source_resource_id">
+                        {{practitioner?.name | humanName }} ({{practitioner?.profession?.text}})
+                      </option>
+
+                      <optgroup *ngIf="practitioners.controls.length" class="divider">---</optgroup>
+                      <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.controls.data.value?.source_resource_id">
+                        {{practitioner.controls.data.value.name | humanName }} ({{practitioner.controls.data.value?.profession?.text}})
                       </option>
                     </select>
+
                   </div><!-- col -->
                   <div class="col-lg-6 mg-t-10 mg-lg-t-0">
                     <p class="mg-b-10">Location</p>
@@ -190,9 +204,9 @@
                   </div><!-- col -->
 
                   <div class="col-1">
-  <!--                  <button type="button" (click)="openAttachmentModal(attachmentCreateModal, procedureGroup, 'attachments')" class="btn btn-indigo btn-with-icon">-->
-  <!--                    <i class="fas fa-paperclip"></i> Add-->
-  <!--                  </button>-->
+                    <button type="button" (click)="openAttachmentModal(procedureGroup, 'attachments')" class="btn btn-indigo btn-with-icon">
+                      <i class="fas fa-paperclip"></i> Add
+                    </button>
                   </div>
                   <div class="col-11">
                     <ng-select class="ng-select-form-control" [readonly]="!attachments.controls.length" formControlName="attachments" placeholder="Select Attachment" [multiple]="true" [hideSelected]="true">
