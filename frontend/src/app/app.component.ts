@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 import {Observable, of} from 'rxjs';
 import {ToastService} from './services/toast.service';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,11 @@ export class AppComponent implements OnInit {
   showHeader:boolean = false;
   showFooter:boolean = true;
 
-  constructor(private router: Router, private toastService: ToastService) {}
+  constructor(
+    private router: Router,
+    private toastService: ToastService,
+    private modalService: NgbModal
+  ) {}
 
   ngOnInit() {
 
@@ -25,17 +30,21 @@ export class AppComponent implements OnInit {
     document.querySelector('body').appendChild(navbarBackdrop);
 
     //determine if we should show the header
-    this.router.events.subscribe(event => this.modifyHeader(event));
+    this.router.events.subscribe(event => this.routerEvent(event));
   }
 
-  modifyHeader(event) {
+  routerEvent(event) {
     if (event instanceof NavigationEnd) {
+      //modify header
       if (event.url?.startsWith('/auth') || event.url?.startsWith('/desktop')) {
         this.showHeader = false;
       } else {
         // console.log("NU")
         this.showHeader = true;
       }
+
+      // close all open modals when route change
+      this.modalService.dismissAll();
     }
   }
 }
