@@ -186,10 +186,16 @@
                     <p class="mg-b-10">Location</p>
                     <select class="form-control" formControlName="location">
                       <option value="" hidden selected>Select Location</option>
-  <!--                    <option value="" (click)="openOrganizationModal(organizationCreateModal, procedureGroup, 'location')">New Organization</option>-->
+                      <option value="" (click)="openOrganizationModal( procedureGroup, 'location')">New Organization</option>
+
+                      <optgroup *ngIf="existingEncounter?.related_resources?.['Organization'].length" class="divider">---</optgroup>
+                      <option *ngFor="let organization of existingEncounter?.related_resources?.['Organization']; let i = index" [value]="organization.source_resource_id">
+                        {{organization?.name }}
+                      </option>
+
                       <optgroup *ngIf="organizations.controls.length" class="divider"></optgroup>
-                      <option *ngFor="let organization of organizations.controls; let i = index" [value]="organization.value.id">
-                        {{organization.value.name}} ({{organization.value.address}})
+                      <option *ngFor="let organization of organizations.controls; let i = index" [value]="organization.controls.data.value?.source_resource_id">
+                        {{organization.controls.data.value.name}} ({{organization.controls.data.value?.address}})
                       </option>
                     </select>
                   </div><!-- col -->
