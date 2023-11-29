@@ -295,7 +295,8 @@ app-medical-sources-filter > .az-content-left-components:hover{
   h4 { color: $color; }
 }
 
-.bd-callout-success { @include bs-callout-variant($green); }
-.bd-callout-info { @include bs-callout-variant($cyan); }
-.bd-callout-warning { @include bs-callout-variant($yellow); }
-.bd-callout-danger { @include bs-callout-variant($red); }
+.fhir-card-callout-success .card, .bd-callout-success { @include bs-callout-variant($green); }
+.fhir-card-callout-info .card, .bd-callout-info { @include bs-callout-variant($cyan); }
+.fhir-card-callout-warning .card, .bd-callout-warning { @include bs-callout-variant($yellow); }
+.fhir-card-callout-danger .card, .bd-callout-danger { @include bs-callout-variant($red); }
+

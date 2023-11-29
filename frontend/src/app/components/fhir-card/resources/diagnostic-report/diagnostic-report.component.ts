@@ -13,7 +13,7 @@ import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.
 @Component({
   standalone: true,
   imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, RouterModule, BinaryComponent, GlossaryLookupComponent],
-  selector: 'app-diagnostic-report',
+  selector: 'fhir-diagnostic-report',
   templateUrl: './diagnostic-report.component.html',
   styleUrls: ['./diagnostic-report.component.scss']
 })

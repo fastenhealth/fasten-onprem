@@ -4,12 +4,10 @@
       <h6 class="card-title">{{displayModel?.sort_title || displayModel?.name?.[0]?.displayName}}</h6>
       <p class="card-text tx-gray-400" *ngIf="displayModel?.sort_date"><strong>Date</strong>{{displayModel?.sort_date}}</p>
     </div>
-    <fhir-ui-badge class="float-right" [status]="displayModel?.status">{{displayModel?.status}}</fhir-ui-badge>
-    <!--    <div class="btn-group">-->
-    <!--      <button class="btn active">Day</button>-->
-    <!--      <button class="btn">Week</button>-->
-    <!--      <button class="btn">Month</button>-->
-    <!--    </div>-->
+    <div>
+      <fhir-ui-badge [status]="displayModel?.status">{{displayModel?.status}}</fhir-ui-badge>
+      <ng-content select="[header]"></ng-content>
+    </div>
   </div>
   <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed" class="card-body">
     <p class="az-content-text mg-b-20">A person who is directly or indirectly involved in the provisioning of healthcare.</p>

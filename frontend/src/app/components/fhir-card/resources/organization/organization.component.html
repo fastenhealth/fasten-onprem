@@ -3,11 +3,7 @@
     <div>
       <h6 class="card-title">{{displayModel?.name}}</h6>
     </div>
-    <!--    <div class="btn-group">-->
-    <!--      <button class="btn active">Day</button>-->
-    <!--      <button class="btn">Week</button>-->
-    <!--      <button class="btn">Month</button>-->
-    <!--    </div>-->
+    <ng-content select="[header]"></ng-content>
   </div>
   <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed" class="card-body">
     <p class="az-content-text mg-b-20">A formally or informally recognized grouping of people or organizations formed for the purpose of achieving some form of collective action. Includes companies, institutions, corporations, departments, community groups, healthcare practice groups, payer/insurer, etc.</p>

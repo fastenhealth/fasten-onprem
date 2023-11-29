@@ -12,7 +12,7 @@ import {TableComponent} from "../../common/table/table.component";
 @Component({
   standalone: true,
   imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, RouterModule],
-  selector: 'app-practitioner',
+  selector: 'fhir-practitioner',
   templateUrl: './practitioner.component.html',
   styleUrls: ['./practitioner.component.scss']
 })

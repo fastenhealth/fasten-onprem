@@ -9574,6 +9574,11 @@ parent-module@^1.0.0:
   dependencies:
     callsites "^3.0.0"
 
+parse-full-name@^1.2.6:
+  version "1.2.6"
+  resolved "https://registry.npmjs.org/parse-full-name/-/parse-full-name-1.2.6.tgz#97e2643c0167b79ca404dab254ea79e89b025704"
+  integrity sha512-uIaENXJFmZfzulBndhHJayi7ZEifJ1bXKaWYmySa04EmMX7eIcsufiAgWTYiJqWRa/Sq7JWPGtCIXFAoUfF7gw==
+
 parse-json@^5.0.0:
   version "5.2.0"
   resolved "https://registry.npmjs.org/parse-json/-/parse-json-5.2.0.tgz#c76fc66dee54231c962b22bcc8a72cf2f99753cd"

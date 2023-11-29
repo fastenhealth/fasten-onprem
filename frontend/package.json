@@ -51,6 +51,7 @@
     "ngx-highlightjs": "^7.0.1",
     "ngx-infinite-scroll": "^14.0.0",
     "ngx-moment": "^6.0.2",
+    "parse-full-name": "^1.2.6",
     "rxjs": "~6.5.4",
     "tslib": "^2.0.0",
     "uuid": "^9.0.0",

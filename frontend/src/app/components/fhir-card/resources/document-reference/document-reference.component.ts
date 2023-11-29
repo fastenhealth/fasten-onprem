@@ -14,7 +14,7 @@ import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.
 @Component({
   standalone: true,
   imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, RouterModule, BinaryComponent],
-  selector: 'app-document-reference',
+  selector: 'fhir-document-reference',
   templateUrl: './document-reference.component.html',
   styleUrls: ['./document-reference.component.scss']
 })

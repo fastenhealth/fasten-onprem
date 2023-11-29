@@ -22,7 +22,7 @@
 
     <div>
       <div class="d-flex">
-        <div ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-pills flex-column col-lg-2 col-md-4 bg-gray-200 pd-20" orientation="vertical">
+        <div ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-pills flex-column col-xl-2 col-lg-3 col-md-4 bg-gray-200 pd-20" orientation="vertical">
         <ng-container ngbNavItem="encounter">
           <a class="nav-link" ngbNavLink>Encounter</a>
           <ng-template ngbNavContent>
@@ -224,46 +224,20 @@
             <fhir-card *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']" [showDetails]="false" [displayModel]="practitioner" [isCollapsed]="true"></fhir-card>
 
             <ng-container formArrayName="practitioners">
-              <div class="card mg-t-10 pd-20" [formGroup]="practitionerGroup" *ngFor="let practitionerGroup of practitioners.controls; let i = index">
+              <ng-container *ngFor="let practitionerGroup of practitioners.controls; let i = index">
                 <div *ngIf="debugMode" class="alert alert-warning">
                   <strong>Practitioner Status: {{practitionerGroup.status}}</strong>
                 </div>
-                <div class="tx-right">
-                  <span class="cursor-pointer" (click)="deletePractitioner(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
-                </div>
-
-                <div class="row row-sm">
-                  <input formControlName="id" class="form-control" type="hidden">
-
-                  <div class="col-lg-6 mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
-                    <input formControlName="name" class="form-control" readonly placeholder="Input box" type="text">
-                  </div><!-- col -->
-                  <div class="col-lg-6 mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Type<span ngbTooltip="required" class="text-danger">*</span></p>
-                    <app-nlm-typeahead formControlName="profession"  searchType="MedicalContactIndividualProfession" [debugMode]="debugMode"></app-nlm-typeahead>
-                  </div><!-- col -->
-                  <div class="col-lg mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Telephone</p>
-                    <input formControlName="phone" class="form-control" placeholder="(123) 456-7890" type="text">
-                  </div><!-- col -->
-                  <div class="col-lg mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Fax</p>
-                    <input formControlName="fax" class="form-control" placeholder="(123) 456-7890" type="text">
-                  </div><!-- col -->
-                  <div class="col-lg mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Email</p>
-                    <input formControlName="email" class="form-control" placeholder="email@example.com" type="text">
-                  </div><!-- col -->
-                  <div class="col-lg mg-t-10 mg-lg-t-0">
-                    <p class="mg-b-10">Address</p>
-                    <input formControlName="address" class="form-control" placeholder="Input box" type="text">
-                  </div><!-- col -->
-
-                </div><!-- row -->
-
-              </div>
+                <fhir-practitioner class="fhir-card-callout-warning" [formGroup]="practitionerGroup"  [showDetails]="false" [displayModel]="practitionerGroup.controls.data.value" [isCollapsed]="true">
+                  <div header>
+                    <span class="cursor-pointer float-right" (click)="deletePractitioner(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                  </div>
+                </fhir-practitioner>
+              </ng-container>
             </ng-container>
+
+
+
 
             <div class="row pt-2">
               <div class="col-lg-4 col-md-4">
@@ -285,17 +259,16 @@
             <fhir-card *ngFor="let organization of existingEncounter?.related_resources?.['Organization']" [showDetails]="false" [displayModel]="organization" [isCollapsed]="true"></fhir-card>
 
             <ng-container formArrayName="organizations">
-              <div class="bd-callout-warning card card-fhir-resource" [formGroup]="organizationGroup" *ngFor="let organizationGroup of organizations.controls; let i = index">
+              <ng-container *ngFor="let organizationGroup of organizations.controls; let i = index">
                 <div *ngIf="debugMode" class="alert alert-warning">
                   <strong>Organization Status: {{organizationGroup.status}}</strong>
                 </div>
-                <div class="card-header">
-                  <div>
-                    <h6 class="card-title">{{organizationGroup.controls.name.value}}</h6>
+                <fhir-organization class="fhir-card-callout-warning" [formGroup]="organizationGroup"  [showDetails]="false" [displayModel]="organizationGroup.controls.data.value" [isCollapsed]="true">
+                  <div header>
+                    <span class="cursor-pointer float-right" (click)="deleteOrganization(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
                   </div>
-                  <span class="cursor-pointer float-right" (click)="deleteOrganization(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
-                </div>
-              </div>
+                </fhir-organization>
+              </ng-container>
             </ng-container>
 
             <div class="row pt-2">
@@ -375,7 +348,7 @@
           </ng-template>
         </ng-container>
       </div>
-        <div [ngbNavOutlet]="nav" class="col-lg-10 col-md-8"></div>
+        <div [ngbNavOutlet]="nav" class="col-xl-10 col-lg-9 col-md-8"></div>
       </div>
     </div>
 

@@ -162,29 +162,15 @@ export class MedicalRecordWizardComponent implements OnInit {
   addPractitioner(openPractitionerResult: { data:PractitionerModel, action: 'find'|'create' }){
     let practitioner = openPractitionerResult.data;
     const practitionerGroup = new FormGroup({
-      source_id: new FormControl(practitioner.source_id),
-      id: new FormControl(practitioner.source_resource_id, Validators.required),
-      identifier: new FormControl(practitioner.identifier || []),
-      telecom: new FormControl(practitioner.telecom || []),
-      name: new FormControl(practitioner.name, Validators.required),
-      profession: new FormControl(practitioner.qualification, Validators.required),
-      address: new FormControl(practitioner.address),
+      data: new FormControl(practitioner),
     });
-
     this.practitioners.push(practitionerGroup);
   }
   addOrganization(openOrganizationResult: { data:OrganizationModel, action: 'find'|'create' }) {
     let organization = openOrganizationResult.data;
     const organizationGroup = new FormGroup({
-      source_id: new FormControl(organization.source_id),
-      id: new FormControl(organization.source_resource_id, Validators.required),
-      identifier: new FormControl(organization.identifier || []),
-      telecom: new FormControl(organization.telecom || []),
-      name: new FormControl(organization.name, Validators.required),
-      type: new FormControl(organization.type),
-      address: new FormControl(organization.addresses?.[0]),
+      data: new FormControl(organization),
     });
-
     this.organizations.push(organizationGroup);
   }
   addAttachment(attachment: ResourceCreateAttachment){

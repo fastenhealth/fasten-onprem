@@ -15,6 +15,7 @@ import {AddressModel} from '../../../lib/models/datatypes/address-model';
 import {CodableConceptModel} from '../../../lib/models/datatypes/codable-concept-model';
 import {uuidV4} from '../../../lib/utils/uuid';
 import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
+import {parseFullName}  from 'parse-full-name'
 
 @Component({
   standalone: true,
@@ -113,7 +114,7 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
     let model = new PractitionerModel({})
     model.source_resource_id = form.get('id').value
     model.identifier = form.get('identifier').value
-    model.name = form.get('name').value
+    model.name = []
     model.address = address
     model.telecom = []
     model.qualification = []
@@ -140,6 +141,17 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
     }
     if(form.get('profession').value) {
       model.qualification =  [form.get('profession').value.identifier]
+    }
+    if(form.get('name').value) {
+      let nameParts = parseFullName(form.get('name').value)
+      model.name.push({
+        givenName: nameParts.first,
+        familyName: nameParts.last,
+        suffix: nameParts.suffix,
+        textName: form.get('name').value,
+        use: 'work',
+        displayName: form.get('name').value,
+      })
     }
 
     if(!model.source_resource_id){
