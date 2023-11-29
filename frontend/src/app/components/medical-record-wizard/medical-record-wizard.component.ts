@@ -29,6 +29,7 @@ import {GenerateR4Bundle} from '../../pages/resource-creator/resource-creator.ut
 import {EncounterModel} from '../../../lib/models/resources/encounter-model';
 import {SharedModule} from '../shared.module';
 import {FhirCardModule} from '../fhir-card/fhir-card.module';
+import {OrganizationModel} from '../../../lib/models/resources/organization-model';
 
 @Component({
   standalone: true,
@@ -178,16 +179,16 @@ export class MedicalRecordWizardComponent implements OnInit {
 
     this.practitioners.push(practitionerGroup);
   }
-  addOrganization(organization: ResourceCreateOrganization){
+  addOrganization(openOrganizationResult: { data:OrganizationModel, action: 'find'|'create' }) {
+    let organization = openOrganizationResult.data;
     const organizationGroup = new FormGroup({
-      id: new FormControl(organization.id, Validators.required),
-      identifier: new FormControl(organization.identifier),
+      source_id: new FormControl(organization.source_id),
+      id: new FormControl(organization.source_resource_id, Validators.required),
+      identifier: new FormControl(organization.identifier || []),
+      telecom: new FormControl(organization.telecom || []),
       name: new FormControl(organization.name, Validators.required),
       type: new FormControl(organization.type),
-      phone: new FormControl(organization.phone, Validators.pattern('[- +()0-9]+')),
-      fax: new FormControl(organization.fax, Validators.pattern('[- +()0-9]+')),
-      email: new FormControl(organization.email, Validators.email),
-      address: new FormControl(organization.address),
+      address: new FormControl(organization.addresses?.[0]),
     });
 
     this.organizations.push(organizationGroup);
@@ -243,11 +244,10 @@ export class MedicalRecordWizardComponent implements OnInit {
       (result) => {
         console.log('Closing, saving form', result);
         //add this to the list of organization
-        result.id = uuidV4();
         this.addOrganization(result);
         if(formGroup && controlName){
           //set this practitioner to the current select box
-          formGroup.get(controlName).setValue(result.id);
+          formGroup.get(controlName).setValue(result.data.id);
         }
       },
       (err) => {

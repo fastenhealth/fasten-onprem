@@ -8,6 +8,14 @@ import {FhirDatatableModule} from '../fhir-datatable/fhir-datatable.module';
 import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {ResponseWrapper} from '../../models/response-wrapper';
+import {OrganizationModel} from '../../../lib/models/resources/organization-model';
+import {CodingModel} from '../../../lib/models/datatypes/coding-model';
+import {AddressModel} from '../../../lib/models/datatypes/address-model';
+import {CodableConceptModel} from '../../../lib/models/datatypes/codable-concept-model';
+import {uuidV4} from '../../../lib/utils/uuid';
+import {fhirModelFactory} from '../../../lib/models/factory';
+import {ResourceFhir} from '../../models/fasten/resource_fhir';
+import {ResourceType} from '../../../lib/models/constants';
 
 @Component({
   standalone: true,
@@ -35,7 +43,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
   newOrganizationForm: FormGroup //ResourceCreateOrganization
 
   //find tab options
-  selectedOrganization: FastenDisplayModel
+  selectedOrganization: {source_resource_id: string,source_resource_type: ResourceType, resource: ResourceFhir} = null
   totalOrganizations: number = 0
   constructor(
     public activeModal: NgbActiveModal,
@@ -64,7 +72,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
       this.selectedOrganization = null
     }
   }
-  selectionChanged(event: FastenDisplayModel) {
+  selectionChanged(event) {
     console.log("SELECTION CHANGED", event)
     this.selectedOrganization = event
   }
@@ -79,17 +87,71 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
       if(this.newOrganizationForm.valid){
         this.activeModal.close({
           action: this.activeId,
-          data: this.newOrganizationForm.getRawValue()
+          data: this.organizationFormToDisplayModel(this.newOrganizationForm)
         });
       }
     } else if(this.activeId == 'find'){
       if(this.selectedOrganization != null){
         this.activeModal.close({
           action: this.activeId,
-          data: this.selectedOrganization
+          data: fhirModelFactory(this.selectedOrganization.source_resource_type, this.selectedOrganization.resource)
         });
       }
     }
+  }
+
+  private organizationFormToDisplayModel(form: FormGroup): OrganizationModel {
+    let address = new AddressModel(null)
+    address.city = form.get('address').get('city').value
+    address.line = [
+      form.get('address').get('line1').value,
+      form.get('address').get('line2').value,
+    ]
+    address.state = form.get('address').get('state').value
+    address.country = form.get('address').get('country').value
+    address.postalCode = form.get('address').get('zip').value
+
+    let model = new OrganizationModel({})
+    model.source_resource_id = form.get('id').value
+    model.identifier = form.get('identifier').value
+    model.name = form.get('name').value
+    model.addresses = [address]
+    model.telecom = []
+    model.type = []
+    if (form.get('phone').value) {
+      model.telecom.push({
+        system: 'phone',
+        value: form.get('phone').value,
+        use: 'work'
+      })
+    }
+    if(form.get('fax').value) {
+      model.telecom.push({
+        system: 'fax',
+        value: form.get('fax').value,
+        use: 'work'
+      })
+    }
+    if(form.get('email').value) {
+      model.telecom.push({
+        system: 'email',
+        value: form.get('email').value,
+        use: 'work'
+      })
+    }
+    if(form.get('type').value) {
+      let codableConcept = new CodableConceptModel({})
+      codableConcept.coding = [form.get('type').value.identifier]
+      codableConcept.text = form.get('type').value.text
+      model.type.push(codableConcept)
+    }
+
+    if(!model.source_resource_id){
+      console.warn("No source_resource_id set for Organization, generating one")
+      model.source_resource_id = uuidV4();
+    }
+
+    return model
   }
 
   private resetOrganizationForm(){
@@ -99,6 +161,9 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
     this.newOrganizationTypeaheadForm.valueChanges.subscribe(form => {
       console.log("CHANGE Organization IN MODAL", form)
       let val = form.data
+      if(val.id){
+        this.newOrganizationForm.get('id').setValue(val.id)
+      }
       if(val.provider_type) {
         this.newOrganizationForm.get('type').setValue(val.provider_type)
       }
@@ -126,6 +191,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
     });
 
     this.newOrganizationForm = new FormGroup({
+      id: new FormControl(null),
       identifier: new FormControl([]),
       name: new FormControl(null, Validators.required),
       type: new FormControl(null, Validators.required),

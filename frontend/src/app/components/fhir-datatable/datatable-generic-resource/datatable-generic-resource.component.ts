@@ -106,6 +106,7 @@ export class DatatableGenericResourceComponent implements OnInit, ResourceListCo
 
     this.rows = resourceList.map((resource) => {
       let row = {
+        resource: resource,
         source_id: resource.source_id,
         source_resource_type: resource.source_resource_type,
         source_resource_id: resource.source_resource_id

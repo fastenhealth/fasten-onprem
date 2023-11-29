@@ -179,6 +179,7 @@ export interface ResourceCreatePractitioner {
   "address": Address,
 }
 
+// @deprecated - replaced by OrganizationModel display model
 export interface ResourceCreateOrganization {
   "id"?: string,
   "identifier": CodingModel[]
