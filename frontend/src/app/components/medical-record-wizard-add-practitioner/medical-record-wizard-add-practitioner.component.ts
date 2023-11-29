@@ -4,6 +4,17 @@ import {CommonModule} from '@angular/common';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NlmTypeaheadComponent} from '../nlm-typeahead/nlm-typeahead.component';
 import {HighlightModule} from 'ngx-highlightjs';
+import {FhirDatatableModule} from '../fhir-datatable/fhir-datatable.module';
+import {ResourceType} from '../../../lib/models/constants';
+import {ResourceFhir} from '../../models/fasten/resource_fhir';
+import {FastenApiService} from '../../services/fasten-api.service';
+import {ResponseWrapper} from '../../models/response-wrapper';
+import {fhirModelFactory} from '../../../lib/models/factory';
+import {OrganizationModel} from '../../../lib/models/resources/organization-model';
+import {AddressModel} from '../../../lib/models/datatypes/address-model';
+import {CodableConceptModel} from '../../../lib/models/datatypes/codable-concept-model';
+import {uuidV4} from '../../../lib/utils/uuid';
+import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
 
 @Component({
   standalone: true,
@@ -13,7 +24,9 @@ import {HighlightModule} from 'ngx-highlightjs';
     FormsModule,
     NlmTypeaheadComponent,
     HighlightModule,
-    NgbTooltipModule
+    NgbTooltipModule,
+    NgbNavModule,
+    FhirDatatableModule
   ],
   selector: 'app-medical-record-wizard-add-practitioner',
   templateUrl: './medical-record-wizard-add-practitioner.component.html',
@@ -22,21 +35,119 @@ import {HighlightModule} from 'ngx-highlightjs';
 export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
   @Input() debugMode: boolean = false;
 
+  activeId: string = 'find'
+
   newPractitionerTypeaheadForm: FormGroup
   newPractitionerForm: FormGroup //ResourceCreatePractitioner
 
-  constructor(public activeModal: NgbActiveModal) { }
+  //find tab options
+  selectedPractitioner: {source_resource_id: string,source_resource_type: ResourceType, resource: ResourceFhir} = null
+  totalPractitioners: number = 0
+
+  constructor(
+    public activeModal: NgbActiveModal,
+    private fastenApi: FastenApiService,
+  ) { }
 
   ngOnInit(): void {
     this.resetPractitionerForm()
+
+    //get a count of all the known practitioners
+    this.fastenApi.queryResources({
+      "select": [],
+      "from": "Practitioner",
+      "where": {},
+      "aggregations": {
+        "count_by": {"field": "*"}
+      }
+    }).subscribe((resp: ResponseWrapper) => {
+      this.totalPractitioners = resp.data?.[0].value
+    })
+  }
+  changeTab(id: string) {
+    if(this.activeId != id){
+      this.activeId = id
+      this.resetPractitionerForm()
+      this.selectedPractitioner = null
+    }
+  }
+  selectionChanged(event) {
+    console.log("SELECTION CHANGED", event)
+    this.selectedPractitioner = event
+  }
+  get submitEnabled() {
+    return (this.activeId == 'create' && this.newPractitionerForm.valid) ||
+      (this.activeId == 'find' && this.selectedPractitioner != null)
   }
 
   submit() {
-    this.newPractitionerForm.markAllAsTouched()
-    this.newPractitionerTypeaheadForm.markAllAsTouched()
-    if(this.newPractitionerForm.valid){
-      this.activeModal.close(this.newPractitionerForm.getRawValue());
+    if(this.activeId == 'create'){
+      this.newPractitionerForm.markAllAsTouched()
+      if(this.newPractitionerForm.valid){
+        this.activeModal.close({
+          action: this.activeId,
+          data: this.practitionerFormToDisplayModel(this.newPractitionerForm)
+        });
+      }
+    } else if(this.activeId == 'find'){
+      if(this.selectedPractitioner != null){
+        this.activeModal.close({
+          action: this.activeId,
+          data: fhirModelFactory(this.selectedPractitioner.source_resource_type, this.selectedPractitioner.resource)
+        });
+      }
     }
+  }
+
+  private practitionerFormToDisplayModel(form: FormGroup): PractitionerModel {
+    let address = new AddressModel(null)
+    address.city = form.get('address').get('city').value
+    address.line = [
+      form.get('address').get('line1').value,
+      form.get('address').get('line2').value,
+    ]
+    address.state = form.get('address').get('state').value
+    address.country = form.get('address').get('country').value
+    address.postalCode = form.get('address').get('zip').value
+
+    let model = new PractitionerModel({})
+    model.source_resource_id = form.get('id').value
+    model.identifier = form.get('identifier').value
+    model.name = form.get('name').value
+    model.address = address
+    model.telecom = []
+    model.qualification = []
+    if (form.get('phone').value) {
+      model.telecom.push({
+        system: 'phone',
+        value: form.get('phone').value,
+        use: 'work'
+      })
+    }
+    if(form.get('fax').value) {
+      model.telecom.push({
+        system: 'fax',
+        value: form.get('fax').value,
+        use: 'work'
+      })
+    }
+    if(form.get('email').value) {
+      model.telecom.push({
+        system: 'email',
+        value: form.get('email').value,
+        use: 'work'
+      })
+    }
+    if(form.get('profession').value) {
+      model.qualification =  [form.get('profession').value.identifier]
+    }
+
+    if(!model.source_resource_id){
+      console.warn("No source_resource_id set for Organization, generating one")
+      model.source_resource_id = uuidV4();
+    }
+
+    return model
   }
 
   private resetPractitionerForm(){
@@ -46,6 +157,9 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
     this.newPractitionerTypeaheadForm.valueChanges.subscribe(form => {
       console.log("CHANGE INDIVIDUAL IN MODAL", form)
       let val = form.data
+      if(val.id){
+        this.newPractitionerForm.get('id').setValue(val.id)
+      }
       if(val.provider_type){
         this.newPractitionerForm.get('profession').setValue(val.provider_type)
       }
@@ -75,6 +189,7 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
 
 
     this.newPractitionerForm = new FormGroup({
+      id: new FormControl(null),
       identifier: new FormControl([]),
       name: new FormControl(null, Validators.required),
       profession: new FormControl(null, Validators.required),

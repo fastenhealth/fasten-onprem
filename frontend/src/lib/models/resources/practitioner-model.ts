@@ -22,7 +22,7 @@ export class PractitionerModel extends FastenDisplayModel {
   telecom: { system?: string, value?: string, use?: string }[]|undefined
   address: AddressModel|undefined
   birthdate: string|undefined
-  qualification: { code: string, system: string }[]|undefined
+  qualification: CodingModel[]|undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)

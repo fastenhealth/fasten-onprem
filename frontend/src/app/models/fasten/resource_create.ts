@@ -168,6 +168,7 @@ export interface ResourceCreateProcedure {
   "attachments": ResourceCreateAttachment[],
 }
 
+// @deprecated - replaced by PractitionerModel display model
 export interface ResourceCreatePractitioner {
   "id"?: string,
   "identifier": CodingModel[]

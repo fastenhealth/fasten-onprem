@@ -30,6 +30,7 @@ import {EncounterModel} from '../../../lib/models/resources/encounter-model';
 import {SharedModule} from '../shared.module';
 import {FhirCardModule} from '../fhir-card/fhir-card.module';
 import {OrganizationModel} from '../../../lib/models/resources/organization-model';
+import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
 
 @Component({
   standalone: true,
@@ -158,23 +159,16 @@ export class MedicalRecordWizardComponent implements OnInit {
 
     this.procedures.push(procedureGroup);
   }
-  addPractitioner(practitioner: ResourceCreatePractitioner){
+  addPractitioner(openPractitionerResult: { data:PractitionerModel, action: 'find'|'create' }){
+    let practitioner = openPractitionerResult.data;
     const practitionerGroup = new FormGroup({
-      id: new FormControl(practitioner.id, Validators.required),
-      identifier: new FormControl(practitioner.identifier),
-      profession: new FormControl(practitioner.profession, Validators.required),
+      source_id: new FormControl(practitioner.source_id),
+      id: new FormControl(practitioner.source_resource_id, Validators.required),
+      identifier: new FormControl(practitioner.identifier || []),
+      telecom: new FormControl(practitioner.telecom || []),
       name: new FormControl(practitioner.name, Validators.required),
-      phone: new FormControl(practitioner.phone, Validators.pattern('[- +()0-9]+')),
-      fax: new FormControl(practitioner.fax, Validators.pattern('[- +()0-9]+')),
-      email: new FormControl(practitioner.email, Validators.email),
-      address: new FormGroup({
-        line1: new FormControl(practitioner.address.line1),
-        line2: new FormControl(practitioner.address.line2),
-        city: new FormControl(practitioner.address.city),
-        state: new FormControl(practitioner.address.state),
-        zip: new FormControl(practitioner.address.zip),
-        country: new FormControl(practitioner.address.country),
-      }),
+      profession: new FormControl(practitioner.qualification, Validators.required),
+      address: new FormControl(practitioner.address),
     });
 
     this.practitioners.push(practitionerGroup);
@@ -220,11 +214,10 @@ export class MedicalRecordWizardComponent implements OnInit {
       (result) => {
         console.log('Closing, saving form', result);
         // add this to the list of organization
-        result.id = uuidV4();
         this.addPractitioner(result);
         if(formGroup && controlName){
           //set this practitioner to the current select box
-          formGroup.get(controlName).setValue(result.id);
+          formGroup.get(controlName).setValue(result.data.source_resource_id);
         }
       },
       (err) => {
@@ -247,7 +240,7 @@ export class MedicalRecordWizardComponent implements OnInit {
         this.addOrganization(result);
         if(formGroup && controlName){
           //set this practitioner to the current select box
-          formGroup.get(controlName).setValue(result.data.id);
+          formGroup.get(controlName).setValue(result.data.source_resource_id);
         }
       },
       (err) => {
