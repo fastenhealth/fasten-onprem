@@ -1,7 +1,7 @@
 <div class="card  card-fhir-resource">
   <div class="card-header" (click)="isCollapsed = ! isCollapsed">
     <div>
-      <h6 class="card-title">{{displayModel?.sort_title}}</h6>
+      <h6 class="card-title">{{displayModel?.sort_title || displayModel?.code?.text}}</h6>
       <p class="card-text tx-gray-400" *ngIf="displayModel?.period_start"><strong>Start date</strong> {{displayModel?.period_start | date}}</p>
     </div>
     <!--    <div class="btn-group">-->

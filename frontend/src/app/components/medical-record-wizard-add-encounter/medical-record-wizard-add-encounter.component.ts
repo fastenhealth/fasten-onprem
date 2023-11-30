@@ -12,6 +12,7 @@ import {ResponseWrapper} from '../../models/response-wrapper';
 import {fhirModelFactory} from '../../../lib/models/factory';
 import {RecResourceRelatedDisplayModel} from '../../../lib/utils/resource_related_display_model';
 import {EncounterModel} from '../../../lib/models/resources/encounter-model';
+import {uuidV4} from '../../../lib/utils/uuid';
 
 @Component({
   standalone: true,
@@ -37,7 +38,6 @@ export class MedicalRecordWizardAddEncounterComponent implements OnInit {
   activeId: string = 'find'
 
   //create tab options
-  newEncounterTypeaheadForm: FormGroup
   newEncounterForm: FormGroup //ResourceCreateEncounter
 
   //find tab options
@@ -82,11 +82,11 @@ export class MedicalRecordWizardAddEncounterComponent implements OnInit {
 
   submit() {
     if(this.activeId == 'create'){
-      this.newEncounterTypeaheadForm.markAllAsTouched()
+      this.newEncounterForm.markAllAsTouched()
       if(this.newEncounterForm.valid){
         this.activeModal.close({
           action: this.activeId,
-          // data: this.encounterFormToDisplayModel(this.newEncounterForm)
+          data: this.encounterFormToDisplayModel(this.newEncounterForm)
         });
       }
     } else if(this.activeId == 'find'){
@@ -126,15 +126,32 @@ export class MedicalRecordWizardAddEncounterComponent implements OnInit {
     }
   }
 
+  private encounterFormToDisplayModel(form: FormGroup): EncounterModel {
+    let encounter = new EncounterModel({})
+    encounter.code = form.get('code').value
+
+    if(form.get('period_start').value){
+      let period_start = form.get('period_start').value
+      encounter.period_start = (new Date(period_start.year, period_start.month-1, period_start.day)).toISOString()
+    }
+    if(form.get('period_end').value){
+      let period_end = form.get('period_end').value
+      encounter.period_end = (new Date(period_end.year, period_end.month-1, period_end.day)).toISOString()
+    }
+    if(!encounter.source_resource_id){
+      encounter.source_resource_id = uuidV4();
+    }
+    return encounter
+  }
+
   private resetEncounterForm(){
 
     this.newEncounterForm = new FormGroup({
       id: new FormControl(null),
       identifier: new FormControl([]),
+      code: new FormControl(null, Validators.required),
       period_start: new FormControl(null, Validators.required),
       period_end: new FormControl(null),
-      participant: new FormControl(null),
-      location: new FormControl(null, Validators.pattern('[- +()0-9]+')),
     })
 
   }

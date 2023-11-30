@@ -39,7 +39,7 @@
           <ng-container [formGroup]="newEncounterForm">
             <div class="col-12">
               <p class="mg-b-10">Encounter Type<span ngbTooltip="required" class="text-danger">*</span></p>
-              <app-nlm-typeahead formControlName="classification" searchType="EncounterServiceType" [debugMode]="debugMode"></app-nlm-typeahead>
+              <app-nlm-typeahead formControlName="code" searchType="EncounterServiceType" [debugMode]="debugMode"></app-nlm-typeahead>
             </div><!-- col -->
             <div class="col-6 mg-t-10 mg-lg-t-0">
               <p class="mg-b-10">Start<span ngbTooltip="required" class="text-danger">*</span></p>
@@ -47,12 +47,7 @@
             </div><!-- col -->
             <div class="col-6 mg-t-10 mg-lg-t-0">
               <p class="mg-b-10">End</p>
-              <input formControlName="period_end" [minDate]="newEncounterForm.get('started').value" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cde="ngbDatepicker" (click)="cde.toggle()">
-            </div><!-- col -->
-
-            <div class="col-lg">
-              <p class="mg-b-10">Description/Comment</p>
-              <textarea formControlName="description" rows="3" class="form-control" placeholder="Textarea"></textarea>
+              <input formControlName="period_end" [minDate]="newEncounterForm.get('period_start').value" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cde="ngbDatepicker" (click)="cde.toggle()">
             </div><!-- col -->
           </ng-container>
         </div>
