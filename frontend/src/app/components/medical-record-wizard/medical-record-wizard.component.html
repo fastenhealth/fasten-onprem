@@ -32,11 +32,20 @@
                 An Encounter refers to a meeting or interaction with a healthcare provider, such as a doctor's appointment, surgery or a visit to discuss and address your health concerns
               </p>
             </div>
-            <fhir-card [showDetails]="false" [displayModel]="existingEncounter" [isCollapsed]="true"></fhir-card>
+            <div *ngIf="existingEncounter; else addEncounter">
+              <fhir-card [showDetails]="false" [displayModel]="existingEncounter" [isCollapsed]="true"></fhir-card>
+            </div>
+            <ng-template #addEncounter>
+              <div class="row pt-2">
+                <div class="col-lg-4 col-md-4">
+                  <button type="button" (click)="openEncounterModal()" class="btn btn-outline-indigo btn-block">Find/Create Encounter</button>
+                </div>
+              </div>
+            </ng-template>
 
           </ng-template>
         </ng-container>
-        <ng-container ngbNavItem="medications">
+        <ng-container ngbNavItem="medications" [disabled]="!existingEncounter">
           <a class="nav-link" ngbNavLink>
             Medications <span class="badge badge-pill badge-warning align-middle" *ngIf="medications.controls.length">{{medications.controls.length}}</span>
           </a>
@@ -136,7 +145,7 @@
 
           </ng-template>
         </ng-container>
-        <ng-container ngbNavItem="procedures">
+        <ng-container ngbNavItem="procedures" [disabled]="!existingEncounter">
           <a class="nav-link" ngbNavLink>
             Procedures <span class="badge badge-pill badge-warning align-middle" *ngIf="procedures.controls.length">{{procedures.controls.length}}</span>
           </a>
@@ -174,7 +183,7 @@
                       <option value="" hidden selected>Select Practitioner</option>
                       <option value="" (click)="openPractitionerModal(procedureGroup, 'performer')">New Practitioner</option>
 
-                      <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner'].length" class="divider">---</optgroup>
+                      <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner']?.length" class="divider">---</optgroup>
                       <option *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']; let i = index" [value]="practitioner.source_resource_id">
                         {{practitioner?.name | humanName }} ({{practitioner?.profession?.text}})
                       </option>
@@ -192,7 +201,7 @@
                       <option value="" hidden selected>Select Location</option>
                       <option value="" (click)="openOrganizationModal( procedureGroup, 'location')">New Organization</option>
 
-                      <optgroup *ngIf="existingEncounter?.related_resources?.['Organization'].length" class="divider">---</optgroup>
+                      <optgroup *ngIf="existingEncounter?.related_resources?.['Organization']?.length" class="divider">---</optgroup>
                       <option *ngFor="let organization of existingEncounter?.related_resources?.['Organization']; let i = index" [value]="organization.source_resource_id">
                         {{organization?.name }}
                       </option>
@@ -237,7 +246,7 @@
 
           </ng-template>
         </ng-container>
-        <ng-container ngbNavItem="practitioners">
+        <ng-container ngbNavItem="practitioners" [disabled]="!existingEncounter">
           <a class="nav-link" ngbNavLink>
             Practitioners <span class="badge badge-pill badge-warning align-middle" *ngIf="practitioners.controls.length">{{practitioners.controls.length}}</span>
           </a>
@@ -273,7 +282,7 @@
 
           </ng-template>
         </ng-container>
-        <ng-container ngbNavItem="organizations">
+        <ng-container ngbNavItem="organizations" [disabled]="!existingEncounter">
           <a class="nav-link" ngbNavLink>
             Organizations <span class="badge badge-pill badge-warning align-middle" *ngIf="organizations.controls.length">{{organizations.controls.length}}</span>
           </a>
@@ -306,7 +315,7 @@
             </div>
           </ng-template>
         </ng-container>
-        <ng-container ngbNavItem="labresults">
+        <ng-container ngbNavItem="labresults" [disabled]="!existingEncounter">
           <a class="nav-link" ngbNavLink>
             Lab Results
           </a>
@@ -330,7 +339,7 @@
             </p>
           </ng-template>
         </ng-container>
-        <ng-container ngbNavItem="attachments">
+        <ng-container ngbNavItem="attachments" [disabled]="!existingEncounter">
           <a class="nav-link" ngbNavLink>
             Attachments <span class="badge badge-pill badge-warning align-middle" *ngIf="attachments.controls.length">{{attachments.controls.length}}</span>
           </a>

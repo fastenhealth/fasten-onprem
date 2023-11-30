@@ -1486,4 +1486,94 @@ export class NlmClinicalTableSearchService {
     // return of(result)
   }
 
+  //https://hl7.org/fhir/r4/v3/ActEncounterCode/vs.html
+  //manually created for patient understanding
+  searchEncounterClassification(searchTerm: string): Observable<NlmSearchResults[]> {
+
+    let searchOptions: NlmSearchResults[] = [
+      {
+        id: "AMB",
+        identifier: [{
+          code: "AMB",
+          display: "ambulatory",
+          system: "http://terminology.hl7.org/CodeSystem/v3-ActCode"
+        }],
+        text: "Routine Check-up or Preventive Visit"
+      },
+      {
+        id: "EMER",
+        identifier: [{
+          code: "EMER",
+          display: "emergency",
+          system: "http://terminology.hl7.org/CodeSystem/v3-ActCode"
+        }],
+        text: "Emergency Room (ER) Visit"
+      },
+      {
+        id: "HH",
+        identifier: [{
+          code: "HH",
+          display: "home health",
+          system: "http://terminology.hl7.org/CodeSystem/v3-ActCode"
+        }],
+        text: "Home Health"
+      },
+      {
+        id: "IMP",
+        identifier: [{
+          code: "IMP",
+          display: "inpatient encounter",
+          system: "http://terminology.hl7.org/CodeSystem/v3-ActCode"
+        }],
+        text: "Hospital Admission involving overnight stay, room, board, and ongoing nursing care."
+      },
+      {
+        id: "SS",
+        identifier: [{
+          code: "SS",
+          display: "short stay",
+          system: "http://terminology.hl7.org/CodeSystem/v3-ActCode"
+        }],
+        text: "Brief Hospital Admission for a predetermined period, typically less than 24 hours."
+      },
+      {
+        id: "VR",
+        identifier: [{
+          code: "VR",
+          display: "virtual",
+          system: "http://terminology.hl7.org/CodeSystem/v3-ActCode"
+        }],
+        text: "Virtual/Telemedicine Appointment"
+      }
+    ]
+    let result = searchTerm.length == 0 ? searchOptions : searchOptions.filter((v) => v['text'].toLowerCase().indexOf(searchTerm.toLowerCase()) > -1).slice(0, 10)
+    return of(result)
+  }
+
+  //https://hl7.org/fhir/r4/codesystem-service-type.html
+  searchEncounterServiceType(searchTerm: string): Observable<NlmSearchResults[]> {
+
+    //https://tx.fhir.org/r4/ValueSet/$expand?_format=json&filter=Referral&url=http://hl7.org/fhir/ValueSet/service-type&incomplete-ok=true
+    let queryParams = {
+      '_format': 'json',
+      'filter':searchTerm,
+      'url': 'http://hl7.org/fhir/ValueSet/service-type',
+      'incomplete-ok': 'true'
+    }
+
+    return this._httpClient.get<any>(`https://tx.fhir.org/r4/ValueSet/$expand`, {params: queryParams})
+      .pipe(
+        map((response) => {
+
+          return (response.expansion.contains || []).map((valueSetItem):NlmSearchResults => {
+            return {
+              id: valueSetItem.code,
+              identifier: [valueSetItem],
+              text: valueSetItem.display,
+            }
+          })
+        })
+      )
+  }
+
 }

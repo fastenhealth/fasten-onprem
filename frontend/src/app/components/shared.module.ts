@@ -34,6 +34,7 @@ import { MedicalRecordWizardAddOrganizationComponent } from './medical-record-wi
 import { MedicalRecordWizardAddAttachmentComponent } from './medical-record-wizard-add-attachment/medical-record-wizard-add-attachment.component';
 import {FhirCardModule} from './fhir-card/fhir-card.module';
 import {FhirDatatableModule} from './fhir-datatable/fhir-datatable.module';
+import { MedicalRecordWizardAddEncounterComponent } from './medical-record-wizard-add-encounter/medical-record-wizard-add-encounter.component';
 
 @NgModule({
   imports: [
@@ -66,6 +67,7 @@ import {FhirDatatableModule} from './fhir-datatable/fhir-datatable.module';
     MedicalRecordWizardAddPractitionerComponent,
     MedicalRecordWizardAddOrganizationComponent,
     MedicalRecordWizardAddAttachmentComponent,
+    MedicalRecordWizardAddEncounterComponent,
 
   ],
   declarations: [
@@ -100,17 +102,17 @@ import {FhirDatatableModule} from './fhir-datatable/fhir-datatable.module';
         ReportMedicalHistoryTimelinePanelComponent,
 
       //standalone components
-        GlossaryLookupComponent,
-        GridstackComponent,
-        GridstackItemComponent,
-        LoadingSpinnerComponent,
-        MedicalSourcesCategoryLookupPipe,
-        MedicalRecordWizardComponent,
-        NlmTypeaheadComponent,
-        MedicalRecordWizardAddPractitionerComponent,
-        MedicalRecordWizardAddOrganizationComponent,
-        MedicalRecordWizardAddAttachmentComponent,
-
+      GlossaryLookupComponent,
+      GridstackComponent,
+      GridstackItemComponent,
+      LoadingSpinnerComponent,
+      MedicalRecordWizardAddAttachmentComponent,
+      MedicalRecordWizardAddEncounterComponent,
+      MedicalRecordWizardAddOrganizationComponent,
+      MedicalRecordWizardAddPractitionerComponent,
+      MedicalRecordWizardComponent,
+      MedicalSourcesCategoryLookupPipe,
+      NlmTypeaheadComponent,
     ]
 })
 

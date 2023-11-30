@@ -190,6 +190,10 @@ export class FastenApiService {
     return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/query`, query)
   }
 
+  // requires:
+  // - source_id: string
+  // - source_resource_type: string
+  // - source_resource_id: string
   getResourceGraph(graphType?: string, selectedResourceIds?: Partial<ResourceFhir>[]): Observable<ResourceGraphResponse> {
     if(!graphType){
       graphType = "MedicalHistory"

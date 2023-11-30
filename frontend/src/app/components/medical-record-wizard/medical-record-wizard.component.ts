@@ -32,6 +32,9 @@ import {FhirCardModule} from '../fhir-card/fhir-card.module';
 import {OrganizationModel} from '../../../lib/models/resources/organization-model';
 import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
 import {PipesModule} from '../../pipes/pipes.module';
+import {
+  MedicalRecordWizardAddEncounterComponent
+} from '../medical-record-wizard-add-encounter/medical-record-wizard-add-encounter.component';
 
 @Component({
   standalone: true,
@@ -55,11 +58,11 @@ import {PipesModule} from '../../pipes/pipes.module';
 })
 export class MedicalRecordWizardComponent implements OnInit {
   @Input() existingEncounter: EncounterModel;
+  @Input()debugMode = false;
+  @Input() form!: FormGroup;
 
   active = 'encounter';
-  debugMode = false;
   submitWizardLoading = false;
-  @Input() form!: FormGroup;
 
 
   constructor(
@@ -73,13 +76,9 @@ export class MedicalRecordWizardComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = new FormGroup({
-      condition: new FormGroup({
-        data: new FormControl<NlmSearchResults>(null, Validators.required),
-        status: new FormControl(null, Validators.required),
-        started: new FormControl(null, Validators.required),
-        stopped: new FormControl(null),
-        description: new FormControl(null),
-      }),
+      encounter: new FormGroup({
+        data: new FormControl({}, Validators.required),
+      }, Validators.required),
 
       medications: new FormArray([]),
       procedures: new FormArray([]),
@@ -127,6 +126,11 @@ export class MedicalRecordWizardComponent implements OnInit {
   //</editor-fold>
 
   //<editor-fold desc="Form Add">
+  addEncounter(openEncounterResult: { data:EncounterModel, action: 'find'|'create' }){
+    let encounter = openEncounterResult.data;
+    this.existingEncounter = encounter;
+    this.form.get("encounter").get('data').setValue(encounter);
+  }
   addMedication(){
     const medicationGroup = new FormGroup({
       data: new FormControl<NlmSearchResults>(null, Validators.required),
@@ -191,6 +195,26 @@ export class MedicalRecordWizardComponent implements OnInit {
   //</editor-fold>
 
   //<editor-fold desc="Open Modals">
+  openEncounterModal() {
+    let modalRef = this.modalService.open(MedicalRecordWizardAddEncounterComponent, {
+      ariaLabelledBy: 'modal-encounter',
+      size: 'lg',
+    })
+    modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.result.then(
+      (result) => {
+        console.log('Closing, saving form', result);
+        // add this to the list of organization
+        //TODO
+        this.addEncounter(result);
+      },
+      (err) => {
+        console.log('Closed without saving', err);
+      },
+    );
+
+  }
+
   openPractitionerModal(formGroup?: AbstractControl, controlName?: string) {
     // this.resetPractitionerForm()
     let modalRef = this.modalService.open(MedicalRecordWizardAddPractitionerComponent, {
