@@ -65,7 +65,7 @@ export class DiagnosticReportModel extends FastenDisplayModel {
       this.performer = _.get(fhirResource, 'performer.0');
     }
     this.has_performer = !!this.performer;
-    this.category_coding = _.get(fhirResource, 'category.coding');
+    this.category_coding = _.get(fhirResource, 'category');
     this.has_category_coding = Array.isArray(this.category_coding);
 
     this.presented_form = _.get(fhirResource, 'presentedForm', []).map((attachment: any) => {

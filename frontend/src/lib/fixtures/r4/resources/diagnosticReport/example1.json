@@ -73,19 +73,21 @@
     }
   ],
   "status": "final",
-  "category": {
-    "coding": [
-      {
-        "system": "http://snomed.info/sct",
-        "code": "252275004",
-        "display": "Haematology test"
-      },
-      {
-        "system": "http://hl7.org/fhir/v2/0074",
-        "code": "HM"
-      }
-    ]
-  },
+  "category": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "252275004",
+          "display": "Haematology test"
+        },
+        {
+          "system": "http://hl7.org/fhir/v2/0074",
+          "code": "HM"
+        }
+      ]
+    }
+  ],
   "code": {
     "coding": [
       {
