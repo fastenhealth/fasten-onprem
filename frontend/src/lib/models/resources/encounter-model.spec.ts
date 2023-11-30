@@ -27,8 +27,8 @@ describe('EncounterModel', () => {
 
     it('should parse example2.json', () => {
       let expected = new EncounterModel({})
-      expected.period_end = '2015-01-17T16:30:00+10:00'
-      expected.period_start = '2015-01-17T16:00:00+10:00'
+      expected.period_end = '2015-01-17T16:30:00Z'
+      expected.period_start = '2015-01-17T16:00:00Z'
       expected.has_participant = true
       expected.location_display = 'Client\'s home'
       // encounterType: string | undefined
@@ -56,6 +56,11 @@ describe('EncounterModel', () => {
       expected.encounter_type = [ { coding: [ Object({ system: 'http://snomed.info/sct', code: '11429006', display: 'Consultation' }) ] } ]
       expected.resource_class = 'ambulatory'
       expected.resource_status = 'finished'
+      expected.reasonCode = [
+        {
+          text: 'The patient had fever peaks over the last couple of days. He is worried about these peaks.'
+        }
+      ]
       expected.participant = [
         { display: undefined,
           reference: Object({ reference: 'Practitioner/f201' }),

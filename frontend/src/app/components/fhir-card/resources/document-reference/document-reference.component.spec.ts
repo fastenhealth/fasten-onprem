@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DocumentReferenceComponent } from './document-reference.component';
 import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('DocumentReferenceComponent', () => {
   let component: DocumentReferenceComponent;
@@ -9,8 +10,8 @@ describe('DocumentReferenceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NgbCollapseModule],
-      declarations: [ DocumentReferenceComponent ]
+      imports: [NgbCollapseModule, DocumentReferenceComponent, RouterTestingModule],
+      declarations: [  ]
     })
     .compileComponents();
 

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReportMedicalHistoryTimelinePanelComponent } from './report-medical-history-timeline-panel.component';
+import {MomentModule} from 'ngx-moment';
 
 describe('ReportMedicalHistoryTimelinePanelComponent', () => {
   let component: ReportMedicalHistoryTimelinePanelComponent;
@@ -8,6 +9,7 @@ describe('ReportMedicalHistoryTimelinePanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [ MomentModule ],
       declarations: [ ReportMedicalHistoryTimelinePanelComponent ]
     })
     .compileComponents();

@@ -9,9 +9,7 @@ describe('MediaComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MediaComponent ],
-      imports: [NgbCollapseModule, RouterTestingModule],
-
+      imports: [NgbCollapseModule, RouterTestingModule, MediaComponent],
     })
     .compileComponents();
 

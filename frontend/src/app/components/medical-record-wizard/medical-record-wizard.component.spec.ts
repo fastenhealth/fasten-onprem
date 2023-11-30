@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MedicalRecordWizardComponent } from './medical-record-wizard.component';
+import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
+import {HttpClient} from '@angular/common/http';
 
 describe('MedicalRecordWizardComponent', () => {
   let component: MedicalRecordWizardComponent;
@@ -8,7 +12,11 @@ describe('MedicalRecordWizardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MedicalRecordWizardComponent ]
+      imports: [ MedicalRecordWizardComponent, HttpClientTestingModule ],
+      providers: [ NgbActiveModal, NgbModal, {
+        provide: HTTP_CLIENT_TOKEN,
+        useClass: HttpClient,
+      } ],
     })
     .compileComponents();
 

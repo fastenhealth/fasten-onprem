@@ -8,7 +8,7 @@ describe('FallbackComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FallbackComponent ]
+      imports: [ FallbackComponent ]
     })
     .compileComponents();
 
