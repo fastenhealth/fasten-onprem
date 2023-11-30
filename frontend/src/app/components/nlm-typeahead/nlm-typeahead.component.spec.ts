@@ -13,9 +13,8 @@ describe('NlmTypeaheadComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        NgbTypeaheadModule
+        NgbTypeaheadModule, NlmTypeaheadComponent
       ],
-      declarations: [ NlmTypeaheadComponent ],
       providers: [{
         provide: NlmClinicalTableSearchService,
         useValue: jasmine.createSpyObj('NlmClinicalTableSearchService', [

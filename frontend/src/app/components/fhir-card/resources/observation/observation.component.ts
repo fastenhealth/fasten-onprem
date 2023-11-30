@@ -103,6 +103,9 @@ export class ObservationComponent implements OnInit {
   constructor(public changeRef: ChangeDetectorRef, public router: Router) { }
 
   ngOnInit(): void {
+    if(!this.displayModel){
+      return
+    }
 
     this.tableData.push(    {
         label: 'Issued on',
@@ -136,13 +139,13 @@ export class ObservationComponent implements OnInit {
     //populate chart data
 
     this.barChartLabels.push(
-      formatDate(this.displayModel.effective_date, "mediumDate", "en-US", undefined)
+      formatDate(this.displayModel?.effective_date, "mediumDate", "en-US", undefined)
     )
 
-    this.barChartData[0].data = [[this.displayModel.reference_range?.[0]?.low?.value, this.displayModel.reference_range?.[0]?.high?.value]]
-    this.barChartData[1].data = [[this.displayModel.value_quantity_value as number, this.displayModel.value_quantity_value as number]]
+    this.barChartData[0].data = [[this.displayModel?.reference_range?.[0]?.low?.value, this.displayModel?.reference_range?.[0]?.high?.value]]
+    this.barChartData[1].data = [[this.displayModel?.value_quantity_value as number, this.displayModel?.value_quantity_value as number]]
 
-    let suggestedMax = (this.displayModel.value_quantity_value as number) * 1.1;
+    let suggestedMax = (this.displayModel?.value_quantity_value as number) * 1.1;
     this.barChartOptions.scales['x']['suggestedMax'] = suggestedMax
 
     console.log("Observation chart data: ", this.barChartData[0].data, this.barChartData[1].data)
