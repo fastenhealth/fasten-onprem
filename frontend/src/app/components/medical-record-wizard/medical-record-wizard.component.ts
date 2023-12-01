@@ -86,6 +86,8 @@ export class MedicalRecordWizardComponent implements OnInit {
       organizations: new FormArray([]),
       attachments: new FormArray([]),
     });
+
+    this.addEncounter({data: this.existingEncounter, action: 'find'});
   }
 
   //<editor-fold desc="Getters">
@@ -105,7 +107,6 @@ export class MedicalRecordWizardComponent implements OnInit {
     return this.form.controls["attachments"] as FormArray;
   }
   //</editor-fold>
-
 
   //<editor-fold desc="Delete Functions">
   deleteMedication(index: number) {
@@ -129,8 +130,13 @@ export class MedicalRecordWizardComponent implements OnInit {
   addEncounter(openEncounterResult: { data:EncounterModel, action: 'find'|'create' }){
     let encounter = openEncounterResult.data;
     this.existingEncounter = encounter;
-    this.form.get("encounter").get('data').setValue(encounter);
+
+    let clonedEncounter = this.deepClone(encounter) as EncounterModel;
+    clonedEncounter.related_resources = {};
+
+    this.form.get("encounter").get('data').setValue(clonedEncounter);
   }
+
   addMedication(){
     const medicationGroup = new FormGroup({
       data: new FormControl<NlmSearchResults>(null, Validators.required),
@@ -317,4 +323,12 @@ export class MedicalRecordWizardComponent implements OnInit {
 
     }
   }
+
+
+  //<editor-fold desc="Helpers">
+  private deepClone(obj: any):any {
+    return JSON.parse(JSON.stringify(obj));
+  }
+  //</editor-fold>
+
 }
