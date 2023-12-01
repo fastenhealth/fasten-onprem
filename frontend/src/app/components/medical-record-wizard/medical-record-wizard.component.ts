@@ -58,7 +58,7 @@ import {
 })
 export class MedicalRecordWizardComponent implements OnInit {
   @Input() existingEncounter: EncounterModel;
-  @Input()debugMode = false;
+  @Input() debugMode = false;
   @Input() form!: FormGroup;
 
   active = 'encounter';
