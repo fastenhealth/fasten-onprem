@@ -162,6 +162,25 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
     this.newOrganizationTypeaheadForm.valueChanges.subscribe(form => {
       console.log("CHANGE Organization IN MODAL", form)
       let val = form.data
+
+      if(val == null){
+        //reset the dependant fields (user cleared the text box)
+        this.newOrganizationForm.get('id').setValue(null)
+        this.newOrganizationForm.get('type').setValue(null)
+        this.newOrganizationForm.get('identifier').setValue(null);
+        this.newOrganizationForm.get('phone').setValue(null);
+        this.newOrganizationForm.get('fax').setValue(null);
+        let addressGroup = this.newOrganizationForm.get('address')
+        addressGroup.get('line1').setValue(null)
+        addressGroup.get('line2').setValue(null)
+        addressGroup.get('city').setValue(null)
+        addressGroup.get('state').setValue(null)
+        addressGroup.get('zip').setValue(null)
+        addressGroup.get('country').setValue(null)
+        this.newOrganizationForm.get('name').setValue(null);
+        return
+      }
+
       if(val.id){
         this.newOrganizationForm.get('id').setValue(val.id)
       }

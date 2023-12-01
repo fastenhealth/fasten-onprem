@@ -170,6 +170,25 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
     this.newPractitionerTypeaheadForm.valueChanges.subscribe(form => {
       console.log("CHANGE INDIVIDUAL IN MODAL", form)
       let val = form.data
+      if(val == null){
+        //reset the dependant fields (user cleared the text box)
+        this.newPractitionerForm.get('id').setValue(null)
+        this.newPractitionerForm.get('profession').setValue(null)
+        this.newPractitionerForm.get('identifier').setValue(null);
+        this.newPractitionerForm.get('phone').setValue(null);
+        this.newPractitionerForm.get('fax').setValue(null);
+        let addressGroup = this.newPractitionerForm.get('address')
+        addressGroup.get('line1').setValue(null)
+        addressGroup.get('line2').setValue(null)
+        addressGroup.get('city').setValue(null)
+        addressGroup.get('state').setValue(null)
+        addressGroup.get('zip').setValue(null)
+        addressGroup.get('country').setValue(null)
+        this.newPractitionerForm.get('name').setValue(null);
+        return
+      }
+
+
       if(val.id){
         this.newPractitionerForm.get('id').setValue(val.id)
       }
