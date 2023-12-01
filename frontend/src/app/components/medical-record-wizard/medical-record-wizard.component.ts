@@ -337,6 +337,7 @@ export class MedicalRecordWizardComponent implements OnInit {
 
   //<editor-fold desc="Helpers">
   private deepClone(obj: any):any {
+    if(!obj) return obj;
     return JSON.parse(JSON.stringify(obj));
   }
   //</editor-fold>
