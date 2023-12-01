@@ -22,7 +22,7 @@
 
     <div>
       <div class="d-flex">
-        <div ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-pills flex-column col-xl-2 col-lg-3 col-md-4 bg-gray-200 pd-20" orientation="vertical">
+        <div ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-pills flex-column col-xl-3 col-lg-3 col-md-4 bg-gray-200 pd-20" orientation="vertical">
         <ng-container ngbNavItem="encounter">
           <a class="nav-link" ngbNavLink>Encounter</a>
           <ng-template ngbNavContent>
@@ -389,7 +389,7 @@
           </ng-template>
         </ng-container>
       </div>
-        <div [ngbNavOutlet]="nav" class="col-xl-10 col-lg-9 col-md-8"></div>
+        <div [ngbNavOutlet]="nav" class="col-xl-9 col-lg-9 col-md-8"></div>
       </div>
     </div>
 
