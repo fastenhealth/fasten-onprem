@@ -8,7 +8,7 @@ import {BinaryModel} from "../../../../../lib/models/resources/binary-model";
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<BinaryTextComponent> = {
-  title: 'Fhir/Datatypes/BinaryText',
+  title: 'Fhir Card/Datatypes/BinaryText',
   component: BinaryTextComponent,
   decorators: [
     // moduleMetadata({

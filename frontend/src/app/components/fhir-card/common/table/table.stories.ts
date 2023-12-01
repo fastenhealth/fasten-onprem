@@ -5,7 +5,7 @@ import {FastenDisplayModel} from "../../../../../lib/models/fasten/fasten-displa
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<TableComponent> = {
-  title: 'Fhir/Common/Table',
+  title: 'Fhir Card/Common/Table',
   component: TableComponent,
   decorators: [
     // moduleMetadata({

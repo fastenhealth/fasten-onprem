@@ -6,7 +6,7 @@ import {ImgComponent} from "./img.component";
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<ImgComponent> = {
-  title: 'Fhir/Datatypes/Img',
+  title: 'Fhir Card/Datatypes/Img',
   component: ImgComponent,
   decorators: [
     // moduleMetadata({

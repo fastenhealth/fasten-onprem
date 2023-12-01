@@ -6,7 +6,7 @@ import {DicomComponent} from "./dicom.component";
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<DicomComponent> = {
-  title: 'Fhir/Datatypes/Dicom',
+  title: 'Fhir Card/Datatypes/Dicom',
   component: DicomComponent,
   decorators: [
     // moduleMetadata({

@@ -1,15 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import {fhirVersions} from "../../../../../lib/models/constants";
-import R4Example1Json from "../../../../../lib/fixtures/r4/resources/binary/exampleHtml.json";
+import R4Example1Json from "../../../../../lib/fixtures/r4/resources/binary/exampleMarkdown.json";
 import {BinaryModel} from "../../../../../lib/models/resources/binary-model";
-import {HtmlComponent} from "./html.component";
-
-
+import {MarkdownComponent} from "./markdown.component";
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
-const meta: Meta<HtmlComponent> = {
-  title: 'Fhir Card/Datatypes/Html',
-  component: HtmlComponent,
+const meta: Meta<MarkdownComponent> = {
+  title: 'Fhir Card/Datatypes/Markdown',
+  component: MarkdownComponent,
   decorators: [
     // moduleMetadata({
     //   imports: [AppModule]
@@ -19,7 +17,7 @@ const meta: Meta<HtmlComponent> = {
     // }),
   ],
   tags: ['autodocs'],
-  render: (args: HtmlComponent) => ({
+  render: (args: MarkdownComponent) => ({
     props: {
       backgroundColor: null,
       ...args,
@@ -33,7 +31,7 @@ const meta: Meta<HtmlComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<HtmlComponent>;
+type Story = StoryObj<MarkdownComponent>;
 
 // More on writing stories with args: https://storybook.js.org/docs/angular/writing-stories/args
 let aiDisplayModel1 =  new BinaryModel(R4Example1Json, fhirVersions.R4)

@@ -3,7 +3,7 @@ import {BadgeComponent} from "./badge.component";
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<BadgeComponent> = {
-  title: 'Fhir/Common/Badge',
+  title: 'Fhir Card/Common/Badge',
   component: BadgeComponent,
   decorators: [
     // moduleMetadata({
