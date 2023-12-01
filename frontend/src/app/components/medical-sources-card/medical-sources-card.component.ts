@@ -30,6 +30,8 @@ export class MedicalSourcesCardComponent implements OnInit {
     }
     if(sourceItem.source?.source_type == 'manual') {
       return 'Uploaded ' + moment(sourceItem.source?.created_at).format('MMM DD, YYYY')
+    } else if(sourceItem.source?.source_type == 'fasten'){
+      return 'Fasten Health'
     }
     return "Unknown"
   }

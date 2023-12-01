@@ -18,7 +18,7 @@
     </button>
   </div>
 
-  <div class="modal-body">
+  <div *ngIf="modalSelectedSourceListItem.source?.source_type != 'fasten'; else fastenSourceDescription" class="modal-body">
     <h6>Manage Source</h6>
     <p>Existing connections can be "Synced", "Reconnected" or "Deleted"</p>
     <ul>
@@ -27,13 +27,23 @@
       <li><p><strong>Delete</strong> - Delete all resources for this healthcare provider. This will ONLY effect data stored in Fasten</p></li>
     </ul>
   </div>
+  <ng-template #fastenSourceDescription>
+    <div class="modal-body">
+      <h6>Fasten Health</h6>
+      <p>This source contains all medical records that are created manually in the Fasten Health app.
+      It will be empty initially.</p>
+      <ul>
+        <li><p><strong>Explore</strong> - View the medical records that you have created</p></li>
+      </ul>
+    </div>
+  </ng-template>
 
   <div class="modal-footer">
 
     <a routerLink="/explore/{{modalSelectedSourceListItem?.source?.id}}" (click)="modal.close()" class="btn btn-indigo mr-auto">Explore</a>
 
 
-    <div class="d-inline-block" ngbDropdown>
+    <div *ngIf="modalSelectedSourceListItem.source?.source_type != 'fasten'" class="d-inline-block" ngbDropdown>
       <button
         type="button"
         class="btn btn-outline-indigo"
@@ -44,7 +54,7 @@
       <div ngbDropdownMenu aria-labelledby="dropdownManual">
         <button *ngIf="modalSelectedSourceListItem.source?.source_type != 'manual'" ngbDropdownItem (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>
         <button *ngIf="modalSelectedSourceListItem.source?.source_type != 'manual'" ngbDropdownItem (click)="sourceReconnectHandler(modalSelectedSourceListItem)" type="button" class="btn btn-danger">Reconnect</button>
-        <button ngbDropdownItem (click)="sourceDeleteHandler()" type="button" class="btn btn-danger">Delete</button>
+        <button  ngbDropdownItem (click)="sourceDeleteHandler()" type="button" class="btn btn-danger">Delete</button>
       </div>
     </div>
     <button (click)="modal.dismiss('Close click')" type="button" class="btn btn-outline-light">Close</button>

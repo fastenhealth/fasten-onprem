@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"strings"
 	"time"
 
@@ -53,6 +54,17 @@ func (gr *GormRepository) CreateUser(ctx context.Context, user *models.User) err
 	if err != nil {
 		return err
 	}
+
+	//create Fasten source credential for this user.
+	fastenUserCred := models.SourceCredential{
+		UserID:     user.ID,
+		SourceType: sourcePkg.SourceTypeFasten,
+	}
+	fastenUserCredResp := gr.GormClient.Create(&fastenUserCred)
+	if fastenUserCredResp.Error != nil {
+		return fastenUserCredResp.Error
+	}
+
 	return nil
 }
 func (gr *GormRepository) GetUserByUsername(ctx context.Context, username string) (*models.User, error) {
@@ -565,6 +577,8 @@ func (gr *GormRepository) FindResourceAssociationsByTypeAndId(ctx context.Contex
 // - add AddResourceAssociation for all resources linked to the Composition resource
 // - store the Composition resource
 // TODO: determine if we should be using a List Resource instead of a Composition resource
+//
+// Deprecated: This method has been deprecated. It has been replaced in favor of Fasten SourceCredential & associations
 func (gr *GormRepository) AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceBase) error {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
