@@ -45,6 +45,7 @@ export class FhirDatatableComponent implements OnInit, OnChanges {
   @Input() source: Source;
   @Input() resourceListType: string;
   @Input() selectedTotalElements: number;
+  @Input() disabledResourceIds: string[] = [];
 
   //location to dynamically load the resource list
   @ViewChild(FhirDatatableOutletDirective, {static: true}) resourceListOutlet!: FhirDatatableOutletDirective;
@@ -73,6 +74,10 @@ export class FhirDatatableComponent implements OnInit, OnChanges {
       componentRef.instance.resourceListType = this.resourceListType;
       componentRef.instance.sourceId = this.source.id;
       componentRef.instance.markForCheck()
+      if(this.disabledResourceIds){
+        componentRef.instance.disabledResourceIds = this.disabledResourceIds
+      }
+
       componentRef.instance.selectionChanged.subscribe((selected: FastenDisplayModel) => {
         this.router.navigateByUrl(`/explore/${selected?.source_id}/resource/${selected?.source_resource_id}`);
       })

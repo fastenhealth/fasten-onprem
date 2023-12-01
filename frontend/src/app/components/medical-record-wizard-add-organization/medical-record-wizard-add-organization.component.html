@@ -28,6 +28,7 @@
               resourceListType="Organization"
               [totalElements]="totalOrganizations"
               (selectionChanged)="selectionChanged($event)"
+              [disabledResourceIds]="disabledResourceIds"
             ></fhir-datatable-organization>
           </div>
         </div>

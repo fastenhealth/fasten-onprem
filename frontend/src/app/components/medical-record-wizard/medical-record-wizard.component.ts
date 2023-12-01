@@ -222,12 +222,17 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
 
   openPractitionerModal(formGroup?: AbstractControl, controlName?: string) {
+    let disabledResourceIds = [];
+    disabledResourceIds.push(...(this.practitioners?.value || []).map(practitioner => practitioner.data.source_resource_id));
+    disabledResourceIds.push(...(this.existingEncounter?.related_resources?.['Practitioner'] || []).map(practitioner => practitioner.source_resource_id));
+
     // this.resetPractitionerForm()
     let modalRef = this.modalService.open(MedicalRecordWizardAddPractitionerComponent, {
       ariaLabelledBy: 'modal-practitioner',
       size: 'lg',
     })
     modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.componentInstance.disabledResourceIds = disabledResourceIds;
     modalRef.result.then(
       (result) => {
         console.log('Closing, saving form', result);
@@ -246,11 +251,16 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
 
   openOrganizationModal(formGroup?: AbstractControl, controlName?: string) {
+    let disabledResourceIds = [];
+    disabledResourceIds.push(...(this.organizations?.value || []).map(org => org.data.source_resource_id));
+    disabledResourceIds.push(...(this.existingEncounter?.related_resources?.['Organization'] || []).map(org => org.source_resource_id));
+
     let modalRef = this.modalService.open(MedicalRecordWizardAddOrganizationComponent, {
       ariaLabelledBy: 'modal-organization',
       size: 'lg',
     })
     modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.componentInstance.disabledResourceIds = disabledResourceIds;
     modalRef.result.then(
       (result) => {
         console.log('Closing, saving form', result);

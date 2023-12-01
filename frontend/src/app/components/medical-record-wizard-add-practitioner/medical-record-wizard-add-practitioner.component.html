@@ -28,6 +28,7 @@
               resourceListType="Practitioner"
               [totalElements]="totalPractitioners"
               (selectionChanged)="selectionChanged($event)"
+              [disabledResourceIds]="disabledResourceIds"
             ></fhir-datatable-practitioner>
           </div>
         </div>

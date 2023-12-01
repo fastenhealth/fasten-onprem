@@ -12,6 +12,7 @@
     [offset]="currentPage.offset"
     [limit]="20"
     [rows]="rows"
+    [selectCheck]="selectCheck()"
     [selectionType]="SelectionType.single"
     (select)="onSelect($event)"
     (page)="changePage($event)"

@@ -35,6 +35,7 @@ import {parseFullName}  from 'parse-full-name'
 })
 export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
   @Input() debugMode: boolean = false;
+  @Input() disabledResourceIds: string[] = [];
 
   activeId: string = 'find'
 

@@ -35,6 +35,7 @@ import {ResourceType} from '../../../lib/models/constants';
 })
 export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
   @Input() debugMode: boolean = false;
+  @Input() disabledResourceIds: string[] = [];
 
   activeId: string = 'find'
 

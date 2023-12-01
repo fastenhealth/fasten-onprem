@@ -11,6 +11,7 @@ export interface ResourceListComponentInterface {
   resourceListType: string;
   totalElements: number;
   sourceId: string;
+  disabledResourceIds: string[];
 
   //outputs
   selectionChanged: EventEmitter<FastenDisplayModel>
@@ -42,6 +43,7 @@ export class DatatableGenericResourceComponent implements OnInit, ResourceListCo
   @Input() totalElements: number;
   @Input() resourceListType: string;
   @Input() sourceId: string;
+  @Input() disabledResourceIds: string[] = [];
   @Output() selectionChanged: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>();
 
   currentPage: PageInfo = {offset: 0}
@@ -131,10 +133,20 @@ export class DatatableGenericResourceComponent implements OnInit, ResourceListCo
    * @param selected
    */
   onSelect({ selected }) {
-    console.log('Select Event', selected);
     this.selectionChanged.emit(selected[0])
   }
 
+  //check to see if this row should be selectable
+  // if the row is in the disabled list, it should not be selectable
+  selectCheck(): (any) => boolean {
+    return function(row) {
+      let canSelect = this.disabledResourceIds.indexOf(row.source_resource_id) === -1
+      if(!canSelect){
+        console.warn(`Row id '${row.source_resource_id}' is disabled, cannot select`)
+      }
+      return canSelect
+    }.bind(this)
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

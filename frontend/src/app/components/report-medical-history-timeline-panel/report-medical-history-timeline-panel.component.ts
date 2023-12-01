@@ -26,7 +26,6 @@ export class ReportMedicalHistoryTimelinePanelComponent implements OnInit {
   }
 
   diagnosticReportLink(diagnosticReportRaw: FastenDisplayModel): string {
-    console.log('diagnosticReportRaw', diagnosticReportRaw)
     let diagnosticReport = diagnosticReportRaw as DiagnosticReportModel
     return diagnosticReport?.is_category_lab_report ?
       '/labs/report/'+ diagnosticReport?.source_id + '/' + diagnosticReport?.source_resource_type + '/' + diagnosticReport?.source_resource_id :
