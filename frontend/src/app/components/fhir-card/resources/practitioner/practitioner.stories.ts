@@ -10,7 +10,7 @@ import {PractitionerModel} from "../../../../../lib/models/resources/practitione
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<PractitionerComponent> = {
-  title: 'Fhir/Practitioner',
+  title: 'Fhir Card/Practitioner',
   component: PractitionerComponent,
   decorators: [
     // moduleMetadata({

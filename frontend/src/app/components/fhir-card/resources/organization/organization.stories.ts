@@ -1,17 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import {fhirVersions} from "../../../../../lib/models/constants";
-import R4Example1Json from "../../../../../lib/fixtures/r4/resources/procedure/example1.json";
-import R4Example2Json from "../../../../../lib/fixtures/r4/resources/procedure/example2.json";
-import R4Example3Json from "../../../../../lib/fixtures/r4/resources/procedure/example3.json";
-import {ProcedureComponent} from "./procedure.component";
-import {ProcedureModel} from "../../../../../lib/models/resources/procedure-model";
+import R4Example1Json from "../../../../../lib/fixtures/r4/resources/organization/example1.json";
+import R4Example2Json from "../../../../../lib/fixtures/r4/resources/organization/example2.json";
+import R4Example3Json from "../../../../../lib/fixtures/r4/resources/organization/example3.json";
+import {OrganizationComponent} from "./organization.component";
+import {OrganizationModel} from "../../../../../lib/models/resources/organization-model";
 
 
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
-const meta: Meta<ProcedureComponent> = {
-  title: 'Fhir Card/Procedure',
-  component: ProcedureComponent,
+const meta: Meta<OrganizationComponent> = {
+  title: 'Fhir Card/Organization',
+  component: OrganizationComponent,
   decorators: [
     // moduleMetadata({
     //   imports: [AppModule]
@@ -21,7 +21,7 @@ const meta: Meta<ProcedureComponent> = {
     // }),
   ],
   tags: ['autodocs'],
-  render: (args: ProcedureComponent) => ({
+  render: (args: OrganizationComponent) => ({
     props: {
       backgroundColor: null,
       ...args,
@@ -38,10 +38,10 @@ const meta: Meta<ProcedureComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<ProcedureComponent>;
+type Story = StoryObj<OrganizationComponent>;
 
 // More on writing stories with args: https://storybook.js.org/docs/angular/writing-stories/args
-let r4Example1DisplayModel =  new ProcedureModel(R4Example1Json, fhirVersions.R4)
+let r4Example1DisplayModel =  new OrganizationModel(R4Example1Json, fhirVersions.R4)
 r4Example1DisplayModel.source_id = '123-456-789'
 r4Example1DisplayModel.source_resource_id = '123-456-789'
 export const R4Example1: Story = {
@@ -50,7 +50,7 @@ export const R4Example1: Story = {
   }
 };
 
-let r4Example2DisplayModel =  new ProcedureModel(R4Example2Json, fhirVersions.R4)
+let r4Example2DisplayModel =  new OrganizationModel(R4Example2Json, fhirVersions.R4)
 r4Example2DisplayModel.source_id = '123-456-789'
 r4Example2DisplayModel.source_resource_id = '123-456-789'
 export const R4Example2: Story = {
@@ -59,7 +59,7 @@ export const R4Example2: Story = {
   }
 };
 
-let r4Example3DisplayModel =  new ProcedureModel(R4Example3Json, fhirVersions.R4)
+let r4Example3DisplayModel =  new OrganizationModel(R4Example3Json, fhirVersions.R4)
 r4Example3DisplayModel.source_id = '123-456-789'
 r4Example3DisplayModel.source_resource_id = '123-456-789'
 export const R4Example3: Story = {
@@ -67,4 +67,3 @@ export const R4Example3: Story = {
     displayModel: r4Example3DisplayModel
   }
 };
-

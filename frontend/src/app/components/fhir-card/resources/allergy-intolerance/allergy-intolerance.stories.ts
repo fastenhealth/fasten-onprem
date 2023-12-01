@@ -10,7 +10,7 @@ import R4Example3Json from "../../../../../lib/fixtures/r4/resources/allergyInto
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<AllergyIntoleranceComponent> = {
-  title: 'Fhir/AllergyIntolerance',
+  title: 'Fhir Card/AllergyIntolerance',
   component: AllergyIntoleranceComponent,
   decorators: [
     // moduleMetadata({
@@ -51,8 +51,8 @@ export const R4Example1: Story = {
 };
 
 let aiDisplayModel2 =  new AllergyIntoleranceModel(R4Example2Json, fhirVersions.R4)
-aiDisplayModel1.source_id = '123-456-789'
-aiDisplayModel1.source_resource_id = '123-456-789'
+aiDisplayModel2.source_id = '123-456-789'
+aiDisplayModel2.source_resource_id = '123-456-789'
 export const R4Example2: Story = {
   args: {
     displayModel: aiDisplayModel2
@@ -60,8 +60,8 @@ export const R4Example2: Story = {
 };
 
 let aiDisplayModel3 =  new AllergyIntoleranceModel(R4Example3Json, fhirVersions.R4)
-aiDisplayModel1.source_id = '123-456-789'
-aiDisplayModel1.source_resource_id = '123-456-789'
+aiDisplayModel3.source_id = '123-456-789'
+aiDisplayModel3.source_resource_id = '123-456-789'
 export const R4Example3: Story = {
   args: {
     displayModel: aiDisplayModel3

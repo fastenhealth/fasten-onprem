@@ -18,7 +18,7 @@ import {HTTP_CLIENT_TOKEN} from '../../../../dependency-injection';
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<BinaryComponent> = {
-  title: 'Fhir/Binary',
+  title: 'Fhir Card/Binary',
   component: BinaryComponent,
   decorators: [
     moduleMetadata({

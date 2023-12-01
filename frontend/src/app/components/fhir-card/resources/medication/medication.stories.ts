@@ -10,7 +10,7 @@ import {MedicationModel} from "../../../../../lib/models/resources/medication-mo
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<MedicationComponent> = {
-  title: 'Fhir/Medication',
+  title: 'Fhir Card/Medication',
   component: MedicationComponent,
   decorators: [
     // moduleMetadata({

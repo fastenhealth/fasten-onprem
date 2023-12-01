@@ -10,7 +10,7 @@ import {ImmunizationModel} from "../../../../../lib/models/resources/immunizatio
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<ImmunizationComponent> = {
-  title: 'Fhir/Immunization',
+  title: 'Fhir Card/Immunization',
   component: ImmunizationComponent,
   decorators: [
     // moduleMetadata({

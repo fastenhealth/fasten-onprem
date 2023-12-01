@@ -11,7 +11,7 @@ import {MedicationRequestModel} from "../../../../../lib/models/resources/medica
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<MedicationRequestComponent> = {
-  title: 'Fhir/MedicationRequest',
+  title: 'Fhir Card/MedicationRequest',
   component: MedicationRequestComponent,
   decorators: [
     // moduleMetadata({
