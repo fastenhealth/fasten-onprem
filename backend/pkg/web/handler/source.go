@@ -122,6 +122,8 @@ func SourceSync(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "source": sourceCred, "data": summary})
 }
 
+// mimics functionality in CreateRelatedResources
+// mimics functionality in SourceSync
 func CreateManualSource(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)

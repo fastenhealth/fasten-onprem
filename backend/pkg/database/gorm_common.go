@@ -222,36 +222,81 @@ func (gr *GormRepository) UpsertRawResource(ctx context.Context, sourceCredentia
 	//note: these associations are not reciprocal, (i.e. if Procedure references Location, Location may not reference Procedure)
 	if rawResource.ReferencedResources != nil && len(rawResource.ReferencedResources) > 0 {
 		for _, referencedResource := range rawResource.ReferencedResources {
-			parts := strings.Split(referencedResource, "/")
-			if len(parts) != 2 {
-				continue
-			}
 
-			relatedResource := &models.ResourceBase{
-				OriginBase: models.OriginBase{
-					SourceID:           source.ID,
-					SourceResourceType: parts[0],
-					SourceResourceID:   parts[1],
-				},
-				RelatedResource: nil,
-			}
-			err := gr.AddResourceAssociation(
-				ctx,
-				source,
-				wrappedResourceModel.SourceResourceType,
-				wrappedResourceModel.SourceResourceID,
-				source,
-				relatedResource.SourceResourceType,
-				relatedResource.SourceResourceID,
-			)
-			if err != nil {
-				return false, err
+			var relatedResource *models.ResourceBase
+
+			if strings.HasPrefix(referencedResource, sourcePkg.FASTENHEALTH_URN_PREFIX) {
+				gr.Logger.Infof("parsing external urn:fastenhealth-fhir reference: %v", referencedResource)
+
+				targetSourceId, targetResourceType, targetResourceId, err := sourcePkg.ParseReferenceUri(&referencedResource)
+				if err != nil {
+					gr.Logger.Warnf("could not parse urn:fastenhealth-fhir reference: %v", referencedResource)
+					continue
+				}
+				err = gr.UpsertRawResourceAssociation(
+					ctx,
+					source.ID.String(),
+					wrappedResourceModel.SourceResourceType,
+					wrappedResourceModel.SourceResourceID,
+					targetSourceId,
+					targetResourceType,
+					targetResourceId,
+				)
+				if err != nil {
+					return false, err
+				}
+			} else {
+				parts := strings.Split(referencedResource, "/")
+				if len(parts) != 2 {
+					continue
+				}
+				relatedResource = &models.ResourceBase{
+					OriginBase: models.OriginBase{
+						SourceID:           source.ID,
+						SourceResourceType: parts[0],
+						SourceResourceID:   parts[1],
+					},
+					RelatedResource: nil,
+				}
+				err := gr.AddResourceAssociation(
+					ctx,
+					source,
+					wrappedResourceModel.SourceResourceType,
+					wrappedResourceModel.SourceResourceID,
+					source,
+					relatedResource.SourceResourceType,
+					relatedResource.SourceResourceID,
+				)
+				if err != nil {
+					return false, err
+				}
 			}
 		}
 	}
 
 	return gr.UpsertResource(ctx, wrappedResourceModel)
 
+}
+
+func (gr *GormRepository) UpsertRawResourceAssociation(
+	ctx context.Context,
+	sourceId string,
+	sourceResourceType string,
+	sourceResourceId string,
+	targetSourceId string,
+	targetResourceType string,
+	targetResourceId string,
+) error {
+	sourceCredential, err := gr.GetSource(ctx, sourceId)
+	if err != nil {
+		return err
+	}
+	targetSourceCredential, err := gr.GetSource(ctx, targetSourceId)
+	if err != nil {
+		return err
+	}
+	//SECURITY: sourceCredential and targetSourceCredential are guaranteed to be owned by the same user, and will be confirmed within the addAssociation function
+	return gr.AddResourceAssociation(ctx, sourceCredential, sourceResourceType, sourceResourceId, targetSourceCredential, targetResourceType, targetResourceId)
 }
 
 // UpsertResource
@@ -554,6 +599,7 @@ func (gr *GormRepository) FindResourceAssociationsByTypeAndId(ctx context.Contex
 			ResourceBaseSourceID:           source.ID,
 			ResourceBaseSourceResourceType: resourceType,
 			ResourceBaseSourceResourceID:   resourceId,
+			RelatedResourceUserID:          currentUser.ID,
 		}).
 		Find(&relatedResources)
 	return relatedResources, result.Error

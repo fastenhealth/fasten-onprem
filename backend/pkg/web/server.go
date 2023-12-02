@@ -74,7 +74,9 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.GET("/resource/fhir", handler.ListResourceFhir)
 				secure.POST("/resource/graph/:graphType", handler.GetResourceFhirGraph)
 				secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
+
 				secure.POST("/resource/composition", handler.CreateResourceComposition)
+				secure.POST("/resource/related", handler.CreateRelatedResources)
 
 				secure.GET("/dashboards", handler.GetDashboard)
 				secure.POST("/dashboards", handler.AddDashboardLocation)

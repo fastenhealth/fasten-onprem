@@ -2,13 +2,13 @@ import {FastenDisplayModel} from '../models/fasten/fasten-display-model';
 import {Reference, Resource} from 'fhir/r4';
 
 //this function is used to generate an id to a resource within this bundle
-export function internalResourceReferenceUri(resourceId: string): string {
-  return `urn:uuid:${resourceId}`
+export function internalResourceReferenceUri(resourceType: string, resourceId: string): string {
+  return `${resourceType}/${resourceId}`
 }
 
 //this function is used to generate an id to a resource outside this bundle, but owned by the same user in another source
 export function externalFastenResourceReferenceUri(sourceId: string, resourceType: string, resourceId: string): string {
-  return `urn:fastenhealth-id:${sourceId}:${resourceType}/${resourceId}`
+  return `urn:fastenhealth-fhir:${sourceId}:${resourceType}/${resourceId}`
 }
 
 export function generateReferenceUriFromResourceOrReference(displayModelOrResourceOrReference: FastenDisplayModel | Resource | Reference): string {
@@ -31,10 +31,10 @@ export function generateReferenceUriFromResourceOrReference(displayModelOrResour
     (displayModelOrResourceOrReference as FastenDisplayModel).source_resource_type &&
     (displayModelOrResourceOrReference as FastenDisplayModel).source_resource_id) {
     //internal reference (within this bundle), eg. urn:uuid:${resource.id}
-    return `${internalResourceReferenceUri((displayModelOrResourceOrReference as FastenDisplayModel).source_resource_id)}`
+    return `${internalResourceReferenceUri((displayModelOrResourceOrReference as FastenDisplayModel).source_resource_type, (displayModelOrResourceOrReference as FastenDisplayModel).source_resource_id)}`
   } else if((displayModelOrResourceOrReference as Resource).id && (displayModelOrResourceOrReference as Resource).resourceType) {
     //internal reference (within this bundle), eg. urn:uuid:${resource.id}
-    return `${internalResourceReferenceUri((displayModelOrResourceOrReference as Resource).id)}`
+    return `${internalResourceReferenceUri((displayModelOrResourceOrReference as Resource).resourceType, (displayModelOrResourceOrReference as Resource).id)}`
   } else {
     console.warn("Cannot determine resource id, this should not happen", displayModelOrResourceOrReference)
     throw new Error("Cannot find resource id")

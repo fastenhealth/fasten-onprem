@@ -25,7 +25,7 @@ import {
 import {
   MedicalRecordWizardAddAttachmentComponent
 } from '../medical-record-wizard-add-attachment/medical-record-wizard-add-attachment.component';
-import {GenerateR4ResourceList, WizardFhirResourceWrapper} from './medical-record-wizard.utilities';
+import {GenerateR4ResourceLookup, WizardFhirResourceWrapper} from './medical-record-wizard.utilities';
 import {EncounterModel} from '../../../lib/models/resources/encounter-model';
 import {SharedModule} from '../shared.module';
 import {FhirCardModule} from '../fhir-card/fhir-card.module';
@@ -35,7 +35,12 @@ import {PipesModule} from '../../pipes/pipes.module';
 import {
   MedicalRecordWizardAddEncounterComponent
 } from '../medical-record-wizard-add-encounter/medical-record-wizard-add-encounter.component';
-import {generateReferenceUriFromResourceOrReference} from '../../../lib/utils/bundle_references';
+import {generateReferenceUriFromResourceOrReference, internalResourceReferenceUri} from '../../../lib/utils/bundle_references';
+
+import {
+  FhirResource,
+  List, Reference
+} from 'fhir/r4';
 
 @Component({
   standalone: true,
@@ -320,25 +325,64 @@ export class MedicalRecordWizardComponent implements OnInit {
       console.log('form submitted');
       this.submitWizardLoading = true;
 
-      let resourceList = GenerateR4ResourceList(this.form.getRawValue());
+      let resourceStorage = GenerateR4ResourceLookup(this.form.getRawValue());
 
-      let bundleJsonStr = JSON.stringify(resourceList);
-      console.log(bundleJsonStr)
-      let bundleBlob = new Blob([bundleJsonStr], { type: 'application/json' });
-      let bundleFile = new File([ bundleBlob ], 'bundle.json');
+      //generate a ndjson file from the resourceList
+      //make sure we extract the encounter resource
 
+      let fhirListResource = {
+        resourceType: 'List',
+        entry: [],
+        encounter: null,
+        contained: []
+      } as List
 
-      // this.fastenApi.createManualSource(bundleFile).subscribe(
-      //   (resp) => {
-      //     console.log(resp)
-      //     this.submitWizardLoading = false;
-      //     this.activeModal.close()
-      //   },
-      //   (err) => {
-      //     console.log(err)
-      //     this.submitWizardLoading = false;
-      //   }
-      // )
+      let encounter = null
+      for(let resourceType in resourceStorage) {
+        if (resourceType === 'Encounter') {
+          //set the encounter to the first encounter
+          let [encounterId] = Object.keys(resourceStorage[resourceType])
+          encounter = resourceStorage[resourceType][encounterId]
+
+          if(!(encounter.type && encounter.reference)){
+            //this is not a reference
+            fhirListResource.contained.push(encounter)
+          }
+          continue
+        }
+
+        for(let resourceId in resourceStorage[resourceType]) {
+          let resourceFromStorage = resourceStorage[resourceType][resourceId]
+          if((resourceFromStorage as Reference).type && (resourceFromStorage as Reference).reference){
+            //this is a reference
+            fhirListResource.entry.push({
+              item: {
+                reference: generateReferenceUriFromResourceOrReference(resourceFromStorage)
+              }
+            })
+          } else {
+            //this is not a reference
+            fhirListResource.contained.push(resourceFromStorage as FhirResource)
+          }
+        }
+      }
+
+      //set the encounter reference
+      fhirListResource.encounter = {
+        reference: generateReferenceUriFromResourceOrReference(encounter),
+      }
+
+      this.fastenApi.createRelatedResourcesFastenSource(fhirListResource).subscribe(
+        (resp) => {
+          console.log(resp)
+          this.submitWizardLoading = false;
+          this.activeModal.close()
+        },
+        (err) => {
+          console.log(err)
+          this.submitWizardLoading = false;
+        }
+      )
 
     }
   }

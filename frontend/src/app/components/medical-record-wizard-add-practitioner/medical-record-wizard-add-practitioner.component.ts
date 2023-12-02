@@ -141,7 +141,7 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
       })
     }
     if(form.get('profession').value) {
-      model.qualification =  [form.get('profession').value.identifier]
+      model.qualification = form.get('profession').value.identifier
     }
     if(form.get('name').value) {
       let nameParts = parseFullName(form.get('name').value)
@@ -150,7 +150,7 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
         familyName: nameParts.last,
         suffix: nameParts.suffix,
         textName: form.get('name').value,
-        use: 'work',
+        use: 'official',
         displayName: form.get('name').value,
       })
     }

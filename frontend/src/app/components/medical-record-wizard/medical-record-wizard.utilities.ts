@@ -13,7 +13,7 @@ import {
   Resource,
   Bundle,
   Organization,
-  Practitioner, MedicationRequest, Patient, Encounter, DocumentReference, Media, DiagnosticReport, Reference, Binary
+  Practitioner, MedicationRequest, Patient, Encounter, DocumentReference, Media, DiagnosticReport, Reference, Binary, HumanName
 } from 'fhir/r4';
 import {uuidV4} from '../../../lib/utils/uuid';
 import {OrganizationModel} from '../../../lib/models/resources/organization-model';
@@ -22,6 +22,7 @@ import {EncounterModel} from '../../../lib/models/resources/encounter-model';
 import {ReferenceModel} from '../../../lib/models/datatypes/reference-model';
 import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
 import {generateReferenceUriFromResourceOrReference} from '../../../lib/utils/bundle_references';
+import {HumanNameModel} from '../../../lib/models/datatypes/human-name-model';
 
 export interface WizardFhirResourceWrapper<T extends OrganizationModel | PractitionerModel | EncounterModel> {
   data: T,
@@ -34,7 +35,7 @@ interface ResourceStorage {
   }
 }
 
-export function GenerateR4ResourceList(resourceCreate: MedicalRecordWizardFormCreate): any[] {
+export function GenerateR4ResourceLookup(resourceCreate: MedicalRecordWizardFormCreate): ResourceStorage {
   let resourceStorage: ResourceStorage = {}
   // resourceStorage = placeholderR4Patient(resourceStorage)
   // resourceStorage = resourceCreateConditionToR4Condition(resourceStorage, resourceCreate.condition)
@@ -74,18 +75,9 @@ export function GenerateR4ResourceList(resourceCreate: MedicalRecordWizardFormCr
   //ImagingStudy
   //ImagingSelection
 
-  console.log("POPULATED RESOURCE STORAGE",  resourceStorage)
 
-  let resourceList = []
-  for(let resourceType in resourceStorage) {
-    for(let resourceId in resourceStorage[resourceType]) {
-      let resource = resourceStorage[resourceType][resourceId]
-      // skip any external references.xw
-      resourceList.push(resource)
-    }
-  }
 
-  return resourceList
+  return resourceStorage
 }
 
 //Private methods
@@ -253,16 +245,38 @@ function resourceCreateOrganizationToR4Organization(resourceStorage: ResourceSto
 function resourceCreatePractitionerToR4Practitioner(resourceStorage: ResourceStorage, resourcePractitioner: WizardFhirResourceWrapper<PractitionerModel>): ResourceStorage {
   resourceStorage['Practitioner'] = resourceStorage['Practitioner'] || {}
   if (resourcePractitioner.action == 'create') {
+
+    let humanName = [] as HumanName[]
+    if (resourcePractitioner.data.name) {
+      humanName = resourcePractitioner.data.name.map((name: HumanNameModel) => {
+        return {
+          family: name.familyName,
+          given: name.givenName.split(', '),
+          suffix: name.suffix.split(', '),
+          text: name.displayName,
+          use: 'official',
+        }
+      })
+    }
+
     let practitionerResource = {
       resourceType: 'Practitioner',
       id: resourcePractitioner.data.source_resource_id,
-      name: resourcePractitioner.data.name || [],
+      name: humanName,
       identifier: resourcePractitioner.data.identifier || [],
       address: resourcePractitioner.data.address || [],
       telecom: resourcePractitioner.data.telecom || [],
       active: true,
-      qualification: resourcePractitioner.data.qualification || [],
     } as Practitioner
+
+    if(resourcePractitioner.data.qualification){
+      practitionerResource.qualification = [{
+        code: {
+          coding: resourcePractitioner.data.qualification || []
+        },
+      }]
+    }
+
     resourceStorage['Practitioner'][practitionerResource.id] = practitionerResource
   } else {
     let foundResourcePractitioner = {

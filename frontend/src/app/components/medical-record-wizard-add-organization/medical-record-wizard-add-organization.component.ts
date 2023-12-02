@@ -142,7 +142,7 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
     }
     if(form.get('type').value) {
       let codableConcept = new CodableConceptModel({})
-      codableConcept.coding = [form.get('type').value.identifier]
+      codableConcept.coding = form.get('type').value.identifier
       codableConcept.text = form.get('type').value.text
       model.type.push(codableConcept)
     }
