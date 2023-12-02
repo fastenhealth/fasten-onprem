@@ -1,0 +1,429 @@
+import {
+  MedicalRecordWizardFormCreate,
+  ResourceCreateCondition, ResourceCreateAttachment, ResourceCreateMedication,
+  ResourceCreateOrganization, ResourceCreatePractitioner,
+  ResourceCreateProcedure
+} from '../../models/fasten/resource_create';
+import {
+  Condition,
+  Medication,
+  Procedure,
+  Location as FhirLocation,
+  BundleEntry,
+  Resource,
+  Bundle,
+  Organization,
+  Practitioner, MedicationRequest, Patient, Encounter, DocumentReference, Media, DiagnosticReport, Reference, Binary
+} from 'fhir/r4';
+import {uuidV4} from '../../../lib/utils/uuid';
+import {OrganizationModel} from '../../../lib/models/resources/organization-model';
+import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
+import {EncounterModel} from '../../../lib/models/resources/encounter-model';
+import {ReferenceModel} from '../../../lib/models/datatypes/reference-model';
+import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
+import {generateReferenceUriFromResourceOrReference} from '../../../lib/utils/bundle_references';
+
+export interface WizardFhirResourceWrapper<T extends OrganizationModel | PractitionerModel | EncounterModel> {
+  data: T,
+  action: 'find'|'create'
+}
+
+interface ResourceStorage {
+  [resourceType: string]: {
+    [resourceId: string]: Condition | Patient | MedicationRequest | Organization | FhirLocation | Practitioner | Procedure | Encounter | DocumentReference | Media | DiagnosticReport | Binary | Reference
+  }
+}
+
+export function GenerateR4ResourceList(resourceCreate: MedicalRecordWizardFormCreate): any[] {
+  let resourceStorage: ResourceStorage = {}
+  // resourceStorage = placeholderR4Patient(resourceStorage)
+  // resourceStorage = resourceCreateConditionToR4Condition(resourceStorage, resourceCreate.condition)
+
+  resourceStorage = resourceCreateEncounterToR4Encounter(resourceStorage, resourceCreate.encounter)
+
+  for(let attachment of resourceCreate.attachments) {
+    if(attachment.file_type == 'application/dicom' ||
+      attachment.category.id == '18726-0' || //Radiology studies (set)
+      attachment.category.id == '27897-8' || //	Neuromuscular electrophysiology studies (set)
+      attachment.category.id == '18748-4' // 	Diagnostic imaging study
+    ) {
+      //Diagnostic imaging study (DiagnosticReport -> Media)
+      resourceStorage = resourceAttachmentToR4DiagnosticReport(resourceStorage, attachment)
+    }
+    else {
+      resourceStorage = resourceAttachmentToR4DocumentReference(resourceStorage, attachment)
+    }
+  }
+
+  for(let organization of resourceCreate.organizations) {
+    resourceStorage = resourceCreateOrganizationToR4Organization(resourceStorage, organization)
+  }
+  for(let practitioner of resourceCreate.practitioners) {
+    resourceStorage = resourceCreatePractitionerToR4Practitioner(resourceStorage, practitioner)
+  }
+  for(let medication of resourceCreate.medications) {
+    resourceStorage = resourceCreateMedicationToR4MedicationRequest(resourceStorage, medication)
+  }
+  for(let procedure of resourceCreate.procedures) {
+    resourceStorage = resourceCreateProcedureToR4Procedure(resourceStorage, procedure)
+  }
+
+
+  //DocumentReference  -> (Optional) Binary
+  //DiagnosticReport -> Media
+  //ImagingStudy
+  //ImagingSelection
+
+  console.log("POPULATED RESOURCE STORAGE",  resourceStorage)
+
+  let resourceList = []
+  for(let resourceType in resourceStorage) {
+    for(let resourceId in resourceStorage[resourceType]) {
+      let resource = resourceStorage[resourceType][resourceId]
+      // skip any external references.xw
+      resourceList.push(resource)
+    }
+  }
+
+  return resourceList
+}
+
+//Private methods
+
+// this model is based on FHIR401 Resource Encounter - http://hl7.org/fhir/R4/encounter.html
+function resourceCreateEncounterToR4Encounter(resourceStorage: ResourceStorage, resourceEncounter: WizardFhirResourceWrapper<EncounterModel>): ResourceStorage {
+  resourceStorage['Encounter'] = resourceStorage['Encounter'] || {}
+  console.warn("resourceEncounter", resourceEncounter)
+
+  if (resourceEncounter.action == 'create') {
+    let createdResourceEncounter = {
+      resourceType: 'Encounter',
+      id: resourceEncounter.data.source_resource_id,
+      serviceType: resourceEncounter.data.code,
+      status: "finished",
+      // participant: [
+      //   {
+      //     individual: {
+      //       reference: `urn:uuid:${resourceCreateProcedure.performer}` //Practitioner
+      //     }
+      //   }
+      // ],
+      participant: [],
+      period: {
+        start: resourceEncounter.data.period_start,
+        end: resourceEncounter.data.period_end,
+      },
+      reasonReference: [],
+      serviceProvider: {
+        // reference: `urn:uuid:${resourceCreateProcedure.location}` //Organization
+      }
+    } as Encounter
+    resourceStorage['Encounter'][createdResourceEncounter.id] = createdResourceEncounter
+  } else {
+    let foundResourceEncounter = {
+      type: 'Encounter',
+      reference: generateReferenceUriFromResourceOrReference(resourceEncounter.data),
+    }
+    resourceStorage['Encounter'][foundResourceEncounter.reference] = foundResourceEncounter
+  }
+
+  return resourceStorage
+}
+
+
+
+// this model is based on FHIR401 Resource Condition - http://hl7.org/fhir/R4/condition.html
+// function resourceCreateConditionToR4Condition(resourceStorage: ResourceStorage, resourceCreateCondition: ResourceCreateCondition): ResourceStorage {
+//   resourceStorage['Condition'] = resourceStorage['Condition'] || {}
+//   resourceStorage['Encounter'] = resourceStorage['Encounter'] || {}
+//
+//   let note = []
+//   if (resourceCreateCondition.description) {
+//     note.push({
+//       text: resourceCreateCondition.description,
+//     })
+//   }
+//
+//   let conditionResource = {
+//     subject: {
+//       reference: `urn:uuid:${findPatient(resourceStorage).id}` //Patient
+//     },
+//     resourceType: 'Condition',
+//     id: uuidV4(),
+//     code: {
+//       coding: resourceCreateCondition.data.identifier || [],
+//       text: resourceCreateCondition.data.identifier[0].display,
+//     },
+//     clinicalStatus: {
+//       "coding": [
+//         {
+//           "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+//           "code": resourceCreateCondition.status,
+//         }
+//       ]
+//     },
+//     onsetDateTime: `${new Date(resourceCreateCondition.started.year, resourceCreateCondition.started.month-1,resourceCreateCondition.started.day).toISOString()}`,
+//     abatementDateTime: resourceCreateCondition.stopped ? `${new Date(resourceCreateCondition.stopped.year,resourceCreateCondition.stopped.month-1, resourceCreateCondition.stopped.day).toISOString()}` : null,
+//     recordedDate: new Date().toISOString(),
+//     note: note
+//   } as Condition
+//
+//
+//
+//   resourceStorage['Condition'][conditionResource.id] = conditionResource
+//   return resourceStorage
+// }
+
+// this model is based on FHIR401 Resource Procedure - http://hl7.org/fhir/R4/procedure.html
+function resourceCreateProcedureToR4Procedure(resourceStorage: ResourceStorage, resourceCreateProcedure: ResourceCreateProcedure): ResourceStorage {
+  resourceStorage['Procedure'] = resourceStorage['Procedure'] || {}
+
+  let note = []
+  if (resourceCreateProcedure.comment) {
+    note.push({
+      text: resourceCreateProcedure.comment,
+    })
+  }
+
+  let encounterResource = findEncounter(resourceStorage) as Encounter | Reference
+
+  let procedureResource = {
+    status: "completed",
+    resourceType: 'Procedure',
+    id: uuidV4(),
+    code: {
+      coding:  resourceCreateProcedure.data.identifier || [],
+      text: resourceCreateProcedure.data.identifier?.[0]?.display,
+    },
+    performedDateTime: `${new Date(resourceCreateProcedure.whendone.year, resourceCreateProcedure.whendone.month-1,resourceCreateProcedure.whendone.day).toISOString()}`,
+    encounter: {
+      reference: generateReferenceUriFromResourceOrReference(encounterResource) //Encounter
+    },
+    report: (resourceCreateProcedure.attachments || []).map(attachmentId => {
+      return {
+        reference: `urn:uuid:${attachmentId}` //DocumentReference or DiagnosticReport
+      }
+    }),
+    performer: [
+      {
+        actor: {
+          reference: resourceCreateProcedure.performer //Practitioner
+        },
+        onBehalfOf: {
+          reference: resourceCreateProcedure.location //Organization
+        }
+      }
+    ],
+    note: note,
+  } as Procedure
+  resourceStorage['Procedure'][procedureResource.id] = procedureResource
+
+  return resourceStorage
+}
+
+// this model is based on FHIR401 Resource Organization - http://hl7.org/fhir/R4/organization.html
+function resourceCreateOrganizationToR4Organization(resourceStorage: ResourceStorage, resourceOrganization: WizardFhirResourceWrapper<OrganizationModel>): ResourceStorage {
+  resourceStorage['Organization'] = resourceStorage['Organization'] || {}
+  if (resourceOrganization.action == 'create') {
+    let organizationResource = {
+      resourceType: 'Organization',
+      id: resourceOrganization.data.source_resource_id,
+      name: resourceOrganization.data.name,
+      identifier: resourceOrganization.data.identifier || [],
+      type: resourceOrganization.data.type || [],
+      address: resourceOrganization.data.addresses || [],
+      telecom: resourceOrganization.data.telecom,
+      active: true,
+    } as Organization
+
+    resourceStorage['Organization'][organizationResource.id] = organizationResource
+  } else {
+    let foundResourceOrganization = {
+      type: 'Organization',
+      reference: generateReferenceUriFromResourceOrReference(resourceOrganization.data),
+    }
+    resourceStorage['Organization'][foundResourceOrganization.reference] = foundResourceOrganization
+  }
+
+  return resourceStorage
+
+}
+
+// this model is based on FHIR401 Resource Practitioner - http://hl7.org/fhir/R4/practitioner.html
+function resourceCreatePractitionerToR4Practitioner(resourceStorage: ResourceStorage, resourcePractitioner: WizardFhirResourceWrapper<PractitionerModel>): ResourceStorage {
+  resourceStorage['Practitioner'] = resourceStorage['Practitioner'] || {}
+  if (resourcePractitioner.action == 'create') {
+    let practitionerResource = {
+      resourceType: 'Practitioner',
+      id: resourcePractitioner.data.source_resource_id,
+      name: resourcePractitioner.data.name || [],
+      identifier: resourcePractitioner.data.identifier || [],
+      address: resourcePractitioner.data.address || [],
+      telecom: resourcePractitioner.data.telecom || [],
+      active: true,
+      qualification: resourcePractitioner.data.qualification || [],
+    } as Practitioner
+    resourceStorage['Practitioner'][practitionerResource.id] = practitionerResource
+  } else {
+    let foundResourcePractitioner = {
+      type: 'Practitioner',
+      reference: generateReferenceUriFromResourceOrReference(resourcePractitioner.data),
+    }
+    resourceStorage['Practitioner'][foundResourcePractitioner.reference] = foundResourcePractitioner
+  }
+  return resourceStorage
+}
+
+// this model is based on FHIR401 Resource Medication - https://www.hl7.org/fhir/R4/MedicationRequest.html
+function resourceCreateMedicationToR4MedicationRequest(resourceStorage: ResourceStorage, resourceCreateMedication: ResourceCreateMedication): ResourceStorage {
+  resourceStorage['MedicationRequest'] = resourceStorage['MedicationRequest'] || {}
+
+  let encounterResource = findEncounter(resourceStorage) as Encounter | Reference
+
+  let medicationRequestResource = {
+    id: uuidV4(),
+    resourceType: 'MedicationRequest',
+    status: resourceCreateMedication.status,
+    statusReason: {
+      coding: resourceCreateMedication.whystopped?.identifier || [],
+    },
+    intent: 'order',
+    medicationCodeableConcept: {
+      coding: resourceCreateMedication.data.identifier || [],
+    },
+    encounter: {
+      reference: generateReferenceUriFromResourceOrReference(encounterResource) //Encounter
+    },
+    authoredOn: `${new Date(resourceCreateMedication.started.year,resourceCreateMedication.started.month-1,resourceCreateMedication.started.day).toISOString()}`,
+    requester: {
+      reference: resourceCreateMedication.requester // Practitioner
+    },
+    supportingInformation: (resourceCreateMedication.attachments || []).map((attachmentId) => {
+      return {
+        reference: `urn:uuid:${attachmentId}` //DocumentReference or DiagnosticReport
+      }
+    }),
+    note: [
+      {
+        text: resourceCreateMedication.instructions,
+      }
+    ],
+    dispenseRequest: {
+      validityPeriod: {
+        start: `${new Date(resourceCreateMedication.started.year,resourceCreateMedication.started.month-1,resourceCreateMedication.started.day).toISOString()}`,
+        end: resourceCreateMedication.stopped ? `${new Date(resourceCreateMedication.stopped.year,resourceCreateMedication.stopped.month-1,resourceCreateMedication.stopped.day).toISOString()}` : null,
+      },
+    },
+  } as MedicationRequest
+  resourceStorage['MedicationRequest'][medicationRequestResource.id] = medicationRequestResource
+
+  return resourceStorage
+}
+
+function resourceAttachmentToR4DocumentReference(resourceStorage: ResourceStorage, resourceAttachment: ResourceCreateAttachment): ResourceStorage {
+  let encounterResource = findEncounter(resourceStorage) as Encounter | Reference
+
+  resourceStorage['Binary'] = resourceStorage['Binary'] || {}
+  let binaryResource = {
+    id: uuidV4(),
+    resourceType: 'Binary',
+    contentType: resourceAttachment.file_type,
+    data: resourceAttachment.file_content,
+  } as Binary
+  resourceStorage['Binary'][binaryResource.id] = binaryResource
+
+  resourceStorage['DocumentReference'] = resourceStorage['DocumentReference'] || {}
+
+  let documentReferenceResource = {
+    id: resourceAttachment.id,
+    resourceType: 'DocumentReference',
+    status: 'current',
+    category: [
+      {
+        coding: resourceAttachment.category.identifier || [],
+        text: resourceAttachment.category.text,
+      }
+    ],
+    // description: resourceAttachment.description,
+    content: [
+      {
+        attachment: {
+          contentType: resourceAttachment.file_type,
+          url: `urn:uuid:${binaryResource.id}`, //Binary
+          title: resourceAttachment.name,
+        }
+      }
+    ],
+    context: [
+      {
+        encounter: {
+          reference: generateReferenceUriFromResourceOrReference(encounterResource) //Encounter
+        },
+      }
+    ]
+    // date: `${new Date(resourceDocumentReference.date.year,resourceDocumentReference.date.month-1,resourceDocumentReference.date.day).toISOString()}`,
+  } as DocumentReference
+  resourceStorage['DocumentReference'][documentReferenceResource.id] = documentReferenceResource
+
+  return resourceStorage
+}
+
+function resourceAttachmentToR4DiagnosticReport(resourceStorage: ResourceStorage, resourceAttachment: ResourceCreateAttachment): ResourceStorage {
+  let encounterResource = findEncounter(resourceStorage) as Encounter | Reference
+
+  resourceStorage['Binary'] = resourceStorage['Binary'] || {}
+  let binaryResource = {
+    id: uuidV4(),
+    resourceType: 'Binary',
+    contentType: resourceAttachment.file_type,
+    data: resourceAttachment.file_content,
+  } as Binary
+  resourceStorage['Binary'][binaryResource.id] = binaryResource
+
+  resourceStorage['Media'] = resourceStorage['Media'] || {}
+
+  let mediaResource = {
+    id: uuidV4(),
+    resourceType: 'Media',
+    status: 'completed',
+    type: {
+      coding: resourceAttachment.category.identifier || [],
+      display: resourceAttachment.category.text,
+    },
+    content: {
+      contentType: resourceAttachment.file_type,
+      url: `urn:uuid:${binaryResource.id}`, //Binary,
+      title: resourceAttachment.name,
+    },
+  } as Media
+  resourceStorage['Media'][mediaResource.id] = mediaResource
+
+  resourceStorage['DiagnosticReport'] = resourceStorage['DiagnosticReport'] || {}
+  let diagnosticReportResource = {
+    id: resourceAttachment.id,
+    resourceType: 'DiagnosticReport',
+    status: 'final',
+    code: {
+      coding: resourceAttachment.category.identifier || [],
+    },
+    encounter: {
+      reference: generateReferenceUriFromResourceOrReference(encounterResource) //Encounter
+    },
+    media: [
+      {
+        link: {
+          reference: `urn:uuid:${mediaResource.id}` //Media
+        }
+      },
+    ],
+  } as DiagnosticReport
+  resourceStorage['DiagnosticReport'][diagnosticReportResource.id] = diagnosticReportResource
+
+  return resourceStorage
+}
+
+
+function findEncounter(resourceStorage: ResourceStorage): Encounter | Reference {
+  let [encounterId] = Object.keys(resourceStorage['Encounter'])
+  return resourceStorage['Encounter'][encounterId] as Encounter | Reference
+}

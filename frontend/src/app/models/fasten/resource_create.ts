@@ -1,6 +1,10 @@
 import {IResourceRaw} from './resource_fhir';
 import {CodingModel} from '../../../lib/models/datatypes/coding-model';
 import {NlmSearchResults} from '../../services/nlm-clinical-table-search.service';
+import {WizardFhirResourceWrapper} from '../../components/medical-record-wizard/medical-record-wizard.utilities';
+import {EncounterModel} from '../../../lib/models/resources/encounter-model';
+import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
+import {OrganizationModel} from '../../../lib/models/resources/organization-model';
 
 
 //
@@ -124,12 +128,12 @@ import {NlmSearchResults} from '../../services/nlm-clinical-table-search.service
 // ]
 // }
 
-export interface ResourceCreate {
-  condition: ResourceCreateCondition,
+export interface MedicalRecordWizardFormCreate {
+  encounter: WizardFhirResourceWrapper<EncounterModel>,
   "medications": ResourceCreateMedication[],
   "procedures": ResourceCreateProcedure[],
-  "practitioners": ResourceCreatePractitioner[],
-  "organizations": ResourceCreateOrganization[],
+  "practitioners": WizardFhirResourceWrapper<PractitionerModel>[],
+  "organizations": WizardFhirResourceWrapper<OrganizationModel>[],
   "attachments": ResourceCreateAttachment[],
 }
 

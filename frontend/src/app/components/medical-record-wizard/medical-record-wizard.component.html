@@ -102,13 +102,13 @@
                       <option value="" hidden selected>Select Practitioner</option>
                       <option value="" (click)="openPractitionerModal(medicationGroup, 'requester')">New Practitioner</option>
 
-                      <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner'].length" class="divider">---</optgroup>
-                      <option *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']; let i = index" [value]="practitioner.source_resource_id">
+                      <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner']?.length" class="divider">---</optgroup>
+                      <option *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']; let i = index" [value]="practitioner | referenceUri">
                         {{practitioner?.name | humanName }} ({{practitioner?.profession?.text}})
                       </option>
 
                       <optgroup *ngIf="practitioners.controls.length" class="divider">---</optgroup>
-                      <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.controls.data.value?.source_resource_id">
+                      <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.controls.data.value | referenceUri">
                         {{practitioner.controls.data.value.name | humanName }} ({{practitioner.controls.data.value?.profession?.text}})
                       </option>
                     </select>
@@ -184,12 +184,12 @@
                       <option value="" (click)="openPractitionerModal(procedureGroup, 'performer')">New Practitioner</option>
 
                       <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner']?.length" class="divider">---</optgroup>
-                      <option *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']; let i = index" [value]="practitioner.source_resource_id">
+                      <option *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']; let i = index" [value]="practitioner | referenceUri">
                         {{practitioner?.name | humanName }} ({{practitioner?.profession?.text}})
                       </option>
 
                       <optgroup *ngIf="practitioners.controls.length" class="divider">---</optgroup>
-                      <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.controls.data.value?.source_resource_id">
+                      <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.controls.data.value | referenceUri">
                         {{practitioner.controls.data.value.name | humanName }} ({{practitioner.controls.data.value?.profession?.text}})
                       </option>
                     </select>
@@ -202,12 +202,12 @@
                       <option value="" (click)="openOrganizationModal( procedureGroup, 'location')">New Organization</option>
 
                       <optgroup *ngIf="existingEncounter?.related_resources?.['Organization']?.length" class="divider">---</optgroup>
-                      <option *ngFor="let organization of existingEncounter?.related_resources?.['Organization']; let i = index" [value]="organization.source_resource_id">
+                      <option *ngFor="let organization of existingEncounter?.related_resources?.['Organization']; let i = index" [value]="organization | referenceUri">
                         {{organization?.name }}
                       </option>
 
                       <optgroup *ngIf="organizations.controls.length" class="divider"></optgroup>
-                      <option *ngFor="let organization of organizations.controls; let i = index" [value]="organization.controls.data.value?.source_resource_id">
+                      <option *ngFor="let organization of organizations.controls; let i = index" [value]="organization.controls.data.value | referenceUri">
                         {{organization.controls.data.value.name}} ({{organization.controls.data.value?.address}})
                       </option>
                     </select>

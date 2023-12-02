@@ -25,7 +25,7 @@ import {
 import {
   MedicalRecordWizardAddAttachmentComponent
 } from '../medical-record-wizard-add-attachment/medical-record-wizard-add-attachment.component';
-import {GenerateR4Bundle} from '../../pages/resource-creator/resource-creator.utilities';
+import {GenerateR4ResourceList, WizardFhirResourceWrapper} from './medical-record-wizard.utilities';
 import {EncounterModel} from '../../../lib/models/resources/encounter-model';
 import {SharedModule} from '../shared.module';
 import {FhirCardModule} from '../fhir-card/fhir-card.module';
@@ -35,6 +35,7 @@ import {PipesModule} from '../../pipes/pipes.module';
 import {
   MedicalRecordWizardAddEncounterComponent
 } from '../medical-record-wizard-add-encounter/medical-record-wizard-add-encounter.component';
+import {generateReferenceUriFromResourceOrReference} from '../../../lib/utils/bundle_references';
 
 @Component({
   standalone: true,
@@ -78,6 +79,7 @@ export class MedicalRecordWizardComponent implements OnInit {
     this.form = new FormGroup({
       encounter: new FormGroup({
         data: new FormControl({}, Validators.required),
+        action: new FormControl(null),
       }, Validators.required),
 
       medications: new FormArray([]),
@@ -87,7 +89,9 @@ export class MedicalRecordWizardComponent implements OnInit {
       attachments: new FormArray([]),
     });
 
-    this.addEncounter({data: this.existingEncounter, action: 'find'});
+    if(this.existingEncounter){
+      this.addEncounter({data: this.existingEncounter, action: 'find'});
+    }
   }
 
   //<editor-fold desc="Getters">
@@ -127,7 +131,7 @@ export class MedicalRecordWizardComponent implements OnInit {
   //</editor-fold>
 
   //<editor-fold desc="Form Add">
-  addEncounter(openEncounterResult: { data:EncounterModel, action: 'find'|'create' }){
+  addEncounter(openEncounterResult: WizardFhirResourceWrapper<EncounterModel>){
     let encounter = openEncounterResult.data;
     this.existingEncounter = encounter;
 
@@ -135,6 +139,7 @@ export class MedicalRecordWizardComponent implements OnInit {
     clonedEncounter.related_resources = {};
 
     this.form.get("encounter").get('data').setValue(clonedEncounter);
+    this.form.get("encounter").get('action').setValue(openEncounterResult.action);
   }
 
   addMedication(){
@@ -171,17 +176,18 @@ export class MedicalRecordWizardComponent implements OnInit {
 
     this.procedures.push(procedureGroup);
   }
-  addPractitioner(openPractitionerResult: { data:PractitionerModel, action: 'find'|'create' }){
-    let practitioner = openPractitionerResult.data;
+  addPractitioner(openPractitionerResult: WizardFhirResourceWrapper<PractitionerModel>){
     const practitionerGroup = new FormGroup({
-      data: new FormControl(practitioner),
+      data: new FormControl(openPractitionerResult.data),
+      action: new FormControl(openPractitionerResult.action),
+
     });
     this.practitioners.push(practitionerGroup);
   }
-  addOrganization(openOrganizationResult: { data:OrganizationModel, action: 'find'|'create' }) {
-    let organization = openOrganizationResult.data;
+  addOrganization(openOrganizationResult: WizardFhirResourceWrapper<OrganizationModel>) {
     const organizationGroup = new FormGroup({
-      data: new FormControl(organization),
+      data: new FormControl(openOrganizationResult.data),
+      action: new FormControl(openOrganizationResult.action),
     });
     this.organizations.push(organizationGroup);
   }
@@ -240,7 +246,7 @@ export class MedicalRecordWizardComponent implements OnInit {
         this.addPractitioner(result);
         if(formGroup && controlName){
           //set this practitioner to the current select box
-          formGroup.get(controlName).setValue(result.data.source_resource_id);
+          formGroup.get(controlName).setValue(generateReferenceUriFromResourceOrReference(result.data));
         }
       },
       (err) => {
@@ -268,7 +274,7 @@ export class MedicalRecordWizardComponent implements OnInit {
         this.addOrganization(result);
         if(formGroup && controlName){
           //set this practitioner to the current select box
-          formGroup.get(controlName).setValue(result.data.source_resource_id);
+          formGroup.get(controlName).setValue(generateReferenceUriFromResourceOrReference(result.data));
         }
       },
       (err) => {
@@ -314,22 +320,25 @@ export class MedicalRecordWizardComponent implements OnInit {
       console.log('form submitted');
       this.submitWizardLoading = true;
 
-      let bundle = GenerateR4Bundle(this.form.getRawValue());
+      let resourceList = GenerateR4ResourceList(this.form.getRawValue());
 
-      let bundleJsonStr = JSON.stringify(bundle);
+      let bundleJsonStr = JSON.stringify(resourceList);
+      console.log(bundleJsonStr)
       let bundleBlob = new Blob([bundleJsonStr], { type: 'application/json' });
       let bundleFile = new File([ bundleBlob ], 'bundle.json');
-      this.fastenApi.createManualSource(bundleFile).subscribe(
-        (resp) => {
-          console.log(resp)
-          this.submitWizardLoading = false;
-          this.activeModal.close()
-        },
-        (err) => {
-          console.log(err)
-          this.submitWizardLoading = false;
-        }
-      )
+
+
+      // this.fastenApi.createManualSource(bundleFile).subscribe(
+      //   (resp) => {
+      //     console.log(resp)
+      //     this.submitWizardLoading = false;
+      //     this.activeModal.close()
+      //   },
+      //   (err) => {
+      //     console.log(err)
+      //     this.submitWizardLoading = false;
+      //   }
+      // )
 
     }
   }

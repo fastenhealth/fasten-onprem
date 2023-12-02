@@ -116,7 +116,7 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
     model.source_resource_id = form.get('id').value
     model.identifier = form.get('identifier').value
     model.name = []
-    model.address = address
+    model.address = [address]
     model.telecom = []
     model.qualification = []
     if (form.get('phone').value) {

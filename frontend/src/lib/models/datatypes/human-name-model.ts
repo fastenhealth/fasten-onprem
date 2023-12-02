@@ -3,7 +3,7 @@ import * as _ from "lodash";
 export class HumanNameModel {
   givenName: string
   familyName: string
-  suffix: string
+  suffix: string[]
   textName: string
   use: string
   displayName: string

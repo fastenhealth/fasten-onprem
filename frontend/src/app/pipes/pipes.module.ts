@@ -7,6 +7,7 @@ import {FilterPipe} from './filter.pipe';
 import { ShortDomainPipe } from './short-domain.pipe';
 import { DatasetLatestEntryPipe } from './dataset-latest-entry.pipe';
 import { HumanNamePipe } from './human-name.pipe';
+import { ReferenceUriPipe } from './reference-uri.pipe';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { HumanNamePipe } from './human-name.pipe';
     ShortDomainPipe,
     DatasetLatestEntryPipe,
     HumanNamePipe,
+    ReferenceUriPipe,
   ],
   imports: [
 
@@ -26,6 +28,7 @@ import { HumanNamePipe } from './human-name.pipe';
     ShortDomainPipe,
     DatasetLatestEntryPipe,
     HumanNamePipe,
+    ReferenceUriPipe
   ]
 })
 export class PipesModule {}

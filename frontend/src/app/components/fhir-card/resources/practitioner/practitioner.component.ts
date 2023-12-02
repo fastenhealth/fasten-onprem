@@ -55,8 +55,8 @@ export class PractitionerComponent implements OnInit, FhirCardComponentInterface
         enabled: true,
       })
     }
-    if(this.displayModel?.address){
-      let address = this.displayModel?.address
+    if(this.displayModel?.address?.length > 0){
+      let address = this.displayModel?.address?.[0]
       let addressParts = []
       if(address.line){
         addressParts.push(address.line.join(' '))
