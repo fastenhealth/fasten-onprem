@@ -113,7 +113,7 @@ export class FastenApiService {
 
     console.log(resourceList)
     let bundleBlob = new Blob([JSON.stringify(resourceList)], { type: 'application/json' });
-    let bundleFile = new File([ bundleBlob ], 'related.json');
+    let bundleFile = new File([ bundleBlob ], 'related.json', { type: 'application/json' });
 
     const formData = new FormData();
     formData.append('file', bundleFile);

@@ -287,14 +287,31 @@ func (gr *GormRepository) UpsertRawResourceAssociation(
 	targetResourceType string,
 	targetResourceId string,
 ) error {
-	sourceCredential, err := gr.GetSource(ctx, sourceId)
-	if err != nil {
-		return err
+
+	if sourceId == targetSourceId && sourceResourceType == targetResourceType && sourceResourceId == targetResourceId {
+		gr.Logger.Warnf("cannot create self-referential association, ignoring")
+		return nil
 	}
-	targetSourceCredential, err := gr.GetSource(ctx, targetSourceId)
-	if err != nil {
-		return err
+	var sourceCredential *models.SourceCredential
+	var targetSourceCredential *models.SourceCredential
+	var err error
+	if sourceId == targetSourceId {
+		sourceCredential, err = gr.GetSource(ctx, sourceId)
+		if err != nil {
+			return err
+		}
+		targetSourceCredential = sourceCredential
+	} else {
+		sourceCredential, err = gr.GetSource(ctx, sourceId)
+		if err != nil {
+			return err
+		}
+		targetSourceCredential, err = gr.GetSource(ctx, targetSourceId)
+		if err != nil {
+			return err
+		}
 	}
+
 	//SECURITY: sourceCredential and targetSourceCredential are guaranteed to be owned by the same user, and will be confirmed within the addAssociation function
 	return gr.AddResourceAssociation(ctx, sourceCredential, sourceResourceType, sourceResourceId, targetSourceCredential, targetResourceType, targetResourceId)
 }
@@ -906,10 +923,10 @@ func (gr *GormRepository) GetSourceSummary(ctx context.Context, sourceId string)
 		Table(patientTableName).
 		First(&wrappedPatientResourceModel)
 
-	if patientResults.Error != nil {
-		return nil, patientResults.Error
+	//some sources may not have a patient resource (including the Fasten source)
+	if patientResults.Error == nil {
+		sourceSummary.Patient = &wrappedPatientResourceModel
 	}
-	sourceSummary.Patient = &wrappedPatientResourceModel
 
 	return sourceSummary, nil
 }
