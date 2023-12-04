@@ -1561,7 +1561,10 @@ export class NlmClinicalTableSearchService {
       'incomplete-ok': 'true'
     }
 
-    return this._httpClient.get<any>(`https://tx.fhir.org/r4/ValueSet/$expand`, {params: queryParams})
+
+    // `https://ontology.nhs.uk/production1/fhir/`
+    // return this._httpClient.get<any>(`https://tx.fhir.org/r4/ValueSet/$expand`, {params: queryParams})
+    return this._httpClient.get<any>(`https://ontology.nhs.uk/production1/fhir/ValueSet/$expand`, {params: queryParams})
       .pipe(
         map((response) => {
 

@@ -40,6 +40,7 @@ func (gr *GormRepository) Close() error {
 // User
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// <editor-fold desc="User">
 func (gr *GormRepository) CreateUser(ctx context.Context, user *models.User) error {
 	if err := user.HashPassword(user.Password); err != nil {
 		return err
@@ -106,10 +107,13 @@ func (gr *GormRepository) GetCurrentUser(ctx context.Context) (*models.User, err
 	return &currentUser, nil
 }
 
+//</editor-fold>
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Glossary
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// <editor-fold desc="Glossary">
 func (gr *GormRepository) CreateGlossaryEntry(ctx context.Context, glossaryEntry *models.Glossary) error {
 	record := gr.GormClient.WithContext(ctx).Create(glossaryEntry)
 	if record.Error != nil {
@@ -125,6 +129,8 @@ func (gr *GormRepository) GetGlossaryEntry(ctx context.Context, code string, cod
 		First(&foundGlossaryEntry)
 	return &foundGlossaryEntry, result.Error
 }
+
+//</editor-fold>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Summary
@@ -191,6 +197,8 @@ func (gr *GormRepository) GetSummary(ctx context.Context) (*models.Summary, erro
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Resource
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// <editor-fold desc="Resource">
 
 // This function will create a new resource if it does not exist, or update an existing resource if it does exist.
 // It will also create associations between fhir resources
@@ -522,9 +530,13 @@ func (gr *GormRepository) GetPatientForSources(ctx context.Context) ([]models.Re
 	return wrappedResourceModels, results.Error
 }
 
+//</editor-fold>
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Resource Associations
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//<editor-fold desc="Resource Associations">
 
 // verifyAssociationPermission ensure that the sources are "owned" by the same user, and that the user is the current user
 func (gr *GormRepository) verifyAssociationPermission(ctx context.Context, sourceUserID uuid.UUID, relatedSourceUserID uuid.UUID) error {
@@ -621,6 +633,8 @@ func (gr *GormRepository) FindResourceAssociationsByTypeAndId(ctx context.Contex
 		Find(&relatedResources)
 	return relatedResources, result.Error
 }
+
+//</editor-fold>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Resource Composition (Grouping)
@@ -794,6 +808,8 @@ func (gr *GormRepository) AddResourceComposition(ctx context.Context, compositio
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SourceCredential
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//<editor-fold desc="SourceCredential">
 
 func (gr *GormRepository) CreateSource(ctx context.Context, sourceCreds *models.SourceCredential) error {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
@@ -1002,10 +1018,13 @@ func (gr *GormRepository) DeleteSource(ctx context.Context, sourceId string) (in
 	return rowsEffected, results.Error
 }
 
+//</editor-fold>
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Background Job
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// <editor-fold desc="Background Job & Checkpoints">
 func (gr *GormRepository) CreateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
@@ -1193,6 +1212,8 @@ func (gr *GormRepository) CancelAllLockedBackgroundJobsAndFail() error {
 		}).Error
 
 }
+
+//</editor-fold>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utilities
