@@ -29,6 +29,8 @@ type DatabaseRepository interface {
 	RemoveResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error
 	FindResourceAssociationsByTypeAndId(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string) ([]models.RelatedResource, error)
 	GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, error)
+
+	// Deprecated:This method has been deprecated. It has been replaced in favor of Fasten SourceCredential & associations
 	AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceBase) error
 	//UpsertProfile(context.Context, *models.Profile) error
 	//UpsertOrganziation(context.Context, *models.Organization) error
@@ -55,6 +57,15 @@ type DatabaseRepository interface {
 	PopulateDefaultUserSettings(ctx context.Context, userId uuid.UUID) error
 
 	//used by fasten-sources Clients
-	UpsertRawResource(ctx context.Context, sourceCredentials sourcePkg.SourceCredential, rawResource sourcePkg.RawResourceFhir) (bool, error)
 	BackgroundJobCheckpoint(ctx context.Context, checkpointData map[string]interface{}, errorData map[string]interface{})
+	UpsertRawResource(ctx context.Context, sourceCredentials sourcePkg.SourceCredential, rawResource sourcePkg.RawResourceFhir) (bool, error)
+	UpsertRawResourceAssociation(
+		ctx context.Context,
+		sourceId string,
+		sourceResourceType string,
+		sourceResourceId string,
+		targetSourceId string,
+		targetResourceType string,
+		targetResourceId string,
+	) error
 }

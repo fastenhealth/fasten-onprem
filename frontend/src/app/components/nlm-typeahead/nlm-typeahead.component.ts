@@ -3,10 +3,12 @@ import {merge, Observable, ObservableInput, of, Subject} from 'rxjs';
 import {catchError, debounceTime, distinctUntilChanged, filter, switchMap, tap} from 'rxjs/operators';
 import {NlmClinicalTableSearchService, NlmSearchResults} from '../../services/nlm-clinical-table-search.service';
 import {
-  ControlValueAccessor,
-  NgControl,
+  ControlValueAccessor, FormsModule,
+  NgControl, ReactiveFormsModule,
 } from '@angular/forms';
-import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
+import {NgbTypeahead, NgbTypeaheadModule} from '@ng-bootstrap/ng-bootstrap';
+import {CommonModule} from '@angular/common';
+import {HighlightModule} from 'ngx-highlightjs';
 
 export enum NlmSearchType {
   Allergy = 'Allergy',
@@ -24,11 +26,21 @@ export enum NlmSearchType {
   Countries = 'Countries',
   AttachmentFileType = 'AttachmentFileType',
   AttachmentCategory = 'AttachmentCategory',
+  EncounterClassification = 'EncounterClassification',
+  EncounterServiceType = 'EncounterServiceType',
   PrePopulated = 'PrePopulated'
 
 }
 
 @Component({
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    NgbTypeaheadModule,
+    HighlightModule,
+  ],
   selector: 'app-nlm-typeahead',
   templateUrl: './nlm-typeahead.component.html',
   styleUrls: ['./nlm-typeahead.component.scss'],
@@ -89,6 +101,16 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
         break
       case NlmSearchType.AttachmentCategory:
         searchOpFn = this.nlmClinicalTableSearchService.searchAttachmentCategory
+        this.openOnFocus = true
+        this.editable = false
+        break
+      case NlmSearchType.EncounterClassification:
+        searchOpFn = this.nlmClinicalTableSearchService.searchEncounterClassification
+        this.openOnFocus = true
+        this.editable = false
+        break
+      case NlmSearchType.EncounterServiceType:
+        searchOpFn = this.nlmClinicalTableSearchService.searchEncounterServiceType
         this.openOnFocus = true
         this.editable = false
         break

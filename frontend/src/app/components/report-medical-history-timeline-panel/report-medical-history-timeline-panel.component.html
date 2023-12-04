@@ -1,7 +1,7 @@
 <!-- begin timeline-time -->
 <div class="timeline-time">
-  <span class="date">{{displayModel.period_start | amDateFormat:'YYYY' }}</span>
-  <span class="time">{{displayModel.period_start | amDateFormat:'MMM DD' }}</span>
+  <span class="date">{{displayModel?.period_start | amDateFormat:'YYYY' }}</span>
+  <span class="time">{{displayModel?.period_start | amDateFormat:'MMM DD' }}</span>
 </div>
 <!-- end timeline-time -->
 <!-- begin timeline-icon -->
@@ -14,7 +14,7 @@
   <div class="timeline-header">
     <span class="username">
       <a style="color:black;font-size: 1.3125rem;font-weight: 500;" routerLink="/explore/{{displayModel?.source_id}}/resource/{{displayModel?.source_resource_id}}">
-        {{displayModel.sort_title}}
+        {{displayModel?.sort_title}}
       </a>
       <small></small>
     </span>
@@ -23,24 +23,24 @@
     </span>
     <br/>
     <span>
-      <small class="cursor-pointer text-muted pd-r-15" placement="bottom-left" popoverClass="card-fhir-resource-popover" [ngbPopover]="practitionerPopoverContent" *ngFor="let practitioner of displayModel.related_resources['Practitioner']">
+      <small class="cursor-pointer text-muted pd-r-15" placement="bottom-left" popoverClass="card-fhir-resource-popover" [ngbPopover]="practitionerPopoverContent" *ngFor="let practitioner of displayModel?.related_resources['Practitioner']">
         <i class="fas fa-user-md"></i> {{practitioner.sort_title}}
         <ng-template #practitionerPopoverContent>
-          <fhir-resource [displayModel]="practitioner"></fhir-resource>
+          <fhir-card [displayModel]="practitioner"></fhir-card>
         </ng-template>
       </small>
 
-      <small class="cursor-pointer text-muted pd-r-15" placement="bottom-left" popoverClass="card-fhir-resource-popover" [ngbPopover]="organizationPopoverContent" *ngFor="let organization of displayModel.related_resources['Organization']">
+      <small class="cursor-pointer text-muted pd-r-15" placement="bottom-left" popoverClass="card-fhir-resource-popover" [ngbPopover]="organizationPopoverContent" *ngFor="let organization of displayModel?.related_resources['Organization']">
         <i class="fas fa-hospital"></i> {{organization.sort_title}}
         <ng-template #organizationPopoverContent>
-          <fhir-resource [displayModel]="organization"></fhir-resource>
+          <fhir-card [displayModel]="organization"></fhir-card>
         </ng-template>
       </small>
 
-      <small class="cursor-pointer text-muted pd-r-15" placement="bottom-left" popoverClass="card-fhir-resource-popover" [ngbPopover]="locationPopoverContent" *ngFor="let location of displayModel.related_resources['Location']">
+      <small class="cursor-pointer text-muted pd-r-15" placement="bottom-left" popoverClass="card-fhir-resource-popover" [ngbPopover]="locationPopoverContent" *ngFor="let location of displayModel?.related_resources['Location']">
         <i class="fas fa-map-marker-alt"></i> {{location.sort_title}}
         <ng-template #locationPopoverContent>
-          <fhir-resource [displayModel]="location"></fhir-resource>
+          <fhir-card [displayModel]="location"></fhir-card>
         </ng-template>
       </small>
     </span>
@@ -53,14 +53,14 @@
           {{medication.display }}
 
           <ng-template #medicationRequestPopoverContent>
-            <fhir-resource [displayModel]="medication"></fhir-resource>
+            <fhir-card [displayModel]="medication"></fhir-card>
           </ng-template>
         </li>
         <li class="cursor-pointer" [ngbPopover]="medicationPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let medication of displayModel?.related_resources?.Medication">
           {{medication.title }}
 
           <ng-template #medicationPopoverContent>
-            <fhir-resource [displayModel]="medication"></fhir-resource>
+            <fhir-card [displayModel]="medication"></fhir-card>
           </ng-template>
         </li>
       </ul>
@@ -74,7 +74,7 @@
           {{procedure.display}}
 
           <ng-template #procedurePopoverContent>
-            <fhir-resource [displayModel]="procedure"></fhir-resource>
+            <fhir-card [displayModel]="procedure"></fhir-card>
           </ng-template>
         </li>
       </ul>
@@ -87,7 +87,7 @@
           {{immunization.sort_title}}
 
           <ng-template #immunizationPopoverContent>
-            <fhir-resource [displayModel]="immunization"></fhir-resource>
+            <fhir-card [displayModel]="immunization"></fhir-card>
           </ng-template>
         </li>
       </ul>
@@ -109,11 +109,11 @@
       </button>
       <div ngbDropdownMenu aria-labelledby="dropdownReports">
         <a class="dropdown-item"
-           *ngFor="let documentReference of displayModel.related_resources['DocumentReference']" ngbDropdownItem
+           *ngFor="let documentReference of displayModel?.related_resources['DocumentReference']" ngbDropdownItem
            routerLink="/explore/{{documentReference?.source_id}}/resource/{{documentReference?.source_resource_id}}"
         >{{documentReference?.sort_title}}</a>
         <a class="dropdown-item"
-           *ngFor="let diagnosticReport of displayModel.related_resources['DiagnosticReport']" ngbDropdownItem
+           *ngFor="let diagnosticReport of displayModel?.related_resources['DiagnosticReport']" ngbDropdownItem
            [routerLink]="diagnosticReportLink(diagnosticReport)"
         >Lab Report - {{diagnosticReport?.sort_title}}</a>
       </div>
@@ -146,7 +146,7 @@
       <form action="">
         <div ngbTooltip="not yet implemented" class="input-group">
           <span class="input-group-btn p-l-10">
-            <button class="btn f-s-12 text-muted rounded-corner" type="button"><i class="cursor-pointer fas fa-lg fa-paperclip"></i></button>
+            <button (click)="openMedicalRecordWizard()" class="btn f-s-12 text-muted rounded-corner" type="button"><i class="cursor-pointer fas fa-lg fa-paperclip"></i></button>
           </span>
           <input type="text" class="form-control rounded-corner" placeholder="Write a private note...">
         </div>

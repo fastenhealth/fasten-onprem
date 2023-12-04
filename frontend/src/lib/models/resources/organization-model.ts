@@ -13,7 +13,8 @@ export class OrganizationModel extends FastenDisplayModel {
   name: string|undefined
   addresses: AddressModel[]|undefined
   telecom: { system?: string, value?: string, use?: string }[]|undefined
-  type_codings: any[]|undefined
+  type: CodableConceptModel[]|undefined
+  type_codings: CodingModel[]|undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
@@ -27,6 +28,8 @@ export class OrganizationModel extends FastenDisplayModel {
     this.name = _.get(fhirResource, 'name');
     this.addresses = _.get(fhirResource, 'address');
     this.telecom = _.get(fhirResource, 'telecom');
+    this.type = _.get(fhirResource, 'type');
+
   };
   dstu2DTO(fhirResource:any){
     this.type_codings = _.get(fhirResource, 'type.coding');

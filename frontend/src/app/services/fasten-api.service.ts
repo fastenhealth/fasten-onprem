@@ -26,7 +26,9 @@ import {ResourceGraphResponse} from '../models/fasten/resource-graph-response';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import {BackgroundJob} from '../models/fasten/background-job';
 import {SupportRequest} from '../models/fasten/support-request';
-
+import {
+  List
+} from 'fhir/r4';
 @Injectable({
   providedIn: 'root'
 })
@@ -106,6 +108,25 @@ export class FastenApiService {
         })
       );
   }
+
+  createRelatedResourcesFastenSource(resourceList: List): Observable<Source> {
+
+    console.log(resourceList)
+    let bundleBlob = new Blob([JSON.stringify(resourceList)], { type: 'application/json' });
+    let bundleFile = new File([ bundleBlob ], 'related.json', { type: 'application/json' });
+
+    const formData = new FormData();
+    formData.append('file', bundleFile);
+
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/related`, formData)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("RELATED RESOURCES RESPONSE", response)
+          return response.data as Source
+        })
+      );
+  }
+
 
   getSources(): Observable<Source[]> {
     return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/source`)
@@ -190,6 +211,10 @@ export class FastenApiService {
     return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/query`, query)
   }
 
+  // requires:
+  // - source_id: string
+  // - source_resource_type: string
+  // - source_resource_id: string
   getResourceGraph(graphType?: string, selectedResourceIds?: Partial<ResourceFhir>[]): Observable<ResourceGraphResponse> {
     if(!graphType){
       graphType = "MedicalHistory"
@@ -228,6 +253,7 @@ export class FastenApiService {
   }
 
   //this method allows a user to manually group related FHIR resources together (conditions, encounters, etc).
+  // @deprecated - replaced by Create Manual Record Wizard
   createResourceComposition(title: string, resources: ResourceFhir[]){
     return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/composition`, {
       "resources": resources,

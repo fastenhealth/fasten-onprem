@@ -15,6 +15,10 @@ import {DeviceModel} from '../../../lib/models/resources/device-model';
 import {CodingModel} from '../../../lib/models/datatypes/coding-model';
 import {LocationModel} from '../../../lib/models/resources/location-model';
 
+/**
+ * @deprecated This EOB panel is no longer in use, the timeline panel allows users to view resources by encounter
+ * TODO: this logic should be moved to the timeline panel before removal (Timeline doesnt have a visualization for EOBs)
+ */
 @Component({
   selector: 'app-report-medical-history-explanation-of-benefit',
   templateUrl: './report-medical-history-explanation-of-benefit.component.html',

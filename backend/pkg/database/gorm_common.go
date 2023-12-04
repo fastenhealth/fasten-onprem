@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"strings"
 	"time"
 
@@ -39,6 +40,7 @@ func (gr *GormRepository) Close() error {
 // User
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// <editor-fold desc="User">
 func (gr *GormRepository) CreateUser(ctx context.Context, user *models.User) error {
 	if err := user.HashPassword(user.Password); err != nil {
 		return err
@@ -53,6 +55,17 @@ func (gr *GormRepository) CreateUser(ctx context.Context, user *models.User) err
 	if err != nil {
 		return err
 	}
+
+	//create Fasten source credential for this user.
+	fastenUserCred := models.SourceCredential{
+		UserID:     user.ID,
+		SourceType: sourcePkg.SourceTypeFasten,
+	}
+	fastenUserCredResp := gr.GormClient.Create(&fastenUserCred)
+	if fastenUserCredResp.Error != nil {
+		return fastenUserCredResp.Error
+	}
+
 	return nil
 }
 func (gr *GormRepository) GetUserByUsername(ctx context.Context, username string) (*models.User, error) {
@@ -94,10 +107,13 @@ func (gr *GormRepository) GetCurrentUser(ctx context.Context) (*models.User, err
 	return &currentUser, nil
 }
 
+//</editor-fold>
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Glossary
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// <editor-fold desc="Glossary">
 func (gr *GormRepository) CreateGlossaryEntry(ctx context.Context, glossaryEntry *models.Glossary) error {
 	record := gr.GormClient.WithContext(ctx).Create(glossaryEntry)
 	if record.Error != nil {
@@ -113,6 +129,8 @@ func (gr *GormRepository) GetGlossaryEntry(ctx context.Context, code string, cod
 		First(&foundGlossaryEntry)
 	return &foundGlossaryEntry, result.Error
 }
+
+//</editor-fold>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Summary
@@ -180,6 +198,8 @@ func (gr *GormRepository) GetSummary(ctx context.Context) (*models.Summary, erro
 // Resource
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// <editor-fold desc="Resource">
+
 // This function will create a new resource if it does not exist, or update an existing resource if it does exist.
 // It will also create associations between fhir resources
 // This function is called directly by fasten-sources
@@ -210,36 +230,98 @@ func (gr *GormRepository) UpsertRawResource(ctx context.Context, sourceCredentia
 	//note: these associations are not reciprocal, (i.e. if Procedure references Location, Location may not reference Procedure)
 	if rawResource.ReferencedResources != nil && len(rawResource.ReferencedResources) > 0 {
 		for _, referencedResource := range rawResource.ReferencedResources {
-			parts := strings.Split(referencedResource, "/")
-			if len(parts) != 2 {
-				continue
-			}
 
-			relatedResource := &models.ResourceBase{
-				OriginBase: models.OriginBase{
-					SourceID:           source.ID,
-					SourceResourceType: parts[0],
-					SourceResourceID:   parts[1],
-				},
-				RelatedResource: nil,
-			}
-			err := gr.AddResourceAssociation(
-				ctx,
-				source,
-				wrappedResourceModel.SourceResourceType,
-				wrappedResourceModel.SourceResourceID,
-				source,
-				relatedResource.SourceResourceType,
-				relatedResource.SourceResourceID,
-			)
-			if err != nil {
-				return false, err
+			var relatedResource *models.ResourceBase
+
+			if strings.HasPrefix(referencedResource, sourcePkg.FASTENHEALTH_URN_PREFIX) {
+				gr.Logger.Infof("parsing external urn:fastenhealth-fhir reference: %v", referencedResource)
+
+				targetSourceId, targetResourceType, targetResourceId, err := sourcePkg.ParseReferenceUri(&referencedResource)
+				if err != nil {
+					gr.Logger.Warnf("could not parse urn:fastenhealth-fhir reference: %v", referencedResource)
+					continue
+				}
+				err = gr.UpsertRawResourceAssociation(
+					ctx,
+					source.ID.String(),
+					wrappedResourceModel.SourceResourceType,
+					wrappedResourceModel.SourceResourceID,
+					targetSourceId,
+					targetResourceType,
+					targetResourceId,
+				)
+				if err != nil {
+					return false, err
+				}
+			} else {
+				parts := strings.Split(referencedResource, "/")
+				if len(parts) != 2 {
+					continue
+				}
+				relatedResource = &models.ResourceBase{
+					OriginBase: models.OriginBase{
+						SourceID:           source.ID,
+						SourceResourceType: parts[0],
+						SourceResourceID:   parts[1],
+					},
+					RelatedResource: nil,
+				}
+				err := gr.AddResourceAssociation(
+					ctx,
+					source,
+					wrappedResourceModel.SourceResourceType,
+					wrappedResourceModel.SourceResourceID,
+					source,
+					relatedResource.SourceResourceType,
+					relatedResource.SourceResourceID,
+				)
+				if err != nil {
+					return false, err
+				}
 			}
 		}
 	}
 
 	return gr.UpsertResource(ctx, wrappedResourceModel)
 
+}
+
+func (gr *GormRepository) UpsertRawResourceAssociation(
+	ctx context.Context,
+	sourceId string,
+	sourceResourceType string,
+	sourceResourceId string,
+	targetSourceId string,
+	targetResourceType string,
+	targetResourceId string,
+) error {
+
+	if sourceId == targetSourceId && sourceResourceType == targetResourceType && sourceResourceId == targetResourceId {
+		gr.Logger.Warnf("cannot create self-referential association, ignoring")
+		return nil
+	}
+	var sourceCredential *models.SourceCredential
+	var targetSourceCredential *models.SourceCredential
+	var err error
+	if sourceId == targetSourceId {
+		sourceCredential, err = gr.GetSource(ctx, sourceId)
+		if err != nil {
+			return err
+		}
+		targetSourceCredential = sourceCredential
+	} else {
+		sourceCredential, err = gr.GetSource(ctx, sourceId)
+		if err != nil {
+			return err
+		}
+		targetSourceCredential, err = gr.GetSource(ctx, targetSourceId)
+		if err != nil {
+			return err
+		}
+	}
+
+	//SECURITY: sourceCredential and targetSourceCredential are guaranteed to be owned by the same user, and will be confirmed within the addAssociation function
+	return gr.AddResourceAssociation(ctx, sourceCredential, sourceResourceType, sourceResourceId, targetSourceCredential, targetResourceType, targetResourceId)
 }
 
 // UpsertResource
@@ -448,9 +530,13 @@ func (gr *GormRepository) GetPatientForSources(ctx context.Context) ([]models.Re
 	return wrappedResourceModels, results.Error
 }
 
+//</editor-fold>
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Resource Associations
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//<editor-fold desc="Resource Associations">
 
 // verifyAssociationPermission ensure that the sources are "owned" by the same user, and that the user is the current user
 func (gr *GormRepository) verifyAssociationPermission(ctx context.Context, sourceUserID uuid.UUID, relatedSourceUserID uuid.UUID) error {
@@ -542,10 +628,13 @@ func (gr *GormRepository) FindResourceAssociationsByTypeAndId(ctx context.Contex
 			ResourceBaseSourceID:           source.ID,
 			ResourceBaseSourceResourceType: resourceType,
 			ResourceBaseSourceResourceID:   resourceId,
+			RelatedResourceUserID:          currentUser.ID,
 		}).
 		Find(&relatedResources)
 	return relatedResources, result.Error
 }
+
+//</editor-fold>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Resource Composition (Grouping)
@@ -565,6 +654,8 @@ func (gr *GormRepository) FindResourceAssociationsByTypeAndId(ctx context.Contex
 // - add AddResourceAssociation for all resources linked to the Composition resource
 // - store the Composition resource
 // TODO: determine if we should be using a List Resource instead of a Composition resource
+//
+// Deprecated: This method has been deprecated. It has been replaced in favor of Fasten SourceCredential & associations
 func (gr *GormRepository) AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceBase) error {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
@@ -718,6 +809,8 @@ func (gr *GormRepository) AddResourceComposition(ctx context.Context, compositio
 // SourceCredential
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//<editor-fold desc="SourceCredential">
+
 func (gr *GormRepository) CreateSource(ctx context.Context, sourceCreds *models.SourceCredential) error {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
@@ -846,10 +939,10 @@ func (gr *GormRepository) GetSourceSummary(ctx context.Context, sourceId string)
 		Table(patientTableName).
 		First(&wrappedPatientResourceModel)
 
-	if patientResults.Error != nil {
-		return nil, patientResults.Error
+	//some sources may not have a patient resource (including the Fasten source)
+	if patientResults.Error == nil {
+		sourceSummary.Patient = &wrappedPatientResourceModel
 	}
-	sourceSummary.Patient = &wrappedPatientResourceModel
 
 	return sourceSummary, nil
 }
@@ -925,10 +1018,13 @@ func (gr *GormRepository) DeleteSource(ctx context.Context, sourceId string) (in
 	return rowsEffected, results.Error
 }
 
+//</editor-fold>
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Background Job
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// <editor-fold desc="Background Job & Checkpoints">
 func (gr *GormRepository) CreateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
@@ -1116,6 +1212,8 @@ func (gr *GormRepository) CancelAllLockedBackgroundJobsAndFail() error {
 		}).Error
 
 }
+
+//</editor-fold>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utilities

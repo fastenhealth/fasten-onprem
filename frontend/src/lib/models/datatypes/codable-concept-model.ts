@@ -16,7 +16,7 @@ export function hasValue(data:any ): boolean {
 
 export class CodableConceptModel {
   text?: string
-  coding: CodingModel[]
+  coding?: CodingModel[]
   constructor(fhirData: any) {
     this.text = _.get(fhirData, 'text', '');
     this.coding = _.get(fhirData, 'coding', []);

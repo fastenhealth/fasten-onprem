@@ -31,7 +31,7 @@
               </div>
 
             <ng-template #practitionerPopoverContent>
-              <fhir-resource [displayModel]="practitioner.displayModel"></fhir-resource>
+              <fhir-card [displayModel]="practitioner.displayModel"></fhir-card>
             </ng-template>
 
           </ng-container>
@@ -80,14 +80,14 @@
                   {{medication.display }}
 
                   <ng-template #medicationRequestPopoverContent>
-                    <fhir-resource [displayModel]="medication"></fhir-resource>
+                    <fhir-card [displayModel]="medication"></fhir-card>
                   </ng-template>
                 </li>
                 <li class="cursor-pointer" [ngbPopover]="medicationPopoverContent" placement="top-left" popoverClass="card-fhir-resource-popover" *ngFor="let medication of encounter?.related_resources?.Medication">
                   {{medication.title }}
 
                   <ng-template #medicationPopoverContent>
-                    <fhir-resource [displayModel]="medication"></fhir-resource>
+                    <fhir-card [displayModel]="medication"></fhir-card>
                   </ng-template>
                 </li>
               </ul>
@@ -101,7 +101,7 @@
                   {{procedure.display}}
 
                   <ng-template #procedurePopoverContent>
-                    <fhir-resource [displayModel]="procedure"></fhir-resource>
+                    <fhir-card [displayModel]="procedure"></fhir-card>
                   </ng-template>
                 </li>
               </ul>
@@ -115,7 +115,7 @@
                   {{diagnosticReport.sort_title || diagnosticReport.title}}
 
                   <ng-template #diagnosticReportPopoverContent>
-                    <fhir-resource [displayModel]="diagnosticReport"></fhir-resource>
+                    <fhir-card [displayModel]="diagnosticReport"></fhir-card>
                   </ng-template>
                 </li>
               </ul>
@@ -128,7 +128,7 @@
                   {{documentReference.sort_title || documentReference.title}}
 
                   <ng-template #documentReferencePopoverContent>
-                    <fhir-resource [displayModel]="documentReference"></fhir-resource>
+                    <fhir-card [displayModel]="documentReference"></fhir-card>
                   </ng-template>
                 </li>
               </ul>

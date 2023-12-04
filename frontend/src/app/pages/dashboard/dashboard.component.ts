@@ -85,7 +85,7 @@ export class DashboardComponent implements OnInit {
   }
 
   isActive(source: Source){
-    if(source.source_type == "manual"){
+    if(source.source_type == "manual" || source.source_type == 'fasten'){
       return '--'
     }
     let expiresDate = new Date(source.expires_at);

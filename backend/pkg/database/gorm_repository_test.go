@@ -1021,7 +1021,7 @@ func (suite *RepositoryTestSuite) TestGetSummary() {
 		{"count": int64(16), "resource_type": "Procedure"},
 	}, sourceSummary.ResourceTypeCounts)
 
-	require.Equal(suite.T(), 2, len(sourceSummary.Sources))
+	require.Equal(suite.T(), 3, len(sourceSummary.Sources))
 	require.Equal(suite.T(), 2, len(sourceSummary.Patients))
 }
 

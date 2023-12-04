@@ -69,6 +69,9 @@ type SourceCredential struct {
 func (s *SourceCredential) GetSourceType() sourcesPkg.SourceType {
 	return s.SourceType
 }
+func (s *SourceCredential) GetSourceId() string {
+	return s.ID.String()
+}
 
 func (s *SourceCredential) GetClientId() string {
 	return s.ClientId

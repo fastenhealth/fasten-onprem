@@ -1,18 +1,21 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-sources/clients/factory"
+	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 func CreateReconnectSource(c *gin.Context) {
@@ -122,30 +125,17 @@ func SourceSync(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "source": sourceCred, "data": summary})
 }
 
+// mimics functionality in CreateRelatedResources
+// mimics functionality in SourceSync
 func CreateManualSource(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 	eventBus := c.MustGet(pkg.ContextKeyTypeEventBusServer).(event_bus.Interface)
 
-	// single file
-	file, err := c.FormFile("file")
+	// store the bundle file locally
+	bundleFile, err := storeFileLocally(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not extract file from form"})
-		return
-	}
-	fmt.Printf("Uploaded filename: %s", file.Filename)
-
-	// create a temporary file to store this uploaded file
-	bundleFile, err := ioutil.TempFile("", file.Filename)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not create temp file"})
-		return
-	}
-
-	// Upload the file to specific bundleFile.
-	err = c.SaveUploadedFile(file, bundleFile.Name())
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not save temp file"})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
@@ -178,23 +168,40 @@ func CreateManualSource(c *gin.Context) {
 		return
 	}
 
-	manualSourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourcePkg.SourceTypeManual, c, logger, &manualSourceCredential)
-	if err != nil {
-		logger.Errorln("An error occurred while initializing hub client using manual source with credential", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
-		return
-	}
+	summary, err := BackgroundJobSyncResourcesWrapper(
+		c,
+		logger,
+		databaseRepo,
+		&manualSourceCredential,
+		func(
+			_backgroundJobContext context.Context,
+			_logger *logrus.Entry,
+			_databaseRepo database.DatabaseRepository,
+			_sourceCred *models.SourceCredential,
+		) (sourceModels.SourceClient, sourceModels.UpsertSummary, error) {
+			manualSourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourcePkg.SourceTypeManual, _backgroundJobContext, _logger, _sourceCred)
+			if err != nil {
+				resultErr := fmt.Errorf("an error occurred while initializing hub client using manual source with credential: %w", err)
+				logger.Errorln(resultErr)
+				return manualSourceClient, sourceModels.UpsertSummary{}, resultErr
+			}
 
-	summary, err := manualSourceClient.SyncAllBundle(databaseRepo, bundleFile, bundleType)
+			summary, err := manualSourceClient.SyncAllBundle(_databaseRepo, bundleFile, bundleType)
+			if err != nil {
+				resultErr := fmt.Errorf("an error occurred while processing bundle: %w", err)
+				logger.Errorln(resultErr)
+				return manualSourceClient, sourceModels.UpsertSummary{}, resultErr
+			}
+			return manualSourceClient, summary, nil
+		})
+
 	if err != nil {
-		logger.Errorln("An error occurred while processing bundle", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
 	//publish event
 	currentUser, _ := databaseRepo.GetCurrentUser(c)
-
 	err = eventBus.PublishMessage(
 		models.NewEventSourceComplete(
 			currentUser.ID.String(),
@@ -259,4 +266,30 @@ func DeleteSource(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": rowsEffected})
+}
+
+// Helpers
+func storeFileLocally(c *gin.Context) (*os.File, error) {
+	// single file
+	file, err := c.FormFile("file")
+	if err != nil {
+		//c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not extract file from form"})
+		return nil, fmt.Errorf("could not extract file from form")
+	}
+	fmt.Printf("Uploaded filename: %s", file.Filename)
+
+	// create a temporary file to store this uploaded file
+	bundleFile, err := ioutil.TempFile("", file.Filename)
+	if err != nil {
+		//c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not create temp file"})
+		return nil, fmt.Errorf("could not create temp file")
+	}
+
+	// Upload the file to specific bundleFile.
+	err = c.SaveUploadedFile(file, bundleFile.Name())
+	if err != nil {
+		//c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not save temp file"})
+		return nil, fmt.Errorf("could not save temp file")
+	}
+	return bundleFile, nil
 }

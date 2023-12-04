@@ -20,9 +20,9 @@ export class PractitionerModel extends FastenDisplayModel {
     relationship: string
   }|undefined
   telecom: { system?: string, value?: string, use?: string }[]|undefined
-  address: AddressModel|undefined
+  address: AddressModel[]|undefined
   birthdate: string|undefined
-  qualification: { code: string, system: string }[]|undefined
+  qualification: CodingModel[]|undefined
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {
     super(fastenOptions)
@@ -51,7 +51,7 @@ export class PractitionerModel extends FastenDisplayModel {
 
   stu3DTO(fhirResource:any){
     this.name = _.get(fhirResource, 'name',[]).map((name:any): HumanNameModel => new HumanNameModel(name));
-    this.address = new AddressModel(_.get(fhirResource, 'address.0'));
+    this.address = _.get(fhirResource, 'address', []).map((address:any): AddressModel => new AddressModel(address));
     this.telecom = _.get(fhirResource, 'telecom');
   };
 

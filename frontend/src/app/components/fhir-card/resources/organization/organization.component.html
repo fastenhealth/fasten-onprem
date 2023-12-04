@@ -1,0 +1,15 @@
+<div class="card card-fhir-resource" >
+  <div class="card-header" (click)="isCollapsed = ! isCollapsed">
+    <div>
+      <h6 class="card-title">{{displayModel?.name}}</h6>
+    </div>
+    <ng-content select="[header]"></ng-content>
+  </div>
+  <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed" class="card-body">
+    <p class="az-content-text mg-b-20">A formally or informally recognized grouping of people or organizations formed for the purpose of achieving some form of collective action. Includes companies, institutions, corporations, departments, community groups, healthcare practice groups, payer/insurer, etc.</p>
+    <fhir-ui-table [displayModel]="displayModel" [tableData]="tableData"></fhir-ui-table>
+  </div>
+  <div *ngIf="showDetails" class="card-footer">
+    <a class="float-right" routerLink="/explore/{{displayModel?.source_id}}/resource/{{displayModel?.source_resource_id}}">details</a>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 <div class="az-content">
 
-  <div class="container bg-light mb-4 p-2">
+  <div *ngIf="selectedPatient" class="container bg-light mb-4 p-2">
       <div class="az-content-body">
         <div class="panel panel-default patient col-xs-12">
           <div class="row">
@@ -37,9 +37,9 @@
                 <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">Address:</div>
                 <div class="col-xs-8 col-sm-5 col-lg-3 text-left p-0">{{getPatientAddress()}}</div>
                 <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">ID:</div>
-                <div class="col-xs-8 col-sm-3 col-lg-3 text-left p-0">{{selectedPatient?.source_resource_id}}</div>
+                <div class="col-xs-8 col-sm-3 col-lg-3 text-left p-0 text-overflow-ellipsis ">{{selectedPatient?.source_resource_id}}</div>
                 <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">MRN:</div>
-                <div class="col-xs-8 col-sm-5 col-lg-3 text-left p-0">{{getPatientMRN()}}</div>
+                <div class="col-xs-8 col-sm-5 col-lg-3 text-left p-0 text-overflow-ellipsis">{{getPatientMRN()}}</div>
               </div>
             </div>
           </div>
@@ -63,11 +63,11 @@
     </div>
     <div class="az-content-body pd-lg-l-40 d-flex flex-column">
 
-      <source-resource-list
+      <fhir-datatable
         [source]="selectedSource"
         [resourceListType]="selectedResourceType"
         [selectedTotalElements]="selectedTotalElements"
-      ></source-resource-list>
+      ></fhir-datatable>
 
     </div><!-- az-content-body -->
   </div><!-- container -->

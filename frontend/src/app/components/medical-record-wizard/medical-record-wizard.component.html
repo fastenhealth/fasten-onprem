@@ -1,0 +1,428 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="form">
+  <div class="modal-header">
+    <h4 class="modal-title"> Medical Record Wizard</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12">
+        <div class="alert alert-info" role="alert">
+          <strong>Manual Entry</strong> If you're unable to automatically retrieve your health records, you can manually enter them using this form.
+          <br/>Simply fill in the required information to ensure your records are up-to-date.
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="debugMode" class="alert alert-warning">
+      <pre><code  [highlight]="form.getRawValue() | json"></code></pre>
+      <strong>Form Status: {{ form.status }}</strong>
+    </div>
+
+    <div>
+      <div class="d-flex">
+        <div ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-pills flex-column col-xl-3 col-lg-3 col-md-4 bg-gray-200 pd-20" orientation="vertical">
+        <ng-container ngbNavItem="encounter">
+          <a class="nav-link" ngbNavLink>Encounter</a>
+          <ng-template ngbNavContent>
+            <div>
+              <h6 class="card-title">Encounter</h6>
+              <p class="card-text mg-b-10">
+                An Encounter refers to a meeting or interaction with a healthcare provider, such as a doctor's appointment, surgery or a visit to discuss and address your health concerns
+              </p>
+            </div>
+            <div *ngIf="existingEncounter; else addEncounter">
+              <fhir-card [showDetails]="false" [displayModel]="existingEncounter" [isCollapsed]="true"></fhir-card>
+            </div>
+            <ng-template #addEncounter>
+              <div class="row pt-2">
+                <div class="col-lg-4 col-md-4">
+                  <button type="button" (click)="openEncounterModal()" class="btn btn-outline-indigo btn-block">Find/Create Encounter</button>
+                </div>
+              </div>
+            </ng-template>
+
+          </ng-template>
+        </ng-container>
+        <ng-container ngbNavItem="medications" [disabled]="!existingEncounter">
+          <a class="nav-link" ngbNavLink>
+            Medications <span class="badge badge-pill badge-warning align-middle" *ngIf="medications.controls.length">{{medications.controls.length}}</span>
+          </a>
+          <ng-template ngbNavContent>
+            <div>
+              <h6 class="card-title">Medications</h6>
+              <p class="card-text mg-b-10">
+                Medications are a type of treatment, usually in the form of pills, liquids, or injections, prescribed by doctors to help your body fight off illnesses, manage symptoms, or improve overall health.
+              </p>
+            </div>
+
+            <fhir-card *ngFor="let medication of existingEncounter?.related_resources?.['Medication']" [showDetails]="false" [displayModel]="medication" [isCollapsed]="true"></fhir-card>
+
+            <ng-container formArrayName="medications">
+              <div class="card mg-t-10 pd-20" [formGroup]="medicationGroup" *ngFor="let medicationGroup of medications.controls; let i = index">
+                <div *ngIf="debugMode" class="alert alert-warning">
+                  <strong>Medication Status: {{medicationGroup.status}}</strong>
+                </div>
+                <div class="tx-right">
+                  <span class="cursor-pointer" (click)="deleteMedication(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                </div>
+                <div class="row row-sm">
+                  <div class="col-lg-6">
+                    <p class="mg-b-10">Medication name<span ngbTooltip="required" class="text-danger">*</span></p>
+                    <app-nlm-typeahead formControlName="data" searchType="Medication" [debugMode]="debugMode"></app-nlm-typeahead>
+                  </div><!-- col -->
+                  <div class="col-lg-3 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Status<span ngbTooltip="required" class="text-danger">*</span></p>
+                    <select formControlName="status" class="form-control">
+                      <option value="" hidden selected>Select Status</option>
+                      <option value="active">Active</option>
+                      <option value="stopped">Stopped</option>
+                    </select>
+                  </div><!-- col -->
+                  <div class="col-lg-3 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Dosage</p>
+                    <input formControlName="dosage" class="form-control" placeholder="Input box" type="text">
+                  </div><!-- col -->
+                  <div class="col-lg-3 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Started<span ngbTooltip="required" class="text-danger">*</span></p>
+                    <input formControlName="started" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #ds="ngbDatepicker" (click)="ds.toggle()">
+                  </div><!-- col -->
+                  <div class="col-lg-3 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Stopped</p>
+                    <input [minDate]="medicationGroup.get('started').value" formControlName="stopped" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #dstop="ngbDatepicker" (click)="dstop.toggle()">
+                  </div><!-- col -->
+                  <div class="col-lg-3 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Why Stopped</p>
+                    <app-nlm-typeahead formControlName="whystopped" searchType="MedicationWhyStopped" [debugMode]="debugMode"></app-nlm-typeahead>
+                  </div><!-- col -->
+                  <div class="col-lg-3 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Prescribing Practitioner<span ngbTooltip="required" class="text-danger">*</span></p>
+                    <select class="form-control" formControlName="requester">
+                      <option value="" hidden selected>Select Practitioner</option>
+                      <option value="" (click)="openPractitionerModal(medicationGroup, 'requester')">New Practitioner</option>
+
+                      <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner']?.length" class="divider">---</optgroup>
+                      <option *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']; let i = index" [value]="practitioner | referenceUri">
+                        {{practitioner?.name | humanName }} ({{practitioner?.profession?.text}})
+                      </option>
+
+                      <optgroup *ngIf="practitioners.controls.length" class="divider">---</optgroup>
+                      <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.controls.data.value | referenceUri">
+                        {{practitioner.controls.data.value.name | humanName }} ({{practitioner.controls.data.value?.profession?.text}})
+                      </option>
+                    </select>
+                  </div><!-- col -->
+                </div><!-- row -->
+                <div class="row row-sm mg-t-20">
+                  <div class="col-lg">
+                    <p class="mg-b-10">Instructions</p>
+                    <textarea formControlName="instructions" rows="3" class="form-control" placeholder="Textarea"></textarea>
+                  </div><!-- col -->
+                </div><!-- row -->
+                <div class="row row-sm mg-t-20">
+                  <div class="col-12 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Attachments</p>
+                  </div><!-- col -->
+                  <div class="col-1">
+                    <button type="button" (click)="openAttachmentModal(medicationGroup, 'attachments')" class="btn btn-indigo btn-with-icon">
+                      <i class="fas fa-paperclip"></i> Add
+                    </button>
+                  </div>
+                  <div class="col-11">
+                    <ng-select class="ng-select-form-control" [readonly]="!attachments.controls.length" appendTo="body" formControlName="attachments" placeholder="Select Attachment" [multiple]="true" [hideSelected]="true">
+                      <ng-option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">{{attachment.value.name}} ({{attachment.value.file_name}})</ng-option>
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <div class="row pt-2">
+              <div class="col-lg-4 col-md-3">
+                <button type="button" (click)="addMedication()" class="btn btn-outline-indigo btn-block">Add Medication</button>
+              </div>
+            </div>
+
+          </ng-template>
+        </ng-container>
+        <ng-container ngbNavItem="procedures" [disabled]="!existingEncounter">
+          <a class="nav-link" ngbNavLink>
+            Procedures <span class="badge badge-pill badge-warning align-middle" *ngIf="procedures.controls.length">{{procedures.controls.length}}</span>
+          </a>
+          <ng-template ngbNavContent>
+            <div>
+              <h6 class="card-title">Major Surgeries and Implants</h6>
+              <p class="card-text mg-b-10">
+                Surgery is a medical procedure where doctors use special tools to fix, remove, or improve something inside your body to help you feel better or get healthier.
+              </p>
+            </div>
+
+            <fhir-card *ngFor="let procedure of existingEncounter?.related_resources?.['Procedure']" [showDetails]="false" [displayModel]="procedure" [isCollapsed]="true"></fhir-card>
+
+
+            <ng-container formArrayName="procedures">
+              <div class="card mg-t-10 pd-20" [formGroup]="procedureGroup" *ngFor="let procedureGroup of procedures.controls; let i = index">
+                <div *ngIf="debugMode" class="alert alert-warning">
+                  <strong>Procedure Status: {{procedureGroup.status}}</strong>
+                </div>
+                <div class="tx-right">
+                  <span class="cursor-pointer" (click)="deleteProcedure(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                </div>
+                <div class="row row-sm">
+                  <div class="col-lg-8">
+                    <p class="mg-b-10">Surgery or Implant<span ngbTooltip="required" class="text-danger">*</span></p>
+                    <app-nlm-typeahead formControlName="data" searchType="Procedure" [debugMode]="debugMode"></app-nlm-typeahead>
+                  </div><!-- col -->
+                  <div class="col-lg-4 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">When done<span ngbTooltip="required" class="text-danger">*</span></p>
+                    <input formControlName="whendone" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #dwd="ngbDatepicker" (click)="dwd.toggle()">
+                  </div><!-- col -->
+                  <div class="col-lg-6 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Performed By</p>
+                    <select class="form-control" formControlName="performer">
+                      <option value="" hidden selected>Select Practitioner</option>
+                      <option value="" (click)="openPractitionerModal(procedureGroup, 'performer')">New Practitioner</option>
+
+                      <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner']?.length" class="divider">---</optgroup>
+                      <option *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']; let i = index" [value]="practitioner | referenceUri">
+                        {{practitioner?.name | humanName }} ({{practitioner?.profession?.text}})
+                      </option>
+
+                      <optgroup *ngIf="practitioners.controls.length" class="divider">---</optgroup>
+                      <option *ngFor="let practitioner of practitioners.controls; let i = index" [value]="practitioner.controls.data.value | referenceUri">
+                        {{practitioner.controls.data.value.name | humanName }} ({{practitioner.controls.data.value?.profession?.text}})
+                      </option>
+                    </select>
+
+                  </div><!-- col -->
+                  <div class="col-lg-6 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Location</p>
+                    <select class="form-control" formControlName="location">
+                      <option value="" hidden selected>Select Location</option>
+                      <option value="" (click)="openOrganizationModal( procedureGroup, 'location')">New Organization</option>
+
+                      <optgroup *ngIf="existingEncounter?.related_resources?.['Organization']?.length" class="divider">---</optgroup>
+                      <option *ngFor="let organization of existingEncounter?.related_resources?.['Organization']; let i = index" [value]="organization | referenceUri">
+                        {{organization?.name }}
+                      </option>
+
+                      <optgroup *ngIf="organizations.controls.length" class="divider"></optgroup>
+                      <option *ngFor="let organization of organizations.controls; let i = index" [value]="organization.controls.data.value | referenceUri">
+                        {{organization.controls.data.value.name}} ({{organization.controls.data.value?.address}})
+                      </option>
+                    </select>
+                  </div><!-- col -->
+                  <div class="col-lg-12 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Comments</p>
+                    <textarea formControlName="comment" class="form-control" placeholder="Input box" rows="3"></textarea>
+                  </div><!-- col -->
+                </div><!-- row -->
+                <div class="row row-sm mg-t-20">
+                  <div class="col-12 mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Attachments</p>
+                  </div><!-- col -->
+
+                  <div class="col-1">
+                    <button type="button" (click)="openAttachmentModal(procedureGroup, 'attachments')" class="btn btn-indigo btn-with-icon">
+                      <i class="fas fa-paperclip"></i> Add
+                    </button>
+                  </div>
+                  <div class="col-11">
+                    <ng-select class="ng-select-form-control" [readonly]="!attachments.controls.length" formControlName="attachments" placeholder="Select Attachment" [multiple]="true" [hideSelected]="true">
+                      <ng-option *ngFor="let attachment of attachments.controls; let i = index" [value]="attachment.value.id">{{attachment.value.name}} ({{attachment.value.file_name}})</ng-option>
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+
+            <div class="row pt-2">
+              <div class="col-lg-4 col-md-3">
+                <button type="button" (click)="addProcedure()" class="btn btn-outline-indigo btn-block">Add Surgery or Implant</button>
+              </div>
+            </div>
+
+
+          </ng-template>
+        </ng-container>
+        <ng-container ngbNavItem="practitioners" [disabled]="!existingEncounter">
+          <a class="nav-link" ngbNavLink>
+            Practitioners <span class="badge badge-pill badge-warning align-middle" *ngIf="practitioners.controls.length">{{practitioners.controls.length}}</span>
+          </a>
+          <ng-template ngbNavContent>
+            <div>
+              <h6 class="card-title">Medical Practitioners</h6>
+              <p class="card-text mg-b-10">A practitioner is a healthcare professional, such as a doctor or nurse, who is trained and qualified to provide medical care and support to help you stay healthy or manage any health concerns you may have.</p>
+            </div>
+
+            <fhir-card *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']" [showDetails]="false" [displayModel]="practitioner" [isCollapsed]="true"></fhir-card>
+
+            <ng-container formArrayName="practitioners">
+              <ng-container *ngFor="let practitionerGroup of practitioners.controls; let i = index">
+                <div *ngIf="debugMode" class="alert alert-warning">
+                  <strong>Practitioner Status: {{practitionerGroup.status}}</strong>
+                </div>
+                <fhir-practitioner class="fhir-card-callout-warning" [formGroup]="practitionerGroup"  [showDetails]="false" [displayModel]="practitionerGroup.controls.data.value" [isCollapsed]="true">
+                  <div header>
+                    <span class="cursor-pointer float-right" (click)="deletePractitioner(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                  </div>
+                </fhir-practitioner>
+              </ng-container>
+            </ng-container>
+
+
+
+
+            <div class="row pt-2">
+              <div class="col-lg-4 col-md-4">
+                <button type="button" (click)="openPractitionerModal()" class="btn btn-outline-indigo btn-block">Add Practitioner</button>
+              </div>
+            </div>
+
+          </ng-template>
+        </ng-container>
+        <ng-container ngbNavItem="organizations" [disabled]="!existingEncounter">
+          <a class="nav-link" ngbNavLink>
+            Organizations <span class="badge badge-pill badge-warning align-middle" *ngIf="organizations.controls.length">{{organizations.controls.length}}</span>
+          </a>
+          <ng-template ngbNavContent>
+            <div>
+              <h6 class="card-title">Medical Location/Organizations</h6>
+              <p class="card-text mg-b-10">A group of healthcare professionals and staff working together, like a hospital or clinic, to provide coordinated and effective care for patients
+              </p>
+            </div>
+
+            <fhir-card *ngFor="let organization of existingEncounter?.related_resources?.['Organization']" [showDetails]="false" [displayModel]="organization" [isCollapsed]="true"></fhir-card>
+
+            <ng-container formArrayName="organizations">
+              <ng-container *ngFor="let organizationGroup of organizations.controls; let i = index">
+                <div *ngIf="debugMode" class="alert alert-warning">
+                  <strong>Organization Status: {{organizationGroup.status}}</strong>
+                </div>
+                <fhir-organization class="fhir-card-callout-warning" [formGroup]="organizationGroup"  [showDetails]="false" [displayModel]="organizationGroup.controls.data.value" [isCollapsed]="true">
+                  <div header>
+                    <span class="cursor-pointer float-right" (click)="deleteOrganization(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                  </div>
+                </fhir-organization>
+              </ng-container>
+            </ng-container>
+
+            <div class="row pt-2">
+              <div class="col-lg-4 col-md-4">
+                <button type="button" (click)="openOrganizationModal()" class="btn btn-outline-indigo btn-block">Add Organization</button>
+              </div>
+            </div>
+          </ng-template>
+        </ng-container>
+        <ng-container ngbNavItem="labresults" [disabled]="!existingEncounter">
+          <a class="nav-link" ngbNavLink>
+            Lab Results
+          </a>
+          <ng-template ngbNavContent>
+            <div>
+              <h6 class="card-title">Lab Results & Observations</h6>
+              <p class="card-text">
+                Lab results are detailed reports of tests conducted on samples like blood or urine, providing important information
+                to your doctor about your health and helping guide the best course of action for your care.
+              </p>
+            </div>
+
+
+            <div class="alert alert-warning" role="alert">
+              <strong>Under Construction</strong> Fasten does not currently support adding lab results manually. <br/>This feature is expected to be available in the next release.
+            </div>
+
+
+
+          </ng-template>
+        </ng-container>
+        <ng-container ngbNavItem="attachments" [disabled]="!existingEncounter">
+          <a class="nav-link" ngbNavLink>
+            Attachments <span class="badge badge-pill badge-warning align-middle" *ngIf="attachments.controls.length">{{attachments.controls.length}}</span>
+          </a>
+          <ng-template ngbNavContent>
+            <div>
+              <h6 class="card-title">Notes & Attachments</h6>
+              <p class="card-text">
+                Files and notes related to medications, procedures, or the current condition.
+              </p>
+            </div>
+
+            <ng-container formArrayName="attachments">
+              <div class="card mg-t-10 pd-20" [formGroup]="attachmentGroup" *ngFor="let attachmentGroup of attachments.controls; let i = index">
+                <div *ngIf="debugMode" class="alert alert-warning">
+                  <strong>Attachment Status: {{attachmentGroup.status}}</strong>
+                </div>
+                <div class="tx-right">
+                  <span class="cursor-pointer" (click)="deleteAttachment(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                </div>
+
+                <div class="row row-sm">
+                  <input formControlName="id" class="form-control" type="hidden">
+
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
+                    <input formControlName="name" readonly class="form-control" placeholder="Input box" type="text">
+                  </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">Category</p>
+                    <app-nlm-typeahead formControlName="category" searchType="AttachmentCategory" [debugMode]="debugMode"></app-nlm-typeahead>
+                  </div><!-- col -->
+                  <div class="col-lg mg-t-10 mg-lg-t-0">
+                    <p class="mg-b-10">File Type</p>
+                    <input readonly class="form-control" formControlName="file_type"/>
+                  </div><!-- col -->
+                </div><!-- row -->
+
+              </div>
+            </ng-container>
+
+            <div class="row pt-2">
+              <div class="col-lg-4 col-md-3">
+                <button type="button" (click)="openAttachmentModal()" class="btn btn-outline-indigo btn-block">Create Attachment/Document</button>
+              </div>
+            </div>
+
+          </ng-template>
+        </ng-container>
+      </div>
+        <div [ngbNavOutlet]="nav" class="col-xl-9 col-lg-9 col-md-8"></div>
+      </div>
+    </div>
+
+  <!--  <div class="row">-->
+  <!--    <div class="col-2">-->
+  <!--      <div class="pd-20 bg-gray-200">-->
+  <!--        <nav class="nav nav-pills flex-column">-->
+  <!--          <a class="nav-link active" data-bs-toggle="tab" href="#">Visit</a>-->
+  <!--          <a class="nav-link" data-bs-toggle="tab" href="#">Medications</a>-->
+  <!--          <a class="nav-link" data-bs-toggle="tab" href="#">Procedures</a>-->
+  <!--          <a class="nav-link" data-bs-toggle="tab" href="#">Practitioners</a>-->
+  <!--          <a class="nav-link" data-bs-toggle="tab" href="#">Organizations</a>-->
+  <!--          <a class="nav-link" data-bs-toggle="tab" href="#">Lab Results</a>-->
+  <!--          <a class="nav-link" data-bs-toggle="tab" href="#">Attachments</a>-->
+  <!--        </nav>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--    <div class="col-10">-->
+  <!--      <span>BODY CONTENT</span>-->
+  <!--    </div>-->
+  <!--  </div>-->
+
+  </div>
+  <div class="modal-footer">
+    <button [ngClass]="{
+    'btn-outline-dark': !debugMode,
+    'text-dark': !debugMode,
+    'btn-dark':debugMode,
+    'text-white':debugMode
+     }" type="button" class="btn float-left" (click)="debugMode = !debugMode">
+      <i class="fas fa-bug"></i>
+    </button>
+    <button type="submit" class="btn btn-indigo" [disabled]="submitWizardLoading">
+      Save
+    </button>
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+  </div>
+</form>

@@ -94,6 +94,7 @@ func GetResourceFhir(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": wrappedResourceModel})
 }
 
+// deprecated - using Manual Resource Wizard instead
 func CreateResourceComposition(c *gin.Context) {
 
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)

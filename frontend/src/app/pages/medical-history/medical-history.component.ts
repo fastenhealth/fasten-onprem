@@ -30,7 +30,7 @@ export class MedicalHistoryComponent implements OnInit {
 
 
   constructor(
-    private fastenApi: FastenApiService,
+    public fastenApi: FastenApiService,
     private modalService: NgbModal
   ) { }
 

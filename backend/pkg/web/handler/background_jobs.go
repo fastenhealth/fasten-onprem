@@ -17,14 +17,65 @@ import (
 	"time"
 )
 
-// BackgroundJobSyncResources is a background job that syncs all FHIR resource for a given source
+// This function is used to sync resources from a source (via a callback function). The BackgroundJobSyncResourcesWrapper contains the logic for registering the background job tracking the sync.
+func BackgroundJobSyncResources(
+	parentContext context.Context,
+	logger *logrus.Entry,
+	databaseRepo database.DatabaseRepository,
+	sourceCred *models.SourceCredential,
+) (sourceModels.UpsertSummary, error) {
+	return BackgroundJobSyncResourcesWrapper(
+		parentContext,
+		logger,
+		databaseRepo,
+		sourceCred,
+		func(
+			_backgroundJobContext context.Context,
+			_logger *logrus.Entry,
+			_databaseRepo database.DatabaseRepository,
+			_sourceCred *models.SourceCredential,
+		) (sourceModels.SourceClient, sourceModels.UpsertSummary, error) {
+			// after creating the client, we should do a bulk import
+			sourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), _sourceCred.SourceType, _backgroundJobContext, _logger, _sourceCred)
+			if err != nil {
+				resultErr := fmt.Errorf("an error occurred while initializing hub client using source credential: %w", err)
+				_logger.Errorln(resultErr)
+				return nil, sourceModels.UpsertSummary{}, resultErr
+			}
+
+			summary, err := sourceClient.SyncAll(_databaseRepo)
+			if err != nil {
+				resultErr := fmt.Errorf("an error occurred while bulk importing resources from source: %w", err)
+				_logger.Errorln(resultErr)
+				return sourceClient, summary, resultErr
+			}
+			return sourceClient, summary, nil
+		})
+}
+
+// BackgroundJobSyncResourcesWrapper is a background job that syncs all FHIR resource for a given source
 // It is a blocking function that will return only when the sync is complete or has failed
 // It will create a background job and associate it with the source
 // It will also update the access token and refresh token if they have been updated
 // It will return the sync summary and error if any
+//
+// It's a wrapper function that takes a callback function as an argument.
+// The callback function is the actual sync operation that will be run in the background (regular source or manual source)
+//
 // TODO: run in background thread, or use https://gobyexample.com/tickers
 // TODO: use goroutine to truely run in the background (how will that work with DatabaseRepository, is that thread safe?) Mutex needed?
-func BackgroundJobSyncResources(parentContext context.Context, logger *logrus.Entry, databaseRepo database.DatabaseRepository, sourceCred *models.SourceCredential) (sourceModels.UpsertSummary, error) {
+func BackgroundJobSyncResourcesWrapper(
+	parentContext context.Context,
+	logger *logrus.Entry,
+	databaseRepo database.DatabaseRepository,
+	sourceCred *models.SourceCredential,
+	callbackFn func(
+		_backgroundJobContext context.Context,
+		_logger *logrus.Entry,
+		_databaseRepo database.DatabaseRepository,
+		_sourceCred *models.SourceCredential,
+	) (sourceModels.SourceClient, sourceModels.UpsertSummary, error),
+) (sourceModels.UpsertSummary, error) {
 	var resultErr error
 	var backgroundJob *models.BackgroundJob
 
@@ -52,14 +103,6 @@ func BackgroundJobSyncResources(parentContext context.Context, logger *logrus.En
 	if err != nil {
 		logger.Warn("An error occurred while registering background job id with source, ignoring", err)
 		//we can safely ignore this error, because we'll be updating the status of the background job again later
-	}
-
-	// after creating the client, we should do a bulk import
-	sourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourceCred.SourceType, backgroundJobContext, logger, sourceCred)
-	if err != nil {
-		resultErr = fmt.Errorf("an error occurred while initializing hub client using source credential: %w", err)
-		logger.Errorln(resultErr)
-		return sourceModels.UpsertSummary{}, resultErr
 	}
 
 	// BEGIN FINALIZER
@@ -124,10 +167,11 @@ func BackgroundJobSyncResources(parentContext context.Context, logger *logrus.En
 	}()
 	// END FINALIZER
 
-	summary, err := sourceClient.SyncAll(databaseRepo)
-	if err != nil {
-		resultErr = fmt.Errorf("an error occurred while bulk importing resources from source: %w", err)
-		logger.Errorln(resultErr)
+	var sourceClient sourceModels.SourceClient
+	var summary sourceModels.UpsertSummary
+	sourceClient, summary, resultErr = callbackFn(backgroundJobContext, logger, databaseRepo, sourceCred)
+	if resultErr != nil {
+		logger.Errorln("An error occurred while syncing resources, ignoring", resultErr)
 		return summary, resultErr
 	}
 

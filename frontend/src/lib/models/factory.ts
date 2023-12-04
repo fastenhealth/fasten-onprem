@@ -31,7 +31,12 @@ import {ExplanationOfBenefitModel} from './resources/explanation-of-benefit-mode
 
 // import {BinaryModel} from './resources/binary-model';
 
-export function fhirModelFactory(modelResourceType: ResourceType, fhirResourceWrapper: any, fhirVersion: fhirVersions = fhirVersions.R4, fastenOptions?: FastenOptions): FastenDisplayModel {
+export function fhirModelFactory(
+  modelResourceType: ResourceType,
+  fhirResourceWrapper: any, //this is a ResourceFhir object (database structure)
+  fhirVersion: fhirVersions = fhirVersions.R4,
+  fastenOptions?: FastenOptions
+): FastenDisplayModel {
 
   let resourceModel: FastenDisplayModel
   switch (modelResourceType) {
