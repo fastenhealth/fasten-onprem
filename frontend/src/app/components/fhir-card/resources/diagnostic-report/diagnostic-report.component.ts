@@ -3,7 +3,7 @@ import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-in
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
 import {DiagnosticReportModel} from '../../../../../lib/models/resources/diagnostic-report-model';
-import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbCollapseModule, NgbNavModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule} from '@angular/common';
 import {BadgeComponent} from '../../common/badge/badge.component';
 import {TableComponent} from '../../common/table/table.component';
@@ -12,7 +12,7 @@ import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.
 
 @Component({
   standalone: true,
-  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, RouterModule, BinaryComponent, GlossaryLookupComponent],
+  imports: [NgbCollapseModule, NgbNavModule, CommonModule, BadgeComponent, TableComponent, RouterModule, BinaryComponent, GlossaryLookupComponent],
   selector: 'fhir-diagnostic-report',
   templateUrl: './diagnostic-report.component.html',
   styleUrls: ['./diagnostic-report.component.scss']
@@ -21,6 +21,7 @@ export class DiagnosticReportComponent implements OnInit, FhirCardComponentInter
   @Input() displayModel: DiagnosticReportModel
   @Input() showDetails: boolean = true
   @Input() isCollapsed: boolean = false
+  active: number = 0
 
   //these are used to populate the description of the resource. May not be available for all resources
   resourceCode?: string;

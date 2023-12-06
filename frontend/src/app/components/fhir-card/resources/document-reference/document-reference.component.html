@@ -16,7 +16,21 @@
     <fhir-ui-table [displayModel]="displayModel" [tableData]="tableData"></fhir-ui-table>
 
     <div *ngIf="!showDetails">
-      <fhir-binary *ngFor="let attachmentModel of displayModel.content" [attachmentModel]="attachmentModel" [attachmentSourceId]="displayModel?.source_id" ></fhir-binary>
+
+      <ng-container *ngIf="displayModel?.content?.length > 1; else showSingle">
+        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+          <li *ngFor="let attachmentModel of displayModel.content; index as i" [ngbNavItem]="i">
+            <a ngbNavLink>{{attachmentModel.contentType}}</a>
+            <ng-template ngbNavContent>
+              <fhir-binary [attachmentModel]="attachmentModel" [attachmentSourceId]="displayModel?.source_id" ></fhir-binary>
+            </ng-template>
+          </li>
+        </ul>
+        <div [ngbNavOutlet]="nav" class="mt-2"></div>
+      </ng-container>
+      <ng-template #showSingle>
+        <fhir-binary *ngIf="displayModel?.content?.length == 1"  [attachmentModel]="displayModel?.content?.[0]" [attachmentSourceId]="displayModel?.source_id" ></fhir-binary>
+      </ng-template>
     </div>
   </div>
   <div *ngIf="showDetails" class="card-footer">

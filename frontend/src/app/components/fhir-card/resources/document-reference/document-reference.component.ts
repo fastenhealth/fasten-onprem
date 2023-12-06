@@ -4,7 +4,7 @@ import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-i
 import {Router, RouterModule} from '@angular/router';
 import {DocumentReferenceModel} from '../../../../../lib/models/resources/document-reference-model';
 import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
-import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbCollapseModule, NgbNavModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule} from '@angular/common';
 import {BadgeComponent} from '../../common/badge/badge.component';
 import {TableComponent} from '../../common/table/table.component';
@@ -13,7 +13,7 @@ import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.
 
 @Component({
   standalone: true,
-  imports: [NgbCollapseModule, CommonModule, BadgeComponent, TableComponent, RouterModule, BinaryComponent],
+  imports: [NgbCollapseModule, NgbNavModule, CommonModule, BadgeComponent, TableComponent, RouterModule, BinaryComponent],
   selector: 'fhir-document-reference',
   templateUrl: './document-reference.component.html',
   styleUrls: ['./document-reference.component.scss']
@@ -23,7 +23,8 @@ export class DocumentReferenceComponent implements OnInit, FhirCardComponentInte
   @Input() showDetails: boolean = true
   @Input() isCollapsed: boolean = false
   tableData: TableRowItem[] = []
-
+  active: number = 0
+  
   constructor(public changeRef: ChangeDetectorRef, public router: Router) {}
 
 
