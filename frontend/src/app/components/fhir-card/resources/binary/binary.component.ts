@@ -17,6 +17,7 @@ import {DicomComponent} from "../../datatypes/dicom/dicom.component";
 import {HighlightModule} from "ngx-highlightjs";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {AuthService} from "../../../../services/auth.service";
+import {RtfComponent} from '../../datatypes/rtf/rtf.component';
 
 @Component({
   standalone: true,
@@ -27,6 +28,7 @@ import {AuthService} from "../../../../services/auth.service";
     ImgComponent,
     HtmlComponent,
     MarkdownComponent,
+    RtfComponent,
     BinaryTextComponent,
     DicomComponent,
     HighlightModule,

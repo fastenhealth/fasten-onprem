@@ -5074,6 +5074,11 @@ codelyzer@^5.1.2:
     source-map "^0.5.7"
     sprintf-js "^1.1.2"
 
+codepage@^1.15.0:
+  version "1.15.0"
+  resolved "https://registry.npmjs.org/codepage/-/codepage-1.15.0.tgz#2e00519024b39424ec66eeb3ec07227e692618ab"
+  integrity sha512-3g6NUTPd/YtuuGrhMnOMRjFc+LJw/bnMp3+0r/Wcz3IXUuCosKRJvMphm5+Q+bvTVGcJJuRvVLuYba+WojaFaA==
+
 coffeescript@^2.7.0:
   version "2.7.0"
   resolved "https://registry.npmjs.org/coffeescript/-/coffeescript-2.7.0.tgz#a43ec03be6885d6d1454850ea70b9409c391279c"
@@ -10826,6 +10831,13 @@ rimraf@~2.6.2:
   integrity sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==
   dependencies:
     glob "^7.1.3"
+
+rtf.js@^3.0.9:
+  version "3.0.9"
+  resolved "https://registry.npmjs.org/rtf.js/-/rtf.js-3.0.9.tgz#27d4f4e26372ba080b945ee48293347346de943e"
+  integrity sha512-I1GpDat4i548WzmeZXv27f/743984fvEeeBS8BC01/Sop17pMlUl3M7DYcdcB3PUvOZTrFIMxGZx8qw7cSMAKQ==
+  dependencies:
+    codepage "^1.15.0"
 
 run-async@^2.4.0:
   version "2.4.1"

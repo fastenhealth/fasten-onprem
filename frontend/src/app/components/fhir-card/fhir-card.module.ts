@@ -27,6 +27,7 @@ import {ProcedureComponent} from './resources/procedure/procedure.component';
 import {FhirCardComponent} from './fhir-card/fhir-card.component';
 import {FhirCardOutletDirective} from './fhir-card/fhir-card-outlet.directive';
 import { EncounterComponent } from './resources/encounter/encounter.component';
+import { RtfComponent } from './datatypes/rtf/rtf.component';
 
 
 
@@ -45,6 +46,7 @@ import { EncounterComponent } from './resources/encounter/encounter.component';
     ImgComponent,
     MarkdownComponent,
     PdfComponent,
+    RtfComponent,
     //resources
     AllergyIntoleranceComponent,
     BinaryComponent,
@@ -82,6 +84,7 @@ import { EncounterComponent } from './resources/encounter/encounter.component';
     ImgComponent,
     MarkdownComponent,
     PdfComponent,
+    RtfComponent,
     //resources
     AllergyIntoleranceComponent,
     BinaryComponent,
