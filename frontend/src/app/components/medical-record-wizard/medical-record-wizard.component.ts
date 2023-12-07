@@ -41,6 +41,9 @@ import {
   FhirResource,
   List, Reference
 } from 'fhir/r4';
+import {
+  MedicalRecordWizardAddLabResultsComponent
+} from '../medical-record-wizard-add-lab-results/medical-record-wizard-add-lab-results.component';
 
 @Component({
   standalone: true,
@@ -286,6 +289,13 @@ export class MedicalRecordWizardComponent implements OnInit {
         console.log('Closed without saving', err);
       },
     );
+  }
+  openLabResultsModal() {
+    let modalRef = this.modalService.open(MedicalRecordWizardAddLabResultsComponent, {
+      ariaLabelledBy: 'modal-labresults',
+      size: 'lg'
+    })
+    modalRef.componentInstance.debugMode = this.debugMode;
   }
 
   openAttachmentModal(formGroup?: AbstractControl, controlName?: string) {
