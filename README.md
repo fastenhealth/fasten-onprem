@@ -13,9 +13,11 @@
 
 **Fasten securely connects your healthcare providers together, creating a personal health record that never leaves your hands**
 
+> [!NOTE]  
 > NOTE: Fasten is a Work-in-Progress and can only communicate with a limited number of Healthcare Instutions (approx 25,000 at last count).
 > Please fill out this [Google Form](https://forms.gle/SNsYX9BNMXB6TuTw6) if you'd like to be kept up-to-date on Fasten
-> 
+
+> [!IMPORTANT]  
 > To ensure Fasten's long-term sustainability, we're exploring some funding options. While we're still deciding a long-term monetization strategy, I'm kicking off with a crowdfunding/fundraising experiment for the first 500 users (including a surprise desktop app):
 >
 > - [Fasten Self-Hosted Lifetime License - **$200**](https://buy.stripe.com/fZe00deiUexS58Y4gg)
