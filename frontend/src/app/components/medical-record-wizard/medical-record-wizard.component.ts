@@ -38,9 +38,13 @@ import {
 import {generateReferenceUriFromResourceOrReference, internalResourceReferenceUri} from '../../../lib/utils/bundle_references';
 
 import {
+  Bundle,
   FhirResource,
   List, Reference
 } from 'fhir/r4';
+import {
+  MedicalRecordWizardAddLabResultsComponent
+} from '../medical-record-wizard-add-lab-results/medical-record-wizard-add-lab-results.component';
 
 @Component({
   standalone: true,
@@ -91,6 +95,7 @@ export class MedicalRecordWizardComponent implements OnInit {
       procedures: new FormArray([]),
       practitioners: new FormArray([]),
       organizations: new FormArray([]),
+      labresults: new FormArray([]),
       attachments: new FormArray([]),
     });
 
@@ -112,6 +117,9 @@ export class MedicalRecordWizardComponent implements OnInit {
   get organizations(): FormArray<FormGroup> {
     return this.form.controls["organizations"] as FormArray;
   }
+  get labresults(): FormArray<FormGroup> {
+    return this.form.controls["labresults"] as FormArray;
+  }
   get attachments(): FormArray<FormGroup> {
     return this.form.controls["attachments"] as FormArray;
   }
@@ -129,6 +137,9 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
   deleteOrganization(index: number) {
     this.organizations.removeAt(index);
+  }
+  deleteLabResults(index: number) {
+    this.labresults.removeAt(index);
   }
   deleteAttachment(index: number) {
     this.attachments.removeAt(index);
@@ -209,6 +220,14 @@ export class MedicalRecordWizardComponent implements OnInit {
 
     this.attachments.push(attachmentGroup);
   }
+
+  addLabResultsBundle(diagnosticReportBundle: WizardFhirResourceWrapper<Bundle>){
+    const diagnosticReportGroup = new FormGroup({
+      data: new FormControl(diagnosticReportBundle.data),
+      action: new FormControl(diagnosticReportBundle.action),
+    });
+    this.labresults.push(diagnosticReportGroup);
+  }
   //</editor-fold>
 
   //<editor-fold desc="Open Modals">
@@ -281,6 +300,23 @@ export class MedicalRecordWizardComponent implements OnInit {
           //set this practitioner to the current select box
           formGroup.get(controlName).setValue(generateReferenceUriFromResourceOrReference(result.data));
         }
+      },
+      (err) => {
+        console.log('Closed without saving', err);
+      },
+    );
+  }
+  openLabResultsModal() {
+    let modalRef = this.modalService.open(MedicalRecordWizardAddLabResultsComponent, {
+      ariaLabelledBy: 'modal-labresults',
+      size: 'lg'
+    })
+    modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.result.then(
+      (result) => {
+        console.log('Closing, saving form', result);
+        //add this to the list of organization
+        this.addLabResultsBundle(result);
       },
       (err) => {
         console.log('Closed without saving', err);

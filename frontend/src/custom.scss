@@ -300,3 +300,26 @@ app-medical-sources-filter > .az-content-left-components:hover{
 .fhir-card-callout-warning .card, .bd-callout-warning { @include bs-callout-variant($yellow); }
 .fhir-card-callout-danger .card, .bd-callout-danger { @include bs-callout-variant($red); }
 
+
+// lhc-autocomplete fixes - if we dont set this z-index, the autocomplete results are hidden behind the modal
+#searchResults {
+  z-index: 9999 !important;
+}
+
+// LHC Forms
+.lhc-form-title {
+  border-radius: inherit;
+  background-color: $indigo;
+}
+
+.lhc-item.lhc-tree-line::before {
+  border-top: 2px solid $indigo;
+}
+
+.lhc-item.lhc-tree-line::after {
+  border-left: 2px solid $indigo;
+}
+
+.lhc-item-question.lhc-active-row {
+  background-color: $primary;
+}

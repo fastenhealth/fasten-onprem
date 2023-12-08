@@ -35,6 +35,41 @@
                 "glob": "**/*",
                 "input": "./node_modules/dwv/decoders/",
                 "output": "/assets/dwv/decoders/"
+              },
+              {
+                "glob": "**/*.js",
+                "input": "./node_modules/lforms/dist/lforms/webcomponent/",
+                "output": "/assets/js/lforms/"
+              },
+              {
+                "glob": "**/*.js.map",
+                "input": "./node_modules/lforms/dist/lforms/webcomponent/",
+                "output": "/assets/js/lforms/"
+              },
+              {
+                "glob": "**/*.js",
+                "input": "./node_modules/lforms/dist/lforms/fhir/",
+                "output": "/assets/js/lforms/fhir/"
+              },
+              {
+                "glob": "**/*.js.map",
+                "input": "./node_modules/lforms/dist/lforms/fhir/",
+                "output": "/assets/js/lforms/fhir/"
+              },
+              {
+                "glob": "**/*.js",
+                "input": "./node_modules/@webcomponents/webcomponentsjs",
+                "output": "/assets/js/webcomponents/"
+              },
+              {
+                "glob": "**/*.css",
+                "input": "./node_modules/lforms/dist/lforms/webcomponent/",
+                "output": "/assets/css/lforms/"
+              },
+              {
+                "glob": "**/*.png",
+                "input": "./node_modules/lforms/dist/lforms/webcomponent/",
+                "output": "/assets/css/lforms/"
               }
             ],
             "styles": [

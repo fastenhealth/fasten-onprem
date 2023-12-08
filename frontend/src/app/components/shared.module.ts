@@ -35,6 +35,7 @@ import { MedicalRecordWizardAddAttachmentComponent } from './medical-record-wiza
 import {FhirCardModule} from './fhir-card/fhir-card.module';
 import {FhirDatatableModule} from './fhir-datatable/fhir-datatable.module';
 import { MedicalRecordWizardAddEncounterComponent } from './medical-record-wizard-add-encounter/medical-record-wizard-add-encounter.component';
+import { MedicalRecordWizardAddLabResultsComponent } from './medical-record-wizard-add-lab-results/medical-record-wizard-add-lab-results.component';
 
 @NgModule({
   imports: [
@@ -68,6 +69,7 @@ import { MedicalRecordWizardAddEncounterComponent } from './medical-record-wizar
     MedicalRecordWizardAddOrganizationComponent,
     MedicalRecordWizardAddAttachmentComponent,
     MedicalRecordWizardAddEncounterComponent,
+    MedicalRecordWizardAddLabResultsComponent,
 
   ],
   declarations: [
@@ -111,6 +113,7 @@ import { MedicalRecordWizardAddEncounterComponent } from './medical-record-wizar
       MedicalRecordWizardAddOrganizationComponent,
       MedicalRecordWizardAddPractitionerComponent,
       MedicalRecordWizardComponent,
+      MedicalRecordWizardAddLabResultsComponent,
       MedicalSourcesCategoryLookupPipe,
       NlmTypeaheadComponent,
     ]

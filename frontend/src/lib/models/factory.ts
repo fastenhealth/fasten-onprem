@@ -31,12 +31,33 @@ import {ExplanationOfBenefitModel} from './resources/explanation-of-benefit-mode
 
 // import {BinaryModel} from './resources/binary-model';
 
+export function wrapFhirModel(fhirResource): any {
+  if(!fhirResource) {
+    throw new Error("resource data cannot be empty")
+  }
+  //determine if valid FhirResource
+  if(!fhirResource.resourceType || !fhirResource.id) {
+    throw new Error("resource data must be a valid FHIR resource")
+  }
+  //wrap
+
+  return {
+    resource_raw: fhirResource,
+    source_resource_id: fhirResource.id,
+    source_resource_type: fhirResource.resourceType,
+  }
+}
+
 export function fhirModelFactory(
   modelResourceType: ResourceType,
-  fhirResourceWrapper: any, //this is a ResourceFhir object (database structure)
+  fhirResourceWrapper: any, //this is a ResourceFhir object (database structure) or a FhirEntity (fhir structure)
   fhirVersion: fhirVersions = fhirVersions.R4,
   fastenOptions?: FastenOptions
 ): FastenDisplayModel {
+
+  if(!fhirResourceWrapper) {
+    throw new Error("resource data cannot be empty")
+  }
 
   let resourceModel: FastenDisplayModel
   switch (modelResourceType) {

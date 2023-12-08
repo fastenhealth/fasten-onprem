@@ -4,6 +4,7 @@ import {map} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
 import {CodingModel} from '../../lib/models/datatypes/coding-model';
 import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
+import {LabresultsQuestionnaire} from '../models/fasten/labresults-questionnaire';
 
 export interface NlmSearchResults {
   id: string
@@ -687,6 +688,44 @@ export class NlmClinicalTableSearchService {
           })
         })
       )
+  }
+
+  //https://lforms-service.nlm.nih.gov/api/loinc_items/v3/search?type=form&available=true&terms=Diabetes
+  searchLabPanels(searchTerm: string): Observable<NlmSearchResults[]> {
+    let queryParams = {
+      'type':'form',
+      'available':'true',
+      'terms':searchTerm
+    }
+    return this._httpClient.get<any>(`https://lforms-service.nlm.nih.gov/api/loinc_items/v3/search`, {params: queryParams})
+      .pipe(
+        map((response) => {
+
+          return response[3].map((panelName, ndx):NlmSearchResults => {
+            return {
+              id: response[1][ndx],
+              text: panelName,
+              identifier: [{
+                system: 'http://loinc.org',
+                code: response[1][ndx],
+                display: panelName
+              }]
+            }
+          })
+        })
+      )
+  }
+
+  searchLabPanelQuestionnaire(panelLoincCode: string): Observable<LabresultsQuestionnaire> {
+    let queryParams = {
+      'loinc_num': panelLoincCode,
+    }
+    return this._httpClient.get<any>(`https://lforms-service.nlm.nih.gov/loinc_form_definitions`, {params: queryParams})
+      .pipe(
+        map((response: LabresultsQuestionnaire) => {
+          return response
+        })
+      );
   }
 
   //see https://lhcforms.nlm.nih.gov/phr.json

@@ -78,6 +78,32 @@ declare global {
     CallByID: (methodID, ...args) => Promise<any>
     CallByName: (name, ...args) => Promise<any>
   }
+
+  //see https://lhncbc.github.io/lforms/ for definitions
+  let LForms: {
+    Util: {
+
+      addFormToPage(formDefinition: any, formElement: HTMLElement | string, options?: any): any
+
+      // Retrieving User-Entered Data
+      // The utility method LForms.Util.getFormData() will return both the user data and the complete form definition data together in a way that can be fed back to LHC-Forms to display the form with the data. This is useful when you want to allow the user to save the form so it can be redisplayed later for completion or editing.
+      getFormData: (formElement: HTMLElement, noEmptyValue: boolean, noDisabledItem: boolean) => any
+
+      // To get a compact structure with just the user-entered data and minimal form definition data, you can call LForms.Util.getUserData(formElement, true, true, true). The parameters are:
+      getFormHL7Data(element?: HTMLElement): any
+
+      // Prior to submitting the form, the form can be checked to make sure required fields are filled in and that the values have the correct format, by using the following function:
+      checkValidity(formElement?: HTMLElement): any[] | null
+
+      // The form definition and user-entered data can be retrieved as FHIR resources, using the following utility method:
+      getFormFHIRData(
+        resourceType: 'DiagnosticReport' | 'Questionnaire' | 'QuestionnaireResponse',
+        fhirVersion: 'STU3' | 'R4',
+        formDataSource?: HTMLElement | any,
+        options?: {bundleType: 'transaction' | 'collection'}
+      ): any
+    }
+  }
 }
 
 //required for PouchDB

@@ -137,10 +137,13 @@ export class ObservationComponent implements OnInit {
 
 
     //populate chart data
-
-    this.barChartLabels.push(
-      formatDate(this.displayModel?.effective_date, "mediumDate", "en-US", undefined)
-    )
+    if(this.displayModel?.effective_date) {
+      this.barChartLabels.push(
+        formatDate(this.displayModel?.effective_date, "mediumDate", "en-US", undefined)
+      )
+    } else {
+      this.barChartLabels.push("")
+    }
 
     this.barChartData[0].data = [[this.displayModel?.reference_range?.[0]?.low?.value, this.displayModel?.reference_range?.[0]?.high?.value]]
     this.barChartData[1].data = [[this.displayModel?.value_quantity_value as number, this.displayModel?.value_quantity_value as number]]

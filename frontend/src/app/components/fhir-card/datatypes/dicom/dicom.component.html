@@ -68,6 +68,7 @@
       class="mr-auto"
       [collectionSize]="metaData.length"
       [(page)]="tagsPage"
+      [maxSize]="15"
       [pageSize]="tagsPageSize"
       (pageChange)="refreshTags()"
     >

@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {HttpClientModule, HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
@@ -105,7 +105,8 @@ import {FhirDatatableModule} from './components/fhir-datatable/fhir-datatable.mo
     }
   ],
   exports: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA] //required for lhncbc/lforms (webcomponent)
 })
 export class AppModule {
   constructor(library: FaIconLibrary) {

@@ -5,6 +5,7 @@ import {WizardFhirResourceWrapper} from '../../components/medical-record-wizard/
 import {EncounterModel} from '../../../lib/models/resources/encounter-model';
 import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
 import {OrganizationModel} from '../../../lib/models/resources/organization-model';
+import {Bundle} from 'fhir/r4';
 
 
 //
@@ -134,6 +135,7 @@ export interface MedicalRecordWizardFormCreate {
   "procedures": ResourceCreateProcedure[],
   "practitioners": WizardFhirResourceWrapper<PractitionerModel>[],
   "organizations": WizardFhirResourceWrapper<OrganizationModel>[],
+  "labresults": WizardFhirResourceWrapper<Bundle>[],
   "attachments": ResourceCreateAttachment[],
 }
 

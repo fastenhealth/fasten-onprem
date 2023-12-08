@@ -22,6 +22,7 @@ export enum NlmSearchType {
   MedicationWhyStopped = 'MedicationWhyStopped',
   Procedure = 'Procedure',
   Vaccine = 'Vaccine',
+  LabPanels = 'LabPanels',
 
   Countries = 'Countries',
   AttachmentFileType = 'AttachmentFileType',
@@ -145,6 +146,10 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
         break
       case NlmSearchType.Procedure:
         searchOpFn = this.nlmClinicalTableSearchService.searchProcedure
+        break
+      case NlmSearchType.LabPanels:
+        searchOpFn = this.nlmClinicalTableSearchService.searchLabPanels
+        this.editable = false
         break
       case NlmSearchType.Vaccine:
         searchOpFn = this.nlmClinicalTableSearchService.searchVaccine
