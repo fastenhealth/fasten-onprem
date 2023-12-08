@@ -328,12 +328,6 @@
               </p>
             </div>
 
-
-            <div class="alert alert-warning" role="alert">
-              <strong>Under Construction</strong> Fasten does not currently support adding lab results manually. <br/>This feature is expected to be available in the next release.
-            </div>
-
-
             <fhir-card *ngFor="let diagnosticReport of existingEncounter?.related_resources?.['DiagnosticReport']" [showDetails]="false" [displayModel]="diagnosticReport" [isCollapsed]="true"></fhir-card>
 
             <ng-container formArrayName="labresults">
