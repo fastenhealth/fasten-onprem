@@ -5,34 +5,31 @@
 <div class="modal-body">
 
   <div *ngIf="debugMode" class="alert alert-warning">
-<!--    <pre><code  [highlight]="newAttachmentForm.getRawValue() | json"></code></pre>-->
-<!--    <strong>New Attachment Form Status: {{ newAttachmentForm.status }}</strong>-->
+    <!--    <pre><code  [highlight]="newAttachmentForm.getRawValue() | json"></code></pre>-->
+    <!--    <strong>New Attachment Form Status: {{ newAttachmentForm.status }}</strong>-->
   </div>
 
-  <div class="row row-sm">
-<!--    <ng-container [formGroup]="newAttachmentForm">-->
+  <div class="row mg-b-5">
+    <div class="col-md-12">
+      <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
+      <form [formGroup]="newLabPanelTypeaheadForm">
+        <app-nlm-typeahead formControlName="data" searchType="LabPanels" [debugMode]="debugMode"></app-nlm-typeahead>
+      </form>
+    </div>
+  </div>
 
-<!--      <div class="col-12">-->
-<!--        <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>-->
-<!--        <input formControlName="name" class="form-control" type="text">-->
-<!--      </div>&lt;!&ndash; col &ndash;&gt;-->
 
-<!--      <div class="col-6 mg-t-10 mg-lg-t-0">-->
-<!--        <p class="mg-b-10">Category<span ngbTooltip="required" class="text-danger">*</span></p>-->
-<!--        <app-nlm-typeahead formControlName="category" searchType="AttachmentCategory" [debugMode]="debugMode"></app-nlm-typeahead>-->
-<!--      </div>&lt;!&ndash; col &ndash;&gt;-->
-<!--      <div class="col-6 mg-t-10 mg-lg-t-0">-->
-<!--        <p class="mg-b-10">File Type<span ngbTooltip="required" class="text-danger">*</span></p>-->
-<!--        <app-nlm-typeahead formControlName="file_type" searchType="AttachmentFileType" [debugMode]="debugMode"></app-nlm-typeahead>-->
-<!--      </div>&lt;!&ndash; col &ndash;&gt;-->
-<!--      <div class="col-12 mg-t-10 mg-lg-t-0">-->
-<!--        <p class="mg-b-10">File<span ngbTooltip="required" class="text-danger">*</span></p>-->
-<!--      </div>&lt;!&ndash; col &ndash;&gt;-->
-<!--      <div class="col-6 mg-t-10 mg-lg-t-0 mg-l-10">-->
-<!--        <label for="customFile" class="custom-file-label">{{newAttachmentForm.get('file_name').value || 'Choose file'}}</label>-->
-<!--        <input id="customFile" (change)="onAttachmentFileChange($event)" class="custom-file-input" formControlName="file_name" type="file">-->
-<!--      </div>&lt;!&ndash; col &ndash;&gt;-->
-<!--    </ng-container>-->
+
+  <div *ngIf="questionnaire" class="row">
+    <wc-lhc-form
+      #lhcForm
+      [(questionnaire)]="questionnaire"
+      [options]="options"
+      [fhirVersion]="format"
+      (onFormReady)="onFormReady($event)"
+      (onError)="onError($event)"
+
+    ></wc-lhc-form>
   </div>
 </div>
 <div class="modal-footer">
