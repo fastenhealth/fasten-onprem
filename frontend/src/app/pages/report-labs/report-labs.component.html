@@ -71,6 +71,7 @@
           <div class="col-12 d-flex justify-content-center flex-nowrap">
             <ngb-pagination
               [collectionSize]="allObservationGroups.length"
+              [maxSize]="15"
               [(page)]="currentPage"
               [pageSize]="pageSize"
               (pageChange)="populateObservationsForCurrentPage()"

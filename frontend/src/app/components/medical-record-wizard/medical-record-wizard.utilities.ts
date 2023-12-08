@@ -13,7 +13,7 @@ import {
   Resource,
   Bundle,
   Organization,
-  Practitioner, MedicationRequest, Patient, Encounter, DocumentReference, Media, DiagnosticReport, Reference, Binary, HumanName
+  Practitioner, MedicationRequest, Patient, Encounter, DocumentReference, Media, DiagnosticReport, Reference, Binary, HumanName, Observation
 } from 'fhir/r4';
 import {uuidV4} from '../../../lib/utils/uuid';
 import {OrganizationModel} from '../../../lib/models/resources/organization-model';
@@ -24,14 +24,14 @@ import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-mode
 import {generateReferenceUriFromResourceOrReference} from '../../../lib/utils/bundle_references';
 import {HumanNameModel} from '../../../lib/models/datatypes/human-name-model';
 
-export interface WizardFhirResourceWrapper<T extends OrganizationModel | PractitionerModel | EncounterModel> {
+export interface WizardFhirResourceWrapper<T extends OrganizationModel | PractitionerModel | EncounterModel | Bundle> {
   data: T,
   action: 'find'|'create'
 }
 
 interface ResourceStorage {
   [resourceType: string]: {
-    [resourceId: string]: Condition | Patient | MedicationRequest | Organization | FhirLocation | Practitioner | Procedure | Encounter | DocumentReference | Media | DiagnosticReport | Binary | Reference
+    [resourceId: string]: Condition | Patient | MedicationRequest | Organization | FhirLocation | Practitioner | Procedure | Encounter | DocumentReference | Media | DiagnosticReport | Binary | Observation | Reference
   }
 }
 
@@ -72,6 +72,9 @@ export function GenerateR4ResourceLookup(resourceCreate: MedicalRecordWizardForm
 
   //DocumentReference  -> (Optional) Binary
   //DiagnosticReport -> Media
+  for(let labresult of resourceCreate.labresults) {
+    resourceStorage = resourceCreateLabResultsToR4DiagnosticReports(resourceStorage, labresult)
+  }
   //ImagingStudy
   //ImagingSelection
 
@@ -433,6 +436,24 @@ function resourceAttachmentToR4DiagnosticReport(resourceStorage: ResourceStorage
   } as DiagnosticReport
   resourceStorage['DiagnosticReport'][diagnosticReportResource.id] = diagnosticReportResource
 
+  return resourceStorage
+}
+
+function resourceCreateLabResultsToR4DiagnosticReports(resourceStorage: ResourceStorage, resourceLabResult: WizardFhirResourceWrapper<Bundle>): ResourceStorage {
+  resourceLabResult.data.entry.forEach((entry) => {
+
+    if (entry.resource.resourceType === 'Observation') {
+      resourceStorage['Observation'] = resourceStorage['Observation'] || {}
+      let resource = entry.resource as Observation
+      resourceStorage['Observation'][resource.id] = resource
+    } else if (entry.resource.resourceType === 'DiagnosticReport') {
+      resourceStorage['DiagnosticReport'] = resourceStorage['DiagnosticReport'] || {}
+      let resource = entry.resource as DiagnosticReport
+      resourceStorage['DiagnosticReport'][resource.id] = resource
+    } else {
+      console.log('Unknown resource type: ', entry.resource.resourceType)
+    }
+  })
   return resourceStorage
 }
 
