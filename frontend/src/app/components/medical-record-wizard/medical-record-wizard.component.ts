@@ -38,6 +38,7 @@ import {
 import {generateReferenceUriFromResourceOrReference, internalResourceReferenceUri} from '../../../lib/utils/bundle_references';
 
 import {
+  Bundle,
   FhirResource,
   List, Reference
 } from 'fhir/r4';
@@ -94,6 +95,7 @@ export class MedicalRecordWizardComponent implements OnInit {
       procedures: new FormArray([]),
       practitioners: new FormArray([]),
       organizations: new FormArray([]),
+      labresults: new FormArray([]),
       attachments: new FormArray([]),
     });
 
@@ -115,6 +117,9 @@ export class MedicalRecordWizardComponent implements OnInit {
   get organizations(): FormArray<FormGroup> {
     return this.form.controls["organizations"] as FormArray;
   }
+  get labresults(): FormArray<FormGroup> {
+    return this.form.controls["labresults"] as FormArray;
+  }
   get attachments(): FormArray<FormGroup> {
     return this.form.controls["attachments"] as FormArray;
   }
@@ -132,6 +137,9 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
   deleteOrganization(index: number) {
     this.organizations.removeAt(index);
+  }
+  deleteLabResults(index: number) {
+    this.labresults.removeAt(index);
   }
   deleteAttachment(index: number) {
     this.attachments.removeAt(index);
@@ -211,6 +219,14 @@ export class MedicalRecordWizardComponent implements OnInit {
     });
 
     this.attachments.push(attachmentGroup);
+  }
+
+  addLabResultsBundle(diagnosticReportBundle: WizardFhirResourceWrapper<Bundle>){
+    const diagnosticReportGroup = new FormGroup({
+      data: new FormControl(diagnosticReportBundle.data),
+      action: new FormControl(diagnosticReportBundle.action),
+    });
+    this.labresults.push(diagnosticReportGroup);
   }
   //</editor-fold>
 
@@ -296,6 +312,16 @@ export class MedicalRecordWizardComponent implements OnInit {
       size: 'lg'
     })
     modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.result.then(
+      (result) => {
+        console.log('Closing, saving form', result);
+        //add this to the list of organization
+        this.addLabResultsBundle(result);
+      },
+      (err) => {
+        console.log('Closed without saving', err);
+      },
+    );
   }
 
   openAttachmentModal(formGroup?: AbstractControl, controlName?: string) {

@@ -9,9 +9,9 @@
     <!--    <strong>New Attachment Form Status: {{ newAttachmentForm.status }}</strong>-->
   </div>
 
-  <div class="row mg-b-5">
+  <div class="row mg-b-15">
     <div class="col-md-12">
-      <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
+      <p class="mg-b-10">Lab Panel Name<span ngbTooltip="required" class="text-danger">*</span></p>
       <form [formGroup]="newLabPanelTypeaheadForm">
         <app-nlm-typeahead formControlName="data" searchType="LabPanels" [debugMode]="debugMode"></app-nlm-typeahead>
       </form>
@@ -31,6 +31,7 @@
 
     ></wc-lhc-form>
   </div>
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-az-primary" (click)="submit()">Create Lab Results</button>

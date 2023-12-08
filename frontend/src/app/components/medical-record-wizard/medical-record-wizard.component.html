@@ -333,6 +333,23 @@
               <strong>Under Construction</strong> Fasten does not currently support adding lab results manually. <br/>This feature is expected to be available in the next release.
             </div>
 
+
+            <fhir-card *ngFor="let diagnosticReport of existingEncounter?.related_resources?.['DiagnosticReport']" [showDetails]="false" [displayModel]="diagnosticReport" [isCollapsed]="true"></fhir-card>
+
+            <ng-container formArrayName="labresults">
+              <ng-container *ngFor="let labresultsGroup of labresults.controls; let i = index">
+                <div *ngIf="debugMode" class="alert alert-warning">
+                  <strong>Lab Results Status: {{labresultsGroup.status}}</strong>
+                </div>
+                <fhir-diagnostic-report class="fhir-card-callout-warning" [formGroup]="labresultsGroup"  [showDetails]="false" [displayModel]="labresultsGroup.controls.data.value?.entry?.[0]?.resource | fastenDisplayModel" [isCollapsed]="true">
+                  <div header>
+                    <span class="cursor-pointer float-right" (click)="deleteLabResults(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                  </div>
+                </fhir-diagnostic-report>
+              </ng-container>
+            </ng-container>
+
+
             <div class="row pt-2">
               <div class="col-lg-4 col-md-3">
                 <button type="button" (click)="openLabResultsModal()" class="btn btn-outline-indigo btn-block">Create Lab Result</button>

@@ -319,3 +319,7 @@ app-medical-sources-filter > .az-content-left-components:hover{
 .lhc-item.lhc-tree-line::after {
   border-left: 2px solid $indigo;
 }
+
+.lhc-item-question.lhc-active-row {
+  background-color: $primary;
+}

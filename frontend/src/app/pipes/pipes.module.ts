@@ -8,6 +8,7 @@ import { ShortDomainPipe } from './short-domain.pipe';
 import { DatasetLatestEntryPipe } from './dataset-latest-entry.pipe';
 import { HumanNamePipe } from './human-name.pipe';
 import { ReferenceUriPipe } from './reference-uri.pipe';
+import { FastenDisplayModelPipe } from './fasten-display-model.pipe';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { ReferenceUriPipe } from './reference-uri.pipe';
     DatasetLatestEntryPipe,
     HumanNamePipe,
     ReferenceUriPipe,
+    FastenDisplayModelPipe,
   ],
   imports: [
 
@@ -28,7 +30,8 @@ import { ReferenceUriPipe } from './reference-uri.pipe';
     ShortDomainPipe,
     DatasetLatestEntryPipe,
     HumanNamePipe,
-    ReferenceUriPipe
+    ReferenceUriPipe,
+    FastenDisplayModelPipe
   ]
 })
 export class PipesModule {}
