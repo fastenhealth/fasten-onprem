@@ -68,7 +68,7 @@
           </div><!-- az-header-profile -->
 
           <a (click)="openSupportForm(content)" class="dropdown-item  cursor-pointer"><i style="font-size: medium;" class="fas fa-question-circle"></i> Get Support</a>
-          <a class="dropdown-item cursor-pointer" href="https://docs.fastenhealth.com/FUNDRAISING.html" externalLink><i style="font-size: medium;" class="fas fa-hand-holding-medical"></i> Donate</a>
+          <a *ngIf="!is_environment_desktop" class="dropdown-item cursor-pointer" href="https://docs.fastenhealth.com/FUNDRAISING.html" externalLink><i style="font-size: medium;" class="fas fa-hand-holding-medical"></i> Donate</a>
           <a (click)="signOut($event)" class="dropdown-item  cursor-pointer"><i style="font-size: medium;" class="fas fa-power-off"></i> Sign Out</a>
         </div><!-- dropdown-menu -->
       </div>
