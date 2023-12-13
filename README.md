@@ -40,7 +40,7 @@
 
 <p align="center">
   <a href="https://imgur.com/a/vfgojBD">
-  <img alt="fasten_view" src="https://i.imgur.com/UaZyEbN.png">
+  <img alt="fasten_view" src="https://i.imgur.com/jfqv5Q5.png">
   </a>
   <br/>
   <a href="https://imgur.com/a/vfgojBD">See more Fasten screenshots</a>
