@@ -12,7 +12,6 @@ body:
         Thanks for taking the time to request a new Provider.
         
         Before you submit this request, please make sure that you've searched the existing issues to see if your provider has already been requested.
-
   - type: input
     id: contact
     attributes:
@@ -52,4 +51,8 @@ body:
       description: Please share any additional information or links that you think would be helpful.
     validations:
       required: false
-
+  - type: markdown
+    attributes:
+      value: |
+        If you haven't already, please consider filling out our [Personal Health Record Research Survey](https://forms.gle/zxxhUtKA1K82dUA76) 
+        to help us understand how you currently manage your health and the challenges you face with your existing tools.
