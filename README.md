@@ -39,11 +39,11 @@
 </p>
 
 <p align="center">
-  <a href="https://imgur.com/a/ec55RMn">
-  <img alt="fasten_view" src="https://imgur.com/BcLY5OY">
+  <a href="https://imgur.com/a/vfgojBD">
+  <img alt="fasten_view" src="https://i.imgur.com/UaZyEbN.png">
   </a>
   <br/>
-  <a href="https://imgur.com/a/ec55RMn">See more Fasten screenshots</a>
+  <a href="https://imgur.com/a/vfgojBD">See more Fasten screenshots</a>
 </p>
 
 
