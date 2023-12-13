@@ -38,14 +38,6 @@ body:
     validations:
       required: true
   - type: input
-    id: provider-website
-    attributes:
-      label: Provider/Institution Website
-      description: Please share a link to the provider's website.
-      placeholder: ex. https://www.humana.com/
-    validations:
-      required: true
-  - type: input
     id: provider-ehr
     attributes:
       label: Provider EHR Platform
