@@ -22,8 +22,8 @@ web:
 database:
   #  encryption:
   #    key: ''
-  type: 'sqlite' # postgres also supported, but still experimental changes
-  location: '/opt/fasten/db/fasten.db' # if postgres use a DSN, eg. `host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=required TimeZone=Asia/Shanghai`
+  type: 'sqlite' # postgres will be supported in the future, but is completely **BROKEN** at the moment.
+  location: '/opt/fasten/db/fasten.db' # if postgres (**BROKEN**) use a DSN, eg. `host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=required TimeZone=Asia/Shanghai`
 log:
   file: '' # absolute or relative paths allowed, eg. web.log
   level: INFO
