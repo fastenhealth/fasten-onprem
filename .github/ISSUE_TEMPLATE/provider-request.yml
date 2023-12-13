@@ -1,15 +1,18 @@
-name: Bug Report
-description: File a bug report
-title: "[Bug]: "
-labels: ["bug", "triage"]
-projects: ["octo-org/1", "octo-org/44"]
+name: Provider Request
+description: Request a new institution/clinic/insurance provider to be added to Fasten
+title: "[Provider Request]: "
+labels: ["provider", "enhancement"]
+projects: ["fastenhealth/fasten-onprem"]
 assignees:
-  - octocat
+  - AnalogJ
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report!
+        Thanks for taking the time to request a new Provider.
+        
+        Before you submit this request, please make sure that you've searched the existing issues to see if your provider has already been requested.
+
   - type: input
     id: contact
     attributes:
@@ -18,47 +21,43 @@ body:
       placeholder: ex. email@example.com
     validations:
       required: false
-  - type: textarea
-    id: what-happened
+  - type: input
+    id: provider-name
     attributes:
-      label: What happened?
-      description: Also tell us, what did you expect to happen?
-      placeholder: Tell us what you see!
-      value: "A bug happened!"
+      label: Provider/Institution Name
+      description: What is the name of this Institution?
+      placeholder: ex. Humana/Kaiser/John Hopkins
     validations:
       required: true
-  - type: dropdown
-    id: version
+  - type: input
+    id: provider-website
     attributes:
-      label: Version
-      description: What version of our software are you running?
-      options:
-        - 1.0.2 (Default)
-        - 1.0.3 (Edge)
-      default: 0
+      label: Provider/Institution Website
+      description: Please share a link to the provider's website.
+      placeholder: ex. https://www.humana.com/
     validations:
       required: true
-  - type: dropdown
-    id: browsers
+  - type: input
+    id: provider-website
     attributes:
-      label: What browsers are you seeing the problem on?
-      multiple: true
-      options:
-        - Firefox
-        - Chrome
-        - Safari
-        - Microsoft Edge
+      label: Provider/Institution Website
+      description: Please share a link to the provider's website.
+      placeholder: ex. https://www.humana.com/
+    validations:
+      required: true
+  - type: input
+    id: provider-ehr
+    attributes:
+      label: Provider EHR Platform
+      description: If you know the name of the EHR platform that this provider uses, please share it.
+      placeholder: ex. Epic MyChart, Cerner, Allscripts, etc
+    validations:
+      required: false
   - type: textarea
-    id: logs
+    id: additional-info
     attributes:
-      label: Relevant log output
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
-      render: shell
-  - type: checkboxes
-    id: terms
-    attributes:
-      label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](https://example.com)
-      options:
-        - label: I agree to follow this project's Code of Conduct
-          required: true
+      label: Anything else we should know?
+      description: Please share any additional information or links that you think would be helpful.
+    validations:
+      required: false
+
