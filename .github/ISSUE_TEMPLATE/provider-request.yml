@@ -32,10 +32,18 @@ body:
     id: provider-website
     attributes:
       label: Provider/Institution Website
-      description: Please share a link to the provider's website.
+      description: Please share a link to the provider's homepage.
       placeholder: ex. https://www.humana.com/
     validations:
       required: true
+  - type: input
+    id: provider-portal
+    attributes:
+      label: Patient Portal Login Website
+      description: Please share a link to the provider's login page, where you can access your health records.
+      placeholder: ex. https://ucsfmychart.ucsfmedicalcenter.org/ucsfmychart/Authentication/Login?
+    validations:
+      required: false
   - type: input
     id: provider-ehr
     attributes:
