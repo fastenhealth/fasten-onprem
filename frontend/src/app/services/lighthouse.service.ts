@@ -90,6 +90,8 @@ export class LighthouseService {
     authorizationUrl.searchParams.set('client_id', lighthouseSource.client_id);
     if(lighthouseSource.scopes_supported && lighthouseSource.scopes_supported.length){
       authorizationUrl.searchParams.set('scope', lighthouseSource.scopes_supported.join(' '));
+    } else {
+      authorizationUrl.searchParams.set('scope', '');
     }
     if (lighthouseSource.aud) {
       authorizationUrl.searchParams.set('aud', lighthouseSource.aud);
