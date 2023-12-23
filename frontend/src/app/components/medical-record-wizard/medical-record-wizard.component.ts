@@ -67,8 +67,7 @@ import {
   styleUrls: ['./medical-record-wizard.component.scss'],
   host: {
     class: 'medical-record-wizard',
-  },
-  encapsulation: ViewEncapsulation.None
+  }
 })
 export class MedicalRecordWizardComponent implements OnInit {
   @Input() existingEncounter: EncounterModel;
