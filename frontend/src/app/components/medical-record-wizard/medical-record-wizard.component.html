@@ -60,7 +60,7 @@
             <fhir-card *ngFor="let medication of existingEncounter?.related_resources?.['Medication']" [showDetails]="false" [displayModel]="medication" [isCollapsed]="true"></fhir-card>
 
             <ng-container formArrayName="medications">
-              <div class="card mg-t-10 pd-20" [formGroup]="medicationGroup" *ngFor="let medicationGroup of medications.controls; let i = index">
+              <div class="card pd-20" [formGroup]="medicationGroup" *ngFor="let medicationGroup of medications.controls; let i = index">
                 <div *ngIf="debugMode" class="alert alert-warning">
                   <strong>Medication Status: {{medicationGroup.status}}</strong>
                 </div>
@@ -161,7 +161,7 @@
 
 
             <ng-container formArrayName="procedures">
-              <div class="card mg-t-10 pd-20" [formGroup]="procedureGroup" *ngFor="let procedureGroup of procedures.controls; let i = index">
+              <div class="card pd-20" [formGroup]="procedureGroup" *ngFor="let procedureGroup of procedures.controls; let i = index">
                 <div *ngIf="debugMode" class="alert alert-warning">
                   <strong>Procedure Status: {{procedureGroup.status}}</strong>
                 </div>
@@ -366,7 +366,7 @@
             </div>
 
             <ng-container formArrayName="attachments">
-              <div class="card mg-t-10 pd-20" [formGroup]="attachmentGroup" *ngFor="let attachmentGroup of attachments.controls; let i = index">
+              <div class="card pd-20" [formGroup]="attachmentGroup" *ngFor="let attachmentGroup of attachments.controls; let i = index">
                 <div *ngIf="debugMode" class="alert alert-warning">
                   <strong>Attachment Status: {{attachmentGroup.status}}</strong>
                 </div>

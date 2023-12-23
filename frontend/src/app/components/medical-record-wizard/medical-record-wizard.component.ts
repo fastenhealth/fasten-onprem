@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {HighlightModule} from 'ngx-highlightjs';
 import {
   NgbActiveModal,
@@ -64,7 +64,11 @@ import {
   ],
   selector: 'app-medical-record-wizard',
   templateUrl: './medical-record-wizard.component.html',
-  styleUrls: ['./medical-record-wizard.component.scss']
+  styleUrls: ['./medical-record-wizard.component.scss'],
+  host: {
+    class: 'medical-record-wizard',
+  },
+  encapsulation: ViewEncapsulation.None
 })
 export class MedicalRecordWizardComponent implements OnInit {
   @Input() existingEncounter: EncounterModel;
