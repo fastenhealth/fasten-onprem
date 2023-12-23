@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {HighlightModule} from 'ngx-highlightjs';
 import {
   NgbActiveModal,
