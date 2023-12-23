@@ -78,14 +78,11 @@ Next we'll start the processes described above:
 ```bash
 
 # In terminal #1, run the following
-cd frontend 
-yarn install
-yarn dist -- -c [sandbox|prod]
-# eg. yarn dist -- -c prod
+make build-frontend-[sandbox|prod]
+# eg. make build-frontend-sandbox
 
 # In terminal #2, run the following
-go mod vendor
-go run backend/cmd/fasten/fasten.go start --config ./config.dev.yaml --debug
+make serve-backend
 
 ```
 
