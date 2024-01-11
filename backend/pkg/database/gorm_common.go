@@ -107,6 +107,66 @@ func (gr *GormRepository) GetCurrentUser(ctx context.Context) (*models.User, err
 	return &currentUser, nil
 }
 
+// SECURITY: this should only be called after the user has confirmed they want to delete their account.
+func (gr *GormRepository) DeleteCurrentUser(ctx context.Context) error {
+	currentUser, err := gr.GetCurrentUser(ctx)
+	if err != nil {
+		return err
+	}
+
+	//delete all records associated with this user.
+	// - background jobs
+	// - FHIR Resources
+	// - source credentials
+	// - related resources
+	// - user settings
+	// - user
+
+	//delete background jobs
+	err = gr.GormClient.
+		Where(models.BackgroundJob{UserID: currentUser.ID}).
+		Delete(&models.BackgroundJob{}).Error
+	if err != nil {
+		return fmt.Errorf("could not delete background jobs for user: %w", err)
+	}
+
+	//delete FHIR Resources & sources
+	sources, err := gr.GetSources(ctx)
+	if err != nil {
+		return fmt.Errorf("could not get sources: %w", err)
+	}
+	for _, source := range sources {
+		_, err = gr.DeleteSource(ctx, source.ID.String())
+		if err != nil {
+			return fmt.Errorf("could not delete source (%s) & resources for user: %w", source.ID.String(), err)
+		}
+	}
+
+	//delete related resources
+	err = gr.GormClient.
+		Where(models.RelatedResource{ResourceBaseUserID: currentUser.ID}).
+		Delete(&models.RelatedResource{}).Error
+	if err != nil {
+		return fmt.Errorf("could not delete related resources for user: %w", err)
+	}
+
+	//delete user settings
+	err = gr.GormClient.
+		Where(models.UserSettingEntry{UserID: currentUser.ID}).
+		Delete(&models.UserSettingEntry{}).Error
+	if err != nil {
+		return fmt.Errorf("could not delete user settings for user: %w", err)
+	}
+	//delete user
+	err = gr.GormClient.
+		Where(models.User{ModelBase: models.ModelBase{ID: currentUser.ID}}).
+		Delete(&models.User{}).Error
+	if err != nil {
+		return fmt.Errorf("could not delete user: %w", err)
+	}
+	return nil
+}
+
 //</editor-fold>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

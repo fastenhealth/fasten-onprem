@@ -17,6 +17,7 @@ type DatabaseRepository interface {
 
 	GetUserByUsername(context.Context, string) (*models.User, error)
 	GetCurrentUser(ctx context.Context) (*models.User, error)
+	DeleteCurrentUser(ctx context.Context) error
 
 	GetSummary(ctx context.Context) (*models.Summary, error)
 

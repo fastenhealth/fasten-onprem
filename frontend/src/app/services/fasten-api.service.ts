@@ -63,6 +63,21 @@ export class FastenApiService {
   SECURE ENDPOINTS
   */
 
+  deleteAccount(): Observable<boolean> {
+    return this._httpClient.delete<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/account/me`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("DELETE ACCOUNT RESPONSE", response)
+          if(response.success) {
+            this.authService.Logout().then(() => {
+              this.router.navigateByUrl('/auth/signup')
+            })
+          }
+          return response.success
+        })
+      );
+  }
+
   //TODO: Any significant API changes here should also be reflected in EventBusService
 
   getDashboards(): Observable<DashboardConfig[]> {

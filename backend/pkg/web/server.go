@@ -62,6 +62,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 			secure := api.Group("/secure").Use(middleware.RequireAuth())
 			{
+				secure.DELETE("/account/me", handler.DeleteAccount)
+
 				secure.GET("/summary", handler.GetSummary)
 
 				secure.POST("/source", handler.CreateReconnectSource)

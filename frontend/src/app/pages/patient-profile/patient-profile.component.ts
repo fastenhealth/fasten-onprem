@@ -6,6 +6,7 @@ import {fhirModelFactory} from '../../../lib/models/factory';
 import {ResourceType} from '../../../lib/models/constants';
 import {ImmunizationModel} from '../../../lib/models/resources/immunization-model';
 import {AllergyIntoleranceModel} from '../../../lib/models/resources/allergy-intolerance-model';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-patient-profile',
@@ -13,24 +14,27 @@ import {AllergyIntoleranceModel} from '../../../lib/models/resources/allergy-int
   styleUrls: ['./patient-profile.component.scss']
 })
 export class PatientProfileComponent implements OnInit {
-  loading: boolean = false
+  loading: {[name: string]: boolean} = {page: false, delete: false}
+
+  modalCloseResult = '';
 
   patient: ResourceFhir = null
   immunizations: ImmunizationModel[] = []
   allergyIntolerances: AllergyIntoleranceModel[] = []
   constructor(
     private fastenApi: FastenApiService,
+    private modalService: NgbModal,
   ) { }
 
   ngOnInit(): void {
-    this.loading = true
+    this.loading['page'] = true
 
     forkJoin([
       this.fastenApi.getResources("Patient"),
       this.fastenApi.getResources("Immunization"),
       this.fastenApi.getResources("AllergyIntolerance")
     ]).subscribe(results => {
-      this.loading = false
+      this.loading['page'] = false
       console.log(results)
       this.patient = results[0][0]
       this.immunizations = results[1].map((immunization) => {
@@ -40,8 +44,27 @@ export class PatientProfileComponent implements OnInit {
         return fhirModelFactory(allergy.source_resource_type as ResourceType, allergy) as AllergyIntoleranceModel
       })
     }, error => {
-      this.loading = false
+      this.loading['page'] = false
     })
+  }
+
+  deleteAccount() {
+    this.loading['delete'] = true
+    this.fastenApi.deleteAccount().subscribe(result => {
+      this.loading['delete'] = false
+      console.log(result)
+    }, error => {
+      this.loading['delete'] = false
+      console.log(error)
+    })
+  }
+
+  openModal(contentModalRef) {
+    this.modalService.open(contentModalRef, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      this.modalCloseResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.modalCloseResult = `Dismissed ${reason}`;
+    });
   }
 
 }
