@@ -46,7 +46,7 @@ func UnsafeRequestSource(c *gin.Context) {
 		return
 	}
 
-	client, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), foundSource.SourceType, c, logger, foundSource)
+	client, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), c, logger, foundSource)
 	if err != nil {
 		logger.Errorf("Could not initialize source client %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
@@ -140,7 +140,7 @@ func UnsafeSyncResourceNames(c *gin.Context) {
 		return
 	}
 
-	client, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), foundSource.SourceType, c, logger, foundSource)
+	client, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), c, logger, foundSource)
 	if err != nil {
 		logger.Errorf("Could not initialize source client %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})

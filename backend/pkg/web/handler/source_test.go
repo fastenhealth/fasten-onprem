@@ -77,16 +77,14 @@ func (suite *SourceHandlerTestSuite) AfterTest(suiteName, testName string) {
 	os.Remove(suite.TestDatabase.Name())
 }
 
-
 func CreateManualSourceHttpRequestFromFile(fileName string) (*http.Request, error) {
-	
+
 	file, err := os.Open(fileName)
-	if err!= nil {
-        log.Fatal("Could not open file ", err.Error())
+	if err != nil {
+		log.Fatal("Could not open file ", err.Error())
 		return nil, err
 	}
 	defer file.Close()
-
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -94,10 +92,9 @@ func CreateManualSourceHttpRequestFromFile(fileName string) (*http.Request, erro
 	io.Copy(part, file)
 	writer.Close()
 
-
 	req, err := http.NewRequest("POST", "/source/manual", body)
-	if err!= nil {
-        log.Fatal("Could not make http request ", err.Error())
+	if err != nil {
+		log.Fatal("Could not make http request ", err.Error())
 		return nil, err
 	}
 	req.Header.Add("Content-Type", writer.FormDataContentType())
@@ -123,7 +120,7 @@ func (suite *SourceHandlerTestSuite) TestCreateManualSourceHandler() {
 
 	//test
 	req, err := CreateManualSourceHttpRequestFromFile("testdata/Tania553_Harris789_545c2380-b77f-4919-ab5d-0f615f877250.json")
-	require.NoError(suite.T(),err)
+	require.NoError(suite.T(), err)
 	ctx.Request = req
 
 	CreateManualSource(ctx)
@@ -144,7 +141,7 @@ func (suite *SourceHandlerTestSuite) TestCreateManualSourceHandler() {
 	require.NoError(suite.T(), err)
 
 	require.Equal(suite.T(), true, respWrapper.Success)
-	require.Equal(suite.T(), "manual", string(respWrapper.Source.SourceType))
+	require.Equal(suite.T(), "manual", string(respWrapper.Source.PlatformType))
 	require.Equal(suite.T(), 196, respWrapper.Data.TotalResources)
 	summary, err := suite.AppRepository.GetSourceSummary(ctx, respWrapper.Source.ID.String())
 	require.NoError(suite.T(), err)

@@ -11,7 +11,7 @@ func NewSyncBackgroundJob(source SourceCredential) *BackgroundJob {
 	now := time.Now()
 	data := BackgroundJobSyncData{
 		SourceID:       source.ID,
-		SourceType:     string(source.SourceType),
+		BrandID:        source.BrandID.String(),
 		CheckpointData: nil,
 		ErrorData:      nil,
 	}
@@ -28,7 +28,7 @@ func NewSyncBackgroundJob(source SourceCredential) *BackgroundJob {
 
 type BackgroundJobSyncData struct {
 	SourceID       uuid.UUID              `json:"source_id"`
-	SourceType     string                 `json:"source_type"`
+	BrandID        string                 `json:"brand_id"`
 	CheckpointData map[string]interface{} `json:"checkpoint_data,omitempty"`
 	ErrorData      map[string]interface{} `json:"error_data,omitempty"`
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/jwk"
+	sourcesDefinitions "github.com/fastenhealth/fasten-sources/definitions"
 	sourcesPkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/google/uuid"
 	"github.com/lestrrat-go/jwx/v2/jwa"
@@ -20,40 +21,22 @@ import (
 // similar to LighthouseSourceDefinition from fasten-source
 type SourceCredential struct {
 	ModelBase
-	User       *User                 `json:"user,omitempty"`
-	UserID     uuid.UUID             `json:"user_id" gorm:"uniqueIndex:idx_user_source_patient"`
-	SourceType sourcesPkg.SourceType `json:"source_type" gorm:"uniqueIndex:idx_user_source_patient"`
-	Patient    string                `json:"patient" gorm:"uniqueIndex:idx_user_source_patient"`
+	User       *User     `json:"user,omitempty"`
+	UserID     uuid.UUID `json:"user_id" gorm:"uniqueIndex:idx_user_source_patient"`
+	Patient    string    `json:"patient" gorm:"uniqueIndex:idx_user_source_patient"`
+	EndpointID uuid.UUID `json:"endpoint_id" gorm:"uniqueIndex:idx_user_source_patient"`
+
+	//New Fields
+	Display      string                  `json:"display"`
+	BrandID      uuid.UUID               `json:"brand_id"`
+	PortalID     uuid.UUID               `json:"portal_id"`
+	PlatformType sourcesPkg.PlatformType `json:"platform_type"`
 
 	LatestBackgroundJob   *BackgroundJob `json:"latest_background_job,omitempty"`
 	LatestBackgroundJobID *uuid.UUID     `json:"-"`
 
-	//oauth endpoints
-	AuthorizationEndpoint string `json:"authorization_endpoint"`
-	TokenEndpoint         string `json:"token_endpoint"`
-	IntrospectionEndpoint string `json:"introspection_endpoint"`
-	RegistrationEndpoint  string `json:"registration_endpoint"` //optional - required when Dynamic Client Registration mode is set
-
-	Scopes                        []string `json:"scopes_supported" gorm:"type:text;serializer:json"`
-	Issuer                        string   `json:"issuer"`
-	GrantTypesSupported           []string `json:"grant_types_supported" gorm:"type:text;serializer:json"`
-	ResponseType                  []string `json:"response_types_supported" gorm:"type:text;serializer:json"`
-	ResponseModesSupported        []string `json:"response_modes_supported" gorm:"type:text;serializer:json"`
-	Audience                      string   `json:"aud"` //optional - required for some providers
-	CodeChallengeMethodsSupported []string `json:"code_challenge_methods_supported" gorm:"type:text;serializer:json"`
-
-	//Fasten custom configuration
-	UserInfoEndpoint   string `json:"userinfo_endpoint"`     //optional - supported by some providers, not others.
-	ApiEndpointBaseUrl string `json:"api_endpoint_base_url"` //api endpoint we'll communicate with after authentication
-	ClientId           string `json:"client_id"`
-	RedirectUri        string `json:"redirect_uri"` //lighthouse url the provider will redirect to (registered with App)
-
-	Confidential                  bool   `json:"confidential"`                     //if enabled, requires client_secret to authenticate with provider (PKCE)
-	DynamicClientRegistrationMode string `json:"dynamic_client_registration_mode"` //if enabled, will dynamically register client with provider (https://oauth.net/2/dynamic-client-registration/)
-	CORSRelayRequired             bool   `json:"cors_relay_required"`              //if true, requires CORS proxy/relay, as provider does not return proper response to CORS preflight
-	//SecretKeyPrefix   string `json:"-"`                   //the secret key prefix to use, if empty (default) will use the sourceType value
-
 	// auth/credential data
+	ClientId      string `json:"client_id"`
 	AccessToken   string `json:"access_token"`
 	RefreshToken  string `json:"refresh_token"`
 	IdToken       string `json:"id_token"`
@@ -66,11 +49,24 @@ type SourceCredential struct {
 	DynamicClientId   string              `json:"dynamic_client_id"`
 }
 
-func (s *SourceCredential) GetSourceType() sourcesPkg.SourceType {
-	return s.SourceType
-}
 func (s *SourceCredential) GetSourceId() string {
 	return s.ID.String()
+}
+
+func (s *SourceCredential) GetEndpointId() string {
+	return s.EndpointID.String()
+}
+
+func (s *SourceCredential) GetPortalId() string {
+	return s.PortalID.String()
+}
+
+func (s *SourceCredential) GetBrandId() string {
+	return s.BrandID.String()
+}
+
+func (s *SourceCredential) GetPlatformType() sourcesPkg.PlatformType {
+	return s.PlatformType
 }
 
 func (s *SourceCredential) GetClientId() string {
@@ -79,18 +75,6 @@ func (s *SourceCredential) GetClientId() string {
 
 func (s *SourceCredential) GetPatientId() string {
 	return s.Patient
-}
-
-func (s *SourceCredential) GetOauthAuthorizationEndpoint() string {
-	return s.AuthorizationEndpoint
-}
-
-func (s *SourceCredential) GetOauthTokenEndpoint() string {
-	return s.TokenEndpoint
-}
-
-func (s *SourceCredential) GetApiEndpointBaseUrl() string {
-	return s.ApiEndpointBaseUrl
 }
 
 func (s *SourceCredential) GetRefreshToken() string {
@@ -135,7 +119,14 @@ codeVerifier: codeVerifier
 
 // IsDynamicClient this method is used to check if this source uses dynamic client registration (used to customize token refresh logic)
 func (s *SourceCredential) IsDynamicClient() bool {
-	return len(s.DynamicClientRegistrationMode) > 0
+
+	endpoint, err := sourcesDefinitions.GetSourceDefinition(sourcesDefinitions.GetSourceConfigOptions{
+		EndpointId: s.EndpointID.String(),
+	})
+	if err != nil || endpoint == nil {
+		return false
+	}
+	return len(endpoint.DynamicClientRegistrationMode) > 0
 }
 
 // This method will generate a new keypair, register a new dynamic client with the provider
@@ -143,6 +134,17 @@ func (s *SourceCredential) IsDynamicClient() bool {
 // - DynamicClientJWKS
 // - DynamicClientId
 func (s *SourceCredential) RegisterDynamicClient() error {
+
+	endpoint, err := sourcesDefinitions.GetSourceDefinition(sourcesDefinitions.GetSourceConfigOptions{
+		EndpointId: s.EndpointID.String(),
+	})
+	if err != nil {
+		return fmt.Errorf("an error occurred while retrieving source definition: %w", err)
+	} else if endpoint == nil {
+		return fmt.Errorf("endpoint definition not found")
+	} else if endpoint.RegistrationEndpoint == "" {
+		return fmt.Errorf("registration endpoint not found")
+	}
 
 	//this source requires dynamic client registration
 	// see https://fhir.epic.com/Documentation?docId=Oauth2&section=Standalone-Oauth2-OfflineAccess-0
@@ -183,7 +185,7 @@ func (s *SourceCredential) RegisterDynamicClient() error {
 	}
 
 	//http.Post("https://fhir.epic.com/interconnect-fhir-oauth/oauth2/token", "application/x-www-form-urlencoded", bytes.NewBuffer([]byte(fmt.Sprintf("grant_type=client_credentials&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&client_assertion=%s&scope=system/Patient.read", sourceSpecificClientKeyPair))))
-	req, err := http.NewRequest(http.MethodPost, s.RegistrationEndpoint, bytes.NewBuffer(payloadBytes))
+	req, err := http.NewRequest(http.MethodPost, endpoint.RegistrationEndpoint, bytes.NewBuffer(payloadBytes))
 	if err != nil {
 		return fmt.Errorf("an error occurred while generating dynamic client registration request: %w", err)
 	}
@@ -223,7 +225,14 @@ func (s *SourceCredential) RegisterDynamicClient() error {
 // - AccessToken
 // - ExpiresAt
 func (s *SourceCredential) RefreshDynamicClientAccessToken() error {
-	if len(s.DynamicClientRegistrationMode) == 0 {
+	endpoint, err := sourcesDefinitions.GetSourceDefinition(sourcesDefinitions.GetSourceConfigOptions{
+		EndpointId: s.EndpointID.String(),
+	})
+	if err != nil {
+		return fmt.Errorf("an error occurred while retrieving source definition: %w", err)
+	}
+
+	if len(endpoint.DynamicClientRegistrationMode) == 0 {
 		return fmt.Errorf("dynamic client registration mode not set")
 	}
 	if len(s.DynamicClientJWKS) == 0 {
@@ -243,7 +252,7 @@ func (s *SourceCredential) RefreshDynamicClientAccessToken() error {
 	t := jwt.New()
 	t.Set("kid", jwkeypair.KeyID())
 	t.Set(jwt.SubjectKey, s.DynamicClientId)
-	t.Set(jwt.AudienceKey, s.TokenEndpoint)
+	t.Set(jwt.AudienceKey, endpoint.TokenEndpoint)
 	t.Set(jwt.JwtIDKey, uuid.New().String())
 	t.Set(jwt.ExpirationKey, time.Now().Add(time.Minute*2).Unix()) // must be less than 5 minutes from now. Time when this JWT expires
 	t.Set(jwt.IssuedAtKey, time.Now().Unix())
@@ -265,7 +274,7 @@ func (s *SourceCredential) RefreshDynamicClientAccessToken() error {
 		"client_id":  {s.DynamicClientId},
 	}
 
-	tokenResp, err := http.PostForm(s.TokenEndpoint, postForm)
+	tokenResp, err := http.PostForm(endpoint.TokenEndpoint, postForm)
 
 	if err != nil {
 		return fmt.Errorf("an error occurred while sending dynamic client token request, %s", err)

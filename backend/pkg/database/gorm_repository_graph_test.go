@@ -80,7 +80,8 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph() {
 		ModelBase: models.ModelBase{
 			ID: uuid.New(),
 		},
-		UserID: userModel.ID,
+		UserID:       userModel.ID,
+		PlatformType: sourcePkg.PlatformTypeManual,
 	}
 	err = dbRepo.CreateSource(authContext, &testSourceCredential)
 	require.NoError(suite.T(), err)
@@ -92,7 +93,7 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph() {
 		"type": "test",
 	})
 
-	manualClient, err := sourceFactory.GetSourceClient(sourcePkg.FastenLighthouseEnvSandbox, sourcePkg.SourceTypeManual, authContext, testLogger, &testSourceCredential)
+	manualClient, err := sourceFactory.GetSourceClient(sourcePkg.FastenLighthouseEnvSandbox, authContext, testLogger, &testSourceCredential)
 
 	summary, err := manualClient.SyncAllBundle(dbRepo, bundleFile, sourcePkg.FhirVersion401)
 	require.NoError(suite.T(), err)
@@ -146,7 +147,8 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph_NDJson() {
 		ModelBase: models.ModelBase{
 			ID: uuid.New(),
 		},
-		UserID: userModel.ID,
+		UserID:       userModel.ID,
+		PlatformType: sourcePkg.PlatformTypeManual,
 	}
 	err = dbRepo.CreateSource(authContext, &testSourceCredential)
 	require.NoError(suite.T(), err)
@@ -158,7 +160,7 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph_NDJson() {
 		"type": "test",
 	})
 
-	manualClient, err := sourceFactory.GetSourceClient(sourcePkg.FastenLighthouseEnvSandbox, sourcePkg.SourceTypeManual, authContext, testLogger, &testSourceCredential)
+	manualClient, err := sourceFactory.GetSourceClient(sourcePkg.FastenLighthouseEnvSandbox, authContext, testLogger, &testSourceCredential)
 
 	summary, err := manualClient.SyncAllBundle(dbRepo, bundleFile, sourcePkg.FhirVersion401)
 	require.NoError(suite.T(), err)

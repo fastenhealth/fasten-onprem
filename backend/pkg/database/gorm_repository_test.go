@@ -1293,7 +1293,7 @@ func (suite *RepositoryTestSuite) TestCreateBackgroundJob_Sync() {
 	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
 
 	//test
-	sourceCredential := models.SourceCredential{ModelBase: models.ModelBase{ID: uuid.New()}, SourceType: sourcePkg.SourceType("bluebutton")}
+	sourceCredential := models.SourceCredential{ModelBase: models.ModelBase{ID: uuid.New()}, PlatformType: sourcePkg.PlatformType("bluebutton")}
 	backgroundJob := models.NewSyncBackgroundJob(sourceCredential)
 	err = dbRepo.CreateBackgroundJob(
 		context.WithValue(authContext, pkg.ContextKeyTypeAuthUsername, "test_username"),
@@ -1408,7 +1408,7 @@ func (suite *RepositoryTestSuite) TestUpdateBackgroundJob() {
 	require.NoError(suite.T(), err)
 	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
 
-	sourceCredential := models.SourceCredential{ModelBase: models.ModelBase{ID: uuid.New()}, SourceType: sourcePkg.SourceType("bluebutton")}
+	sourceCredential := models.SourceCredential{ModelBase: models.ModelBase{ID: uuid.New()}, PlatformType: sourcePkg.PlatformType("bluebutton")}
 	backgroundJob := models.NewSyncBackgroundJob(sourceCredential)
 	err = dbRepo.CreateBackgroundJob(
 		context.WithValue(authContext, pkg.ContextKeyTypeAuthUsername, "test_username"),

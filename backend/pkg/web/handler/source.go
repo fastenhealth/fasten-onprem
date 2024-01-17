@@ -9,6 +9,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-sources/clients/factory"
 	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
+	sourceDefinitions "github.com/fastenhealth/fasten-sources/definitions"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -31,11 +32,16 @@ func CreateReconnectSource(c *gin.Context) {
 
 	logger.Infof("Parsed Create SourceCredential Credentials Payload: %v", sourceCred)
 
-	if sourceCred.DynamicClientRegistrationMode == "user-authenticated" {
+	//get the endpoint definition
+	endpointDefinition, err := sourceDefinitions.GetSourceDefinition(sourceDefinitions.GetSourceConfigOptions{
+		EndpointId: sourceCred.EndpointID.String(),
+	})
+
+	if endpointDefinition.DynamicClientRegistrationMode == "user-authenticated" {
 		logger.Warnf("This client requires a dynamic client registration, starting registration process")
 
-		if len(sourceCred.RegistrationEndpoint) == 0 {
-			err := fmt.Errorf("this client requires dynamic registration, but does not provide a registration endpoint: %s", sourceCred.DynamicClientRegistrationMode)
+		if len(endpointDefinition.RegistrationEndpoint) == 0 {
+			err := fmt.Errorf("this client requires dynamic registration, but does not provide a registration endpoint: %s", endpointDefinition.DynamicClientRegistrationMode)
 			logger.Errorln(err)
 			c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
 			return
@@ -143,9 +149,9 @@ func CreateManualSource(c *gin.Context) {
 
 	// create a "manual" client, which we can use to parse the
 	manualSourceCredential := models.SourceCredential{
-		SourceType: sourcePkg.SourceTypeManual,
+		PlatformType: sourcePkg.PlatformTypeManual,
 	}
-	tempSourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourcePkg.SourceTypeManual, c, logger, &manualSourceCredential)
+	tempSourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), c, logger, &manualSourceCredential)
 	if err != nil {
 		logger.Errorln("An error occurred while initializing hub client using manual source without credentials", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
@@ -179,7 +185,7 @@ func CreateManualSource(c *gin.Context) {
 			_databaseRepo database.DatabaseRepository,
 			_sourceCred *models.SourceCredential,
 		) (sourceModels.SourceClient, sourceModels.UpsertSummary, error) {
-			manualSourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), sourcePkg.SourceTypeManual, _backgroundJobContext, _logger, _sourceCred)
+			manualSourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), _backgroundJobContext, _logger, _sourceCred)
 			if err != nil {
 				resultErr := fmt.Errorf("an error occurred while initializing hub client using manual source with credential: %w", err)
 				logger.Errorln(resultErr)
