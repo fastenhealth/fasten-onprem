@@ -12,6 +12,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Location} from '@angular/common';
 import {EventBusService} from '../../services/event-bus.service';
 import {SourceState} from '../../models/fasten/source-state';
+import {PatientAccessBrand} from '../../models/patient-access-brands';
 
 @Component({
   selector: 'app-medical-sources-connected',
@@ -45,29 +46,41 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
       //handle connected sources sources
       const connectedSources = results as Source[]
-      forkJoin(connectedSources.map((source) => this.lighthouseApi.getLighthouseSource(source.source_type))).subscribe((connectedMetadata) => {
-        for(const ndx in connectedSources){
-          this.connectedSourceList.push({source: connectedSources[ndx], metadata: connectedMetadata[ndx]})
-          if(connectedSources[ndx].latest_background_job?.job_status == "STATUS_LOCKED"){
-            this.status[connectedSources[ndx].source_type] = "token"
-          } else if (connectedSources[ndx].latest_background_job?.job_status === "STATUS_FAILED") {
-            this.status[connectedSources[ndx].source_type] = "failed"
-          }
+      forkJoin(connectedSources.map((source) => {
+        if(source.platform_type == 'fasten' || source.platform_type == 'manual') {
+          return this.lighthouseApi.getLighthouseCatalogBrand(source.platform_type)
+        } else {
+          return this.lighthouseApi.getLighthouseCatalogBrand(source.brand_id)
         }
-      })
+      }))
+        .subscribe((connectedBrand) => {
+          for(const ndx in connectedSources){
+            console.log(connectedSources[ndx])
+            this.connectedSourceList.push({source: connectedSources[ndx], brand: connectedBrand[ndx]})
+            if(connectedSources[ndx].latest_background_job?.job_status == "STATUS_LOCKED"){
+              this.status[connectedSources[ndx].brand_id] = "token"
+            } else if (connectedSources[ndx].latest_background_job?.job_status === "STATUS_FAILED") {
+              this.status[connectedSources[ndx].brand_id] = "failed"
+            }
+          }
+        })
+
     })
 
-    const callbackSourceType = this.activatedRoute.snapshot.paramMap.get('source_type')
-    if(callbackSourceType) {
-      console.log("handle callback redirect from source")
-      this.status[callbackSourceType] = "token"
+    const callbackState = this.activatedRoute.snapshot.paramMap.get('state')
+    if(callbackState) {
+
+      let sourceInfo = this.lighthouseApi.getSourceState(callbackState)
+
+      console.log("handle callback redirect from source", callbackState, sourceInfo)
+      this.status[sourceInfo.brand_id] = "token"
 
       //the structure of "availableSourceList" vs "connectedSourceList" sources is slightly different,
       //connectedSourceList contains a "source" field. The this.fastenApi.createSource() call in the callback function will set it.
-      this.lighthouseApi.getLighthouseSource(callbackSourceType)
-        .then((metadata) => {
-          this.connectedSourceList.push({metadata: metadata})
-          return this.callback(callbackSourceType)
+      this.lighthouseApi.getLighthouseCatalogBrand(sourceInfo.brand_id)
+        .then((brandInfo) => {
+          this.connectedSourceList.push({brand: brandInfo})
+          return this.callback(sourceInfo)
         })
         .then(console.log)
     }
@@ -80,12 +93,12 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
   /**
    * if the user is redirected to this page from the lighthouse, we'll need to process the "code" to retrieve the access token & refresh token.
-   * @param sourceType
+   * @param expectedSourceStateInfo
    */
-  public async callback(sourceType: string) {
+  public async callback(expectedSourceStateInfo: SourceState) {
 
     //get the source metadata again
-    await this.lighthouseApi.getLighthouseSource(sourceType)
+    await this.lighthouseApi.getLighthouseSource(expectedSourceStateInfo.endpoint_id)
       .then(async (sourceMetadata: LighthouseSourceMetadata) => {
 
         //get required parameters from the URI and local storage
@@ -93,7 +106,6 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         //in desktop mode, we're using fragment routing, and the callback params are in the fragment.
         const fragmentParams = new URLSearchParams(callbackUrlParts.hash.split('?')?.[1] || '')
         const callbackCode = callbackUrlParts.searchParams.get("code") || fragmentParams.get("code")
-        const callbackState = callbackUrlParts.searchParams.get("state") || fragmentParams.get("state")
         const callbackError = callbackUrlParts.searchParams.get("error") || fragmentParams.get("error")
         const callbackErrorDescription = callbackUrlParts.searchParams.get("error_description") || fragmentParams.get("error_description")
 
@@ -103,8 +115,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         });
         this.location.replaceState(urlTree.toString());
 
-        const expectedSourceStateInfo = JSON.parse(localStorage.getItem(callbackState)) as SourceState
-        localStorage.removeItem(callbackState)
+        localStorage.removeItem(expectedSourceStateInfo.state)
 
         if(callbackError && !callbackCode){
           //TOOD: print this message in the UI
@@ -114,10 +125,10 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         }
 
         console.log("callback code:", callbackCode)
-        this.status[sourceType] = "token"
+        this.status[expectedSourceStateInfo.brand_id] = "token"
 
         let payload: any
-        payload = await this.lighthouseApi.swapOauthToken(sourceType, sourceMetadata,expectedSourceStateInfo, callbackCode)
+        payload = await this.lighthouseApi.swapOauthToken(sourceMetadata,expectedSourceStateInfo, callbackCode)
 
         if(!payload.access_token || payload.error){
           //if the access token is not set, then something is wrong,
@@ -143,37 +154,25 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
         }
 
-
+        //get the portal information
+        const portalInfo = await this.lighthouseApi.getLighthouseCatalogPortal(expectedSourceStateInfo.portal_id)
 
         //Create FHIR Client
 
         const dbSourceCredential = new Source({
           id: expectedSourceStateInfo.reconnect_source_id,
-          source_type: sourceType,
 
-          authorization_endpoint: sourceMetadata.authorization_endpoint,
-          token_endpoint: sourceMetadata.token_endpoint,
-          introspection_endpoint: sourceMetadata.introspection_endpoint,
-          userinfo_endpoint: sourceMetadata.userinfo_endpoint,
-          registration_endpoint: sourceMetadata.registration_endpoint,
-          api_endpoint_base_url:   sourceMetadata.api_endpoint_base_url,
+          display: portalInfo.name,
+          brand_id: expectedSourceStateInfo.brand_id,
+          portal_id: expectedSourceStateInfo.portal_id,
+          endpoint_id: expectedSourceStateInfo.endpoint_id,
+          platform_type: sourceMetadata.platform_type,
+
           client_id:             sourceMetadata.client_id,
-          redirect_uri:          sourceMetadata.redirect_uri,
-          scopes_supported:      sourceMetadata.scopes_supported,
-          issuer: sourceMetadata.issuer,
-          grant_types_supported: sourceMetadata.grant_types_supported,
-          response_types_supported: sourceMetadata.response_types_supported,
-          aud: sourceMetadata.aud,
-          code_challenge_methods_supported: sourceMetadata.code_challenge_methods_supported || [],
-          confidential: sourceMetadata.confidential,
-          cors_relay_required: sourceMetadata.cors_relay_required,
-
           patient:            payload.patient,
           access_token:          payload.access_token,
           refresh_token:          payload.refresh_token,
           id_token:              payload.id_token,
-
-          dynamic_client_registration_mode:  sourceMetadata.dynamic_client_registration_mode,
 
           // @ts-ignore - in some cases the getAccessTokenExpiration is a string, which cases failures to store Source in db.
           expires_at:            parseInt(this.getAccessTokenExpiration(payload)),
@@ -182,20 +181,20 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         this.fastenApi.createSource(dbSourceCredential)
           .subscribe((resp) => {
               // const sourceSyncMessage = JSON.parse(msg) as SourceSyncMessage
-              delete this.status[sourceType]
+              delete this.status[dbSourceCredential.brand_id]
               delete this.status[resp.source.id]
               // window.location.reload();
               // this.connectedSourceList.
 
               //find the index of the "inprogress" source in the connected List, and then add this source to its source metadata.
-              let foundSource = this.connectedSourceList.findIndex((item) => item.metadata.source_type == sourceType)
+              let foundSource = this.connectedSourceList.findIndex((item) => item.brand.id == dbSourceCredential.brand_id)
               this.connectedSourceList[foundSource].source = resp.source
 
               console.log("source sync-all response:", resp.summary)
 
               const toastNotification = new ToastNotification()
               toastNotification.type = ToastType.Success
-              toastNotification.message = `Successfully connected ${sourceType}`
+              toastNotification.message = `Successfully connected external data source`
 
               // const upsertSummary = sourceSyncMessage.response as UpsertSummary
               // if(upsertSummary && upsertSummary.totalResources != upsertSummary.updatedResources.length){
@@ -207,12 +206,12 @@ export class MedicalSourcesConnectedComponent implements OnInit {
               this.toastService.show(toastNotification)
             },
             (err) => {
-              delete this.status[sourceType]
+              delete this.status[dbSourceCredential.brand_id]
               // window.location.reload();
 
               const toastNotification = new ToastNotification()
               toastNotification.type = ToastType.Error
-              toastNotification.message = `An error occurred while accessing ${sourceType}: '${this.extractErrorFromResponse(err)}'`
+              toastNotification.message = `An error occurred while accessing external data source: '${this.extractErrorFromResponse(err)}'`
               toastNotification.autohide = false
               toastNotification.link = {
                 text: "View Details",
@@ -223,12 +222,12 @@ export class MedicalSourcesConnectedComponent implements OnInit {
             });
       })
       .catch((err) => {
-        delete this.status[sourceType]
+        delete this.status[expectedSourceStateInfo.brand_id]
         // window.location.reload();
 
         const toastNotification = new ToastNotification()
         toastNotification.type = ToastType.Error
-        toastNotification.message = `An error occurred while accessing ${sourceType}: '${JSON.stringify(err)}'`
+        toastNotification.message = `An error occurred while accessing external data source: '${JSON.stringify(err)}'`
         toastNotification.autohide = false
         this.toastService.show(toastNotification)
         console.error(err)
@@ -296,7 +295,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
   public openModal(contentModalRef, sourceListItem: SourceListItem) {
     if(
-      (this.status[sourceListItem.metadata.source_type] && this.status[sourceListItem.metadata.source_type] != 'failed') //if this source type is currently "loading" dont open the modal window
+      (this.status[sourceListItem.brand.id] && this.status[sourceListItem.brand.id] != 'failed') //if this source type is currently "loading" dont open the modal window
       || !sourceListItem.source //if there's no connected source, dont open the modal window
       || (this.status[sourceListItem.source.id] && this.status[sourceListItem.source.id] != 'failed') //if this source type is currently "loading" dont open the modal window
     ){
@@ -323,12 +322,12 @@ export class MedicalSourcesConnectedComponent implements OnInit {
     this.fastenApi.syncSource(source.id).subscribe(
       (respData) => {
         delete this.status[source.id]
-        delete this.status[source.source_type]
+        delete this.status[source.brand_id]
         console.log("source sync response:", respData)
       },
       (err) => {
         delete this.status[source.id]
-        delete this.status[source.source_type]
+        delete this.status[source.brand_id]
         console.log(err)
       }
     )
@@ -336,7 +335,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
   public sourceDeleteHandler(){
     let source = this.modalSelectedSourceListItem.source
-    let sourceDisplayName = this.modalSelectedSourceListItem?.metadata?.display || this.modalSelectedSourceListItem?.source?.source_type || 'unknown'
+    let sourceDisplayName = this.modalSelectedSourceListItem?.source?.display || this.modalSelectedSourceListItem?.brand?.name || 'unknown'
 
     this.status[source.id] = "authorize"
     this.modalService.dismissAll()
@@ -344,7 +343,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
     this.fastenApi.deleteSource(source.id).subscribe(
       (respData) => {
         delete this.status[source.id]
-        delete this.status[source.source_type]
+        delete this.status[source.brand_id]
 
         //delete this source from the connnected list
         let foundIndex = this.connectedSourceList.findIndex((connectedSource) => {
@@ -365,7 +364,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
       },
       (err) => {
         delete this.status[source.id]
-        delete this.status[source.source_type]
+        delete this.status[source.brand_id]
 
         const toastNotification = new ToastNotification()
         toastNotification.type = ToastType.Error
@@ -376,17 +375,18 @@ export class MedicalSourcesConnectedComponent implements OnInit {
   }
 
   //this is similar to the connectHandler in the MedicalSourcesComponent
+  //TODO: refactor this to use the connectHandler in the MedicalSourcesComponent
   public sourceReconnectHandler(selectedSourceListItem: SourceListItem){
 
-    let sourceType = selectedSourceListItem.metadata.source_type
-    this.lighthouseApi.getLighthouseSource(sourceType)
+    let endpointId = selectedSourceListItem?.source?.endpoint_id
+    this.lighthouseApi.getLighthouseSource(endpointId)
       .then(async (sourceMetadata: LighthouseSourceMetadata) => {
         console.log(sourceMetadata);
-        let authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceType, sourceMetadata, selectedSourceListItem.source.id)
+        let authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceMetadata, selectedSourceListItem.source.id)
 
         console.log('authorize url:', authorizationUrl.toString());
         // redirect to lighthouse with uri's (or open a new window in desktop mode)
-        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceType, sourceMetadata.redirect_uri).subscribe((codeData) => {
+        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceMetadata).subscribe((desktopRedirectData) => {
           //Note: this code will only run in Desktop mode (with popups)
           //in non-desktop environments, the user is redirected in the same window, and this code is never executed.
 
@@ -394,7 +394,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           this.modalService.dismissAll()
 
           //redirect the browser back to this page with the code in the query string parameters
-          this.lighthouseApi.redirectWithDesktopCode(sourceType, codeData)
+          this.lighthouseApi.redirectWithDesktopCode(desktopRedirectData.state, desktopRedirectData.codeData)
         })
       });
   }

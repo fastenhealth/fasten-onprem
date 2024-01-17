@@ -3,7 +3,6 @@ import {Source} from '../../models/fasten/source';
 import {Router} from '@angular/router';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {forkJoin} from 'rxjs';
-import {MetadataSource} from '../../models/fasten/metadata-source';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {LighthouseService} from '../../services/lighthouse.service';
 import { GridStack, GridStackOptions, GridStackWidget } from 'gridstack';
@@ -29,7 +28,6 @@ export class DashboardComponent implements OnInit {
   recordsCount: number = 0
   patientForSource: {[name: string]: ResourceFhir} = {}
 
-  metadataSource: { [name: string]: MetadataSource }
   dashboardConfigs: DashboardConfig[] = []
   selectedDashboardConfigNdx: number = 0
 
@@ -85,7 +83,7 @@ export class DashboardComponent implements OnInit {
   }
 
   isActive(source: Source){
-    if(source.source_type == "manual" || source.source_type == 'fasten'){
+    if(source.platform_type == "manual" || source.platform_type == 'fasten'){
       return '--'
     }
     let expiresDate = new Date(source.expires_at);

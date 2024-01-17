@@ -7,7 +7,6 @@ import {ResponseWrapper} from '../models/response-wrapper';
 import {LighthouseSourceMetadata} from '../models/lighthouse/lighthouse-source-metadata';
 import * as Oauth from '@panva/oauth4webapi';
 import {SourceState} from '../models/fasten/source-state';
-import {MetadataSource} from '../models/fasten/metadata-source';
 import {uuidV4} from '../../lib/utils/uuid';
 import {LighthouseSourceSearch} from '../models/lighthouse/lighthouse-source-search';
 import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
@@ -15,6 +14,7 @@ import {MedicalSourcesFilter} from './medical-sources-filter.service';
 import {OpenExternalLink} from '../../lib/utils/external_link';
 import {Router, UrlSerializer} from '@angular/router';
 import {Location} from '@angular/common';
+import {PatientAccessBrand, PatientAccessEndpoint, PatientAccessPortal} from '../models/patient-access-brands';
 
 export const sourceConnectDesktopTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
 
@@ -29,6 +29,14 @@ export class LighthouseService {
     private urlSerializer: UrlSerializer,
     private location: Location,
   ) {}
+
+  public storeSourceState(state: string, sourceStateInfo: SourceState) {
+    localStorage.setItem(state, JSON.stringify(sourceStateInfo))
+  }
+
+  public getSourceState(state: string): SourceState {
+    return JSON.parse(localStorage.getItem(state))
+  }
 
   public searchLighthouseSources(filter: MedicalSourcesFilter): Observable<LighthouseSourceSearch> {
     if((typeof filter.searchAfter === 'string' || filter.searchAfter instanceof String) && (filter.searchAfter as string).length > 0){
@@ -46,23 +54,8 @@ export class LighthouseService {
       );
   }
 
-  public getLighthouseSourceMetadataMap(showHidden = false): Observable<{[name: string]: MetadataSource}> {
-    const endpointUrl = new URL(`${environment.lighthouse_api_endpoint_base}/list`);
-    if(showHidden){
-      endpointUrl.searchParams.set('show_hidden', 'true');
-    }
-
-    return this._httpClient.get<ResponseWrapper>(endpointUrl.toString())
-      .pipe(
-        map((response: ResponseWrapper) => {
-          console.log("Metadata RESPONSE", response)
-          return response.data as {[name: string]: MetadataSource}
-        })
-      );
-  }
-
-  async getLighthouseSource(sourceType: string): Promise<LighthouseSourceMetadata> {
-    return this._httpClient.get<any>(`${environment.lighthouse_api_endpoint_base}/connect/${sourceType}`)
+  async getLighthouseSource(endpointId: string): Promise<LighthouseSourceMetadata> {
+    return this._httpClient.get<any>(`${environment.lighthouse_api_endpoint_base}/connect/${endpointId}`)
       .pipe(
         map((response: ResponseWrapper) => {
           return response.data as LighthouseSourceMetadata
@@ -70,12 +63,65 @@ export class LighthouseService {
       ).toPromise();
   }
 
+  async getLighthouseCatalogBrand(brandIdOrPlatformType: string): Promise<PatientAccessBrand> {
+    if(brandIdOrPlatformType === 'fasten'){
+      return of({
+        id: 'fasten',
+        last_updated: '',
+        portal_ids: [],
+        name: '',
+        platform_type: 'fasten'
+      }).toPromise()
+    } else if (brandIdOrPlatformType === 'manual'){
+      return of({
+        id: 'manual',
+        last_updated: '',
+        portal_ids: [],
+        name: '',
+        platform_type: 'manual'
+      }).toPromise()
+    }
 
-  async generateSourceAuthorizeUrl(sourceType: string, lighthouseSource: LighthouseSourceMetadata, reconnectSourceId?: string): Promise<URL> {
+    const catalogUrl = new URL(`${environment.lighthouse_api_endpoint_base}/catalog`);
+    catalogUrl.searchParams.set('brand_id', brandIdOrPlatformType);
+    return this._httpClient.get<any>(catalogUrl.toString())
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as PatientAccessBrand
+        })
+      ).toPromise();
+  }
+
+  async getLighthouseCatalogPortal(portalId: string): Promise<PatientAccessPortal> {
+    const catalogUrl = new URL(`${environment.lighthouse_api_endpoint_base}/catalog`);
+    catalogUrl.searchParams.set('portal_id', portalId);
+    return this._httpClient.get<any>(catalogUrl.toString())
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as PatientAccessPortal
+        })
+      ).toPromise();
+  }
+
+  async getLighthouseCatalogEndpoint(endpointId: string): Promise<PatientAccessEndpoint> {
+    const catalogUrl = new URL(`${environment.lighthouse_api_endpoint_base}/catalog`);
+    catalogUrl.searchParams.set('endpoint_id', endpointId);
+    return this._httpClient.get<any>(catalogUrl.toString())
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as PatientAccessEndpoint
+        })
+      ).toPromise();
+  }
+
+
+  async generateSourceAuthorizeUrl(lighthouseSource: LighthouseSourceMetadata, reconnectSourceId?: string): Promise<URL> {
     const state = uuidV4()
     let sourceStateInfo = new SourceState()
     sourceStateInfo.state = state
-    sourceStateInfo.source_type = sourceType
+    sourceStateInfo.endpoint_id = lighthouseSource.id
+    sourceStateInfo.portal_id = lighthouseSource.portal_id
+    sourceStateInfo.brand_id = lighthouseSource.brand_id
     if(reconnectSourceId){
       //if the source already exists, and we want to re-connect it (because of an expiration), we need to pass the existing source id
       sourceStateInfo.reconnect_source_id = reconnectSourceId
@@ -112,7 +158,8 @@ export class LighthouseService {
       authorizationUrl.searchParams.set('code_challenge_method', codeChallengeMethod);
     }
 
-    localStorage.setItem(state, JSON.stringify(sourceStateInfo))
+    //store the source state info
+    this.storeSourceState(state, sourceStateInfo)
 
     return authorizationUrl
   }
@@ -136,23 +183,36 @@ export class LighthouseService {
    * dest_url -  https://patient360la.anthem.com/.../connect/authorize?redirect_uri=https://lighthouse.fastenhealth.com/callback/anthem
    * redirect_url - lighthouse.fastenhealth.com/sandbox/redirect/anthem?origin_url=...&dest_url=...
    */
-  redirectWithOriginAndDestination(destUrl: string, sourceType: string, callbackUri: string): Observable<any> {
+  redirectWithOriginAndDestination(destUrl: string, redirectOpts: {platform_type: string, redirect_uri: string, brand_id: string, portal_id: string, id: string}): Observable<{ codeData:any, state:string }> {
     const originUrlParts = new URL(window.location.href)
+
+    //retrieve the state info from destUrl
+    const destUrlParts = new URL(destUrl)
+    const state = destUrlParts.searchParams.get("state")
+
+    if(!state){
+      throw new Error("No state found in destination url")
+    }
 
     if(environment.environment_desktop){
       //hash based routing
-      originUrlParts.hash = `desktop/callback/${sourceType}`
+      originUrlParts.hash = `desktop/callback/${state}`
     } else {
       //path based routing
       originUrlParts.hash = "" //reset hash in-case its present.
-      originUrlParts.pathname = this.pathJoin([originUrlParts.pathname, `callback/${sourceType}`])
+      originUrlParts.pathname = this.pathJoin([originUrlParts.pathname, `callback/${state}`])
     }
 
-    const redirectUrlParts = new URL(callbackUri.replace("/callback/", "/redirect/"));
+    let redirectUrl = this.pathJoin([environment.lighthouse_api_endpoint_base, `redirect/${state}`])
+
+    const redirectUrlParts = new URL(redirectUrl);
     const redirectParams = new URLSearchParams()
     redirectParams.set("origin_url", originUrlParts.toString())
     redirectParams.set("dest_url", destUrl)
     redirectParams.set("desktop_mode", environment.environment_desktop ? "true" : "false")
+    redirectParams.set("brand_id", redirectOpts.brand_id)
+    redirectParams.set("portal_id", redirectOpts.portal_id)
+    redirectParams.set("endpoint_id", redirectOpts.id)
     redirectUrlParts.search = redirectParams.toString()
     console.log(redirectUrlParts.toString());
 
@@ -161,9 +221,9 @@ export class LighthouseService {
     if(environment.environment_desktop && environment.popup_source_auth){
       //@ts-ignore
 
-      OpenExternalLink(redirectUrlParts.toString(), environment.environment_desktop, sourceType)
+      OpenExternalLink(redirectUrlParts.toString(), environment.environment_desktop, state)
 
-      return this.waitForDesktopCodeOrTimeout(sourceType)
+      return this.waitForDesktopCodeOrTimeout(state)
 
       //now wait for response from the opened window
     } else {
@@ -174,7 +234,7 @@ export class LighthouseService {
 
   }
 
-  async swapOauthToken(sourceType: string, sourceMetadata: LighthouseSourceMetadata, expectedSourceStateInfo: SourceState, code: string): Promise<any>{
+  async swapOauthToken(sourceMetadata: LighthouseSourceMetadata, expectedSourceStateInfo: SourceState, code: string): Promise<any>{
     // @ts-expect-error
     const client: oauth.Client = {
       client_id: sourceMetadata.client_id
@@ -188,7 +248,8 @@ export class LighthouseService {
     } else {
       console.log("This is a confidential client, using lighthouse token endpoint.")
       //if this is a confidential client, we need to "override" token endpoint, and use the Fasten Lighthouse to complete the swap
-      sourceMetadata.token_endpoint = sourceMetadata.redirect_uri.replace("/callback/", "/token/")
+      sourceMetadata.token_endpoint  = this.pathJoin([environment.lighthouse_api_endpoint_base, `token/${expectedSourceStateInfo.endpoint_id}`])
+
       //use a placeholder client_secret (the actual secret is stored in Lighthouse)
       client.client_secret = "placeholder"
       client.token_endpoint_auth_method = "client_secret_basic"
@@ -242,7 +303,7 @@ export class LighthouseService {
     return parts.join(separator);
   }
 
-  private waitForDesktopCodeOrTimeout(sourceType: string): Observable<any> {
+  private waitForDesktopCodeOrTimeout(state: string): Observable<{ codeData:any, state:string }> {
     console.log(`waiting for wails Event notification from window`)
 
     if(typeof wails == "undefined"){
@@ -257,17 +318,20 @@ export class LighthouseService {
         //throw an error if we wait more than 2 minutes (this will close the window)
         timeout(sourceConnectDesktopTimeout),
         //make sure we're only listening to events from the "opened" window.
-        filter((eventPayload: any ) => eventPayload.sender == sourceType),
+        filter((eventPayload: any ) => eventPayload.sender == state),
         //after filtering, we should only have one event to handle.
         first(),
         map((event) => {
-          console.log(`received wails event notification from ${sourceType} window & sending acknowledgment`, event)
+          console.log(`received wails event notification from ${state} window & sending acknowledgment`, event)
           // @ts-ignore
-          return event.data
+          return {
+            state: state,
+            codeData: event.data
+          }
         }),
         catchError((err) => {
-          console.warn(`timed out waiting for notification from ${sourceType} (${sourceConnectDesktopTimeout/1000}s), closing window`)
-          wails.Application.GetWindowByName(sourceType).Window.Close()
+          console.warn(`timed out waiting for notification from ${state} (${sourceConnectDesktopTimeout/1000}s), closing window`)
+          wails.Application.GetWindowByName(state).Window.Close()
           return throwError(err)
         })
   )
@@ -275,7 +339,7 @@ export class LighthouseService {
 
   //after waiting for the desktop code, we need to redirect to the callback page with the code in the query params
   // (which is what would have happened if we were in a browser and we were redirected as usual)
-  redirectWithDesktopCode(sourceType: string, codeData: any){
+  redirectWithDesktopCode(state: string, codeData: any){
 
     if(!codeData){
       //if we redirected completely, no callback data will be present.
@@ -286,7 +350,7 @@ export class LighthouseService {
     //redirect to callback page with code
 
     let urlTree = this.router.createUrlTree(
-      ['/sources/callback/' + sourceType],
+      ['/sources/callback/' + state],
       { queryParams: codeData, }
     );
 

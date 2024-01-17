@@ -3,7 +3,6 @@ import {LighthouseService} from '../../services/lighthouse.service';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-source-metadata';
 import {Source} from '../../models/fasten/source';
-import {MetadataSource} from '../../models/fasten/metadata-source';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute} from '@angular/router';
 import {environment} from '../../../environments/environment';
@@ -11,18 +10,19 @@ import {BehaviorSubject, forkJoin, Observable, of, Subject} from 'rxjs';
 import {
   LighthouseSourceSearch,
   LighthouseSourceSearchAggregation,
-  LighthouseSourceSearchResult
+  LighthouseBrandListDisplayItem
 } from '../../models/lighthouse/lighthouse-source-search';
 import {debounceTime, distinctUntilChanged, pairwise, startWith} from 'rxjs/operators';
 import {MedicalSourcesFilter, MedicalSourcesFilterService} from '../../services/medical-sources-filter.service';
 import {FormControl, FormGroup} from '@angular/forms';
 import * as _ from 'lodash';
+import {PatientAccessBrand} from '../../models/patient-access-brands';
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
 
 export class SourceListItem {
   source?: Source
-  metadata: MetadataSource
+  brand: LighthouseBrandListDisplayItem | PatientAccessBrand
 }
 
 @Component({
@@ -38,7 +38,7 @@ export class MedicalSourcesComponent implements OnInit {
   uploadedFile: File[] = []
 
 
-  availableSourceList: SourceListItem[] = []
+  availableLighthouseBrandList: SourceListItem[] = []
   searchTermUpdate = new BehaviorSubject<string>("");
   status: { [name: string]: undefined | "token" | "authorize" } = {}
 
@@ -69,7 +69,7 @@ export class MedicalSourcesComponent implements OnInit {
   filterForm = this.filterService.filterForm;
 
   //modal
-  modalSelectedSourceListItem:SourceListItem = null;
+  modalSelectedBrandListItem: LighthouseBrandListDisplayItem | PatientAccessBrand = null;
   modalCloseResult = '';
 
   constructor(
@@ -85,7 +85,7 @@ export class MedicalSourcesComponent implements OnInit {
       console.log("medical-sources - filterChanges", filterInfo)
 
       //this function should only trigger when there's a change to the filter values -- which requires a new query
-      this.availableSourceList = []
+      this.availableLighthouseBrandList = []
       this.resultLimits.totalItems = 0
       this.resultLimits.scrollComplete = false
 
@@ -99,14 +99,18 @@ export class MedicalSourcesComponent implements OnInit {
   ngOnInit(): void {
 
 
-    //TODO: handle Callbacks from the source connect window
-    const callbackSourceType = this.activatedRoute.snapshot.paramMap.get('source_type')
-    if(callbackSourceType){
+    // TODO: handle Callbacks from the source connect window
+    const callbackState = this.activatedRoute.snapshot.paramMap.get('state')
+    if(callbackState){
+
+      //get the source state information from localstorage
+      let sourceStateInfo = this.lighthouseApi.getSourceState(callbackState)
+
       //move this source from available to connected (with a progress bar)
       //remove item from available sources list, add to connected sources.
-      let inProgressAvailableIndex = this.availableSourceList.findIndex((item) => item.metadata.source_type == callbackSourceType)
+      let inProgressAvailableIndex = this.availableLighthouseBrandList.findIndex((item) => item.brand.id == sourceStateInfo.brand_id)
       if(inProgressAvailableIndex > -1){
-        let sourcesInProgress = this.availableSourceList.splice(inProgressAvailableIndex, 1);
+        let sourcesInProgress = this.availableLighthouseBrandList.splice(inProgressAvailableIndex, 1);
       }
     }
     //we're not in a callback redirect, lets load the sources
@@ -154,8 +158,8 @@ export class MedicalSourcesComponent implements OnInit {
       // this.searchResults = wrapper.hits.hits;
       this.resultLimits.totalItems = wrapper.hits.total.value;
 
-      this.availableSourceList = this.availableSourceList.concat(wrapper.hits.hits.map((result) => {
-        return {metadata: result._source}
+      this.availableLighthouseBrandList = this.availableLighthouseBrandList.concat(wrapper.hits.hits.map((result) => {
+        return {brand: result._source}
       }))
 
       //check if scroll is complete.
@@ -258,34 +262,37 @@ export class MedicalSourcesComponent implements OnInit {
     console.log("TODO: connect Handler")
 
 
-    this.modalSelectedSourceListItem = sourceListItem
+    this.modalSelectedBrandListItem = sourceListItem.brand
     this.modalService.open(contentModalRef, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      this.modalSelectedSourceListItem = null
+      this.modalSelectedBrandListItem = null
       this.modalCloseResult = `Closed with: ${result}`;
     }, (reason) => {
-      this.modalSelectedSourceListItem = null
+      this.modalSelectedBrandListItem = null
     });
   }
 
   // /**
-  //  * after pressing the connect button in the Modal, this function will generate an authorize url for this source, and redirec the user.
+  //  * after pressing the connect button in the Modal, this function will generate an authorize url for this source, and redirect the user.
   //  * @param $event
   //  * @param sourceType
   //  */
-  public connectHandler($event, sourceListItem: SourceListItem): void {
+  public connectHandler($event, brandId: string, portalId: string, endpointId: string): void {
 
     ($event.currentTarget as HTMLButtonElement).disabled = true;
-    this.status[sourceListItem.metadata.source_type] = "authorize"
+    this.status[brandId] = "authorize"
+    this.status[endpointId] = "authorize"
 
-    let sourceType = sourceListItem.metadata.source_type
-    this.lighthouseApi.getLighthouseSource(sourceType)
+    this.lighthouseApi.getLighthouseSource(endpointId)
       .then(async (sourceMetadata: LighthouseSourceMetadata) => {
+        sourceMetadata.brand_id = brandId
+        sourceMetadata.portal_id = portalId
+
         console.log(sourceMetadata);
-        let authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceType, sourceMetadata)
+        let authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceMetadata)
 
         console.log('authorize url:', authorizationUrl.toString());
         // redirect to lighthouse with uri's (or open a new window in desktop mode)
-        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceType, sourceMetadata.redirect_uri).subscribe((codeData) => {
+        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceMetadata).subscribe((codeData) => {
           //Note: this code will only run in Desktop mode (with popups)
           //in non-desktop environments, the user is redirected in the same window, and this code is never executed.
 
@@ -293,7 +300,7 @@ export class MedicalSourcesComponent implements OnInit {
           this.modalService.dismissAll()
 
           //redirect the browser back to this page with the code in the query string parameters
-          this.lighthouseApi.redirectWithDesktopCode(sourceType, codeData)
+          this.lighthouseApi.redirectWithDesktopCode(sourceMetadata.platform_type, codeData)
         })
       });
   }

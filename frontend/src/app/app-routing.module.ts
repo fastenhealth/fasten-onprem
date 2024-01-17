@@ -35,10 +35,10 @@ const routes: Routes = [
   { path: 'explore/:source_id/resource/:resource_type/:resource_id', component: ResourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
   { path: 'sources', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
-  { path: 'sources/callback/:source_type', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+  { path: 'sources/callback/:state', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'resource/create', component: ResourceCreatorComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
-  { path: 'desktop/callback/:source_id', component: DesktopCallbackComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+  { path: 'desktop/callback/:state', component: DesktopCallbackComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
   { path: 'background-jobs', component: BackgroundJobsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'patient-profile', component: PatientProfileComponent, canActivate: [ IsAuthenticatedAuthGuard] },

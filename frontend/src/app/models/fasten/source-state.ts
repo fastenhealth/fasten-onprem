@@ -1,7 +1,10 @@
 export class SourceState {
   state: string
 
-  source_type: string //used to override the source_type for sources which have a single redirect url (eg. Epic)
+  endpoint_id: string
+  portal_id: string
+  brand_id: string
+
   reconnect_source_id?: string //used to reconnect a source
 
   code_verifier?: string

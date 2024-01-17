@@ -57,7 +57,7 @@
             </div>
             <input [ngModel]="searchTermUpdate | async" (keyup)="searchTermUpdate.next($event.target.value)" type="text" class="form-control" placeholder="Search Term">
             <div class="input-group-append">
-              <span class="input-group-text">{{this.availableSourceList.length}} of {{this.resultLimits.totalItems}} results</span>
+              <span class="input-group-text">{{this.availableLighthouseBrandList.length}} of {{this.resultLimits.totalItems}} results</span>
             </div>
 
           </div><!-- input-group -->
@@ -65,7 +65,7 @@
       </div>
 
 
-      <div *ngIf="!loading || availableSourceList.length > 0 else isLoadingTemplate" class="row row-sm"
+      <div *ngIf="!loading || availableLighthouseBrandList.length > 0 else isLoadingTemplate" class="row row-sm"
            infiniteScroll
            [infiniteScrollDistance]="2"
            [infiniteScrollThrottle]="50"
@@ -73,9 +73,9 @@
       >
 
         <app-medical-sources-card class="col-sm-3 mg-b-20 px-3"
-          *ngFor="let sourceData of availableSourceList"
-          [sourceInfo]="sourceData"
-          [status]="status[sourceData.metadata.source_type]"
+          *ngFor="let lighthouseBrand of availableLighthouseBrandList"
+          [sourceInfo]="lighthouseBrand"
+          [status]="status[lighthouseBrand.brand.id]"
           (onClick)="connectModalHandler(contentModalRef, $event)"
         ></app-medical-sources-card>
 
@@ -92,12 +92,12 @@
 
   <div class="modal-header">
     <div class="media">
-      <img class="modal-header-media-image mg-sm-r-20 mg-b-20 mg-sm-b-0" [src]="'assets/sources/'+(modalSelectedSourceListItem?.metadata.brand_logo ? modalSelectedSourceListItem?.metadata?.brand_logo : modalSelectedSourceListItem?.metadata?.source_type+'.png')" [alt]="modalSelectedSourceListItem?.metadata?.display">
+      <img class="modal-header-media-image mg-sm-r-20 mg-b-20 mg-sm-b-0" [src]="'assets/sources/'+(modalSelectedBrandListItem?.id +'.png')" [alt]="modalSelectedBrandListItem?.name">
       <div class="media-body">
-        <h6>{{modalSelectedSourceListItem?.metadata.display}}</h6>
-        <a *ngIf="modalSelectedSourceListItem?.metadata.patient_access_url"
-           [href]="modalSelectedSourceListItem.metadata?.patient_access_url"
-           class="mg-b-0" externalLink>{{modalSelectedSourceListItem?.metadata.patient_access_url | shortDomain}}</a>
+        <h6>{{modalSelectedBrandListItem?.name}}</h6>
+        <a *ngIf="modalSelectedBrandListItem?.brand_website"
+           [href]="modalSelectedBrandListItem?.brand_website"
+           class="mg-b-0" externalLink>{{modalSelectedBrandListItem?.brand_website | shortDomain}}</a>
       </div><!-- media-body -->
     </div><!-- media -->
     <button type="button" class="btn close" aria-label="Close" (click)="modal.dismiss('Cross click')">
@@ -114,40 +114,58 @@
       If the data about this institution is missing or incorrect, you can <a class="link" href="https://docs.google.com/spreadsheets/d/1ZSgwfd7kwxSnimk4yofIFcR8ZMUls0zi9SZpRiOJBx0/edit?usp=sharing" externalLink>click here</a> to submit a correction.
     </p>
 
-    <ng-container *ngIf="modalSelectedSourceListItem?.metadata?.category?.length > 0 || modalSelectedSourceListItem?.metadata?.patient_access_description">
-      <hr/>
-      <ng-container *ngIf="modalSelectedSourceListItem?.metadata?.patient_access_description">
-        <h6>About this Source</h6>
-        <p >{{modalSelectedSourceListItem?.metadata?.patient_access_description}}</p>
+
+    <div *ngFor="let portal of modalSelectedBrandListItem.portals" class="list-group">
+      <ng-container *ngFor="let endpoint of portal.endpoints">
+        <div (click)="connectHandler($event, modalSelectedBrandListItem.id, portal.id, endpoint.id)" class="list-group-item list-group-item-action flex-column align-items-start cursor-pointer">
+          <div class="d-flex w-100 justify-content-between align-items-center">
+            <h5 class="mb-1">
+              <span *ngIf="status[endpoint.id] == 'authorize'" class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
+              {{portal.name}}
+            </h5>
+            <span class="badge badge-primary badge-pill">{{endpoint.platform_type}}</span>
+          </div>
+          <p class="mb-1">{{portal.description}}</p>
+          <small>{{portal.portal_website | shortDomain}}</small>
+        </div>
       </ng-container>
-      <ng-container *ngIf="modalSelectedSourceListItem?.metadata.aliases?.length > 0">
-        <h6>Aliases</h6>
-        <ul>
-          <li *ngFor="let alias of modalSelectedSourceListItem?.metadata?.aliases">{{alias}}</li>
-        </ul>
-      </ng-container>
-      <ng-container *ngIf="modalSelectedSourceListItem?.metadata.platform_type">
-        <h6>Platform Type</h6>
-        <p>{{modalSelectedSourceListItem?.metadata.platform_type}}</p>
-      </ng-container>
-      <ng-container *ngIf="modalSelectedSourceListItem?.metadata?.category?.length > 0">
-        <h6>Categories</h6>
-        <ul>
-          <li *ngFor="let cat of modalSelectedSourceListItem?.metadata?.category">{{cat | medicalSourcesCategoryLookup}}</li>
-        </ul>
-      </ng-container>
-    </ng-container>
+    </div>
+
+
+<!--    <ng-container *ngIf="modalSelectedSourceListItem?.metadata?.category?.length > 0 || modalSelectedSourceListItem?.metadata?.patient_access_description">-->
+<!--      <hr/>-->
+<!--      <ng-container *ngIf="modalSelectedSourceListItem?.metadata?.patient_access_description">-->
+<!--        <h6>About this Source</h6>-->
+<!--        <p >{{modalSelectedSourceListItem?.metadata?.patient_access_description}}</p>-->
+<!--      </ng-container>-->
+<!--      <ng-container *ngIf="modalSelectedSourceListItem?.metadata.aliases?.length > 0">-->
+<!--        <h6>Aliases</h6>-->
+<!--        <ul>-->
+<!--          <li *ngFor="let alias of modalSelectedSourceListItem?.metadata?.aliases">{{alias}}</li>-->
+<!--        </ul>-->
+<!--      </ng-container>-->
+<!--      <ng-container *ngIf="modalSelectedSourceListItem?.metadata.platform_type">-->
+<!--        <h6>Platform Type</h6>-->
+<!--        <p>{{modalSelectedSourceListItem?.metadata.platform_type}}</p>-->
+<!--      </ng-container>-->
+<!--      <ng-container *ngIf="modalSelectedSourceListItem?.metadata?.category?.length > 0">-->
+<!--        <h6>Categories</h6>-->
+<!--        <ul>-->
+<!--          <li *ngFor="let cat of modalSelectedSourceListItem?.metadata?.category">{{cat | medicalSourcesCategoryLookup}}</li>-->
+<!--        </ul>-->
+<!--      </ng-container>-->
+<!--    </ng-container>-->
   </div>
 
-  <div class="modal-footer">
-<!--    <button (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>-->
-    <!--    <button (click)="connectHandler($event, modalSelectedSourceListItem.source['source_type'])" type="button" class="btn btn-outline-light">Reconnect</button>-->
-    <button type="button" (click)="connectHandler($event, modalSelectedSourceListItem)" class="btn btn-indigo">
-      <span *ngIf="status[modalSelectedSourceListItem?.metadata?.source_type] == 'authorize'" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-      Connect
-    </button>
-    <button (click)="modal.dismiss('Close click')" type="button" class="btn btn-outline-light">Close</button>
-  </div>
+<!--  <div class="modal-footer">-->
+<!--&lt;!&ndash;    <button (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>&ndash;&gt;-->
+<!--    &lt;!&ndash;    <button (click)="connectHandler($event, modalSelectedSourceListItem.source['source_type'])" type="button" class="btn btn-outline-light">Reconnect</button>&ndash;&gt;-->
+<!--    <button type="button" (click)="connectHandler($event, modalSelectedSourceListItem)" class="btn btn-indigo">-->
+<!--      <span *ngIf="status[modalSelectedSourceListItem?.metadata?.source_type] == 'authorize'" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>-->
+<!--      Connect-->
+<!--    </button>-->
+<!--    <button (click)="modal.dismiss('Close click')" type="button" class="btn btn-outline-light">Close</button>-->
+<!--  </div>-->
 </ng-template>
 
 

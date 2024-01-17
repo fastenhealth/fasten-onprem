@@ -1,8 +1,8 @@
-<div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': sourceInfo?.metadata?.hidden}">
+<div class="card h-100 d-flex align-items-center justify-content-center mt-3 mt-3 rounded-0 cursor-pointer" [ngClass]="{'card-disable': sourceInfo?.brand?.hidden}">
   <div (click)="onCardClick()" class="card-body" [class.border-left-danger]="status == 'failed'">
 
     <div class="h-100 d-flex align-items-center">
-      <img imageFallback [src]="'assets/sources/'+(sourceInfo?.metadata.brand_logo ? sourceInfo?.metadata?.brand_logo : sourceInfo?.metadata?.source_type+'.png')" [alt]="sourceInfo?.metadata?.display" class="img-fluid">
+      <img imageFallback [src]="'assets/sources/'+((sourceInfo?.brand?.id || sourceInfo?.source?.brand_id )+'.png')" [alt]="sourceInfo?.brand?.name" class="img-fluid">
       <div *ngIf="status == 'failed'"  class="card-img-overlay">
         <span class="badge badge-danger">failed</span>
       </div>
@@ -13,7 +13,7 @@
   </div>
   <div class="card-footer text-center p-1" style="width:100%">
     <small class="tx-gray-700">
-      {{sourceInfo?.metadata?.display || getSourceDisplayName(sourceInfo)}}
+      {{getSourceDisplayName(sourceInfo)}}
     </small>
   </div>
 </div>

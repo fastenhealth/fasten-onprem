@@ -4,8 +4,14 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Source} from '../../models/fasten/source';
 import {forkJoin} from 'rxjs';
 import {LighthouseService} from '../../services/lighthouse.service';
-import {SourceListItem} from '../medical-sources/medical-sources.component';
 import {Router} from '@angular/router';
+import {LighthouseBrandListDisplayItem} from '../../models/lighthouse/lighthouse-source-search';
+import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-source-metadata';
+
+export class SourceListItem {
+  source?: Source
+  metadata: LighthouseSourceMetadata
+}
 
 @Component({
   selector: 'app-explore',
@@ -27,7 +33,7 @@ export class ExploreComponent implements OnInit {
 
       //handle connected sources sources
       const connectedSources = results as Source[]
-      forkJoin(connectedSources.map((source) => this.lighthouseApi.getLighthouseSource(source.source_type))).subscribe((connectedMetadata) => {
+      forkJoin(connectedSources.map((source) => this.lighthouseApi.getLighthouseSource(source.endpoint_id))).subscribe((connectedMetadata) => {
         for(const ndx in connectedSources){
           this.connectedSources.push({source: connectedSources[ndx], metadata: connectedMetadata[ndx]})
         }
