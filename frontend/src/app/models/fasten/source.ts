@@ -8,6 +8,7 @@ export class Source {
   user_id?: number
 
   display?: string
+  lighthouse_env_type?: 'prod' | 'sandbox'
   brand_id?: string
   portal_id?: string
   endpoint_id: string

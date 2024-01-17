@@ -9,7 +9,6 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-sources/clients/factory"
 	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
-	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -36,7 +35,7 @@ func BackgroundJobSyncResources(
 			_sourceCred *models.SourceCredential,
 		) (sourceModels.SourceClient, sourceModels.UpsertSummary, error) {
 			// after creating the client, we should do a bulk import
-			sourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), _backgroundJobContext, _logger, _sourceCred)
+			sourceClient, err := factory.GetSourceClient(_sourceCred.LighthouseEnvType, _backgroundJobContext, _logger, _sourceCred)
 			if err != nil {
 				resultErr := fmt.Errorf("an error occurred while initializing hub client using source credential: %w", err)
 				_logger.Errorln(resultErr)

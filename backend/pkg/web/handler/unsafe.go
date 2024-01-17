@@ -6,7 +6,6 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-sources/clients/factory"
-	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -46,7 +45,7 @@ func UnsafeRequestSource(c *gin.Context) {
 		return
 	}
 
-	client, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), c, logger, foundSource)
+	client, err := factory.GetSourceClient("", c, logger, foundSource)
 	if err != nil {
 		logger.Errorf("Could not initialize source client %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
@@ -140,7 +139,7 @@ func UnsafeSyncResourceNames(c *gin.Context) {
 		return
 	}
 
-	client, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), c, logger, foundSource)
+	client, err := factory.GetSourceClient("", c, logger, foundSource)
 	if err != nil {
 		logger.Errorf("Could not initialize source client %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})

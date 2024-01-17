@@ -151,7 +151,7 @@ func CreateManualSource(c *gin.Context) {
 	manualSourceCredential := models.SourceCredential{
 		PlatformType: sourcePkg.PlatformTypeManual,
 	}
-	tempSourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), c, logger, &manualSourceCredential)
+	tempSourceClient, err := factory.GetSourceClient("", c, logger, &manualSourceCredential)
 	if err != nil {
 		logger.Errorln("An error occurred while initializing hub client using manual source without credentials", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
@@ -185,7 +185,7 @@ func CreateManualSource(c *gin.Context) {
 			_databaseRepo database.DatabaseRepository,
 			_sourceCred *models.SourceCredential,
 		) (sourceModels.SourceClient, sourceModels.UpsertSummary, error) {
-			manualSourceClient, err := factory.GetSourceClient(sourcePkg.GetFastenLighthouseEnv(), _backgroundJobContext, _logger, _sourceCred)
+			manualSourceClient, err := factory.GetSourceClient("", _backgroundJobContext, _logger, _sourceCred)
 			if err != nil {
 				resultErr := fmt.Errorf("an error occurred while initializing hub client using manual source with credential: %w", err)
 				logger.Errorln(resultErr)

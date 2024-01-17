@@ -2,6 +2,7 @@ package _0240114092806
 
 import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	sourcesPkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/google/uuid"
 )
 
@@ -13,11 +14,12 @@ type SourceCredential struct {
 	Patient    string       `json:"patient" gorm:"uniqueIndex:idx_user_source_patient"`
 
 	//New Fields
-	Display      string     `json:"display"`
-	BrandID      *uuid.UUID `json:"brand_id"`
-	PortalID     *uuid.UUID `json:"portal_id"`
-	EndpointID   uuid.UUID  `json:"endpoint_id"`
-	PlatformType string     `json:"platform_type"`
+	Display           string                             `json:"display"`
+	LighthouseEnvType sourcesPkg.FastenLighthouseEnvType `json:"lighthouse_env_type"`
+	BrandID           *uuid.UUID                         `json:"brand_id"`
+	PortalID          *uuid.UUID                         `json:"portal_id"`
+	EndpointID        uuid.UUID                          `json:"endpoint_id"`
+	PlatformType      string                             `json:"platform_type"`
 
 	LatestBackgroundJob   *models.BackgroundJob `json:"latest_background_job,omitempty"`
 	LatestBackgroundJobID *uuid.UUID            `json:"-"`

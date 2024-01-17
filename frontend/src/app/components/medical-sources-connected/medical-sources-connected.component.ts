@@ -13,6 +13,7 @@ import {Location} from '@angular/common';
 import {EventBusService} from '../../services/event-bus.service';
 import {SourceState} from '../../models/fasten/source-state';
 import {PatientAccessBrand} from '../../models/patient-access-brands';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-medical-sources-connected',
@@ -163,6 +164,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           id: expectedSourceStateInfo.reconnect_source_id,
 
           display: portalInfo.name,
+          lighthouse_env_type: environment.lighthouse_api_endpoint_base == 'https://lighthouse.fastenhealth.com/v1' ? 'prod' : 'sandbox',
           brand_id: expectedSourceStateInfo.brand_id,
           portal_id: expectedSourceStateInfo.portal_id,
           endpoint_id: expectedSourceStateInfo.endpoint_id,

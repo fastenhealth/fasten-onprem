@@ -27,10 +27,11 @@ type SourceCredential struct {
 	EndpointID uuid.UUID `json:"endpoint_id" gorm:"uniqueIndex:idx_user_source_patient"`
 
 	//New Fields
-	Display      string                  `json:"display"`
-	BrandID      uuid.UUID               `json:"brand_id"`
-	PortalID     uuid.UUID               `json:"portal_id"`
-	PlatformType sourcesPkg.PlatformType `json:"platform_type"`
+	Display           string                             `json:"display"`
+	LighthouseEnvType sourcesPkg.FastenLighthouseEnvType `json:"lighthouse_env_type"`
+	BrandID           uuid.UUID                          `json:"brand_id"`
+	PortalID          uuid.UUID                          `json:"portal_id"`
+	PlatformType      sourcesPkg.PlatformType            `json:"platform_type"`
 
 	LatestBackgroundJob   *BackgroundJob `json:"latest_background_job,omitempty"`
 	LatestBackgroundJobID *uuid.UUID     `json:"-"`
