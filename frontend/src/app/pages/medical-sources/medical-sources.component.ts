@@ -292,7 +292,11 @@ export class MedicalSourcesComponent implements OnInit {
 
         console.log('authorize url:', authorizationUrl.toString());
         // redirect to lighthouse with uri's (or open a new window in desktop mode)
-        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceMetadata).subscribe((codeData) => {
+        this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceMetadata).subscribe((desktopRedirectData) => {
+          if(!desktopRedirectData){
+            return //wait for redirect
+          }
+
           //Note: this code will only run in Desktop mode (with popups)
           //in non-desktop environments, the user is redirected in the same window, and this code is never executed.
 
@@ -300,7 +304,7 @@ export class MedicalSourcesComponent implements OnInit {
           this.modalService.dismissAll()
 
           //redirect the browser back to this page with the code in the query string parameters
-          this.lighthouseApi.redirectWithDesktopCode(sourceMetadata.platform_type, codeData)
+          this.lighthouseApi.redirectWithDesktopCode(desktopRedirectData.state, desktopRedirectData.codeData)
         })
       });
   }

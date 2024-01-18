@@ -190,7 +190,9 @@ export class MedicalSourcesConnectedComponent implements OnInit {
               // this.connectedSourceList.
 
               //find the index of the "inprogress" source in the connected List, and then add this source to its source metadata.
-              let foundSource = this.connectedSourceList.findIndex((item) => item.brand.id == dbSourceCredential.brand_id)
+              let foundSource = this.connectedSourceList.findIndex((item) => {
+                return item.source?.brand_id == dbSourceCredential.brand_id || item.brand?.id == dbSourceCredential.brand_id
+              })
               this.connectedSourceList[foundSource].source = resp.source
 
               console.log("source sync-all response:", resp.summary)
@@ -402,6 +404,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           if(!desktopRedirectData){
             return //wait for redirect
           }
+
           //Note: this code will only run in Desktop mode (with popups)
           //in non-desktop environments, the user is redirected in the same window, and this code is never executed.
 
