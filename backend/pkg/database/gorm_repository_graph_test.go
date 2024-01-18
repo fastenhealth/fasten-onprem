@@ -81,6 +81,7 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph() {
 			ID: uuid.New(),
 		},
 		UserID:       userModel.ID,
+		Patient:      uuid.New().String(),
 		PlatformType: sourcePkg.PlatformTypeManual,
 	}
 	err = dbRepo.CreateSource(authContext, &testSourceCredential)
@@ -148,6 +149,7 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph_NDJson() {
 			ID: uuid.New(),
 		},
 		UserID:       userModel.ID,
+		Patient:      uuid.New().String(),
 		PlatformType: sourcePkg.PlatformTypeManual,
 	}
 	err = dbRepo.CreateSource(authContext, &testSourceCredential)
