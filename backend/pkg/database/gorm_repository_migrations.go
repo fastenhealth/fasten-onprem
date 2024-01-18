@@ -3,10 +3,16 @@ package database
 import (
 	"context"
 	"fmt"
+	_20231017112246 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20231017112246"
+	_20231201122541 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20231201122541"
+	_0240114092806 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114092806"
+	_20240114103850 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114103850"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
+	sourceCatalog "github.com/fastenhealth/fasten-sources/catalog"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -20,15 +26,15 @@ func (gr *GormRepository) Migrate() error {
 	//use "echo $(date '+%Y%m%d%H%M%S')" to generate new ID's
 	m := gormigrate.New(gr.GormClient, gormMigrateOptions, []*gormigrate.Migration{
 		{
-			ID: "20231017112246", // base database models //TODO: figure out how to version these correctly (SourceCredential is complicated)
+			ID: "20231017112246",
 			Migrate: func(tx *gorm.DB) error {
 
 				return tx.AutoMigrate(
-					&models.BackgroundJob{},
-					&models.Glossary{},
-					&models.SourceCredential{},
-					&models.UserSettingEntry{},
-					&models.User{},
+					&_20231017112246.BackgroundJob{},
+					&_20231017112246.Glossary{},
+					&_20231017112246.SourceCredential{},
+					&_20231017112246.UserSettingEntry{},
+					&_20231017112246.User{},
 				)
 			},
 		},
@@ -44,7 +50,7 @@ func (gr *GormRepository) Migrate() error {
 			ID: "20231201122541", // Adding Fasten Source Credential for each user
 			Migrate: func(tx *gorm.DB) error {
 
-				users := []models.User{}
+				users := []_20231201122541.User{}
 				results := tx.Find(&users)
 				if results.Error != nil {
 					return results.Error
@@ -52,9 +58,9 @@ func (gr *GormRepository) Migrate() error {
 				for _, user := range users {
 					tx.Logger.Info(context.Background(), fmt.Sprintf("Creating Fasten Source Credential for user: %s", user.ID))
 
-					fastenUserCred := models.SourceCredential{
+					fastenUserCred := _20231201122541.SourceCredential{
 						UserID:     user.ID,
-						SourceType: sourcePkg.SourceTypeFasten,
+						SourceType: string(sourcePkg.PlatformTypeFasten),
 					}
 					fastenUserCredCreateResp := tx.Create(&fastenUserCred)
 					if fastenUserCredCreateResp.Error != nil {
@@ -65,6 +71,89 @@ func (gr *GormRepository) Migrate() error {
 				return nil
 			},
 		},
+		{
+			ID: "20240114092806", // Adding additional fields to Source Credential
+			Migrate: func(tx *gorm.DB) error {
+
+				err := tx.AutoMigrate(
+					&_0240114092806.SourceCredential{},
+				)
+				if err != nil {
+					return err
+				}
+
+				//attempt to populate the endpoint id, portal id and brand id for each existing source credential
+				sourceCredentials := []_0240114092806.SourceCredential{}
+				results := tx.Find(&sourceCredentials)
+				if results.Error != nil {
+					return results.Error
+				}
+
+				for ndx, _ := range sourceCredentials {
+					sourceCredential := &sourceCredentials[ndx]
+
+					if sourceCredential.SourceType == string(sourcePkg.PlatformTypeFasten) || sourceCredential.SourceType == string(sourcePkg.PlatformTypeManual) {
+						tx.Logger.Info(context.Background(), fmt.Sprintf("Updating Legacy SourceType (%s) to PlatformType: %s", sourceCredential.SourceType, sourceCredential.ID))
+
+						sourceCredential.PlatformType = string(sourceCredential.SourceType)
+
+						fastenUpdateSourceCredential := tx.Save(sourceCredential)
+						if fastenUpdateSourceCredential.Error != nil {
+							tx.Logger.Error(context.Background(), fmt.Sprintf("An error occurred update Fasten Source Credential: %s", sourceCredential.ID))
+							return fastenUpdateSourceCredential.Error
+						}
+
+						continue
+					}
+
+					tx.Logger.Info(context.Background(), fmt.Sprintf("Mapping Legacy SourceType (%s) to Brand, Portal and Endpoint IDs: %s", sourceCredential.SourceType, sourceCredential.ID))
+
+					matchingBrand, matchingPortal, matchingEndpoint, err := sourceCatalog.GetPatientAccessInfoForLegacySourceType(sourceCredential.SourceType, sourceCredential.ApiEndpointBaseUrl)
+					if err != nil {
+						tx.Logger.Error(context.Background(), err.Error())
+						return err
+					}
+					portalId := uuid.MustParse(matchingPortal.Id)
+					sourceCredential.PortalID = &portalId
+					brandId := uuid.MustParse(matchingBrand.Id)
+					sourceCredential.Display = matchingPortal.Name
+					sourceCredential.BrandID = &brandId
+					sourceCredential.EndpointID = uuid.MustParse(matchingEndpoint.Id)
+					sourceCredential.PlatformType = string(matchingEndpoint.GetPlatformType())
+
+					fastenUpdateSourceCredential := tx.Save(sourceCredential)
+					if fastenUpdateSourceCredential.Error != nil {
+						tx.Logger.Error(context.Background(), fmt.Sprintf("An error occurred update Fasten Source Credential: %s", sourceCredential.ID))
+						return fastenUpdateSourceCredential.Error
+					}
+				}
+				return nil
+			},
+		},
+		{
+			ID: "20240114103850", // cleanup unnecessary fields, now that we're using Brands, Portals and Endpoints.
+			Migrate: func(tx *gorm.DB) error {
+
+				return tx.AutoMigrate(
+					&_20240114103850.SourceCredential{},
+				)
+			},
+		},
+	})
+
+	// run when database is empty
+	m.InitSchema(func(tx *gorm.DB) error {
+		err := tx.AutoMigrate(
+			&models.BackgroundJob{},
+			&models.Glossary{},
+			&models.SourceCredential{},
+			&models.UserSettingEntry{},
+			&models.User{},
+		)
+		if err != nil {
+			return err
+		}
+		return nil
 	})
 
 	if err := m.Migrate(); err != nil {

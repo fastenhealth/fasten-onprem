@@ -1,0 +1,6 @@
+packages:
+  - path: "github.com/fastenhealth/fasten-sources/pkg/models/catalog"
+    output_path: "frontend/src/app/models/patient-access-brands/"
+    exclude_files:
+      - "catalog_query_options.go"
+

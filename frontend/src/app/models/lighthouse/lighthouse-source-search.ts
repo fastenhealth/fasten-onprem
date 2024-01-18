@@ -1,11 +1,27 @@
-import {MetadataSource} from '../fasten/metadata-source';
+import {PatientAccessBrand, PatientAccessPortal} from '../patient-access-brands';
+
+export interface LighthouseEndpointListDisplayItem {
+  id: string;
+  platform_type: string;
+}
+
+export interface LighthousePortalListDisplayItem extends PatientAccessPortal {
+  endpoints?: LighthouseEndpointListDisplayItem[];
+}
+
+export interface LighthouseBrandListDisplayItem extends PatientAccessBrand {
+  portals: LighthousePortalListDisplayItem[];
+  hidden: boolean;
+}
+
+
 
 export class LighthouseSourceSearchResult {
   _index: string;
   _type: string;
   _id: string;
   _score: number;
-  _source: MetadataSource;
+  _source: LighthouseBrandListDisplayItem;
   sort: string[];
 }
 

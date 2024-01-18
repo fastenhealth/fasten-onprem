@@ -23,6 +23,10 @@ serve-frontend-prod: dep-frontend
 serve-backend:
 	go run backend/cmd/fasten/fasten.go start --config ./config.dev.yaml --debug
 
+.PHONY: migrate
+migrate:
+	go run backend/cmd/fasten/fasten.go migrate --config ./config.dev.yaml --debug
+
 
 ########################################################################################################################
 # Backend
@@ -36,6 +40,7 @@ clean-backend:
 dep-backend:
 	go mod vendor
 
+
 .PHONY: test-backend
 test-backend: dep-backend
 	go vet ./...
@@ -44,6 +49,11 @@ test-backend: dep-backend
 .PHONY: test-backend-coverage
 test-backend-coverage: dep-backend
 	go test -coverprofile=backend-coverage.txt -covermode=atomic -v ./...
+
+.PHONY: generate-backend
+generate-backend:
+	go generate ./...
+	tygo generate
 
 ########################################################################################################################
 # Frontend
@@ -67,6 +77,10 @@ build-frontend-desktop-sandbox: dep-frontend
 .PHONY: build-frontend-desktop-prod
 build-frontend-desktop-prod: dep-frontend
 	cd frontend && yarn build -- -c desktop_prod
+
+.PHONY: build-frontend-offline-sandbox
+build-frontend-offline-sandbox: dep-frontend
+	cd frontend && yarn build -- -c offline_sandbox
 
 
 .PHONY: test-frontend

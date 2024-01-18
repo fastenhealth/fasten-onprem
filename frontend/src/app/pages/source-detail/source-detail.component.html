@@ -8,8 +8,8 @@
               <div class="">
                 <div class="patient-image-wrap embed-responsive-item">
 
-                  <img [src]="'assets/sources/'+selectedSource?.source_type+'.png'"
-                       alt="{{selectedSource?.source_type}}"
+                  <img [src]="'assets/sources/'+selectedSource?.brand_id+'.png'"
+                       alt="{{selectedSource?.endpoint_id}}"
                        class="img-fluid">
                 </div>
               </div>
@@ -51,7 +51,7 @@
     <div class="az-content-left">
       <div class="az-content-breadcrumb">
         <span>Sources</span>
-        <span>{{selectedSource?.source_type}}</span>
+        <span>{{selectedSource?.endpoint_id}}</span>
         <span>Details</span>
       </div>
 
@@ -75,7 +75,7 @@
   <ng-template #empty >
     <div class="container">
       <div class="az-error-wrapper">
-        <h1>{{selectedSource?.source_type}}</h1>
+        <h1>{{selectedSource?.endpoint_id}}</h1>
         <h2>No resources found for this Healthcare provider</h2>
         <h6>You may need to re-authenticate to this source, or wait for the resources to sync.</h6>
         <a routerLink="/sources" class="btn btn-outline-indigo">Sources</a>

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/analogj/go-util/utils"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/version"
@@ -128,6 +129,55 @@ func main() {
 						Name:  "log-file",
 						Usage: "Path to file for logging. Leave empty to use STDOUT",
 						Value: "",
+					},
+					&cli.BoolFlag{
+						Name:    "debug",
+						Usage:   "Enable debug logging",
+						EnvVars: []string{"DEBUG"},
+					},
+				},
+			},
+			{
+				Name:  "version",
+				Usage: "Print the version",
+				Action: func(c *cli.Context) error {
+					fmt.Println(version.VERSION)
+					return nil
+				},
+			},
+			{
+				Name:  "migrate",
+				Usage: "Run database migrations, without starting application",
+				Action: func(c *cli.Context) error {
+
+					if c.IsSet("config") {
+						err = appconfig.ReadConfig(c.String("config")) // Find and read the config file
+						if err != nil {                                // Handle errors reading the config file
+							//ignore "could not find config file"
+							fmt.Printf("Could not find config file at specified path: %s", c.String("config"))
+							return err
+						}
+					}
+
+					if c.Bool("debug") {
+						appconfig.Set("log.level", "DEBUG")
+					}
+
+					appLogger, logFile, err := CreateLogger(appconfig)
+					if logFile != nil {
+						defer logFile.Close()
+					}
+					if err != nil {
+						return err
+					}
+
+					_, err = database.NewRepository(appconfig, appLogger, event_bus.NewNoopEventBusServer())
+					return err
+				},
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:  "config",
+						Usage: "Specify the path to the config file",
 					},
 					&cli.BoolFlag{
 						Name:    "debug",

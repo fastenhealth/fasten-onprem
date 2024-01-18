@@ -30,7 +30,7 @@
                     <tbody>
                       <tr *ngFor="let backgroundJob of backgroundJobs" [class.border-left-danger]="backgroundJob.job_status == 'STATUS_FAILED'">
                         <td>
-                          <img style="max-height:30px" [src]="'assets/sources/'+(backgroundJob?.data?.source_type + '.png')" [alt]="backgroundJob?.data?.source_type" class="img-fluid">
+                          <img style="max-height:30px" [src]="'assets/sources/'+(backgroundJob?.data?.brand_id + '.png')" [alt]="backgroundJob?.data?.brand_id" class="img-fluid">
                         </td>
                         <td>{{backgroundJob.job_type}}</td>
                         <td container="body" [ngbTooltip]="backgroundJob.created_at | amDateFormat:'YYYY-MM-DD HH:mm'">{{backgroundJob.created_at | amDateFormat:'LL'}}</td>

@@ -58,8 +58,8 @@ func (gr *GormRepository) CreateUser(ctx context.Context, user *models.User) err
 
 	//create Fasten source credential for this user.
 	fastenUserCred := models.SourceCredential{
-		UserID:     user.ID,
-		SourceType: sourcePkg.SourceTypeFasten,
+		UserID:       user.ID,
+		PlatformType: sourcePkg.PlatformTypeFasten,
 	}
 	fastenUserCredResp := gr.GormClient.Create(&fastenUserCred)
 	if fastenUserCredResp.Error != nil {
@@ -723,7 +723,7 @@ func (gr *GormRepository) AddResourceComposition(ctx context.Context, compositio
 	}
 
 	//generate placeholder source
-	placeholderSource := models.SourceCredential{UserID: currentUser.ID, SourceType: "manual", ModelBase: models.ModelBase{ID: uuid.Nil}}
+	placeholderSource := models.SourceCredential{UserID: currentUser.ID, PlatformType: "manual", ModelBase: models.ModelBase{ID: uuid.Nil}}
 
 	existingCompositionResources := []*models.ResourceBase{}
 	rawResourceLookupTable := map[string]*models.ResourceBase{}
@@ -882,7 +882,7 @@ func (gr *GormRepository) CreateSource(ctx context.Context, sourceCreds *models.
 	return gr.GormClient.WithContext(ctx).
 		Where(models.SourceCredential{
 			UserID:     sourceCreds.UserID,
-			SourceType: sourceCreds.SourceType,
+			EndpointID: sourceCreds.EndpointID,
 			Patient:    sourceCreds.Patient}).
 		Assign(*sourceCreds).FirstOrCreate(sourceCreds).Error
 }
@@ -899,15 +899,14 @@ func (gr *GormRepository) UpdateSource(ctx context.Context, sourceCreds *models.
 		Where(models.SourceCredential{
 			ModelBase:  models.ModelBase{ID: sourceCreds.ID},
 			UserID:     sourceCreds.UserID,
-			SourceType: sourceCreds.SourceType,
+			EndpointID: sourceCreds.EndpointID,
 		}).Updates(models.SourceCredential{
-		AccessToken:                   sourceCreds.AccessToken,
-		RefreshToken:                  sourceCreds.RefreshToken,
-		ExpiresAt:                     sourceCreds.ExpiresAt,
-		DynamicClientId:               sourceCreds.DynamicClientId,
-		DynamicClientRegistrationMode: sourceCreds.DynamicClientRegistrationMode,
-		DynamicClientJWKS:             sourceCreds.DynamicClientJWKS,
-		LatestBackgroundJobID:         sourceCreds.LatestBackgroundJobID,
+		AccessToken:           sourceCreds.AccessToken,
+		RefreshToken:          sourceCreds.RefreshToken,
+		ExpiresAt:             sourceCreds.ExpiresAt,
+		DynamicClientId:       sourceCreds.DynamicClientId,
+		DynamicClientJWKS:     sourceCreds.DynamicClientJWKS,
+		LatestBackgroundJobID: sourceCreds.LatestBackgroundJobID,
 	}).Error
 }
 

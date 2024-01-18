@@ -29,6 +29,9 @@ npm install -g yarn
 brew install go
 
 brew install docker
+
+# Go specific tools
+go install github.com/gzuidhof/tygo@latest
 ```
 
 # Running Tests

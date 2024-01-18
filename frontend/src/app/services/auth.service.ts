@@ -28,7 +28,7 @@ export class AuthService {
     const state = uuidV4()
     let sourceStateInfo = new SourceState()
     sourceStateInfo.state = state
-    sourceStateInfo.source_type = idp_type
+    // sourceStateInfo.source_type = idp_type
     sourceStateInfo.redirect_uri = `${window.location.href}/callback/hello`
 
     // generate the authorization url
