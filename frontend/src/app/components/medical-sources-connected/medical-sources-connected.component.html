@@ -18,7 +18,7 @@
     </button>
   </div>
 
-  <div *ngIf="modalSelectedSourceListItem.source?.platform_type != 'fasten'; else fastenSourceDescription" class="modal-body">
+  <div *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'fasten'; else fastenSourceDescription" class="modal-body">
     <h6>Manage Source</h6>
     <p>Existing connections can be "Synced", "Reconnected" or "Deleted"</p>
     <ul>
@@ -43,7 +43,7 @@
     <a routerLink="/explore/{{modalSelectedSourceListItem?.source?.id}}" (click)="modal.close()" class="btn btn-indigo mr-auto">Explore</a>
 
 
-    <div *ngIf="modalSelectedSourceListItem.source?.platform_type != 'fasten'" class="d-inline-block" ngbDropdown>
+    <div *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'fasten'" class="d-inline-block" ngbDropdown>
       <button
         type="button"
         class="btn btn-outline-indigo"
@@ -52,8 +52,8 @@
         Actions
       </button>
       <div ngbDropdownMenu aria-labelledby="dropdownManual">
-        <button *ngIf="modalSelectedSourceListItem.source?.platform_type != 'manual'" ngbDropdownItem (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>
-        <button *ngIf="modalSelectedSourceListItem.source?.platform_type != 'manual'" ngbDropdownItem (click)="sourceReconnectHandler(modalSelectedSourceListItem)" type="button" class="btn btn-danger">Reconnect</button>
+        <button *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'manual'" ngbDropdownItem (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>
+        <button *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'manual'" ngbDropdownItem (click)="sourceReconnectHandler(modalSelectedSourceListItem)" type="button" class="btn btn-danger">Reconnect</button>
         <button  ngbDropdownItem (click)="sourceDeleteHandler()" type="button" class="btn btn-danger">Delete</button>
       </div>
     </div>

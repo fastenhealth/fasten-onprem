@@ -383,12 +383,21 @@ export class MedicalSourcesConnectedComponent implements OnInit {
     let endpointId = selectedSourceListItem?.source?.endpoint_id
     this.lighthouseApi.getLighthouseSource(endpointId)
       .then(async (sourceMetadata: LighthouseSourceMetadata) => {
+
+        if(selectedSourceListItem?.source){
+          sourceMetadata.brand_id = selectedSourceListItem.source.brand_id
+          sourceMetadata.portal_id = selectedSourceListItem.source.portal_id
+        }
+
         console.log(sourceMetadata);
         let authorizationUrl = await this.lighthouseApi.generateSourceAuthorizeUrl(sourceMetadata, selectedSourceListItem.source.id)
 
         console.log('authorize url:', authorizationUrl.toString());
         // redirect to lighthouse with uri's (or open a new window in desktop mode)
         this.lighthouseApi.redirectWithOriginAndDestination(authorizationUrl.toString(), sourceMetadata).subscribe((desktopRedirectData) => {
+          if(!desktopRedirectData){
+            return //wait for redirect
+          }
           //Note: this code will only run in Desktop mode (with popups)
           //in non-desktop environments, the user is redirected in the same window, and this code is never executed.
 
