@@ -52,7 +52,7 @@
         Actions
       </button>
       <div ngbDropdownMenu aria-labelledby="dropdownManual">
-        <button *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'manual'" ngbDropdownItem (click)="sourceSyncHandler(modalSelectedSourceListItem.source)" type="button" class="btn btn-indigo">Sync</button>
+        <button *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'manual'" ngbDropdownItem (click)="sourceSyncHandler(modalSelectedSourceListItem?.source)" type="button" class="btn btn-indigo">Sync</button>
         <button *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'manual'" ngbDropdownItem (click)="sourceReconnectHandler(modalSelectedSourceListItem)" type="button" class="btn btn-danger">Reconnect</button>
         <button  ngbDropdownItem (click)="sourceDeleteHandler()" type="button" class="btn btn-danger">Delete</button>
       </div>

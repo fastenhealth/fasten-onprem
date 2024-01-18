@@ -3,7 +3,7 @@ import {Source} from '../../models/fasten/source';
 import {SourceListItem} from '../../pages/medical-sources/medical-sources.component';
 import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {FastenApiService} from '../../services/fasten-api.service';
-import {forkJoin} from 'rxjs';
+import {forkJoin, of} from 'rxjs';
 import {LighthouseService} from '../../services/lighthouse.service';
 import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-source-metadata';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
@@ -51,7 +51,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         if(source.platform_type == 'fasten' || source.platform_type == 'manual') {
           return this.lighthouseApi.getLighthouseCatalogBrand(source.platform_type)
         } else {
-          return this.lighthouseApi.getLighthouseCatalogBrand(source.brand_id)
+          return of(null)
         }
       }))
         .subscribe((connectedBrand) => {
@@ -296,10 +296,13 @@ export class MedicalSourcesConnectedComponent implements OnInit {
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   public openModal(contentModalRef, sourceListItem: SourceListItem) {
+    let brandId = sourceListItem?.source?.brand_id || sourceListItem?.brand?.id
+
+
     if(
-      (this.status[sourceListItem.brand.id] && this.status[sourceListItem.brand.id] != 'failed') //if this source type is currently "loading" dont open the modal window
+      (this.status[brandId] && this.status[brandId] != 'failed') //if this source type is currently "loading" dont open the modal window
       || !sourceListItem.source //if there's no connected source, dont open the modal window
-      || (this.status[sourceListItem.source.id] && this.status[sourceListItem.source.id] != 'failed') //if this source type is currently "loading" dont open the modal window
+      || (this.status[sourceListItem?.source?.id] && this.status[sourceListItem?.source?.id] != 'failed') //if this source type is currently "loading" dont open the modal window
     ){
       //if this source is currently "loading" dont open the modal window
       return
