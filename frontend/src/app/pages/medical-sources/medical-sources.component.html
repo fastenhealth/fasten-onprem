@@ -115,8 +115,8 @@
     </p>
 
 
-    <div *ngFor="let portal of modalSelectedBrandListItem.portals" class="list-group">
-      <ng-container *ngFor="let endpoint of portal.endpoints">
+    <div *ngFor="let portal of modalSelectedBrandListItem?.portals" class="list-group">
+      <ng-container *ngFor="let endpoint of portal?.endpoints">
         <div (click)="connectHandler($event, modalSelectedBrandListItem.id, portal.id, endpoint.id)" class="list-group-item list-group-item-action flex-column align-items-start cursor-pointer">
           <div class="d-flex w-100 justify-content-between align-items-center">
             <h5 class="mb-1">

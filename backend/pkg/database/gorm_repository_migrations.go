@@ -7,13 +7,13 @@ import (
 	_20231201122541 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20231201122541"
 	_0240114092806 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114092806"
 	_20240114103850 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114103850"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	sourceCatalog "github.com/fastenhealth/fasten-sources/catalog"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/go-gormigrate/gormigrate/v2"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"log"
 )
 
 func (gr *GormRepository) Migrate() error {
@@ -108,8 +108,9 @@ func (gr *GormRepository) Migrate() error {
 
 					tx.Logger.Info(context.Background(), fmt.Sprintf("Mapping Legacy SourceType (%s) to Brand, Portal and Endpoint IDs: %s", sourceCredential.SourceType, sourceCredential.ID))
 
-					matchingBrand, matchingPortal, matchingEndpoint, err := sourceCatalog.GetPatientAccessInfoForLegacySourceType(sourceCredential.SourceType, sourceCredential.ApiEndpointBaseUrl)
+					matchingBrand, matchingPortal, matchingEndpoint, endpointEnv, err := sourceCatalog.GetPatientAccessInfoForLegacySourceType(sourceCredential.SourceType, sourceCredential.ApiEndpointBaseUrl)
 					if err != nil {
+						log.Printf("An error occurred getting Patient Access Info for Legacy SourceType: %s", sourceCredential.SourceType)
 						tx.Logger.Error(context.Background(), err.Error())
 						return err
 					}
@@ -120,6 +121,7 @@ func (gr *GormRepository) Migrate() error {
 					sourceCredential.BrandID = &brandId
 					sourceCredential.EndpointID = uuid.MustParse(matchingEndpoint.Id)
 					sourceCredential.PlatformType = string(matchingEndpoint.GetPlatformType())
+					sourceCredential.LighthouseEnvType = endpointEnv
 
 					fastenUpdateSourceCredential := tx.Save(sourceCredential)
 					if fastenUpdateSourceCredential.Error != nil {
@@ -142,19 +144,19 @@ func (gr *GormRepository) Migrate() error {
 	})
 
 	// run when database is empty
-	m.InitSchema(func(tx *gorm.DB) error {
-		err := tx.AutoMigrate(
-			&models.BackgroundJob{},
-			&models.Glossary{},
-			&models.SourceCredential{},
-			&models.UserSettingEntry{},
-			&models.User{},
-		)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
+	//m.InitSchema(func(tx *gorm.DB) error {
+	//	err := tx.AutoMigrate(
+	//		&models.BackgroundJob{},
+	//		&models.Glossary{},
+	//		&models.SourceCredential{},
+	//		&models.UserSettingEntry{},
+	//		&models.User{},
+	//	)
+	//	if err != nil {
+	//		return err
+	//	}
+	//	return nil
+	//})
 
 	if err := m.Migrate(); err != nil {
 		gr.Logger.Errorf("Database migration failed with error. \n Please open a github issue at https://github.com/fastenhealth/fasten-onprem. \n %v", err)
