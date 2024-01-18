@@ -858,6 +858,7 @@ func (suite *RepositoryTestSuite) TestGetSourceSummary() {
 	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
 
 	testSourceCredential := models.SourceCredential{
+		Patient: uuid.New().String(),
 		ModelBase: models.ModelBase{
 			ID: uuid.New(),
 		},
