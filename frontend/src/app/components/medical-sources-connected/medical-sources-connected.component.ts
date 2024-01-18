@@ -48,6 +48,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
       //handle connected sources sources
       const connectedSources = results as Source[]
       forkJoin(connectedSources.map((source) => {
+        //TODO: remove this, and similar code in explore.component.ts
         if(source.platform_type == 'fasten' || source.platform_type == 'manual') {
           return this.lighthouseApi.getLighthouseCatalogBrand(source.platform_type)
         } else {

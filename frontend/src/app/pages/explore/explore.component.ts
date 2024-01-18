@@ -2,16 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Source} from '../../models/fasten/source';
-import {forkJoin} from 'rxjs';
+import {forkJoin, of} from 'rxjs';
 import {LighthouseService} from '../../services/lighthouse.service';
 import {Router} from '@angular/router';
 import {LighthouseBrandListDisplayItem} from '../../models/lighthouse/lighthouse-source-search';
 import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-source-metadata';
+import {SourceListItem} from '../medical-sources/medical-sources.component';
 
-export class SourceListItem {
-  source?: Source
-  metadata: LighthouseSourceMetadata
-}
 
 @Component({
   selector: 'app-explore',
@@ -33,12 +30,19 @@ export class ExploreComponent implements OnInit {
 
       //handle connected sources sources
       const connectedSources = results as Source[]
-      forkJoin(connectedSources.map((source) => this.lighthouseApi.getLighthouseSource(source.endpoint_id))).subscribe((connectedMetadata) => {
-        for(const ndx in connectedSources){
-          this.connectedSources.push({source: connectedSources[ndx], metadata: connectedMetadata[ndx]})
+      forkJoin(connectedSources.map((source) => {
+        //TODO: remove this, and similar code in medical-sources-card.component.ts
+        if(source.platform_type == 'fasten' || source.platform_type == 'manual') {
+          return this.lighthouseApi.getLighthouseCatalogBrand(source.platform_type)
+        } else {
+          return of(null)
         }
-        this.loading = false
-      })
+      })).subscribe((connectedMetadata) => {
+          for(const ndx in connectedSources){
+            this.connectedSources.push({source: connectedSources[ndx], brand: connectedMetadata[ndx]})
+          }
+          this.loading = false
+        })
       if(connectedSources.length == 0) this.loading = false
 
     }, error => {
