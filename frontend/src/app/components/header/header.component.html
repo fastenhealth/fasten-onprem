@@ -43,7 +43,7 @@
           <p class="az-notification-text">Background Jobs & Updates</p>
           <div class="az-notification-list">
             <a *ngFor="let backgroundJob of backgroundJobs" class="media new" routerLink="/background-jobs">
-              <div><img style="max-width:50px;" src="assets/sources/{{backgroundJob.data?.source_type}}.png" alt=""></div>
+              <div><img imageFallback style="max-width:50px;" src="assets/sources/{{backgroundJob.data?.brand_id}}.png" alt=""></div>
               <div class="media-body">
                 <p><strong>{{backgroundJob.data?.source_type}}</strong> added {{backgroundJob.data?.checkpoint_data?.summary?.UpdatedResources?.length}} new records</p>
                 <span>{{backgroundJob.done_time | amDateFormat:'MMM DD hh:mma'}}</span>
