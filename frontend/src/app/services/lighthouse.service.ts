@@ -176,12 +176,12 @@ export class LighthouseService {
    * Scenario 1: No reuse of callback url
    * origin_url - localhost:8080/sources/callback/aetna
    * dest_url -  https://.aetna.com/.../oauth2/authorize?redirect_uri=https://lighthouse.fastenhealth.com/callback/aetna
-   * redirect_url - lighthouse.fastenhealth.com/sandbox/redirect/aetna?origin_url=...&dest_url=...
+   * redirect_url - lighthouse.fastenhealth.com/sandbox/redirect/{STATE}?origin_url=...&dest_url=...
    *
    * Scenario 2: Reused callback url
    * origin_url - localhost:8080/sources/callback/healthybluela
    * dest_url -  https://patient360la.anthem.com/.../connect/authorize?redirect_uri=https://lighthouse.fastenhealth.com/callback/anthem
-   * redirect_url - lighthouse.fastenhealth.com/sandbox/redirect/anthem?origin_url=...&dest_url=...
+   * redirect_url - lighthouse.fastenhealth.com/sandbox/redirect/{STATE}?origin_url=...&dest_url=...
    */
   redirectWithOriginAndDestination(destUrl: string, redirectOpts: {platform_type: string, redirect_uri: string, brand_id: string, portal_id: string, id: string}): Observable<{ codeData:any, state:string }> {
     const originUrlParts = new URL(window.location.href)
@@ -192,6 +192,7 @@ export class LighthouseService {
 
     if(!state){
       throw new Error("No state found in destination url")
+      return
     }
 
     if(environment.environment_desktop){
@@ -271,7 +272,7 @@ export class LighthouseService {
     const params = Oauth.validateAuthResponse(as, client, new URLSearchParams({"code": code, "state": expectedSourceStateInfo.state}), expectedSourceStateInfo.state)
     if (Oauth.isOAuth2Error(params)) {
       console.log('error', params)
-      throw new Error() // Handle OAuth 2.0 redirect error
+      throw new Error('error when validating code & state before token exchange') // Handle OAuth 2.0 redirect error
     }
     console.log("ENDING--- Oauth.validateAuthResponse")
     console.log("STARTING--- Oauth.authorizationCodeGrantRequest")

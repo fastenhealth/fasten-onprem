@@ -25,8 +25,9 @@ func CreateReconnectSource(c *gin.Context) {
 
 	sourceCred := models.SourceCredential{}
 	if err := c.ShouldBindJSON(&sourceCred); err != nil {
-		logger.Errorln("An error occurred while parsing posted source credential", err)
-		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		err = fmt.Errorf("an error occurred while parsing posted source credential: %s", err)
+		logger.Errorln(err)
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
@@ -88,7 +89,9 @@ func CreateReconnectSource(c *gin.Context) {
 
 	summary, err := BackgroundJobSyncResources(GetBackgroundContext(c), logger, databaseRepo, &sourceCred)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		err := fmt.Errorf("an error occurred while starting initial sync: %w", err)
+		logger.Errorln(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
@@ -104,15 +107,18 @@ func SourceSync(c *gin.Context) {
 
 	sourceCred, err := databaseRepo.GetSource(c, c.Param("sourceId"))
 	if err != nil {
-		logger.Errorln("An error occurred while retrieving source credential", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		err = fmt.Errorf("an error occurred while retrieving source credential: %w", err)
+		logger.Errorln(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
 	// after creating the source, we should do a bulk import (in the background)
 	summary, err := BackgroundJobSyncResources(GetBackgroundContext(c), logger, databaseRepo, sourceCred)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		err := fmt.Errorf("an error occurred while syncing resources: %w", err)
+		logger.Errorln(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
@@ -153,14 +159,16 @@ func CreateManualSource(c *gin.Context) {
 	}
 	tempSourceClient, err := factory.GetSourceClient("", c, logger, &manualSourceCredential)
 	if err != nil {
-		logger.Errorln("An error occurred while initializing hub client using manual source without credentials", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		err = fmt.Errorf("an error occurred while initializing hub client using manual source without credentials: %w", err)
+		logger.Errorln(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
 
 	patientId, bundleType, err := tempSourceClient.ExtractPatientId(bundleFile)
 	if err != nil {
-		logger.Errorln("An error occurred while extracting patient id", err)
+		err = fmt.Errorf("an error occurred while extracting patient id: %w", err)
+		logger.Errorln(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
@@ -169,7 +177,8 @@ func CreateManualSource(c *gin.Context) {
 	//store the manualSourceCredential
 	err = databaseRepo.CreateSource(c, &manualSourceCredential)
 	if err != nil {
-		logger.Errorln("An error occurred while creating manual source", err)
+		err = fmt.Errorf("an error occurred while creating manual source: %w", err)
+		logger.Errorln(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}
@@ -202,6 +211,7 @@ func CreateManualSource(c *gin.Context) {
 		})
 
 	if err != nil {
+		err = fmt.Errorf("an error occurred while storing manual source resources: %w", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
 	}

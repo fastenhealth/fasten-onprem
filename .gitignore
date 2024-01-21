@@ -56,7 +56,6 @@ fabric.properties
 
 /dist/
 vendor
-fasten.db
 test.go
 /.couchdb
 
@@ -64,3 +63,8 @@ config.dev.yaml
 .cache/
 cache/
 fasten-*.db
+fasten-*.db-shm
+fasten-*.db-wal
+fasten.db
+fasten.db-shm
+fasten.db-wal
