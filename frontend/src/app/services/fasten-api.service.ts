@@ -22,7 +22,7 @@ import {DashboardConfig} from '../models/widget/dashboard-config';
 import {DashboardWidgetQuery} from '../models/widget/dashboard-widget-query';
 import {ResourceGraphResponse} from '../models/fasten/resource-graph-response';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import {BackgroundJob} from '../models/fasten/background-job';
+import {BackgroundJob, BackgroundJobSyncData} from '../models/fasten/background-job';
 import {SupportRequest} from '../models/fasten/support-request';
 import {
   List
@@ -331,6 +331,17 @@ export class FastenApiService {
         map((response: ResponseWrapper) => {
           console.log("RESPONSE", response)
           return response.data as BackgroundJob[]
+        })
+      );
+  }
+
+  //this method will persist client side errors in the database for later review & easier debugging. Primarily used for source/provider connection errors
+  createBackgroundJobError(errorData: BackgroundJobSyncData){
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/jobs/error`, errorData)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("RESPONSE", response)
+          return response.data
         })
       );
   }

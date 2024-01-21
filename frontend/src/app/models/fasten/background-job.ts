@@ -9,3 +9,11 @@ export class BackgroundJob {
   retries: number
   schedule?: string
 }
+
+export class BackgroundJobSyncData {
+  source_id?: string
+  brand_id: string
+  checkpoint_data?: {[key:string]:string}
+  error_data?: {[key:string]:string}
+
+}

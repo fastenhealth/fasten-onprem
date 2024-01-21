@@ -14,6 +14,7 @@ import {EventBusService} from '../../services/event-bus.service';
 import {SourceState} from '../../models/fasten/source-state';
 import {PatientAccessBrand} from '../../models/patient-access-brands';
 import {environment} from '../../../environments/environment';
+import {BackgroundJobSyncData} from '../../models/fasten/background-job';
 
 @Component({
   selector: 'app-medical-sources-connected',
@@ -232,10 +233,33 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
         const toastNotification = new ToastNotification()
         toastNotification.type = ToastType.Error
-        toastNotification.message = `An error occurred while accessing external data source: '${this.extractErrorFromResponse(err)}'`
+        toastNotification.message = `An error occurred while initializing external data source connection: '${this.extractErrorFromResponse(err)}'`
         toastNotification.autohide = false
         this.toastService.show(toastNotification)
         console.error(err)
+
+        let errData = new BackgroundJobSyncData()
+        errData.source_id = expectedSourceStateInfo.reconnect_source_id
+        errData.brand_id = expectedSourceStateInfo.brand_id
+        errData.checkpoint_data = {
+          //don't copy confidential data to the error data
+          state: expectedSourceStateInfo.state,
+          endpoint_id: expectedSourceStateInfo.endpoint_id,
+          portal_id: expectedSourceStateInfo.portal_id,
+          brand_id: expectedSourceStateInfo.brand_id,
+          reconnect_source_id: expectedSourceStateInfo.reconnect_source_id,
+          code_challenge_method: expectedSourceStateInfo.code_challenge_method,
+          redirect_uri: expectedSourceStateInfo.redirect_uri,
+        }
+        errData.error_data = {
+          summary: toastNotification.message,
+          error: JSON.stringify(err),
+          stack: err.stack
+        }
+
+        //attempt to persist this error to the background job table. ignore any errors that occur during this process.
+        this.fastenApi.createBackgroundJobError(errData).subscribe(console.log)
+
       })
   }
 
