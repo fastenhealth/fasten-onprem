@@ -85,6 +85,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				//secure.GET("/dashboard/:dashboardId", handler.GetDashboard)
 
 				secure.GET("/jobs", handler.ListBackgroundJobs)
+				secure.POST("/jobs/error", handler.CreateBackgroundJobError)
 
 				secure.POST("/query", handler.QueryResourceFhir)
 

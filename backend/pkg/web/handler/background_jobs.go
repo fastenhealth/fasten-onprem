@@ -239,6 +239,46 @@ func ListBackgroundJobs(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": backgroundJobs})
 }
 
+// CreateBackgroundJobError this function is used to store error data related to a Source/Provider connection operation that fails in the client-side
+// - client errors occur when the OAuth provider sends back an error message (error, error_description query string parameters) or when the code -> access token swap results in an error.
+// - server side errors occur for a number of reasons (unable to initialize client, unable to store crednetial in db, unable to sync 1 or more FHIR resources from a patient's medical record)
+func CreateBackgroundJobError(c *gin.Context) {
+
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	var payload models.BackgroundJobSyncData
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		logger.Errorln("An error occurred while parsing error data", err)
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
+	}
+
+	//override the job type to be an error
+	errJsonData, err := json.MarshalIndent(payload, "", "  ")
+	if err != nil {
+		logger.Errorln("An error occurred re-encoding error data", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	now := time.Now()
+	backgroundJob := models.BackgroundJob{
+		JobType:    pkg.BackgroundJobTypeSync,
+		JobStatus:  pkg.BackgroundJobStatusFailed,
+		DoneTime:   &now,
+		LockedTime: &now,
+		Data:       errJsonData,
+	}
+
+	err = databaseRepo.CreateBackgroundJob(c, &backgroundJob)
+	if err != nil {
+		logger.Errorln("An error occurred while creating background job to store client-side error data", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true})
+}
+
 // Utilities
 
 func GetBackgroundContext(ginContext *gin.Context) context.Context {

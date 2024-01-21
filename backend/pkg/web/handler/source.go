@@ -89,9 +89,12 @@ func CreateReconnectSource(c *gin.Context) {
 
 	summary, err := BackgroundJobSyncResources(GetBackgroundContext(c), logger, databaseRepo, &sourceCred)
 	if err != nil {
-		err := fmt.Errorf("an error occurred while starting initial sync: %w", err)
 		logger.Errorln(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		//errors from the background job will be wrapped and stored in the database, lets just return a generic error
+		// this is also important because these errors:
+		// 1. are not user facing - longer/scarier for users, and may show information that they are not equipped to resolve themselves.
+		// 2. lots of duplicate text ("an error occurred while...") due to wrapping as the error bubbles up the codebase.
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "initial record sync failed. See background jobs page for more details"})
 		return
 	}
 
@@ -118,7 +121,11 @@ func SourceSync(c *gin.Context) {
 	if err != nil {
 		err := fmt.Errorf("an error occurred while syncing resources: %w", err)
 		logger.Errorln(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		//errors from the background job will be wrapped and stored in the database, lets just return a generic error
+		// this is also important because these errors:
+		// 1. are not user facing - longer/scarier for users, and may show information that they are not equipped to resolve themselves.
+		// 2. lots of duplicate text ("an error occurred while...") due to wrapping as the error bubbles up the codebase.
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "record sync failed. See background jobs page for more details"})
 		return
 	}
 

@@ -13,7 +13,8 @@ type BackgroundJob struct {
 	User   User      `json:"user,omitempty"` //SECURITY: user and user.id will be set by the repository service
 	UserID uuid.UUID `json:"user_id"`
 
-	JobType    pkg.BackgroundJobType      `json:"job_type"`
+	JobType pkg.BackgroundJobType `json:"job_type"`
+	//this should be JSON encoded data from BackgroundJobSyncData or
 	Data       datatypes.JSON             `gorm:"column:data;type:text;serializer:json" json:"data,omitempty"`
 	JobStatus  pkg.BackgroundJobStatus    `json:"job_status"`
 	LockedTime *time.Time                 `json:"locked_time"`
