@@ -104,6 +104,13 @@ func main() {
 						return err
 					}
 
+					// ensure panics are written to the log file.
+					defer func() {
+						if err := recover(); err != nil {
+							appLogger.Panic("panic occurred:", err)
+						}
+					}()
+
 					settingsData, err := json.Marshal(appconfig.AllSettings())
 					appLogger.Debug(string(settingsData), err)
 
@@ -170,6 +177,13 @@ func main() {
 					if err != nil {
 						return err
 					}
+
+					// ensure panics are written to the log file.
+					defer func() {
+						if err := recover(); err != nil {
+							appLogger.Panic("panic occurred:", err)
+						}
+					}()
 
 					_, err = database.NewRepository(appconfig, appLogger, event_bus.NewNoopEventBusServer())
 					return err
