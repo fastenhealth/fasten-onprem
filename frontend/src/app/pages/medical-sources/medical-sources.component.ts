@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Optional, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Optional, Output, ViewChild} from '@angular/core';
 import {LighthouseService} from '../../services/lighthouse.service';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {LighthouseSourceMetadata} from '../../models/lighthouse/lighthouse-source-metadata';
@@ -17,6 +17,7 @@ import {MedicalSourcesFilter, MedicalSourcesFilterService} from '../../services/
 import {FormControl, FormGroup} from '@angular/forms';
 import * as _ from 'lodash';
 import {PatientAccessBrand} from '../../models/patient-access-brands';
+import {PlatformService} from '../../services/platform.service';
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
 
@@ -72,9 +73,14 @@ export class MedicalSourcesComponent implements OnInit {
   modalSelectedBrandListItem: LighthouseBrandListDisplayItem | PatientAccessBrand = null;
   modalCloseResult = '';
 
+
+  // CCDA-FHIR modal
+  @ViewChild('ccdaWarningModalRef') ccdaWarningModalRef : any;
+
   constructor(
     private lighthouseApi: LighthouseService,
     private fastenApi: FastenApiService,
+    private platformApi: PlatformService,
     private activatedRoute: ActivatedRoute,
     private filterService: MedicalSourcesFilterService,
     private modalService: NgbModal,
@@ -315,10 +321,28 @@ export class MedicalSourcesComponent implements OnInit {
    * this function is used to process manually "uploaded" FHIR bundle files, adding them to the database.
    * @param event
    */
-  public uploadSourceBundleHandler(event) {
-    this.uploadedFile = [event.addedFiles[0]]
+  public async uploadSourceBundleHandler(event) {
+
+    let processingFile = event.addedFiles[0] as File
+    this.uploadedFile = [processingFile]
+
+    if(processingFile.type == "text/xml"){
+
+      let shouldConvert = await this.showCcdaWarningModal()
+      if(shouldConvert){
+        let convertedFile = await this.platformApi.convertCcdaToFhir(processingFile).toPromise()
+        console.log("converted file: ", convertedFile.name)
+        processingFile = convertedFile
+      } else {
+        console.log("removing file from list")
+        this.uploadedFile = []
+        return
+      }
+
+    }
+
     //TODO: handle manual bundles.
-    this.fastenApi.createManualSource(event.addedFiles[0]).subscribe(
+    this.fastenApi.createManualSource(processingFile).subscribe(
       (respData) => {
         console.log("source manual source create response:", respData)
       },
@@ -327,6 +351,21 @@ export class MedicalSourcesComponent implements OnInit {
         this.uploadedFile = []
       }
     )
+  }
+
+  showCcdaWarningModal(): Promise<boolean> {
+
+    console.log("SHOWING CCDA Warning MODAL")
+
+    return this.modalService.open(this.ccdaWarningModalRef).result.then<boolean>(
+      (result) => {
+        //convert button clicked, .close()
+        return true //convert from CCDA -> FHIR.
+      }
+    ).catch((reason) => {
+      // x or cancel button clicked, .dismiss()
+      return false
+    })
   }
 
 
