@@ -118,7 +118,8 @@ It can be as simple as
 ## Usage
 
 If you're using the `sandbox` version of Fasten, you'll only be able to connect to Sources using test credentials
-https://github.com/fastenhealth/docs/blob/main/BETA.md#connecting-a-new-source
+
+https://docs.fastenhealth.com/getting-started/sandbox.html#connecting-a-new-source
 
 # FAQ's
 
