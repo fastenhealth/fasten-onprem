@@ -20,11 +20,11 @@ serve-frontend-prod: dep-frontend
 	cd frontend && yarn dist -- -c prod
 
 .PHONY: serve-backend
-serve-backend:
+serve-backend: dep-backend
 	go run backend/cmd/fasten/fasten.go start --config ./config.dev.yaml --debug
 
 .PHONY: migrate
-migrate:
+migrate: dep-backend
 	go run backend/cmd/fasten/fasten.go migrate --config ./config.dev.yaml --debug
 
 
@@ -38,7 +38,7 @@ clean-backend:
 
 .PHONY: dep-backend
 dep-backend:
-	go mod vendor
+	go mod tidy && go mod vendor
 
 
 .PHONY: test-backend
