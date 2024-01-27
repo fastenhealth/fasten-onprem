@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// SECURITY: this is a secure endpoint, and should only be called after a double confirmation
+// UX: this is a secure endpoint, and should only be called after a double confirmation
 func DeleteAccount(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)

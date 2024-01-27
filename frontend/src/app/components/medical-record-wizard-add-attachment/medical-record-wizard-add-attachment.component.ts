@@ -41,15 +41,16 @@ export class MedicalRecordWizardAddAttachmentComponent implements OnInit {
     console.log("onAttachmentFileChange")
     let fileInput = $event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files[0]) {
+      let processingFile = fileInput.files[0]
       let reader = new FileReader();
       reader.onloadend = () => {
         // use a regex to remove data url part
         const base64String = (reader.result as string).replace('data:', '').replace(/^.+,/, '');
         this.newAttachmentForm.get('file_content').setValue(base64String)
       };
-      reader.readAsDataURL(fileInput.files[0]);
-      this.newAttachmentForm.get('file_name').setValue(fileInput.files[0].name)
-      this.newAttachmentForm.get('file_size').setValue(fileInput.files[0].size)
+      reader.readAsDataURL(processingFile);
+      this.newAttachmentForm.get('file_name').setValue(processingFile.name)
+      this.newAttachmentForm.get('file_size').setValue(processingFile.size)
     }
   }
 

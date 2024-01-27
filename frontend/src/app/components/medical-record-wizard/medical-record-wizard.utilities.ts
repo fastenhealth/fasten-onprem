@@ -371,13 +371,12 @@ function resourceAttachmentToR4DocumentReference(resourceStorage: ResourceStorag
         }
       }
     ],
-    context: [
-      {
-        encounter: {
-          reference: generateReferenceUriFromResourceOrReference(encounterResource) //Encounter
-        },
-      }
-    ]
+    context: {
+      encounter: [{
+        reference: generateReferenceUriFromResourceOrReference(encounterResource) //Encounter
+      }],
+    }
+
     // date: `${new Date(resourceDocumentReference.date.year,resourceDocumentReference.date.month-1,resourceDocumentReference.date.day).toISOString()}`,
   } as DocumentReference
   resourceStorage['DocumentReference'][documentReferenceResource.id] = documentReferenceResource
