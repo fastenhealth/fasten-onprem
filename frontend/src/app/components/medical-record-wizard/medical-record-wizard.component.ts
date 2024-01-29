@@ -64,7 +64,10 @@ import {
   ],
   selector: 'app-medical-record-wizard',
   templateUrl: './medical-record-wizard.component.html',
-  styleUrls: ['./medical-record-wizard.component.scss']
+  styleUrls: ['./medical-record-wizard.component.scss'],
+  host: {
+    class: 'medical-record-wizard',
+  }
 })
 export class MedicalRecordWizardComponent implements OnInit {
   @Input() existingEncounter: EncounterModel;

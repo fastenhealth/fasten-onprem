@@ -61,6 +61,12 @@ select > optgroup > .divider {
 
 // Fhir Resource Cards
 
+.medical-record-wizard {
+  .card {
+      margin-top: 10px;
+  }
+}
+
 .card-fhir-resource-popover {
   max-width:500px;
 }
