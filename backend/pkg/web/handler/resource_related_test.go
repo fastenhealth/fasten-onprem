@@ -111,7 +111,7 @@ func (suite *ResourceRelatedHandlerTestSuite) TestResourceRelatedHandlerTestSuit
 
 	//assert
 	assert.EqualValues(suite.T(), http.StatusOK, w.Code)
-	assert.Equal(suite.T(), summary["TotalResources"], 3)
+	assert.Equal(suite.T(), summary["TotalResources"], float64(3))
 
 }
 
