@@ -124,7 +124,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
           //TOOD: print this message in the UI
           let errMsg = "an error occurred while authenticating to this source. Please try again later"
           console.error(errMsg, callbackErrorDescription)
-          throw new Error(errMsg)
+          throw new Error(`callback error: ${callbackError}, description: ${callbackErrorDescription}`)
         }
 
         console.log("callback code:", callbackCode)
