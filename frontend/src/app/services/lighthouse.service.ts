@@ -15,6 +15,7 @@ import {OpenExternalLink} from '../../lib/utils/external_link';
 import {Router, UrlSerializer} from '@angular/router';
 import {Location} from '@angular/common';
 import {PatientAccessBrand, PatientAccessEndpoint, PatientAccessPortal} from '../models/patient-access-brands';
+import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
 
 export const sourceConnectDesktopTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
 
@@ -242,11 +243,10 @@ export class LighthouseService {
     }
     //this is for providers that support CORS & PKCE (public client auth)
     let codeVerifier = undefined
-    if(!sourceMetadata.confidential){
-      client.token_endpoint_auth_method = 'none'
-      codeVerifier = expectedSourceStateInfo.code_verifier
 
-    } else {
+    let tokenEndpointUrl = sourceMetadata.token_endpoint
+
+    if(sourceMetadata.confidential) {
       console.log("This is a confidential client, using lighthouse token endpoint.")
       //if this is a confidential client, we need to "override" token endpoint, and use the Fasten Lighthouse to complete the swap
       sourceMetadata.token_endpoint  = this.pathJoin([environment.lighthouse_api_endpoint_base, `token/${expectedSourceStateInfo.endpoint_id}`])
@@ -259,12 +259,28 @@ export class LighthouseService {
       } else {
         codeVerifier = "placeholder"
       }
+    }  else {
+      //is not confidential
+      client.token_endpoint_auth_method = 'none'
+      codeVerifier = expectedSourceStateInfo.code_verifier
+
+      //check if source requires a CORS relay
+      if(sourceMetadata.cors_relay_required){
+        let corsProxyBaseUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/cors/${sourceMetadata.id}/`
+
+        //this endpoint requires a CORS relay
+        //get the path to the Fasten server, and append `cors/` and then append the request url
+        let tokenEndpointUrlParts = new URL(tokenEndpointUrl)
+        tokenEndpointUrl = corsProxyBaseUrl + `${tokenEndpointUrlParts.hostname}${tokenEndpointUrlParts.pathname}${tokenEndpointUrlParts.search}`
+        console.warn("Using local CORS proxy for token endpoint", tokenEndpointUrl)
+      }
+
     }
 
     const as = {
       issuer: sourceMetadata.issuer,
       authorization_endpoint:	sourceMetadata.authorization_endpoint,
-      token_endpoint:	sourceMetadata.token_endpoint,
+      token_endpoint:	tokenEndpointUrl,
       introspection_endpoint: sourceMetadata.introspection_endpoint,
     }
 

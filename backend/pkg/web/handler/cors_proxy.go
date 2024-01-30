@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	sourceDefinitions "github.com/fastenhealth/fasten-sources/definitions"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -10,15 +11,50 @@ import (
 	"strings"
 )
 
-//TODO, there are security implications to this, we need to make sure we lock this down.
+// SECURITY: there are security implications to this, this may require some additional authentication to limit misuse
+// this is a whitelisted CORS proxy, it is only used to proxy requests to Token Exchange urls for specified endpoint
 func CORSProxy(c *gin.Context) {
-	//appConfig := c.MustGet("CONFIG").(config.Interface)
+
+	endpointId := strings.Trim(c.Param("endpointId"), "/")
+
+	//get the endpoint definition
+	endpointDefinition, err := sourceDefinitions.GetSourceDefinition(sourceDefinitions.GetSourceConfigOptions{
+		EndpointId: endpointId,
+	})
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": fmt.Sprintf("endpoint not found: %s", endpointId),
+		})
+		return
+	}
+
+	//SECURITY: if the endpoint definition does not have CORSRelayRequired set to true, then return a 404
+	if endpointDefinition.CORSRelayRequired != true {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "endpoint does not require CORS Relay.",
+		})
+		return
+	}
+
+	//SECURITY: the proxy URL must start with the same URL as the endpoint.TokenUri
 	corsUrl := fmt.Sprintf("https://%s", strings.TrimPrefix(c.Param("proxyPath"), "/"))
+
+	//we'll lowercase to normalize the comparison
+	if !strings.HasPrefix(strings.ToLower(corsUrl), strings.ToLower(endpointDefinition.TokenEndpoint)) {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "invalid proxy URL, must match TokenEndpoint",
+		})
+		return
+	}
 
 	remote, err := url.Parse(corsUrl)
 	remote.RawQuery = c.Request.URL.Query().Encode()
 	if err != nil {
-		panic(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "invalid proxy URL, could not parse",
+		})
+		return
 	}
 
 	proxy := httputil.ReverseProxy{}
