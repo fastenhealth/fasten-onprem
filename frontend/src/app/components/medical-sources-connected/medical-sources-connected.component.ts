@@ -253,7 +253,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         }
         errData.error_data = {
           summary: toastNotification.message,
-          error: JSON.stringify(err),
+          error: JSON.stringify(err, this.replaceErrors),
           stack: err.stack
         }
 
@@ -262,17 +262,31 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
       })
   }
-
+  //https://stackoverflow.com/a/18391400/1157633
   extractErrorFromResponse(errResp: any): string {
     let errMsg = ""
     if(errResp.name == "HttpErrorResponse" && errResp.error && errResp.error?.error){
       errMsg = errResp.error.error
     } else {
-      errMsg = JSON.stringify(errResp)
+      errMsg = JSON.stringify(errResp, this.replaceErrors)
     }
     return errMsg
   }
 
+  //stringify error objects
+  replaceErrors(key, value) {
+    if (value instanceof Error) {
+      var error = {};
+
+      Object.getOwnPropertyNames(value).forEach(function (propName) {
+        error[propName] = value[propName];
+      });
+
+      return error;
+    }
+
+    return value;
+  }
 
   /**
    * https://github.com/smart-on-fhir/client-js/blob/8f64b770dbcd0abd30646e239cd446dfa4d831f6/src/lib.ts#L311
