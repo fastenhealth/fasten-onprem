@@ -53,10 +53,12 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 			api.POST("/auth/signup", handler.AuthSignup)
 			api.POST("/auth/signin", handler.AuthSignin)
-			//
-			//r.Any("/database/*proxyPath", handler.CouchDBProxy)
-			//r.GET("/cors/*proxyPath", handler.CORSProxy)
-			//r.OPTIONS("/cors/*proxyPath", handler.CORSProxy)
+
+			//whitelisted CORS PROXY
+			api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
+			api.POST("/cors/:endpointId/*proxyPath", handler.CORSProxy)
+			api.OPTIONS("/cors/:endpointId/*proxyPath", handler.CORSProxy)
+
 			api.GET("/glossary/code", handler.GlossarySearchByCode)
 			api.POST("/support/request", handler.SupportRequest)
 
