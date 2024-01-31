@@ -249,7 +249,7 @@ export class LighthouseService {
     if(sourceMetadata.confidential) {
       console.log("This is a confidential client, using lighthouse token endpoint.")
       //if this is a confidential client, we need to "override" token endpoint, and use the Fasten Lighthouse to complete the swap
-      sourceMetadata.token_endpoint  = this.pathJoin([environment.lighthouse_api_endpoint_base, `token/${expectedSourceStateInfo.endpoint_id}`])
+      tokenEndpointUrl = this.pathJoin([environment.lighthouse_api_endpoint_base, `token/${expectedSourceStateInfo.endpoint_id}`])
 
       //use a placeholder client_secret (the actual secret is stored in Lighthouse)
       client.client_secret = "placeholder"
