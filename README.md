@@ -90,15 +90,17 @@ There are 2 flavors of Fasten:
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/fastenhealth/fasten-onprem?style=flat-square)](https://github.com/fastenhealth/fasten-onprem/releases/latest)
 
+First, if you don't have Docker installed on your computer, get Docker by following this [install guide](https://docs.docker.com/get-docker/).
 
-Run the following commands to download and start the Fasten docker container.
+Next, run the following commands from the Windows command line or Mac/Linux terminal in order to download and start the Fasten docker container.
+
 ```
 docker pull ghcr.io/fastenhealth/fasten-onprem:main 
 
 docker run --rm \
 -p 9090:8080 \
--v `pwd`/db:/opt/fasten/db \
--v `pwd`/cache:/opt/fasten/cache \
+-v ./db:/opt/fasten/db \
+-v ./cache:/opt/fasten/cache \
 ghcr.io/fastenhealth/fasten-onprem:main 
 ```
 
