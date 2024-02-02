@@ -69,6 +69,7 @@ func CORSProxy(c *gin.Context) {
 		req.URL.Host = remote.Host
 		log.Printf(c.Param("proxyPath"))
 		req.URL.Path = remote.Path
+		req.Body = c.Request.Body
 
 		//TODO: throw an error if the remote.Host is not allowed
 	}
