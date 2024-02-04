@@ -13,6 +13,7 @@ on:
           - warning
           - debug
 jobs:
+  runs-on: ubuntu-latest
   sync:
     steps:
     - uses: actions/checkout@v2
