@@ -2,6 +2,8 @@ name: CDN-Deploy
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'frontend/src/assets/sources/**'
   workflow_dispatch:
     inputs:
       logLevel:
