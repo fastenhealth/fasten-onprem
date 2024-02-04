@@ -13,8 +13,8 @@ on:
           - warning
           - debug
 jobs:
-  runs-on: ubuntu-latest
   sync:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Pushes to another repository
