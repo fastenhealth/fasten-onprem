@@ -1,0 +1,20 @@
+name: Cloud-Deploy
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+
+jobs:
+  - uses: actions/checkout@v2
+  - name: Pushes to another repository
+    uses: cpina/github-action-push-to-another-repository@main
+    env:
+      API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+    with:
+      source-directory: 'frontend/src/assets/sources'
+      destination-github-username: 'fastenhealth'
+      destination-repository-name: 'cdn'
+      target-directory: 'logos/sources'
+      user-email: jason@thesparktree.com
+      target-branch: main
