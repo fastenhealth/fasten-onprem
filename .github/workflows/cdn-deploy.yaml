@@ -1,4 +1,4 @@
-name: Cloud-Deploy
+name: CDN-Deploy
 on:
   push:
     branches: [ main ]
