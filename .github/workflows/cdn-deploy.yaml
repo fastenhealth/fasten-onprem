@@ -4,7 +4,14 @@ on:
     branches: [ main ]
   workflow_dispatch:
     inputs:
-
+      logLevel:
+        description: 'Log level'
+        type: choice
+        default: 'info'
+        options:
+          - info
+          - warning
+          - debug
 jobs:
   - uses: actions/checkout@v2
   - name: Pushes to another repository
