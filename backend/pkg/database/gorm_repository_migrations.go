@@ -7,6 +7,7 @@ import (
 	_20231201122541 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20231201122541"
 	_0240114092806 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114092806"
 	_20240114103850 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114103850"
+	_20240208112210 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240208112210"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	sourceCatalog "github.com/fastenhealth/fasten-sources/catalog"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
@@ -138,6 +139,15 @@ func (gr *GormRepository) Migrate() error {
 
 				return tx.AutoMigrate(
 					&_20240114103850.SourceCredential{},
+				)
+			},
+		},
+		{
+			ID: "20240208112210", // add system settings
+			Migrate: func(tx *gorm.DB) error {
+
+				return tx.AutoMigrate(
+					&_20240208112210.SystemSettingEntry{},
 				)
 			},
 		},

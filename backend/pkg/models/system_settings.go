@@ -4,12 +4,13 @@ import (
 	"reflect"
 )
 
-type UserSettings struct {
-	DashboardLocations []string `json:"dashboard_locations"`
+type SystemSettings struct {
+	InstallationID     string `json:"installation_id"`
+	InstallationSecret string `json:"installation_secret"`
 }
 
 // see https://gist.github.com/lelandbatey/a5c957b537bed39d1d6fb202c3b8de06
-func (s *UserSettings) FromUserSettingsEntry(entry *UserSettingEntry) error {
+func (s *SystemSettings) FromSystemSettingsEntry(entry *SystemSettingEntry) error {
 
 	structType := reflect.ValueOf(s).Elem()
 
@@ -37,7 +38,7 @@ func (s *UserSettings) FromUserSettingsEntry(entry *UserSettingEntry) error {
 	return nil
 }
 
-func (s *UserSettings) ToUserSettingsEntry(entries []UserSettingEntry) ([]UserSettingEntry, error) {
+func (s *SystemSettings) ToSystemSettingsEntry(entries []SystemSettingEntry) ([]SystemSettingEntry, error) {
 
 	structType := reflect.ValueOf(s).Elem()
 
