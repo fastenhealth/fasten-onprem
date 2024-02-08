@@ -17,8 +17,11 @@ import {ExploreComponent} from './pages/explore/explore.component';
 import {environment} from '../environments/environment';
 import {DesktopCallbackComponent} from './pages/desktop-callback/desktop-callback.component';
 import {BackgroundJobsComponent} from './pages/background-jobs/background-jobs.component';
+import {AuthSignupWizardComponent} from './pages/auth-signup-wizard/auth-signup-wizard.component';
 
 const routes: Routes = [
+
+  { path: 'auth/signup/wizard', component: AuthSignupWizardComponent },
 
   { path: 'auth/signin', component: AuthSigninComponent },
   { path: 'auth/signin/callback/:idp_type', component: AuthSigninComponent },

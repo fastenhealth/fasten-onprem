@@ -40,6 +40,7 @@ import { DesktopCallbackComponent } from './pages/desktop-callback/desktop-callb
 import { BackgroundJobsComponent } from './pages/background-jobs/background-jobs.component';
 import {FhirCardModule} from './components/fhir-card/fhir-card.module';
 import {FhirDatatableModule} from './components/fhir-datatable/fhir-datatable.module';
+import { AuthSignupWizardComponent } from './pages/auth-signup-wizard/auth-signup-wizard.component';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import {FhirDatatableModule} from './components/fhir-datatable/fhir-datatable.mo
     ExploreComponent,
     DesktopCallbackComponent,
     BackgroundJobsComponent,
+    AuthSignupWizardComponent,
   ],
   imports: [
     FormsModule,

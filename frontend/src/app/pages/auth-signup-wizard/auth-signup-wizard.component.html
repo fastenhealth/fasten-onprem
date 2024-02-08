@@ -1,0 +1,81 @@
+<div style="overflow:hidden;height: 95vh; width: 99vw" class="row">
+  <div *ngFor="let img of gridImages" class="col-1 nopadding">
+    <img src="assets/sources/{{img}}" class="rounded img-fluid opacity-50">
+  </div>
+</div>
+
+<div class="outer-div">
+  <div class="inner-div">
+    <div class="az-signin-wrapper">
+      <div class="az-card-signin" [ngStyle]="{'height': '560px' }">
+        <h1 class="az-logo">fasten</h1>
+        <p>
+          Import your medical, dental and vision history from your various health providers. Your data is always stored safely and securely on your computer.
+        </p>
+        <div class="az-signin-header">
+          <h2>Let's Get Started!</h2>
+          <p>Create your Fasten Health administrator account</p>
+
+          <form   #userForm="ngForm">
+            <div class="form-group">
+              <input name="full_name" required minlength="2" type="text" class="form-control" placeholder="Name">
+
+<!--              <div *ngIf="full_name.invalid && (full_name.dirty || full_name.touched)" class="alert alert-danger">-->
+<!--                <div *ngIf="full_name.errors?.['required']">-->
+<!--                  Name is required.-->
+<!--                </div>-->
+<!--                <div *ngIf="full_name.errors?.['minlength']">-->
+<!--                  Name must be at least 2 characters long.-->
+<!--                </div>-->
+<!--              </div>-->
+            </div><!-- form-group -->
+            <div class="form-group">
+              <input name="username" required autocapitalize="none" minlength="2" type="text" class="form-control" placeholder="Email">
+
+              <!--          <div *ngIf="username.invalid && (username.dirty || username.touched)" class="alert alert-danger">-->
+              <!--            <div *ngIf="username.errors?.['required']">-->
+              <!--              Username is required.-->
+              <!--            </div>-->
+              <!--            <div *ngIf="username.errors?.['minlength']">-->
+              <!--              Username must be at least 4 characters long.-->
+              <!--            </div>-->
+              <!--          </div>-->
+            </div><!-- form-group -->
+            <div class="form-group">
+              <input  name="password"  required minlength="8" type="password" class="form-control" placeholder="Password">
+
+              <!--          <div *ngIf="password.invalid && (password.dirty || password.touched)" class="alert alert-danger">-->
+              <!--            <div *ngIf="password.errors?.['required']">-->
+              <!--              Password is required.-->
+              <!--            </div>-->
+              <!--            <div *ngIf="password.errors?.['minlength']">-->
+              <!--              Password must be at least 8 characters long.-->
+              <!--            </div>-->
+              <!--          </div>-->
+            </div><!-- form-group -->
+
+            <div class="form-group form-check">
+              <input type="checkbox" class="form-check-input" id="exampleCheck1">
+              <label class="form-check-label" for="exampleCheck1">
+                I have read and agree to the Fasten Health <br/> <a href="https://policy.fastenhealth.com/privacy_policy.html">Privacy Policy</a>
+                and <a href="https://policy.fastenhealth.com/terms.html">Terms of Service</a>
+              </label>
+            </div>
+            <!--        <div *ngIf="errorMsg" class="alert alert-danger mt-3" role="alert">-->
+            <!--          <strong>Error</strong> {{errorMsg}}-->
+            <!--        </div>-->
+          </form>
+
+        </div><!-- az-signin-header -->
+        <div class="az-signin-footer">
+          <button  type="submit" class="btn btn-az-primary btn-block">Sign In</button>
+
+        </div><!-- az-signin-footer -->
+      </div><!-- az-card-signin -->
+    </div><!-- az-signin-wrapper -->
+
+  </div>
+</div>
+
+
+
