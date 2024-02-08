@@ -1,31 +1,44 @@
 package web
 
 import (
+	"bytes"
+	"context"
 	"embed"
+	"encoding/json"
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/handler"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"io"
 	"net/http"
 	"runtime"
 	"strings"
 )
 
 type AppEngine struct {
-	Config   config.Interface
-	Logger   *logrus.Entry
-	EventBus event_bus.Interface
+	Config     config.Interface
+	Logger     *logrus.Entry
+	EventBus   event_bus.Interface
+	deviceRepo database.DatabaseRepository
 }
 
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	r := gin.New()
 
+	//setup database
+	deviceRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
+	if err != nil {
+		panic(err)
+	}
+	ae.deviceRepo = deviceRepo
+
 	r.Use(middleware.LoggerMiddleware(ae.Logger))
-	r.Use(middleware.RepositoryMiddleware(ae.Config, ae.Logger, ae.EventBus))
+	r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
 	r.Use(middleware.ConfigMiddleware(ae.Config))
 	r.Use(middleware.EventBusMiddleware(ae.EventBus))
 	r.Use(gin.Recovery())
@@ -172,6 +185,72 @@ func (ae *AppEngine) SetupEmbeddedFrontendRouting(embeddedAssetsFS embed.FS, bas
 	return router
 }
 
+func (ae *AppEngine) SetupInstallationRegistration() error {
+	//check if installation is already registered
+	systemSettings, err := ae.deviceRepo.LoadSystemSettings(context.Background())
+	if err != nil {
+		return fmt.Errorf("an error occurred while loading system settings: %s", err)
+	}
+
+	if systemSettings.InstallationID != "" && systemSettings.InstallationSecret != "" {
+		//already setup, exit
+		//TODO: future, update fasten-onprem, fasten-sources version
+		return nil
+	}
+
+	//setup the installation registration payload
+	registrationData := &models.InstallationRegistrationRequest{
+		SoftwareArchitecture: runtime.GOARCH,
+		SoftwareOS:           runtime.GOOS,
+		FastenDesktopVersion: "",
+		FastenOnpremVersion:  "",
+		FastenSourcesVersion: "",
+	}
+
+	//setup the http request
+	registrationDataJson, err := json.Marshal(registrationData)
+	if err != nil {
+		return fmt.Errorf("an error occurred while serializing installation registration data: %s", err)
+	}
+
+	//send the registration request
+	resp, err := http.Post(
+		"https://api.platform.fastenhealth.com/v1/installation/register",
+		"application/json",
+		bytes.NewBuffer(registrationDataJson),
+	)
+	if err != nil {
+		return fmt.Errorf("an error occurred while sending installation registration request: %s", err)
+	} else if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("an error occurred while sending installation registration request: %s", resp.Status)
+	}
+	defer resp.Body.Close()
+
+	//unmarshal the registration response
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("an error occurred while reading installation registration response: %s", err)
+	}
+	var registrationResponse models.ResponseWrapperTyped[models.InstallationRegistrationResponse]
+	err = json.Unmarshal(bodyBytes, &registrationResponse)
+	if err != nil {
+		return fmt.Errorf("an error occurred while unmarshalling installation registration response: %s", err)
+	}
+
+	//now that we have the registration response, store the registration data in the system settings
+	systemSettings.InstallationID = registrationResponse.Data.InstallationID
+	systemSettings.InstallationSecret = registrationResponse.Data.InstallationSecret
+
+	ae.Logger.Infof("Saving installation id to settings table: %s", systemSettings.InstallationID)
+
+	//save the system settings
+	err = ae.deviceRepo.SaveSystemSettings(context.Background(), systemSettings)
+	if err != nil {
+		return fmt.Errorf("an error occurred while saving system settings: %s", err)
+	}
+	return nil
+}
+
 func (ae *AppEngine) Start() error {
 	//set the gin mode
 	gin.SetMode(gin.ReleaseMode)
@@ -180,6 +259,10 @@ func (ae *AppEngine) Start() error {
 	}
 
 	baseRouterGroup, ginRouter := ae.Setup()
+	err := ae.SetupInstallationRegistration()
+	if err != nil {
+		return err
+	}
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
 
 	return r.Run(fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port")))
