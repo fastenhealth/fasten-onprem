@@ -88,8 +88,12 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
       if(!this.name && _.get(patient, 'name[0].family') && _.get(patient, 'name[0].given[0]')){
         this.name = `${_.get(patient, 'name[0].given[0]')} ${_.get(patient, 'name[0].family')}`
       }
-      if(!this.age && _.get(patient, 'birthDate')){
-        this.age = `${moment().diff(moment(_.get(patient, 'birthDate')), 'years')} years`
+      const birthDate = _.get(patient, 'birthDate');
+      if(!this.age && birthDate){
+        const birthDateString = Array.isArray(birthDate) ? birthDate[0] : birthDate;
+        const birthDateMoment = moment(birthDateString);
+        this.age = `${moment().diff(birthDateMoment, 'years')} years`; // moment.diff rounds down
+        console.log(this.age);
       }
       if(!this.gender && _.get(patient, 'gender[0]')){
         this.gender = _.get(patient, 'gender[0]')
@@ -190,6 +194,8 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
     for(let key in vitalSignCodeLookup){
       this.vitalSigns.push(vitalSignCodeLookup[key])
     }
+
+    console.log(this);
 
     console.log("PRINTING DETECTED PATIENT DATA", this.name, this.age, this.gender, vitalSignCodeLookup, this.vitalSigns)
   }
