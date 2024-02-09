@@ -82,7 +82,7 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
       return
     }
 
-    //process Patient objecst
+    //process Patient objects
     let sortedPatients = _.sortBy(queryResults?.[1], ['birthDate'])
     for(let patient of sortedPatients){
       if(!this.name && _.get(patient, 'name[0].family') && _.get(patient, 'name[0].given[0]')){
@@ -93,7 +93,6 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
         const birthDateString = Array.isArray(birthDate) ? birthDate[0] : birthDate;
         const birthDateMoment = moment(birthDateString);
         this.age = `${moment().diff(birthDateMoment, 'years')} years`; // moment.diff rounds down
-        console.log(this.age);
       }
       if(!this.gender && _.get(patient, 'gender[0]')){
         this.gender = _.get(patient, 'gender[0]')
