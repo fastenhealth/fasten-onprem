@@ -194,8 +194,6 @@ export class PatientVitalsWidgetComponent extends DashboardWidgetComponent imple
       this.vitalSigns.push(vitalSignCodeLookup[key])
     }
 
-    console.log(this);
-
     console.log("PRINTING DETECTED PATIENT DATA", this.name, this.age, this.gender, vitalSignCodeLookup, this.vitalSigns)
   }
 
