@@ -7,6 +7,9 @@ type BackgroundJobSchedule string
 
 type DatabaseRepositoryType string
 
+type InstallationVerificationStatus string
+type InstallationQuotaStatus string
+
 const (
 	ResourceListPageSize int = 20
 
@@ -41,4 +44,10 @@ const (
 
 	DatabaseRepositoryTypeSqlite   DatabaseRepositoryType = "sqlite"
 	DatabaseRepositoryTypePostgres DatabaseRepositoryType = "postgres"
+
+	InstallationVerificationStatusMissing  InstallationVerificationStatus = "MISSING"  //email is missing for this installation
+	InstallationVerificationStatusPending  InstallationVerificationStatus = "PENDING"  //email has not been verified
+	InstallationVerificationStatusVerified InstallationVerificationStatus = "VERIFIED" //email has been verified
+	InstallationQuotaStatusActive          InstallationQuotaStatus        = "ACTIVE"
+	InstallationQuotaStatusConsumed        InstallationQuotaStatus        = "CONSUMED"
 )

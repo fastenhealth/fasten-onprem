@@ -7,6 +7,7 @@ import (
 	_20231201122541 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20231201122541"
 	_0240114092806 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114092806"
 	_20240114103850 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114103850"
+	_20240208112210 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240208112210"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	sourceCatalog "github.com/fastenhealth/fasten-sources/catalog"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
@@ -139,6 +140,45 @@ func (gr *GormRepository) Migrate() error {
 				return tx.AutoMigrate(
 					&_20240114103850.SourceCredential{},
 				)
+			},
+		},
+		{
+			ID: "20240208112210", // add system settings
+			Migrate: func(tx *gorm.DB) error {
+
+				err := tx.AutoMigrate(
+					&_20240208112210.SystemSettingEntry{},
+				)
+				if err != nil {
+					return err
+				}
+
+				//add the default system settings
+				defaultSystemSettings := []_20240208112210.SystemSettingEntry{
+					{
+						SettingKeyName:        "installation_id",
+						SettingKeyDescription: "installation id is used to identify this installation when making external calls to Fasten Health, Inc. infrastructure. It does not contain any personally identifiable information",
+						SettingDataType:       "string",
+						SettingValueString:    "",
+					},
+					{
+						SettingKeyName:        "installation_secret",
+						SettingKeyDescription: "installation secret is used to sign requests/updates to Fasten Health, Inc. infrastructure",
+						SettingDataType:       "string",
+						SettingValueString:    "",
+					},
+				}
+
+				for _, setting := range defaultSystemSettings {
+					tx.Logger.Info(context.Background(), fmt.Sprintf("Creating System Setting: %s", setting.SettingKeyName))
+
+					settingCreateResp := tx.Create(&setting)
+					if settingCreateResp.Error != nil {
+						tx.Logger.Error(context.Background(), fmt.Sprintf("An error occurred creating System Setting: %s", setting.SettingKeyName))
+						return settingCreateResp.Error
+					}
+				}
+				return nil
 			},
 		},
 	})

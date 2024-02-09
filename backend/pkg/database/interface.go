@@ -53,6 +53,8 @@ type DatabaseRepository interface {
 	ListBackgroundJobs(ctx context.Context, queryOptions models.BackgroundJobQueryOptions) ([]models.BackgroundJob, error)
 
 	//settings
+	LoadSystemSettings(ctx context.Context) (*models.SystemSettings, error)
+	SaveSystemSettings(ctx context.Context, newSettings *models.SystemSettings) error
 	LoadUserSettings(ctx context.Context) (*models.UserSettings, error)
 	SaveUserSettings(context.Context, *models.UserSettings) error
 	PopulateDefaultUserSettings(ctx context.Context, userId uuid.UUID) error
