@@ -10,6 +10,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/version"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web"
+	"github.com/fastenhealth/fasten-onprem/backend/resources"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"io"
@@ -114,10 +115,13 @@ func main() {
 					settingsData, err := json.Marshal(appconfig.AllSettings())
 					appLogger.Debug(string(settingsData), err)
 
+					relatedVersions, _ := resources.GetRelatedVersions()
+
 					webServer := web.AppEngine{
-						Config:   appconfig,
-						Logger:   appLogger,
-						EventBus: event_bus.NewEventBusServer(appLogger),
+						Config:          appconfig,
+						Logger:          appLogger,
+						EventBus:        event_bus.NewEventBusServer(appLogger),
+						RelatedVersions: relatedVersions,
 					}
 					return webServer.Start()
 				},

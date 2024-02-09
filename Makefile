@@ -39,6 +39,7 @@ clean-backend:
 .PHONY: dep-backend
 dep-backend:
 	go mod tidy && go mod vendor
+	cd scripts && go generate ./...
 
 
 .PHONY: test-backend

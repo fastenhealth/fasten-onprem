@@ -25,6 +25,8 @@ type AppEngine struct {
 	Logger     *logrus.Entry
 	EventBus   event_bus.Interface
 	deviceRepo database.DatabaseRepository
+
+	RelatedVersions map[string]string //related versions metadata provided & embedded by the build process
 }
 
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
@@ -202,9 +204,18 @@ func (ae *AppEngine) SetupInstallationRegistration() error {
 	registrationData := &models.InstallationRegistrationRequest{
 		SoftwareArchitecture: runtime.GOARCH,
 		SoftwareOS:           runtime.GOOS,
-		FastenDesktopVersion: "",
-		FastenOnpremVersion:  "",
-		FastenSourcesVersion: "",
+	}
+
+	if ae.RelatedVersions != nil {
+		if fastenSourcesVersion, fastenSourcesVersionOk := ae.RelatedVersions["sources"]; fastenSourcesVersionOk {
+			registrationData.FastenSourcesVersion = fastenSourcesVersion
+		}
+		if fastenOnpremVersion, fastenOnpremVersionOk := ae.RelatedVersions["onprem"]; fastenOnpremVersionOk {
+			registrationData.FastenOnpremVersion = fastenOnpremVersion
+		}
+		if fastenDesktopVersion, fastenDesktopVersionOk := ae.RelatedVersions["desktop"]; fastenDesktopVersionOk {
+			registrationData.FastenDesktopVersion = fastenDesktopVersion
+		}
 	}
 
 	//setup the http request

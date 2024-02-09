@@ -68,3 +68,5 @@ fasten-*.db-wal
 fasten.db
 fasten.db-shm
 fasten.db-wal
+
+backend/resources/related_versions.json
