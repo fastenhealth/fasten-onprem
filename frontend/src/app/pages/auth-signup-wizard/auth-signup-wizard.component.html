@@ -1,6 +1,11 @@
-<div style="overflow:hidden;height: 95vh; width: 99vw" class="row">
+<div style="overflow:hidden;height: 95vh;" class="row">
   <div *ngFor="let img of gridImages" class="col-1 nopadding">
-    <img src="assets/sources/{{img}}" class="rounded img-fluid opacity-50">
+
+    <div class="d-flex h-100">
+      <div class="mx-auto my-auto">
+        <img src="assets/sources/{{img}}" class="rounded img-fluid opacity-20">
+      </div>
+    </div>
   </div>
 </div>
 
@@ -9,9 +14,6 @@
     <div class="az-signin-wrapper">
       <div class="az-card-signin" [ngStyle]="{'height': '560px' }">
         <h1 class="az-logo">fasten</h1>
-        <p>
-          Import your medical, dental and vision history from your various health providers. Your data is always stored safely and securely on your computer.
-        </p>
         <div class="az-signin-header">
           <h2>Let's Get Started!</h2>
           <p>Create your Fasten Health administrator account</p>
