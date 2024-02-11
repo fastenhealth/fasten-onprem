@@ -72,7 +72,6 @@ export class AuthSignupWizardComponent implements OnInit {
     "1317665c-e5c4-48b8-b3a5-2a90aa0283d7.png",
     "48f2153e-6f4a-4da5-99a5-775a888c218a.png",
     "34451b52-0f65-4e1a-91aa-5f2b1420f4b7.png",
-    "ce838f8d-6097-4eac-b9ac-6ad00eed3208.png",
     "d3a10e7c-63c1-4309-b801-e42ce6e575d5.png",
     "4c74937f-c30d-49c8-993e-c5a133f92414.png",
     "5c4c748f-acd5-4fc8-b6cd-a37f629709fb.png",
@@ -93,6 +92,7 @@ export class AuthSignupWizardComponent implements OnInit {
     "c7fe32b2-97c6-45f7-90f8-47213c9b85f1.png",
     "a7a87c72-1d8a-42d6-b0a4-c72b7dd8933a.png",
     "2630415e-1871-437a-84de-52ad7ce88f3e.png",
+    "b53ff282-4725-45f7-a436-89f77320f062.png",
   ]
 
   constructor() { }
