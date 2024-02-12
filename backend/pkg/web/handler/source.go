@@ -38,6 +38,13 @@ func CreateReconnectSource(c *gin.Context) {
 		EndpointId: sourceCred.EndpointID.String(),
 	})
 
+	if err != nil {
+		err = fmt.Errorf("an error occurred while retrieving source definition: %w", err)
+		logger.Errorln(err)
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
 	if endpointDefinition.DynamicClientRegistrationMode == "user-authenticated" {
 		logger.Warnf("This client requires a dynamic client registration, starting registration process")
 
