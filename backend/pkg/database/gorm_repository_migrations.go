@@ -8,6 +8,7 @@ import (
 	_0240114092806 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114092806"
 	_20240114103850 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114103850"
 	_20240208112210 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240208112210"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	sourceCatalog "github.com/fastenhealth/fasten-sources/catalog"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
@@ -177,6 +178,18 @@ func (gr *GormRepository) Migrate() error {
 						tx.Logger.Error(context.Background(), fmt.Sprintf("An error occurred creating System Setting: %s", setting.SettingKeyName))
 						return settingCreateResp.Error
 					}
+				}
+				return nil
+			},
+		},
+		{
+			ID: "20240212142126", // remove unnecessary admin user if present.
+			Migrate: func(tx *gorm.DB) error {
+
+				deleteResp := tx.Delete(&models.User{}, "username = ?", "admin")
+				if deleteResp.Error != nil {
+					tx.Logger.Error(context.Background(), fmt.Sprintf("An error occurred while removing placeholder admin user: %v", deleteResp.Error))
+					return deleteResp.Error
 				}
 				return nil
 			},
