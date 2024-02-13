@@ -50,6 +50,11 @@ func (gr *GormRepository) CreateUser(ctx context.Context, user *models.User) err
 		return record.Error
 	}
 
+	//SECURITY:
+	//TODO: we should disallow reserved usernames:
+	// https://github.com/forwardemail/reserved-email-addresses-list/blob/master/admin-list.json
+	// https://github.com/shouldbee/reserved-usernames/blob/master/reserved-usernames.txt
+
 	//create user settings
 	err := gr.PopulateDefaultUserSettings(ctx, user.ID)
 	if err != nil {
