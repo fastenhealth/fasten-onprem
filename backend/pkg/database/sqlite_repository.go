@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/sirupsen/logrus"
 	"net/url"
 	"strings"
@@ -102,15 +101,6 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 	err = fastenRepo.Migrate()
 	if err != nil {
 		return nil, err
-	}
-
-	// create/update admin user
-	//TODO: determine if this admin user is ncessary
-	//SECURITY: validate this user is necessary
-	adminUser := models.User{}
-	err = database.FirstOrCreate(&adminUser, models.User{Username: "admin"}).Error
-	if err != nil {
-		return nil, fmt.Errorf("Failed to create admin user! - %v", err)
 	}
 
 	//fail any Locked jobs. This is necessary because the job may have been locked by a process that was killed.

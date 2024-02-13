@@ -1,0 +1,34 @@
+
+.opacity-20 {
+  opacity: 0.2;
+}
+
+.nopadding {
+  padding: 1px !important;
+  margin: 0px !important;
+}
+
+.outer-div {
+  position: absolute;
+  //top:25%;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 13;
+
+  /*
+   * Setting all four values to 0 makes the element as big
+   * as its next relative parent. Usually this is the viewport.
+   */
+}
+
+.inner-div {
+  margin: 0 auto;
+  //background-color: khaki;
+}
+
+.az-card-signin {
+  background-color: white;
+  width: 450px;
+  box-shadow: 0 0 50px 0 rgba(207, 207, 207, 0.5);
+}
