@@ -12,86 +12,92 @@
 <div class="outer-div">
   <div class="inner-div">
     <div class="az-signin-wrapper">
-      <div class="az-card-signin" [ngStyle]="{'height': '560px' }">
+      <div class="az-card-signin">
         <h1 class="az-logo">fasten</h1>
         <div class="az-signin-header">
           <h2>Let's Get Started!</h2>
           <p>Create your Fasten Health administrator account</p>
 
-          <form   #userForm="ngForm">
+          <form (ngSubmit)="signupSubmit()" #userForm="ngForm">
             <div class="form-group">
-              <input name="full_name" required minlength="2" type="text" class="form-control" placeholder="Name">
+              <input [(ngModel)]="newUser.full_name" name="full_name" #full_name="ngModel" required minlength="2" type="text" class="form-control" placeholder="Name">
 
-<!--              <div *ngIf="full_name.invalid && (full_name.dirty || full_name.touched)" class="alert alert-danger">-->
-<!--                <div *ngIf="full_name.errors?.['required']">-->
-<!--                  Name is required.-->
-<!--                </div>-->
-<!--                <div *ngIf="full_name.errors?.['minlength']">-->
-<!--                  Name must be at least 2 characters long.-->
-<!--                </div>-->
-<!--              </div>-->
+              <div *ngIf="full_name.invalid && (full_name.dirty || full_name.touched)" class="alert alert-danger">
+                <div *ngIf="full_name.errors?.['required']">
+                  Name is required.
+                </div>
+                <div *ngIf="full_name.errors?.['minlength']">
+                  Name must be at least 2 characters long.
+                </div>
+              </div>
             </div><!-- form-group -->
             <div class="form-group">
-              <input name="username" required autocapitalize="none" minlength="2" type="text" class="form-control" placeholder="Username">
-
-              <!--          <div *ngIf="username.invalid && (username.dirty || username.touched)" class="alert alert-danger">-->
-              <!--            <div *ngIf="username.errors?.['required']">-->
-              <!--              Username is required.-->
-              <!--            </div>-->
-              <!--            <div *ngIf="username.errors?.['minlength']">-->
-              <!--              Username must be at least 4 characters long.-->
-              <!--            </div>-->
-              <!--          </div>-->
+              <input [(ngModel)]="newUser.username" name="username" #username="ngModel" required minlength="4" type="text" class="form-control" autocapitalize="none" placeholder="Username">
+              <div *ngIf="username.invalid && (username.dirty || username.touched)" class="alert alert-danger">
+                <div *ngIf="username.errors?.['required']">
+                  Username is required.
+                </div>
+                <div *ngIf="username.errors?.['minlength']">
+                  Username must be at least 4 characters long.
+                </div>
+              </div>
             </div><!-- form-group -->
             <div class="form-group">
-              <input name="username" required autocapitalize="none" minlength="2" type="text" class="form-control" placeholder="Email">
-
-              <!--          <div *ngIf="username.invalid && (username.dirty || username.touched)" class="alert alert-danger">-->
-              <!--            <div *ngIf="username.errors?.['required']">-->
-              <!--              Username is required.-->
-              <!--            </div>-->
-              <!--            <div *ngIf="username.errors?.['minlength']">-->
-              <!--              Username must be at least 4 characters long.-->
-              <!--            </div>-->
-              <!--          </div>-->
+              <input [(ngModel)]="newUser.email" name="email" #email="ngModel" required email minlength="4" type="email" class="form-control" autocapitalize="none" placeholder="Email Address">
+              <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert alert-danger">
+                <div *ngIf="email.errors?.['required']">
+                  Email is required.
+                </div>
+                <div *ngIf="email.errors?.['minlength']">
+                  Email must be at least 4 characters long.
+                </div>
+                <div *ngIf="email.errors?.['email']">
+                  Email must be a valid email address.
+                </div>
+              </div>
             </div><!-- form-group -->
             <div class="form-group">
-              <input  name="password"  required minlength="8" type="password" class="form-control" placeholder="Password">
-
-              <!--          <div *ngIf="password.invalid && (password.dirty || password.touched)" class="alert alert-danger">-->
-              <!--            <div *ngIf="password.errors?.['required']">-->
-              <!--              Password is required.-->
-              <!--            </div>-->
-              <!--            <div *ngIf="password.errors?.['minlength']">-->
-              <!--              Password must be at least 8 characters long.-->
-              <!--            </div>-->
-              <!--          </div>-->
+              <input [(ngModel)]="newUser.password" name="password" #password="ngModel" required minlength="8" type="password" class="form-control" placeholder="Password">
+              <div *ngIf="password.invalid && (password.dirty || password.touched)" class="alert alert-danger">
+                <div *ngIf="password.errors?.['required']">
+                  Password is required.
+                </div>
+                <div *ngIf="password.errors?.['minlength']">
+                  Password must be at least 8 characters long.
+                </div>
+              </div>
             </div><!-- form-group -->
 
             <div class="form-group form-check">
-              <input type="checkbox" class="form-check-input" id="exampleCheck1">
-              <label class="form-check-label" for="exampleCheck1">
+              <input [(ngModel)]="newUser.agreeTerms" name="agreeTerms" #agreeTerms="ngModel" type="checkbox" class="form-check-input" id="agreeTermsCheck" required>
+              <label class="form-check-label" for="agreeTermsCheck">
                 I have read and agree to the Fasten Health <br/> <a href="https://policy.fastenhealth.com/privacy_policy.html">Privacy Policy</a>
                 and <a href="https://policy.fastenhealth.com/terms.html">Terms of Service</a>
               </label>
+
+              <div *ngIf="agreeTerms.invalid && (agreeTerms.dirty || agreeTerms.touched)" class="alert alert-danger">
+                <div *ngIf="agreeTerms.errors?.['required']">
+                  You must agree to the Privacy Policy and Terms of Use.
+                </div>
+              </div>
             </div>
 
 
             <div class="form-group form-check">
-              <input type="checkbox" class="form-check-input" id="exampleCheck2">
-              <label class="form-check-label" for="exampleCheck2">
+              <input [(ngModel)]="newUser.joinMailingList" name="joinMailingList" #joinMailingList="ngModel" type="checkbox" class="form-check-input" id="joinMailingListCheck">
+              <label class="form-check-label" for="joinMailingListCheck">
                 Join Mailing List
               </label>
             </div>
 
-            <!--        <div *ngIf="errorMsg" class="alert alert-danger mt-3" role="alert">-->
-            <!--          <strong>Error</strong> {{errorMsg}}-->
-            <!--        </div>-->
+            <div *ngIf="errorMsg" class="alert alert-danger mt-3" role="alert">
+              <strong>Error</strong> {{errorMsg}}
+            </div>
           </form>
 
         </div><!-- az-signin-header -->
         <div class="az-signin-footer">
-          <button  type="submit" class="btn btn-az-primary btn-block">Create Account</button>
+          <button [disabled]="!userForm.form.valid || loading" type="submit" class="btn btn-az-primary btn-block">Create Account</button>
 
         </div><!-- az-signin-footer -->
       </div><!-- az-card-signin -->
