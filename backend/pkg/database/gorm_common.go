@@ -73,6 +73,13 @@ func (gr *GormRepository) CreateUser(ctx context.Context, user *models.User) err
 
 	return nil
 }
+
+func (gr *GormRepository) GetUserCount(ctx context.Context) (int, error) {
+	var count int64
+	result := gr.GormClient.WithContext(ctx).Model(&models.User{}).Count(&count)
+	return int(count), result.Error
+}
+
 func (gr *GormRepository) GetUserByUsername(ctx context.Context, username string) (*models.User, error) {
 	var foundUser models.User
 	result := gr.GormClient.WithContext(ctx).Where(models.User{Username: username}).First(&foundUser)

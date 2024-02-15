@@ -41,6 +41,7 @@ import { BackgroundJobsComponent } from './pages/background-jobs/background-jobs
 import {FhirCardModule} from './components/fhir-card/fhir-card.module';
 import {FhirDatatableModule} from './components/fhir-datatable/fhir-datatable.module';
 import { AuthSignupWizardComponent } from './pages/auth-signup-wizard/auth-signup-wizard.component';
+import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard';
 
 @NgModule({
   declarations: [
@@ -95,6 +96,7 @@ import { AuthSignupWizardComponent } from './pages/auth-signup-wizard/auth-signu
       deps: [AuthService, Router]
     },
     IsAuthenticatedAuthGuard,
+    ShowFirstRunWizardGuard,
     {
       provide: HIGHLIGHT_OPTIONS,
       useValue: {

@@ -6,6 +6,7 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
@@ -54,15 +55,32 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 		{
 			api.Use(middleware.CacheMiddleware())
 			api.GET("/health", func(c *gin.Context) {
+				// This function does a quick check to see if the server is up and running
+				// it will also determine if we should show the first run wizard
+
 				//TODO:
 				// check if the /web folder is populated.
-				// check if access to database
+
+				//get the count of users in the DB
+				databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+				userCount, err := databaseRepo.GetUserCount(c)
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+					return
+				}
 
 				keepAliveMsg := models.NewEventKeepAlive("heartbeat")
-				err := ae.EventBus.PublishMessage(keepAliveMsg)
+				err = ae.EventBus.PublishMessage(keepAliveMsg)
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+					return
+				}
 
 				c.JSON(http.StatusOK, gin.H{
-					"success": err == nil,
+					"success": true,
+					"data": gin.H{
+						"first_run_wizard": userCount == 0,
+					},
 				})
 			})
 

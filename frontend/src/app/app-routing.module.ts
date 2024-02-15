@@ -18,14 +18,15 @@ import {environment} from '../environments/environment';
 import {DesktopCallbackComponent} from './pages/desktop-callback/desktop-callback.component';
 import {BackgroundJobsComponent} from './pages/background-jobs/background-jobs.component';
 import {AuthSignupWizardComponent} from './pages/auth-signup-wizard/auth-signup-wizard.component';
+import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard';
 
 const routes: Routes = [
 
   { path: 'auth/signup/wizard', component: AuthSignupWizardComponent },
 
-  { path: 'auth/signin', component: AuthSigninComponent },
+  { path: 'auth/signin', component: AuthSigninComponent, canActivate: [ ShowFirstRunWizardGuard] },
   { path: 'auth/signin/callback/:idp_type', component: AuthSigninComponent },
-  { path: 'auth/signup', component: AuthSignupComponent },
+  { path: 'auth/signup', component: AuthSignupComponent, canActivate: [ ShowFirstRunWizardGuard] },
   { path: 'auth/signup/callback/:idp_type', component: AuthSignupComponent },
 
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },

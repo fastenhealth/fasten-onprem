@@ -56,6 +56,16 @@ export class FastenApiService {
       );
   }
 
+  getHealth(): Observable<any> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/health`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          console.log("Health RESPONSE", response)
+          return response.data
+        })
+      );
+  }
+
 
   /*
   SECURE ENDPOINTS

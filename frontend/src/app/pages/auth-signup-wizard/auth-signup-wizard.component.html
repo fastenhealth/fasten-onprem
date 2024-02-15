@@ -71,8 +71,8 @@
             <div class="form-group form-check">
               <input [(ngModel)]="newUser.agree_terms" name="agree_terms" #agree_terms="ngModel" type="checkbox" class="form-check-input" id="agreeTermsCheck" required>
               <label class="form-check-label" for="agreeTermsCheck">
-                I have read and agree to the Fasten Health <br/> <a href="https://policy.fastenhealth.com/privacy_policy.html">Privacy Policy</a>
-                and <a href="https://policy.fastenhealth.com/terms.html">Terms of Service</a>
+                I have read and agree to the Fasten Health <br/> <a externalLink href="https://policy.fastenhealth.com/privacy_policy.html">Privacy Policy</a>
+                and <a externalLink href="https://policy.fastenhealth.com/terms.html">Terms of Service</a>
               </label>
 
               <div *ngIf="agree_terms.invalid && (agree_terms.dirty || agree_terms.touched)" class="alert alert-danger">

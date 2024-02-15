@@ -148,6 +148,20 @@ func (mr *MockDatabaseRepositoryMockRecorder) CreateUser(arg0, arg1 interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockDatabaseRepository)(nil).CreateUser), arg0, arg1)
 }
 
+// DeleteCurrentUser mocks base method.
+func (m *MockDatabaseRepository) DeleteCurrentUser(ctx context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteCurrentUser", ctx)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteCurrentUser indicates an expected call of DeleteCurrentUser.
+func (mr *MockDatabaseRepositoryMockRecorder) DeleteCurrentUser(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteCurrentUser", reflect.TypeOf((*MockDatabaseRepository)(nil).DeleteCurrentUser), ctx)
+}
+
 // DeleteSource mocks base method.
 func (m *MockDatabaseRepository) DeleteSource(ctx context.Context, sourceId string) (int64, error) {
 	m.ctrl.T.Helper()
@@ -209,13 +223,12 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetCurrentUser(ctx interface{}) *g
 }
 
 // GetFlattenedResourceGraph mocks base method.
-func (m *MockDatabaseRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, *models.ResourceGraphMetadata, error) {
+func (m *MockDatabaseRepository) GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetFlattenedResourceGraph", ctx, graphType, options)
 	ret0, _ := ret[0].(map[string][]*models.ResourceBase)
-	ret1, _ := ret[1].(*models.ResourceGraphMetadata)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetFlattenedResourceGraph indicates an expected call of GetFlattenedResourceGraph.
@@ -359,6 +372,21 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetUserByUsername(arg0, arg1 inter
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUsername", reflect.TypeOf((*MockDatabaseRepository)(nil).GetUserByUsername), arg0, arg1)
 }
 
+// GetUserCount mocks base method.
+func (m *MockDatabaseRepository) GetUserCount(arg0 context.Context) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserCount", arg0)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserCount indicates an expected call of GetUserCount.
+func (mr *MockDatabaseRepositoryMockRecorder) GetUserCount(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserCount", reflect.TypeOf((*MockDatabaseRepository)(nil).GetUserCount), arg0)
+}
+
 // ListBackgroundJobs mocks base method.
 func (m *MockDatabaseRepository) ListBackgroundJobs(ctx context.Context, queryOptions models.BackgroundJobQueryOptions) ([]models.BackgroundJob, error) {
 	m.ctrl.T.Helper()
@@ -387,6 +415,21 @@ func (m *MockDatabaseRepository) ListResources(arg0 context.Context, arg1 models
 func (mr *MockDatabaseRepositoryMockRecorder) ListResources(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListResources", reflect.TypeOf((*MockDatabaseRepository)(nil).ListResources), arg0, arg1)
+}
+
+// LoadSystemSettings mocks base method.
+func (m *MockDatabaseRepository) LoadSystemSettings(ctx context.Context) (*models.SystemSettings, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LoadSystemSettings", ctx)
+	ret0, _ := ret[0].(*models.SystemSettings)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// LoadSystemSettings indicates an expected call of LoadSystemSettings.
+func (mr *MockDatabaseRepositoryMockRecorder) LoadSystemSettings(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoadSystemSettings", reflect.TypeOf((*MockDatabaseRepository)(nil).LoadSystemSettings), ctx)
 }
 
 // LoadUserSettings mocks base method.
@@ -461,6 +504,20 @@ func (mr *MockDatabaseRepositoryMockRecorder) RemoveResourceAssociation(ctx, sou
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveResourceAssociation", reflect.TypeOf((*MockDatabaseRepository)(nil).RemoveResourceAssociation), ctx, source, resourceType, resourceId, relatedSource, relatedResourceType, relatedResourceId)
 }
 
+// SaveSystemSettings mocks base method.
+func (m *MockDatabaseRepository) SaveSystemSettings(ctx context.Context, newSettings *models.SystemSettings) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SaveSystemSettings", ctx, newSettings)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SaveSystemSettings indicates an expected call of SaveSystemSettings.
+func (mr *MockDatabaseRepositoryMockRecorder) SaveSystemSettings(ctx, newSettings interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveSystemSettings", reflect.TypeOf((*MockDatabaseRepository)(nil).SaveSystemSettings), ctx, newSettings)
+}
+
 // SaveUserSettings mocks base method.
 func (m *MockDatabaseRepository) SaveUserSettings(arg0 context.Context, arg1 *models.UserSettings) error {
 	m.ctrl.T.Helper()
@@ -516,4 +573,18 @@ func (m *MockDatabaseRepository) UpsertRawResource(ctx context.Context, sourceCr
 func (mr *MockDatabaseRepositoryMockRecorder) UpsertRawResource(ctx, sourceCredentials, rawResource interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertRawResource", reflect.TypeOf((*MockDatabaseRepository)(nil).UpsertRawResource), ctx, sourceCredentials, rawResource)
+}
+
+// UpsertRawResourceAssociation mocks base method.
+func (m *MockDatabaseRepository) UpsertRawResourceAssociation(ctx context.Context, sourceId, sourceResourceType, sourceResourceId, targetSourceId, targetResourceType, targetResourceId string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertRawResourceAssociation", ctx, sourceId, sourceResourceType, sourceResourceId, targetSourceId, targetResourceType, targetResourceId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpsertRawResourceAssociation indicates an expected call of UpsertRawResourceAssociation.
+func (mr *MockDatabaseRepositoryMockRecorder) UpsertRawResourceAssociation(ctx, sourceId, sourceResourceType, sourceResourceId, targetSourceId, targetResourceType, targetResourceId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertRawResourceAssociation", reflect.TypeOf((*MockDatabaseRepository)(nil).UpsertRawResourceAssociation), ctx, sourceId, sourceResourceType, sourceResourceId, targetSourceId, targetResourceType, targetResourceId)
 }
