@@ -7,9 +7,9 @@ import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 
 class UserWizard extends User {
-  passwordConfirm: string = ""
-  agreeTerms: boolean = false
-  joinMailingList: boolean = true
+  password_confirm: string = ""
+  agree_terms: boolean = false
+  join_mailing_list: boolean = true
 }
 
 
@@ -126,6 +126,7 @@ export class AuthSignupWizardComponent implements OnInit {
     this.loading = true
     this.submitted = true;
 
+    console.log("starting signup process...",this.newUser)
     this.authService.Signup(this.newUser).then((tokenResp: any) => {
         this.loading = false
         console.log(tokenResp);

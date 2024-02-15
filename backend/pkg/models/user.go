@@ -6,6 +6,11 @@ import (
 	"strings"
 )
 
+type UserWizard struct {
+	*User           `json:",inline"`
+	JoinMailingList bool `json:"join_mailing_list"`
+}
+
 type User struct {
 	ModelBase
 	FullName string `json:"full_name"`

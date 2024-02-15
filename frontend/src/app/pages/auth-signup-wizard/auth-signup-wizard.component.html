@@ -69,14 +69,14 @@
             </div><!-- form-group -->
 
             <div class="form-group form-check">
-              <input [(ngModel)]="newUser.agreeTerms" name="agreeTerms" #agreeTerms="ngModel" type="checkbox" class="form-check-input" id="agreeTermsCheck" required>
+              <input [(ngModel)]="newUser.agree_terms" name="agree_terms" #agree_terms="ngModel" type="checkbox" class="form-check-input" id="agreeTermsCheck" required>
               <label class="form-check-label" for="agreeTermsCheck">
                 I have read and agree to the Fasten Health <br/> <a href="https://policy.fastenhealth.com/privacy_policy.html">Privacy Policy</a>
                 and <a href="https://policy.fastenhealth.com/terms.html">Terms of Service</a>
               </label>
 
-              <div *ngIf="agreeTerms.invalid && (agreeTerms.dirty || agreeTerms.touched)" class="alert alert-danger">
-                <div *ngIf="agreeTerms.errors?.['required']">
+              <div *ngIf="agree_terms.invalid && (agree_terms.dirty || agree_terms.touched)" class="alert alert-danger">
+                <div *ngIf="agree_terms.errors?.['required']">
                   You must agree to the Privacy Policy and Terms of Use.
                 </div>
               </div>
@@ -84,11 +84,13 @@
 
 
             <div class="form-group form-check">
-              <input [(ngModel)]="newUser.joinMailingList" name="joinMailingList" #joinMailingList="ngModel" type="checkbox" class="form-check-input" id="joinMailingListCheck">
+              <input [(ngModel)]="newUser.join_mailing_list" name="join_mailing_list" #join_mailing_list="ngModel" type="checkbox" class="form-check-input" id="joinMailingListCheck">
               <label class="form-check-label" for="joinMailingListCheck">
                 Join Mailing List
               </label>
             </div>
+
+            <button [disabled]="!userForm.form.valid || loading" type="submit" class="btn btn-az-primary btn-block">Create Account</button>
 
             <div *ngIf="errorMsg" class="alert alert-danger mt-3" role="alert">
               <strong>Error</strong> {{errorMsg}}
@@ -96,10 +98,6 @@
           </form>
 
         </div><!-- az-signin-header -->
-        <div class="az-signin-footer">
-          <button [disabled]="!userForm.form.valid || loading" type="submit" class="btn btn-az-primary btn-block">Create Account</button>
-
-        </div><!-- az-signin-footer -->
       </div><!-- az-card-signin -->
     </div><!-- az-signin-wrapper -->
 
