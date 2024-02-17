@@ -168,7 +168,7 @@ func main() {
 		fieldMap["Text"] = DBField{
 			FieldType:          "keyword",
 			Description:        "Text search against the narrative",
-			FHIRPathExpression: "text",
+			FHIRPathExpression: "text.div",
 		}
 		fieldMap["Type"] = DBField{
 			FieldType:   "special",
@@ -424,6 +424,14 @@ func main() {
 						break
 					default:
 						i.Id("s").Dot(fieldName).Op("=").Id(fieldNameVar).Dot("String").Call()
+						if fieldName == "Text" {
+							//convert html to markdown
+							i.Id("converter").Op(":=").Qual("github.com/JohannesKaufmann/html-to-markdown", "NewConverter").Call(jen.Lit(""), jen.True(), jen.Nil())
+							i.List(jen.Id("markdown"), jen.Id("err")).Op(":=").Id("converter").Dot("ConvertString").Call(jen.Id("s").Dot(fieldName))
+							i.If(jen.Err().Op("==").Nil()).BlockFunc(func(q *jen.Group) {
+								q.Id("s").Dot(fieldName).Op("=").Id("markdown")
+							})
+						}
 						break
 					}
 
