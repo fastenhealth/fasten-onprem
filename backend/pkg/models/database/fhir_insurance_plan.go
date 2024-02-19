@@ -6,7 +6,6 @@ package database
 import (
 	"encoding/json"
 	"fmt"
-	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown"
 	goja "github.com/dop251/goja"
 	models "github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	datatypes "gorm.io/datatypes"
@@ -244,14 +243,9 @@ func (s *FhirInsurancePlan) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.Status = []byte(statusResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text.div')")
+	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
 		s.Text = textResult.String()
-		converter := htmltomarkdown.NewConverter("", true, nil)
-		markdown, err := converter.ConvertString(s.Text)
-		if err == nil {
-			s.Text = markdown
-		}
 	}
 	return nil
 }

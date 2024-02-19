@@ -17,6 +17,8 @@ import (
 	"gorm.io/gorm"
 )
 
+//TODO: replace functionality here with https://github.com/go-gorm/datatypes
+
 type SearchParameterType string
 
 const (

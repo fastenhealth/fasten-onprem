@@ -69,4 +69,14 @@ func TestFhirObservation_ExtractSearchParameters(t *testing.T) {
 			"code": "final",
 		},
 	}, testStatus)
+
+	var testText []struct {
+		Div    string `json:"div"`
+		Status string `json:"status"`
+	}
+	require.NoError(t, err)
+	err = json.Unmarshal(json.RawMessage(observationModel.Text), &testText)
+	require.NoError(t, err)
+
+	require.Equal(t, "generated", testText[0].Status)
 }

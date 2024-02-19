@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	_20231017112246 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20231017112246"
 	_20231201122541 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20231201122541"
@@ -194,7 +195,59 @@ func (gr *GormRepository) Migrate() error {
 				return nil
 			},
 		},
+		{
+			ID: "20240217112628", // re-process all FHIR resources, to ensure we correctly process the text field
+			Migrate: func(tx *gorm.DB) error {
+
+				//re-process all FHIR resources
+				resourceTypes := databaseModel.GetAllowedResourceTypes()
+				for _, resourceType := range resourceTypes {
+					tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
+					if err != nil {
+						return err
+					}
+					var tempWrappedResourceModels []models.ResourceBase
+					results := tx.
+						Where("text = ?", "[object Object]"). // only re-process resources that were incorrectly processed
+						Table(tableName).
+						Find(&tempWrappedResourceModels)
+					if results.Error != nil {
+						return results.Error
+					}
+
+					for ndx, _ := range tempWrappedResourceModels {
+						tempWrappedResourceModel := &tempWrappedResourceModels[ndx]
+
+						wrappedFhirResourceModel, err := databaseModel.NewFhirResourceModelByType(tempWrappedResourceModel.SourceResourceType)
+						if err != nil {
+							return err
+						}
+
+						wrappedFhirResourceModel.SetOriginBase(tempWrappedResourceModel.OriginBase)
+						wrappedFhirResourceModel.SetSortTitle(tempWrappedResourceModel.SortTitle)
+						wrappedFhirResourceModel.SetSortDate(tempWrappedResourceModel.SortDate)
+						wrappedFhirResourceModel.SetSourceUri(tempWrappedResourceModel.SourceUri)
+
+						//TODO: this is a waste of processing, we're re-parsing the JSON for every field, instead of just the one we care about.
+						err = wrappedFhirResourceModel.PopulateAndExtractSearchParameters(json.RawMessage(tempWrappedResourceModel.ResourceRaw))
+						if err != nil {
+							//ignoring errors here, as we're just trying to re-process the resources
+							continue
+						}
+
+						resp := tx.Table(tableName).Save(&tempWrappedResourceModel)
+						if resp.Error != nil {
+							tx.Logger.Error(context.Background(), fmt.Sprintf("An error occurred re-processing FHIR Resource: %s", tempWrappedResourceModel.ID))
+							return resp.Error
+						}
+					}
+
+				}
+				return nil
+			},
+		},
 	})
+	//use "echo $(date '+%Y%m%d%H%M%S')" to generate new ID's
 
 	// run when database is empty
 	//m.InitSchema(func(tx *gorm.DB) error {
