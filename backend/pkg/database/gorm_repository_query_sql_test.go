@@ -149,6 +149,80 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithMultipleWhereCon
 	})
 }
 
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithTokenWithNotModifier() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*GormRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select: []string{},
+		Where: map[string]interface{}{
+			"code:not": "test_code",
+		},
+		From: "Observation",
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT fhir.*",
+			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
+			"WHERE ((codeJson.value ->> '$.code' <> ?)) AND (user_id = ?)",
+			"GROUP BY `fhir`.`id`",
+			"ORDER BY fhir.sort_date DESC",
+		}, " "),
+		sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"test_code", "00000000-0000-0000-0000-000000000000",
+	})
+}
+
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithTokenMultipleValuesWithNotModifier() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*GormRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select: []string{},
+		Where: map[string]interface{}{
+			"code:not": []string{"test_code", "test_code2"},
+		},
+		From: "Observation",
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT fhir.*",
+			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
+			"WHERE ((codeJson.value ->> '$.code' <> ?)) AND ((codeJson.value ->> '$.code' <> ?)) AND (user_id = ?)",
+			"GROUP BY `fhir`.`id`",
+			"ORDER BY fhir.sort_date DESC",
+		}, " "),
+		sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"test_code", "test_code2", "00000000-0000-0000-0000-000000000000",
+	})
+}
+
 func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithPrimitiveOrderByAggregation() {
 	//setup
 	sqliteRepo := suite.TestRepository.(*GormRepository)

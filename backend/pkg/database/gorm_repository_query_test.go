@@ -38,7 +38,9 @@ func TestProcessSearchParameter(t *testing.T) {
 		{"url:below", map[string]string{"url": "string"}, SearchParameter{Type: "string", Name: "url", Modifier: "below"}, false},
 		{"url:above", map[string]string{"url": "string"}, SearchParameter{Type: "string", Name: "url", Modifier: "above"}, false},
 
-		{"display:text", map[string]string{"display": "token"}, SearchParameter{}, true},
+		{"display", map[string]string{"display": "token"}, SearchParameter{Type: "token", Name: "display", Modifier: ""}, false},
+		{"display:not", map[string]string{"display": "token"}, SearchParameter{Type: "token", Name: "display", Modifier: "not"}, false},
+		{"display:unsupported", map[string]string{"display": "token"}, SearchParameter{}, true},
 	}
 
 	//test && assert
@@ -161,7 +163,9 @@ func TestSearchCodeToWhereClause(t *testing.T) {
 
 		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, SearchParameterValue{Value: "ha125", Prefix: "", SecondaryValues: map[string]interface{}{"codeSystem": "http://acme.org/conditions/codes"}}, "0_0", "(codeJson.value ->> '$.code' = @code_0_0 AND codeJson.value ->> '$.system' = @codeSystem_0_0)", map[string]interface{}{"code_0_0": "ha125", "codeSystem_0_0": "http://acme.org/conditions/codes"}, false},
 		{SearchParameter{Type: "token", Name: "code", Modifier: ""}, SearchParameterValue{Value: "ha125", Prefix: "", SecondaryValues: map[string]interface{}{}}, "0_0", "(codeJson.value ->> '$.code' = @code_0_0)", map[string]interface{}{"code_0_0": "ha125"}, false},
-		{SearchParameter{Type: "token", Name: "identifier", Modifier: "otype"}, SearchParameterValue{Value: "MR|446053", Prefix: "", SecondaryValues: map[string]interface{}{"identifierSystem": "http://terminology.hl7.org/CodeSystem/v2-0203"}}, "0_0", "(identifierJson.value ->> '$.code' = @identifier_0_0 AND identifierJson.value ->> '$.system' = @identifierSystem_0_0)", map[string]interface{}{"identifier_0_0": "MR|446053", "identifierSystem_0_0": "http://terminology.hl7.org/CodeSystem/v2-0203"}, false},
+		{SearchParameter{Type: "token", Name: "identifier", Modifier: ""}, SearchParameterValue{Value: "MR|446053", Prefix: "", SecondaryValues: map[string]interface{}{"identifierSystem": "http://terminology.hl7.org/CodeSystem/v2-0203"}}, "0_0", "(identifierJson.value ->> '$.code' = @identifier_0_0 AND identifierJson.value ->> '$.system' = @identifierSystem_0_0)", map[string]interface{}{"identifier_0_0": "MR|446053", "identifierSystem_0_0": "http://terminology.hl7.org/CodeSystem/v2-0203"}, false},
+		{SearchParameter{Type: "token", Name: "gender", Modifier: ""}, SearchParameterValue{Value: "male", Prefix: "", SecondaryValues: map[string]interface{}{"genderSystem": "http://terminology.hl7.org/CodeSystem/v2-0203"}}, "0_0", "(genderJson.value ->> '$.code' = @gender_0_0 AND genderJson.value ->> '$.system' = @genderSystem_0_0)", map[string]interface{}{"gender_0_0": "male", "genderSystem_0_0": "http://terminology.hl7.org/CodeSystem/v2-0203"}, false},
+		{SearchParameter{Type: "token", Name: "gender", Modifier: "not"}, SearchParameterValue{Value: "male", Prefix: "", SecondaryValues: map[string]interface{}{"genderSystem": "http://terminology.hl7.org/CodeSystem/v2-0203"}}, "0_0", "(genderJson.value ->> '$.code' <> @gender_0_0 AND genderJson.value ->> '$.system' = @genderSystem_0_0)", map[string]interface{}{"gender_0_0": "male", "genderSystem_0_0": "http://terminology.hl7.org/CodeSystem/v2-0203"}, false},
 
 		{SearchParameter{Type: "keyword", Name: "id", Modifier: ""}, SearchParameterValue{Value: "1234", Prefix: "", SecondaryValues: map[string]interface{}{}}, "0_0", "(id = @id_0_0)", map[string]interface{}{"id_0_0": "1234"}, false},
 	}
