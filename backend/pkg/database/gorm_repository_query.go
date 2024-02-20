@@ -313,9 +313,10 @@ func ProcessSearchParameter(searchCodeWithModifier string, searchParamTypeLookup
 		searchParameter.Type = SearchParameterType(searchParamTypeStr)
 	}
 
-	//if this is a token search parameter with a modifier, we need to throw an error
-	if searchParameter.Type == SearchParameterTypeToken && len(searchParameter.Modifier) > 0 {
-		return searchParameter, fmt.Errorf("token search parameter %s cannot have a modifier", searchParameter.Name)
+	//only a limited set of token modifiers are allowed. Otherwise we need to throw an error
+	allowedTokenModifiers := []string{"not"}
+	if searchParameter.Type == SearchParameterTypeToken && len(searchParameter.Modifier) > 0 && !lo.Contains(allowedTokenModifiers, searchParameter.Modifier) {
+		return searchParameter, fmt.Errorf("token search parameter %s does not support this modifier: %s", searchParameter.Name, searchParameter.Modifier)
 	}
 
 	return searchParameter, nil
@@ -332,8 +333,8 @@ func ProcessSearchParameter(searchCodeWithModifier string, searchParamTypeLookup
 //
 // For example, searchParamCodeValueOrValuesWithPrefix may be:
 //
-//	"code": "29463-7,3141-9,27113001"
-//	"code": ["le29463-7", "gt3141-9", "27113001"]
+//	"code": "29463-7,3141-9,27113001" = OR
+//	"code": ["le29463-7", "gt3141-9", "27113001"] = AND
 func ProcessSearchParameterValueIntoOperatorTree(searchParameter SearchParameter, searchParamCodeValueOrValuesWithPrefix interface{}) (SearchParameterValueOperatorTree, error) {
 
 	searchParamCodeValuesWithPrefix := []string{}
@@ -343,6 +344,11 @@ func ProcessSearchParameterValueIntoOperatorTree(searchParameter SearchParameter
 		break
 	case []string:
 		searchParamCodeValuesWithPrefix = v
+		break
+	case []interface{}:
+		for _, searchParamCodeValue := range v {
+			searchParamCodeValuesWithPrefix = append(searchParamCodeValuesWithPrefix, fmt.Sprintf("%v", searchParamCodeValue))
+		}
 		break
 	default:
 		return nil, fmt.Errorf("invalid search parameter value type %T, must be a string or a list of strings (%s=%v)", v, searchParameter.Name, searchParamCodeValueOrValuesWithPrefix)
@@ -574,7 +580,11 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		//setup the clause
 		clause := []string{}
 		if searchParamValue.Value.(string) != "" {
-			clause = append(clause, fmt.Sprintf("%sJson.value ->> '$.code' = @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)))
+			if searchParam.Modifier == "" {
+				clause = append(clause, fmt.Sprintf("%sJson.value ->> '$.code' = @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)))
+			} else if searchParam.Modifier == "not" {
+				clause = append(clause, fmt.Sprintf("%sJson.value ->> '$.code' <> @%s", searchParam.Name, NamedParameterWithSuffix(searchParam.Name, namedParameterSuffix)))
+			}
 		}
 
 		//append the code and/or system clauses (if required)

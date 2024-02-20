@@ -21,6 +21,7 @@ type DatabaseRepository interface {
 	DeleteCurrentUser(ctx context.Context) error
 	GetUsers(ctx context.Context) ([]models.User, error)
 
+	//get a count of every resource type
 	GetSummary(ctx context.Context) (*models.Summary, error)
 
 	GetResourceByResourceTypeAndId(context.Context, string, string) (*models.ResourceBase, error)
