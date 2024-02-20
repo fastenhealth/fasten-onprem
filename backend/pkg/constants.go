@@ -68,3 +68,20 @@ const (
 	IPSSectionsFunctionalStatus      IPSSections = "functional_status"
 	IPSSectionsAdvanceDirectives     IPSSections = "advance_directives"
 )
+
+var IPSSectionsList = []IPSSections{
+	IPSSectionsMedicationSummary,
+	IPSSectionsAllergiesIntolerances,
+	IPSSectionsProblemList,
+	IPSSectionsImmunizations,
+	IPSSectionsHistoryOfProcedures,
+	IPSSectionsMedicalDevices,
+	IPSSectionsDiagnosticResults,
+	IPSSectionsVitalSigns,
+	IPSSectionsHistoryOfIllnesses,
+	IPSSectionsPregnancy,
+	IPSSectionsSocialHistory,
+	IPSSectionsPlanOfCare,
+	IPSSectionsFunctionalStatus,
+	IPSSectionsAdvanceDirectives,
+}
