@@ -72,3 +72,20 @@ const (
 	UserRoleUser  UserRole = "user"
 	UserRoleAdmin UserRole = "admin"
 )
+
+var IPSSectionsList = []IPSSections{
+	IPSSectionsMedicationSummary,
+	IPSSectionsAllergiesIntolerances,
+	IPSSectionsProblemList,
+	IPSSectionsImmunizations,
+	IPSSectionsHistoryOfProcedures,
+	IPSSectionsMedicalDevices,
+	IPSSectionsDiagnosticResults,
+	IPSSectionsVitalSigns,
+	IPSSectionsHistoryOfIllnesses,
+	IPSSectionsPregnancy,
+	IPSSectionsSocialHistory,
+	IPSSectionsPlanOfCare,
+	IPSSectionsFunctionalStatus,
+	IPSSectionsAdvanceDirectives,
+}
