@@ -468,7 +468,7 @@ func ProcessSearchParameterValue(searchParameter SearchParameter, searchValueWit
 
 func NamedParameterWithSuffix(parameterName string, parameterModifier string, suffix string) string {
 	if len(parameterModifier) > 0 {
-		return fmt.Sprintf("%s-%s_%s", parameterName, parameterModifier, suffix)
+		return fmt.Sprintf("%s_%s_%s", parameterName, parameterModifier, suffix)
 	} else {
 		return fmt.Sprintf("%s_%s", parameterName, suffix)
 	}
@@ -482,7 +482,7 @@ func SearchCodeToWhereClause(searchParam SearchParameter, searchParamValue Searc
 		NamedParameterWithSuffix(searchParam.Name, searchParam.Modifier, namedParameterSuffix): searchParamValue.Value,
 	}
 	for k, v := range searchParamValue.SecondaryValues {
-		searchClauseNamedParams[NamedParameterWithSuffix(k, "", namedParameterSuffix)] = v
+		searchClauseNamedParams[NamedParameterWithSuffix(k, searchParam.Modifier, namedParameterSuffix)] = v
 	}
 
 	//parse the searchCode and searchCodeValue to determine the correct where clause
