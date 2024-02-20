@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"log"
 	"sort"
 	"strconv"
 	"strings"
@@ -229,6 +230,15 @@ func (gr *GormRepository) sqlQueryResources(ctx context.Context, query models.Qu
 
 		}
 	}
+
+	log.Printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+	log.Printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+	log.Printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+	log.Printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+	log.Printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+	log.Printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+	log.Printf("whereClauses: %v", whereClauses)
+	log.Printf("whereNamedParameters: %v", whereNamedParameters)
 
 	//ensure Where and From clauses are unique
 	whereClauses = lo.Uniq(whereClauses)

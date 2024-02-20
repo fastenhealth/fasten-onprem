@@ -9,6 +9,8 @@ type DatabaseRepositoryType string
 
 type InstallationVerificationStatus string
 type InstallationQuotaStatus string
+
+type IPSSections string
 type UserRole string
 
 const (
@@ -51,6 +53,21 @@ const (
 	InstallationVerificationStatusVerified InstallationVerificationStatus = "VERIFIED" //email has been verified
 	InstallationQuotaStatusActive          InstallationQuotaStatus        = "ACTIVE"
 	InstallationQuotaStatusConsumed        InstallationQuotaStatus        = "CONSUMED"
+
+	IPSSectionsMedicationSummary     IPSSections = "medication_summary"
+	IPSSectionsAllergiesIntolerances IPSSections = "allergies_intolerances"
+	IPSSectionsProblemList           IPSSections = "problem_list"
+	IPSSectionsImmunizations         IPSSections = "immunizations"
+	IPSSectionsHistoryOfProcedures   IPSSections = "history_of_procedures"
+	IPSSectionsMedicalDevices        IPSSections = "medical_devices"
+	IPSSectionsDiagnosticResults     IPSSections = "diagnostic_results"
+	IPSSectionsVitalSigns            IPSSections = "vital_signs"
+	IPSSectionsHistoryOfIllnesses    IPSSections = "history_of_illnesses"
+	IPSSectionsPregnancy             IPSSections = "pregnancy"
+	IPSSectionsSocialHistory         IPSSections = "social_history"
+	IPSSectionsPlanOfCare            IPSSections = "plan_of_care"
+	IPSSectionsFunctionalStatus      IPSSections = "functional_status"
+	IPSSectionsAdvanceDirectives     IPSSections = "advance_directives"
 
 	UserRoleUser  UserRole = "user"
 	UserRoleAdmin UserRole = "admin"
