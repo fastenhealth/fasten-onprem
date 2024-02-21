@@ -20,3 +20,16 @@ func GetSummary(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": summary})
 }
+
+func GetIPSSummary(c *gin.Context) {
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	summary, err := databaseRepo.GetInternationalPatientSummaryBundle(c)
+	if err != nil {
+		logger.Errorln("An error occurred while retrieving IPS summary", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": summary})
+}
