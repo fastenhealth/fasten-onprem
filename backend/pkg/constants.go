@@ -61,7 +61,7 @@ const (
 	IPSSectionsMedicalDevices        IPSSections = "medical_devices"
 	IPSSectionsDiagnosticResults     IPSSections = "diagnostic_results"
 	IPSSectionsVitalSigns            IPSSections = "vital_signs"
-	IPSSectionsHistoryOfIllnesses    IPSSections = "history_of_illnesses"
+	IPSSectionsHistoryOfIllness      IPSSections = "history_of_illness"
 	IPSSectionsPregnancy             IPSSections = "pregnancy"
 	IPSSectionsSocialHistory         IPSSections = "social_history"
 	IPSSectionsPlanOfCare            IPSSections = "plan_of_care"
@@ -78,7 +78,7 @@ var IPSSectionsList = []IPSSections{
 	IPSSectionsMedicalDevices,
 	IPSSectionsDiagnosticResults,
 	IPSSectionsVitalSigns,
-	IPSSectionsHistoryOfIllnesses,
+	IPSSectionsHistoryOfIllness,
 	IPSSectionsPregnancy,
 	IPSSectionsSocialHistory,
 	IPSSectionsPlanOfCare,
