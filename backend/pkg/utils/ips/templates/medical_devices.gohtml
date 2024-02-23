@@ -1,0 +1,34 @@
+<!--/* MedicalDevices -->
+<!--
+Device: Device.type.text || Device.type.coding[x].display (separated by <br />)
+Status: DeviceUseStatement.status
+Comments: DeviceUseStatement.note[x].text (separated by <br />)
+Date Recorded: DeviceUseStatement.recordedDateTime
+*/-->
+<div xmlns:th="http://www.thymeleaf.org">
+   <h5>Medical Devices</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Device</th>
+         <th>Status</th>
+         <th>Comments</th>
+         <th>Date Recorded</th>
+      </tr>
+      </thead>
+      <tbody>
+      <th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
+         <th:block th:if='*{getResourceType().name() == "DeviceUseStatement"}'>
+            <th:block th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
+               <tr th:id="${#strings.arraySplit(extension, '#')[1]}">
+                  <td th:insert="~{IpsUtilityFragments :: renderDevice (deviceRef=*{getDevice()})}">Device</td>
+                  <td th:text="*{getStatusElement().value}">Status</td>
+                  <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+                  <td th:insert="~{IpsUtilityFragments :: renderRecorded (recorded=*{getRecordedOn()})}">Date Recorded</td>
+               </tr>
+            </th:block>
+         </th:block>
+      </th:block>
+      </tbody>
+   </table>
+</div>

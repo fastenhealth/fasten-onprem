@@ -1,0 +1,43 @@
+<!--/* Immunizations -->
+<!--
+Immunization: Immunization.vaccineCode.text || Immunization.vaccineCode.coding[x].display (separated by <br />)
+Status: Immunization.status
+Dose Number: Immunization.protocolApplied[x]{doseNumberPositiveInt || doseNumberString} (concatenate with comma, e.g. x, y, z)
+Manufacturer: Organization.name
+Lot Number: Immunization.lotNumber
+Comments: Immunization.note[x].text (separated by <br />)
+Date: Immunization.occurrenceDateTime || Immunization.occurrenceString
+*/-->
+<div xmlns:th="http://www.thymeleaf.org">
+   <h5>Immunizations</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Immunization</th>
+         <th>Status</th>
+         <th>Dose Number</th>
+         <th>Manufacturer</th>
+         <th>Lot Number</th>
+         <th>Comments</th>
+         <th>Date</th>
+      </tr>
+      </thead>
+      <tbody>
+      <th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
+         <th:block th:if='*{getResourceType().name() == "Immunization"}'>
+            <th:block th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
+               <tr th:id="${#strings.arraySplit(extension, '#')[1]}">
+                  <td th:insert="~{IpsUtilityFragments :: codeableConcept (cc=*{getVaccineCode()},attr='display')}">Immunization</td>
+                  <td th:text="*{getStatusElement().value}">Status</td>
+                  <td th:insert="~{IpsUtilityFragments :: concatDoseNumber (list=*{getProtocolApplied()})}">Comments</td>
+                  <td th:insert="~{IpsUtilityFragments :: renderOrganization (orgRef=*{getManufacturer()})}">Manufacturer</td>
+                  <td th:text="*{getLotNumber()}">Lot Number</td>
+                  <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+                  <td th:insert="~{IpsUtilityFragments :: renderOccurrence (occurrence=*{getOccurrence()})}">Date</td>
+               </tr>
+            </th:block>
+         </th:block>
+      </th:block>
+      </tbody>
+   </table>
+</div>

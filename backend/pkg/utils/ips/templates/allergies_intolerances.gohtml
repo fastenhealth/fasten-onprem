@@ -1,0 +1,52 @@
+<!--/* AllergiesAndIntolerances -->
+<!--
+Allergen: AllergyIntolerance.code.text || AllergyIntolerance.code.coding[x].display (separated by <br />)
+Status: AllergyIntolerance.clinicalStatus.text || AllergyIntolerance.clinicalStatus.coding[x].code (separated by <br />)
+Category: AllergyIntolerance.category[x] (separated by <br />)
+Reaction: AllergyIntolerance.reaction.manifestation.description || AllergyIntolerance.reaction.manifestation.text || AllergyIntolerance.reaction.manifestation.coding[x].display (separated by <br />)
+Severity: AllergyIntolerance.reaction.severity[x].code (separated by <br />)
+Comments: AllergyIntolerance.note[x].text (separated by <br />)
+*/-->
+<div xmlns:th="http://www.thymeleaf.org">
+   <h5>Allergies And Intolerances</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Allergen</th>
+         <th>Status</th>
+         <th>Category</th>
+         <th>Reaction</th>
+         <th>Severity</th>
+         <th>Comments</th>
+         <th>Onset</th>
+      </tr>
+      </thead>
+      <tbody>
+      <th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
+         <th:block th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
+            <tr th:id="${#strings.arraySplit(extension, '#')[1]}">
+               <td th:insert="IpsUtilityFragments :: codeableConcept (cc=*{getCode()},attr='display')">Allergen</td>
+               <td th:insert="~{IpsUtilityFragments :: codeableConcept (cc=*{getClinicalStatus()},attr='code')}">Status</td>
+               <td th:insert="~{IpsUtilityFragments :: concat (list=*{getCategory()},attr='value')}">Category</td>
+               <td th:insert="~{IpsUtilityFragments :: concatReactionManifestation (list=*{getReaction()})}">Reaction</td>
+               <td th:insert="~{IpsUtilityFragments :: concat (list=*{getReaction()},attr='severity')}">Severity</td>
+               <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+
+               <th:block th:if="*{hasOnsetDateTimeType()}">
+                  <td th:text="*{getOnsetDateTimeType().getValue()}">Onset</td>
+               </th:block>
+               <th:block th:if="*{hasOnsetStringType()}">
+                  <td th:text="*{getOnsetStringType().getValue()}">Onset</td>
+               </th:block>
+               <th:block th:if="*{!hasOnsetDateTimeType() && !hasOnsetStringType()}">
+                  <td></td>
+               </th:block>
+
+            </tr>
+         </th:block>
+      </th:block>
+      </tbody>
+   </table>
+</div>
+
+

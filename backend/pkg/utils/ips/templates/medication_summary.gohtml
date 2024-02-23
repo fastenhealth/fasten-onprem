@@ -1,0 +1,93 @@
+<!--/* MedicationSummary -->
+<!--
+Table 1 Medication Requests
+Medication: MedicationRequest.medicationCodeableConcept.text || MedicationRequest.medicationCodeableConcept.coding[x].display (separated by <br />) || Medication.code.text || Medication.code.coding[x].display (separated by <br />)
+Status: MedicationRequest.status.display
+Route: MedicationRequest.dosageInstruction[x].{ route.text || route.coding[x].display (separated by <br />) } (concatenate with comma, e.g. x, y, z)
+Sig: MedicationRequest.dosageInstruction[x].text (display all sigs separated by <br />)
+Comments: MedicationRequest.note[x].text (separated by <br />)
+Authored Date: MedicationRequest.authoredOn
+
+Table 2 Medication Statements
+Medication: MedicationStatement.medicationCodeableConcept.text || MedicationStatement.medicationCodeableConcept.coding[x].display (separated by <br />) || Medication.code.text || Medication.code.coding[x].display (separated by <br />)
+Status: MedicationStatement.status.display
+Route: MedicationStatement.dosage[x].{ route.text || route.coding[x].display (separated by <br />) } (concatenate with comma, e.g. x, y, z)
+Sig: MedicationStatement.dosage[x].text (display all sigs separated by <br />)
+Date: MedicationStatement.effectiveDateTime || MedicationStatement.effectivePeriod.start
+*/-->
+<div xmlns:th="http://www.thymeleaf.org">
+
+	<th:block th:if="${narrativeUtil.bundleHasEntriesWithResourceType(resource, 'MedicationRequest')}">
+		<h5>Medication Summary: Medication Requests</h5>
+		<table class="hapiPropertyTable">
+			<thead>
+			<tr>
+				<th>Medication</th>
+				<th>Status</th>
+				<th>Route</th>
+				<th>Sig</th>
+				<th>Comments</th>
+				<th>Authored Date</th>
+			</tr>
+			</thead>
+			<tbody>
+			<th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
+				<th:block th:if='*{getResourceType().name() == "MedicationRequest"}'>
+					<th:block th:unless='*{getResourceType().name() == "Composition"}'>
+						<th:block
+							th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
+							<tr th:id="${#strings.arraySplit(extension, '#')[1]}">
+								<td th:insert="~{IpsUtilityFragments :: renderMedication (medicationType=*{getMedication()})}">
+									Medication
+								</td>
+								<td th:text="*{getStatus().getDisplay()}">Status</td>
+								<td th:insert="~{IpsUtilityFragments :: concatDosageRoute (list=*{getDosageInstruction()})}">
+									Route
+								</td>
+								<td th:insert="~{IpsUtilityFragments :: concat (list=*{getDosageInstruction()},attr='text')}">
+									Sig
+								</td>
+								<td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+								<td th:text="*{getAuthoredOnElement().getValue()}">Authored Date</td>
+							</tr>
+						</th:block>
+					</th:block>
+				</th:block>
+			</th:block>
+			</tbody>
+		</table>
+	</th:block>
+
+	<th:block th:if="${narrativeUtil.bundleHasEntriesWithResourceType(resource, 'MedicationStatement')}">
+		<h5>Medication Summary: Medication Statements</h5>
+		<table class="hapiPropertyTable">
+			<thead>
+			<tr>
+				<th>Medication</th>
+				<th>Status</th>
+				<th>Route</th>
+				<th>Sig</th>
+				<th>Date</th>
+			</tr>
+			</thead>
+			<tbody>
+			<th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
+				<th:block th:if='*{getResourceType().name() == "MedicationStatement"}'>
+					<th:block
+						th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
+						<tr th:id="${#strings.arraySplit(extension, '#')[1]}">
+							<td th:insert="~{IpsUtilityFragments :: renderMedication (medicationType=*{getMedication()})}">
+								Medication
+							</td>
+							<td th:text="*{getStatus().getDisplay()}">Status</td>
+							<td th:insert="~{IpsUtilityFragments :: concatDosageRoute (list=*{getDosage()})}">Route</td>
+							<td th:insert="~{IpsUtilityFragments :: concat (list=*{getDosage()},attr='text')}">Sig</td>
+							<td th:insert="~{IpsUtilityFragments :: renderEffective (effective=*{getEffective()})}">Date</td>
+						</tr>
+					</th:block>
+				</th:block>
+			</th:block>
+			</tbody>
+		</table>
+	</th:block>
+</div>
