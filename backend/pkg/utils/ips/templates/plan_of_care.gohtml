@@ -1,0 +1,37 @@
+<!--/* PlanOfCare -->
+<!--
+Activity: CarePlan.description
+Intent: CarePlan.intent.code
+Comments: CarePlan.note[x].text (separated by <br />)
+Planned Start: CarePlan.period.start
+Planned End: CarePlan.period.end
+*/-->
+<div xmlns:th="http://www.thymeleaf.org">
+   <h5>Plan of Care</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Activity</th>
+         <th>Intent</th>
+         <th>Comments</th>
+         <th>Planned Start</th>
+         <th>Planned End</th>
+      </tr>
+      </thead>
+      <tbody>
+      <th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
+         <th:block th:unless='*{getResourceType().name() == "Composition"}'>
+            <th:block th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
+               <tr th:id="${#strings.arraySplit(extension, '#')[1]}">
+                  <td th:text="*{getDescription()}">Activity</td>
+                  <td th:text="*{getIntent().toCode()}">Intent</td>
+                  <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+                  <td th:text="*{getPeriod().getStartElement().getValue()}">Planned Start</td>
+                  <td th:text="*{getPeriod().getEndElement().getValue()}">Planned End</td>
+               </tr>
+            </th:block>
+         </th:block>
+      </th:block>
+      </tbody>
+   </table>
+</div>

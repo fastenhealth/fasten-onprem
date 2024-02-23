@@ -1,0 +1,31 @@
+<!--/* HistoryOfProcedures -->
+<!--
+Procedure: Procedure.code.text || Procedure.code.coding[x].display (separated by <br />)
+Comments: Procedure.note[x].text(separated by <br />)
+Date: Procedure.performedDateTime || Procedure.performedPeriod.start && “-“ && Procedure.performedPeriod.end || Procedure.performedAge || Procedure.performedRange.low && “-“ && Procedure.performedRange.high || Procedure.performedString
+*/-->
+<div xmlns:th="http://www.thymeleaf.org">
+   <h5>History Of Procedures</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Procedure</th>
+         <th>Comments</th>
+         <th>Date</th>
+      </tr>
+      </thead>
+      <tbody>
+      <th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
+         <th:block th:unless='*{getResourceType().name() == "Composition"}'>
+            <th:block th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
+               <tr th:id="${#strings.arraySplit(extension, '#')[1]}">
+                  <td th:insert="~{IpsUtilityFragments :: codeableConcept (cc=*{getCode()},attr='display')}">Procedure</td>
+                  <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+                  <td th:insert="~{IpsUtilityFragments :: renderPerformed (performed=*{getPerformed()})}">Date</td>
+               </tr>
+            </th:block>
+         </th:block>
+      </th:block>
+      </tbody>
+   </table>
+</div>
