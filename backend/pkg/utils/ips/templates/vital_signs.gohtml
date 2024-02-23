@@ -1,0 +1,40 @@
+<!--/* VitalSigns -->
+<!--
+Code: Observation.code.text || Observation.code.coding[x].display (separated by <br />)
+Result: Observation.valueQuantity || Observation.valueDateTime || Observation.valueCodeableConcept.text || Observation.valueCodeableConcept.coding[x].display (separated by <br />) || Observation.valueString
+Unit: Observation.valueQuantity.unit
+Interpretation: Observation.interpretation[0].text || Observation.interpretation[0].coding[x].display (separated by <br />)
+Comments: Observation.note[x].text (separated by <br />)
+Date: Observation.effectiveDateTime || Observation.effectivePeriod.start
+*/-->
+<div xmlns:th="http://www.thymeleaf.org">
+   <h5>Vital Signs</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Code</th>
+         <th>Result</th>
+         <th>Unit</th>
+         <th>Interpretation</th>
+         <th>Comments</th>
+         <th>Date</th>
+      </tr>
+      </thead>
+      <tbody>
+      <th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
+         <th:block th:unless='*{getResourceType().name() == "Composition"}'>
+            <th:block th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
+               <tr th:id="${#strings.arraySplit(extension, '#')[1]}">
+                  <td th:insert="~{IpsUtilityFragments :: codeableConcept (cc=*{getCode()},attr='display')}">Code</td>
+                  <td th:insert="~{IpsUtilityFragments :: renderValue (value=*{getValue()})}">Result</td>
+                  <td th:insert="~{IpsUtilityFragments :: renderValueUnit (value=*{getValue()})}">Unit</td>
+                  <td th:replace="~{IpsUtilityFragments :: firstFromCodeableConceptList (list=*{getInterpretation()})}">Interpretation</td>
+                  <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+                  <td th:insert="~{IpsUtilityFragments :: renderEffective (effective=*{getEffective()})}">Date</td>
+               </tr>
+            </th:block>
+         </th:block>
+      </th:block>
+      </tbody>
+   </table>
+</div>
