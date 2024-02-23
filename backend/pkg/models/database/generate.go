@@ -507,6 +507,22 @@ func main() {
 		})
 	})
 
+	//Similar to NewFhirResourceModelByType, this is a function which returns a slice corresponding FhirResource when provided the FhirResource type string
+	//uses a switch statement to return the correct type
+	utilsFile.Comment("Returns a map of all the resource names to their corresponding go struct")
+	utilsFile.Func().Id("NewFhirResourceModelSliceByType").Params(jen.Id("resourceType").String()).Params(jen.Interface(), jen.Error()).BlockFunc(func(g *jen.Group) {
+		g.Switch(jen.Id("resourceType")).BlockFunc(func(s *jen.Group) {
+			for _, resourceName := range AllowedResources {
+				s.Case(jen.Lit(resourceName)).BlockFunc(func(c *jen.Group) {
+					c.Return(jen.Index().Id("Fhir"+resourceName).Values(), jen.Nil())
+				})
+			}
+			s.Default().BlockFunc(func(d *jen.Group) {
+				d.Return(jen.Nil(), jen.Qual("fmt", "Errorf").Call(jen.Lit("Invalid resource type for model: %s"), jen.Id("resourceType")))
+			})
+		})
+	})
+
 	//A function which returns the GORM table name for a FHIRResource when provided the FhirResource type string
 	//uses a switch statement to return the correct type
 	utilsFile.Comment("Returns the GORM table name for a FHIRResource when provided the FhirResource type string")

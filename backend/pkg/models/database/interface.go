@@ -11,6 +11,7 @@ type IFhirResourceModel interface {
 	models.OriginBaser
 	SetOriginBase(originBase models.OriginBase)
 	SetResourceRaw(resourceRaw datatypes.JSON)
+	GetResourceRaw() datatypes.JSON
 	SetSortTitle(sortTitle *string)
 	SetSortDate(sortDate *time.Time)
 	SetSourceUri(sourceUri *string)
