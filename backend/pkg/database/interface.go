@@ -21,7 +21,7 @@ type DatabaseRepository interface {
 
 	//get a count of every resource type
 	GetSummary(ctx context.Context) (*models.Summary, error)
-	GetInternationalPatientSummaryBundle(ctx context.Context) (interface{}, error)
+	GetInternationalPatientSummaryBundle(ctx context.Context) (interface{}, interface{}, error)
 
 	GetResourceByResourceTypeAndId(context.Context, string, string) (*models.ResourceBase, error)
 	GetResourceBySourceId(context.Context, string, string) (*models.ResourceBase, error)
