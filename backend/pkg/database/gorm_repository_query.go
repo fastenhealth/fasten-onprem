@@ -67,9 +67,15 @@ func (gr *GormRepository) QueryResources(ctx context.Context, query models.Query
 		return results, clientResp.Error
 
 	} else {
-		results := []models.ResourceBase{}
-		clientResp := sqlQuery.Find(&results)
-		return results, clientResp.Error
+
+		//find the associated Gorm Model for this query
+		queryModelSlice, err := databaseModel.NewFhirResourceModelSliceByType(query.From)
+		if err != nil {
+			return nil, err
+		}
+
+		clientResp := sqlQuery.Find(&queryModelSlice)
+		return queryModelSlice, clientResp.Error
 	}
 
 }

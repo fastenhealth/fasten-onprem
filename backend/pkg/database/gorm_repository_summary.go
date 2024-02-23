@@ -6,15 +6,22 @@ import (
 	"fmt"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips"
 	"github.com/fastenhealth/gofhir-models/fhir401"
 	"github.com/google/uuid"
 	"log"
 	"time"
 )
 
-func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Context) (interface{}, error) {
+func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Context) (interface{}, interface{}, error) {
 	summaryTime := time.Now()
 	timestamp := summaryTime.Format(time.RFC3339)
+
+	narrativeEngine, err := ips.NewNarrative()
+	if err != nil {
+		return nil, nil, fmt.Errorf("error creating narrative engine: %w", err)
+	}
 
 	//Algorithm to create the IPS bundle
 	// 1. Generate the IPS Section Lists (GetInternationalPatientSummarySectionResources)
@@ -34,15 +41,15 @@ func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Conte
 	//Step 1. Generate the IPS Section Lists
 	summarySectionResources, err := gr.GetInternationalPatientSummarySectionResources(ctx)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	//Step 2. Create the Composition Section
 	compositionSections := []fhir401.CompositionSection{}
 	for sectionType, sectionResources := range summarySectionResources {
-		compositionSection, err := generateIPSCompositionSection(sectionType, sectionResources)
+		compositionSection, err := generateIPSCompositionSection(narrativeEngine, sectionType, sectionResources)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		compositionSections = append(compositionSections, *compositionSection)
 	}
@@ -115,6 +122,7 @@ func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Conte
 			},
 		},
 	}
+	ipsComposition.Section = compositionSections
 
 	// Step 6. Create the IPS Bundle
 	bundleUUID := uuid.New().String()
@@ -129,7 +137,7 @@ func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Conte
 	// Add the Composition to the bundle
 	ipsCompositionJson, err := json.Marshal(ipsComposition)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	ipsBundle.Entry = append(ipsBundle.Entry, fhir401.BundleEntry{
 		Resource: json.RawMessage(ipsCompositionJson),
@@ -142,28 +150,28 @@ func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Conte
 	for _, sectionResources := range summarySectionResources {
 		for _, resource := range sectionResources {
 			ipsBundle.Entry = append(ipsBundle.Entry, fhir401.BundleEntry{
-				Resource: json.RawMessage(resource.ResourceRaw),
+				Resource: json.RawMessage(resource.GetResourceRaw()),
 			})
 		}
 	}
 
-	return ipsBundle, nil
+	return ipsBundle, ipsComposition, nil
 }
 
 // GetInternationalPatientSummary will generate an IPS bundle, which can then be used to generate a IPS QR code, PDF or JSON bundle
 // The IPS bundle will contain a summary of all the data in the system, including a list of all sources, and the main Patient
 // See: https://github.com/fastenhealth/fasten-onprem/issues/170
 // See: https://github.com/jddamore/fhir-ips-server/blob/main/docs/Summary_Creation_Steps.md
-func (gr *GormRepository) GetInternationalPatientSummarySectionResources(ctx context.Context) (map[pkg.IPSSections][]models.ResourceBase, error) {
+func (gr *GormRepository) GetInternationalPatientSummarySectionResources(ctx context.Context) (map[pkg.IPSSections][]database.IFhirResourceModel, error) {
 
-	summarySectionResources := map[pkg.IPSSections][]models.ResourceBase{}
+	summarySectionResources := map[pkg.IPSSections][]database.IFhirResourceModel{}
 
 	// generate queries for each IPS Section
 	for ndx, _ := range pkg.IPSSectionsList {
 		sectionName := pkg.IPSSectionsList[ndx]
 
 		//initialize the section
-		summarySectionResources[sectionName] = []models.ResourceBase{}
+		summarySectionResources[sectionName] = []database.IFhirResourceModel{}
 
 		queries, err := generateIPSSectionQueries(sectionName)
 		if err != nil {
@@ -176,7 +184,7 @@ func (gr *GormRepository) GetInternationalPatientSummarySectionResources(ctx con
 				return nil, err
 			}
 
-			resultsList := results.([]models.ResourceBase)
+			resultsList := convertUnknownInterfaceToFhirSlice(results)
 
 			//TODO: generate resource narrative
 			summarySectionResources[sectionName] = append(summarySectionResources[sectionName], resultsList...)
@@ -186,7 +194,7 @@ func (gr *GormRepository) GetInternationalPatientSummarySectionResources(ctx con
 	return summarySectionResources, nil
 }
 
-func generateIPSCompositionSection(sectionType pkg.IPSSections, resources []models.ResourceBase) (*fhir401.CompositionSection, error) {
+func generateIPSCompositionSection(narrativeEngine *ips.Narrative, sectionType pkg.IPSSections, resources []database.IFhirResourceModel) (*fhir401.CompositionSection, error) {
 	sectionTitle, sectionCode, err := generateIPSSectionHeaderInfo(sectionType)
 	if err != nil {
 		return nil, err
@@ -210,7 +218,7 @@ func generateIPSCompositionSection(sectionType pkg.IPSSections, resources []mode
 		section.Entry = []fhir401.Reference{}
 		for _, resource := range resources {
 			reference := fhir401.Reference{
-				Reference: stringPtr(fmt.Sprintf("%s/%s", resource.SourceResourceType, resource.SourceID)),
+				Reference: stringPtr(fmt.Sprintf("%s/%s", resource.GetSourceResourceType(), resource.GetSourceResourceID())),
 			}
 			if err != nil {
 				return nil, err
@@ -219,9 +227,17 @@ func generateIPSCompositionSection(sectionType pkg.IPSSections, resources []mode
 		}
 
 		//TODO: Add the section narrative summary
+		rendered, err := narrativeEngine.RenderSection(
+			sectionType,
+			resources,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("error rendering narrative for section %s: %w", sectionType, err)
+		}
+
 		section.Text = &fhir401.Narrative{
 			Status: fhir401.NarrativeStatusGenerated,
-			Div:    "PLACEHOLDER NARRATIVE SUMMARY FOR SECTION",
+			Div:    rendered,
 		}
 
 	}
@@ -541,6 +557,66 @@ func generateIPSSectionHeaderInfo(sectionType pkg.IPSSections) (string, fhir401.
 		return "", fhir401.CodeableConcept{}, fmt.Errorf("invalid section type: %s", sectionType)
 	}
 
+}
+
+// QueryResources returns an interface{} which is actually a slice of the appropriate FHIR resource type
+// we use this function to "cast" the results to a slice of the IFhirResourceModel interface (so we can use the same code to handle the results)
+// TODO: there has to be a better way to do this :/
+func convertUnknownInterfaceToFhirSlice(unknown interface{}) []database.IFhirResourceModel {
+	results := []database.IFhirResourceModel{}
+
+	switch fhirSlice := unknown.(type) {
+	case []database.FhirAllergyIntolerance:
+		for ndx, _ := range fhirSlice {
+			results = append(results, &fhirSlice[ndx])
+		}
+	case []database.FhirCarePlan:
+		for ndx, _ := range fhirSlice {
+			results = append(results, &fhirSlice[ndx])
+		}
+	case []database.FhirCondition:
+		for ndx, _ := range fhirSlice {
+			results = append(results, &fhirSlice[ndx])
+		}
+	case []database.FhirDevice:
+		for ndx, _ := range fhirSlice {
+			results = append(results, &fhirSlice[ndx])
+		}
+	case []database.FhirDiagnosticReport:
+		for ndx, _ := range fhirSlice {
+			results = append(results, &fhirSlice[ndx])
+		}
+	case []database.FhirEncounter:
+		for ndx, _ := range fhirSlice {
+			results = append(results, &fhirSlice[ndx])
+		}
+	case []database.FhirImmunization:
+		for ndx, _ := range fhirSlice {
+			results = append(results, &fhirSlice[ndx])
+		}
+	case []database.FhirMedicationRequest:
+		for ndx, _ := range fhirSlice {
+			results = append(results, &fhirSlice[ndx])
+		}
+	case []database.FhirMedicationStatement:
+		for ndx, _ := range fhirSlice {
+			results = append(results, &fhirSlice[ndx])
+		}
+	case []database.FhirObservation:
+		for ndx, _ := range fhirSlice {
+			results = append(results, &fhirSlice[ndx])
+		}
+	case []database.FhirPatient:
+		for ndx, _ := range fhirSlice {
+			results = append(results, &fhirSlice[ndx])
+		}
+	case []database.FhirProcedure:
+		for ndx, _ := range fhirSlice {
+			results = append(results, &fhirSlice[ndx])
+		}
+	}
+
+	return results
 }
 
 func generateIPSSectionNarrative(sectionType pkg.IPSSections, resources []models.ResourceBase) string {
