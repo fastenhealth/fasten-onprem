@@ -19,19 +19,26 @@ Date: Observation.effectiveDateTime || Observation.effectivePeriod.start
       </tr>
       </thead>
       <tbody>
-      <th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
-         <th:block th:unless='*{getResourceType().name() == "Composition"}'>
-            <th:block th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
-               <tr th:id="${#strings.arraySplit(extension, '#')[1]}">
-                  <td th:insert="~{IpsUtilityFragments :: codeableConcept (cc=*{getCode()},attr='display')}">Code</td>
-                  <td th:insert="~{IpsUtilityFragments :: renderValue (value=*{getValue()})}">Result</td>
-                  <td th:insert="~{IpsUtilityFragments :: renderValueUnit (value=*{getValue()})}">Unit</td>
-                  <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
-                  <td th:insert="~{IpsUtilityFragments :: renderEffective (effective=*{getEffective()})}">Date</td>
-               </tr>
-            </th:block>
-         </th:block>
-      </th:block>
+      {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+      {{range $index, $entry := .Observation }}
+         <tr id="{{$entry.SourceResourceID}}">
+            <td>{{pluckList "text" ($entry.Code | parseList) | uniq | join "," }}</td> {{/* Code */}}
+            <td>
+               {{if gt (len $entry.ValueString) 0 }}
+                  {{$entry.ValueString}}
+               {{else if gt (len ($entry.ValueQuantity | parseList)) 0 }}
+                  {{$entry.ValueQuantity}}
+               {{else if gt (len $entry.ValueDateTime) 0 }}
+                  {{$entry.ValueDateTime | date "2006-01-02" }}
+               {{else if gt (len ($entry.ValueCodeableConcept | parseList)) 0 }}
+                  {{$entry.ValueCodeableConcept}}
+               {{end}}
+            </td> {{/* Result */}}
+            <td th:insert="~{IpsUtilityFragments :: renderValueUnit (value=*{getValue()})}">Unit</td>
+            <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+            <td>{{$entry.Date | date "2006-01-02"}}</td> {{/* Date */}}
+         </tr>
+      {{end}}
       </tbody>
    </table>
 </div>
