@@ -19,19 +19,16 @@ Planned End: CarePlan.period.end
       </tr>
       </thead>
       <tbody>
-      <th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
-         <th:block th:unless='*{getResourceType().name() == "Composition"}'>
-            <th:block th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
-               <tr th:id="${#strings.arraySplit(extension, '#')[1]}">
-                  <td th:text="*{getDescription()}">Activity</td>
-                  <td th:text="*{getIntent().toCode()}">Intent</td>
-                  <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
-                  <td th:text="*{getPeriod().getStartElement().getValue()}">Planned Start</td>
-                  <td th:text="*{getPeriod().getEndElement().getValue()}">Planned End</td>
-               </tr>
-            </th:block>
-         </th:block>
-      </th:block>
+      {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+      {{range $index, $entry := .CarePlan }}
+         <tr id="{{$entry.SourceResourceID}}">
+            <td th:text="*{getDescription()}">Activity</td>
+            <td>{{pluckList "code" ($entry.Intent | parseList) | uniq | join "," }}</td> {{/* Intent */}}
+            <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+            <td>{{.$entry.Date}}</td>{{/* Planned Start */}}
+            <td th:text="*{getPeriod().getEndElement().getValue()}">Planned End</td>
+         </tr>
+      {{end}}
       </tbody>
    </table>
 </div>
