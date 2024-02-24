@@ -23,21 +23,20 @@ Date: Immunization.occurrenceDateTime || Immunization.occurrenceString
       </tr>
       </thead>
       <tbody>
-      <th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
-         <th:block th:if='*{getResourceType().name() == "Immunization"}'>
-            <th:block th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
-               <tr th:id="${#strings.arraySplit(extension, '#')[1]}">
-                  <td th:insert="~{IpsUtilityFragments :: codeableConcept (cc=*{getVaccineCode()},attr='display')}">Immunization</td>
-                  <td th:text="*{getStatusElement().value}">Status</td>
-                  <td th:insert="~{IpsUtilityFragments :: concatDoseNumber (list=*{getProtocolApplied()})}">Comments</td>
-                  <td th:insert="~{IpsUtilityFragments :: renderOrganization (orgRef=*{getManufacturer()})}">Manufacturer</td>
-                  <td th:text="*{getLotNumber()}">Lot Number</td>
-                  <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
-                  <td th:insert="~{IpsUtilityFragments :: renderOccurrence (occurrence=*{getOccurrence()})}">Date</td>
-               </tr>
-            </th:block>
-         </th:block>
-      </th:block>
+
+      {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+      {{range $index, $entry := .Immunization }}
+         <tr id="{{$entry.SourceResourceID}}">
+            <td>{{pluckList "text" ($entry.VaccineCode | parseList) | uniq | join "," }}</td> {{/* Immunization */}}
+            <td>{{pluckList "code" ($entry.Status | parseList) | uniq | join "," }}</td> {{/* Status */}}
+            <td th:insert="~{IpsUtilityFragments :: concatDoseNumber (list=*{getProtocolApplied()})}">Dose Number</td> {{/* Comments - TODO: use FHIRPath */}}
+            <td th:insert="~{IpsUtilityFragments :: renderOrganization (orgRef=*{getManufacturer()})}">Manufacturer</td> {{/* Manufacturer - TODO: use FHIRPath */}}
+            <td>{{$entry.LotNumber}}</td> {{/* Lot Number */}}
+            <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+            <td>{{$entry.Date | date "2006-01-02"}}</td> {{/* Performed Date */}}
+         </tr>
+      {{end}}
+
       </tbody>
    </table>
 </div>

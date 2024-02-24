@@ -15,17 +15,16 @@ Date: Procedure.performedDateTime || Procedure.performedPeriod.start && “-“ 
       </tr>
       </thead>
       <tbody>
-      <th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
-         <th:block th:unless='*{getResourceType().name() == "Composition"}'>
-            <th:block th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
-               <tr th:id="${#strings.arraySplit(extension, '#')[1]}">
-                  <td th:insert="~{IpsUtilityFragments :: codeableConcept (cc=*{getCode()},attr='display')}">Procedure</td>
-                  <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
-                  <td th:insert="~{IpsUtilityFragments :: renderPerformed (performed=*{getPerformed()})}">Date</td>
-               </tr>
-            </th:block>
-         </th:block>
-      </th:block>
+
+      {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+      {{range $index, $entry := .Procedure }}
+         <tr id="{{$entry.SourceResourceID}}">
+            <td>{{pluckList "text" ($entry.Code | parseList) | uniq | join "," }}</td> {{/* Procedure */}}
+            <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td> {{/* Comments - TODO: use FHIRPath */}}
+            <td>{{$entry.Date | date "2006-01-02"}}</td> {{/* Performed Date */}}
+         </tr>
+      {{end}}
+
       </tbody>
    </table>
 </div>
