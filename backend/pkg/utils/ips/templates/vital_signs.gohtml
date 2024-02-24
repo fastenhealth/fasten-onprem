@@ -21,20 +21,6 @@ Date: Observation.effectiveDateTime || Observation.effectivePeriod.start
       </tr>
       </thead>
       <tbody>
-      <th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
-         <th:block th:unless='*{getResourceType().name() == "Composition"}'>
-            <th:block th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
-               <tr th:id="${#strings.arraySplit(extension, '#')[1]}">
-                  <td th:insert="~{IpsUtilityFragments :: codeableConcept (cc=*{getCode()},attr='display')}">Code</td>
-                  <td th:insert="~{IpsUtilityFragments :: renderValue (value=*{getValue()})}">Result</td>
-                  <td th:insert="~{IpsUtilityFragments :: renderValueUnit (value=*{getValue()})}">Unit</td>
-                  <td th:replace="~{IpsUtilityFragments :: firstFromCodeableConceptList (list=*{getInterpretation()})}">Interpretation</td>
-                  <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
-                  <td th:insert="~{IpsUtilityFragments :: renderEffective (effective=*{getEffective()})}">Date</td>
-               </tr>
-            </th:block>
-         </th:block>
-      </th:block>
 
       {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
       {{range $index, $entry := .Observation }}
