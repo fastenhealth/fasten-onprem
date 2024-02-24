@@ -11,6 +11,7 @@ replace github.com/mattn/go-sqlite3 v1.14.17 => github.com/jgiannuzzi/go-sqlite3
 //replace gorm.io/driver/sqlite v1.5.4 => github.com/jgiannuzzi/gorm-sqlite v1.4.4-0.20221215225833-42389ad31305
 
 require (
+	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/analogj/go-util v0.0.0-20210417161720-39b497cca03b
 	github.com/dave/jennifer v1.6.1
 	github.com/dominikbraun/graph v0.15.0
@@ -40,11 +41,18 @@ require (
 )
 
 require (
+	github.com/Masterminds/goutils v1.1.1 // indirect
+	github.com/Masterminds/semver/v3 v3.2.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
+	github.com/huandu/xstrings v1.3.3 // indirect
+	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.4.3 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
+	github.com/mitchellh/copystructure v1.0.0 // indirect
+	github.com/mitchellh/reflectwalk v1.0.0 // indirect
+	github.com/shopspring/decimal v1.2.0 // indirect
 )
 
 require (

@@ -3,10 +3,13 @@ package ips
 import (
 	"bytes"
 	"embed"
+	"encoding/json"
 	"fmt"
+	sprig "github.com/Masterminds/sprig/v3"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	"github.com/fastenhealth/gofhir-models/fhir401"
+	"gorm.io/datatypes"
 	"html/template"
 )
 
@@ -51,7 +54,19 @@ func NewNarrative() (*Narrative, error) {
 			}
 			return template.HTML(*s)
 		},
-	}).ParseFS(ipsTemplates, "templates/*.gohtml", "templates/includes/*.gohtml")
+		"parseList": func(data datatypes.JSON) []map[string]interface{} {
+			var parsed []map[string]interface{}
+			_ = json.Unmarshal(data, &parsed)
+			return parsed
+		},
+		"pluckList": func(key string, data []map[string]interface{}) []interface{} {
+			values := []interface{}{}
+			for _, item := range data {
+				values = append(values, item[key])
+			}
+			return values
+		},
+	}).Funcs(sprig.FuncMap()).ParseFS(ipsTemplates, "templates/*.gohtml", "templates/includes/*.gohtml")
 
 	if err != nil {
 		return nil, err
@@ -127,11 +142,10 @@ func (r *Narrative) RenderSection(sectionType pkg.IPSSections, resources []datab
 		case "Procedure":
 			templateData.Procedure = append(templateData.Procedure, *resource.(*database.FhirProcedure))
 		}
-
 	}
 
 	var b bytes.Buffer
-	err := r.Templates.ExecuteTemplate(&b, templateName, resources)
+	err := r.Templates.ExecuteTemplate(&b, templateName, templateData)
 	if err != nil {
 		return "", err
 	}
