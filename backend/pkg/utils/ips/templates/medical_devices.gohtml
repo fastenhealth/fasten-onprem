@@ -17,18 +17,15 @@ Date Recorded: DeviceUseStatement.recordedDateTime
       </tr>
       </thead>
       <tbody>
-      <th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
-         <th:block th:if='*{getResourceType().name() == "DeviceUseStatement"}'>
-            <th:block th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
-               <tr th:id="${#strings.arraySplit(extension, '#')[1]}">
-                  <td th:insert="~{IpsUtilityFragments :: renderDevice (deviceRef=*{getDevice()})}">Device</td>
-                  <td th:text="*{getStatusElement().value}">Status</td>
-                  <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
-                  <td th:insert="~{IpsUtilityFragments :: renderRecorded (recorded=*{getRecordedOn()})}">Date Recorded</td>
-               </tr>
-            </th:block>
-         </th:block>
-      </th:block>
+      {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+      {{range $index, $entry := .Device }}
+         <tr id="{{$entry.SourceResourceID}}">
+            <td>{{pluckList "text" ($entry.Type | parseList) | uniq | join "," }}</td> {{/* Device */}}
+            <td>{{pluckList "code" ($entry.Status | parseList) | uniq | join "," }}</td> {{/* Status */}}
+            <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+            <td></td> {{/* Date Recorded */}}
+         </tr>
+      {{end}}
       </tbody>
    </table>
 </div>
