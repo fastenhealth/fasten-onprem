@@ -387,4 +387,54 @@ export class FastenApiService {
       );
   }
 
+  getIPSExport(exportType?: string) {
+    // // <a href="https://somedomain.com/api/doc/somefile.pdf" ng-click="openPdf($event)">PDF</a>
+    //
+    // // function openPdf($event) {
+    // // Prevent default behavior when clicking a link
+    // $event.preventDefault();
+    //
+    // // Get filename from href
+    // var filename = $event.target.href;
+    //
+    // $http.get('/api/secure/summary/ips?format=html', {responseType: 'arraybuffer'})
+    //   .success(function (data) {
+    //     var file = new Blob([data], {type: 'application/pdf'});
+    //     var fileURL = URL.createObjectURL(file);
+    //
+    //     // Open new windows and show PDF
+    //     window.open(fileURL);
+    //   });
+    //
+    // $vent.
+    // // }
+
+    let httpHeaders = new HttpHeaders();
+    //.set('Content-Type'
+    httpHeaders.set('Accept', 'text/html');
+
+
+    let queryParams = {
+      "format": exportType || "html"
+    }
+    console.log("requesting", `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/summary/ips`)
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/summary/ips`, {
+      params: queryParams,
+      headers: httpHeaders,
+      // observe: 'response',
+      // @ts-ignore
+      responseType: 'arraybuffer'
+    })
+      .subscribe((data) => {
+
+        var file = new Blob([data]);
+        var fileURL = URL.createObjectURL(file);
+
+        // Open new windows and show PDF or HTML file
+        window.open(fileURL, "_blank");
+
+      });
+
+  }
+
 }
