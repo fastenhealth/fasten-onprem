@@ -153,14 +153,14 @@ func (s *FhirMedication) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 	// extracting ExpirationDate
 	expirationDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Medication.batch.expirationDate')")
 	if err == nil && expirationDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, expirationDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, expirationDateResult.String()); err == nil {
 			s.ExpirationDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", expirationDateResult.String())
-			if err == nil {
-				s.ExpirationDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", expirationDateResult.String()); err == nil {
+			s.ExpirationDate = &t
+		} else if t, err = time.Parse("2006-01", expirationDateResult.String()); err == nil {
+			s.ExpirationDate = &t
+		} else if t, err = time.Parse("2006", expirationDateResult.String()); err == nil {
+			s.ExpirationDate = &t
 		}
 	}
 	// extracting Form
@@ -201,14 +201,14 @@ func (s *FhirMedication) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
