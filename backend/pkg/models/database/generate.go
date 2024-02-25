@@ -170,10 +170,6 @@ func main() {
 			Description:        "Text search against the narrative",
 			FHIRPathExpression: "text",
 		}
-		fieldMap["Type"] = DBField{
-			FieldType:   "special",
-			Description: "A resource type filter",
-		}
 
 		resourceFieldMap[resourceName] = fieldMap
 	}

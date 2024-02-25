@@ -27,6 +27,10 @@ type SearchParameterTokenType []struct {
 	Text   string `json:"text"`
 }
 
+type SearchParameterReferenceType []struct {
+	Reference string `json:"reference"`
+}
+
 type SearchParameterStringType []string
 
 type SearchParameterDateType []struct {

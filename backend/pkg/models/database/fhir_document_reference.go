@@ -143,8 +143,17 @@ type FhirDocumentReference struct {
 	// Text search against the narrative
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
+	/*
+	   Multiple Resources:
+
+	   * [AllergyIntolerance](allergyintolerance.html): allergy | intolerance - Underlying mechanism (if known)
+	   * [Composition](composition.html): Kind of composition (LOINC if possible)
+	   * [DocumentManifest](documentmanifest.html): Kind of document set
+	   * [DocumentReference](documentreference.html): Kind of document (LOINC if possible)
+	   * [Encounter](encounter.html): Specific type of encounter
+	   * [EpisodeOfCare](episodeofcare.html): Type/class  - e.g. specialist referral, disease management
+	*/
+	// https://hl7.org/fhir/r4/search.html#token
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
@@ -183,7 +192,7 @@ func (s *FhirDocumentReference) GetSearchParameters() map[string]string {
 		"status":               "token",
 		"subject":              "reference",
 		"text":                 "keyword",
-		"type":                 "special",
+		"type":                 "token",
 	}
 	return searchParameters
 }
@@ -382,6 +391,11 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
 		s.Text = textResult.String()
+	}
+	// extracting Type
+	typeResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type')")
+	if err == nil && typeResult.String() != "undefined" {
+		s.Type = []byte(typeResult.String())
 	}
 	return nil
 }
