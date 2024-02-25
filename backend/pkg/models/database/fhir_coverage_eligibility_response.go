@@ -127,14 +127,14 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 	// extracting Created
 	createdResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'CoverageEligibilityResponse.created')")
 	if err == nil && createdResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, createdResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, createdResult.String()); err == nil {
 			s.Created = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", createdResult.String())
-			if err == nil {
-				s.Created = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", createdResult.String()); err == nil {
+			s.Created = &t
+		} else if t, err = time.Parse("2006-01", createdResult.String()); err == nil {
+			s.Created = &t
+		} else if t, err = time.Parse("2006", createdResult.String()); err == nil {
+			s.Created = &t
 		}
 	}
 	// extracting Disposition
@@ -160,14 +160,14 @@ func (s *FhirCoverageEligibilityResponse) PopulateAndExtractSearchParameters(res
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile

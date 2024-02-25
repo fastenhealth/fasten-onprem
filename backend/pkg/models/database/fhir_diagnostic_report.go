@@ -260,14 +260,14 @@ func (s *FhirDiagnosticReport) PopulateAndExtractSearchParameters(resourceRaw js
 	// extracting Date
 	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effectiveDateTime | DiagnosticReport.effectivePeriod | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effectiveDateTime | Observation.effectivePeriod | Observation.effectiveTiming | Observation.effectiveInstant | Procedure.performedDateTime | Procedure.performedPeriod | Procedure.performedString | Procedure.performedAge | Procedure.performedRange | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')")
 	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, dateResult.String()); err == nil {
 			s.Date = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", dateResult.String())
-			if err == nil {
-				s.Date = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006-01", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006", dateResult.String()); err == nil {
+			s.Date = &t
 		}
 	}
 	// extracting Encounter
@@ -283,14 +283,14 @@ func (s *FhirDiagnosticReport) PopulateAndExtractSearchParameters(resourceRaw js
 	// extracting Issued
 	issuedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'DiagnosticReport.issued')")
 	if err == nil && issuedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, issuedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, issuedResult.String()); err == nil {
 			s.Issued = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", issuedResult.String())
-			if err == nil {
-				s.Issued = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", issuedResult.String()); err == nil {
+			s.Issued = &t
+		} else if t, err = time.Parse("2006-01", issuedResult.String()); err == nil {
+			s.Issued = &t
+		} else if t, err = time.Parse("2006", issuedResult.String()); err == nil {
+			s.Issued = &t
 		}
 	}
 	// extracting Language
@@ -306,14 +306,14 @@ func (s *FhirDiagnosticReport) PopulateAndExtractSearchParameters(resourceRaw js
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
