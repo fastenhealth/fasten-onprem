@@ -409,15 +409,27 @@ func main() {
 						break
 					case "date":
 						//parse RFC3339 date
-						i.List(jen.Id("t"), jen.Id("err")).Op(":=").Qual("time", "Parse").Call(jen.Qual("time", "RFC3339"), jen.Id(fieldNameVar).Dot("String").Call())
-						i.If(jen.Err().Op("==").Nil()).BlockFunc(func(e *jen.Group) {
+
+						i.If(
+							jen.List(jen.Id("t"), jen.Err()).Op(":=").Qual("time", "Parse").Call(jen.Qual("time", "RFC3339"), jen.Id(fieldNameVar).Dot("String").Call()),
+							jen.Err().Op("==").Nil(),
+						).BlockFunc(func(e *jen.Group) {
 							e.Id("s").Dot(fieldName).Op("=").Op("&").Id("t")
-						}).Else().If(jen.Err().Op("!=").Nil()).BlockFunc(func(e *jen.Group) {
-							//parse date only
-							e.List(jen.Id("d"), jen.Id("err")).Op(":=").Qual("time", "Parse").Call(jen.Lit("2006-01-02"), jen.Id(fieldNameVar).Dot("String").Call())
-							e.If(jen.Err().Op("==").Nil()).BlockFunc(func(f *jen.Group) {
-								f.Id("s").Dot(fieldName).Op("=").Op("&").Id("d")
-							})
+						}).Else().If(
+							jen.List(jen.Id("t"), jen.Err()).Op("=").Qual("time", "Parse").Call(jen.Lit("2006-01-02"), jen.Id(fieldNameVar).Dot("String").Call()),
+							jen.Err().Op("==").Nil(),
+						).BlockFunc(func(e *jen.Group) {
+							e.Id("s").Dot(fieldName).Op("=").Op("&").Id("t")
+						}).Else().If(
+							jen.List(jen.Id("t"), jen.Err()).Op("=").Qual("time", "Parse").Call(jen.Lit("2006-01"), jen.Id(fieldNameVar).Dot("String").Call()),
+							jen.Err().Op("==").Nil(),
+						).BlockFunc(func(e *jen.Group) {
+							e.Id("s").Dot(fieldName).Op("=").Op("&").Id("t")
+						}).Else().If(
+							jen.List(jen.Id("t"), jen.Err()).Op("=").Qual("time", "Parse").Call(jen.Lit("2006"), jen.Id(fieldNameVar).Dot("String").Call()),
+							jen.Err().Op("==").Nil(),
+						).BlockFunc(func(e *jen.Group) {
+							e.Id("s").Dot(fieldName).Op("=").Op("&").Id("t")
 						})
 					case "uri":
 						i.Id("s").Dot(fieldName).Op("=").Id(fieldNameVar).Dot("String").Call()

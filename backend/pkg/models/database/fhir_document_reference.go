@@ -252,14 +252,14 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 	// extracting Date
 	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'DocumentReference.date')")
 	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, dateResult.String()); err == nil {
 			s.Date = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", dateResult.String())
-			if err == nil {
-				s.Date = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006-01", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006", dateResult.String()); err == nil {
+			s.Date = &t
 		}
 	}
 	// extracting Description
@@ -305,14 +305,14 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -333,14 +333,14 @@ func (s *FhirDocumentReference) PopulateAndExtractSearchParameters(resourceRaw j
 	// extracting Period
 	periodResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'DocumentReference.context.period')")
 	if err == nil && periodResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, periodResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, periodResult.String()); err == nil {
 			s.Period = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", periodResult.String())
-			if err == nil {
-				s.Period = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", periodResult.String()); err == nil {
+			s.Period = &t
+		} else if t, err = time.Parse("2006-01", periodResult.String()); err == nil {
+			s.Period = &t
+		} else if t, err = time.Parse("2006", periodResult.String()); err == nil {
+			s.Period = &t
 		}
 	}
 	// extracting Related

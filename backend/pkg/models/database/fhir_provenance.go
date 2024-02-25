@@ -161,14 +161,14 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -189,14 +189,14 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 	// extracting Recorded
 	recordedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Provenance.recorded')")
 	if err == nil && recordedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, recordedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, recordedResult.String()); err == nil {
 			s.Recorded = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", recordedResult.String())
-			if err == nil {
-				s.Recorded = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", recordedResult.String()); err == nil {
+			s.Recorded = &t
+		} else if t, err = time.Parse("2006-01", recordedResult.String()); err == nil {
+			s.Recorded = &t
+		} else if t, err = time.Parse("2006", recordedResult.String()); err == nil {
+			s.Recorded = &t
 		}
 	}
 	// extracting SignatureType
@@ -217,14 +217,14 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 	// extracting When
 	whenResult, err := vm.RunString("extractDateSearchParameters(fhirResource, '(Provenance.occurredDateTime)')")
 	if err == nil && whenResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, whenResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, whenResult.String()); err == nil {
 			s.When = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", whenResult.String())
-			if err == nil {
-				s.When = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", whenResult.String()); err == nil {
+			s.When = &t
+		} else if t, err = time.Parse("2006-01", whenResult.String()); err == nil {
+			s.When = &t
+		} else if t, err = time.Parse("2006", whenResult.String()); err == nil {
+			s.When = &t
 		}
 	}
 	return nil

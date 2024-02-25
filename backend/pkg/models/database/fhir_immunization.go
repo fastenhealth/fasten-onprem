@@ -208,14 +208,14 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 	// extracting Date
 	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effectiveDateTime | DiagnosticReport.effectivePeriod | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effectiveDateTime | Observation.effectivePeriod | Observation.effectiveTiming | Observation.effectiveInstant | Procedure.performedDateTime | Procedure.performedPeriod | Procedure.performedString | Procedure.performedAge | Procedure.performedRange | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')")
 	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, dateResult.String()); err == nil {
 			s.Date = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", dateResult.String())
-			if err == nil {
-				s.Date = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006-01", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006", dateResult.String()); err == nil {
+			s.Date = &t
 		}
 	}
 	// extracting Identifier
@@ -246,14 +246,14 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -284,14 +284,14 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 	// extracting ReactionDate
 	reactionDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Immunization.reaction.date')")
 	if err == nil && reactionDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, reactionDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, reactionDateResult.String()); err == nil {
 			s.ReactionDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", reactionDateResult.String())
-			if err == nil {
-				s.ReactionDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", reactionDateResult.String()); err == nil {
+			s.ReactionDate = &t
+		} else if t, err = time.Parse("2006-01", reactionDateResult.String()); err == nil {
+			s.ReactionDate = &t
+		} else if t, err = time.Parse("2006", reactionDateResult.String()); err == nil {
+			s.ReactionDate = &t
 		}
 	}
 	// extracting ReasonCode

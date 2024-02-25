@@ -230,14 +230,14 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	// extracting AbatementDate
 	abatementDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Condition.abatementDateTime | Condition.abatementPeriod')")
 	if err == nil && abatementDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, abatementDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, abatementDateResult.String()); err == nil {
 			s.AbatementDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", abatementDateResult.String())
-			if err == nil {
-				s.AbatementDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", abatementDateResult.String()); err == nil {
+			s.AbatementDate = &t
+		} else if t, err = time.Parse("2006-01", abatementDateResult.String()); err == nil {
+			s.AbatementDate = &t
+		} else if t, err = time.Parse("2006", abatementDateResult.String()); err == nil {
+			s.AbatementDate = &t
 		}
 	}
 	// extracting AbatementString
@@ -298,14 +298,14 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -331,14 +331,14 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	// extracting OnsetDate
 	onsetDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Condition.onsetDateTime | Condition.onsetPeriod')")
 	if err == nil && onsetDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, onsetDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, onsetDateResult.String()); err == nil {
 			s.OnsetDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", onsetDateResult.String())
-			if err == nil {
-				s.OnsetDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", onsetDateResult.String()); err == nil {
+			s.OnsetDate = &t
+		} else if t, err = time.Parse("2006-01", onsetDateResult.String()); err == nil {
+			s.OnsetDate = &t
+		} else if t, err = time.Parse("2006", onsetDateResult.String()); err == nil {
+			s.OnsetDate = &t
 		}
 	}
 	// extracting OnsetInfo
@@ -349,14 +349,14 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	// extracting RecordedDate
 	recordedDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Condition.recordedDate')")
 	if err == nil && recordedDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, recordedDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, recordedDateResult.String()); err == nil {
 			s.RecordedDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", recordedDateResult.String())
-			if err == nil {
-				s.RecordedDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", recordedDateResult.String()); err == nil {
+			s.RecordedDate = &t
+		} else if t, err = time.Parse("2006-01", recordedDateResult.String()); err == nil {
+			s.RecordedDate = &t
+		} else if t, err = time.Parse("2006", recordedDateResult.String()); err == nil {
+			s.RecordedDate = &t
 		}
 	}
 	// extracting Severity
