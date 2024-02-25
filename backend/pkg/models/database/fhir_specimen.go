@@ -62,8 +62,8 @@ type FhirSpecimen struct {
 	// Text search against the narrative
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
+	// The specimen type
+	// https://hl7.org/fhir/r4/search.html#token
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
@@ -91,7 +91,7 @@ func (s *FhirSpecimen) GetSearchParameters() map[string]string {
 		"status":               "token",
 		"subject":              "reference",
 		"text":                 "keyword",
-		"type":                 "special",
+		"type":                 "token",
 	}
 	return searchParameters
 }
@@ -227,6 +227,11 @@ func (s *FhirSpecimen) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
 		s.Text = textResult.String()
+	}
+	// extracting Type
+	typeResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Specimen.type')")
+	if err == nil && typeResult.String() != "undefined" {
+		s.Type = []byte(typeResult.String())
 	}
 	return nil
 }

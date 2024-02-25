@@ -56,9 +56,6 @@ type FhirProvenance struct {
 	// Text search against the narrative
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 	// When the activity occurred
 	// https://hl7.org/fhir/r4/search.html#date
 	When *time.Time `gorm:"column:when;type:datetime" json:"when,omitempty"`
@@ -86,7 +83,6 @@ func (s *FhirProvenance) GetSearchParameters() map[string]string {
 		"source_uri":           "keyword",
 		"target":               "reference",
 		"text":                 "keyword",
-		"type":                 "special",
 		"when":                 "date",
 	}
 	return searchParameters

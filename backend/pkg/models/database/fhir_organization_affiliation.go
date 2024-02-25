@@ -74,9 +74,6 @@ type FhirOrganizationAffiliation struct {
 	// Text search against the narrative
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
 func (s *FhirOrganizationAffiliation) GetSearchParameters() map[string]string {
@@ -107,7 +104,6 @@ func (s *FhirOrganizationAffiliation) GetSearchParameters() map[string]string {
 		"specialty":                 "token",
 		"telecom":                   "token",
 		"text":                      "keyword",
-		"type":                      "special",
 	}
 	return searchParameters
 }
