@@ -142,14 +142,14 @@ func (s *FhirSlot) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -190,14 +190,14 @@ func (s *FhirSlot) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 	// extracting Start
 	startResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Slot.start')")
 	if err == nil && startResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, startResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, startResult.String()); err == nil {
 			s.Start = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", startResult.String())
-			if err == nil {
-				s.Start = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", startResult.String()); err == nil {
+			s.Start = &t
+		} else if t, err = time.Parse("2006-01", startResult.String()); err == nil {
+			s.Start = &t
+		} else if t, err = time.Parse("2006", startResult.String()); err == nil {
+			s.Start = &t
 		}
 	}
 	// extracting Status

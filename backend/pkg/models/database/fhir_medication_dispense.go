@@ -245,14 +245,14 @@ func (s *FhirMedicationDispense) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -308,27 +308,27 @@ func (s *FhirMedicationDispense) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting Whenhandedover
 	whenhandedoverResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'MedicationDispense.whenHandedOver')")
 	if err == nil && whenhandedoverResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, whenhandedoverResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, whenhandedoverResult.String()); err == nil {
 			s.Whenhandedover = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", whenhandedoverResult.String())
-			if err == nil {
-				s.Whenhandedover = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", whenhandedoverResult.String()); err == nil {
+			s.Whenhandedover = &t
+		} else if t, err = time.Parse("2006-01", whenhandedoverResult.String()); err == nil {
+			s.Whenhandedover = &t
+		} else if t, err = time.Parse("2006", whenhandedoverResult.String()); err == nil {
+			s.Whenhandedover = &t
 		}
 	}
 	// extracting Whenprepared
 	whenpreparedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'MedicationDispense.whenPrepared')")
 	if err == nil && whenpreparedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, whenpreparedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, whenpreparedResult.String()); err == nil {
 			s.Whenprepared = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", whenpreparedResult.String())
-			if err == nil {
-				s.Whenprepared = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", whenpreparedResult.String()); err == nil {
+			s.Whenprepared = &t
+		} else if t, err = time.Parse("2006-01", whenpreparedResult.String()); err == nil {
+			s.Whenprepared = &t
+		} else if t, err = time.Parse("2006", whenpreparedResult.String()); err == nil {
+			s.Whenprepared = &t
 		}
 	}
 	return nil

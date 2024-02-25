@@ -246,14 +246,14 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting Date
 	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effectiveDateTime | DiagnosticReport.effectivePeriod | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effectiveDateTime | Observation.effectivePeriod | Observation.effectiveTiming | Observation.effectiveInstant | Procedure.performedDateTime | Procedure.performedPeriod | Procedure.performedString | Procedure.performedAge | Procedure.performedRange | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')")
 	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, dateResult.String()); err == nil {
 			s.Date = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", dateResult.String())
-			if err == nil {
-				s.Date = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006-01", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006", dateResult.String()); err == nil {
+			s.Date = &t
 		}
 	}
 	// extracting Identifier
@@ -269,14 +269,14 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting LastDate
 	lastDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.lastOccurrence')")
 	if err == nil && lastDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, lastDateResult.String()); err == nil {
 			s.LastDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", lastDateResult.String())
-			if err == nil {
-				s.LastDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", lastDateResult.String()); err == nil {
+			s.LastDate = &t
+		} else if t, err = time.Parse("2006-01", lastDateResult.String()); err == nil {
+			s.LastDate = &t
+		} else if t, err = time.Parse("2006", lastDateResult.String()); err == nil {
+			s.LastDate = &t
 		}
 	}
 	// extracting Manifestation
@@ -287,14 +287,14 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -315,14 +315,14 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting Onset
 	onsetResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.reaction.onset')")
 	if err == nil && onsetResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, onsetResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, onsetResult.String()); err == nil {
 			s.Onset = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", onsetResult.String())
-			if err == nil {
-				s.Onset = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", onsetResult.String()); err == nil {
+			s.Onset = &t
+		} else if t, err = time.Parse("2006-01", onsetResult.String()); err == nil {
+			s.Onset = &t
+		} else if t, err = time.Parse("2006", onsetResult.String()); err == nil {
+			s.Onset = &t
 		}
 	}
 	// extracting Recorder
