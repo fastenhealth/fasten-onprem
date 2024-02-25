@@ -47,8 +47,17 @@ func TestFhirAllergyIntolerance_ExtractSearchParameters(t *testing.T) {
 		},
 	}, testVerificationStatus)
 
-	//TODO: Special field, ignoring
-	//require.Equal(t, "allergy", allergyIntoleranceModel.Type)
+	require.NotEmpty(t, allergyIntoleranceModel.Type)
+
+	var testType SearchParameterTokenType
+	require.NoError(t, err)
+	err = json.Unmarshal(json.RawMessage(allergyIntoleranceModel.Type), &testType)
+	require.NoError(t, err)
+	require.Equal(t, SearchParameterTokenType{
+		{
+			Code: "allergy",
+		},
+	}, testType)
 
 	var testCategory SearchParameterTokenType
 	require.NoError(t, err)
@@ -87,21 +96,28 @@ func TestFhirAllergyIntolerance_ExtractSearchParameters(t *testing.T) {
 		},
 	}, testCodeSystem)
 
-	//var testPatient SearchParameterTokenType
-	//require.NoError(t, err)
-	//err = json.Unmarshal(json.RawMessage(allergyIntoleranceModel.Code), &testCodeSystem)
-	//require.NoError(t, err)
-	//require.Equal(t, SearchParameterTokenType{
-	//	{
-	//		Code:   "39065001",
-	//		System: "http://snomed.info/sct",
-	//		Text:   "Burn of ear",
-	//	},
-	//}, testCodeSystem)
-
 	require.Equal(t, "2012-06-12T00:00:00Z", allergyIntoleranceModel.Onset.Format(time.RFC3339))
-	//TODO: require.Equal(t, "2004", allergyIntoleranceModel.Recorder)
-	//require.Equal(t, "2004", allergyIntoleranceModel.Asserter)
+
+	var testRecorder SearchParameterReferenceType
+	require.NoError(t, err)
+	err = json.Unmarshal(json.RawMessage(allergyIntoleranceModel.Recorder), &testRecorder)
+	require.NoError(t, err)
+	require.Equal(t, SearchParameterReferenceType{
+		{
+			Reference: "Practitioner/example",
+		},
+	}, testRecorder)
+
+	var testAsserter SearchParameterReferenceType
+	require.NoError(t, err)
+	err = json.Unmarshal(json.RawMessage(allergyIntoleranceModel.Asserter), &testAsserter)
+	require.NoError(t, err)
+	require.Equal(t, SearchParameterReferenceType{
+		{
+			Reference: "Patient/example",
+		},
+	}, testAsserter)
+
 	require.Equal(t, "2012-06", allergyIntoleranceModel.LastDate.Format("2006-01"))
 
 	var testSeverity SearchParameterTokenType
@@ -117,7 +133,22 @@ func TestFhirAllergyIntolerance_ExtractSearchParameters(t *testing.T) {
 		},
 	}, testSeverity)
 
-	//TODO: Manifestation
+	var testManifestation SearchParameterTokenType
+	require.NoError(t, err)
+	err = json.Unmarshal(json.RawMessage(allergyIntoleranceModel.Manifestation), &testManifestation)
+	require.NoError(t, err)
+	require.Equal(t, SearchParameterTokenType{
+		{
+			System: "http://snomed.info/sct",
+			Code:   "39579001",
+			Text:   "Anaphylactic reaction",
+		},
+		{
+			System: "http://snomed.info/sct",
+			Code:   "64305001",
+			Text:   "Urticaria",
+		},
+	}, testManifestation)
 }
 
 //func TestFhirAllergyIntolerance2_ExtractSearchParameters(t *testing.T) {
