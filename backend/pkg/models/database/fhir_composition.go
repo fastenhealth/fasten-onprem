@@ -148,8 +148,17 @@ type FhirComposition struct {
 	// Human Readable name/title
 	// https://hl7.org/fhir/r4/search.html#string
 	Title datatypes.JSON `gorm:"column:title;type:text;serializer:json" json:"title,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
+	/*
+	   Multiple Resources:
+
+	   * [AllergyIntolerance](allergyintolerance.html): allergy | intolerance - Underlying mechanism (if known)
+	   * [Composition](composition.html): Kind of composition (LOINC if possible)
+	   * [DocumentManifest](documentmanifest.html): Kind of document set
+	   * [DocumentReference](documentreference.html): Kind of document (LOINC if possible)
+	   * [Encounter](encounter.html): Specific type of encounter
+	   * [EpisodeOfCare](episodeofcare.html): Type/class  - e.g. specialist referral, disease management
+	*/
+	// https://hl7.org/fhir/r4/search.html#token
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
@@ -183,7 +192,7 @@ func (s *FhirComposition) GetSearchParameters() map[string]string {
 		"subject":              "reference",
 		"text":                 "keyword",
 		"title":                "string",
-		"type":                 "special",
+		"type":                 "token",
 	}
 	return searchParameters
 }
@@ -357,6 +366,11 @@ func (s *FhirComposition) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	titleResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Composition.title')")
 	if err == nil && titleResult.String() != "undefined" {
 		s.Title = []byte(titleResult.String())
+	}
+	// extracting Type
+	typeResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type')")
+	if err == nil && typeResult.String() != "undefined" {
+		s.Type = []byte(typeResult.String())
 	}
 	return nil
 }

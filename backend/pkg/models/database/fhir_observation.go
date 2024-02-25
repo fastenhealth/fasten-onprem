@@ -192,9 +192,6 @@ type FhirObservation struct {
 	// Text search against the narrative
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 	// The value of the observation, if the value is a CodeableConcept
 	// https://hl7.org/fhir/r4/search.html#token
 	ValueConcept datatypes.JSON `gorm:"column:valueConcept;type:text;serializer:json" json:"valueConcept,omitempty"`
@@ -248,7 +245,6 @@ func (s *FhirObservation) GetSearchParameters() map[string]string {
 		"status":                    "token",
 		"subject":                   "reference",
 		"text":                      "keyword",
-		"type":                      "special",
 		"valueConcept":              "token",
 		"valueDate":                 "date",
 		"valueQuantity":             "quantity",

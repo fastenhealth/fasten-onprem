@@ -77,9 +77,6 @@ type FhirQuestionnaire struct {
 	// The human-friendly name of the questionnaire
 	// https://hl7.org/fhir/r4/search.html#string
 	Title datatypes.JSON `gorm:"column:title;type:text;serializer:json" json:"title,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 	// The uri that identifies the questionnaire
 	// https://hl7.org/fhir/r4/search.html#uri
 	Url string `gorm:"column:url;type:text" json:"url,omitempty"`
@@ -117,7 +114,6 @@ func (s *FhirQuestionnaire) GetSearchParameters() map[string]string {
 		"subjectType":          "token",
 		"text":                 "keyword",
 		"title":                "string",
-		"type":                 "special",
 		"url":                  "uri",
 		"version":              "token",
 	}
