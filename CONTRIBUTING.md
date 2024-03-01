@@ -30,6 +30,9 @@ brew install go
 
 brew install docker
 
+# Frontend tests run with ChromeHeadless browser.
+brew install --cask google-chrome
+
 # Go specific tools
 go install github.com/gzuidhof/tygo@latest
 ```
@@ -47,6 +50,8 @@ make test-frontend
 # alternatively, if you only care about backend (Go) tests, you can run:
 make test-backend
 ```
+
+**Note**: Running backend tests may take awhile to complete the first time you run
 
 # Start Development Environment
 
@@ -211,9 +216,12 @@ a CDN or minimal Nginx deployment.
 
 ### How do I run individual frontend tests?
 
-- ng test --include='**/base_client.spec.ts'    
-- ng test --include='lib/**/*.spec.ts'     
+From the `frontend` directory, you can run `ng test` with the `--include` argument.
 
+```bash
+ng test --include='**/badge.component.spec.ts'
+ng test --include='lib/**/*.spec.ts'
+```
 
 ### How do I change the default encryption key and admin credentials
 - FASTEN_ISSUER_JWT_KEY
