@@ -7,8 +7,12 @@
 .PHONY: test
 test: test-backend test-frontend
 
-.PHONY: serve-frontend-storybook
-serve-frontend-storybook:
+.PHONY: build-storybook
+build-storybook: dep-frontend
+	cd frontend && ng run fastenhealth:build-storybook
+
+.PHONY: serve-storybook
+serve-storybook: dep-frontend
 	cd frontend && ng run fastenhealth:storybook
 
 .PHONY: serve-frontend
@@ -83,7 +87,6 @@ build-frontend-desktop-prod: dep-frontend
 build-frontend-offline-sandbox: dep-frontend
 	cd frontend && yarn build -- -c offline_sandbox
 
-
 .PHONY: test-frontend
 # reduce logging, disable angular-cli analytics for ci environment
 test-frontend: dep-frontend
@@ -98,7 +101,3 @@ test-frontend-coverage: dep-frontend
 # reduce logging, disable angular-cli analytics for ci environment
 test-frontend-coverage-ci: dep-frontend
 	cd frontend && npx ng test --watch=false --code-coverage --browsers=ChromeHeadlessCI
-
-.PHONY: test-frontend-storybook
-test-frontend-storybook:
-	cd frontend && ng run fastenhealth:storybook
