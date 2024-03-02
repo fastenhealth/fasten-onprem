@@ -9,6 +9,7 @@ import { DatasetLatestEntryPipe } from './dataset-latest-entry.pipe';
 import { HumanNamePipe } from './human-name.pipe';
 import { ReferenceUriPipe } from './reference-uri.pipe';
 import { FastenDisplayModelPipe } from './fasten-display-model.pipe';
+import { SafeHtmlPipe } from './safe-html.pipe';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { FastenDisplayModelPipe } from './fasten-display-model.pipe';
     HumanNamePipe,
     ReferenceUriPipe,
     FastenDisplayModelPipe,
+    SafeHtmlPipe,
   ],
   imports: [
 
@@ -31,7 +33,8 @@ import { FastenDisplayModelPipe } from './fasten-display-model.pipe';
     DatasetLatestEntryPipe,
     HumanNamePipe,
     ReferenceUriPipe,
-    FastenDisplayModelPipe
+    FastenDisplayModelPipe,
+    SafeHtmlPipe
   ]
 })
 export class PipesModule {}

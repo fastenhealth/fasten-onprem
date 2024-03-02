@@ -15,5 +15,10 @@
     <small class="tx-gray-700">
       {{getSourceDisplayName(sourceInfo)}}
     </small>
+    <ng-container *ngIf="sourceInfo?.searchHighlights?.length > 0">
+      <br/>
+      <small class="tx-gray-700"><strong>Also: </strong><span [innerHTML]="sourceInfo?.searchHighlights.join(', ') | safeHtml:'html'"></span></small>
+    </ng-container>
+
   </div>
 </div>

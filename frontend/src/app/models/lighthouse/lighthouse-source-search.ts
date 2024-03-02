@@ -23,6 +23,9 @@ export class LighthouseSourceSearchResult {
   _score: number;
   _source: LighthouseBrandListDisplayItem;
   sort: string[];
+  highlight?: {
+    aliases?: string[];
+  }
 }
 
 export class LighthouseSourceSearchAggregation {

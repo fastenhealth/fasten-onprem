@@ -24,6 +24,7 @@ export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120
 export class SourceListItem {
   source?: Source
   brand: LighthouseBrandListDisplayItem | PatientAccessBrand
+  searchHighlights?: string[]
 }
 
 @Component({
@@ -165,7 +166,10 @@ export class MedicalSourcesComponent implements OnInit {
       this.resultLimits.totalItems = wrapper.hits.total.value;
 
       this.availableLighthouseBrandList = this.availableLighthouseBrandList.concat(wrapper.hits.hits.map((result) => {
-        return {brand: result._source}
+        return {
+          brand: result._source,
+          searchHighlights: result?.highlight?.aliases || []
+        }
       }))
 
       //check if scroll is complete.
