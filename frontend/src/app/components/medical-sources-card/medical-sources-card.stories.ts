@@ -1,17 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/angular';
+import { componentWrapperDecorator, moduleMetadata } from '@storybook/angular';
+
 import {MedicalSourcesCardComponent} from './medical-sources-card.component'
+import { PatientAccessBrand } from 'src/app/models/patient-access-brands';
+import { ImageFallbackDirective } from 'src/app/directives/image-fallback.directive';
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<MedicalSourcesCardComponent> = {
   title: 'Components/MedicalSourcesCard',
   component: MedicalSourcesCardComponent,
   decorators: [
-    // moduleMetadata({
-    //   imports: [AppModule]
-    // })
-    // applicationConfig({
-    //   providers: [importProvidersFrom(AppModule)],
-    // }),
+    componentWrapperDecorator((story) => `<div style="width: 300px">${story}</div>`),
+    moduleMetadata({
+      declarations: [ImageFallbackDirective]
+    })
   ],
   tags: ['autodocs'],
   render: (args: MedicalSourcesCardComponent) => ({
@@ -33,41 +35,26 @@ const meta: Meta<MedicalSourcesCardComponent> = {
 export default meta;
 type Story = StoryObj<MedicalSourcesCardComponent>;
 
+const brand: PatientAccessBrand = {
+  id: 'b53c77ed-c0f4-4d6a-bddf-5c0e3934c2d6',
+  name: 'Aetna',
+  last_updated: '2024-01-12T05:20:50.52Z',
+  portal_ids: []
+};
+
 // More on writing stories with args: https://storybook.js.org/docs/angular/writing-stories/args
 export const Entry: Story = {
   args: {
     sourceInfo: {
-      metadata: {
-        // aliases?: string[]
-        // brand_logo?: string
-        category: [],
-        display: "Aetna",
-        hidden: false,
-        // identifiers?: {[name:string]: string}
-        // patient_access_description?: string
-        // patient_access_url?: string
-        platform_type: "aetna",
-        source_type: "aetna"
-      }
-    }
+      brand: brand
+    },
   }
 };
 
 export const LoadingAuthorize: Story = {
   args: {
     sourceInfo: {
-      metadata: {
-        // aliases?: string[]
-        // brand_logo?: string
-        category: [],
-        display: "Aetna",
-        hidden: false,
-        // identifiers?: {[name:string]: string}
-        // patient_access_description?: string
-        // patient_access_url?: string
-        platform_type: "aetna",
-        source_type: "aetna"
-      }
+      brand: brand
     },
     status: 'authorize'
   },
@@ -76,18 +63,7 @@ export const LoadingAuthorize: Story = {
 export const LoadingToken: Story = {
   args: {
     sourceInfo: {
-      metadata: {
-        // aliases?: string[]
-        // brand_logo?: string
-        category: [],
-        display: "Aetna",
-        hidden: false,
-        // identifiers?: {[name:string]: string}
-        // patient_access_description?: string
-        // patient_access_url?: string
-        platform_type: "aetna",
-        source_type: "aetna"
-      }
+      brand: brand
     },
     status: 'token'
   },
@@ -96,57 +72,18 @@ export const LoadingToken: Story = {
 export const Failed: Story = {
   args: {
     sourceInfo: {
-      metadata: {
-        // aliases?: string[]
-        // brand_logo?: string
-        category: [],
-        display: "Aetna",
-        hidden: false,
-        // identifiers?: {[name:string]: string}
-        // patient_access_description?: string
-        // patient_access_url?: string
-        platform_type: "aetna",
-        source_type: "aetna"
-      }
+      brand: brand
     },
     status: 'failed'
   },
 };
 
-
-export const Hidden: Story = {
+export const MissingLogo: Story = {
   args: {
     sourceInfo: {
-      metadata: {
-        // aliases?: string[]
-        // brand_logo?: string
-        category: [],
-        display: "Aetna",
-        hidden: true,
-        // identifiers?: {[name:string]: string}
-        // patient_access_description?: string
-        // patient_access_url?: string
-        platform_type: "aetna",
-        source_type: "aetna"
-      }
-    }
-  },
-};
-
-export const CustomBrandLogo: Story = {
-  args: {
-    sourceInfo: {
-      metadata: {
-        // aliases?: string[]
-        brand_logo: 'bluebutton.png',
-        category: [],
-        display: "Aetna",
-        hidden: false,
-        // identifiers?: {[name:string]: string}
-        // patient_access_description?: string
-        // patient_access_url?: string
-        platform_type: "aetna",
-        source_type: "aetna"
+      brand: {
+        ...brand,
+        id: 'aetna-123',
       }
     }
   },
