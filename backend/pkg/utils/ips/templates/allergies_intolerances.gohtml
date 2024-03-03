@@ -32,7 +32,7 @@ Comments: AllergyIntolerance.note[x].text (separated by <br />)
          <td>{{pluckList "text" ($entry.Manifestation | parseList) | uniq | join "," }}</td> {{/* Reaction */}}
          <td>{{pluckList "code" ($entry.Criticality | parseList) | uniq | join ","}}</td> {{/* Severity */}}
          <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td> {{/* Comments - TODO: use FHIRPath */}}
-         <td>{{$entry.Onset | date "2006-01-02"}}</td> {{/* Onset */}}
+         <td>{{default "unknown" $entry.Onset }}</td> {{/* Onset */}}
       </tr>
       {{end}}
       </tbody>
