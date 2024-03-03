@@ -16,9 +16,14 @@
 
 
     {{range $index, $text := $componentCodeText }}
-        {{$text}} - {{index $componentValueQuantity $index}}
+        {{$text}}
+        {{if lt $index (len $componentValueQuantity)}}
+            - {{index $componentValueQuantity $index}}
+        {{end}}
         {{if (get $ "include_unit")}}
-            {{index $componentValueQuantityUnit $index}}
+            {{if lt $index (len $componentValueQuantityUnit)}}
+                {{index $componentValueQuantityUnit $index}}
+            {{end}}
         {{end}}
         <br/>
     {{end}}
