@@ -1,0 +1,9 @@
+{{if not (empty .ValueString) }}
+    {{.ValueString}}
+{{else if not (empty (.ValueQuantity | parseList)) }}
+    {{.ValueQuantity | parseList | pluckList "unit" | join "," }}
+{{else if not (empty .ValueDate) }}
+    {{.ValueDate | date "2006-01-02" }}
+{{else if not (empty (.ValueConcept | parseList)) }}
+    {{.ValueConcept}}
+{{end}}

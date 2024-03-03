@@ -1,0 +1,12 @@
+{{if not (empty .entry.ValueString) }}
+    {{.ValueString}}
+{{else if not (empty (.entry.ValueQuantity | parseList)) }}
+    {{.entry.ValueQuantity | parseList | pluckList "value" | roundList 2 | join "," }}
+    {{if (get . "include_unit")}}
+        {{.entry.ValueQuantity | parseList | pluckList "unit" | join "," }}
+    {{end}}
+{{else if not (empty .entry.ValueDate) }}
+    {{.entry.ValueDate | date "2006-01-02" }}
+{{else if not (empty (.entry.ValueConcept | parseList)) }}
+    {{.entry.ValueConcept}}
+{{end}}
