@@ -6,4 +6,6 @@
     {{.ValueDate | date "2006-01-02" }}
 {{else if not (empty (.ValueConcept | parseList)) }}
     {{.ValueConcept}}
+{{else if not (empty (.ComponentValueQuantity | parseList)) }}
+    {{.ComponentValueQuantity | parseList | pluckList "unit" | join "," }}
 {{end}}
