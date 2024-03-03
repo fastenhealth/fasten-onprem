@@ -25,7 +25,7 @@ Date: Observation.effectiveDateTime || Observation.effectivePeriod.start
       {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
       {{range $index, $entry := .Observation }}
          <tr id="{{$entry.SourceResourceID}}">
-            <td>{{pluckList "text" ($entry.Code | parseList) | uniq | join "," }}</td> {{/* Code */}}
+            <td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Code */}}
             <td>{{template "observation-value.gohtml" (dict "entry" $entry "include_unit" false)}}</td> {{/* Result */}}
             <td>{{template "observation-unit.gohtml" $entry}}</td>
             <td th:replace="~{IpsUtilityFragments :: firstFromCodeableConceptList (list=*{getInterpretation()})}">Interpretation</td>

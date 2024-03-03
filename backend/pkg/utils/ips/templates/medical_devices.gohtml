@@ -20,8 +20,8 @@ Date Recorded: DeviceUseStatement.recordedDateTime
       {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
       {{range $index, $entry := .Device }}
          <tr id="{{$entry.SourceResourceID}}">
-            <td>{{pluckList "text" ($entry.Type | parseList) | uniq | join "," }}</td> {{/* Device */}}
-            <td>{{pluckList "code" ($entry.Status | parseList) | uniq | join "," }}</td> {{/* Status */}}
+            <td>{{pluckList "text" ($entry.Type | parseMapList) | uniq | join "," }}</td> {{/* Device */}}
+            <td>{{pluckList "code" ($entry.Status | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
             <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
             <td></td> {{/* Date Recorded */}}
          </tr>

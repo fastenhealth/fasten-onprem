@@ -26,11 +26,11 @@ Comments: AllergyIntolerance.note[x].text (separated by <br />)
       {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
       {{range $index, $entry := .AllergyIntolerance }}
       <tr id="{{$entry.SourceResourceID}}">
-         <td>{{pluckList "text" ($entry.Code | parseList) | uniq | join "," }}</td> {{/* Allergen */}}
-         <td>{{pluckList "code" ($entry.ClinicalStatus | parseList) | uniq | join "," }}</td> {{/* Status */}}
-         <td>{{pluckList "code" ($entry.Category | parseList) | uniq | join "," }}</td> {{/* Category */}}
-         <td>{{pluckList "text" ($entry.Manifestation | parseList) | uniq | join "," }}</td> {{/* Reaction */}}
-         <td>{{pluckList "code" ($entry.Criticality | parseList) | uniq | join ","}}</td> {{/* Severity */}}
+         <td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Allergen */}}
+         <td>{{pluckList "code" ($entry.ClinicalStatus | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
+         <td>{{pluckList "code" ($entry.Category | parseMapList) | uniq | join "," }}</td> {{/* Category */}}
+         <td>{{pluckList "text" ($entry.Manifestation | parseMapList) | uniq | join "," }}</td> {{/* Reaction */}}
+         <td>{{pluckList "code" ($entry.Criticality | parseMapList) | uniq | join ","}}</td> {{/* Severity */}}
          <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td> {{/* Comments - TODO: use FHIRPath */}}
          <td>{{default "unknown" $entry.Onset }}</td> {{/* Onset */}}
       </tr>
