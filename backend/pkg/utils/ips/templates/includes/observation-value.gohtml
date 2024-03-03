@@ -1,23 +1,27 @@
-{{if not (empty .entry.ValueString) }}
-    {{.ValueString}}
-{{else if not (empty (.entry.ValueQuantity | parseList)) }}
-    {{.entry.ValueQuantity | parseList | pluckList "value" | roundList 2 | join "," }}
+{{if not (empty (.entry.ValueString | parseMapList)) }}
+    {{.entry.ValueString | parseStringList | join ","}}
+{{else if not (empty (.entry.ValueQuantity | parseMapList)) }}
+    {{.entry.ValueQuantity | parseMapList | pluckList "value" | roundList 2 | join "," }}
     {{if (get . "include_unit")}}
-        {{.entry.ValueQuantity | parseList | pluckList "unit" | join "," }}
+        {{.entry.ValueQuantity | parseMapList | pluckList "unit" | join "," }}
     {{end}}
 {{else if not (empty .entry.ValueDate) }}
     {{.entry.ValueDate | date "2006-01-02" }}
-{{else if not (empty (.entry.ValueConcept | parseList)) }}
+{{else if not (empty (.entry.ValueConcept | parseMapList)) }}
     {{.entry.ValueConcept}}
-{{else if not (empty (.entry.ComponentValueQuantity | parseList)) }}
-    {{$componentCodeText := $.entry.ComponentCode | parseList | pluckList "text" }}
-    {{$componentValueQuantity := $.entry.ComponentValueQuantity | parseList | pluckList "value" | roundList 2 }}
+{{else if not (empty (.entry.ComponentValueQuantity | parseMapList)) }}
+    {{$componentCodeText := .entry.ComponentCode | parseMapList | pluckList "text" }}
+    {{$componentValueQuantity := .entry.ComponentValueQuantity | parseMapList | pluckList "value" | roundList 2 }}
+    {{$componentValueQuantityUnit := .entry.ComponentValueQuantity | parseMapList | pluckList "unit" }}
+
 
     {{range $index, $text := $componentCodeText }}
         {{$text}} - {{index $componentValueQuantity $index}}
+        {{if (get $ "include_unit")}}
+            {{index $componentValueQuantityUnit $index}}
+        {{end}}
+        <br/>
     {{end}}
 
-    {{if (get . "include_unit")}}
-    {{.ComponentValueQuantity | parseList | pluckList "unit" | join "," }}
-    {{end}}
+
 {{end}}

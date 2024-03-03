@@ -55,7 +55,12 @@ func NewNarrative() (*Narrative, error) {
 			}
 			return template.HTML(*s)
 		},
-		"parseList": func(data datatypes.JSON) []map[string]interface{} {
+		"parseStringList": func(data datatypes.JSON) []string {
+			var parsed []string
+			_ = json.Unmarshal(data, &parsed)
+			return parsed
+		},
+		"parseMapList": func(data datatypes.JSON) []map[string]interface{} {
 			var parsed []map[string]interface{}
 			_ = json.Unmarshal(data, &parsed)
 			return parsed
