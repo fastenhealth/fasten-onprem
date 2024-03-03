@@ -9,4 +9,15 @@
     {{.entry.ValueDate | date "2006-01-02" }}
 {{else if not (empty (.entry.ValueConcept | parseList)) }}
     {{.entry.ValueConcept}}
+{{else if not (empty (.entry.ComponentValueQuantity | parseList)) }}
+    {{$componentCodeText := $.entry.ComponentCode | parseList | pluckList "text" }}
+    {{$componentValueQuantity := $.entry.ComponentValueQuantity | parseList | pluckList "value" | roundList 2 }}
+
+    {{range $index, $text := $componentCodeText }}
+        {{$text}} - {{index $componentValueQuantity $index}}
+    {{end}}
+
+    {{if (get . "include_unit")}}
+    {{.ComponentValueQuantity | parseList | pluckList "unit" | join "," }}
+    {{end}}
 {{end}}
