@@ -41,6 +41,10 @@ const TABLE_ALIAS = "fhir"
 // Can generate simple or complex queries, depending on the SearchParameter type:
 //
 // eg. Simple
+// SELECT fhir.*
+// FROM fhir_observation as fhir, json_each(fhir.code) as codeJson
+//
+// result = inteface{} ([]database.IFhirResource)
 //
 // eg. Complex
 // SELECT fhir.*
@@ -54,6 +58,8 @@ const TABLE_ALIAS = "fhir"
 // )
 // AND (user_id = "6efcd7c5-3f29-4f0d-926d-a66ff68bbfc2")
 // GROUP BY `fhir`.`id`
+//
+// results = []map[string]any{}
 func (gr *GormRepository) QueryResources(ctx context.Context, query models.QueryResource) (interface{}, error) {
 
 	sqlQuery, err := gr.sqlQueryResources(ctx, query)
@@ -62,7 +68,7 @@ func (gr *GormRepository) QueryResources(ctx context.Context, query models.Query
 	}
 
 	if query.Aggregations != nil && (query.Aggregations.GroupBy != nil || query.Aggregations.CountBy != nil) {
-		results := []map[string]interface{}{}
+		results := []map[string]any{}
 		clientResp := sqlQuery.Find(&results)
 		return results, clientResp.Error
 
