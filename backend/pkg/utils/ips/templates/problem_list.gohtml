@@ -20,8 +20,8 @@ Onset Date: Condition.onsetDateTime || Condition.onsetPeriod.start && “-“ &&
       {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
       {{range $index, $entry := .Condition }}
          <tr id="{{$entry.SourceResourceID}}">
-            <td>{{pluckList "text" ($entry.Code | parseList) | uniq | join "," }}</td> {{/* Medical Problems */}}
-            <td>{{pluckList "code" ($entry.ClinicalStatus | parseList) | uniq | join "," }}</td> {{/* Status */}}
+            <td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Medical Problems */}}
+            <td>{{pluckList "code" ($entry.ClinicalStatus | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
             <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
             <td>{{$entry.OnsetDate | date "2006-01-02"}}</td> {{/* Onset */}}
          </tr>

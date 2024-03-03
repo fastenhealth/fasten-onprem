@@ -27,10 +27,10 @@ Date: Immunization.occurrenceDateTime || Immunization.occurrenceString
       {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
       {{range $index, $entry := .Immunization }}
          <tr id="{{$entry.SourceResourceID}}">
-            <td>{{pluckList "text" ($entry.VaccineCode | parseList) | uniq | join "," }}</td> {{/* Immunization */}}
-            <td>{{pluckList "code" ($entry.Status | parseList) | uniq | join "," }}</td> {{/* Status */}}
+            <td>{{pluckList "text" ($entry.VaccineCode | parseMapList) | uniq | join "," }}</td> {{/* Immunization */}}
+            <td>{{pluckList "code" ($entry.Status | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
             <td th:insert="~{IpsUtilityFragments :: concatDoseNumber (list=*{getProtocolApplied()})}">Dose Number</td> {{/* Comments - TODO: use FHIRPath */}}
-            <td>{{pluckList "display" ($entry.Manufacturer | parseList) | uniq | join "," }}</td> {{/* Manufacturer */}}
+            <td>{{pluckList "display" ($entry.Manufacturer | parseMapList) | uniq | join "," }}</td> {{/* Manufacturer */}}
             <td>{{$entry.LotNumber}}</td> {{/* Lot Number */}}
             <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
             <td>{{$entry.Date | date "2006-01-02"}}</td> {{/* Performed Date */}}
