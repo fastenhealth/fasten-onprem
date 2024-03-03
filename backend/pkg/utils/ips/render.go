@@ -11,6 +11,7 @@ import (
 	"github.com/fastenhealth/gofhir-models/fhir401"
 	"gorm.io/datatypes"
 	"html/template"
+	"math"
 )
 
 //go:embed templates
@@ -65,6 +66,19 @@ func NewNarrative() (*Narrative, error) {
 				values = append(values, item[key])
 			}
 			return values
+		},
+		"roundList": func(precision uint, listVals []interface{}) []interface{} {
+			results := []interface{}{}
+			for ndx, _ := range listVals {
+				switch listVal := listVals[ndx].(type) {
+				case float64:
+					ratio := math.Pow(10, float64(precision))
+					results = append(results, math.Round(listVal*ratio)/ratio)
+				default:
+					results = append(results, listVal)
+				}
+			}
+			return results
 		},
 	}).Funcs(sprig.FuncMap()).ParseFS(ipsTemplates, "templates/*.gohtml", "templates/includes/*.gohtml")
 

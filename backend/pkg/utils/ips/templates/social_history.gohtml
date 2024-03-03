@@ -23,17 +23,7 @@ Date: Observation.effectiveDateTime || Observation.effectivePeriod.start
       {{range $index, $entry := .Observation }}
          <tr id="{{$entry.SourceResourceID}}">
             <td>{{pluckList "text" ($entry.Code | parseList) | uniq | join "," }}</td> {{/* Code */}}
-            <td>
-               {{if not (empty $entry.ValueString) }}
-                  {{$entry.ValueString}}
-               {{else if not (empty ($entry.ValueQuantity | parseList)) }}
-                  {{$entry.ValueQuantity}}
-               {{else if not (empty $entry.ValueDate) }}
-                  {{$entry.ValueDate | date "2006-01-02" }}
-               {{else if not (empty ($entry.ValueConcept | parseList)) }}
-                  {{$entry.ValueConcept}}
-               {{end}}
-            </td> {{/* Result */}}
+            <td>{{template "observation-value.gohtml" (dict "entry" $entry "include_unit" false)}}</td> {{/* Result */}}
             <td th:insert="~{IpsUtilityFragments :: renderValueUnit (value=*{getValue()})}">Unit</td>
             <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
             <td>{{$entry.Date | date "2006-01-02"}}</td> {{/* Date */}}
