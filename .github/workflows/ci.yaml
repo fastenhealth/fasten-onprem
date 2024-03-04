@@ -1,66 +1,22 @@
 name: CI
-# This workflow is triggered on pushes & pull requests
+# This workflow is triggered on pushes
 on:
-  pull_request:
-    branches:
-      - main
-      - sandbox
-      - beta
   push:
     branches: [ main, beta ]
     # Publish semver tags as releases.
   release:
     types: [published]
 jobs:
-  test-frontend:
-    name: Test Frontend
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: test
-        uses: actions/setup-node@v1
-        with:
-          node-version: 20.x
-      - name: Test Frontend
-        run: |
-          make test-frontend-coverage
-      - name: Upload coverage
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage
-          path: ${{ github.workspace }}/frontend/coverage/fastenhealth/lcov.info
-          retention-days: 1
-  test-backend:
-    name: Test Backend
-    runs-on: ubuntu-latest
-    container: ghcr.io/packagrio/packagr:latest-golang
-    env:
-      STATIC: true
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Test Backend
-        run: |
-          go install github.com/golang/mock/mockgen@v1.6.0
-          go generate ./...
-          make test-backend-coverage
-          CGO_ENABLED=0 go build -buildvcs=false ./backend/cmd/fasten/
-      - name: Upload coverage
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage
-          path: ${{ github.workspace }}/backend-coverage.txt
-          retention-days: 1
+  test:
+    uses: ./.github/workflows/development.yaml
   test-coverage:
     name: Test Coverage Upload
     needs:
-      - test-backend
-      - test-frontend
+      - test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Download coverage reports
         uses: actions/download-artifact@v3
         with:
@@ -72,12 +28,11 @@ jobs:
           flags: unittests
           fail_ci_if_error: true
           verbose: true
-
   storybook:
     name: Storybook Upload
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - run: cd frontend && yarn install

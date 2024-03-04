@@ -239,9 +239,21 @@ curl -H "Authorization: Bearer ${JWT_TOKEN_HERE}" http://localhost:5984/_session
 ```
 
 
-# Run Component Storybook
+# How do I work with Storybook?
+
+[Storybook](https://storybook.js.org) allows development and testing of frontend components in isolation.
+When running the Storybook server, each defined story can be viewed and interacted with on it's own allowing for defining and testing of various states and conditions.
+
+In order to run the Storybook server, run the following command and open the url provided:
+
 ```bash
-ng run fastenhealth:storybook
+make serve-storybook
+```
+
+If you only want to verify that all stories build properly (a check that is run on commits and PRs), you can run the following command:
+
+```bash
+make build-storybook
 ```
 
 
