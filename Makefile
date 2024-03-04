@@ -9,11 +9,11 @@ test: test-backend test-frontend
 
 .PHONY: build-storybook
 build-storybook: dep-frontend
-	cd frontend && ng run fastenhealth:build-storybook
+	cd frontend && npx ng run fastenhealth:build-storybook
 
 .PHONY: serve-storybook
 serve-storybook: dep-frontend
-	cd frontend && ng run fastenhealth:storybook
+	cd frontend && npx ng run fastenhealth:storybook
 
 .PHONY: serve-frontend
 serve-frontend: dep-frontend

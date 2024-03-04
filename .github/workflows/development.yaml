@@ -1,0 +1,68 @@
+name: Development
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+  workflow_call:
+
+jobs:
+  test-frontend:
+    name: Test Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - name: Test Frontend
+        run: |
+          make test-frontend-coverage
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: ${{ github.workspace }}/frontend/coverage/fastenhealth/lcov.info
+          retention-days: 1
+  test-backend:
+    name: Test Backend
+    runs-on: ubuntu-latest
+    container: ghcr.io/packagrio/packagr:latest-golang
+    env:
+      STATIC: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup
+        run: |
+          go install github.com/golang/mock/mockgen@v1.6.0
+          go generate ./...
+      - name: Test Backend
+        run: |
+          make test-backend-coverage
+          CGO_ENABLED=0 go build -buildvcs=false ./backend/cmd/fasten/
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: ${{ github.workspace }}/backend-coverage.txt
+          retention-days: 1
+  compile-storybook:
+    name: Compile Storybook
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - run: |
+          make build-storybook
+
+  
