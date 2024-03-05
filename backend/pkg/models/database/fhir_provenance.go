@@ -54,8 +54,8 @@ type FhirProvenance struct {
 	// https://hl7.org/fhir/r4/search.html#reference
 	Target datatypes.JSON `gorm:"column:target;type:text;serializer:json" json:"target,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// When the activity occurred
 	// https://hl7.org/fhir/r4/search.html#date
 	When *time.Time `gorm:"column:when;type:datetime" json:"when,omitempty"`
@@ -82,7 +82,7 @@ func (s *FhirProvenance) GetSearchParameters() map[string]string {
 		"source_resource_type": "keyword",
 		"source_uri":           "keyword",
 		"target":               "reference",
-		"text":                 "keyword",
+		"text":                 "string",
 		"when":                 "date",
 	}
 	return searchParameters
@@ -206,9 +206,9 @@ func (s *FhirProvenance) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 		s.Target = []byte(targetResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	// extracting When
 	whenResult, err := vm.RunString("extractDateSearchParameters(fhirResource, '(Provenance.occurredDateTime)')")

@@ -125,8 +125,8 @@ type FhirImmunization struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	TargetDisease datatypes.JSON `gorm:"column:targetDisease;type:text;serializer:json" json:"targetDisease,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// Vaccine Product Administered
 	// https://hl7.org/fhir/r4/search.html#token
 	VaccineCode datatypes.JSON `gorm:"column:vaccineCode;type:text;serializer:json" json:"vaccineCode,omitempty"`
@@ -159,7 +159,7 @@ func (s *FhirImmunization) GetSearchParameters() map[string]string {
 		"status":               "token",
 		"statusReason":         "token",
 		"targetDisease":        "token",
-		"text":                 "keyword",
+		"text":                 "string",
 		"vaccineCode":          "token",
 	}
 	return searchParameters
@@ -321,9 +321,9 @@ func (s *FhirImmunization) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.TargetDisease = []byte(targetDiseaseResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	// extracting VaccineCode
 	vaccineCodeResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Immunization.vaccineCode')")
