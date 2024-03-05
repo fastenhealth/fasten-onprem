@@ -75,8 +75,8 @@ type FhirClaim struct {
 	// https://hl7.org/fhir/r4/search.html#reference
 	SubdetailUdi datatypes.JSON `gorm:"column:subdetailUdi;type:text;serializer:json" json:"subdetailUdi,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// The kind of financial resource
 	// https://hl7.org/fhir/r4/search.html#token
 	Use datatypes.JSON `gorm:"column:use;type:text;serializer:json" json:"use,omitempty"`
@@ -110,7 +110,7 @@ func (s *FhirClaim) GetSearchParameters() map[string]string {
 		"source_uri":           "keyword",
 		"status":               "token",
 		"subdetailUdi":         "reference",
-		"text":                 "keyword",
+		"text":                 "string",
 		"use":                  "token",
 	}
 	return searchParameters
@@ -269,9 +269,9 @@ func (s *FhirClaim) PopulateAndExtractSearchParameters(resourceRaw json.RawMessa
 		s.SubdetailUdi = []byte(subdetailUdiResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	// extracting Use
 	useResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Claim.use')")
