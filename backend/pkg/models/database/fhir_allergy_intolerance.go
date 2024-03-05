@@ -139,8 +139,8 @@ type FhirAllergyIntolerance struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	Severity datatypes.JSON `gorm:"column:severity;type:text;serializer:json" json:"severity,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -184,7 +184,7 @@ func (s *FhirAllergyIntolerance) GetSearchParameters() map[string]string {
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",
 		"source_uri":           "keyword",
-		"text":                 "keyword",
+		"text":                 "string",
 		"type":                 "token",
 		"verificationStatus":   "token",
 	}
@@ -350,9 +350,9 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 		s.Severity = []byte(severityResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	// extracting Type
 	typeResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type')")

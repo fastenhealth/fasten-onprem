@@ -166,7 +166,7 @@ func main() {
 			FHIRPathExpression: "Resource.meta.tag",
 		}
 		fieldMap["Text"] = DBField{
-			FieldType:          "keyword",
+			FieldType:          "string",
 			Description:        "Text search against the narrative",
 			FHIRPathExpression: "text",
 		}

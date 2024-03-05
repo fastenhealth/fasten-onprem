@@ -30,8 +30,8 @@ type FhirBinary struct {
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 }
 
 func (s *FhirBinary) GetSearchParameters() map[string]string {
@@ -47,7 +47,7 @@ func (s *FhirBinary) GetSearchParameters() map[string]string {
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",
 		"source_uri":           "keyword",
-		"text":                 "keyword",
+		"text":                 "string",
 	}
 	return searchParameters
 }
@@ -122,9 +122,9 @@ func (s *FhirBinary) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 		s.MetaVersionId = metaVersionIdResult.String()
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	return nil
 }

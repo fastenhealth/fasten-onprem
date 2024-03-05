@@ -51,8 +51,8 @@ type FhirSchedule struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	Specialty datatypes.JSON `gorm:"column:specialty;type:text;serializer:json" json:"specialty,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 }
 
 func (s *FhirSchedule) GetSearchParameters() map[string]string {
@@ -75,7 +75,7 @@ func (s *FhirSchedule) GetSearchParameters() map[string]string {
 		"source_resource_type": "keyword",
 		"source_uri":           "keyword",
 		"specialty":            "token",
-		"text":                 "keyword",
+		"text":                 "string",
 	}
 	return searchParameters
 }
@@ -193,9 +193,9 @@ func (s *FhirSchedule) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		s.Specialty = []byte(specialtyResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	return nil
 }
