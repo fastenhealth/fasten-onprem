@@ -1,9 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 import {GlossaryLookupComponent} from "./glossary-lookup.component";
-import {applicationConfig, moduleMetadata} from "@storybook/angular";
-import { DecoratorFunction, StoryContext } from '@storybook/types';
+import {componentWrapperDecorator, moduleMetadata} from "@storybook/angular";
+import { DecoratorFunction } from '@storybook/types';
 import {HttpClient, HttpClientModule} from "@angular/common/http";
-import {BrowserModule} from "@angular/platform-browser";
 import {Observable, of} from "rxjs";
 import {HTTP_CLIENT_TOKEN} from "../../dependency-injection";
 
@@ -15,7 +14,6 @@ import {HTTP_CLIENT_TOKEN} from "../../dependency-injection";
 
 const withHttpClientProvider: DecoratorFunction<any> = (storyFunc, context) => {
   const { httpClientResp } = context.parameters;
-  let { code, codeSystem } = context.args;
   // uses `moduleMetadata` decorator to cleanly add locale provider into module metadata
 
   // It is also possible to do it directly in story with
@@ -54,12 +52,8 @@ const meta: Meta<GlossaryLookupComponent> = {
   decorators: [
     withHttpClientProvider,
     moduleMetadata({
-      imports: [BrowserModule, HttpClientModule],
+      imports: [HttpClientModule],
     }),
-    // applicationConfig({
-    //   // imports: [BrowserModule, HttpClientModule],
-    //   providers: [{ provide: FastenApiService, useValue: MockFastenApiService }],
-    // }),
   ],
   tags: ['autodocs'],
   render: (args: GlossaryLookupComponent) => ({
@@ -141,6 +135,13 @@ export const Html: Story = {
         "</ol>",
     }
   }
+};
+
+// Wrap in small width div to verify that text doesn't overflow horizontally. Border included to make it easier to verify overflow.
+export const HorizontalOverflow: Story = {
+  args: Html.args,
+  parameters: Html.parameters,
+  decorators: [componentWrapperDecorator((story) => `<div style="width: 300px; border-style: solid">${story}</div>`)]
 };
 
 // More on writing stories with args: https://storybook.js.org/docs/angular/writing-stories/args
