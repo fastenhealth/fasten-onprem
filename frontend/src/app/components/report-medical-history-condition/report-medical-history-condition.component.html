@@ -1,6 +1,6 @@
 <div class="card card-dashboard-seven mb-3">
   <div class="card-header tx-medium">
-    <div class="row cursor-pointer" routerLink="/explore/{{conditionDisplayModel?.source_id}}/resource/{{conditionDisplayModel?.source_resource_id}}" role="link">
+    <div class="row cursor-pointer" [routerLink]="['/explore', conditionDisplayModel?.source_id, 'resource', conditionDisplayModel?.source_resource_id]" role="link">
       <!-- Condition Header -->
       <div class="col-6">
         {{conditionDisplayModel?.sort_title ? conditionDisplayModel?.sort_title : (conditionGroup | fhirPath: "Condition.code.text.first()":"Condition.code.coding.display.first()")}}
@@ -66,10 +66,10 @@
         <div class="row">
 
           <ng-container *ngFor="let encounter of encounters">
-            <div routerLink="/explore/{{encounter?.source_id}}/resource/{{encounter?.source_resource_id}}" class="col-6 mt-3 mb-2 tx-indigo" role="link">
+            <div [routerLink]="['/explore', encounter?.source_id, 'resource', encounter?.source_resource_id]" class="col-6 mt-3 mb-2 tx-indigo" role="link">
               <strong>{{encounter.period_start | date}}</strong>
             </div>
-            <div routerLink="/explore/{{encounter?.source_id}}/resource/{{encounter?.source_resource_id}}" class="col-6 mt-3 mb-2 tx-indigo" role="link">
+            <div [routerLink]="['/explore', encounter?.source_id, 'resource', encounter?.source_resource_id]" class="col-6 mt-3 mb-2 tx-indigo" role="link">
               <small>{{encounter.location_display }}</small>
             </div>
 
@@ -137,7 +137,7 @@
             <div *ngIf="encounter?.related_resources?.Device as devices" class="col-12 mt-2 mb-2">
               <strong>Device:</strong>
               <ul>
-                <li routerLink="/explore/{{device?.source_id}}/resource/{{device?.source_resource_id}}" *ngFor="let device of devices" role="link">
+                <li [routerLink]="['/explore', device?.source_id, 'resource', device?.source_resource_id]" *ngFor="let device of devices" role="link">
                   {{device.model}}
                 </li>
               </ul>

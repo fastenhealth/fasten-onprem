@@ -13,7 +13,7 @@
 <div class="timeline-body card">
   <div class="timeline-header">
     <span class="username">
-      <a style="color:black;font-size: 1.3125rem;font-weight: 500;" routerLink="/explore/{{displayModel?.source_id}}/resource/{{displayModel?.source_resource_id}}">
+      <a style="color:black;font-size: 1.3125rem;font-weight: 500;" [routerLink]="['/explore', displayModel?.source_id, 'resource', displayModel?.source_resource_id]">
         {{displayModel?.sort_title}}
       </a>
       <small></small>
@@ -96,7 +96,7 @@
     <div *ngIf="displayModel?.related_resources?.Device as devices">
       <strong>Device:</strong>
       <ul>
-        <li routerLink="/explore/{{device?.source_id}}/resource/{{device?.source_resource_id}}" *ngFor="let device of devices" role="link">
+        <li [routerLink]="['/explore', device?.source_id, 'resource', device?.source_resource_id]" *ngFor="let device of devices" role="link">
           {{device.model}}
         </li>
       </ul>
@@ -110,7 +110,7 @@
       <div ngbDropdownMenu aria-labelledby="dropdownReports">
         <a class="dropdown-item"
            *ngFor="let documentReference of displayModel?.related_resources['DocumentReference']" ngbDropdownItem
-           routerLink="/explore/{{documentReference?.source_id}}/resource/{{documentReference?.source_resource_id}}"
+           [routerLink]="['/explore', documentReference?.source_id, 'resource', documentReference?.source_resource_id]"
         >{{documentReference?.sort_title}}</a>
         <a class="dropdown-item"
            *ngFor="let diagnosticReport of displayModel?.related_resources['DiagnosticReport']" ngbDropdownItem
@@ -127,7 +127,7 @@
         <ng-container *ngFor="let resourceEntry of displayModel?.related_resources | keyvalue">
           <a class="dropdown-item"
              *ngFor="let resourceListItem of resourceEntry.value" ngbDropdownItem
-             routerLink="/explore/{{resourceListItem?.source_id}}/resource/{{resourceListItem?.source_resource_id}}"
+             [routerLink]="['/explore', resourceListItem?.source_id, 'resource', resourceListItem?.source_resource_id]"
           >{{resourceListItem.source_resource_type}} {{resourceListItem.sort_title ? '- '+resourceListItem.sort_title : '' }}</a>
         </ng-container>
 
