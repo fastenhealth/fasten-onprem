@@ -1,19 +1,17 @@
-import type { Meta, StoryObj } from '@storybook/angular';
+import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import {TableComponent} from "./table.component";
 import {TableRowItem} from "./table-row-item";
 import {FastenDisplayModel} from "../../../../../lib/models/fasten/fasten-display-model";
+import { RouterTestingModule } from '@angular/router/testing';
 
 // More on how to set up stories at: https://storybook.js.org/docs/angular/writing-stories/introduction
 const meta: Meta<TableComponent> = {
   title: 'Fhir Card/Common/Table',
   component: TableComponent,
   decorators: [
-    // moduleMetadata({
-    //   imports: [AppModule]
-    // })
-    // applicationConfig({
-    //   providers: [importProvidersFrom(AppModule)],
-    // }),
+    moduleMetadata({
+      imports: [RouterTestingModule]
+    })
   ],
   tags: ['autodocs'],
   render: (args: TableComponent) => ({
@@ -73,7 +71,7 @@ export const Ref: Story = {
         label: 'hello',
         data_type: 'reference',
         data: {
-          reference: 'Patient/123',
+          reference: 'Patient/123=',
           display: 'John Doe'
         }
       },
@@ -82,8 +80,8 @@ export const Ref: Story = {
         label: 'hello',
         data_type: 'reference',
         data: {
-          reference: 'Patient/123',
-          display: 'John Doe'
+          reference: 'aHR0cHM6Ly93d3cubWVyY3kubmV0L3NpdGVzL2RlZmF1bHQvZmlsZXMvZG9jdG9yX2ltYWdlcy9kZXNrdG9wLzE2NTk4ODYwNTktbS5qcGc=',
+          display: 'binary'
         }
       }
     ] as TableRowItem[]
