@@ -79,7 +79,7 @@ export class FhirDatatableComponent implements OnInit, OnChanges {
       }
 
       componentRef.instance.selectionChanged.subscribe((selected: FastenDisplayModel) => {
-        this.router.navigateByUrl(`/explore/${selected?.source_id}/resource/${selected?.source_resource_id}`);
+        this.router.navigate(['/explore', selected?.source_id, 'resource', selected?.source_resource_id]);
       })
       this.knownResourceType = (componentType != DatatableFallbackComponent)
     }
