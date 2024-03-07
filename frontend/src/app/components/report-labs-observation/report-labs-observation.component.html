@@ -3,7 +3,7 @@
     <div class="row" >
       <!-- Condition Header -->
       <div class="col-6">
-        <span routerLink="/explore/{{firstObservation?.source_id}}/resource/{{firstObservation?.source_resource_id}}">{{observationTitle}}</span>
+        <span [routerLink]="['/explore', firstObservation?.source_id, 'resource', firstObservation?.source_resource_id]">{{observationTitle}}</span>
       </div>
       <div class="col-6">
         {{firstObservation | fhirPath: "Observation.effectiveDateTime": "Observation.issued" |  date}}
@@ -36,7 +36,7 @@
             <div #collapse="ngbCollapse" [ngbCollapse]="true">
 
               <ul>
-                <li class="cursor-pointer tx-indigo" *ngFor="let observation of observations" routerLink="/explore/{{observation?.source_id}}/resource/{{observation?.source_resource_id}}">Observation: {{observation | fhirPath: "Observation.effectiveDateTime": "Observation.issued" | date}}</li>
+                <li class="cursor-pointer tx-indigo" *ngFor="let observation of observations" [routerLink]="['/explore', observation?.source_id, 'resource', observation?.source_resource_id]">Observation: {{observation | fhirPath: "Observation.effectiveDateTime": "Observation.issued" | date}}</li>
               </ul>
             </div>
 

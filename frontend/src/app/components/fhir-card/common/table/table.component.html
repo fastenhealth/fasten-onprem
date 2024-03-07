@@ -23,7 +23,7 @@
           <fhir-coding *ngFor="let coding of rowItem.data" [coding]="coding"></fhir-coding>
         </ng-template>
         <ng-template #dataTypeReference>
-          <a routerLink="/explore/{{displayModel.source_id}}/resource/{{rowItem.data.reference}}">{{rowItem.data.display}}</a>
+          <a [routerLink]="['/explore', displayModel.source_id, 'resource', rowItem.data.reference]">{{rowItem.data.display}}</a>
         </ng-template>
         <ng-template #dataTypeString>{{rowItem.data}}</ng-template>
       </td>
