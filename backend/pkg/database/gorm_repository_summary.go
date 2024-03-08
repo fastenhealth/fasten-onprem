@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/TwiN/deepmerge"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
@@ -15,13 +16,33 @@ import (
 	"time"
 )
 
-func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Context) (interface{}, interface{}, error) {
+// returns IPSBundle and IPSComposition
+func (gr *GormRepository) GetInternationalPatientSummaryExport(ctx context.Context) (*ips.InternationalPatientSummaryExportData, error) {
+	exportData := &ips.InternationalPatientSummaryExportData{}
+
 	summaryTime := time.Now()
 	timestamp := summaryTime.Format(time.RFC3339)
 
+	exportData.GenerationDate = summaryTime
+
+	//get a list of all Patients associated with this user (we'll be creating a pseudo Patient for referencing in this Bundle
+	patient, err := gr.GetPatientMerged(ctx)
+	if err != nil {
+		//TODO: determine if we should error out here. If only manually entered records were entered, we wont have a Patient record,
+		return exportData, err
+	}
+	exportData.Patient = patient
+
+	//get a list of all Sources associated with this user
+	sources, err := gr.GetSources(ctx)
+	if err != nil {
+		return exportData, err
+	}
+	exportData.Sources = sources
+
 	narrativeEngine, err := ips.NewNarrative()
 	if err != nil {
-		return nil, nil, fmt.Errorf("error creating narrative engine: %w", err)
+		return exportData, fmt.Errorf("error creating narrative engine: %w", err)
 	}
 
 	//Algorithm to create the IPS bundle
@@ -42,7 +63,7 @@ func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Conte
 	//Step 1. Generate the IPS Section Lists
 	summarySectionQueryResults, err := gr.getInternationalPatientSummarySectionResources(ctx)
 	if err != nil {
-		return nil, nil, err
+		return exportData, err
 	}
 
 	//Step 2. Create the Composition Section
@@ -50,7 +71,7 @@ func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Conte
 	for sectionType, sectionQueryResultsList := range summarySectionQueryResults {
 		compositionSection, err := generateIPSCompositionSection(narrativeEngine, sectionType, sectionQueryResultsList)
 		if err != nil {
-			return nil, nil, err
+			return exportData, err
 		}
 		compositionSections = append(compositionSections, *compositionSection)
 	}
@@ -60,6 +81,7 @@ func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Conte
 	//TODO: Step 4. Create a Fasten Health Organization resource.
 
 	compositionUUID := uuid.New().String()
+	patientReference := fmt.Sprintf("%s/%s", exportData.Patient.GetSourceResourceType(), exportData.Patient.GetSourceResourceID())
 
 	//Step 5. Create the IPS Composition
 	ipsComposition := &fhir401.Composition{
@@ -83,7 +105,7 @@ func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Conte
 			},
 		},
 		Subject: &fhir401.Reference{
-			Reference: stringPtr("Patient/123"), //TODO
+			Reference: stringPtr(patientReference), //TODO
 		},
 		Date: timestamp,
 		Author: []fhir401.Reference{
@@ -97,7 +119,7 @@ func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Conte
 				Mode: fhir401.CompositionAttestationModePersonal,
 				Time: &timestamp,
 				Party: &fhir401.Reference{
-					Reference: stringPtr("Patient/123"),
+					Reference: stringPtr(patientReference),
 				},
 			},
 		},
@@ -138,7 +160,7 @@ func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Conte
 	// Add the Composition to the bundle
 	ipsCompositionJson, err := json.Marshal(ipsComposition)
 	if err != nil {
-		return nil, nil, err
+		return exportData, err
 	}
 	ipsBundle.Entry = append(ipsBundle.Entry, fhir401.BundleEntry{
 		Resource: json.RawMessage(ipsCompositionJson),
@@ -156,7 +178,10 @@ func (gr *GormRepository) GetInternationalPatientSummaryBundle(ctx context.Conte
 	//	}
 	//}
 
-	return ipsBundle, ipsComposition, nil
+	exportData.Bundle = ipsBundle
+	exportData.Composition = ipsComposition
+
+	return exportData, nil
 }
 
 // GetInternationalPatientSummary will generate an IPS bundle, which can then be used to generate a IPS QR code, PDF or JSON bundle
@@ -697,11 +722,64 @@ func flattenQueryResultsToResourcesList(queryResultsList []any) []database.IFhir
 	return resources
 }
 
-func generateIPSSectionNarrative(sectionType pkg.IPSSections, resources []models.ResourceBase) string {
-	return ""
+// When given a list of Patient database records, we need to merge them together to a Patient record that's usable by the
+func (gr *GormRepository) GetPatientMerged(ctx context.Context) (*database.FhirPatient, error) {
+	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return nil, currentUserErr
+	}
+
+	tableName, err := database.GetTableNameByResourceType("Patient")
+	if err != nil {
+		return nil, err
+	}
+
+	var wrappedFhirPatients []database.FhirPatient
+	results := gr.GormClient.WithContext(ctx).
+		//Group("source_id"). //broken in Postgres.
+		Where(models.OriginBase{
+			UserID:             currentUser.ID,
+			SourceResourceType: "Patient",
+		}).
+		Order("sort_date DESC").
+		Table(tableName).
+		Find(&wrappedFhirPatients)
+
+	if results.Error != nil {
+		return nil, results.Error
+	}
+
+	return mergePatients(wrappedFhirPatients)
 }
 
 // helper utility
 func stringPtr(s string) *string {
 	return &s
+}
+
+func mergePatients(patients []database.FhirPatient) (*database.FhirPatient, error) {
+	if len(patients) == 0 {
+		log.Printf("no patients to merge, ignoring")
+		return nil, fmt.Errorf("no patients to merge, ignoring")
+	}
+	mergedPatientResource := `{}`
+	for ndx, _ := range patients {
+		patient := patients[ndx]
+		mergedPatientResourceBytes, err := deepmerge.JSON([]byte(mergedPatientResource), []byte(patient.ResourceRaw))
+		if err != nil {
+			return nil, err
+		}
+		mergedPatientResource = string(mergedPatientResourceBytes)
+	}
+
+	mergedPatient := &database.FhirPatient{
+		ResourceBase: models.ResourceBase{
+			OriginBase: patients[len(patients)-1].OriginBase,
+		},
+	}
+	err := mergedPatient.PopulateAndExtractSearchParameters([]byte(mergedPatientResource))
+	if err != nil {
+		return nil, fmt.Errorf("error occurred while extracting fields from merged Patient")
+	}
+	return mergedPatient, nil
 }

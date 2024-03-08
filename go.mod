@@ -1,6 +1,8 @@
 module github.com/fastenhealth/fasten-onprem
 
-go 1.18
+go 1.21
+
+toolchain go1.21.1
 
 //replace github.com/fastenhealth/fasten-sources => ../fasten-sources
 
@@ -12,6 +14,7 @@ replace github.com/mattn/go-sqlite3 v1.14.17 => github.com/jgiannuzzi/go-sqlite3
 
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
+	github.com/TwiN/deepmerge v0.2.1
 	github.com/analogj/go-util v0.0.0-20210417161720-39b497cca03b
 	github.com/dave/jennifer v1.6.1
 	github.com/dominikbraun/graph v0.15.0

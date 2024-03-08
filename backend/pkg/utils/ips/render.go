@@ -39,7 +39,7 @@ type NarrativeTemplateData struct {
 	CarePlan            []database.FhirCarePlan
 	Observation         []database.FhirObservation
 	Encounter           []database.FhirEncounter
-	Patient             []database.FhirPatient
+	Patient             database.FhirPatient
 }
 
 func NewNarrative() (*Narrative, error) {
@@ -49,11 +49,14 @@ func NewNarrative() (*Narrative, error) {
 	// https://stackoverflow.com/questions/50283370/include-template-from-another-directory
 	// https://www.digitalocean.com/community/tutorials/how-to-use-templates-in-go
 	tmpl, err := template.New("ips").Funcs(template.FuncMap{
-		"safeHTML": func(s *string) template.HTML {
+		"safeHTMLPtr": func(s *string) template.HTML {
 			if s == nil {
 				return template.HTML("")
 			}
 			return template.HTML(*s)
+		},
+		"safeHTML": func(s string) template.HTML {
+			return template.HTML(s)
 		},
 		"parseStringList": func(data datatypes.JSON) []string {
 			var parsed []string
@@ -124,8 +127,9 @@ func (r *Narrative) RenderSection(sectionType pkg.IPSSections, resources []datab
 		MedicationRequest:   []database.FhirMedicationRequest{},
 		MedicationStatement: []database.FhirMedicationStatement{},
 		Observation:         []database.FhirObservation{},
-		Patient:             []database.FhirPatient{},
 		Procedure:           []database.FhirProcedure{},
+
+		Patient: database.FhirPatient{},
 	}
 
 	//loop though the resources, cast them to the correct type, and then store them in the correct array
@@ -156,8 +160,6 @@ func (r *Narrative) RenderSection(sectionType pkg.IPSSections, resources []datab
 			templateData.MedicationStatement = append(templateData.MedicationStatement, *resource.(*database.FhirMedicationStatement))
 		case "Observation":
 			templateData.Observation = append(templateData.Observation, *resource.(*database.FhirObservation))
-		case "Patient":
-			templateData.Patient = append(templateData.Patient, *resource.(*database.FhirPatient))
 		case "Procedure":
 			templateData.Procedure = append(templateData.Procedure, *resource.(*database.FhirProcedure))
 		}
