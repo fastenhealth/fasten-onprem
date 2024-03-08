@@ -11,7 +11,7 @@ all of the section narratives into a single narrative.
             {{if eq $section.Text nil }}
                 {{$section.EmptyReason.Text}}
             {{else }}
-                 {{$section.Text.Div | safeHTML}}
+                 {{$section.Text.Div | safeHTMLPtr}}
             {{end}}
          </div>
       </section>
