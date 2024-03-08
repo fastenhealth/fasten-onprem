@@ -5,7 +5,6 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips"
-	"github.com/fastenhealth/gofhir-models/fhir401"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -28,7 +27,7 @@ func GetIPSSummary(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
-	ipsBundle, ipsComposititon, err := databaseRepo.GetInternationalPatientSummaryBundle(c)
+	ipsExport, err := databaseRepo.GetInternationalPatientSummaryExport(c)
 	if err != nil {
 		logger.Errorln("An error occurred while retrieving IPS summary", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
@@ -36,7 +35,7 @@ func GetIPSSummary(c *gin.Context) {
 	}
 
 	if c.Query("format") == "" {
-		c.JSON(http.StatusOK, gin.H{"success": true, "data": ipsBundle})
+		c.JSON(http.StatusOK, gin.H{"success": true, "data": ipsExport.Bundle})
 		return
 	}
 
@@ -47,13 +46,13 @@ func GetIPSSummary(c *gin.Context) {
 		return
 	}
 
-	composititon := ipsComposititon.(*fhir401.Composition)
+	composititon := ipsExport.Composition
 
 	if c.Query("format") == "html" {
 
 		logger.Debugln("Rendering HTML")
 		//create string writer
-		content, err := narrative.RenderTemplate("index.gohtml", ips.NarrativeTemplateData{Composition: composititon})
+		content, err := narrative.RenderTemplate("index.gohtml", ips.NarrativeTemplateData{Composition: composititon, Patient: *ipsExport.Patient})
 		if err != nil {
 			logger.Errorln("An error occurred while executing template", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"success": false})

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips"
 	sourcePkg "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/google/uuid"
 )
@@ -21,7 +22,7 @@ type DatabaseRepository interface {
 
 	//get a count of every resource type
 	GetSummary(ctx context.Context) (*models.Summary, error)
-	GetInternationalPatientSummaryBundle(ctx context.Context) (interface{}, interface{}, error)
+	GetInternationalPatientSummaryExport(ctx context.Context) (*ips.InternationalPatientSummaryExportData, error)
 
 	GetResourceByResourceTypeAndId(context.Context, string, string) (*models.ResourceBase, error)
 	GetResourceBySourceId(context.Context, string, string) (*models.ResourceBase, error)
