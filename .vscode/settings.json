@@ -1,0 +1,6 @@
+{
+  "karmaTestExplorer.karmaConfFilePath": "frontend/karma.conf.js",
+  "karmaTestExplorer.projectWorkspaces": [
+    "frontend"
+  ]
+}
