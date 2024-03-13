@@ -248,8 +248,8 @@ describe('DashboardWidgetComponent', () => {
       });
 
     })
-    describe('Vitals - ListWidget', () => {})
-    describe('Resource Aggregation - DonutWidget', () => {})
+    // describe('Vitals - ListWidget', () => {})
+    // describe('Resource Aggregation - DonutWidget', () => {})
 
   })
 
