@@ -1,0 +1,9 @@
+<!-- surrounding div needed so chart can resize when window size changes -->
+<div class="observation-bar-chart-container">
+  <canvas baseChart
+          [height]="chartHeight"
+          [type]="'bar'"
+          [datasets]="barChartData"
+          [labels]="barChartLabels"
+          [options]="barChartOptions"></canvas>
+</div>
