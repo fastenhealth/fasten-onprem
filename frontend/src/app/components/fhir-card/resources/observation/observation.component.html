@@ -14,13 +14,7 @@
     <p class="az-content-text mg-b-20">Observations are a central element in healthcare, used to support diagnosis, monitor progress, determine baselines and patterns and even capture demographic characteristics.</p>
     <fhir-ui-table [displayModel]="displayModel" [tableData]="tableData"></fhir-ui-table>
 
-    <canvas baseChart
-            [height]="chartHeight"
-            [type]="'bar'"
-            [datasets]="barChartData"
-            [labels]="barChartLabels"
-            [options]="barChartOptions"
-    ></canvas>
+    <observation-bar-chart [observations]="[displayModel]"></observation-bar-chart>
   </div>
   <div *ngIf="showDetails" class="card-footer">
     <a class="float-right" [routerLink]="['/explore', displayModel?.source_id, 'resource', displayModel?.source_resource_id]">details</a>

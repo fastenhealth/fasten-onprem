@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ReportLabsObservationComponent } from './report-labs-observation.component';
-import {PipesModule} from '../../pipes/pipes.module';
-import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
+import { PipesModule } from '../../pipes/pipes.module';
+import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
 
 describe('ReportLabsObservationComponent', () => {
   let component: ReportLabsObservationComponent;
@@ -10,8 +9,8 @@ describe('ReportLabsObservationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PipesModule, NgbCollapseModule],
-      declarations: [ ReportLabsObservationComponent ]
+      imports: [PipesModule],
+      declarations: [ ReportLabsObservationComponent, NgbCollapse ],
     })
     .compileComponents();
 
