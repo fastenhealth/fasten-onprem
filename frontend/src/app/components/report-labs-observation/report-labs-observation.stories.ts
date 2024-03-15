@@ -14,6 +14,7 @@ import { Observable, of } from 'rxjs';
 
 import R4Example1Json from "../../../lib/fixtures/r4/resources/observation/example1.json";
 import { Html as GlossaryLookupHtml } from '../glossary-lookup/glossary-lookup.stories';
+import { ObservationBarChartComponent } from '../fhir-card/common/observation-bar-chart/observation-bar-chart.component';
 
 
 const withHttpClientProvider: DecoratorFunction<any> = (storyFunc, context) => {
@@ -39,8 +40,8 @@ const meta: Meta<ReportLabsObservationComponent> = {
   decorators: [
     withHttpClientProvider,
     moduleMetadata({
-      imports: [PipesModule, GlossaryLookupComponent, NgChartsModule, RouterTestingModule, HttpClientModule],
-      declarations: [NgbCollapse],
+      imports: [PipesModule, GlossaryLookupComponent, NgChartsModule, RouterTestingModule, HttpClientModule, ObservationBarChartComponent],
+      declarations: [ NgbCollapse ],
       providers: [],
     })
   ],

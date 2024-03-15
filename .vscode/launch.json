@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Go Tests",
+      "type": "go",
+      "request": "launch",
+      "mode": "test",
+      "program": "${workspaceFolder}/backend",
+      "args": [
+        "-test.run"
+      ]
+    },
+    {
+      "type": "chrome",
+      "request": "attach",
+      "name": "Attach Karma Chrome",
+      "address": "localhost",
+      "port": 9333,
+      "pathMapping": {
+        "/": "${workspaceRoot}/frontend",
+        "/base/": "${workspaceRoot}/frontend"
+      }
+    }
+  ]
+}

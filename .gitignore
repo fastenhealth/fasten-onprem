@@ -36,6 +36,13 @@ cmake-build-release/
 # IntelliJ
 out/
 
+# VS Code files for those working on multiple tools
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 
@@ -70,3 +77,4 @@ fasten.db-shm
 fasten.db-wal
 
 backend/resources/related_versions.json
+frontend/documentation.json

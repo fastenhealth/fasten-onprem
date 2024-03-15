@@ -36,12 +36,13 @@
             <div #collapse="ngbCollapse" [ngbCollapse]="true">
 
               <ul>
-                <li class="cursor-pointer tx-indigo" *ngFor="let observation of observations" [routerLink]="['/explore', observation?.source_id, 'resource', observation?.source_resource_id]">Observation: {{observation | fhirPath: "Observation.effectiveDateTime": "Observation.issued" | date}}</li>
+                <li class="cursor-pointer tx-indigo" *ngFor="let observation of observations">
+                  <a [routerLink]="['/explore', observation?.source_id, 'resource', observation?.source_resource_id]">
+                    Observation: {{observation | fhirPath: "Observation.effectiveDateTime": "Observation.issued" | date}}
+                  </a>
+                </li>
               </ul>
             </div>
-
-
-
           </div>
         </div>
 
@@ -53,15 +54,12 @@
           </div>
 
           <div class="col-12">
-            <canvas baseChart [height]="chartHeight" [type]="'bar'" [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"></canvas>
+            <observation-bar-chart [observations]="observationModels"></observation-bar-chart>
           </div>
-
-
 
         </div>
       </div>
     </div>
-
 
   </div><!-- card-body -->
 </div>
