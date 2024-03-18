@@ -33,6 +33,12 @@ export const NoRange: Story = {
   }
 };
 
+export const ValueStringWithRange: Story = {
+  args: {
+    observations: [new ObservationModel(observationR4Factory.valueString('<10 IntlUnit/mL').referenceRangeOnlyHigh(50).build(), fhirVersions.R4)]
+  }
+};
+
 export const Range: Story = {
   args: {
     observations: [new ObservationModel(observationR4Factory.referenceRange().build(), fhirVersions.R4)]

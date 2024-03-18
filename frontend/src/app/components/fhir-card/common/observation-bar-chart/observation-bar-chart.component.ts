@@ -15,7 +15,7 @@ const defaultChartEntryHeight = 30;
   styleUrls: ['./observation-bar-chart.component.scss']
 })
 export class ObservationBarChartComponent implements OnInit {
-  @Input() observations: [ObservationModel]
+  @Input() observations: ObservationModel[]
 
   chartHeight = defaultChartEntryHeight;
 
@@ -122,14 +122,21 @@ export class ObservationBarChartComponent implements OnInit {
       return;
     }
 
-    let currentValues: number[] = []
+    let currentValues = []
     let referenceRanges = []
 
     for(let observation of this.observations) {
       let refRange = observation.reference_range;
 
       referenceRanges.push([refRange.low || 0, refRange.high || 0]);
-      currentValues.push(observation.value_quantity_value);
+
+      let value = observation.value_object;
+
+      if (value.range) {
+        currentValues.push([value.range.low, value.range.high]);
+      } else {
+        currentValues.push([value.value, value.value])
+      }
 
       if (observation.effective_date) {
         this.barChartLabels.push(formatDate(observation.effective_date, "mediumDate", "en-US", undefined));
@@ -141,7 +148,7 @@ export class ObservationBarChartComponent implements OnInit {
       this.barChartData[1]['dataLabels'].push(observation.value_quantity_unit);
     }
 
-    let xAxisMax = Math.max(...currentValues) * 1.3;
+    let xAxisMax = Math.max(...currentValues.map(set => set[1])) * 1.3;
     this.barChartOptions.scales['x']['max'] = xAxisMax
 
     let updatedRefRanges = referenceRanges.map(range => {
@@ -154,7 +161,7 @@ export class ObservationBarChartComponent implements OnInit {
 
     // @ts-ignore
     this.barChartData[0].data = updatedRefRanges
-    this.barChartData[1].data = currentValues.map(v => [v, v])
+    this.barChartData[1].data = currentValues
 
     this.chartHeight = defaultChartHeight + (defaultChartEntryHeight * currentValues.length)
   }
