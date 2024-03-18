@@ -1,6 +1,6 @@
 import {fhirVersions, ResourceType} from '../constants';
 import * as _ from "lodash";
-import {CodableConceptModel, hasValue} from '../datatypes/codable-concept-model';
+import {CodableConceptModel} from '../datatypes/codable-concept-model';
 import {ReferenceModel} from '../datatypes/reference-model';
 import {FastenDisplayModel} from '../fasten/fasten-display-model';
 import {FastenOptions} from '../fasten/fasten-options';
@@ -10,12 +10,19 @@ interface referenceRangeHash {
   high: number | null
 }
 
+// should have one or the other
+export interface ValueObject {
+  range?: { low?: number | null, high?: number | null }
+  value?: number | string | boolean | null
+}
+
 export class ObservationModel extends FastenDisplayModel {
   code: CodableConceptModel | undefined
   effective_date: string
   code_coding_display: string
   code_text: string
-  value_quantity_value: number
+  value_object: ValueObject
+  value_quantity_value
   value_quantity_unit: string
   status: string
   value_codeable_concept_text: string
@@ -34,7 +41,8 @@ export class ObservationModel extends FastenDisplayModel {
     this.code = _.get(fhirResource, 'code');
     this.code_coding_display = _.get(fhirResource, 'code.coding.0.display');
     this.code_text = _.get(fhirResource, 'code.text', '');
-    this.value_quantity_value = this.parseValue();
+    this.value_object = this.parseValue();
+    this.value_quantity_value = this.value_object?.value;
     this.value_quantity_unit = this.parseUnit();
     this.status = _.get(fhirResource, 'status', '');
     this.value_codeable_concept_text = _.get(
@@ -55,9 +63,8 @@ export class ObservationModel extends FastenDisplayModel {
     this.subject = _.get(fhirResource, 'subject');
   }
 
-  private parseValue(): number {
-    // TODO: parseFloat would return NaN if it can't parse. Need to check and make sure that doesn't cause issues
-    return this.valueQuantity() || parseFloat(this.valueString())
+  private parseValue(): ValueObject {
+    return this.parseValueQuantity() || this.parseValueString()
   }
 
   private parseUnit(): string {
@@ -65,9 +72,23 @@ export class ObservationModel extends FastenDisplayModel {
   }
 
   // Look for the observation's numeric value. Use this first before valueString which is a backup if this can't be found.
-  private valueQuantity(): number {
-    // debugger
-    return _.get(this.fhirResource, "valueQuantity.value");
+  private parseValueQuantity(): ValueObject {
+    let quantity = _.get(this.fhirResource, "valueQuantity");
+
+    if (!quantity) {
+      return null;
+    }
+
+    switch (quantity.comparator) {
+      case '<':
+      case '<=':
+        return { range: { low: null, high: quantity.value } };
+      case '>':
+      case '>=':
+        return { range: { low: quantity.value, high: null } };
+      default:
+        return { value: quantity.value }
+    }
   }
 
   // Look for the observation's numeric value. Use this first before valueStringUnit which is a backup if this can't be found.
@@ -75,9 +96,44 @@ export class ObservationModel extends FastenDisplayModel {
     return _.get(this.fhirResource, "valueQuantity.unit");
   }
 
-  // Use if valueQuantity can't be found. This will check for valueString and attempt to parse the first number in the string
-  private valueString(): string {
-    return _.get(this.fhirResource, "valueString")?.match(/(?<value>[\d.]*)(?<text>.*)/).groups.value;
+  private parseValueString(): ValueObject {
+    let matches = _.get(this.fhirResource, "valueString")?.match(/(?<value1>[\d.]*)?(?<operator>[^\d]*)?(?<value2>[\d.]*)?/)
+
+    if(!matches) {
+      return { range: { low: null, high: null } }
+    }
+
+    if (!!matches.groups['value1'] && !!matches.groups['value2']) {
+      return {
+        range: {
+          low: parseFloat(matches.groups['value1']),
+          high: parseFloat(matches.groups['value2'])
+        }
+      }
+    }
+
+    if (['<', '<='].includes(matches.groups['operator'])) {
+      return {
+        range: {
+          low: null,
+          high: parseFloat(matches.groups['value2'])
+        }
+      }
+    } else if (['>', '>='].includes(matches.groups['operator'])) {
+      return {
+        range: {
+          low: parseFloat(matches.groups['value2']),
+          high: null
+        }
+      }
+    }
+    let float = parseFloat(matches.groups['value1']);
+
+    if (Number.isNaN(float)) {
+      return { value: matches.groups['value1'] }
+    }
+
+    return { value: float };
   }
 
   // Use if valueUnit can't be found.

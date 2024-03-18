@@ -9,6 +9,18 @@ class ObservationR4Factory extends Factory<{}> {
     })
   }
 
+  valueQuantity(params: {}) {
+    return this.params({
+      valueQuantity: {
+        value: params['value'] || 6.3,
+        unit: params['unit'] || 'mmol/l',
+        system: 'http://unitsofmeasure.org',
+        code: params['code'] || 'mmol/L',
+        comparator: params['comparator']
+      }
+    })
+  }
+
   referenceRange(high?: number, low?: number) {
     return this.params({
       referenceRange: [
