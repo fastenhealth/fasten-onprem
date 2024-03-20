@@ -155,11 +155,8 @@ type FhirServiceRequest struct {
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 }
 
 func (s *FhirServiceRequest) GetSearchParameters() map[string]string {
@@ -195,8 +192,7 @@ func (s *FhirServiceRequest) GetSearchParameters() map[string]string {
 		"specimen":              "reference",
 		"status":                "token",
 		"subject":               "reference",
-		"text":                  "keyword",
-		"type":                  "special",
+		"text":                  "string",
 	}
 	return searchParameters
 }
@@ -240,14 +236,14 @@ func (s *FhirServiceRequest) PopulateAndExtractSearchParameters(resourceRaw json
 	// extracting Authored
 	authoredResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'ServiceRequest.authoredOn')")
 	if err == nil && authoredResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, authoredResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, authoredResult.String()); err == nil {
 			s.Authored = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", authoredResult.String())
-			if err == nil {
-				s.Authored = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", authoredResult.String()); err == nil {
+			s.Authored = &t
+		} else if t, err = time.Parse("2006-01", authoredResult.String()); err == nil {
+			s.Authored = &t
+		} else if t, err = time.Parse("2006", authoredResult.String()); err == nil {
+			s.Authored = &t
 		}
 	}
 	// extracting BasedOn
@@ -303,14 +299,14 @@ func (s *FhirServiceRequest) PopulateAndExtractSearchParameters(resourceRaw json
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -331,14 +327,14 @@ func (s *FhirServiceRequest) PopulateAndExtractSearchParameters(resourceRaw json
 	// extracting Occurrence
 	occurrenceResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'ServiceRequest.occurrenceDateTime | ServiceRequest.occurrencePeriod | ServiceRequest.occurrenceTiming')")
 	if err == nil && occurrenceResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, occurrenceResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, occurrenceResult.String()); err == nil {
 			s.Occurrence = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", occurrenceResult.String())
-			if err == nil {
-				s.Occurrence = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", occurrenceResult.String()); err == nil {
+			s.Occurrence = &t
+		} else if t, err = time.Parse("2006-01", occurrenceResult.String()); err == nil {
+			s.Occurrence = &t
+		} else if t, err = time.Parse("2006", occurrenceResult.String()); err == nil {
+			s.Occurrence = &t
 		}
 	}
 	// extracting Performer
@@ -387,9 +383,9 @@ func (s *FhirServiceRequest) PopulateAndExtractSearchParameters(resourceRaw json
 		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	return nil
 }

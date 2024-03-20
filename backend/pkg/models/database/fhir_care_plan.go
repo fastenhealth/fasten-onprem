@@ -140,11 +140,8 @@ type FhirCarePlan struct {
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 }
 
 func (s *FhirCarePlan) GetSearchParameters() map[string]string {
@@ -179,8 +176,7 @@ func (s *FhirCarePlan) GetSearchParameters() map[string]string {
 		"source_uri":            "keyword",
 		"status":                "token",
 		"subject":               "reference",
-		"text":                  "keyword",
-		"type":                  "special",
+		"text":                  "string",
 	}
 	return searchParameters
 }
@@ -229,14 +225,14 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	// extracting ActivityDate
 	activityDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'CarePlan.activity.detail.scheduledTiming | CarePlan.activity.detail.scheduledPeriod | CarePlan.activity.detail.scheduledString')")
 	if err == nil && activityDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, activityDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, activityDateResult.String()); err == nil {
 			s.ActivityDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", activityDateResult.String())
-			if err == nil {
-				s.ActivityDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", activityDateResult.String()); err == nil {
+			s.ActivityDate = &t
+		} else if t, err = time.Parse("2006-01", activityDateResult.String()); err == nil {
+			s.ActivityDate = &t
+		} else if t, err = time.Parse("2006", activityDateResult.String()); err == nil {
+			s.ActivityDate = &t
 		}
 	}
 	// extracting ActivityReference
@@ -267,14 +263,14 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	// extracting Date
 	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effectiveDateTime | DiagnosticReport.effectivePeriod | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effectiveDateTime | Observation.effectivePeriod | Observation.effectiveTiming | Observation.effectiveInstant | Procedure.performedDateTime | Procedure.performedPeriod | Procedure.performedString | Procedure.performedAge | Procedure.performedRange | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')")
 	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, dateResult.String()); err == nil {
 			s.Date = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", dateResult.String())
-			if err == nil {
-				s.Date = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006-01", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006", dateResult.String()); err == nil {
+			s.Date = &t
 		}
 	}
 	// extracting Encounter
@@ -315,14 +311,14 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -366,9 +362,9 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	return nil
 }

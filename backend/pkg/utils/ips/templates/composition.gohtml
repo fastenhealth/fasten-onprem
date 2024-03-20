@@ -1,0 +1,19 @@
+<!--/*
+This template generates a composite narrative for the Composition, incorporating
+all of the section narratives into a single narrative.
+*/-->
+<div>
+    {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData */ -}}
+    {{range $index, $section := .Composition.Section }}
+      <section>
+         <h1>{{$section.Title}}</h1>
+         <div>
+            {{if eq $section.Text nil }}
+                {{$section.EmptyReason.Text}}
+            {{else }}
+                 {{$section.Text.Div | safeHTMLPtr}}
+            {{end}}
+         </div>
+      </section>
+   {{end}}
+</div>

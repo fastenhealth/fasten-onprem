@@ -166,13 +166,9 @@ func main() {
 			FHIRPathExpression: "Resource.meta.tag",
 		}
 		fieldMap["Text"] = DBField{
-			FieldType:          "keyword",
+			FieldType:          "string",
 			Description:        "Text search against the narrative",
 			FHIRPathExpression: "text",
-		}
-		fieldMap["Type"] = DBField{
-			FieldType:   "special",
-			Description: "A resource type filter",
 		}
 
 		resourceFieldMap[resourceName] = fieldMap
@@ -409,15 +405,27 @@ func main() {
 						break
 					case "date":
 						//parse RFC3339 date
-						i.List(jen.Id("t"), jen.Id("err")).Op(":=").Qual("time", "Parse").Call(jen.Qual("time", "RFC3339"), jen.Id(fieldNameVar).Dot("String").Call())
-						i.If(jen.Err().Op("==").Nil()).BlockFunc(func(e *jen.Group) {
+
+						i.If(
+							jen.List(jen.Id("t"), jen.Err()).Op(":=").Qual("time", "Parse").Call(jen.Qual("time", "RFC3339"), jen.Id(fieldNameVar).Dot("String").Call()),
+							jen.Err().Op("==").Nil(),
+						).BlockFunc(func(e *jen.Group) {
 							e.Id("s").Dot(fieldName).Op("=").Op("&").Id("t")
-						}).Else().If(jen.Err().Op("!=").Nil()).BlockFunc(func(e *jen.Group) {
-							//parse date only
-							e.List(jen.Id("d"), jen.Id("err")).Op(":=").Qual("time", "Parse").Call(jen.Lit("2006-01-02"), jen.Id(fieldNameVar).Dot("String").Call())
-							e.If(jen.Err().Op("==").Nil()).BlockFunc(func(f *jen.Group) {
-								f.Id("s").Dot(fieldName).Op("=").Op("&").Id("d")
-							})
+						}).Else().If(
+							jen.List(jen.Id("t"), jen.Err()).Op("=").Qual("time", "Parse").Call(jen.Lit("2006-01-02"), jen.Id(fieldNameVar).Dot("String").Call()),
+							jen.Err().Op("==").Nil(),
+						).BlockFunc(func(e *jen.Group) {
+							e.Id("s").Dot(fieldName).Op("=").Op("&").Id("t")
+						}).Else().If(
+							jen.List(jen.Id("t"), jen.Err()).Op("=").Qual("time", "Parse").Call(jen.Lit("2006-01"), jen.Id(fieldNameVar).Dot("String").Call()),
+							jen.Err().Op("==").Nil(),
+						).BlockFunc(func(e *jen.Group) {
+							e.Id("s").Dot(fieldName).Op("=").Op("&").Id("t")
+						}).Else().If(
+							jen.List(jen.Id("t"), jen.Err()).Op("=").Qual("time", "Parse").Call(jen.Lit("2006"), jen.Id(fieldNameVar).Dot("String").Call()),
+							jen.Err().Op("==").Nil(),
+						).BlockFunc(func(e *jen.Group) {
+							e.Id("s").Dot(fieldName).Op("=").Op("&").Id("t")
 						})
 					case "uri":
 						i.Id("s").Dot(fieldName).Op("=").Id(fieldNameVar).Dot("String").Call()
@@ -499,6 +507,22 @@ func main() {
 			for _, resourceName := range AllowedResources {
 				s.Case(jen.Lit(resourceName)).BlockFunc(func(c *jen.Group) {
 					c.Return(jen.Op("&").Id("Fhir"+resourceName).Values(), jen.Nil())
+				})
+			}
+			s.Default().BlockFunc(func(d *jen.Group) {
+				d.Return(jen.Nil(), jen.Qual("fmt", "Errorf").Call(jen.Lit("Invalid resource type for model: %s"), jen.Id("resourceType")))
+			})
+		})
+	})
+
+	//Similar to NewFhirResourceModelByType, this is a function which returns a slice corresponding FhirResource when provided the FhirResource type string
+	//uses a switch statement to return the correct type
+	utilsFile.Comment("Returns a map of all the resource names to their corresponding go struct")
+	utilsFile.Func().Id("NewFhirResourceModelSliceByType").Params(jen.Id("resourceType").String()).Params(jen.Interface(), jen.Error()).BlockFunc(func(g *jen.Group) {
+		g.Switch(jen.Id("resourceType")).BlockFunc(func(s *jen.Group) {
+			for _, resourceName := range AllowedResources {
+				s.Case(jen.Lit(resourceName)).BlockFunc(func(c *jen.Group) {
+					c.Return(jen.Index().Id("Fhir"+resourceName).Values(), jen.Nil())
 				})
 			}
 			s.Default().BlockFunc(func(d *jen.Group) {

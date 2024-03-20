@@ -10,6 +10,9 @@ type DatabaseRepositoryType string
 type InstallationVerificationStatus string
 type InstallationQuotaStatus string
 
+type IPSSections string
+type IPSSectionGroups string
+
 const (
 	ResourceListPageSize int = 20
 
@@ -50,4 +53,63 @@ const (
 	InstallationVerificationStatusVerified InstallationVerificationStatus = "VERIFIED" //email has been verified
 	InstallationQuotaStatusActive          InstallationQuotaStatus        = "ACTIVE"
 	InstallationQuotaStatusConsumed        InstallationQuotaStatus        = "CONSUMED"
+
+	IPSSectionsMedicationSummary     IPSSections = "medication_summary"
+	IPSSectionsAllergiesIntolerances IPSSections = "allergies_intolerances"
+	IPSSectionsProblemList           IPSSections = "problem_list"
+	IPSSectionsImmunizations         IPSSections = "immunizations"
+	IPSSectionsHistoryOfProcedures   IPSSections = "history_of_procedures"
+	IPSSectionsMedicalDevices        IPSSections = "medical_devices"
+	IPSSectionsDiagnosticResults     IPSSections = "diagnostic_results"
+	IPSSectionsVitalSigns            IPSSections = "vital_signs"
+	IPSSectionsHistoryOfIllness      IPSSections = "history_of_illness"
+	IPSSectionsPregnancy             IPSSections = "pregnancy"
+	IPSSectionsSocialHistory         IPSSections = "social_history"
+	IPSSectionsPlanOfCare            IPSSections = "plan_of_care"
+	IPSSectionsFunctionalStatus      IPSSections = "functional_status"
+	IPSSectionsAdvanceDirectives     IPSSections = "advance_directives"
+
+	IPSSectionGroupsRequired    IPSSectionGroups = "required"
+	IPSSectionGroupsRecommended IPSSectionGroups = "recommended"
+	IPSSectionGroupsOptional    IPSSectionGroups = "optional"
 )
+
+var IPSSectionsList = []IPSSections{
+	IPSSectionsMedicationSummary,
+	IPSSectionsAllergiesIntolerances,
+	IPSSectionsProblemList,
+	IPSSectionsImmunizations,
+	IPSSectionsHistoryOfProcedures,
+	IPSSectionsMedicalDevices,
+	IPSSectionsDiagnosticResults,
+	IPSSectionsVitalSigns,
+	IPSSectionsHistoryOfIllness,
+	IPSSectionsPregnancy,
+	IPSSectionsSocialHistory,
+	IPSSectionsPlanOfCare,
+	IPSSectionsFunctionalStatus,
+	IPSSectionsAdvanceDirectives,
+}
+
+var IPSSectionGroupsOrdered = map[IPSSectionGroups][]IPSSections{
+	IPSSectionGroupsRequired: []IPSSections{
+		IPSSectionsMedicationSummary,
+		IPSSectionsAllergiesIntolerances,
+		IPSSectionsProblemList,
+	},
+	IPSSectionGroupsRecommended: []IPSSections{
+		IPSSectionsImmunizations,
+		IPSSectionsHistoryOfProcedures,
+		IPSSectionsMedicalDevices,
+		IPSSectionsDiagnosticResults,
+	},
+	IPSSectionGroupsOptional: []IPSSections{
+		IPSSectionsVitalSigns,
+		IPSSectionsHistoryOfIllness,
+		IPSSectionsPregnancy,
+		IPSSectionsSocialHistory,
+		IPSSectionsPlanOfCare,
+		IPSSectionsFunctionalStatus,
+		IPSSectionsAdvanceDirectives,
+	},
+}

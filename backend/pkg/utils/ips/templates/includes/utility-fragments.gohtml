@@ -1,0 +1,249 @@
+<!--/* Utility Fragments */-->
+
+<!--/* Referenced Models */-->
+
+<th:block th:if="${deviceRef}" th:fragment="renderDevice (deviceRef)">
+   <th:block th:with="device = ${#fhirpath.evaluateFirst(deviceRef, 'resolve()')}">
+      <th:block  th:if="${device != null}">
+         <th:block th:if='${device.getResourceType().name() == "Device"}'>
+            <th:block th:replace=":: codeableConcept (cc=${device.getType()},attr='display')">Device</th:block>
+         </th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<th:block th:if="${orgRef}" th:fragment="renderOrganization (orgRef)">
+   <th:block th:with="organization = ${#fhirpath.evaluateFirst(orgRef, 'resolve()')}">
+      <th:block th:if="${organization != null}">
+         <th:block th:if='${organization.getResourceType().name() == "Organization"}'>
+            <th:block th:text="${organization.getName()}">Org Name</th:block>
+         </th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<th:block th:fragment="renderMedication (medicationType)">
+   <th:block th:if="${medicationType} != null" th:object="${medicationType}">
+      <th:block th:switch="*{getClass().getSimpleName()}">
+         <th:block th:case="'CodeableConcept'">
+            <th:block th:replace=":: codeableConcept (cc=${medicationType}, attr='display')">Medication</th:block>
+         </th:block>
+         <th:block th:case="'Reference'">
+            <th:block th:replace=":: renderMedicationRef (medicationRef=${medicationType})">Medication</th:block>
+         </th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<th:block th:if="${medicationRef}" th:fragment="renderMedicationRef (medicationRef)">
+   <th:block th:with="medication = ${#fhirpath.evaluateFirst(medicationRef, 'resolve()')}">
+      <th:block  th:if="${medication != null}">
+         <th:block th:replace=":: renderMedicationCode (medication=${medication})">Medication</th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<th:block th:if="${medication}" th:fragment="renderMedicationCode (medication)">
+   <th:block th:if="${medication} != null">
+      <th:block th:replace=":: codeableConcept (cc=${medication.getCode()},attr='display')">Medication</th:block>
+   </th:block>
+</th:block>
+
+<!--/* Dose Number  */-->
+
+<th:block th:if="${doseNumber}" th:fragment="renderDoseNumber (doseNumber)">
+   <th:block th:if="${doseNumber} != null" th:object="${doseNumber}">
+      <th:block th:switch="*{getClass().getSimpleName()}">
+         <th:block th:case="'PositiveIntType'" th:text="*{getValue()}">Dose Number</th:block>
+         <th:block th:case="'StringType'" th:text="*{getValue()}">Dose Number</th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<!--/* Value  */-->
+
+<th:block th:if="${value}" th:fragment="renderValue (value)">
+   <th:block th:if="${value} != null" th:object="${value}">
+      <th:block th:switch="*{getClass().getSimpleName()}">
+         <th:block th:case="'Quantity'" th:text="*{getValue()}">Result</th:block>
+         <th:block th:case="'DateTimeType'" th:text="*{getValue()}">Result</th:block>
+         <th:block th:case="'CodeableConcept'">
+            <th:block th:replace=":: codeableConcept (cc=${value}, attr='display')">Result</th:block>
+         </th:block>
+         <th:block th:case="'StringType'" th:text="*{getValue()}">Result</th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<th:block th:if="${value}" th:fragment="renderValueUnit (value)">
+   <th:block th:if="${value} != null" th:object="${value}">
+      <th:block th:switch="*{getClass().getSimpleName()}">
+         <th:block th:case="'Quantity'" th:text="*{getUnit()}">Unit</th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<!--/* Dates */-->
+
+<th:block th:if="${effective}" th:fragment="renderEffective (effective)">
+   <th:block th:if="${effective} != null" th:object="${effective}">
+      <th:block th:switch="*{getClass().getSimpleName()}">
+         <th:block th:case="'DateTimeType'" th:text="*{getValue()}">Date</th:block>
+         <th:block th:case="'Period'" th:text="*{getStartElement().getValue()}">Date</th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<th:block th:if="${onset}" th:fragment="renderOnset (onset)">
+   <th:block th:if="${onset} != null" th:object="${onset}">
+      <th:block th:switch="*{getClass().getSimpleName()}">
+         <th:block th:case="'DateTimeType'" th:text="*{getValue()}">Date</th:block>
+         <th:block th:case="'Period'"
+                   th:text="*{#strings.concatReplaceNulls('', getStartElement().getValue(), '-', getEndElement().getValue() )}">
+            Date
+         </th:block>
+         <th:block th:case="'Age'" th:text="*{getValue()}">Date</th:block>
+         <th:block th:case="'Range'"
+                   th:text="*{#strings.concatReplaceNulls('', getLow().getValue(), '-', getHigh().getValue() )}">Date
+         </th:block>
+         <th:block th:case="'StringType'" th:text="*{getValue()}">Date</th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<th:block th:if="${performed}" th:fragment="renderPerformed (performed)">
+   <th:block th:if="${performed} != null" th:object="${performed}">
+      <th:block th:switch="*{getClass().getSimpleName()}">
+         <th:block th:case="'DateTimeType'" th:text="*{getValue()}">Date</th:block>
+         <th:block th:case="'Period'"
+                   th:text="*{#strings.concatReplaceNulls('', getStartElement().getValue(), '-', getEndElement().getValue() )}">
+            Date
+         </th:block>
+         <th:block th:case="'Age'" th:text="*{getValue()}">Date</th:block>
+         <th:block th:case="'Range'"
+                   th:text="*{#strings.concatReplaceNulls('', getLow().getValue(), '-', getHigh().getValue() )}">Date
+         </th:block>
+         <th:block th:case="'StringType'" th:text="*{getValue()}">Date</th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<th:block th:if="${occurrence}" th:fragment="renderOccurrence (occurrence)">
+   <th:block th:if="${occurrence} != null" th:object="${occurrence}">
+      <th:block th:switch="*{getClass().getSimpleName()}">
+         <th:block th:case="'DateTimeType'" th:text="*{getValue()}">Date</th:block>
+         <th:block th:case="'StringType'" th:text="*{getValue()}">Date</th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<th:block th:if="${recorded}" th:fragment="renderRecorded (recorded)">
+   <th:block th:if="${recorded} != null" th:object="${recorded}">
+      <th:block th:switch="*{getClass().getSimpleName()}">
+         <th:block th:case="'DateTimeType'" th:text="*{getValue()}">Date Recorded</th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<!--/* CodeableConcept */-->
+
+<th:block th:if="${cc}" th:fragment="codeableConcept (cc, attr)">
+   <th:block th:if="${cc} != null">
+      <th:block th:if="${!cc.getTextElement().empty}" th:text="${cc.getText()}"/>
+      <th:block th:if="${cc.getTextElement().empty}" th:switch="${attr} ?: 'display'">
+         <th:block th:case="'display'">
+            <th:block th:replace=":: concat (list=${cc.getCoding()},attr='display')"/>
+         </th:block>
+         <th:block th:case="'code'">
+            <th:block th:replace=":: concat (list=${cc.getCoding()},attr='code')"/>
+         </th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<th:block th:if="${list}" th:fragment="firstFromCodeableConceptList (list)">
+   <th:block th:if="${list} != null AND ${!list.empty}" with="${attr} ?: 'display'">
+      <th:block th:replace=":: codeableConcept (cc=${list.get(0)},attr=${attr})">Interpretation</th:block>
+   </th:block>
+</th:block>
+
+<!--/* Lists */-->
+
+<th:block th:if="${list}" th:fragment="concat (list, attr)">
+   <th:block th:each="item,iter : ${list}" th:if="${!list.empty}">
+      <th:block th:switch="${attr} ?: 'value'">
+         <th:block th:case="'display'">
+            <th:block th:replace=":: concatItem (listItem=${item.getDisplayElement()}, iter=${iter}, separator='')"/>
+         </th:block>
+         <th:block th:case="'code'">
+            <th:block th:replace=":: concatItem (listItem=${item.getCodeElement()}, iter=${iter}, separator='')"/>
+         </th:block>
+         <th:block th:case="'text'">
+            <th:block th:replace=":: concatItem (listItem=${item.getTextElement()}, iter=${iter}, separator='')"/>
+         </th:block>
+         <th:block th:case="'value'">
+            <th:block th:replace=":: concatItem (listItem=${item}, iter=${iter}, separator='')"/>
+         </th:block>
+         <th:block th:case="'severity'">
+            <th:block th:if="${item.getSeverity() != null}">
+               <th:block th:replace=":: concatItem (listItem=${item.getSeverity().toCode()}, iter=${iter}, separator='')"/>
+            </th:block>
+         </th:block>
+      </th:block>
+   </th:block>
+</th:block>
+
+<th:block th:if="${listItem}" th:fragment="concatItem (listItem, iter, separator)">
+   <th:block th:if="${!listItem.empty}">
+      <th:block th:text="${listItem.getClass().getSimpleName() == 'String'} ? ${listItem} : ${listItem.getValue()}">
+      </th:block>
+      <th:block th:if="${!iter.last}">
+         <th:block th:if="${!separator.empty}" th:text="${separator + ' '}"/>
+         <br th:if="${separator.empty}"/>
+      </th:block>
+   </th:block>
+</th:block>
+
+<!--/* Nested Lists */-->
+
+<th:block th:if="${list}" th:fragment="concatReactionManifestation (list)">
+   <th:block th:each="item,iter : ${list}" th:if="${!list.empty}" with="attr=${attr} ?: 'display'">
+      <th:block th:if="${item.hasDescription()}" th:text="${item.getDescription()}">Reaction</th:block>
+      <th:block th:if="${!item.hasDescription()}">
+         <th:block th:replace=":: concatCodeableConcept (list=${item.getManifestation()})">Reaction</th:block>
+      </th:block>
+      <th:block th:if="${!iter.last}" th:text="', '"/>
+   </th:block>
+</th:block>
+
+<th:block th:if="${list}" th:fragment="concatCodeableConcept (list)">
+   <th:block th:each="item,iter : ${list}" th:if="${!list.empty}" with="attr=${attr} ?: 'display'">
+      <th:block th:replace=":: codeableConcept (cc=${item},attr=${attr})"/>
+      <th:block th:if="${!iter.last}" th:text="', '"/>
+   </th:block>
+</th:block>
+
+<th:block th:if="${list}" th:fragment="concatDosageRoute (list)">
+   <th:block th:each="item,iter : ${list}" th:if="${!list.empty}" with="attr=${attr} ?: 'display'">
+      <th:block th:replace=":: codeableConcept (cc=${item.getRoute()},attr=${attr})"/>
+      <th:block th:if="${!iter.last}" th:text="', '"/>
+   </th:block>
+</th:block>
+
+<th:block th:if="${list}" th:fragment="concatDoseNumber (list)">
+   <th:block th:each="item,iter : ${list}" th:if="${!list.empty}">
+      <th:block th:replace=":: renderDoseNumber (doseNumber=${item.doseNumber})">Dose Number</th:block>
+      <th:block th:if="${!iter.last}" th:text="', '"/>
+   </th:block>
+</th:block>
+
+<th:block th:if="${list}" th:fragment="concatReferenceRange (list)">
+   <th:block th:each="item,iter : ${list}" th:if="${!list.empty}">
+      <th:block th:if="${item.hasText()}" th:text="${item.getText()}">Reference Range</th:block>
+      <th:block th:if="${!item.hasText()}"
+                th:text="${#strings.concatReplaceNulls('', item.getLow().getValue(), '-', item.getHigh().getValue() )}">
+         Reference Range
+      </th:block>
+      <th:block th:if="${!iter.last}" th:text="', '"/>
+   </th:block>
+</th:block>

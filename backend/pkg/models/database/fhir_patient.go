@@ -192,11 +192,8 @@ type FhirPatient struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	Telecom datatypes.JSON `gorm:"column:telecom;type:text;serializer:json" json:"telecom,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 }
 
 func (s *FhirPatient) GetSearchParameters() map[string]string {
@@ -234,8 +231,7 @@ func (s *FhirPatient) GetSearchParameters() map[string]string {
 		"source_resource_type": "keyword",
 		"source_uri":           "keyword",
 		"telecom":              "token",
-		"text":                 "keyword",
-		"type":                 "special",
+		"text":                 "string",
 	}
 	return searchParameters
 }
@@ -314,27 +310,27 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 	// extracting Birthdate
 	birthdateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Patient.birthDate | Person.birthDate | RelatedPerson.birthDate')")
 	if err == nil && birthdateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, birthdateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, birthdateResult.String()); err == nil {
 			s.Birthdate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", birthdateResult.String())
-			if err == nil {
-				s.Birthdate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", birthdateResult.String()); err == nil {
+			s.Birthdate = &t
+		} else if t, err = time.Parse("2006-01", birthdateResult.String()); err == nil {
+			s.Birthdate = &t
+		} else if t, err = time.Parse("2006", birthdateResult.String()); err == nil {
+			s.Birthdate = &t
 		}
 	}
 	// extracting DeathDate
 	deathDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, '(Patient.deceasedDateTime)')")
 	if err == nil && deathDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, deathDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, deathDateResult.String()); err == nil {
 			s.DeathDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", deathDateResult.String())
-			if err == nil {
-				s.DeathDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", deathDateResult.String()); err == nil {
+			s.DeathDate = &t
+		} else if t, err = time.Parse("2006-01", deathDateResult.String()); err == nil {
+			s.DeathDate = &t
+		} else if t, err = time.Parse("2006", deathDateResult.String()); err == nil {
+			s.DeathDate = &t
 		}
 	}
 	// extracting Deceased
@@ -385,14 +381,14 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -436,9 +432,9 @@ func (s *FhirPatient) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 		s.Telecom = []byte(telecomResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	return nil
 }
