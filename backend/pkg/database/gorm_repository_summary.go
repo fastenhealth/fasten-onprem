@@ -68,13 +68,46 @@ func (gr *GormRepository) GetInternationalPatientSummaryExport(ctx context.Conte
 
 	//Step 2. Create the Composition Section
 	compositionSections := []fhir401.CompositionSection{}
-	for sectionType, sectionQueryResultsList := range summarySectionQueryResults {
-		compositionSection, err := generateIPSCompositionSection(narrativeEngine, sectionType, sectionQueryResultsList)
-		if err != nil {
-			return exportData, err
+
+	//loop though the various section groups in order (required, recommended, optional)
+	for ndx, _ := range pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsRequired] {
+		section := pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsRequired][ndx]
+		if sectionQueryResultsList, ok := summarySectionQueryResults[section]; ok {
+			compositionSection, err := generateIPSCompositionSection(narrativeEngine, section, sectionQueryResultsList)
+			if err != nil {
+				return exportData, err
+			}
+			compositionSections = append(compositionSections, *compositionSection)
 		}
-		compositionSections = append(compositionSections, *compositionSection)
 	}
+	for ndx, _ := range pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsRecommended] {
+		section := pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsRecommended][ndx]
+		if sectionQueryResultsList, ok := summarySectionQueryResults[section]; ok {
+			compositionSection, err := generateIPSCompositionSection(narrativeEngine, section, sectionQueryResultsList)
+			if err != nil {
+				return exportData, err
+			}
+			compositionSections = append(compositionSections, *compositionSection)
+		}
+	}
+	for ndx, _ := range pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsOptional] {
+		section := pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsOptional][ndx]
+		if sectionQueryResultsList, ok := summarySectionQueryResults[section]; ok {
+			compositionSection, err := generateIPSCompositionSection(narrativeEngine, section, sectionQueryResultsList)
+			if err != nil {
+				return exportData, err
+			}
+			compositionSections = append(compositionSections, *compositionSection)
+		}
+	}
+
+	//for sectionType, sectionQueryResultsList := range summarySectionQueryResults {
+	//	compositionSection, err := generateIPSCompositionSection(narrativeEngine, sectionType, sectionQueryResultsList)
+	//	if err != nil {
+	//		return exportData, err
+	//	}
+	//	compositionSections = append(compositionSections, *compositionSection)
+	//}
 
 	//TODO: Step 3. Query all the Patient Resources & merge them together
 
