@@ -11,6 +11,7 @@ type InstallationVerificationStatus string
 type InstallationQuotaStatus string
 
 type IPSSections string
+type IPSSectionGroups string
 
 const (
 	ResourceListPageSize int = 20
@@ -67,6 +68,10 @@ const (
 	IPSSectionsPlanOfCare            IPSSections = "plan_of_care"
 	IPSSectionsFunctionalStatus      IPSSections = "functional_status"
 	IPSSectionsAdvanceDirectives     IPSSections = "advance_directives"
+
+	IPSSectionGroupsRequired    IPSSectionGroups = "required"
+	IPSSectionGroupsRecommended IPSSectionGroups = "recommended"
+	IPSSectionGroupsOptional    IPSSectionGroups = "optional"
 )
 
 var IPSSectionsList = []IPSSections{
@@ -84,4 +89,27 @@ var IPSSectionsList = []IPSSections{
 	IPSSectionsPlanOfCare,
 	IPSSectionsFunctionalStatus,
 	IPSSectionsAdvanceDirectives,
+}
+
+var IPSSectionGroupsOrdered = map[IPSSectionGroups][]IPSSections{
+	IPSSectionGroupsRequired: []IPSSections{
+		IPSSectionsMedicationSummary,
+		IPSSectionsAllergiesIntolerances,
+		IPSSectionsProblemList,
+	},
+	IPSSectionGroupsRecommended: []IPSSections{
+		IPSSectionsImmunizations,
+		IPSSectionsHistoryOfProcedures,
+		IPSSectionsMedicalDevices,
+		IPSSectionsDiagnosticResults,
+	},
+	IPSSectionGroupsOptional: []IPSSections{
+		IPSSectionsVitalSigns,
+		IPSSectionsHistoryOfIllness,
+		IPSSectionsPregnancy,
+		IPSSectionsSocialHistory,
+		IPSSectionsPlanOfCare,
+		IPSSectionsFunctionalStatus,
+		IPSSectionsAdvanceDirectives,
+	},
 }
