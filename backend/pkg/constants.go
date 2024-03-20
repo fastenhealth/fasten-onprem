@@ -11,6 +11,7 @@ type InstallationVerificationStatus string
 type InstallationQuotaStatus string
 
 type IPSSections string
+type IPSSectionGroups string
 type UserRole string
 
 const (
@@ -69,6 +70,10 @@ const (
 	IPSSectionsFunctionalStatus      IPSSections = "functional_status"
 	IPSSectionsAdvanceDirectives     IPSSections = "advance_directives"
 
+	IPSSectionGroupsRequired    IPSSectionGroups = "required"
+	IPSSectionGroupsRecommended IPSSectionGroups = "recommended"
+	IPSSectionGroupsOptional    IPSSectionGroups = "optional"
+
 	UserRoleUser  UserRole = "user"
 	UserRoleAdmin UserRole = "admin"
 )
@@ -88,4 +93,27 @@ var IPSSectionsList = []IPSSections{
 	IPSSectionsPlanOfCare,
 	IPSSectionsFunctionalStatus,
 	IPSSectionsAdvanceDirectives,
+}
+
+var IPSSectionGroupsOrdered = map[IPSSectionGroups][]IPSSections{
+	IPSSectionGroupsRequired: []IPSSections{
+		IPSSectionsMedicationSummary,
+		IPSSectionsAllergiesIntolerances,
+		IPSSectionsProblemList,
+	},
+	IPSSectionGroupsRecommended: []IPSSections{
+		IPSSectionsImmunizations,
+		IPSSectionsHistoryOfProcedures,
+		IPSSectionsMedicalDevices,
+		IPSSectionsDiagnosticResults,
+	},
+	IPSSectionGroupsOptional: []IPSSections{
+		IPSSectionsVitalSigns,
+		IPSSectionsHistoryOfIllness,
+		IPSSectionsPregnancy,
+		IPSSectionsSocialHistory,
+		IPSSectionsPlanOfCare,
+		IPSSectionsFunctionalStatus,
+		IPSSectionsAdvanceDirectives,
+	},
 }
