@@ -53,8 +53,8 @@
             <app-glossary-lookup [code]="observationCode" [codeSystem]="'http://loinc.org'"></app-glossary-lookup>
           </div>
 
-          <div class="col-12">
-            <observation-bar-chart [observations]="observationModels"></observation-bar-chart>
+          <div class="col-12 visualization-container">
+            <observation-visualization [observations]="observationModels"></observation-visualization>
           </div>
 
         </div>

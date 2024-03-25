@@ -22,12 +22,21 @@ export class ObservationComponent implements OnInit {
   @Input() isCollapsed: boolean = false
 
   tableData: TableRowItem[] = []
+  displayVisualization: boolean = true
 
   constructor(public changeRef: ChangeDetectorRef, public router: Router) { }
 
   ngOnInit(): void {
     if(!this.displayModel){
       return
+    }
+
+    let visualizationTypes = this.displayModel?.value_model?.visualizationTypes()
+
+    // If only table is allowed, just don't display anything since we are already displaying
+    // everything in tabular format.
+    if (visualizationTypes.length == 1 && visualizationTypes[0] == 'table') {
+      this.displayVisualization = false
     }
 
     this.tableData.push(
@@ -40,23 +49,23 @@ export class ObservationComponent implements OnInit {
         label: 'Subject',
         data: this.displayModel?.subject,
         data_type: TableRowItemDataType.Reference,
-        enabled: !!this.displayModel?.subject ,
+        enabled: !!this.displayModel?.subject,
       },
       {
         label: 'Coding',
         data: this.displayModel?.code,
-        data_type: TableRowItemDataType.Coding,
+        data_type: TableRowItemDataType.CodableConcept,
         enabled: !!this.displayModel?.code,
       },
       {
         label: 'Value',
-        data: [this.displayModel?.value_quantity_value,this.displayModel?.value_quantity_unit].join(" "),
-        enabled: !!this.displayModel?.value_quantity_value,
+        data: this.displayModel?.value_model?.display(),
+        enabled: !!this.displayModel?.value_model,
       },
       {
         label: 'Reference',
-        data: this.displayModel.referenceRangeDisplay(),
-        enabled: !!this.displayModel?.reference_range,
+        data: this.displayModel?.reference_range.display(),
+        enabled: !!this.displayModel?.reference_range.hasValue(),
       }
     )
   }
