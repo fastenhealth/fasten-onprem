@@ -1,0 +1,20 @@
+<div class="table-responsive">
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th *ngFor="let header of headers">
+          {{header}}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of rows">
+        <td *ngFor="let data of row">
+          {{data}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
