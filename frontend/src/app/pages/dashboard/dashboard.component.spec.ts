@@ -6,6 +6,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {RouterModule} from '@angular/router';
 import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
 import {HttpClient} from '@angular/common/http';
+import { GridstackComponent } from 'src/app/components/gridstack/gridstack.component';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
@@ -13,7 +14,7 @@ describe('DashboardComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule, RouterModule],
+      imports: [HttpClientTestingModule, RouterTestingModule, RouterModule, GridstackComponent],
       declarations: [ DashboardComponent ],
       providers: [
         {

@@ -20,6 +20,9 @@ export class ReportMedicalHistoryTimelinePanelComponent implements OnInit {
   constructor(private modalService: NgbModal) { }
 
   ngOnInit(): void {
+    if (!this.resourceFhir) {
+      return;
+    }
 
     let parsed = RecResourceRelatedDisplayModel(this.resourceFhir)
     this.displayModel = parsed.displayModel as EncounterModel

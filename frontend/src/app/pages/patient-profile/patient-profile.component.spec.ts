@@ -2,9 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PatientProfileComponent } from './patient-profile.component';
 import {FastenApiService} from '../../services/fasten-api.service';
-import {NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
 import {of} from 'rxjs';
 import {PipesModule} from '../../pipes/pipes.module';
+import { ReportHeaderComponent } from 'src/app/components/report-header/report-header.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('PatientProfileComponent', () => {
   let component: PatientProfileComponent;
@@ -14,8 +15,8 @@ describe('PatientProfileComponent', () => {
   beforeEach(async () => {
     mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['getResources'])
     await TestBed.configureTestingModule({
-      declarations: [ PatientProfileComponent ],
-      imports: [PipesModule],
+      declarations: [ PatientProfileComponent, ReportHeaderComponent ],
+      imports: [PipesModule, RouterTestingModule],
       providers: [{
         provide: FastenApiService,
         useValue: mockedFastenApiService

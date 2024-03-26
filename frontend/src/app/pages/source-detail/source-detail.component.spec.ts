@@ -6,6 +6,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {ActivatedRoute, convertToParamMap, RouterModule} from '@angular/router';
 import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
 import {HttpClient} from '@angular/common/http';
+import { FhirDatatableModule } from 'src/app/components/fhir-datatable/fhir-datatable.module';
 
 describe('SourceDetailComponent', () => {
   let component: SourceDetailComponent;
@@ -13,7 +14,7 @@ describe('SourceDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule, RouterModule],
+      imports: [HttpClientTestingModule, RouterTestingModule, RouterModule, FhirDatatableModule],
       declarations: [ SourceDetailComponent ],
       providers: [
         {

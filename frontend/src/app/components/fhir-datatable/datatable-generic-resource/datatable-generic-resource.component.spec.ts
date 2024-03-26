@@ -4,6 +4,7 @@ import { DatatableGenericResourceComponent } from './datatable-generic-resource.
 import {HTTP_CLIENT_TOKEN} from '../../../dependency-injection';
 import {HttpClient} from '@angular/common/http';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 describe('ListGenericResourceComponent', () => {
   let component: DatatableGenericResourceComponent;
@@ -12,7 +13,7 @@ describe('ListGenericResourceComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ DatatableGenericResourceComponent ],
-      imports: [HttpClientTestingModule],
+      imports: [HttpClientTestingModule, NgxDatatableModule],
       providers: [
         {
           provide: HTTP_CLIENT_TOKEN,

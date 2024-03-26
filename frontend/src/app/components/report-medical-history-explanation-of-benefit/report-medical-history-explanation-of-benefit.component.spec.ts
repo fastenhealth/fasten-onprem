@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medical-history-explanation-of-benefit.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ReportMedicalHistoryExplanationOfBenefitComponent', () => {
   let component: ReportMedicalHistoryExplanationOfBenefitComponent;
@@ -8,7 +9,8 @@ describe('ReportMedicalHistoryExplanationOfBenefitComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ReportMedicalHistoryExplanationOfBenefitComponent ]
+      declarations: [ ReportMedicalHistoryExplanationOfBenefitComponent ],
+      imports: [ RouterTestingModule ]
     })
     .compileComponents();
 

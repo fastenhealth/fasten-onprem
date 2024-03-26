@@ -6,6 +6,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {ActivatedRoute, convertToParamMap} from '@angular/router';
 import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
 import {HttpClient} from '@angular/common/http';
+import { LoadingSpinnerComponent } from 'src/app/components/loading-spinner/loading-spinner.component';
 
 describe('ResourceDetailComponent', () => {
   let component: ResourceDetailComponent;
@@ -14,7 +15,7 @@ describe('ResourceDetailComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ ResourceDetailComponent ],
-      imports: [HttpClientTestingModule, RouterTestingModule],
+      imports: [HttpClientTestingModule, RouterTestingModule, LoadingSpinnerComponent],
       providers: [
         {
           provide: ActivatedRoute,

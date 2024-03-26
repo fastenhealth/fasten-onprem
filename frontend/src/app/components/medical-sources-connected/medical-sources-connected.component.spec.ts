@@ -5,6 +5,7 @@ import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
 import {HttpClient} from '@angular/common/http';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {RouterTestingModule} from '@angular/router/testing';
+import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 
 describe('MedicalSourcesConnectedComponent', () => {
   let component: MedicalSourcesConnectedComponent;
@@ -13,7 +14,7 @@ describe('MedicalSourcesConnectedComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ MedicalSourcesConnectedComponent ],
-      imports: [HttpClientTestingModule, RouterTestingModule],
+      imports: [HttpClientTestingModule, RouterTestingModule, LoadingSpinnerComponent],
       providers: [
         {
           provide: HTTP_CLIENT_TOKEN,
