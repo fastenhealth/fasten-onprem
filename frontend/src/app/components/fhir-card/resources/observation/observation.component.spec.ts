@@ -33,4 +33,12 @@ describe('ObservationComponent', () => {
     expect(component.displayVisualization).toBeFalse();
     expect(fixture.debugElement.query(By.css('observation-visualization'))).toBeFalsy();
   });
+
+  it('should display a visualization if there is a non-table visualization type', () => {
+    component.displayModel = new ObservationModel(observationR4Factory.valueQuantity().build(), fhirVersions.R4);
+    fixture.detectChanges();
+
+    expect(component.displayVisualization).toBeTrue();
+    expect(fixture.debugElement.query(By.css('observation-visualization'))).toBeTruthy();
+  });
 });

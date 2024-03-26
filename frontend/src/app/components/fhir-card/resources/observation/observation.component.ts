@@ -6,11 +6,11 @@ import {TableComponent} from '../../common/table/table.component';
 import {Router, RouterModule} from '@angular/router';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {ObservationModel} from '../../../../../lib/models/resources/observation-model';
-import { ObservationBarChartComponent } from 'src/app/components/fhir-card/common/observation-bar-chart/observation-bar-chart.component';
+import { ObservationVisualizationComponent } from '../../common/observation-visualization/observation-visualization.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, BadgeComponent, TableComponent, RouterModule, NgbCollapseModule, ObservationBarChartComponent],
+  imports: [CommonModule, BadgeComponent, TableComponent, RouterModule, NgbCollapseModule, ObservationVisualizationComponent],
   providers: [],
   selector: 'fhir-observation',
   templateUrl: './observation.component.html',
