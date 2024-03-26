@@ -10,9 +10,6 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { MedicalSourcesComponent } from './pages/medical-sources/medical-sources.component';
 import { NgChartsModule } from 'ng2-charts';
 import {SharedModule} from './components/shared.module';
-import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome'
-import { fas } from '@fortawesome/free-solid-svg-icons';
-import { far } from '@fortawesome/free-regular-svg-icons';
 import { ResourceDetailComponent } from './pages/resource-detail/resource-detail.component';
 import { AuthSignupComponent } from './pages/auth-signup/auth-signup.component';
 import { AuthSigninComponent } from './pages/auth-signin/auth-signin.component';
@@ -42,6 +39,7 @@ import {FhirCardModule} from './components/fhir-card/fhir-card.module';
 import {FhirDatatableModule} from './components/fhir-datatable/fhir-datatable.module';
 import { AuthSignupWizardComponent } from './pages/auth-signup-wizard/auth-signup-wizard.component';
 import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard';
+import { IconsModule } from './icon-module';
 
 @NgModule({
   declarations: [
@@ -67,7 +65,6 @@ import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard
     FormsModule,
     ReactiveFormsModule,
     BrowserModule,
-    FontAwesomeModule,
     SharedModule,
     FhirCardModule,
     FhirDatatableModule,
@@ -82,7 +79,8 @@ import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard
     InfiniteScrollModule,
     NgSelectModule,
     WidgetsModule,
-    DirectivesModule
+    DirectivesModule,
+    IconsModule,
   ],
   providers: [
     {
@@ -112,8 +110,4 @@ import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA] //required for lhncbc/lforms (webcomponent)
 })
-export class AppModule {
-  constructor(library: FaIconLibrary) {
-    library.addIconPacks(fas, far);
-  }
-}
+export class AppModule {}
