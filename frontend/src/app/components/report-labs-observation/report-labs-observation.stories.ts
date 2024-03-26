@@ -4,7 +4,7 @@ import { DecoratorFunction } from '@storybook/types';
 import { ReportLabsObservationComponent } from './report-labs-observation.component'
 import { PipesModule } from 'src/app/pipes/pipes.module';
 import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
-import { ResourceFhir } from 'src/app/models/fasten/resource_fhir';
+import { IResourceRaw, ResourceFhir } from 'src/app/models/fasten/resource_fhir';
 import { GlossaryLookupComponent } from '../glossary-lookup/glossary-lookup.component';
 import { NgChartsModule } from 'ng2-charts';
 import { HTTP_CLIENT_TOKEN } from 'src/app/dependency-injection';
@@ -14,7 +14,9 @@ import { Observable, of } from 'rxjs';
 
 import R4Example1Json from "../../../lib/fixtures/r4/resources/observation/example1.json";
 import { Html as GlossaryLookupHtml } from '../glossary-lookup/glossary-lookup.stories';
-import { ObservationBarChartComponent } from '../fhir-card/common/observation-bar-chart/observation-bar-chart.component';
+import { ObservationVisualizationComponent } from '../fhir-card/common/observation-visualization/observation-visualization.component';
+import { fhirVersions } from 'src/lib/models/constants';
+import { observationR4Factory } from 'src/lib/fixtures/factories/r4/resources/observation-r4-factory';
 
 
 const withHttpClientProvider: DecoratorFunction<any> = (storyFunc, context) => {
@@ -40,7 +42,7 @@ const meta: Meta<ReportLabsObservationComponent> = {
   decorators: [
     withHttpClientProvider,
     moduleMetadata({
-      imports: [PipesModule, GlossaryLookupComponent, NgChartsModule, RouterTestingModule, HttpClientModule, ObservationBarChartComponent],
+      imports: [PipesModule, GlossaryLookupComponent, NgChartsModule, RouterTestingModule, HttpClientModule, ObservationVisualizationComponent],
       declarations: [ NgbCollapse ],
       providers: [],
     })
@@ -93,6 +95,38 @@ const observation2: ResourceFhir = {
 export const Entry: Story = {
   args: {
     observations: [observation, observation2],
+    observationCode: '788-0',
+    observationTitle: 'Erythrocyte distribution width [Ratio] by Automated count',
+  },
+  parameters: {
+    ...GlossaryLookupHtml.parameters
+  }
+};
+
+
+const observation3: ResourceFhir = {
+  source_id: '',
+  source_resource_id: '',
+  source_resource_type: 'Observation',
+  fhir_version: '4',
+  sort_title: 'sort',
+  sort_date: new Date(),
+  resource_raw: observationR4Factory.valueCodeableConcept().build() as IResourceRaw,
+};
+
+const observation4: ResourceFhir = {
+  source_id: '',
+  source_resource_id: '',
+  source_resource_type: 'Observation',
+  fhir_version: '4',
+  sort_title: 'sort',
+  sort_date: new Date(),
+  resource_raw: observationR4Factory.valueCodeableConcept().build() as IResourceRaw,
+};
+
+export const CodableConcept: Story = {
+  args: {
+    observations: [observation3, observation4],
     observationCode: '788-0',
     observationTitle: 'Erythrocyte distribution width [Ratio] by Automated count',
   },

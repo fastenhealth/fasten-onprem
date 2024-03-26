@@ -1,6 +1,13 @@
 import { Factory } from 'fishery';
+import { codeableConceptR4Factory } from '../datatypes/codeable-concept-r4-factory';
+
 
 class ObservationR4Factory extends Factory<{}> {
+  code(codeableConcept: {}) {
+    return this.params({
+      code: codeableConcept || codeableConceptR4Factory.build()
+    })
+  }
 
   valueString(value?: string) {
     return this.params({
@@ -9,19 +16,66 @@ class ObservationR4Factory extends Factory<{}> {
     })
   }
 
-  valueQuantity(params: {}) {
+  valueQuantity(params?: {}) {
+    let p = params || {}
     return this.params({
       valueQuantity: {
-        value: params['value'] || 6.3,
-        unit: params['unit'] || 'mmol/l',
+        value: p['value'] || 6.3,
+        unit: p['unit'] || 'mmol/l',
         system: 'http://unitsofmeasure.org',
-        code: params['code'] || 'mmol/L',
-        comparator: params['comparator']
+        code: p['code'] || 'mmol/L',
+        comparator: p['comparator']
       }
     })
   }
 
-  referenceRange(high?: number, low?: number) {
+  valueInteger(value?: number) {
+    return this.params({
+      valueQuantity: null,
+      valueInteger: value || 4.9
+    })
+  }
+
+  valueCodeableConcept() {
+    return this.params({
+      valueQuantity: null,
+      valueCodeableConcept: {
+        coding: [
+          {
+            system: 'http://snomed.info/sct',
+            code: '260373001',
+            display: 'Detected (qualifier value)',
+            userSelected: false
+          }
+        ],
+        text: 'Detected'
+      },
+    })
+  }
+
+  valueBoolean(value?: boolean) {
+    return this.params({
+      valueQuantity: null,
+      valueBoolean: value || true
+    })
+  }
+
+  dataAbsent() {
+    return this.params({
+      dataAbsentReason: {
+        coding: [
+          {
+            system: 'http://terminology.hl7.org/CodeSystem/data-absent-reason',
+            code: 'unknown',
+            display: 'Error'
+          }
+        ],
+        text: 'Error'
+      }
+    })
+  }
+
+  referenceRange(low?: number, high?: number) {
     return this.params({
       referenceRange: [
         {
@@ -143,12 +197,6 @@ export const observationR4Factory = ObservationR4Factory.define(() => (
         display: 'A. Langeveld'
       }
     ],
-    valueQuantity: {
-      value: 6.3,
-      unit: 'mmol/l',
-      system: 'http://unitsofmeasure.org',
-      code: 'mmol/L'
-    },
     interpretation: [
       {
         coding: [
