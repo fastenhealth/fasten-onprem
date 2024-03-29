@@ -29,6 +29,8 @@ import {FhirCardOutletDirective} from './fhir-card/fhir-card-outlet.directive';
 import { EncounterComponent } from './resources/encounter/encounter.component';
 import { RtfComponent } from './datatypes/rtf/rtf.component';
 import { ObservationBarChartComponent } from './common/observation-bar-chart/observation-bar-chart.component';
+import { ObservationTableComponent } from './common/observation-table/observation-table.component';
+import { ObservationVisualizationComponent } from './common/observation-visualization/observation-visualization.component';
 
 
 
@@ -38,6 +40,8 @@ import { ObservationBarChartComponent } from './common/observation-bar-chart/obs
     CommonModule,
     BadgeComponent,
     ObservationBarChartComponent,
+    ObservationTableComponent,
+    ObservationVisualizationComponent,
     //datatypes
     TableComponent,
     BinaryTextComponent,
@@ -78,6 +82,8 @@ import { ObservationBarChartComponent } from './common/observation-bar-chart/obs
     BadgeComponent,
     TableComponent,
     ObservationBarChartComponent,
+    ObservationTableComponent,
+    ObservationVisualizationComponent,
     //datatypes
     BinaryTextComponent,
     CodableConceptComponent,

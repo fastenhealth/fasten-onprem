@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReportLabsObservationComponent } from './report-labs-observation.component';
 import { PipesModule } from '../../pipes/pipes.module';
 import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
+import { RouterTestingModule } from '@angular/router/testing';
+import { ObservationVisualizationComponent } from '../fhir-card/common/observation-visualization/observation-visualization.component';
 
 describe('ReportLabsObservationComponent', () => {
   let component: ReportLabsObservationComponent;
@@ -9,7 +11,7 @@ describe('ReportLabsObservationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PipesModule],
+      imports: [PipesModule, RouterTestingModule, ObservationVisualizationComponent],
       declarations: [ ReportLabsObservationComponent, NgbCollapse ],
     })
     .compileComponents();
