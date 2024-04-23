@@ -8461,6 +8461,13 @@ karma-source-map-support@1.4.0:
   dependencies:
     source-map-support "^0.5.5"
 
+karma-verbose-reporter@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/karma-verbose-reporter/-/karma-verbose-reporter-0.0.8.tgz#472d1062af5402d8f2d38d534a8614a5b77b84e8"
+  integrity sha512-wHgevIcEpfgKwR3CnWd8t1ErzWeVlctO7ZtXkKFR1inb006ogz+7ZKg95eIVOnHCYWL3Gdy1dRMOGjVP0n4MlA==
+  dependencies:
+    colors "1.4.0"
+
 karma@~6.4.3:
   version "6.4.3"
   resolved "https://registry.yarnpkg.com/karma/-/karma-6.4.3.tgz#763e500f99597218bbb536de1a14acc4ceea7ce8"
