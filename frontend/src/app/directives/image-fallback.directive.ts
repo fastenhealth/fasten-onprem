@@ -14,7 +14,7 @@ export class ImageFallbackDirective {
   loadFallbackOnError() {
     // Check to see if we have already tried to load the fallback image.
     // Avoids endless loop if for some reason fallback image is missing. Just accept the broken image.
-    if (this.path(this.elementRef.nativeElement.src) == this.path(this.fallbackSrc())) {
+    if (this.path(this.elementRef.nativeElement.src).endsWith(this.path(this.fallbackSrc()))) {
       return;
     }
 
