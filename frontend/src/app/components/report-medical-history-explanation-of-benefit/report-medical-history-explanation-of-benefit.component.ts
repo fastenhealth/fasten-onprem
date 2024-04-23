@@ -57,7 +57,6 @@ export class ReportMedicalHistoryExplanationOfBenefitComponent implements OnInit
     this.eobDisplayModel = result.displayModel
 
 
-    console.log("Resources Lookup", this.resourcesLookup)
 
     let involvedInCareMap: {[resource_id: string]: {displayName: string, role?: string, email?: string}} = {}
 
@@ -86,7 +85,6 @@ export class ReportMedicalHistoryExplanationOfBenefitComponent implements OnInit
       this.procedures.push(procedureModel)
     })
 
-    console.log("CONDITION", this.condition)
 
     // this.medications = this.eobDisplayModel.prescription
 
@@ -157,7 +155,6 @@ export class ReportMedicalHistoryExplanationOfBenefitComponent implements OnInit
 
     }
 
-    console.log("GENERATED INVOLVED IN CARE MAP", involvedInCareMap)
     for(let resourceId in involvedInCareMap){
       this.involvedInCare.push(involvedInCareMap[resourceId])
     }

@@ -67,13 +67,10 @@ export class ReportLabsComponent implements OnInit {
       this.reportSourceId = routeParams['source_id']
       this.reportResourceType = routeParams['resource_type']
       this.reportResourceId = routeParams['resource_id']
-      console.log("Selected Report changed!", this.reportSourceId,this.reportResourceType, this.reportResourceId)
 
       if(this.reportSourceId && this.reportResourceType && this.reportResourceId){
         //we're requesting a single report
-        console.log("REQUSTING REPORT", this.reportSourceId, this.reportResourceType, this.reportResourceId)
         this.findLabResultCodesFilteredToReport(this.reportSourceId, this.reportResourceType, this.reportResourceId).subscribe((data) => {
-          console.log("REPORT result codes", data)
           this.allObservationGroups = data
           this.currentPage = 1 //reset to first page when changing report
           return this.populateObservationsForCurrentPage()
@@ -81,7 +78,6 @@ export class ReportLabsComponent implements OnInit {
       } else {
         this.findLabResultCodesSortedByLatest().subscribe((data) => {
           // this.loading = false
-          console.log("ALL lab result codes", data)
           this.allObservationGroups = data.map((item) => item.label)
           return this.populateObservationsForCurrentPage()
         })
@@ -95,7 +91,6 @@ export class ReportLabsComponent implements OnInit {
 
     let observationGroups = this.allObservationGroups.slice((this.currentPage-1) * this.pageSize, this.currentPage * this.pageSize)
 
-    console.log("FILTERED OBSERVATION GROUPS", observationGroups, (this.currentPage -1) * this.pageSize, this.currentPage * this.pageSize)
     this.loading = true
     this.getObservationsByCodes(observationGroups).subscribe((data) => {
       this.loading = false
@@ -116,7 +111,6 @@ export class ReportLabsComponent implements OnInit {
       .pipe(
         mergeMap((diagnosticReports) => {
           let diagnosticReport = diagnosticReports?.[0]
-          console.log("diagnosticReport", diagnosticReport)
           this.reportDisplayModel = fhirModelFactory(diagnosticReport.source_resource_type as ResourceType, diagnosticReport)
 
 
@@ -142,7 +136,6 @@ export class ReportLabsComponent implements OnInit {
               allObservationGroups.push('http://loinc.org|' + observationGroup)
             }
           }
-          console.log("FOUND REPORT LAB CODES", allObservationGroups)
           return allObservationGroups
         })
       )

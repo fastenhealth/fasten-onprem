@@ -32,7 +32,6 @@ export class AuthSignupComponent implements OnInit {
 
     this.authService.Signup(this.newUser).then((tokenResp: any) => {
         this.loading = false
-        console.log(tokenResp);
         this.router.navigateByUrl('/dashboard');
       },
       (err)=>{

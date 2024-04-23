@@ -28,7 +28,6 @@ export class ResourceDetailComponent implements OnInit {
     this.loading = true
     this.fastenApi.getResourceBySourceId(this.route.snapshot.paramMap.get('source_id'), this.route.snapshot.paramMap.get('resource_id')).subscribe((resourceFhir) => {
       this.loading = false
-      console.log("RESOURECE FHIR", resourceFhir)
       this.resource = resourceFhir;
       this.sourceId = this.route.snapshot.paramMap.get('source_id')
       this.sourceName = "unknown" //TODO popualte this
@@ -36,9 +35,7 @@ export class ResourceDetailComponent implements OnInit {
       try{
         let parsed = fhirModelFactory(resourceFhir.source_resource_type as ResourceType, resourceFhir)
         this.displayModel = parsed
-        console.log("Successfully parsed model", parsed)
       } catch (e) {
-        console.log("FAILED TO PARSE", resourceFhir)
         console.error(e)
       }
     }, error => {

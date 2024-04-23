@@ -58,7 +58,6 @@ export class NlmClinicalTableSearchService {
       `${this.nlm_clinical_table_search_endpoint}/conditions/v3/search`, {params: queryParams}
     ).pipe(
         map((response) => {
-          console.log("RESPONSE", response)
           let results =  response[3].map((item: any):NlmSearchResults => {
             return {
               id: item[0],

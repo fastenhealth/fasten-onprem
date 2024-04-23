@@ -68,7 +68,6 @@ export class FhirDatatableComponent implements OnInit, OnChanges {
 
     let componentType = this.typeLookup(this.resourceListType)
     if(componentType != null){
-      console.log("Attempting to create component", this.resourceListType, componentType)
       const componentRef = viewContainerRef.createComponent<ResourceListComponentInterface>(componentType);
       componentRef.instance.totalElements = this.selectedTotalElements;
       componentRef.instance.resourceListType = this.resourceListType;

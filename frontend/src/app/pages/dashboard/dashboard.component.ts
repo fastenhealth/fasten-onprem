@@ -59,7 +59,6 @@ export class DashboardComponent implements OnInit {
 
 
       //setup dashboard configs
-      console.log("DASHBOARDS!", this.dashboardConfigs)
       this.changeSelectedDashboard(0)
 
     }, error => {
@@ -115,7 +114,6 @@ export class DashboardComponent implements OnInit {
     this.gridComp?.grid?.removeAll() //clear the grid
 
     this.dashboardConfigs?.[this.selectedDashboardConfigNdx]?.widgets?.forEach((widgetConfig) => {
-      console.log("Adding Widgets to Dashboard Grid")
 
       this.gridComp?.grid?.addWidget({
         x: widgetConfig.x,
@@ -131,7 +129,6 @@ export class DashboardComponent implements OnInit {
 
   public toggleEditableGrid() {
     this.gridEditDisabled = !this.gridEditDisabled;
-    console.log('toggle - is disabled', this.gridEditDisabled)
 
     this.gridEditDisabled ? this.gridComp.grid?.disable(true) : this.gridComp.grid?.enable(true);
 
@@ -141,7 +138,6 @@ export class DashboardComponent implements OnInit {
     this.addDashboardLoading = true
     this.dashboardLocationError = ''
     this.fastenApi.addDashboardLocation(this.dashboardLocation).subscribe((result) => {
-      console.log("Added Remote Dashboard", result)
       this.addDashboardLoading = false
 
       this.modalService.dismissAll()
@@ -149,37 +145,21 @@ export class DashboardComponent implements OnInit {
       //reload the page
       window.location.reload()
     }, (error) => {
-      console.log("Error Adding Remote Dashboard", error)
       this.addDashboardLoading = false
       this.dashboardLocationError = error
 
       },
     () => {
-      console.log("Completed Adding Remote Dashboard")
       this.addDashboardLoading = false
     })
   }
 
   public showAddDashboardLocationModal(content) {
     this.dashboardLocation = ''
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
-      (result) => {
-        console.log(`Closed with: ${result}`)
-      },
-      (reason) => {
-        console.log(`Dismissed ${reason}`)
-      },
-    );
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result;
   }
   public showDashboardSettingsModal(content) {
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
-      (result) => {
-        console.log(`Closed with: ${result}`)
-      },
-      (reason) => {
-        console.log(`Dismissed ${reason}`)
-      },
-    );
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result;
   }
 
 }

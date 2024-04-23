@@ -32,12 +32,10 @@ const withHttpClientProvider: DecoratorFunction<any> = (storyFunc, context) => {
   class MockHttpClient extends HttpClient {
 
     get(): Observable<any> {
-      // console.log("CALLED getGlossarySearchByCode in MockFastenApiService")
       return of(httpClientResp)
     }
   }
 
-  // console.log("Inside withHttpClientProvider DecoratorFunction", code, codeSystem)
   return moduleMetadata({ providers: [{ provide: HTTP_CLIENT_TOKEN, useClass: MockHttpClient }] })(
     storyFunc,
     context

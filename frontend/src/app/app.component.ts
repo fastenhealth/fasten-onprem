@@ -39,7 +39,6 @@ export class AppComponent implements OnInit {
       if (event.url?.startsWith('/auth') || event.url?.startsWith('/desktop')) {
         this.showHeader = false;
       } else {
-        // console.log("NU")
         this.showHeader = true;
       }
 
@@ -48,5 +47,3 @@ export class AppComponent implements OnInit {
     }
   }
 }
-
-

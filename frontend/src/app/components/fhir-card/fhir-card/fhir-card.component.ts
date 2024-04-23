@@ -62,7 +62,6 @@ export class FhirCardComponent implements OnInit, OnChanges {
 
     let componentType = this.typeLookup(this.displayModel?.source_resource_type)
     if(componentType != null){
-      console.log("Attempting to create fhir display component", this.displayModel, componentType)
       const componentRef = viewContainerRef.createComponent<FhirCardComponentInterface>(componentType);
       componentRef.instance.displayModel = this.displayModel;
       componentRef.instance.showDetails = this.showDetails;

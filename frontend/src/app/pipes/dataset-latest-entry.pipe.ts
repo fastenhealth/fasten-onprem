@@ -18,7 +18,6 @@ export class DatasetLatestEntryPipe implements PipeTransform {
       }
       let lastItem = dataset?.data?.[dataset?.data?.length - 1] || ''
       // let valueKey = this.chartOptions?.parsing?.['yAxisKey'] || dataset?.parsing?.['key']
-      console.log('latestEntryConfig', lastItem, valLookupKey, unitLookupKey, round)
       let lastItemUnit = ""
       let lastItemValue
 
@@ -26,7 +25,6 @@ export class DatasetLatestEntryPipe implements PipeTransform {
         lastItemValue = _.flatten(lastItem?.[0]?.[valLookupKey])?.[0] as string
         lastItemUnit = _.flatten(lastItem?.[0]?.[unitLookupKey])?.[0] as string
       } else if (typeof lastItem === 'object') {
-        console.log('lastItem-object', lastItem?.[valLookupKey])
         lastItemValue = lastItem?.[valLookupKey]
         lastItemUnit = lastItem?.[unitLookupKey]
       } else {

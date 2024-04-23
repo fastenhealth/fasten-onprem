@@ -139,7 +139,6 @@ export class ReportMedicalHistoryConditionComponent implements OnInit {
 
     }
 
-    console.log("GENERATED INVOLVED IN CARE MAP", involvedInCareMap)
     for(let resourceId in involvedInCareMap){
       this.involvedInCare.push(involvedInCareMap[resourceId])
     }

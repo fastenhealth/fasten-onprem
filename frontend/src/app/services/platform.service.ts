@@ -26,7 +26,6 @@ export class PlatformService {
     return this._httpClient.post<string>(endpointUrl.toString(), ccdaFile, { headers: {'Content-Type': 'application/cda+xml'} })
       .pipe(
         map((responseJson: string) => {
-          console.log("Converter RESPONSE", responseJson)
           return new File([JSON.stringify(responseJson)], ccdaFile.name + ".converted.json", {type: "application/json", lastModified: ccdaFile.lastModified || Date.now()})
         })
       );

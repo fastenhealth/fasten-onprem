@@ -81,7 +81,6 @@ export class DocumentReferenceModel extends FastenDisplayModel {
   };
 
   contentDTO(fhirResource: any, fhirVersion: fhirVersions){
-    console.log('INSIDE CONTENTDTO', fhirResource)
     this.category = new CodableConceptModel(_.get(fhirResource, 'category[0]') || {});
     this.content = _.get(fhirResource, 'content', []).map((content: any) => {
       const attachment: Attachment = _.get(content, 'attachment');

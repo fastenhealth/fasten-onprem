@@ -206,9 +206,6 @@ export class RecordsSummaryWidgetComponent extends DashboardWidgetComponent impl
       },
       (error) => {
         this.loading = false
-      },
-      () => {
-        console.log('completed getting summary')
       })
   }
 }

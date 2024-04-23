@@ -11,7 +11,6 @@ export class MedicalSourcesCategoryLookupPipe implements PipeTransform {
     }
     let lookupDescription = SOURCE_CATEGORY_CODE_LOOKUP[categoryCode];
     if (!lookupDescription){
-      console.log("COULD NOT FIND CATEGORY CODE", categoryCode, "IN LOOKUP")
       return categoryCode;
     } else {
       return lookupDescription;

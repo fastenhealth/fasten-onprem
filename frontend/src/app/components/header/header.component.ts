@@ -95,12 +95,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.newSupportRequest = newSupportRequest
   }
   submitSupportForm() {
-    console.log("submitting support form", this.newSupportRequest)
     this.loading = false
 
     this.fastenApi.supportRequest(this.newSupportRequest).subscribe((resp: any) => {
         this.loading = false
-        console.log(resp);
         this.submitSuccess = true
         //show success toast? close modal?
       },
