@@ -156,10 +156,10 @@ export class DashboardComponent implements OnInit {
 
   public showAddDashboardLocationModal(content) {
     this.dashboardLocation = ''
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result;
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.catch(console.error);
   }
   public showDashboardSettingsModal(content) {
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result;
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.catch(console.error);
   }
 
 }

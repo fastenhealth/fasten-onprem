@@ -90,6 +90,6 @@ export class AuthSigninComponent implements OnInit {
   }
 
   idpConnectHello($event){
-    this.authService.IdpConnect('hello')
+    this.authService.IdpConnect('hello').catch(console.error)
   }
 }
