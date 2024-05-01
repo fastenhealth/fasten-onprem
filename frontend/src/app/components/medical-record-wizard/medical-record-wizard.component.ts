@@ -242,13 +242,11 @@ export class MedicalRecordWizardComponent implements OnInit {
     modalRef.componentInstance.debugMode = this.debugMode;
     modalRef.result.then(
       (result) => {
-        console.log('Closing, saving form', result);
         // add this to the list of organization
         //TODO
         this.addEncounter(result);
       },
       (err) => {
-        console.log('Closed without saving', err);
       },
     );
 
@@ -268,7 +266,6 @@ export class MedicalRecordWizardComponent implements OnInit {
     modalRef.componentInstance.disabledResourceIds = disabledResourceIds;
     modalRef.result.then(
       (result) => {
-        console.log('Closing, saving form', result);
         // add this to the list of organization
         this.addPractitioner(result);
         if(formGroup && controlName){
@@ -277,7 +274,6 @@ export class MedicalRecordWizardComponent implements OnInit {
         }
       },
       (err) => {
-        console.log('Closed without saving', err);
       },
     );
 
@@ -296,7 +292,6 @@ export class MedicalRecordWizardComponent implements OnInit {
     modalRef.componentInstance.disabledResourceIds = disabledResourceIds;
     modalRef.result.then(
       (result) => {
-        console.log('Closing, saving form', result);
         //add this to the list of organization
         this.addOrganization(result);
         if(formGroup && controlName){
@@ -305,7 +300,6 @@ export class MedicalRecordWizardComponent implements OnInit {
         }
       },
       (err) => {
-        console.log('Closed without saving', err);
       },
     );
   }
@@ -317,12 +311,10 @@ export class MedicalRecordWizardComponent implements OnInit {
     modalRef.componentInstance.debugMode = this.debugMode;
     modalRef.result.then(
       (result) => {
-        console.log('Closing, saving form', result);
         //add this to the list of organization
         this.addLabResultsBundle(result);
       },
       (err) => {
-        console.log('Closed without saving', err);
       },
     );
   }
@@ -335,7 +327,6 @@ export class MedicalRecordWizardComponent implements OnInit {
     modalRef.componentInstance.debugMode = this.debugMode;
     modalRef.result.then(
       (result) => {
-        console.log('Closing, saving form',  result);
         //add this to the list of organization
         result.id = uuidV4();
         this.addAttachment(result);
@@ -349,7 +340,6 @@ export class MedicalRecordWizardComponent implements OnInit {
         }
       },
       (err) => {
-        console.log('Closed without saving', err);
       },
     );
   }
@@ -358,10 +348,8 @@ export class MedicalRecordWizardComponent implements OnInit {
 
 
   onSubmit() {
-    console.log(this.form.getRawValue())
     this.form.markAllAsTouched()
     if (this.form.valid) {
-      console.log('form submitted');
       this.submitWizardLoading = true;
 
       let resourceStorage = GenerateR4ResourceLookup(this.form.getRawValue());
@@ -413,12 +401,10 @@ export class MedicalRecordWizardComponent implements OnInit {
 
       this.fastenApi.createRelatedResourcesFastenSource(fhirListResource).subscribe(
         (resp) => {
-          console.log(resp)
           this.submitWizardLoading = false;
           this.activeModal.close()
         },
         (err) => {
-          console.log(err)
           this.submitWizardLoading = false;
         }
       )

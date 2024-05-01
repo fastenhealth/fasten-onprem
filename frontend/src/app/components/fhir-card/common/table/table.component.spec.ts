@@ -41,7 +41,7 @@ describe('TableComponent', () => {
   it('encodes urls properly', () => {
     spyOn(console, 'log').and.callThrough();
     const link = fixture.debugElement.nativeElement.querySelector('a');
-    console.log(link);
+
     expect(link.href).toContain(
       '/explore/123-456-789%3D/resource/aHR0cHM6Ly93d3cubWVyY3kubmV0L3NpdGVzL2RlZmF1bHQvZmlsZXMvZG9jdG9yX2ltYWdlcy9kZXNrdG9wLzE2NTk4ODYwNTktbS5qcGc%3D'
     );

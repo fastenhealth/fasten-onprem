@@ -126,10 +126,8 @@ export class AuthSignupWizardComponent implements OnInit {
     this.loading = true
     this.submitted = true;
 
-    console.log("starting signup process...",this.newUser)
     this.authService.Signup(this.newUser).then((tokenResp: any) => {
         this.loading = false
-        console.log(tokenResp);
         this.router.navigateByUrl('/dashboard');
       },
       (err)=>{

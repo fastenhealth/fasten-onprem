@@ -43,7 +43,6 @@ export class MedicalRecordWizardAddLabResultsComponent implements OnInit {
   ngOnInit(): void {
 
     // const parent: HTMLElement = document.getElementById('lhcFormContainer');
-    // console.log("Adding Form to page", this.questionnaire)
     // LForms.Util.addFormToPage(this.questionnaire, parent);
     this.resetLabPanelForm()
   }
@@ -60,18 +59,11 @@ export class MedicalRecordWizardAddLabResultsComponent implements OnInit {
       null,
       {bundleType: "transaction"}
     )
-    console.log(formData)
 
     this.activeModal.close({
       action: 'create',
       data: formData
     });
-  }
-  onFormReady(e){
-    console.log("onFormReady", e)
-  }
-  onError(e){
-    console.log("onError", e)
   }
 
   private resetLabPanelForm() {
@@ -79,7 +71,6 @@ export class MedicalRecordWizardAddLabResultsComponent implements OnInit {
       data: new FormControl(null, Validators.required),
     })
     this.newLabPanelTypeaheadForm.valueChanges.subscribe(form => {
-      console.log("CHANGE LabPanel IN MODAL", form)
       let val = form.data
       if(val && val.id){
         this.loading = true

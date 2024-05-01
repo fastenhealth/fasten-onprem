@@ -74,7 +74,6 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
     }
   }
   selectionChanged(event) {
-    console.log("SELECTION CHANGED", event)
     this.selectedPractitioner = event
   }
   get submitEnabled() {
@@ -168,7 +167,6 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
       data: new FormControl(null, Validators.required),
     })
     this.newPractitionerTypeaheadForm.valueChanges.subscribe(form => {
-      console.log("CHANGE INDIVIDUAL IN MODAL", form)
       let val = form.data
       if(val == null){
         //reset the dependant fields (user cleared the text box)

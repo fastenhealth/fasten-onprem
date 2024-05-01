@@ -23,11 +23,9 @@ export class MedicalSourcesFilterComponent implements OnInit {
   }
 
   categorySelected(category: string){
-    console.log("SELECTED CATEGORY", category)
     this.filterService.filterForm.patchValue({'categories': {[category]: true}})
   }
   platformTypeSelected(platformType: string){
-    console.log("SELECTED PLATFORMTYPE", platformType)
     this.filterService.filterForm.patchValue({'platformTypes': {[platformType]: true}})
   }
 

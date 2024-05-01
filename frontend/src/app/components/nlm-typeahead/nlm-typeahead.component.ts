@@ -180,8 +180,6 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
       tap(() => { this.searching = true }),
       switchMap((term): ObservableInput<any> => {
 
-        console.log("searching for", term)
-
         //must use bind
         return searchOpFn(term).pipe(
           tap(() => {this.searchFailed = false}),
@@ -197,7 +195,7 @@ export class NlmTypeaheadComponent implements ControlValueAccessor {
 
   typeAheadChangeEvent(event){
     this.markAsTouched()
-    console.log("bubbling modelChange event", event)
+
     if(typeof event === 'string'){
       if(this.idResult){
         this.onChange(null);

@@ -38,7 +38,6 @@ export class MedicalRecordWizardAddAttachmentComponent implements OnInit {
   }
 
   onAttachmentFileChange($event){
-    console.log("onAttachmentFileChange")
     let fileInput = $event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files[0]) {
       let processingFile = fileInput.files[0]

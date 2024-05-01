@@ -70,9 +70,6 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
       this.chartProcessQueryResults.bind(currentThis),
       (error) => {
         this.loading = false
-      },
-      () => {
-        console.log("complete")
       })
   }
 
@@ -84,7 +81,6 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
 
       for (let queryNdx in queryResults) {
         let queryResult = queryResults[queryNdx]
-        console.log(`QUERY RESULTS FOR ${this.widgetConfig.title_text}`, queryResult)
         this.chartLabels = []
         // console.log(`CHART LABELS BEFORE ${this.widgetConfig.title_text}`, this.chartLabels)
         for(let result of queryResult){
@@ -96,8 +92,6 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
           this.chartLabels.push(label)
           // }
         }
-
-        console.log(`CHART LABELS FOR ${this.widgetConfig.title_text}`, this.chartLabels)
 
         this.chartDatasets.push(_.extend(
           this.chartDatasetsDefaults?.[queryNdx] || {},
@@ -115,10 +109,6 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
       console.error("ERROR DURING PROCESSING")
       console.error(e)
     }
-
-
-
-    console.log(`Loading COmpleted for ${this.widgetConfig.title_text}, ${this.loading}`)
   }
 
 
@@ -127,9 +117,7 @@ export class DashboardWidgetComponent implements OnInit, DashboardWidgetComponen
   // fhirPathMapQueryFn will also assign aliases where appropriate.
   // `where` clause filtering is processed in the backend.
   processQueryResourcesSelectClause(query: DashboardWidgetQuery, response: ResponseWrapper): any[]{
-    console.log("RESPONSE", response)
     if(!response.data || !response.data.length){
-      console.log("NO QUERY DATA FOUND")
       return []
     }
     let results = response.data

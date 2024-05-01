@@ -4,6 +4,9 @@ import { ExploreComponent } from './explore.component';
 import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
 import {HttpClient} from '@angular/common/http';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import { ReportHeaderComponent } from 'src/app/components/report-header/report-header.component';
+import { LoadingSpinnerComponent } from 'src/app/components/loading-spinner/loading-spinner.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ExploreComponent', () => {
   let component: ExploreComponent;
@@ -11,8 +14,8 @@ describe('ExploreComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ExploreComponent ],
-      imports: [HttpClientTestingModule],
+      declarations: [ ExploreComponent, ReportHeaderComponent ],
+      imports: [HttpClientTestingModule, LoadingSpinnerComponent, RouterTestingModule],
       providers: [
         {
           provide: HTTP_CLIENT_TOKEN,

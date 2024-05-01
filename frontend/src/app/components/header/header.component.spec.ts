@@ -6,6 +6,7 @@ import {RouterModule} from '@angular/router';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
 import {HttpClient} from '@angular/common/http';
+import { IconsModule } from 'src/app/icon-module';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -13,7 +14,7 @@ describe('HeaderComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ HttpClientTestingModule, RouterTestingModule, RouterModule ],
+      imports: [ HttpClientTestingModule, RouterTestingModule, RouterModule, IconsModule ],
       declarations: [ HeaderComponent ],
       providers: [
         {

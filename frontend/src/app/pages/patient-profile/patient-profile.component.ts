@@ -35,7 +35,6 @@ export class PatientProfileComponent implements OnInit {
       this.fastenApi.getResources("AllergyIntolerance")
     ]).subscribe(results => {
       this.loading['page'] = false
-      console.log(results)
       this.patient = results[0][0]
       this.immunizations = results[1].map((immunization) => {
         return fhirModelFactory(immunization.source_resource_type as ResourceType, immunization) as ImmunizationModel
@@ -52,7 +51,6 @@ export class PatientProfileComponent implements OnInit {
     this.loading['delete'] = true
     this.fastenApi.deleteAccount().subscribe(result => {
       this.loading['delete'] = false
-      console.log(result)
     }, error => {
       this.loading['delete'] = false
       console.log(error)

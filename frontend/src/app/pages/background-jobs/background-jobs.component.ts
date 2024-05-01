@@ -25,7 +25,6 @@ export class BackgroundJobsComponent implements OnInit, OnDestroy {
         mergeMap(() => this.fastenApi.getBackgroundJobs())
       )
       .subscribe((jobs) => {
-        console.log("Background jobs updated")
         this.backgroundJobs = jobs
       })
   }

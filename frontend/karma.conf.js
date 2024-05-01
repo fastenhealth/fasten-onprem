@@ -8,7 +8,8 @@ module.exports = function(config) {
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
       require('karma-coverage'),
-      require('@angular-devkit/build-angular/plugins/karma')
+      require('karma-verbose-reporter'),
+      require('@angular-devkit/build-angular/plugins/karma'),
     ],
     client: {
       jasmine: {
@@ -41,7 +42,11 @@ module.exports = function(config) {
     },
 
     // coverage reporter generates the coverage
-    reporters: ['progress', 'coverage'],
+    reporters: [
+      'progress',
+      'coverage',
+      // 'verbose'
+    ],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,

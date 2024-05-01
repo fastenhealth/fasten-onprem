@@ -74,7 +74,6 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
     }
   }
   selectionChanged(event) {
-    console.log("SELECTION CHANGED", event)
     this.selectedOrganization = event
   }
   get submitEnabled() {
@@ -160,7 +159,6 @@ export class MedicalRecordWizardAddOrganizationComponent implements OnInit {
       data: new FormControl(null, Validators.required),
     })
     this.newOrganizationTypeaheadForm.valueChanges.subscribe(form => {
-      console.log("CHANGE Organization IN MODAL", form)
       let val = form.data
 
       if(val == null){

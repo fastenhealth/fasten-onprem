@@ -65,7 +65,6 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log("ngOnInit STATUS", this.conditions)
     this.nodes = this.generateNodes(this.conditions)
   }
 
@@ -81,7 +80,6 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
       //delete this key (unselected)
       delete this.selectedResources[key]
     }
-    console.log("selected resources", this.selectedResources)
   }
 
   onMergeResourcesClick() {
@@ -91,8 +89,7 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
       resources.push(this.selectedResources[key])
     }
 
-    this.fastenApi.createResourceComposition(this.compositionTitle, resources).subscribe(results => {
-      console.log(results)
+    this.fastenApi.createResourceComposition(this.compositionTitle, resources).subscribe((results) => {
       this.activeModal.close()
     },(err) => {})
   }
@@ -112,7 +109,6 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
       }
     }
 
-    console.log("NODES:", relatedNodes)
     return relatedNodes
   }
 

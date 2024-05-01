@@ -72,7 +72,6 @@ export class MedicalRecordWizardAddEncounterComponent implements OnInit {
     }
   }
   selectionChanged(event) {
-    console.log("SELECTION CHANGED", event)
     this.selectedEncounter = event
   }
   get submitEnabled() {
@@ -108,7 +107,6 @@ export class MedicalRecordWizardAddEncounterComponent implements OnInit {
           let parsed = RecResourceRelatedDisplayModel(graphResponse.results["Encounter"]?.[0])
           let encounterDisplayModelWithRelated = parsed.displayModel as EncounterModel
 
-          console.log("Found encounter (and related resources)", encounterDisplayModelWithRelated)
           this.activeModal.close({
             action: this.activeId,
             data: encounterDisplayModelWithRelated

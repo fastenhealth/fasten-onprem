@@ -67,7 +67,6 @@ export class MedicalHistoryComponent implements OnInit {
     this.fastenApi.getResourceGraph(null, encounterIds).subscribe((graphResponse: ResourceGraphResponse) => {
         this.loading = false
 
-        console.log("FLATTENED RESOURCES RESPONSE", graphResponse)
         this.encounters = graphResponse.results["Encounter"] || []
 
       },

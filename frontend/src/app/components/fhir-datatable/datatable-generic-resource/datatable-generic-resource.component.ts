@@ -65,7 +65,6 @@ export class DatatableGenericResourceComponent implements OnInit, ResourceListCo
   }
 
   ngOnInit(): void {
-    console.log("INIT GENERIC RESOURCE")
     this.currentPage = {offset: 0}
 
     this.changePage(this.currentPage)
@@ -75,7 +74,6 @@ export class DatatableGenericResourceComponent implements OnInit, ResourceListCo
   }
 
   changePage(page: PageInfo){
-    console.log("Requesting page:" + JSON.stringify(page))
     this.currentPage = page;
     this.fastenApi.getResources(this.resourceListType, this.sourceId, null, this.currentPage.offset)
       .subscribe((resourceList: ResourceFhir[]) => {
@@ -100,7 +98,6 @@ export class DatatableGenericResourceComponent implements OnInit, ResourceListCo
 
 
   renderList(resourceList: ResourceFhir[]){
-    console.log("GENERIC RESOURCE RENDERLSIT")
     this.columns = this.columnDefinitions.map((defn) => {
       let column = {name: defn.title, prop: defn.title.replace(/[^A-Z0-9]/ig, "_"), sortable: false}
       return column
@@ -152,15 +149,3 @@ export class DatatableGenericResourceComponent implements OnInit, ResourceListCo
 ///////////////////////////////////////////////////////////////////////////////////////
 // START OVERRIDES
 ///////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
