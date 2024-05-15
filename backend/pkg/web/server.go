@@ -94,7 +94,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 			api.GET("/glossary/code", handler.GlossarySearchByCode)
 			api.POST("/support/request", handler.SupportRequest)
-			api.POST("/healthsystem/request", handler.HealthSystemRequest)
+			api.POST("/support/healthsystem", handler.HealthSystemRequest)
 
 			secure := api.Group("/secure").Use(middleware.RequireAuth())
 			{

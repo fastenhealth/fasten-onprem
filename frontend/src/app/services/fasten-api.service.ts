@@ -350,7 +350,7 @@ export class FastenApiService {
   }
 
   requestHealthSystem(requestHealth: FormRequestHealthSystem): Observable<any> {
-    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/healthsystem/request`, requestHealth)
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/support/healthsystem`, requestHealth)
       .pipe(
         map((response: ResponseWrapper) => {
           // @ts-ignore
