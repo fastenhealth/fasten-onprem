@@ -36,6 +36,7 @@ import {FhirCardModule} from './fhir-card/fhir-card.module';
 import {FhirDatatableModule} from './fhir-datatable/fhir-datatable.module';
 import { MedicalRecordWizardAddEncounterComponent } from './medical-record-wizard-add-encounter/medical-record-wizard-add-encounter.component';
 import { MedicalRecordWizardAddLabResultsComponent } from './medical-record-wizard-add-lab-results/medical-record-wizard-add-lab-results.component';
+import { FormRequestHealthSystemComponent } from './form-request-health-system/form-request-health-system.component';
 
 @NgModule({
   imports: [
@@ -87,6 +88,7 @@ import { MedicalRecordWizardAddLabResultsComponent } from './medical-record-wiza
     MedicalSourcesConnectedComponent,
     MedicalSourcesCategoryLookupPipe,
     MedicalSourcesCardComponent,
+    FormRequestHealthSystemComponent,
   ],
     exports: [
         ComponentsSidebarComponent,

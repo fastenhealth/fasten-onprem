@@ -27,6 +27,7 @@ import {SupportRequest} from '../models/fasten/support-request';
 import {
   List
 } from 'fhir/r4';
+import {FormRequestHealthSystem} from '../models/fasten/form-request-health-system';
 @Injectable({
   providedIn: 'root'
 })
@@ -340,6 +341,16 @@ export class FastenApiService {
 
   supportRequest(request: SupportRequest): Observable<any> {
     return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/support/request`, request)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          // @ts-ignore
+          return {}
+        })
+      );
+  }
+
+  requestHealthSystem(requestHealth: FormRequestHealthSystem): Observable<any> {
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/healthsystem/request`, requestHealth)
       .pipe(
         map((response: ResponseWrapper) => {
           // @ts-ignore

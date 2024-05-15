@@ -18,6 +18,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 import * as _ from 'lodash';
 import {PatientAccessBrand} from '../../models/patient-access-brands';
 import {PlatformService} from '../../services/platform.service';
+import {FormRequestHealthSystemComponent} from '../../components/form-request-health-system/form-request-health-system.component';
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
 
@@ -354,6 +355,17 @@ export class MedicalSourcesComponent implements OnInit {
     })
   }
 
+  showRequestHealthSystemModal(): Promise<boolean> {
+    return this.modalService.open(FormRequestHealthSystemComponent).result.then<boolean>(
+      (result) => {
+        //convert button clicked, .close()
+        return true
+      }
+    ).catch((reason) => {
+      // x or cancel button clicked, .dismiss()
+      return false
+    })
+  }
 
 
 }

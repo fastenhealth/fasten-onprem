@@ -73,11 +73,20 @@
       >
 
         <app-medical-sources-card class="col-sm-3 mg-b-20 px-3"
+
           *ngFor="let lighthouseBrand of availableLighthouseBrandList"
           [sourceInfo]="lighthouseBrand"
           [status]="status[lighthouseBrand.brand.id]"
           (onClick)="connectModalHandler(contentModalRef, $event)"
         ></app-medical-sources-card>
+
+        <div *ngIf="availableLighthouseBrandList.length == 0" class="mg-b-60 w-100">
+          <div class="card card-body bg-gray-200 bd-0">
+            <p class="card-text">
+              <strong>No results</strong> Try another search term or <a (click)="showRequestHealthSystemModal()" class="link">request this health system</a>.
+            </p>
+          </div>
+        </div>
 
       </div><!-- row -->
 
@@ -144,7 +153,7 @@
   </div>
 
   <div class="modal-body">
-    <h6>Fasten Does not natively support <a href="https://en.wikipedia.org/wiki/Consolidated_Clinical_Document_Architecture"  externalLink >CCDA</a> Health Records</h6>
+    <h6>Fasten does not natively support <a href="https://en.wikipedia.org/wiki/Consolidated_Clinical_Document_Architecture"  externalLink >CCDA</a> Health Records</h6>
 
     <p>However we can convert it automatically using software generously donated by the team at <a href="https://www.health-samurai.io/"  externalLink>Health Samurai</a><br/><br/>
       This converter is hosted by <a href="https://www.fastenhealth.com/" externalLink>Fasten Health, Inc.</a> and is subject to our <a href="https://policy.fastenhealth.com/privacy_policy.html" externalLink>Privacy Policy</a>.
