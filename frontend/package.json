@@ -8,7 +8,7 @@
     "build": "ng build --output-path=../dist",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
+    "e2e": "npx playwright test",
     "dist": "ng build --watch --output-path=../dist",
     "storybook": "ng run fastenhealth:storybook",
     "build-storybook": "ng run fastenhealth:build-storybook"
