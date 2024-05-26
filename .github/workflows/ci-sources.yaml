@@ -19,7 +19,7 @@ jobs:
           node-version: 21
       - run: cd frontend && yarn install
       - name: Run Browserstack tests
-        run: cd frontend && yarn run sample-local-test
+        run: cd frontend && yarn run e2e
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
