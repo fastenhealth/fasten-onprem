@@ -145,6 +145,8 @@ Work your magic and then submit a pull request. We love pull requests!
 
 If you find the documentation lacking, help us out and update this README.md. If you don't have the time to work on Fasten, but found something we should know about, please submit an issue.
 
+This project is tested with BrowserStack.
+
 # Versioning
 
 We use SemVer for versioning. For the versions available, see the tags on this repository.
