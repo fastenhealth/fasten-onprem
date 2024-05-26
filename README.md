@@ -170,3 +170,4 @@ I'd also like to thank the following Corporate Sponsors:
 <a href="https://depot.dev/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/depot.png" height="100px" /></a>
 <a style="padding-left:5px" href="https://www.macminivault.com/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/macminivault.png" height="100px" /></a>
 <a style="padding-left:5px" href="https://www.health-samurai.io/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/health-samurai-logo.png" height="100px" /></a>
+<a style="padding-left:5px" href="https://www.browserstack.com/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/browserstack.png" height="100px" /></a>
