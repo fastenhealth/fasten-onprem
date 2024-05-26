@@ -281,6 +281,12 @@ func (s *SourceCredential) RefreshDynamicClientAccessToken() error {
 		return fmt.Errorf("an error occurred while sending dynamic client token request, %s", err)
 	}
 
+	//dump, err := httputil.DumpResponse(tokenResp, true)
+	//if err != nil {
+	//	return fmt.Errorf("an error occurred while introspecting response")
+	//}
+	//fmt.Printf("%q", dump)
+	//
 	defer tokenResp.Body.Close()
 	if tokenResp.StatusCode >= 300 || tokenResp.StatusCode < 200 {
 
