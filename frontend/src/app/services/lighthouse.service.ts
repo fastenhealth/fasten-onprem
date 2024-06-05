@@ -45,6 +45,10 @@ export class LighthouseService {
     } else {
       filter.searchAfter = []
     }
+    if(environment.environment_desktop){
+      filter.app = "fastenhealth.desktop"
+    }
+
     const endpointUrl = new URL(`${environment.lighthouse_api_endpoint_base}/search`);
     return this._httpClient.post<ResponseWrapper>(endpointUrl.toString(), filter)
       .pipe(

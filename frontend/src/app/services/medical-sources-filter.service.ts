@@ -19,6 +19,8 @@ export class MedicalSourcesFilter {
   searchAfter: string | string[] = '';
 
   fields: string[] = []; //specify the fields to return. if null or empty list, return all.
+
+  app?: string
 }
 
 
