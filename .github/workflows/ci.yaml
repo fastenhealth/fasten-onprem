@@ -23,6 +23,8 @@ jobs:
           name: coverage
       - name: Upload coverage reports
         uses: codecov/codecov-action@v2
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           files: ${{ github.workspace }}/backend-coverage.txt,${{ github.workspace }}/lcov.info
           flags: unittests
