@@ -39,6 +39,10 @@
 
   <!-- required for lhncbc/lforms -->
   <script src="./assets/js/webcomponents/webcomponents-loader.js"></script>
+
+  <!-- wails -- this file is expected to be missing in docker/web mode. It's only required in Desktop -->
+  <script type="module" src="/wails/runtime.js"></script>
+
   <script>
     if (!window.customElements) {
       document.write('<!--');

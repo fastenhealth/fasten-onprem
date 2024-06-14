@@ -6,7 +6,7 @@ export function OpenExternalLink(url: string, desktopMode: boolean, windowId?: s
 
   //check if wails exists and is defined
   if(typeof wails !== "undefined" && desktopMode){
-    wails.CallByName("pkg.AppService.BrowserOpenURL", url, windowId || 'external')
+    wails.Call.ByName("github.com/fastenhealth/fasten-desktop/pkg.AppService.BrowserOpenURL", url, windowId || 'external').then(console.log, console.error)
   } else{
     window.open(url, "_blank");
   }

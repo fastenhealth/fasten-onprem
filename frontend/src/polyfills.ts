@@ -74,9 +74,10 @@ declare global {
       Once: (eventName, callback) => void
       On: (eventName, callback) => void
     }
-    Call: (options) => Promise<any>
-    CallByID: (methodID, ...args) => Promise<any>
-    CallByName: (name, ...args) => Promise<any>
+    Call: {
+      ByID: (methodID, ...args) => Promise<any>
+      ByName: (name, ...args) => Promise<any>
+    }
   }
 
   //see https://lhncbc.github.io/lforms/ for definitions
