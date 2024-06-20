@@ -139,10 +139,19 @@ type FhirAllergyIntolerance struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	Severity datatypes.JSON `gorm:"column:severity;type:text;serializer:json" json:"severity,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
+	/*
+	   Multiple Resources:
+
+	   * [AllergyIntolerance](allergyintolerance.html): allergy | intolerance - Underlying mechanism (if known)
+	   * [Composition](composition.html): Kind of composition (LOINC if possible)
+	   * [DocumentManifest](documentmanifest.html): Kind of document set
+	   * [DocumentReference](documentreference.html): Kind of document (LOINC if possible)
+	   * [Encounter](encounter.html): Specific type of encounter
+	   * [EpisodeOfCare](episodeofcare.html): Type/class  - e.g. specialist referral, disease management
+	*/
+	// https://hl7.org/fhir/r4/search.html#token
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 	// unconfirmed | confirmed | refuted | entered-in-error
 	// https://hl7.org/fhir/r4/search.html#token
@@ -175,8 +184,8 @@ func (s *FhirAllergyIntolerance) GetSearchParameters() map[string]string {
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",
 		"source_uri":           "keyword",
-		"text":                 "keyword",
-		"type":                 "special",
+		"text":                 "string",
+		"type":                 "token",
 		"verificationStatus":   "token",
 	}
 	return searchParameters
@@ -246,14 +255,14 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting Date
 	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effectiveDateTime | DiagnosticReport.effectivePeriod | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effectiveDateTime | Observation.effectivePeriod | Observation.effectiveTiming | Observation.effectiveInstant | Procedure.performedDateTime | Procedure.performedPeriod | Procedure.performedString | Procedure.performedAge | Procedure.performedRange | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')")
 	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, dateResult.String()); err == nil {
 			s.Date = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", dateResult.String())
-			if err == nil {
-				s.Date = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006-01", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006", dateResult.String()); err == nil {
+			s.Date = &t
 		}
 	}
 	// extracting Identifier
@@ -269,14 +278,14 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting LastDate
 	lastDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.lastOccurrence')")
 	if err == nil && lastDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, lastDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, lastDateResult.String()); err == nil {
 			s.LastDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", lastDateResult.String())
-			if err == nil {
-				s.LastDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", lastDateResult.String()); err == nil {
+			s.LastDate = &t
+		} else if t, err = time.Parse("2006-01", lastDateResult.String()); err == nil {
+			s.LastDate = &t
+		} else if t, err = time.Parse("2006", lastDateResult.String()); err == nil {
+			s.LastDate = &t
 		}
 	}
 	// extracting Manifestation
@@ -287,14 +296,14 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -315,14 +324,14 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting Onset
 	onsetResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.reaction.onset')")
 	if err == nil && onsetResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, onsetResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, onsetResult.String()); err == nil {
 			s.Onset = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", onsetResult.String())
-			if err == nil {
-				s.Onset = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", onsetResult.String()); err == nil {
+			s.Onset = &t
+		} else if t, err = time.Parse("2006-01", onsetResult.String()); err == nil {
+			s.Onset = &t
+		} else if t, err = time.Parse("2006", onsetResult.String()); err == nil {
+			s.Onset = &t
 		}
 	}
 	// extracting Recorder
@@ -341,9 +350,14 @@ func (s *FhirAllergyIntolerance) PopulateAndExtractSearchParameters(resourceRaw 
 		s.Severity = []byte(severityResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
+	}
+	// extracting Type
+	typeResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type')")
+	if err == nil && typeResult.String() != "undefined" {
+		s.Type = []byte(typeResult.String())
 	}
 	// extracting VerificationStatus
 	verificationStatusResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'AllergyIntolerance.verificationStatus')")

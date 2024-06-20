@@ -27,7 +27,7 @@ type QueryResourceAggregations struct {
 
 type QueryResourceAggregation struct {
 	Field    string `json:"field"`
-	Function string `json:"fn"`
+	Function string `json:"fn"` //built-in SQL aggregation functions (eg. Count, min, max, etc).
 }
 
 func (q *QueryResource) Validate() error {

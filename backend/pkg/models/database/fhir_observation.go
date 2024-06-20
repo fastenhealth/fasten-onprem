@@ -190,11 +190,8 @@ type FhirObservation struct {
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// The value of the observation, if the value is a CodeableConcept
 	// https://hl7.org/fhir/r4/search.html#token
 	ValueConcept datatypes.JSON `gorm:"column:valueConcept;type:text;serializer:json" json:"valueConcept,omitempty"`
@@ -247,8 +244,7 @@ func (s *FhirObservation) GetSearchParameters() map[string]string {
 		"specimen":                  "reference",
 		"status":                    "token",
 		"subject":                   "reference",
-		"text":                      "keyword",
-		"type":                      "special",
+		"text":                      "string",
 		"valueConcept":              "token",
 		"valueDate":                 "date",
 		"valueQuantity":             "quantity",
@@ -356,14 +352,14 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	// extracting Date
 	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effectiveDateTime | DiagnosticReport.effectivePeriod | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effectiveDateTime | Observation.effectivePeriod | Observation.effectiveTiming | Observation.effectiveInstant | Procedure.performedDateTime | Procedure.performedPeriod | Procedure.performedString | Procedure.performedAge | Procedure.performedRange | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')")
 	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, dateResult.String()); err == nil {
 			s.Date = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", dateResult.String())
-			if err == nil {
-				s.Date = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006-01", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006", dateResult.String()); err == nil {
+			s.Date = &t
 		}
 	}
 	// extracting DerivedFrom
@@ -404,14 +400,14 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -460,9 +456,9 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	// extracting ValueConcept
 	valueConceptResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, '(Observation.valueCodeableConcept)')")
@@ -472,14 +468,14 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	// extracting ValueDate
 	valueDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, '(Observation.valueDateTime) | (Observation.valuePeriod)')")
 	if err == nil && valueDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, valueDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, valueDateResult.String()); err == nil {
 			s.ValueDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", valueDateResult.String())
-			if err == nil {
-				s.ValueDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", valueDateResult.String()); err == nil {
+			s.ValueDate = &t
+		} else if t, err = time.Parse("2006-01", valueDateResult.String()); err == nil {
+			s.ValueDate = &t
+		} else if t, err = time.Parse("2006", valueDateResult.String()); err == nil {
+			s.ValueDate = &t
 		}
 	}
 	// extracting ValueQuantity
