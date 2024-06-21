@@ -12,7 +12,7 @@ Fasten is made up of a handful of different components. Here's a summary of the 
 - Angular `v14.1.3`
 
 **Backend**
-- Go `v1.18.3`
+- Go `v1.22.1`
 
 **Misc**
 - Docker `v20.10.17`
@@ -105,9 +105,11 @@ The following URL's and credentials may be helpful as you're developing
 - http://localhost:9090/web/dashboard - WebUI
 
 ### Credentials
-- WebUI: 
-  - username: `testuser`
-  - password: `testuser`
+
+Fasten stores all user data locally, including your account information. That means on first start you'll need to register a new account.
+Once you've done that, you'll want to go to the Sources tab and connect a healthcare provider.
+
+See [Connecting a new Source](https://docs.fastenhealth.com/getting-started/sandbox.html#connecting-a-new-source) for credentials to use.
 
 # Source Code Folder Structure
 
@@ -151,44 +153,45 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   │   │   ├── fasten-db.service.ts          # db service, used to communicate with CouchDB database
 │   │   │   │   ├── lighthouse.service.ts         # api service, used to communicate with auth-gateway (Lighthouse)
 │   │   │   │   └── toast.service.ts              # notifications service, used to send notifications
-│   │   │   └── workers
-│   │   │       ├── queue.service.spec.ts
-│   │   │       ├── queue.service.ts              # queue service, used to coordinate background work
-│   │   │       └── source-sync.worker.ts         # background job (web-worker) that syncs all FHIR resources from healthcare provider
 │   │   ├── lib                                   # root directory for libraries
-│   │   │   ├── README.md
-│   │   │   ├── conduit                           # Conduit Library - HealthCare provider communication layer (FHIR protocol)
-│   │   │   │   ├── fhir                          # contains healthcare provider specific FHIR clients
-│   │   │   ├── database                          # Database Library - PouchDB/CouchDB client, compatible with web-worker and browser env
-│   │   │   │   ├── plugins
-│   │   │   │   └── pouchdb_repository.ts          
-│   │   │   ├── models
-│   │   │   │   ├── database                      # Classes used to store data in CouchDB
-│   │   │   │   ├── fasten                        
-│   │   │   │   └── lighthouse                    # Classes used to communicate with Lighthouse API
-│   │   │   └── utils
 │   │   ├── styles.scss                           # Main sylesheet
 ```
 
 ## Backend
 
-The backend is incredibly simple (by design). The hope is to remove it completely if possible, allowing Fasten to be served by 
-a CDN or minimal Nginx deployment. 
 
 ```tree
-├── backend
-│   ├── cmd
-│   └── pkg
-│       ├── config
-│       ├── database                  # contains CouchDB client, allowing creation of new Users (and associated databases)
-│       ├── errors
-│       ├── models
-│       └── web
-│           ├── handler               # contains code for API endpoints
-│           │   ├── auth.go           # authentication endpoints (create new user)
-│           │   ├── cors_proxy.go     # CORS proxy/relay for communicating with healthcare providers who do not support CORS
-│           │   ├── couchdb_proxy.go  # reverse proxy for CouchDB api, allowing for database API to be exposed (with limitations)
-│           │   └── metadata.go       # API endpoint returning metadata for healthcare providers
+
+backend
+├── cmd
+│   └── fasten
+│       └── fasten.go
+├── pkg
+│   ├── auth
+│   ├── config
+│   ├── constants.go
+│   ├── database                                                        # contains SQLite Database Client
+│   │   ├── migrations                                            # contains database migrations                        
+│   ├── event_bus                                                       # contains event bus for pub/sub in UI
+│   ├── models                                                          # contains models for application
+│   │   ├── database                                                # contains database models, generated using Jennifer and supports search parameter extraction using FHIRPath.js to SQLite columns
+│   │   │   ├── README.md
+│   │   │   ├── choiceTypePaths.json
+│   │   │   ├── fhirpath.min.js
+│   │   │   ├── generate.go
+│   │   │   ├── interface.go
+│   │   │   ├── search-parameters.json
+│   │   │   ├── searchParameterExtractor.js
+│   │   │   ├── searchParameterExtractor_test.go
+│   │   │   └── utils.go
+│   ├── version
+│   └── web 
+│       ├── handler                                                    # contains code for API endpoints
+│       ├── middleware                                                # contains middleware for API endpoints
+│       └── server.go
+└── resources
+    ├── related_versions.go                                           # contains tools that help extract verion infromation for binaries
+    └── related_versions.json
 ```
 
 ## Distribution/Docker
@@ -198,16 +201,11 @@ a CDN or minimal Nginx deployment.
 ├── Dockerfile                          # dockerfile for "all-in-one" image, containing frontend, backend & database
 ├── docker
 │   ├── README.md 
-│   ├── couchdb                               
-│   │   ├── Dockerfile                  # dockerfile for "couchdb" only image, used for development
-│   │   └── local.ini
 │   └── rootfs                          # filesystem configs, used in Dockerfiles to setup s6-overlay service manager
 │       └── etc
 │           ├── cont-init.d
 │           │   ├── 01-timezone
-│           │   └── 50-couchdb-init
 │           └── services.d
-│               ├── couchdb
 │               └── fasten
 
 ```
