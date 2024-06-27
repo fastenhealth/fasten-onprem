@@ -19,6 +19,7 @@ import * as _ from 'lodash';
 import {PatientAccessBrand} from '../../models/patient-access-brands';
 import {PlatformService} from '../../services/platform.service';
 import {FormRequestHealthSystemComponent} from '../../components/form-request-health-system/form-request-health-system.component';
+import {extractErrorFromResponse} from '../../../lib/utils/error_extract';
 
 export const sourceConnectWindowTimeout = 24*5000 //wait 2 minutes (5 * 24 = 120)
 
@@ -39,7 +40,7 @@ export class MedicalSourcesComponent implements OnInit {
   environment_name = environment.environment_name
 
   uploadedFile: File[] = []
-
+  uploadErrorMsg: string = ""
 
   availableLighthouseBrandList: SourceListItem[] = []
   searchTermUpdate = new BehaviorSubject<string>("");
@@ -313,7 +314,7 @@ export class MedicalSourcesComponent implements OnInit {
    * @param event
    */
   public async uploadSourceBundleHandler(event) {
-
+    this.uploadErrorMsg = ""
     let processingFile = event.addedFiles[0] as File
     this.uploadedFile = [processingFile]
 
@@ -321,8 +322,16 @@ export class MedicalSourcesComponent implements OnInit {
 
       let shouldConvert = await this.showCcdaWarningModal()
       if(shouldConvert){
-        let convertedFile = await this.platformApi.convertCcdaToFhir(processingFile).toPromise()
-        processingFile = convertedFile
+        try {
+          let convertedFile = await this.platformApi.convertCcdaToFhir(processingFile).toPromise()
+          processingFile = convertedFile
+        } catch(err){
+          console.error(err)
+          this.uploadErrorMsg = "Error converting file: " + (extractErrorFromResponse(err) || "Unknown Error")
+          this.uploadedFile = []
+          return
+        }
+
       } else {
         this.uploadedFile = []
         return
@@ -334,7 +343,10 @@ export class MedicalSourcesComponent implements OnInit {
     this.fastenApi.createManualSource(processingFile).subscribe(
       (respData) => {
       },
-      (err) => {console.log(err)},
+      (err) => {
+        console.log(err)
+        this.uploadErrorMsg = "Error uploading file: " + (extractErrorFromResponse(err)|| "Unknown Error")
+      },
       () => {
         this.uploadedFile = []
       }

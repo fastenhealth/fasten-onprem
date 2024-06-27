@@ -15,6 +15,7 @@ import {SourceState} from '../../models/fasten/source-state';
 import {PatientAccessBrand} from '../../models/patient-access-brands';
 import {environment} from '../../../environments/environment';
 import {BackgroundJobSyncData} from '../../models/fasten/background-job';
+import {extractErrorFromResponse, replaceErrors} from '../../../lib/utils/error_extract';
 
 @Component({
   selector: 'app-medical-sources-connected',
@@ -217,7 +218,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
               const toastNotification = new ToastNotification()
               toastNotification.type = ToastType.Error
-              toastNotification.message = `An error occurred while finalizing external data source and starting sync: '${this.extractErrorFromResponse(err)}'`
+              toastNotification.message = `An error occurred while finalizing external data source and starting sync: '${extractErrorFromResponse(err)}'`
               toastNotification.autohide = false
               toastNotification.link = {
                 text: "View Details",
@@ -233,7 +234,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
         const toastNotification = new ToastNotification()
         toastNotification.type = ToastType.Error
-        toastNotification.message = `An error occurred while initializing external data source connection: '${this.extractErrorFromResponse(err)}'`
+        toastNotification.message = `An error occurred while initializing external data source connection: '${extractErrorFromResponse(err)}'`
         toastNotification.autohide = false
         this.toastService.show(toastNotification)
         console.error(err)
@@ -253,7 +254,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
         }
         errData.error_data = {
           summary: toastNotification.message,
-          error: JSON.stringify(err, this.replaceErrors),
+          error: JSON.stringify(err, replaceErrors),
           stack: err.stack
         }
 
@@ -262,31 +263,31 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
       })
   }
-  //https://stackoverflow.com/a/18391400/1157633
-  extractErrorFromResponse(errResp: any): string {
-    let errMsg = ""
-    if(errResp.name == "HttpErrorResponse" && errResp.error && errResp.error?.error){
-      errMsg = errResp.error.error
-    } else {
-      errMsg = JSON.stringify(errResp, this.replaceErrors)
-    }
-    return errMsg
-  }
+  // //https://stackoverflow.com/a/18391400/1157633
+  // extractErrorFromResponse(errResp: any): string {
+  //   let errMsg = ""
+  //   if(errResp.name == "HttpErrorResponse" && errResp.error && errResp.error?.error){
+  //     errMsg = errResp.error.error
+  //   } else {
+  //     errMsg = JSON.stringify(errResp, replaceErrors)
+  //   }
+  //   return errMsg
+  // }
 
-  //stringify error objects
-  replaceErrors(key, value) {
-    if (value instanceof Error) {
-      var error = {};
-
-      Object.getOwnPropertyNames(value).forEach(function (propName) {
-        error[propName] = value[propName];
-      });
-
-      return error;
-    }
-
-    return value;
-  }
+  // //stringify error objects
+  // replaceErrors(key, value) {
+  //   if (value instanceof Error) {
+  //     var error = {};
+  //
+  //     Object.getOwnPropertyNames(value).forEach(function (propName) {
+  //       error[propName] = value[propName];
+  //     });
+  //
+  //     return error;
+  //   }
+  //
+  //   return value;
+  // }
 
   /**
    * https://github.com/smart-on-fhir/client-js/blob/8f64b770dbcd0abd30646e239cd446dfa4d831f6/src/lib.ts#L311
@@ -382,7 +383,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
         const toastNotification = new ToastNotification()
         toastNotification.type = ToastType.Error
-        toastNotification.message = `An error occurred while updating source (${source.display}): ${this.extractErrorFromResponse(err)}`
+        toastNotification.message = `An error occurred while updating source (${source.display}): ${extractErrorFromResponse(err)}`
         this.toastService.show(toastNotification)
         console.log(err)
 
@@ -425,7 +426,7 @@ export class MedicalSourcesConnectedComponent implements OnInit {
 
         const toastNotification = new ToastNotification()
         toastNotification.type = ToastType.Error
-        toastNotification.message = `An error occurred while deleting source (${sourceDisplayName}): ${this.extractErrorFromResponse(err)}`
+        toastNotification.message = `An error occurred while deleting source (${sourceDisplayName}): ${extractErrorFromResponse(err)}`
         this.toastService.show(toastNotification)
         console.log(err)
       })
