@@ -152,3 +152,49 @@ func (suite *SourceHandlerTestSuite) TestCreateManualSourceHandler() {
 	}, summary.ResourceTypeCounts[3])
 
 }
+
+// bug: https://github.com/fastenhealth/fasten-onprem/pull/486
+func (suite *SourceHandlerTestSuite) TestCreateManualSourceHandler_ShouldExtractPatientIdFromConvertedCCDA() {
+	//setup
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", suite.T().Name()))
+	ctx.Set(pkg.ContextKeyTypeDatabase, suite.AppRepository)
+	ctx.Set(pkg.ContextKeyTypeConfig, suite.AppConfig)
+	ctx.Set(pkg.ContextKeyTypeEventBusServer, suite.AppEventBus)
+	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	//test
+	req, err := CreateManualSourceHttpRequestFromFile("testdata/ccda_to_fhir_converted_C-CDA_R2-1_CCD.xml.json")
+	require.NoError(suite.T(), err)
+	ctx.Request = req
+
+	CreateManualSource(ctx)
+
+	//assert
+	require.Equal(suite.T(), http.StatusOK, w.Code)
+
+	type ResponseWrapper struct {
+		Data struct {
+			UpdatedResources []string `json:"UpdatedResources"`
+			TotalResources   int      `json:"TotalResources"`
+		} `json:"data"`
+		Success bool                    `json:"success"`
+		Source  models.SourceCredential `json:"source"`
+	}
+	var respWrapper ResponseWrapper
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	require.NoError(suite.T(), err)
+
+	require.Equal(suite.T(), true, respWrapper.Success)
+	require.Equal(suite.T(), "manual", string(respWrapper.Source.PlatformType))
+	require.Equal(suite.T(), 65, respWrapper.Data.TotalResources)
+	summary, err := suite.AppRepository.GetSourceSummary(ctx, respWrapper.Source.ID.String())
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), map[string]interface{}{
+		"count":         int64(1),
+		"resource_type": "Consent",
+		"source_id":     respWrapper.Source.ID.String(),
+	}, summary.ResourceTypeCounts[3])
+
+}
