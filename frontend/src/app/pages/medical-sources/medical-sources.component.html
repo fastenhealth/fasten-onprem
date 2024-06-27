@@ -39,6 +39,10 @@
               <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
             </ngx-dropzone-preview>
           </ngx-dropzone>
+
+          <div *ngIf="uploadErrorMsg" class="alert alert-danger mt-3" role="alert">
+            <strong>Error:</strong> {{uploadErrorMsg}}
+          </div>
         </div><!-- col -->
       </div><!-- row -->
 
@@ -155,15 +159,15 @@
   <div class="modal-body">
     <h6>Fasten does not natively support <a href="https://en.wikipedia.org/wiki/Consolidated_Clinical_Document_Architecture"  externalLink >CCDA</a> Health Records</h6>
 
-    <p>However we can convert it automatically using software generously donated by the team at <a href="https://www.health-samurai.io/"  externalLink>Health Samurai</a><br/><br/>
+    <p>However we can convert it automatically using <a href="https://github.com/metriport/metriport/tree/master/packages/fhir-converter" externalLink>open-source software</a> generously provided the team at <a href="https://www.metriport.com/"  externalLink>Metriport</a><br/><br/>
       This converter is hosted by <a href="https://www.fastenhealth.com/" externalLink>Fasten Health, Inc.</a> and is subject to our <a href="https://policy.fastenhealth.com/privacy_policy.html" externalLink>Privacy Policy</a>.
       Your data will <strong>NEVER</strong> be shared with any third parties.
     </p>
 
     <div class="d-flex h-100">
       <div class="mx-auto my-auto">
-        <a href="https://www.health-samurai.io/"  externalLink>
-          <img style="height:50px" src="assets/images/health-samurai-logo.png">
+        <a href="https://www.metriport.com/"  externalLink>
+          <img style="height:50px" src="assets/images/metriport-logo.png">
         </a>
       </div>
     </div>
