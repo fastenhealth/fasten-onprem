@@ -3,6 +3,7 @@ import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {FastenApiService} from '../../services/fasten-api.service';
 import * as fhirpath from 'fhirpath';
 import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
+import {Summary} from '../../../app/models/fasten/summary';
 
 @Component({
   selector: 'report-header',
@@ -12,14 +13,22 @@ import {PractitionerModel} from '../../../lib/models/resources/practitioner-mode
 export class ReportHeaderComponent implements OnInit {
   patient: ResourceFhir = null
   primaryCare: PractitionerModel = null
+  lastUpdated: Date = null
   @Input() reportHeaderTitle: string = ""
   @Input() reportHeaderSubTitle: string = "Organized by condition and encounters"
-
   constructor(
     private fastenApi: FastenApiService,
   ) { }
 
   ngOnInit(): void {
+    this.fastenApi.getSummary().subscribe((summary: Summary) => {
+      if (summary.sources && summary.sources.length > 0) {
+        this.lastUpdated = summary.sources.reduce((latest, source) => {
+          const sourceDate = new Date(source.updated_at);
+          return sourceDate > latest ? sourceDate : latest;
+        }, new Date(0));
+      }
+    })
     this.fastenApi.getResources("Patient").subscribe(results => {
       this.patient = results[0]
       if(!this.patient) return

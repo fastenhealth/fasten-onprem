@@ -7,7 +7,7 @@
     <div class="media">
       <div class="media-body">
         <label>Last Updated</label>
-        <h6>Oct 10, 2018</h6>
+        <h6>{{lastUpdated ? (lastUpdated | date:'MMM d, yyyy') : ''}}</h6>
       </div><!-- media-body -->
     </div><!-- media -->
     <div *ngIf="primaryCare" class="media">
