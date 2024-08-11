@@ -14,7 +14,7 @@ describe('MedicalHistoryComponent', () => {
 
   beforeEach(async () => {
 
-    mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['getResources', 'getResourceGraph'])
+    mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['getResources', 'getResourceGraph', 'getSummary'])
     await TestBed.configureTestingModule({
       declarations: [ MedicalHistoryComponent, ReportHeaderComponent ],
       imports: [ RouterTestingModule ],
@@ -26,6 +26,7 @@ describe('MedicalHistoryComponent', () => {
     .compileComponents();
     mockedFastenApiService.getResourceGraph.and.returnValue(of({"Condition":[],"Encounter":[]}));
     mockedFastenApiService.getResources.and.returnValue(of([]));
+    mockedFastenApiService.getSummary.and.returnValue(of({sources: []}));
 
     fixture = TestBed.createComponent(MedicalHistoryComponent);
     component = fixture.componentInstance;

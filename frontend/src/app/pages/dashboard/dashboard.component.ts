@@ -9,7 +9,7 @@ import { GridStack, GridStackOptions, GridStackWidget } from 'gridstack';
 import {GridstackComponent, NgGridStackOptions} from '../../components/gridstack/gridstack.component';
 import {DashboardConfig} from '../../models/widget/dashboard-config';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-
+import {Summary} from '../../models/fasten/summary';
 
 // unique ids sets for each item for correct ngFor updating
 //TODO: fix this
@@ -22,6 +22,8 @@ let ids = 1;
 })
 export class DashboardComponent implements OnInit {
   loading: boolean = false
+
+  lastUpdated: Date = null
 
   sources: Source[] = []
   encounterCount: number = 0
@@ -49,6 +51,15 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true
+
+    this.fastenApi.getSummary().subscribe((summary: Summary) => {
+      if (summary.sources && summary.sources.length > 0) {
+        this.lastUpdated = summary.sources.reduce((latest, source) => {
+          const sourceDate = new Date(source.updated_at);
+          return sourceDate > latest ? sourceDate : latest;
+        }, new Date(0));
+      }
+    })
 
 
     forkJoin([
