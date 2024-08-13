@@ -264,6 +264,9 @@ app-medical-sources-filter > .az-content-left-components:hover{
   background-color: $indigo !important;
   color: #fff;
 }
+.fhir-resource-datatable .datatable-body-row {
+  cursor: pointer;
+}
 
 // Callouts
 
