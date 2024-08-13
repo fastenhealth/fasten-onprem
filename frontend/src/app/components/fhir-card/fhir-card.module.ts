@@ -22,6 +22,7 @@ import {MedicationComponent} from './resources/medication/medication.component';
 import {MedicationRequestComponent} from './resources/medication-request/medication-request.component';
 import {ObservationComponent} from './resources/observation/observation.component';
 import {OrganizationComponent} from './resources/organization/organization.component';
+import {PatientComponent} from './resources/patient/patient.component';
 import {PractitionerComponent} from './resources/practitioner/practitioner.component';
 import {ProcedureComponent} from './resources/procedure/procedure.component';
 import {FhirCardComponent} from './fhir-card/fhir-card.component';
@@ -67,6 +68,7 @@ import { ObservationVisualizationComponent } from './common/observation-visualiz
     MedicationRequestComponent,
     ObservationComponent,
     OrganizationComponent,
+    PatientComponent,
     PractitionerComponent,
     ProcedureComponent,
 
@@ -108,6 +110,7 @@ import { ObservationVisualizationComponent } from './common/observation-visualiz
     MedicationRequestComponent,
     ObservationComponent,
     OrganizationComponent,
+    PatientComponent,
     PractitionerComponent,
     ProcedureComponent,
 

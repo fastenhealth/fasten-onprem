@@ -14,6 +14,19 @@ export function getPath(obj, path = ""): string {
 }
 
 export const FORMATTERS = {
+  age: (patientDOB: number|string): number => {
+    if (patientDOB == null) { return NaN; }
+    const dob = typeof patientDOB === 'string' ? new Date(patientDOB) : new Date(patientDOB);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+
+    return age;
+  },
   date: (str) => str ? moment(str).format('YYYY-MM-DD') : '',
   time: (str) => str ? moment(str).format('HH:mm') : '',
   dateTime: (str) => str ? moment(str).format('YYYY-MM-DD - h:mm a') : '',
@@ -24,15 +37,13 @@ export const FORMATTERS = {
     if(codeableConcept.text) return codeableConcept.text
     return codeableConcept.coding && codeableConcept.coding[0] ? `${codeableConcept.coding[0].code}: ${codeableConcept.coding[0].display ? codeableConcept.coding[0].display : ''}` : ''
   },
-  address: (address) => {
-    if(!address) return ''
+  address: (address): Array<string> => {
+    if(!address) return []
     var addressParts = []
-    if(address.line) addressParts.push(address.line.join(', '))
-    if(address.city) addressParts.push(address.city)
-    if(address.state) addressParts.push(address.state)
-    if(address.postalCode) addressParts.push(address.postalCode)
+    if(address.line) addressParts.push(...address.line)
+    addressParts.push(`${address.city}, ${address.state} ${address.postalCode}`)
     if(address.country) addressParts.push(address.country)
-    return addressParts.join(', ')
+    return addressParts
   },
   humanName: (humanName) => {
     if(!humanName) return ''

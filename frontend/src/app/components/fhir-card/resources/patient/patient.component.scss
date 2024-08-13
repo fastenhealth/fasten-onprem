@@ -1,0 +1,28 @@
+.bg-fasten-purple {
+  background-color: #5b47fb;
+}
+
+.patient-card {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+  }
+
+  .patient-info {
+    p {
+      margin: 5px 0;
+    }
+
+    strong {
+      font-weight: bold;
+      margin-right: 5px;
+    }
+  }
+}
