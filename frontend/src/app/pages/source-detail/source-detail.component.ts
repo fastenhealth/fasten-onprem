@@ -47,6 +47,10 @@ export class SourceDetailComponent implements OnInit {
     this.selectedTotalElements = this.resourceTypeCounts[resourceType]
   }
 
+  isExternal(){
+    return this.selectedSource?.brand_id != '00000000-0000-0000-0000-000000000000';
+  }
+
   //functions to call on patient
   getPatientName(){
     // @ts-ignore
@@ -88,7 +92,8 @@ export class SourceDetailComponent implements OnInit {
     const line = getPath(this.selectedPatient?.resource_raw, 'address.0.line')
     const city = getPath(this.selectedPatient?.resource_raw, 'address.0.city')
     const state = getPath(this.selectedPatient?.resource_raw, 'address.0.state')
-    return `${line}, ${city}, ${state}`
+    const zip = getPath(this.selectedPatient?.resource_raw, 'address.0.postalCode')
+    return [`${line}`, `${city}, ${state} ${zip}`]
   }
 
 }
