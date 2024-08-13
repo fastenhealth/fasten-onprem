@@ -25,7 +25,7 @@ import {DatatableMedicationRequestComponent} from './datatable-generic-resource/
 import {DatatableNutritionOrderComponent} from './datatable-generic-resource/datatable-nutrition-order.component';
 import {DatatableObservationComponent} from './datatable-generic-resource/datatable-observation.component';
 import {DatatableOrganizationComponent} from './datatable-generic-resource/datatable-organization.component';
-import {ListPatientComponent} from './list-patient/list-patient.component';
+import {DatatablePatientComponent} from './datatable-generic-resource/datatable-patient.component';
 import {DatatablePractitionerComponent} from './datatable-generic-resource/datatable-practitioner.component';
 import {DatatableProcedureComponent} from './datatable-generic-resource/datatable-procedure.component';
 import {DatatableServiceRequestComponent} from './datatable-generic-resource/datatable-service-request.component';
@@ -65,7 +65,7 @@ import {NgxDatatableModule} from '@swimlane/ngx-datatable';
     DatatableNutritionOrderComponent,
     DatatableObservationComponent,
     DatatableOrganizationComponent,
-    ListPatientComponent,
+    DatatablePatientComponent,
     DatatablePractitionerComponent,
     DatatableProcedureComponent,
     DatatableServiceRequestComponent,
@@ -99,7 +99,7 @@ import {NgxDatatableModule} from '@swimlane/ngx-datatable';
     DatatableNutritionOrderComponent,
     DatatableObservationComponent,
     DatatableOrganizationComponent,
-    ListPatientComponent,
+    DatatablePatientComponent,
     DatatablePractitionerComponent,
     DatatableProcedureComponent,
     DatatableServiceRequestComponent,

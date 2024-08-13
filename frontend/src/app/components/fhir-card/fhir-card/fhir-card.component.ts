@@ -29,6 +29,7 @@ import {LocationComponent} from '../resources/location/location.component';
 import {OrganizationComponent} from '../resources/organization/organization.component';
 import {ObservationComponent} from '../resources/observation/observation.component';
 import {EncounterComponent} from '../resources/encounter/encounter.component';
+import {PatientComponent} from '../resources/patient/patient.component';
 
 
 @Component({
@@ -151,6 +152,9 @@ export class FhirCardComponent implements OnInit, OnChanges {
       }
       case "Organization": {
         return OrganizationComponent;
+      }
+      case "Patient": {
+        return PatientComponent;
       }
       case "Procedure": {
         return ProcedureComponent;

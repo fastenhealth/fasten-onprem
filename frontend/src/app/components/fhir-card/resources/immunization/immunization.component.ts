@@ -1,13 +1,13 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
-import {Router, RouterModule} from '@angular/router';
-import {ImmunizationModel} from '../../../../../lib/models/resources/immunization-model';
-import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
+import { CommonModule } from "@angular/common";
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { NgbCollapseModule } from "@ng-bootstrap/ng-bootstrap";
 import * as _ from "lodash";
-import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
-import {CommonModule} from "@angular/common";
-import {BadgeComponent} from "../../common/badge/badge.component";
-import {TableComponent} from "../../common/table/table.component";
+import { ImmunizationModel } from '../../../../../lib/models/resources/immunization-model';
+import { BadgeComponent } from "../../common/badge/badge.component";
+import { TableRowItem, TableRowItemDataType } from '../../common/table/table-row-item';
+import { TableComponent } from "../../common/table/table.component";
+import { FhirCardComponentInterface } from '../../fhir-card/fhir-card-component-interface';
 
 @Component({
   standalone: true,

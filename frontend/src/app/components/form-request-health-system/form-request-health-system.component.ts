@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {SupportRequest} from '../../models/fasten/support-request';
-import {FormRequestHealthSystem} from '../../models/fasten/form-request-health-system';
-import {environment} from '../../../environments/environment';
-import {versionInfo} from '../../../environments/versions';
-import {FastenApiService} from '../../services/fasten-api.service';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormRequestHealthSystem } from '../../models/fasten/form-request-health-system';
+import { FastenApiService } from '../../services/fasten-api.service';
 
 @Component({
   selector: 'app-form-request-health-system',

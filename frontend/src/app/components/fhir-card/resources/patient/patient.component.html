@@ -1,0 +1,73 @@
+<div class="patient-card card">
+  <div class="card-header bg-fasten-purple">
+    <h2 class="mb-0 text-white">{{ displayModel.patient_name }}</h2>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <!-- Basic Information -->
+      <div class="col-md-6 mb-4">
+        <h3 class="h5 mb-3">Basic Information</h3>
+        <ul class="list-unstyled">
+          <li><strong>Date of Birth:</strong> {{ displayModel.patient_birthdate | date:'mediumDate' }}</li>
+          <li><strong>Age:</strong> {{ displayModel.patient_age }}</li>
+          <li><strong>Gender:</strong> {{ displayModel.patient_gender | titlecase }}</li>
+          <li><strong>Birth Sex:</strong> {{ displayModel.birth_sex }}</li>
+          <li><strong>Marital Status:</strong> {{ displayModel.marital_status }}</li>
+          <li><strong>Race:</strong> {{ displayModel.race }}</li>
+          <li><strong>Ethnicity:</strong> {{ displayModel.ethnicity }}</li>
+        </ul>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="col-md-6 mb-4">
+        <h3 class="h5 mb-3">Contact Information</h3>
+        <ul class="list-unstyled">
+          <li><strong>Address:</strong>
+            <address class="mb-0 ml-3">
+              <div *ngFor="let line of displayModel.patient_address">{{line}}</div>
+            </address>
+          </li>
+          <li><strong>Phone{{ displayModel.patient_phones.length > 0 ? '' : 's' }}:</strong>
+            <ul class="list-unstyled ml-3">
+              <li *ngFor="let phone of displayModel.patient_phones">{{ phone.value }} ({{ phone.use }})</li>
+            </ul>
+          </li>
+          <li><strong>Language{{ displayModel.communication_languages.length > 0 ? '' : 's' }}:</strong>
+            <span *ngFor="let language of displayModel.communication_languages; let last = last">
+              {{ language.display }}{{last ? '' : ', '}}
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Additional Information -->
+      <div class="col-md-6 mb-4">
+        <h3 class="h5 mb-3">Additional Information</h3>
+        <ul class="list-unstyled">
+          <li><strong>Mother's Maiden Name:</strong> {{ displayModel.mothers_maiden_name }}</li>
+          <li><strong>Birth Place:</strong> {{ displayModel.birth_place }}</li>
+          <li><strong>Multiple Birth:</strong> {{ displayModel.multiple_birth ? 'Yes' : 'No' }}</li>
+        </ul>
+      </div>
+
+      <!-- Identifiers -->
+      <div class="col-md-6 mb-4">
+        <h3 class="h5 mb-3">Identifiers</h3>
+        <ul class="list-unstyled">
+          <li *ngIf="displayModel.mrn"><strong>Medical Record Number:</strong> <code class="ml-2 text-muted">{{ displayModel.mrn }}</code></li>
+          <li *ngIf="displayModel.ssn"><strong>SSN:</strong> <code class="ml-2 text-muted">{{ displayModel.ssn }}</code></li>
+        </ul>
+        <ng-container *ngIf="displayModel.identifiers && displayModel.identifiers.length > 0">
+          <h4 class="h6 mt-3">Other Identifiers:</h4>
+          <ul class="list-unstyled ml-3">
+            <li *ngFor="let identifier of displayModel.identifiers">
+              <strong>{{ identifier.type }}:</strong> <code class="ml-2 text-muted">{{ identifier.value }}</code>
+            </li>
+          </ul>
+        </ng-container>
+      </div>
+
+
+    </div>
+  </div>
+</div>
