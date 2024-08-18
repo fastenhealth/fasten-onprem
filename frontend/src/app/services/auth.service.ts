@@ -1,16 +1,17 @@
-import {Inject, Injectable} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {User} from '../models/fasten/user';
-import {environment} from '../../environments/environment';
-import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
-import {ResponseWrapper} from '../models/response-wrapper';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import * as Oauth from '@panva/oauth4webapi';
-import {SourceState} from '../models/fasten/source-state';
 import * as jose from 'jose';
-import {UserRegisteredClaims} from '../models/fasten/user-registered-claims';
-import {uuidV4} from '../../lib/utils/uuid';
-import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { GetEndpointAbsolutePath } from '../../lib/utils/endpoint_absolute_path';
+import { uuidV4 } from '../../lib/utils/uuid';
+import { HTTP_CLIENT_TOKEN } from "../dependency-injection";
+import { SourceState } from '../models/fasten/source-state';
+import { User } from '../models/fasten/user';
+import { UserRegisteredClaims } from '../models/fasten/user-registered-claims';
+import { ResponseWrapper } from '../models/response-wrapper';
 
 @Injectable({
   providedIn: 'root'
@@ -132,7 +133,17 @@ export class AuthService {
 
   public createUser(newUser: User): Observable<any> {
     let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base);
-    return this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/secure/users`, newUser);
+    return this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/secure/users`, newUser)
+      .pipe(
+        catchError((error) => {
+          if (error.status === 400) {
+            // Extract error information from the response body
+            const errorBody = error.error;
+            return throwError(new Error(errorBody.error || error.message));
+          }
+          return throwError(error);
+        })
+      );
   }
 
   //TODO: now that we've moved to remote-first database, we can refactor and simplify this function significantly.

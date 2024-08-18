@@ -29,7 +29,7 @@ func TestAuthSignup(t *testing.T) {
 
 		mockDB.EXPECT().GetUserCount(gomock.Any()).Return(0, nil)
 		mockDB.EXPECT().CreateUser(gomock.Any(), gomock.Any()).Do(func(_ interface{}, user *models.User) {
-			assert.Equal(t, models.RoleAdmin, user.Role)
+			assert.Equal(t, pkg.UserRoleAdmin, user.Role)
 		}).Return(nil)
 		mockConfig.EXPECT().GetString("jwt.issuer.key").Return("test_key")
 
@@ -63,7 +63,7 @@ func TestAuthSignup(t *testing.T) {
 
 		mockDB.EXPECT().GetUserCount(gomock.Any()).Return(1, nil)
 		mockDB.EXPECT().CreateUser(gomock.Any(), gomock.Any()).Do(func(_ interface{}, user *models.User) {
-			assert.Equal(t, models.RoleUser, user.Role)
+			assert.Equal(t, pkg.UserRoleUser, user.Role)
 		}).Return(nil)
 		mockConfig.EXPECT().GetString("jwt.issuer.key").Return("test_key")
 

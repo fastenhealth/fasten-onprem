@@ -183,7 +183,13 @@ func (gr *GormRepository) DeleteCurrentUser(ctx context.Context) error {
 func (gr *GormRepository) GetUsers(ctx context.Context) ([]models.User, error) {
 	var users []models.User
 	result := gr.GormClient.WithContext(ctx).Find(&users)
-	return users, result.Error
+	// Remove password field from each user
+	var sanitizedUsers []models.User
+	for _, user := range users {
+		user.Password = "" // Clear the password field
+		sanitizedUsers = append(sanitizedUsers, user)
+	}
+	return sanitizedUsers, result.Error
 }
 
 //</editor-fold>

@@ -24,6 +24,7 @@ func newPostgresRepository(appConfig config.Interface, globalLogger logrus.Field
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		//TODO: figure out how to log database queries again.
 		//logger: logger
+		TranslateError:                           true,
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 

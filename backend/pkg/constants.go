@@ -9,6 +9,7 @@ type DatabaseRepositoryType string
 
 type InstallationVerificationStatus string
 type InstallationQuotaStatus string
+type UserRole string
 
 const (
 	ResourceListPageSize int = 20
@@ -50,4 +51,7 @@ const (
 	InstallationVerificationStatusVerified InstallationVerificationStatus = "VERIFIED" //email has been verified
 	InstallationQuotaStatusActive          InstallationQuotaStatus        = "ACTIVE"
 	InstallationQuotaStatusConsumed        InstallationQuotaStatus        = "CONSUMED"
+
+	UserRoleUser  UserRole = "user"
+	UserRoleAdmin UserRole = "admin"
 )

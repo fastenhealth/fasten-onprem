@@ -3,6 +3,10 @@ package handler
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
@@ -14,9 +18,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
-	"io/ioutil"
-	"net/http"
-	"os"
 )
 
 func CreateReconnectSource(c *gin.Context) {

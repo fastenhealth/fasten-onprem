@@ -2,11 +2,12 @@ package database
 
 import (
 	"fmt"
+	"net/url"
+	"strings"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/sirupsen/logrus"
-	"net/url"
-	"strings"
 
 	//"github.com/glebarez/sqlite"
 	"gorm.io/driver/sqlite"
@@ -67,6 +68,7 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 	database, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{
 		//TODO: figure out how to log database queries again.
 		//logger: logger
+		TranslateError:                           true,
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 

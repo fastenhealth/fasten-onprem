@@ -2,6 +2,14 @@
   <div class="container">
     <div class="az-content-body">
       <h2 class="az-content-title">Create New User</h2>
+
+      <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ errorMessage }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="errorMessage = null">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
       <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
           <label for="full_name">Full Name</label>
@@ -12,12 +20,22 @@
           <input type="text" id="username" formControlName="username" class="form-control" required>
         </div>
         <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" formControlName="email" class="form-control" required>
-        </div>
-        <div class="form-group">
           <label for="password">Password</label>
           <input type="password" id="password" formControlName="password" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="role">Role</label>
+          <select id="role" formControlName="role" class="form-control" required>
+            <option value="user" selected>User</option>
+            <option value="admin">Admin</option>
+          </select>
+          <div *ngIf="userForm.get('role')?.value === 'admin'" class="text-danger mt-2">
+            <strong>Warning:</strong> This will allow full system access including the ability to manage other users.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" formControlName="email" class="form-control">
         </div>
         <button type="submit" class="btn btn-az-primary" [disabled]="!userForm.valid || loading">
           Create User

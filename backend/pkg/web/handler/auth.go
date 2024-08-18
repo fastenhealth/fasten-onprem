@@ -19,20 +19,16 @@ type UserWizard struct {
 	JoinMailingList bool `json:"join_mailing_list"`
 }
 
-func RequireAdmin(c *gin.Context) {
+func IsAdmin(c *gin.Context) bool {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	currentUser, err := databaseRepo.GetCurrentUser(c)
 	if err != nil {
 		logger.Errorf("Error getting current user: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
-		return
+		return false
 	}
-	if currentUser.Role != models.RoleAdmin {
-		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Unauthorized"})
-		return
-	}
+	return currentUser.Role == pkg.UserRoleAdmin
 }
 
 func AuthSignup(c *gin.Context) {
@@ -53,9 +49,9 @@ func AuthSignup(c *gin.Context) {
 	}
 
 	if userCount == 0 {
-		userWizard.User.Role = models.RoleAdmin
+		userWizard.User.Role = pkg.UserRoleAdmin
 	} else {
-		userWizard.User.Role = models.RoleUser
+		userWizard.User.Role = pkg.UserRoleUser
 	}
 	err = databaseRepo.CreateUser(c, userWizard.User)
 	if err != nil {

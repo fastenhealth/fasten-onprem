@@ -67,7 +67,7 @@
               <img src="assets/logo/logo-text.png" alt="">
             </div><!-- az-img-user -->
             <h6>{{current_user_claims.full_name || current_user_claims.sub || current_user_claims.email }}</h6>
-            <span>Adminstrator</span>
+            <span *ngIf="isAdmin">Administrator</span>
           </div><!-- az-header-profile -->
 
           <a (click)="openSupportForm(content)" class="dropdown-item  cursor-pointer"><i style="font-size: medium;" class="fas fa-question-circle"></i> Get Support</a>

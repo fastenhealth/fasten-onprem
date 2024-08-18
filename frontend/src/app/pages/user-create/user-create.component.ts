@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 export class UserCreateComponent implements OnInit {
   userForm: FormGroup;
   loading = false;
+  errorMessage: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -29,14 +30,17 @@ export class UserCreateComponent implements OnInit {
     this.userForm = this.fb.group({
       full_name: ['', [Validators.required, Validators.minLength(2)]],
       username: ['', [Validators.required, Validators.minLength(4)]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]]
+      email: ['', [Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      role: ['user', Validators.required]
     });
   }
 
   onSubmit() {
     if (this.userForm.valid) {
       this.loading = true;
+      this.errorMessage = null;
+
       const newUser: User = this.userForm.value;
       this.authService.createUser(newUser).subscribe(
         (response) => {
@@ -49,10 +53,7 @@ export class UserCreateComponent implements OnInit {
         },
         (error) => {
           this.loading = false;
-          const toastNotification = new ToastNotification();
-          toastNotification.type = ToastType.Error;
-          toastNotification.message = 'Error creating user: ' + error.message;
-          this.toastService.show(toastNotification);
+          this.errorMessage = 'Error creating user: ' + error.message;
         }
       );
     }

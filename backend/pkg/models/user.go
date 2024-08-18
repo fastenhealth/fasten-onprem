@@ -5,13 +5,8 @@ import (
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
-)
 
-type Role string
-
-const (
-	RoleUser  Role = "user"
-	RoleAdmin Role = "admin"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 )
 
 type User struct {
@@ -21,9 +16,9 @@ type User struct {
 	Password string `json:"password"`
 
 	//additional optional metadata that Fasten stores with users
-	Picture string `json:"picture"`
-	Email   string `json:"email"`
-	Role    Role   `json:"role"`
+	Picture string       `json:"picture"`
+	Email   string       `json:"email"`
+	Role    pkg.UserRole `json:"role"`
 }
 
 func (user *User) HashPassword(password string) error {
