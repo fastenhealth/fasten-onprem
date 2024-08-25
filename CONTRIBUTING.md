@@ -1,5 +1,5 @@
 > This doc is a WIP and will be expanded shortly.
-> 
+>
 > In the meantime, please consider looking at the extensive docs in the [Fasten Docs Repository](https://github.com/fastenhealth/docs/tree/main/technical)
 
 # Tech Stack
@@ -86,8 +86,7 @@ Next we'll start the processes described above:
 ```bash
 
 # In terminal #1, run the following
-make build-frontend-[sandbox|prod]
-# eg. make build-frontend-sandbox
+make serve-frontend
 
 # In terminal #2, run the following
 make serve-backend
@@ -95,14 +94,11 @@ make serve-backend
 ```
 
 _Note_: Fasten can run in 2 modes: sandbox or production (prod). In sandbox mode, it can only communicate with test servers (full of synthetic health data).
+By default, the dev environment will run in sandbox mode.
 
-Now you can open a browser to `http://localhost:9090` to see the Fasten UI. 
+Now you can open a browser to `http://localhost:4200` to see the Fasten UI.
 
-## Important URL's 
-
-The following URL's and credentials may be helpful as you're developing
-
-- http://localhost:9090/web/dashboard - WebUI
+_Note_: By default in `dev` mode, you view the frontend server and that will proxy API requests to the backend. It is also possible to build the frontend and serve it from the backend server, but this is much slower to make changes to the frontend.
 
 ### Credentials
 
@@ -137,7 +133,7 @@ The Fasten source code is organized into a handful of important folders, which w
 │   │   │   │   ├── resource-list                 # Thin shim which populates template depending on FHIR resource type
 │   │   │   │   ├── toast                         # Toast/notification component
 │   │   │   │   └── utilities-sidebar
-│   │   │   ├── models                            # contains classes for communicating with API's and transfering data between pages. 
+│   │   │   ├── models                            # contains classes for communicating with API's and transfering data between pages.
 │   │   │   ├── pages
 │   │   │   │   ├── auth-signin                   # Login/Signin page
 │   │   │   │   ├── auth-signup                   # Signup page
@@ -171,7 +167,7 @@ backend
 │   ├── config
 │   ├── constants.go
 │   ├── database                                                        # contains SQLite Database Client
-│   │   ├── migrations                                            # contains database migrations                        
+│   │   ├── migrations                                            # contains database migrations
 │   ├── event_bus                                                       # contains event bus for pub/sub in UI
 │   ├── models                                                          # contains models for application
 │   │   ├── database                                                # contains database models, generated using Jennifer and supports search parameter extraction using FHIRPath.js to SQLite columns
@@ -185,7 +181,7 @@ backend
 │   │   │   ├── searchParameterExtractor_test.go
 │   │   │   └── utils.go
 │   ├── version
-│   └── web 
+│   └── web
 │       ├── handler                                                    # contains code for API endpoints
 │       ├── middleware                                                # contains middleware for API endpoints
 │       └── server.go
@@ -200,7 +196,7 @@ backend
 ├── docker-compose.yml                  # docker-compose file which can be used to compile and run "all-in-one" image
 ├── Dockerfile                          # dockerfile for "all-in-one" image, containing frontend, backend & database
 ├── docker
-│   ├── README.md 
+│   ├── README.md
 │   └── rootfs                          # filesystem configs, used in Dockerfiles to setup s6-overlay service manager
 │       └── etc
 │           ├── cont-init.d
@@ -277,4 +273,4 @@ PRAGMA wal_checkpoint(TRUNCATE);
 ```
 
 See: https://sqlite.org/forum/info/fefd56014e2135589ea57825b0e2aa3e2df5daf53b5e41aa6a9d8f0c29d0b8e5
-TODO: check if https://www.sqlite.org/pragma.html#pragma_wal_checkpoint can be used to do this automatically. 
+TODO: check if https://www.sqlite.org/pragma.html#pragma_wal_checkpoint can be used to do this automatically.

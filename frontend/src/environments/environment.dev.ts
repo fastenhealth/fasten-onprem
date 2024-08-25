@@ -1,12 +1,8 @@
-// This file can be replaced during build by using the `fileReplacements` array.
-// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
-
 export const environment = {
-  production: true,
+  production: false,
   environment_cloud: false,
   environment_desktop: false,
-  environment_name: "sandbox",
+  environment_name: "dev",
   popup_source_auth: false,
 
   lighthouse_api_endpoint_base: 'https://lighthouse.fastenhealth.com/sandbox',
