@@ -17,7 +17,7 @@ serve-storybook: dep-frontend
 
 .PHONY: serve-frontend
 serve-frontend: dep-frontend
-	cd frontend && yarn dist -- -c sandbox
+	cd frontend && ng serve --hmr --live-reload -c dev
 
 .PHONY: serve-frontend-prod
 serve-frontend-prod: dep-frontend

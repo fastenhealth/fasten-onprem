@@ -76,10 +76,27 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/@panva/oauth4webapi/build/index.js"
+              {
+                "input": "node_modules/@panva/oauth4webapi/build/index.js",
+                "bundleName": "oauth4webapi"
+              }
             ]
           },
           "configurations": {
+            "dev": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.dev.ts"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            },
             "prod": {
               "fileReplacements": [
                 {
@@ -135,7 +152,10 @@
               ]
             },
             "cloud_sandbox": {
-              "index": "src/index-cloud.html",
+              "index": {
+                "input": "src/index-cloud.html",
+                "output": "src/index.html"
+              },
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -163,6 +183,10 @@
               ]
             },
             "desktop_sandbox": {
+              "index": {
+                "input": "src/index-desktop.html",
+                "output": "src/index.html"
+              },
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -190,6 +214,10 @@
               ]
             },
             "desktop_prod": {
+              "index": {
+                "input": "src/index-desktop.html",
+                "output": "src/index.html"
+              },
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -248,9 +276,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "fastenhealth:build"
+            "hmr": true,
+            "liveReload": true,
+            "browserTarget": "fastenhealth:build",
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
+            "dev": {
+              "browserTarget": "fastenhealth:build:dev"
+            },
             "prod": {
               "browserTarget": "fastenhealth:build:prod"
             },
