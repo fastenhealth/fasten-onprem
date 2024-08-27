@@ -210,7 +210,7 @@ func (gr *GormRepository) Migrate() error {
 				// set first user to admin
 				// set all other users to user
 				users := []_20240813222836.User{}
-				results := tx.Order("created_at").Find(&users)
+				results := tx.Order("created_at ASC").Find(&users)
 				if results.Error != nil {
 					return results.Error
 				}

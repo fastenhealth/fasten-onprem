@@ -12,7 +12,11 @@ export class UserListComponent implements OnInit {
   users: User[] = [];
   loading: boolean = false;
 
-  constructor(private fastenApi: FastenApiService, private router: Router, private route: ActivatedRoute) { }
+  constructor(
+    private fastenApi: FastenApiService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
     this.loadUsers();

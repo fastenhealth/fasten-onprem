@@ -68,7 +68,6 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 	database, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{
 		//TODO: figure out how to log database queries again.
 		//logger: logger
-		TranslateError:                           true,
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 
