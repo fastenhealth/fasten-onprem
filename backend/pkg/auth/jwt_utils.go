@@ -3,14 +3,15 @@ package auth
 import (
 	"errors"
 	"fmt"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
-	"github.com/golang-jwt/jwt/v4"
 	"strings"
 	"time"
+
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // JwtGenerateFastenTokenFromUser Note: these functions are duplicated, in Fasten Cloud
-//Any changes here must be replicated in that repo
+// Any changes here must be replicated in that repo
 func JwtGenerateFastenTokenFromUser(user models.User, issuerSigningKey string) (string, error) {
 	if len(strings.TrimSpace(issuerSigningKey)) == 0 {
 		return "", fmt.Errorf("issuer signing key cannot be empty")
@@ -26,8 +27,8 @@ func JwtGenerateFastenTokenFromUser(user models.User, issuerSigningKey string) (
 		},
 		UserMetadata: UserMetadata{
 			FullName: user.FullName,
-			Picture:  "",
-			Email:    user.ID.String(),
+			Email:    user.Email,
+			Role:     user.Role,
 		},
 	}
 

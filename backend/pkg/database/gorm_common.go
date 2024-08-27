@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"strings"
 	"time"
+
+	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
@@ -177,6 +178,12 @@ func (gr *GormRepository) DeleteCurrentUser(ctx context.Context) error {
 		return fmt.Errorf("could not delete user: %w", err)
 	}
 	return nil
+}
+
+func (gr *GormRepository) GetUsers(ctx context.Context) ([]models.User, error) {
+	var users []models.User
+	result := gr.GormClient.WithContext(ctx).Find(&users)
+	return users, result.Error
 }
 
 //</editor-fold>

@@ -29,6 +29,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   is_environment_desktop: boolean = environment.environment_desktop
 
+  isAdmin: boolean = false;
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -42,6 +44,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.current_user_claims = new UserRegisteredClaims()
     }
 
+    this.isAdmin = this.authService.IsAdmin();
 
     this.fastenApi.getBackgroundJobs().subscribe((data) => {
       this.backgroundJobs = data.filter((job) => {

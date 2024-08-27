@@ -10,4 +10,5 @@ export class UserRegisteredClaims {
   full_name: string //FullName
   picture: string //Picture
   email: string //Email
+  role: string //Role
 }

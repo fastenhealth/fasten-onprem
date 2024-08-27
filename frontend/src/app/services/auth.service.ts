@@ -130,6 +130,11 @@ export class AuthService {
     this.setAuthToken(resp.data)
   }
 
+  public createUser(newUser: User): Observable<any> {
+    let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base);
+    return this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/secure/users`, newUser);
+  }
+
   //TODO: now that we've moved to remote-first database, we can refactor and simplify this function significantly.
   public async IsAuthenticated(): Promise<boolean> {
     let authToken = this.GetAuthToken()
@@ -193,6 +198,12 @@ export class AuthService {
     // }
     // await this.Close()
   }
+
+  public IsAdmin(): boolean {
+    const currentUser = this.GetCurrentUser();
+    return currentUser && currentUser.role === "admin";
+  }
+
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //Private Methods
   /////////////////////////////////////////////////////////////////////////////////////////////////

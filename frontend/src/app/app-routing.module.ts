@@ -1,24 +1,27 @@
-import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
-import { Routes, RouterModule } from "@angular/router";
+import { RouterModule, Routes } from "@angular/router";
+import { environment } from '../environments/environment';
+import { IsAdminAuthGuard } from './auth-guards/is-admin-auth-guard';
+import { IsAuthenticatedAuthGuard } from './auth-guards/is-authenticated-auth-guard';
+import { ShowFirstRunWizardGuard } from './auth-guards/show-first-run-wizard-guard';
+import { AuthSigninComponent } from './pages/auth-signin/auth-signin.component';
+import { AuthSignupWizardComponent } from './pages/auth-signup-wizard/auth-signup-wizard.component';
+import { AuthSignupComponent } from './pages/auth-signup/auth-signup.component';
+import { BackgroundJobsComponent } from './pages/background-jobs/background-jobs.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { DesktopCallbackComponent } from './pages/desktop-callback/desktop-callback.component';
+import { ExploreComponent } from './pages/explore/explore.component';
+import { MedicalHistoryComponent } from './pages/medical-history/medical-history.component';
 import { MedicalSourcesComponent } from './pages/medical-sources/medical-sources.component';
-import {ResourceDetailComponent} from './pages/resource-detail/resource-detail.component';
-import {AuthSigninComponent} from './pages/auth-signin/auth-signin.component';
-import {AuthSignupComponent} from './pages/auth-signup/auth-signup.component';
-import {IsAuthenticatedAuthGuard} from './auth-guards/is-authenticated-auth-guard';
-import {SourceDetailComponent} from './pages/source-detail/source-detail.component';
-import {PatientProfileComponent} from './pages/patient-profile/patient-profile.component';
-import {MedicalHistoryComponent} from './pages/medical-history/medical-history.component';
-import {ReportLabsComponent} from './pages/report-labs/report-labs.component';
-import {ResourceCreatorComponent} from './pages/resource-creator/resource-creator.component';
-import {ExploreComponent} from './pages/explore/explore.component';
-import {environment} from '../environments/environment';
-import {DesktopCallbackComponent} from './pages/desktop-callback/desktop-callback.component';
-import {BackgroundJobsComponent} from './pages/background-jobs/background-jobs.component';
-import {AuthSignupWizardComponent} from './pages/auth-signup-wizard/auth-signup-wizard.component';
-import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard';
+import { PatientProfileComponent } from './pages/patient-profile/patient-profile.component';
+import { ReportLabsComponent } from './pages/report-labs/report-labs.component';
+import { ResourceCreatorComponent } from './pages/resource-creator/resource-creator.component';
+import { ResourceDetailComponent } from './pages/resource-detail/resource-detail.component';
+import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
+import { UserCreateComponent } from './pages/user-create/user-create.component';
+import { UserListComponent } from './pages/user-list/user-list.component';
 
 const routes: Routes = [
 
@@ -49,6 +52,9 @@ const routes: Routes = [
   { path: 'medical-history', component: MedicalHistoryComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'labs', component: ReportLabsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'labs/report/:source_id/:resource_type/:resource_id', component: ReportLabsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+
+  { path: 'users', component: UserListComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
+  { path: 'users/new', component: UserCreateComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
 
   // { path: 'general-pages', loadChildren: () => import('./general-pages/general-pages.module').then(m => m.GeneralPagesModule) },
   // { path: 'ui-elements', loadChildren: () => import('./ui-elements/ui-elements.module').then(m => m.UiElementsModule) },

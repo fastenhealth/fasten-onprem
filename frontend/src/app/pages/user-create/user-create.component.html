@@ -1,0 +1,28 @@
+<div class="az-content">
+  <div class="container">
+    <div class="az-content-body">
+      <h2 class="az-content-title">Create New User</h2>
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="full_name">Full Name</label>
+          <input type="text" id="full_name" formControlName="full_name" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" formControlName="username" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" formControlName="email" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" formControlName="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-az-primary" [disabled]="!userForm.valid || loading">
+          Create User
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

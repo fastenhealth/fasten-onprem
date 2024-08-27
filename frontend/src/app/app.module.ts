@@ -40,6 +40,7 @@ import {FhirDatatableModule} from './components/fhir-datatable/fhir-datatable.mo
 import { AuthSignupWizardComponent } from './pages/auth-signup-wizard/auth-signup-wizard.component';
 import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard';
 import { IconsModule } from './icon-module';
+import { UserListComponent } from './pages/user-list/user-list.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { IconsModule } from './icon-module';
     DesktopCallbackComponent,
     BackgroundJobsComponent,
     AuthSignupWizardComponent,
+    UserListComponent,
   ],
   imports: [
     FormsModule,

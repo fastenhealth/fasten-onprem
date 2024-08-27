@@ -387,6 +387,21 @@ func (mr *MockDatabaseRepositoryMockRecorder) GetUserCount(arg0 interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserCount", reflect.TypeOf((*MockDatabaseRepository)(nil).GetUserCount), arg0)
 }
 
+// GetUsers mocks base method.
+func (m *MockDatabaseRepository) GetUsers(ctx context.Context) ([]models.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUsers", ctx)
+	ret0, _ := ret[0].([]models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUsers indicates an expected call of GetUsers.
+func (mr *MockDatabaseRepositoryMockRecorder) GetUsers(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockDatabaseRepository)(nil).GetUsers), ctx)
+}
+
 // ListBackgroundJobs mocks base method.
 func (m *MockDatabaseRepository) ListBackgroundJobs(ctx context.Context, queryOptions models.BackgroundJobQueryOptions) ([]models.BackgroundJob, error) {
 	m.ctrl.T.Helper()
