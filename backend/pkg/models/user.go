@@ -2,14 +2,12 @@ package models
 
 import (
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
 	"strings"
-)
 
-type UserWizard struct {
-	*User           `json:",inline"`
-	JoinMailingList bool `json:"join_mailing_list"`
-}
+	"golang.org/x/crypto/bcrypt"
+
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+)
 
 type User struct {
 	ModelBase
@@ -18,9 +16,9 @@ type User struct {
 	Password string `json:"password"`
 
 	//additional optional metadata that Fasten stores with users
-	Picture string `json:"picture"`
-	Email   string `json:"email"`
-	//Roles   datatypes.JSON `json:"roles"`
+	Picture string       `json:"picture"`
+	Email   string       `json:"email"`
+	Role    pkg.UserRole `json:"role"`
 }
 
 func (user *User) HashPassword(password string) error {

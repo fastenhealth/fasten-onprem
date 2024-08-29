@@ -13,5 +13,4 @@ type User struct {
 	//additional optional metadata that Fasten stores with users
 	Picture string `json:"picture"`
 	Email   string `json:"email"`
-	//Roles   datatypes.JSON `json:"roles"`
 }

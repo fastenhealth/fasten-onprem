@@ -2,11 +2,12 @@ package database
 
 import (
 	"fmt"
+	"net/url"
+	"strings"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/sirupsen/logrus"
-	"net/url"
-	"strings"
 
 	//"github.com/glebarez/sqlite"
 	"gorm.io/driver/sqlite"

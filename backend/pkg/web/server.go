@@ -6,6 +6,11 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"runtime"
+	"strings"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
@@ -15,10 +20,6 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"io"
-	"net/http"
-	"runtime"
-	"strings"
 )
 
 type AppEngine struct {
@@ -124,6 +125,9 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.POST("/jobs/error", handler.CreateBackgroundJobError)
 
 				secure.POST("/query", handler.QueryResourceFhir)
+
+				secure.GET("/users", handler.GetUsers)
+				secure.POST("/users", handler.CreateUser)
 
 				//server-side-events handler (only supported on mac/linux)
 				// TODO: causes deadlock on Windows

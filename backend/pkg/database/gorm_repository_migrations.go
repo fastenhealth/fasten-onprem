@@ -3,11 +3,14 @@ package database
 import (
 	"context"
 	"fmt"
+	"log"
+
 	_20231017112246 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20231017112246"
 	_20231201122541 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20231201122541"
 	_0240114092806 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114092806"
 	_20240114103850 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114103850"
 	_20240208112210 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240208112210"
+	_20240813222836 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240813222836"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	sourceCatalog "github.com/fastenhealth/fasten-sources/catalog"
@@ -15,7 +18,6 @@ import (
 	"github.com/go-gormigrate/gormigrate/v2"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"log"
 )
 
 func (gr *GormRepository) Migrate() error {
@@ -190,6 +192,35 @@ func (gr *GormRepository) Migrate() error {
 				if deleteResp.Error != nil {
 					tx.Logger.Error(context.Background(), fmt.Sprintf("An error occurred while removing placeholder admin user: %v", deleteResp.Error))
 					return deleteResp.Error
+				}
+				return nil
+			},
+		},
+		{
+			ID: "20240813222836", // add role to user
+			Migrate: func(tx *gorm.DB) error {
+
+				err := tx.AutoMigrate(
+					&_20240813222836.User{},
+				)
+				if err != nil {
+					return err
+				}
+
+				// set first user to admin
+				// set all other users to user
+				users := []_20240813222836.User{}
+				results := tx.Order("created_at ASC").Find(&users)
+				if results.Error != nil {
+					return results.Error
+				}
+				for ndx, user := range users {
+					if ndx == 0 {
+						user.Role = _20240813222836.RoleAdmin
+					} else {
+						user.Role = _20240813222836.RoleUser
+					}
+					tx.Save(&user)
 				}
 				return nil
 			},

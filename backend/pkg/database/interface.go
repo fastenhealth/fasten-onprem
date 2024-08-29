@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	sourcePkg "github.com/fastenhealth/fasten-sources/clients/models"
@@ -18,6 +19,7 @@ type DatabaseRepository interface {
 	GetUserByUsername(context.Context, string) (*models.User, error)
 	GetCurrentUser(ctx context.Context) (*models.User, error)
 	DeleteCurrentUser(ctx context.Context) error
+	GetUsers(ctx context.Context) ([]models.User, error)
 
 	GetSummary(ctx context.Context) (*models.Summary, error)
 

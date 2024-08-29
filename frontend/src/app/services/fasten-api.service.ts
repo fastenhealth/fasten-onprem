@@ -359,4 +359,13 @@ export class FastenApiService {
       );
   }
 
+  getAllUsers(): Observable<User[]> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/users`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as User[]
+        })
+      );
+  }
+
 }

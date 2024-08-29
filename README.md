@@ -13,16 +13,9 @@
 
 **Fasten securely connects your healthcare providers together, creating a personal health record that never leaves your hands**
 
-> [!NOTE]  
+> [!NOTE]
 > NOTE: Fasten is a Work-in-Progress and can only communicate with a limited number of Healthcare Instutions (approx 25,000 at last count).
 > Please fill out this [Google Form](https://forms.gle/SNsYX9BNMXB6TuTw6) if you'd like to be kept up-to-date on Fasten
-
-> [!IMPORTANT]  
-> To ensure Fasten's long-term sustainability, we're exploring some funding options. While we're still deciding a long-term monetization strategy, I'm kicking off with a crowdfunding/fundraising experiment for the first 500 users (including a surprise desktop app):
->
-> - [Fasten Self-Hosted Lifetime License - **$200**](https://buy.stripe.com/fZe00deiUexS58Y4gg)
->
-> Got questions or want to learn more about our fundraising experiment? [Click here to dive into the details & FAQs](https://docs.fastenhealth.com/funding.html) 
 
 
 <p align="center">
@@ -49,19 +42,19 @@
 
 # Introduction
 
-Like many of you, I've worked for many companies over my career. In that time, I've had multiple health, vision and dental 
+Like many of you, I've worked for many companies over my career. In that time, I've had multiple health, vision and dental
 insurance providers, and visited many different clinics, hospitals and labs to get procedures & tests done.
 
-Recently I had a semi-serious medical issue, and I realized that my medical history (and the medical history of my family members) 
-is a lot more complicated than I realized and distributed across the many healthcare providers I've used over the years. 
+Recently I had a semi-serious medical issue, and I realized that my medical history (and the medical history of my family members)
+is a lot more complicated than I realized and distributed across the many healthcare providers I've used over the years.
 I wanted a single (private) location to store our medical records, and I just couldn't find any software that worked as I'd like:
 
-- self-hosted/offline - this is my medical history, I'm not willing to give it to some random multi-national corporation to data-mine and sell 
-- It should aggregate my data from multiple healthcare providers (insurance companies, hospital networks, clinics, labs) across multiple industries (vision, dental, medical) -- all in one dashboard 
+- self-hosted/offline - this is my medical history, I'm not willing to give it to some random multi-national corporation to data-mine and sell
+- It should aggregate my data from multiple healthcare providers (insurance companies, hospital networks, clinics, labs) across multiple industries (vision, dental, medical) -- all in one dashboard
 - automatic - it should pull my EMR (electronic medical record) directly from my insurance provider/clinic/hospital network - I dont want to scan/OCR physical documents (unless I have to)
 - open source - the code should be available for contributions & auditing
 
-So, I built it
+So, I built it.
 
 **Fasten is an open-source, self-hosted, personal/family electronic medical record aggregator, designed to integrate with 1000's of insurances/hospitals/clinics**
 
@@ -74,9 +67,9 @@ It's pretty basic right now, but it's designed with a easily extensible core aro
 - Supports the Medical industry's (semi-standard) FHIR protocol
 - Uses OAuth2 (Smart-on-FHIR) authentication (no passwords necessary)
 - Uses OAuth's `offline_access` scope (where possible) to automatically pull changes/updates
-- Multi-user support for household/family use
+- (Future) Multi-user support for household/family use
 - Condition specific user Dashboards & tracking for diagnostic tests
-- (Future) Vaccination & condition specific recommendations using NIH/WHO clinical care guidelines (HEDIS/CQL) 
+- (Future) Vaccination & condition specific recommendations using NIH/WHO clinical care guidelines (HEDIS/CQL)
 - (Future) ChatGPT-style interface to query your own medical history (offline)
 - (Future) Integration with smart-devices & wearables
 
@@ -95,13 +88,13 @@ First, if you don't have Docker installed on your computer, get Docker by follow
 Next, run the following commands from the Windows command line or Mac/Linux terminal in order to download and start the Fasten docker container.
 
 ```
-docker pull ghcr.io/fastenhealth/fasten-onprem:main 
+docker pull ghcr.io/fastenhealth/fasten-onprem:main
 
 docker run --rm \
 -p 9090:8080 \
 -v ./db:/opt/fasten/db \
 -v ./cache:/opt/fasten/cache \
-ghcr.io/fastenhealth/fasten-onprem:main 
+ghcr.io/fastenhealth/fasten-onprem:main
 ```
 
 Next, open a browser to `http://localhost:9090`
@@ -122,6 +115,26 @@ It can be as simple as
 If you're using the `sandbox` version of Fasten, you'll only be able to connect to Sources using test credentials
 
 https://docs.fastenhealth.com/getting-started/sandbox.html#connecting-a-new-source
+
+## Using with multiple people
+
+> [!NOTE]
+> NOTE: Multi-user features are a work in progress. This section describes the eventual goals.
+
+Fasten is designd to work well for an individual or a family. Since it is self-hosted, by nature the person running the service will have full root access to all user records. For most families, this is perfect! If you need stronger security, Fasten might not be for you.
+
+Fasten assumes that all records connected from a single user account (from one or more sources) belong to a single individual, and thus will show aggregations that will only make sense for a single person. Be careful to not connect sources for different people to the same Fasten user account.
+
+Tracking health data for multiple family members works by creating new user accounts for each person. Any user with the `admin` role can manage users and permissions. Any user can be granted access (by an admin) to view another user's records. Through this mechanism, it's easy to setup any family configuration needed. For example: a family of four can have two parents that can each see the records of the two children.
+
+It is also possible to create users with the `viewer` role that only have access to view records of other users. This can be used to share records with a caregiver.
+
+This allows for a more complex example:
+
+- a family consisting of 2 parents, and 2 children and a caregiver (nurse, babysitter, grandparent).
+- both parents need to be able to access both children's records, and maybe each-others
+- the caregiver should have view-only access to 1 or both children, but not the parents.
+
 
 # FAQ's
 
@@ -161,11 +174,9 @@ Jason Kulatunga - Initial Development - @AnalogJ
 
 # Fundraising & Sponsorships
 
-To ensure Fasten's long-term sustainability, we're exploring some funding options. While we're still deciding a long-term monetization strategy, I'm kicking off with a crowdfunding/fundraising experiment for the first 500 users (including a surprise desktop app):
+To ensure Fasten's long-term sustainability, we're exploring some funding options. We're still deciding a long-term monetization strategy.
 
-- [Fasten Self-Hosted Lifetime License - **$200**](https://buy.stripe.com/fZe00deiUexS58Y4gg)
-
-Got questions or want to learn more about our fundraising experiment? [Click here to dive into the details & FAQs](https://docs.fastenhealth.com/FUNDRAISING.html) 
+Got questions or want to learn more about our fundraising experiment? [Click here to dive into the details & FAQs](https://docs.fastenhealth.com/FUNDRAISING.html)
 
 I'd also like to thank the following Corporate Sponsors:
 

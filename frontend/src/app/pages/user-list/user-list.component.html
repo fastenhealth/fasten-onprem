@@ -1,0 +1,31 @@
+<div class="az-content">
+  <div class="container">
+    <div class="az-content-body">
+      <h2 class="az-content-title">User List</h2>
+      <div *ngIf="loading" class="text-center">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <table *ngIf="!loading" class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.full_name }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td><span class="badge badge-primary">{{ user.role }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-az-primary mt-3" routerLink="/users/new">Create New User</button>
+    </div>
+  </div>
+</div>
