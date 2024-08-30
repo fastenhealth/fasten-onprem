@@ -75,12 +75,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [
-              {
-                "input": "node_modules/@panva/oauth4webapi/build/index.js",
-                "bundleName": "oauth4webapi"
-              }
-            ]
+            "scripts": []
           },
           "configurations": {
             "dev": {
