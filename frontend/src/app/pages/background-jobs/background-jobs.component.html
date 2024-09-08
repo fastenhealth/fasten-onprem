@@ -41,7 +41,9 @@
                                      'badge-danger': backgroundJob.job_status == 'STATUS_FAILED'
                         }">{{backgroundJob.job_status}}</label></td>
                         <td container="body" [ngbTooltip]="backgroundJob.locked_time | amDateFormat:'YYYY-MM-DD HH:mm'">{{backgroundJob.locked_time | amTimeAgo}}</td>
-                        <td container="body" [ngbTooltip]="backgroundJob.done_time | amDateFormat:'YYYY-MM-DD HH:mm'">{{backgroundJob.done_time | amTimeAgo}}</td>
+                        <td container="body">
+                          <span *ngIf="backgroundJob.done_time" [ngbTooltip]="backgroundJob.done_time | amDateFormat:'YYYY-MM-DD HH:mm'">{{backgroundJob.done_time | amTimeAgo}}</span>
+                        </td>
                         <td>
                           <button (click)="openModal(content, backgroundJob)" class="btn btn-outline-indigo btn-with-icon btn-rounded"><i class="fa fa-info-circle"></i> Details</button>
                         </td>
