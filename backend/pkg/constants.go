@@ -10,6 +10,7 @@ type DatabaseRepositoryType string
 type InstallationVerificationStatus string
 type InstallationQuotaStatus string
 type UserRole string
+type Permission string
 
 const (
 	ResourceListPageSize int = 20
@@ -54,4 +55,7 @@ const (
 
 	UserRoleUser  UserRole = "user"
 	UserRoleAdmin UserRole = "admin"
+
+	PermissionManageSources Permission = "manage_sources"
+	PermissionRead          Permission = "read"
 )

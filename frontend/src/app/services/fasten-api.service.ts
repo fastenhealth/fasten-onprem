@@ -1,33 +1,27 @@
-import {Inject, Injectable} from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {Observable, of} from 'rxjs';
-import { Router } from '@angular/router';
-import {map} from 'rxjs/operators';
-import {ResponseWrapper} from '../models/response-wrapper';
-import {Source} from '../models/fasten/source';
-import {User} from '../models/fasten/user';
-import {ResourceFhir} from '../models/fasten/resource_fhir';
-import {SourceSummary} from '../models/fasten/source-summary';
-import {Summary} from '../models/fasten/summary';
-import {AuthService} from './auth.service';
-import {GetEndpointAbsolutePath} from '../../lib/utils/endpoint_absolute_path';
-import {environment} from '../../environments/environment';
-import {ValueSet} from 'fhir/r4';
-import {AttachmentModel} from '../../lib/models/datatypes/attachment-model';
-import {BinaryModel} from '../../lib/models/resources/binary-model';
-import {HTTP_CLIENT_TOKEN} from "../dependency-injection";
-import * as fhirpath from 'fhirpath';
-import _ from 'lodash';
-import {DashboardConfig} from '../models/widget/dashboard-config';
-import {DashboardWidgetQuery} from '../models/widget/dashboard-widget-query';
-import {ResourceGraphResponse} from '../models/fasten/resource-graph-response';
-import { fetchEventSource } from '@microsoft/fetch-event-source';
-import {BackgroundJob, BackgroundJobSyncData} from '../models/fasten/background-job';
-import {SupportRequest} from '../models/fasten/support-request';
-import {
-  List
-} from 'fhir/r4';
-import {FormRequestHealthSystem} from '../models/fasten/form-request-health-system';
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { List, ValueSet } from 'fhir/r4';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { AttachmentModel } from '../../lib/models/datatypes/attachment-model';
+import { BinaryModel } from '../../lib/models/resources/binary-model';
+import { GetEndpointAbsolutePath } from '../../lib/utils/endpoint_absolute_path';
+import { HTTP_CLIENT_TOKEN } from "../dependency-injection";
+import { BackgroundJob, BackgroundJobSyncData } from '../models/fasten/background-job';
+import { FormRequestHealthSystem } from '../models/fasten/form-request-health-system';
+import { ResourceGraphResponse } from '../models/fasten/resource-graph-response';
+import { ResourceFhir } from '../models/fasten/resource_fhir';
+import { Source } from '../models/fasten/source';
+import { SourceSummary } from '../models/fasten/source-summary';
+import { Summary } from '../models/fasten/summary';
+import { SupportRequest } from '../models/fasten/support-request';
+import { User } from '../models/fasten/user';
+import { ResponseWrapper } from '../models/response-wrapper';
+import { DashboardConfig } from '../models/widget/dashboard-config';
+import { DashboardWidgetQuery } from '../models/widget/dashboard-widget-query';
+import { AuthService } from './auth.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -365,6 +359,19 @@ export class FastenApiService {
         map((response: ResponseWrapper) => {
           return response.data as User[]
         })
+      );
+  }
+
+  getUser(userId: string): Observable<User> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/users/${userId}`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          if (!response.success) {
+            throw new Error(response.error)
+          }
+          return response.data as User
+        }),
+        // catchError(() => of(null))
       );
   }
 
