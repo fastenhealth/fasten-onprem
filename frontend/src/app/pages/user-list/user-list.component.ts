@@ -24,13 +24,15 @@ export class UserListComponent implements OnInit {
 
   loadUsers(): void {
     this.loading = true;
-    this.fastenApi.getAllUsers().subscribe((users: User[]) => {
-      this.users = users;
-      this.loading = false;
-    },
-      error => {
+    this.fastenApi.getAllUsers().subscribe(
+      (users: User[]) => {
+        this.users = users;
+        this.loading = false;
+      },
+      (error: Error) => {
         console.error('Error loading users:', error);
         this.loading = false;
-      });
+      }
+    );
   }
 }
