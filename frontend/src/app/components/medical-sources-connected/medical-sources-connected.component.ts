@@ -155,8 +155,18 @@ export class MedicalSourcesConnectedComponent implements OnInit {
             //remove the "Patient/" or "https://example.com/fhir/Patient/" prefix if it exists
             payload.patient = payload.patient.split("Patient/")[1]
           }
-
         }
+        //special case for flatiron id token. See https://github.com/fastenhealth/fasten-sources/issues/42
+        if(!payload.patient && sourceMetadata.platform_type == 'flatiron'){
+          // "pp.patient_id": "PD_05XXXXXXXXX3",
+          // "pp.group_id": "GH_CXXXXXXXXXXXX9_5",
+          // Becomes: PD--05XXXXXXXXX3.GH--CXXXXXXXXXXXX9--5
+
+          let decodedAccessToken = this.jwtDecode(payload.access_token)
+          let patientId = `${decodedAccessToken["pp.patient_id"]}.${decodedAccessToken["pp.group_id"]}`.replace(/_/g, '--')
+          payload.patient = patientId
+        }
+
 
         //get the portal information
         const portalInfo = await this.lighthouseApi.getLighthouseCatalogPortal(expectedSourceStateInfo.portal_id)

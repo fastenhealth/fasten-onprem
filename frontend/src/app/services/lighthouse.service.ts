@@ -120,6 +120,8 @@ export class LighthouseService {
   }
 
 
+  //DEPRECATED
+  // TODO: use the fasten-sources js library
   async generateSourceAuthorizeUrl(lighthouseSource: LighthouseSourceMetadata, reconnectSourceId?: string): Promise<URL> {
     const state = uuidV4()
     let sourceStateInfo = new SourceState()
