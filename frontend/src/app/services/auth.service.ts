@@ -146,6 +146,21 @@ export class AuthService {
       );
   }
 
+  public updateUser(user: User): Observable<any> {
+    let fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base);
+    return this._httpClient.post<ResponseWrapper>(`${fastenApiEndpointBase}/secure/users/${user.id}`, user)
+      .pipe(
+        catchError((error) => {
+          if (error.status === 400) {
+            // Extract error information from the response body
+            const errorBody = error.error;
+            return throwError(new Error(errorBody.error || error.message));
+          }
+          return throwError(error);
+        })
+      );
+  }
+
   //TODO: now that we've moved to remote-first database, we can refactor and simplify this function significantly.
   public async IsAuthenticated(): Promise<boolean> {
     let authToken = this.GetAuthToken()

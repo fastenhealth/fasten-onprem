@@ -11,6 +11,7 @@ import (
 	_20240114103850 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114103850"
 	_20240208112210 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240208112210"
 	_20240813222836 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240813222836"
+	_20240827214347 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240827214347"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	sourceCatalog "github.com/fastenhealth/fasten-sources/catalog"
@@ -222,6 +223,20 @@ func (gr *GormRepository) Migrate() error {
 					}
 					tx.Save(&user)
 				}
+				return nil
+			},
+		},
+		{
+			ID: "20240827214347", // add UserPermission model
+			Migrate: func(tx *gorm.DB) error {
+
+				err := tx.AutoMigrate(
+					&_20240827214347.UserPermission{},
+				)
+				if err != nil {
+					return err
+				}
+
 				return nil
 			},
 		},
