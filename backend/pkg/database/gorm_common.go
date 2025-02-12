@@ -193,34 +193,25 @@ func (gr *GormRepository) GetUsers(ctx context.Context) ([]models.User, error) {
 }
 
 func (gr *GormRepository) GetUser(ctx context.Context, userID uuid.UUID) (*models.User, error) {
-	var dbUser models.User
 	var user models.User
-	result := gr.GormClient.WithContext(ctx).First(&dbUser, userID)
+	result := gr.GormClient.WithContext(ctx).
+		Preload("UserPermissions").
+		First(&user, userID)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	user.ID = dbUser.ID
-	user.FullName = dbUser.FullName
-	user.Email = dbUser.Email
-	user.Username = dbUser.Username
-	user.Role = dbUser.Role
-
-	// Populate ACLs for the user
-	var acls []models.UserPermission
-	if err := gr.GormClient.WithContext(ctx).
-		Where("user_id = ?", user.ID).
-		Find(&acls).Error; err != nil {
-		return nil, err
-	}
+	// Convert UserPermissions to the Permissions map
 	user.Permissions = make(map[string]map[string]bool)
-
-	for _, acl := range acls {
-		if _, exists := user.Permissions[acl.TargetUserID.String()]; !exists {
-			user.Permissions[acl.TargetUserID.String()] = make(map[string]bool)
+	for _, perm := range user.UserPermissions {
+		if _, exists := user.Permissions[perm.TargetUserID.String()]; !exists {
+			user.Permissions[perm.TargetUserID.String()] = make(map[string]bool)
 		}
-		user.Permissions[acl.TargetUserID.String()][string(acl.Permission)] = true
+		user.Permissions[perm.TargetUserID.String()][string(perm.Permission)] = true
 	}
+
+	// Clear sensitive fields
+	user.Password = ""
 
 	return &user, nil
 }
@@ -232,65 +223,33 @@ func (gr *GormRepository) UpdateUserAndPermissions(ctx context.Context, user mod
 	if result.Error != nil {
 		return result.Error
 	}
-	// Update fields on User
-	updates := map[string]interface{}{
-		"full_name": user.FullName,
-		"username":  user.Username,
-		"email":     user.Email,
-		"role":      user.Role,
-	}
-	result = gr.GormClient.WithContext(ctx).Model(dbUser).Updates(updates)
-	if result.Error != nil {
-		return result.Error
-	}
-	// Update User Permissions
-	var existingPermissions []models.UserPermission
-	if err := gr.GormClient.WithContext(ctx).
-		Where("user_id = ?", user.ID).
-		Find(&existingPermissions).Error; err != nil {
+
+	// Update only changed fields using Select
+	if err := gr.GormClient.WithContext(ctx).Model(&dbUser).
+		Select("full_name", "username", "email", "role").
+		Updates(user).Error; err != nil {
 		return err
 	}
-	for targetUserId, permissions := range user.Permissions {
+
+	// Convert permissions map to UserPermissions slice
+	var newPermissions []models.UserPermission
+	for targetUserID, permissions := range user.Permissions {
 		for permission, value := range permissions {
 			if !value {
 				continue
 			}
-			// Check if the permission already exists
-			exists := false
-			for _, existingPermission := range existingPermissions {
-				if existingPermission.TargetUserID.String() == targetUserId && string(existingPermission.Permission) == permission {
-					exists = true
-					break
-				}
-			}
-			if !exists {
-				// Add new permission
-				p := models.UserPermission{
-					UserID:       user.ID,
-					TargetUserID: uuid.Must(uuid.Parse(targetUserId)),
-					Permission:   pkg.Permission(permission),
-				}
-				err := gr.GormClient.WithContext(ctx).Create(&p).Error
-				if err != nil {
-					return err
-				}
-			}
+			newPermissions = append(newPermissions, models.UserPermission{
+				UserID:       user.ID,
+				TargetUserID: uuid.Must(uuid.Parse(targetUserID)),
+				Permission:   pkg.Permission(permission),
+			})
 		}
 	}
 
-	// Remove permissions that are no longer in user.Permissions
-	for _, existingPermission := range existingPermissions {
-		targetUserId := existingPermission.TargetUserID.String()
-		permission := string(existingPermission.Permission)
-
-		// Check if the permission still exists in the new user.Permissions
-		if _, exists := user.Permissions[targetUserId]; !exists || !user.Permissions[targetUserId][permission] {
-			// Permission no longer exists, so delete it
-			err := gr.GormClient.WithContext(ctx).Delete(&existingPermission).Error
-			if err != nil {
-				return err
-			}
-		}
+	// Replace all permissions in a single operation
+	// This will automatically handle adding new permissions and removing old ones
+	if err := gr.GormClient.WithContext(ctx).Model(&dbUser).Association("UserPermissions").Replace(newPermissions); err != nil {
+		return err
 	}
 
 	return nil
