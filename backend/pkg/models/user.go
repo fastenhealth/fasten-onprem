@@ -10,13 +10,14 @@ import (
 
 type User struct {
 	ModelBase
-	FullName    string                     `json:"full_name"`
-	Username    string                     `json:"username" gorm:"unique"`
-	Password    string                     `json:"password"`
-	Picture     string                     `json:"picture"`
-	Email       string                     `json:"email"`
-	Role        pkg.UserRole               `json:"role"`
-	Permissions map[string]map[string]bool `json:"permissions" gorm:"-:all"`
+	FullName        string                     `json:"full_name"`
+	Username        string                     `json:"username" gorm:"unique"`
+	Password        string                     `json:"password"`
+	Picture         string                     `json:"picture"`
+	Email           string                     `json:"email"`
+	Role            pkg.UserRole               `json:"role"`
+	Permissions     map[string]map[string]bool `json:"permissions" gorm:"-:all"`
+	UserPermissions []UserPermission           `json:"-" gorm:"foreignKey:UserID"`
 }
 
 func (user *User) HashPassword(password string) error {
