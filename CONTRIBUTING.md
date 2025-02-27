@@ -17,9 +17,23 @@ Fasten is made up of a handful of different components. Here's a summary of the 
 **Misc**
 - Docker `v20.10.17`
 
-## Setup
+# Development Environment Setup
 
-If you're on a Mac, you can run the following commands to install the necessary software to get setup:
+## Nix
+
+If you use nix, you can use the included flake:
+
+1. Make sure you have [Nix](https://nixos.org/download/) installed with flakes enabled, and optionally [direnv](https://direnv.net/) installed.
+
+2. Allow direnv to use the flake in this directory: `direnv allow`
+
+The flake will automatically set up all required dependencies.
+
+When you enter the directory, the environment will automatically activate and you'll see version information for all the tools.
+
+## Mac
+
+Alternatively if you're on a Mac, you can run the following commands to install the necessary software to get setup:
 
 ```bash
 brew install node
