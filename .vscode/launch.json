@@ -2,6 +2,31 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "command": "make serve-backend",
+      "name": "Run make serve-backend",
+      "request": "launch",
+      "type": "node-terminal",
+    },
+    {
+      "command": "make serve-frontend",
+      "name": "Run make serve-frontend",
+      "request": "launch",
+      "type": "node-terminal",
+    },
+    {
+      "name": "Debug go backend",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/backend/cmd/fasten/fasten.go",
+      "args": [
+        "start",
+        "--config",
+        "${workspaceFolder}/config.dev.yaml",
+        "--debug"
+      ]
+    },
+    {
       "name": "Go Tests",
       "type": "go",
       "request": "launch",
