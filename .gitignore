@@ -61,6 +61,9 @@ fabric.properties
 # Editor-based Rest Client
 .idea/httpRequests
 
+# direnv
+.direnv/
+
 /dist/
 vendor
 test.go
