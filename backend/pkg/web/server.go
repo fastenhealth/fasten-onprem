@@ -128,6 +128,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 				secure.GET("/users", handler.GetUsers)
 				secure.POST("/users", handler.CreateUser)
+				secure.GET("/users/:userId", handler.GetUser)
+				secure.POST("/users/:userId", handler.UpdateUser)
 
 				//server-side-events handler (only supported on mac/linux)
 				// TODO: causes deadlock on Windows

@@ -192,6 +192,69 @@ func (gr *GormRepository) GetUsers(ctx context.Context) ([]models.User, error) {
 	return sanitizedUsers, result.Error
 }
 
+func (gr *GormRepository) GetUser(ctx context.Context, userID uuid.UUID) (*models.User, error) {
+	var user models.User
+	result := gr.GormClient.WithContext(ctx).
+		Preload("UserPermissions").
+		First(&user, userID)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	// Convert UserPermissions to the Permissions map
+	user.Permissions = make(map[string]map[string]bool)
+	for _, perm := range user.UserPermissions {
+		if _, exists := user.Permissions[perm.TargetUserID.String()]; !exists {
+			user.Permissions[perm.TargetUserID.String()] = make(map[string]bool)
+		}
+		user.Permissions[perm.TargetUserID.String()][string(perm.Permission)] = true
+	}
+
+	// Clear sensitive fields
+	user.Password = ""
+
+	return &user, nil
+}
+
+func (gr *GormRepository) UpdateUserAndPermissions(ctx context.Context, user models.User) error {
+	// Lookup user from the db
+	var dbUser models.User
+	result := gr.GormClient.WithContext(ctx).First(&dbUser, user.ID)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	// Update only changed fields using Select
+	if err := gr.GormClient.WithContext(ctx).Model(&dbUser).
+		Select("full_name", "username", "email", "role").
+		Updates(user).Error; err != nil {
+		return err
+	}
+
+	// Convert permissions map to UserPermissions slice
+	var newPermissions []models.UserPermission
+	for targetUserID, permissions := range user.Permissions {
+		for permission, value := range permissions {
+			if !value {
+				continue
+			}
+			newPermissions = append(newPermissions, models.UserPermission{
+				UserID:       user.ID,
+				TargetUserID: uuid.Must(uuid.Parse(targetUserID)),
+				Permission:   pkg.Permission(permission),
+			})
+		}
+	}
+
+	// Replace all permissions in a single operation
+	// This will automatically handle adding new permissions and removing old ones
+	if err := gr.GormClient.WithContext(ctx).Model(&dbUser).Association("UserPermissions").Replace(newPermissions); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 //</editor-fold>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
