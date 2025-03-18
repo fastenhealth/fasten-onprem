@@ -10,6 +10,7 @@ import {environment} from '../../../environments/environment';
 import {versionInfo} from '../../../environments/versions';
 import {Subscription} from 'rxjs';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
+import {ThemeService} from '../../theme.service';
 
 @Component({
   selector: 'app-header',
@@ -30,12 +31,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
   is_environment_desktop: boolean = environment.environment_desktop
 
   isAdmin: boolean = false;
+  isDarkMode: boolean;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private fastenApi: FastenApiService,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal,
+    private themeService: ThemeService) { 
+      this.isDarkMode = this.themeService.isDarkMode();
+    }
 
   ngOnInit() {
     try {
@@ -74,6 +79,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   toggleHeaderMenu(event) {
     event.preventDefault();
     document.querySelector('body').classList.toggle('az-header-menu-show');
+  }
+
+  toggleTheme() {
+    this.isDarkMode = !this.isDarkMode;
+    this.themeService.setDarkMode(this.isDarkMode);
   }
 
   signOut(e) {
