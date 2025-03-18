@@ -838,3 +838,14 @@
   right: 0;
   z-index: 1000;
 }
+
+.az-header-theme-toggle {
+  margin-left: 15px;
+
+  i {
+    font-size: 18px;
+    line-height: 0;
+    color: $gray-900;
+  }
+  
+}
