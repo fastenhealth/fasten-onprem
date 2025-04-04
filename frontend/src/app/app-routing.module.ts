@@ -21,6 +21,7 @@ import { ResourceCreatorComponent } from './pages/resource-creator/resource-crea
 import { ResourceDetailComponent } from './pages/resource-detail/resource-detail.component';
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
 import { UserCreateComponent } from './pages/user-create/user-create.component';
+import { UserEditComponent } from "./pages/user-edit/user-edit.component";
 import { UserListComponent } from './pages/user-list/user-list.component';
 
 const routes: Routes = [
@@ -55,6 +56,7 @@ const routes: Routes = [
 
   { path: 'users', component: UserListComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
   { path: 'users/new', component: UserCreateComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
+  { path: 'users/:user_id', component: UserEditComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
 
   // { path: 'general-pages', loadChildren: () => import('./general-pages/general-pages.module').then(m => m.GeneralPagesModule) },
   // { path: 'ui-elements', loadChildren: () => import('./ui-elements/ui-elements.module').then(m => m.UiElementsModule) },
