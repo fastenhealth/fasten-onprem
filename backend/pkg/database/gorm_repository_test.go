@@ -1437,3 +1437,277 @@ func (suite *RepositoryTestSuite) TestUpdateBackgroundJob() {
 	require.Equal(suite.T(), pkg.BackgroundJobStatusFailed, foundAllBackgroundJobs[0].JobStatus)
 	require.NotNil(suite.T(), foundAllBackgroundJobs[0].DoneTime)
 }
+
+func (suite *RepositoryTestSuite) TestUpdateUserAndPermissions() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	// Create initial user
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+		FullName: "Test User",
+		Role:     pkg.UserRoleUser,
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+
+	// Create target user for permissions
+	targetUser := &models.User{
+		Username: "target_user",
+		Password: "targetpass",
+		Email:    "target@test.com",
+		FullName: "Target User",
+		Role:     pkg.UserRoleUser,
+	}
+	err = dbRepo.CreateUser(context.Background(), targetUser)
+	require.NoError(suite.T(), err)
+
+	// Update user with new details and permissions
+	updatedUser := models.User{
+		ModelBase: models.ModelBase{ID: userModel.ID},
+		Username:  "test_username",
+		Email:     "newemail@test.com",
+		FullName:  "Updated Name",
+		Role:      pkg.UserRoleAdmin,
+		Permissions: map[string]map[string]bool{
+			targetUser.ID.String(): {
+				"read":           true,
+				"manage_sources": true,
+			},
+		},
+	}
+
+	// Test
+	err = dbRepo.UpdateUserAndPermissions(context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username"), updatedUser)
+	require.NoError(suite.T(), err)
+
+	// Verify
+	updatedUserResult, err := dbRepo.GetUser(context.Background(), userModel.ID)
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), "newemail@test.com", updatedUserResult.Email)
+	require.Equal(suite.T(), "Updated Name", updatedUserResult.FullName)
+	require.Equal(suite.T(), pkg.UserRoleAdmin, updatedUserResult.Role)
+	require.Equal(suite.T(), true, updatedUserResult.Permissions[targetUser.ID.String()]["read"])
+	require.Equal(suite.T(), true, updatedUserResult.Permissions[targetUser.ID.String()]["manage_sources"])
+}
+
+func (suite *RepositoryTestSuite) TestUpdateUserAndPermissions_NonExistentUser() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	// Try to update non-existent user
+	nonExistentUser := models.User{
+		ModelBase: models.ModelBase{ID: uuid.New()},
+		Username:  "nonexistent",
+		Email:     "nonexistent@test.com",
+		FullName:  "Non Existent",
+		Role:      pkg.UserRoleUser,
+	}
+
+	// Test
+	err = dbRepo.UpdateUserAndPermissions(context.Background(), nonExistentUser)
+	require.Error(suite.T(), err)
+}
+
+func (suite *RepositoryTestSuite) TestUpdateUserAndPermissions_RemovePermissions() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	// Create initial user
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+		FullName: "Test User",
+		Role:     pkg.UserRoleUser,
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+
+	// Create target user for permissions
+	targetUser := &models.User{
+		Username: "target_user",
+		Password: "targetpass",
+		Email:    "target@test.com",
+		FullName: "Target User",
+		Role:     pkg.UserRoleUser,
+	}
+	err = dbRepo.CreateUser(context.Background(), targetUser)
+	require.NoError(suite.T(), err)
+
+	// First update: add permissions
+	userWithPermissions := models.User{
+		ModelBase: models.ModelBase{ID: userModel.ID},
+		Username:  "test_username",
+		Email:     "test@test.com",
+		FullName:  "Test User",
+		Role:      pkg.UserRoleUser,
+		Permissions: map[string]map[string]bool{
+			targetUser.ID.String(): {
+				"read":           true,
+				"manage_sources": true,
+			},
+		},
+	}
+
+	err = dbRepo.UpdateUserAndPermissions(context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username"), userWithPermissions)
+	require.NoError(suite.T(), err)
+
+	// Second update: remove all permissions
+	userWithoutPermissions := models.User{
+		ModelBase:   models.ModelBase{ID: userModel.ID},
+		Username:    "test_username",
+		Email:       "test@test.com",
+		FullName:    "Test User",
+		Role:        pkg.UserRoleUser,
+		Permissions: map[string]map[string]bool{},
+	}
+
+	// Test
+	err = dbRepo.UpdateUserAndPermissions(context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username"), userWithoutPermissions)
+	require.NoError(suite.T(), err)
+
+	// Verify
+	updatedUserResult, err := dbRepo.GetUser(context.Background(), userModel.ID)
+	require.NoError(suite.T(), err)
+	require.Empty(suite.T(), updatedUserResult.Permissions[targetUser.ID.String()])
+}
+
+func (suite *RepositoryTestSuite) TestGetUser() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	// Create initial user
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+		FullName: "Test User",
+		Role:     pkg.UserRoleUser,
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+
+	// Create target user for permissions
+	targetUser := &models.User{
+		Username: "target_user",
+		Password: "targetpass",
+		Email:    "target@test.com",
+		FullName: "Target User",
+		Role:     pkg.UserRoleUser,
+	}
+	err = dbRepo.CreateUser(context.Background(), targetUser)
+	require.NoError(suite.T(), err)
+
+	// Add permissions
+	userWithPermissions := models.User{
+		ModelBase: models.ModelBase{ID: userModel.ID},
+		Username:  "test_username",
+		Email:     "test@test.com",
+		FullName:  "Test User",
+		Role:      pkg.UserRoleUser,
+		Permissions: map[string]map[string]bool{
+			targetUser.ID.String(): {
+				"read":           true,
+				"manage_sources": true,
+			},
+		},
+	}
+
+	err = dbRepo.UpdateUserAndPermissions(context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username"), userWithPermissions)
+	require.NoError(suite.T(), err)
+
+	// Test
+	foundUser, err := dbRepo.GetUser(context.Background(), userModel.ID)
+
+	// Verify
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), userModel.ID, foundUser.ID)
+	require.Equal(suite.T(), userModel.Username, foundUser.Username)
+	require.Equal(suite.T(), userModel.Email, foundUser.Email)
+	require.Equal(suite.T(), userModel.FullName, foundUser.FullName)
+	require.Equal(suite.T(), userModel.Role, foundUser.Role)
+	require.Empty(suite.T(), foundUser.Password) // Password should be sanitized
+	require.Equal(suite.T(), true, foundUser.Permissions[targetUser.ID.String()]["read"])
+	require.Equal(suite.T(), true, foundUser.Permissions[targetUser.ID.String()]["manage_sources"])
+}
+
+func (suite *RepositoryTestSuite) TestGetUser_NonExistentUser() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	// Test
+	nonExistentID := uuid.New()
+	foundUser, err := dbRepo.GetUser(context.Background(), nonExistentID)
+
+	// Verify
+	require.Error(suite.T(), err)
+	require.Nil(suite.T(), foundUser)
+}
+
+func (suite *RepositoryTestSuite) TestGetUser_NoPermissions() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	// Create user without any permissions
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+		FullName: "Test User",
+		Role:     pkg.UserRoleUser,
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+
+	// Test
+	foundUser, err := dbRepo.GetUser(context.Background(), userModel.ID)
+
+	// Verify
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), userModel.ID, foundUser.ID)
+	require.Equal(suite.T(), userModel.Username, foundUser.Username)
+	require.Equal(suite.T(), userModel.Email, foundUser.Email)
+	require.Equal(suite.T(), userModel.FullName, foundUser.FullName)
+	require.Equal(suite.T(), userModel.Role, foundUser.Role)
+	require.Empty(suite.T(), foundUser.Password)    // Password should be sanitized
+	require.Empty(suite.T(), foundUser.Permissions) // No permissions should be present
+}

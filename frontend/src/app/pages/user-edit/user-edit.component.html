@@ -1,0 +1,63 @@
+<div class="az-content">
+  <div class="container">
+    <div class="az-content-body">
+      <h2 class="az-content-title">Edit User</h2>
+
+      <div *ngIf="loading" class="text-center">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ errorMessage }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="errorMessage = null">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <form *ngIf="!loading && !errorMessage" [formGroup]="userForm" (ngSubmit)="onSubmit()" class="pb-5 mb-5">
+        <div class="form-group">
+          <label for="full_name">Full Name</label>
+          <input type="text" id="full_name" formControlName="full_name" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" formControlName="username" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="role">Role</label>
+          <select id="role" formControlName="role" class="form-control" required>
+            <option value="user" selected>User</option>
+            <option value="admin">Admin</option>
+          </select>
+          <div *ngIf="userForm.get('role')?.value === 'admin'" class="text-danger mt-2">
+            <strong>Warning:</strong> This will allow full system access including the ability to manage other users.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" formControlName="email" class="form-control">
+        </div>
+
+        <h5>Access to other Users</h5>
+
+        <div formGroupName="permissions">
+          <div *ngFor="let otherUser of userList" class="">
+            <div class="text">{{ otherUser.full_name }}</div>
+            <div formGroupName="{{otherUser.id}}" class="ml-3 p-1">
+              <div *ngFor="let permission of permissionsList" class="form-check">
+                <input type="checkbox" [formControlName]="permission.value" class="form-check-input" id="{{otherUser.id}}_{{permission.value}}">
+                <label class="form-check-label" for="{{otherUser.id}}_{{permission.value}}">{{ permission.name }}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-az-primary mt-2" [disabled]="!userForm.valid || loading">
+          Update User
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
