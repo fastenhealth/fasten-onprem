@@ -57,7 +57,7 @@
               </p>
             </div>
 
-            <fhir-card *ngFor="let medication of existingEncounter?.related_resources?.['Medication']" [showDetails]="false" [displayModel]="medication" [isCollapsed]="true"></fhir-card>
+            <fhir-card *ngFor="let medication of existingEncounter?.related_resources?.['Medication']" [showDetails]="false" [displayModel]="medication" [isCollapsed]="true" [isUnlinkable]="true" (unlinkRequested)="handleUnlinkRequested(medication)"></fhir-card>
 
             <ng-container formArrayName="medications">
               <div class="card pd-20" [formGroup]="medicationGroup" *ngFor="let medicationGroup of medications.controls; let i = index">
@@ -157,7 +157,7 @@
               </p>
             </div>
 
-            <fhir-card *ngFor="let procedure of existingEncounter?.related_resources?.['Procedure']" [showDetails]="false" [displayModel]="procedure" [isCollapsed]="true"></fhir-card>
+            <fhir-card *ngFor="let procedure of existingEncounter?.related_resources?.['Procedure']" [showDetails]="false" [displayModel]="procedure" [isCollapsed]="true" [isUnlinkable]="true" (unlinkRequested)="handleUnlinkRequested(procedure)"></fhir-card>
 
 
             <ng-container formArrayName="procedures">
@@ -256,7 +256,7 @@
               <p class="card-text mg-b-10">A practitioner is a healthcare professional, such as a doctor or nurse, who is trained and qualified to provide medical care and support to help you stay healthy or manage any health concerns you may have.</p>
             </div>
 
-            <fhir-card *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']" [showDetails]="false" [displayModel]="practitioner" [isCollapsed]="true"></fhir-card>
+            <fhir-card *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']" [showDetails]="false" [displayModel]="practitioner" [isCollapsed]="true" [isUnlinkable]="true" (unlinkRequested)="handleUnlinkRequested(practitioner)"></fhir-card>
 
             <ng-container formArrayName="practitioners">
               <ng-container *ngFor="let practitionerGroup of practitioners.controls; let i = index">
@@ -293,7 +293,7 @@
               </p>
             </div>
 
-            <fhir-card *ngFor="let organization of existingEncounter?.related_resources?.['Organization']" [showDetails]="false" [displayModel]="organization" [isCollapsed]="true"></fhir-card>
+            <fhir-card *ngFor="let organization of existingEncounter?.related_resources?.['Organization']" [showDetails]="false" [displayModel]="organization" [isCollapsed]="true" [isUnlinkable]="true" (unlinkRequested)="handleUnlinkRequested(organization)"></fhir-card>
 
             <ng-container formArrayName="organizations">
               <ng-container *ngFor="let organizationGroup of organizations.controls; let i = index">
@@ -328,7 +328,7 @@
               </p>
             </div>
 
-            <fhir-card *ngFor="let diagnosticReport of existingEncounter?.related_resources?.['DiagnosticReport']" [showDetails]="false" [displayModel]="diagnosticReport" [isCollapsed]="true"></fhir-card>
+            <fhir-card *ngFor="let diagnosticReport of existingEncounter?.related_resources?.['DiagnosticReport']" [showDetails]="false" [displayModel]="diagnosticReport" [isCollapsed]="true" [isUnlinkable]="true" (unlinkRequested)="handleUnlinkRequested(diagnosticReport)"></fhir-card>
 
             <ng-container formArrayName="labresults">
               <ng-container *ngFor="let labresultsGroup of labresults.controls; let i = index">

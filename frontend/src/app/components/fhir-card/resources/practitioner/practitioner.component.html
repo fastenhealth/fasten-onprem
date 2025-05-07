@@ -8,6 +8,9 @@
       <fhir-ui-badge [status]="displayModel?.status">{{displayModel?.status}}</fhir-ui-badge>
       <ng-content select="[header]"></ng-content>
     </div>
+    <span *ngIf="isUnlinkable && !isCollapsed" class="cursor-pointer float-right" (click)="onUnlinkClicked($event)" aria-hidden="true">
+      <i class="fas fa-trash"></i>
+    </span>
   </div>
   <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed" class="card-body">
     <p class="az-content-text mg-b-20">A person who is directly or indirectly involved in the provisioning of healthcare.</p>

@@ -45,6 +45,8 @@ import {
 import {
   MedicalRecordWizardAddLabResultsComponent
 } from '../medical-record-wizard-add-lab-results/medical-record-wizard-add-lab-results.component';
+import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
+import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
 
 @Component({
   standalone: true,
@@ -242,6 +244,7 @@ export class MedicalRecordWizardComponent implements OnInit {
     modalRef.componentInstance.debugMode = this.debugMode;
     modalRef.result.then(
       (result) => {
+        console.log("Result: ", result)
         // add this to the list of organization
         //TODO
         this.addEncounter(result);
@@ -357,6 +360,8 @@ export class MedicalRecordWizardComponent implements OnInit {
       //generate a ndjson file from the resourceList
       //make sure we extract the encounter resource
 
+      console.log("Resource storage: ", resourceStorage)
+
       let fhirListResource = {
         resourceType: 'List',
         entry: [],
@@ -399,6 +404,8 @@ export class MedicalRecordWizardComponent implements OnInit {
         reference: generateReferenceUriFromResourceOrReference(encounter),
       }
 
+      console.log("FHIR List Resource: ", fhirListResource)
+
       this.fastenApi.createRelatedResourcesFastenSource(fhirListResource).subscribe(
         (resp) => {
           this.submitWizardLoading = false;
@@ -420,4 +427,35 @@ export class MedicalRecordWizardComponent implements OnInit {
   }
   //</editor-fold>
 
+  handleUnlinkRequested(model: FastenDisplayModel) {
+    console.log("MODEL: ", model)
+    const modalRef = this.modalService.open(ConfirmationModalComponent, {
+      ariaLabelledBy: 'modal-confirmation',
+      size: 'sm'
+    });
+
+    modalRef.componentInstance.message = `Are you sure you want to delete this resource from the encounter?`;
+    modalRef.componentInstance.title = 'Delete Resource';
+
+    modalRef.result.then((result) => {
+      if (result == true) {
+        this.submitWizardLoading = true;
+        const encounterId = this.existingEncounter.source_resource_id
+        const resourceId = model.source_resource_id
+        const resourceType = model.source_resource_type
+
+        const indexOf = this.existingEncounter?.related_resources?.[resourceType]?.indexOf(model)
+        this.existingEncounter?.related_resources?.[resourceType]?.splice(indexOf, 1)
+
+        this.fastenApi.removeEncounterRelatedResource(encounterId, resourceId, resourceType).subscribe(
+          (resp) => {
+            this.submitWizardLoading = false;
+          },
+          (err) => {
+            this.submitWizardLoading = false;
+          }
+        )
+      }
+    })
+  }
 }

@@ -143,6 +143,15 @@ export class FastenApiService {
       );
   }
 
+  removeEncounterRelatedResource(encounterId: string, resourceId: string, resourceType: string) : Observable<any> {
+    return this._httpClient.delete<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/encounter/${encounterId}/related/${resourceType}/${resourceId}`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data
+        })
+      );
+  }
+
 
   getSources(): Observable<Source[]> {
     return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/source`)

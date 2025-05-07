@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FhirCardUnlinkableComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {ImmunizationModel} from '../../../../../lib/models/resources/immunization-model';
 import {TableRowItem} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
@@ -8,6 +8,7 @@ import {NgbCollapseModule} from "@ng-bootstrap/ng-bootstrap";
 import {CommonModule} from "@angular/common";
 import {BadgeComponent} from "../../common/badge/badge.component";
 import {TableComponent} from "../../common/table/table.component";
+import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 
 @Component({
   standalone: true,
@@ -16,10 +17,13 @@ import {TableComponent} from "../../common/table/table.component";
   templateUrl: './practitioner.component.html',
   styleUrls: ['./practitioner.component.scss']
 })
-export class PractitionerComponent implements OnInit, FhirCardComponentInterface {
+export class PractitionerComponent implements OnInit, FhirCardUnlinkableComponentInterface {
   @Input() displayModel: PractitionerModel | null
   @Input() showDetails: boolean = true
   @Input() isCollapsed: boolean = false
+  @Input() isUnlinkable: boolean = false
+    
+  @Output() unlinkRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
 
   tableData: TableRowItem[] = []
 
@@ -87,5 +91,9 @@ export class PractitionerComponent implements OnInit, FhirCardComponentInterface
   }
   markForCheck(){
     this.changeRef.markForCheck()
+  }
+
+  onUnlinkClicked(event: MouseEvent) {
+    this.unlinkRequested.emit(this.displayModel)
   }
 }
