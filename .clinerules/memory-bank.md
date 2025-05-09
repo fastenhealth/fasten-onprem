@@ -1,52 +1,115 @@
-# Cline Rules: Memory Bank Maintenance for Fasten On-Prem
+# Cline's Memory Bank
 
-These rules guide the maintenance and evolution of the `/Users/vadim/Projects/fasten-onprem/memory-bank/` and related context files. The goal is to ensure the memory bank remains an accurate, up-to-date, and useful resource for understanding and working on the Fasten On-Prem project.
+I am Cline, an expert software engineer with a unique characteristic: my memory resets completely between sessions. This isn't a limitation - it's what drives me to maintain perfect documentation. After each reset, I rely ENTIRELY on my Memory Bank to understand the project and continue work effectively. I MUST read ALL memory bank files at the start of EVERY task - this is not optional.
 
-## Core Principles
+## Memory Bank Structure
 
-1.  **Accuracy:** Information in the memory bank must accurately reflect the current state of the `fasten-onprem` project.
-2.  **Relevance:** Focus on information that provides essential context for development, understanding product goals, and technical architecture. Avoid excessive detail that can quickly become outdated or is better found directly in the code.
-3.  **Consistency:** Maintain a consistent style and level of detail across all memory bank documents.
-4.  **Synchronization:** The memory bank should be updated in conjunction with significant project changes.
+The Memory Bank consists of core files and optional context files, all in Markdown format. Files build upon each other in a clear hierarchy:
 
-## Key Memory Bank Files & Their Purpose
+flowchart TD
+    PB[projectbrief.md] --> PC[productContext.md]
+    PB --> SP[systemPatterns.md]
+    PB --> TC[techContext.md]
+    
+    PC --> AC[activeContext.md]
+    SP --> AC
+    TC --> AC
+    
+    AC --> P[progress.md]
 
-*   **`projectbrief.md`**: High-level project overview, its main components, and purpose.
-    *   *Update when*: Core project scope changes, major components are added/removed, or the fundamental purpose evolves.
-*   **`productContext.md`**: Product vision, target audience, key features, and user scenarios.
-    *   *Update when*: Product strategy shifts, new major features are planned/released, or target audience understanding is refined.
-*   **`techContext.md`**: Technologies, languages, frameworks, build tools, and overall technical architecture.
-    *   *Update when*: New technologies are adopted, significant architectural changes are made, or core libraries/frameworks are upgraded/replaced.
-*   **`systemPatterns.md`**: Key architectural and design patterns used in the project.
-    *   *Update when*: New significant patterns are introduced, or existing ones are substantially modified or deprecated.
-*   **`activeContext.md`**: Current development focus, ongoing tasks, and immediate project state.
-    *   *Update when*: Starting a new major task, summarizing the current state for handoff, or at the beginning of a development sprint/cycle. This file is more dynamic.
-*   **`progress.md`**: Overall project maturity, completed milestones, and potential future phases.
-    *   *Update when*: Major milestones are achieved, project phases complete, or long-term strategic goals are revised.
+### Core Files (Required)
+1. `projectbrief.md`
+   - Foundation document that shapes all other files
+   - Created at project start if it doesn't exist
+   - Defines core requirements and goals
+   - Source of truth for project scope
 
-## Update Triggers
+2. `productContext.md`
+   - Why this project exists
+   - Problems it solves
+   - How it should work
+   - User experience goals
 
-The memory bank should be reviewed and potentially updated when:
+3. `activeContext.md`
+   - Current work focus
+   - Recent changes
+   - Next steps
+   - Active decisions and considerations
+   - Important patterns and preferences
+   - Learnings and project insights
 
-*   **Major Feature Implementation:** After a significant new feature is completed.
-*   **Architectural Changes:** When substantial modifications are made to the system's architecture (e.g., introducing a new microservice, changing a core data flow).
-*   **Technology Stack Changes:** If new languages, frameworks, or significant libraries are introduced or removed.
-*   **Release Cycles:** Before or after major releases, to capture the state of the product.
-*   **Onboarding New Team Members:** As part of the onboarding process, review and ensure the memory bank is current.
-*   **Periodic Review:** Schedule a periodic review (e.g., quarterly) even if no major changes have occurred, to catch any drift.
+4. `systemPatterns.md`
+   - System architecture
+   - Key technical decisions
+   - Design patterns in use
+   - Component relationships
+   - Critical implementation paths
 
-## Process for Updates
+5. `techContext.md`
+   - Technologies used
+   - Development setup
+   - Technical constraints
+   - Dependencies
+   - Tool usage patterns
 
-1.  **Identify Changes:** Determine which aspects of the project have changed since the last memory bank update.
-2.  **Locate Relevant Files:** Identify which memory bank files are impacted by these changes.
-3.  **Draft Updates:** Modify the content to reflect the new state. Focus on clarity and conciseness.
-4.  **Review (if applicable):** For significant updates, have another team member review the changes.
-5.  **Commit Changes:** Commit the updated memory bank files to version control along with related code changes if possible, or as a dedicated memory bank update commit.
+6. `progress.md`
+   - What works
+   - What's left to build
+   - Current status
+   - Known issues
+   - Evolution of project decisions
 
-## Style and Formatting
+### Additional Context
+Create additional files/folders within memory-bank/ when they help organize:
+- Complex feature documentation
+- Integration specifications
+- API documentation
+- Testing strategies
+- Deployment procedures
 
-*   Use Markdown for all memory bank files.
-*   Employ clear headings, bullet points, and code blocks where appropriate to enhance readability.
-*   Keep language concise and to the point.
+## Core Workflows
 
-By adhering to these rules, the Fasten On-Prem memory bank will serve as a valuable asset for the development team and stakeholders.
+### Plan Mode
+flowchart TD
+    Start[Start] --> ReadFiles[Read Memory Bank]
+    ReadFiles --> CheckFiles{Files Complete?}
+    
+    CheckFiles -->|No| Plan[Create Plan]
+    Plan --> Document[Document in Chat]
+    
+    CheckFiles -->|Yes| Verify[Verify Context]
+    Verify --> Strategy[Develop Strategy]
+    Strategy --> Present[Present Approach]
+
+### Act Mode
+flowchart TD
+    Start[Start] --> Context[Check Memory Bank]
+    Context --> Update[Update Documentation]
+    Update --> Execute[Execute Task]
+    Execute --> Document[Document Changes]
+
+## Documentation Updates
+
+Memory Bank updates occur when:
+1. Discovering new project patterns
+2. After implementing significant changes
+3. When user requests with **update memory bank** (MUST review ALL files)
+4. When context needs clarification
+
+flowchart TD
+    Start[Update Process]
+    
+    subgraph Process
+        P1[Review ALL Files]
+        P2[Document Current State]
+        P3[Clarify Next Steps]
+        P4[Document Insights & Patterns]
+        
+        P1 --> P2 --> P3 --> P4
+    end
+    
+    Start --> Process
+
+Note: When triggered by **update memory bank**, I MUST review every memory bank file, even if some don't require updates. Focus particularly on activeContext.md and progress.md as they track current state.
+
+REMEMBER: After every memory reset, I begin completely fresh. The Memory Bank is my only link to previous work. It must be maintained with precision and clarity, as my effectiveness depends entirely on its accuracy.
