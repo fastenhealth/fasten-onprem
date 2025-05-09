@@ -1,35 +1,17 @@
-version: "3.9"
-# Fasten Health Docker Compose flexible configuration
-# Can be used for both development and production
-
 services:
   fasten-health:
-    # Dynamic image selection based on environment
-    image: ${FASTEN_IMAGE}
-    # Only build if FASTEN_IMAGE is not specified
     build:
-      context: ${FASTEN_BUILD_CONTEXT:-.}
-      dockerfile: ${FASTEN_DOCKERFILE:-Dockerfile}
+      context: .
+      dockerfile: Dockerfile
       args:
-        - FASTEN_ENV=${FASTEN_ENV:-prod}
-    
+        - FASTEN_ENV=sandbox
     container_name: fasten-health
-    restart: ${FASTEN_RESTART:-unless-stopped}
-    
-    # Port configuration - by default limits access to localhost
+    restart: no
+
     ports:
-      - "${FASTEN_HOST:-127.0.0.1}:${FASTEN_PORT:-9090}:8080"
-    
-    # Volumes for data persistence
+      - "127.0.0.1:9090:8080"
+
     volumes:
-      - ${FASTEN_DB_PATH:-./db}:/opt/fasten/db
-      - ${FASTEN_CACHE_PATH:-./cache}:/opt/fasten/cache
-      # Uncomment to use custom configuration file
-      # - ${FASTEN_CONFIG_PATH:-./config.yaml}:/opt/fasten/config/config.yaml
-    
-    # Optional: Resource limits
-    deploy:
-      resources:
-        limits:
-          cpus: ${FASTEN_CPU_LIMIT:-'0.75'}
-          memory: ${FASTEN_MEMORY_LIMIT:-'1G'}
+      - ./dev_db:/opt/fasten/db
+      - ./dev_cache:/opt/fasten/cache
+      # - ./config.dev.yaml:/opt/fasten/config/config.yaml

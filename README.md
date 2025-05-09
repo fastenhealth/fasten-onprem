@@ -73,6 +73,32 @@ It's pretty basic right now, but it's designed with a easily extensible core aro
 - (Future) ChatGPT-style interface to query your own medical history (offline)
 - (Future) Integration with smart-devices & wearables
 
+# Running Fasten in Development or Production
+
+Fasten provides two different Docker Compose files, depending on your use case:
+
+### 🧪 Development Mode
+
+This will spin up the Fasten stack using development settings:
+
+```bash
+docker compose up -d
+```
+
+This uses the default `docker-compose.yml` file and is useful for local testing and development.
+
+### 🚀 Production Mode
+
+For a production deployment, use the production Docker Compose file:
+
+```bash
+docker compose -f docker-compose-production.yml up -d
+```
+
+This uses production-grade settings and should be used in production environments.
+
+> ⚠️ **Warning:** Do not run both `docker-compose.yml` and `docker-compose-production.yml` simultaneously. Choose one based on your deployment scenario.
+
 # Getting Started
 
 There are 2 flavors of Fasten:
