@@ -2,7 +2,7 @@
 
 ## Overall Architecture
 
-Fasten On-Prem employs a client-server architecture with a Go-based backend and an Angular frontend. The project is structured as a monorepo.
+Fasten On-Prem employs a client-server architecture with a Go-based backend and an Angular frontend. The project is structured as a monorepo, which also includes a shared TypeScript library (`frontend/src/lib/`) intended for use in both the frontend and potential Web Workers or Node.js environments.
 
 ## Backend Technologies
 
@@ -34,12 +34,19 @@ Fasten On-Prem employs a client-server architecture with a Go-based backend and 
 *   **Build System:** Angular CLI (implied by `angular.json` and standard Angular project structure).
 *   **Linting:** TSLint (`frontend/tslint.json`), EditorConfig (`frontend/.editorconfig`).
 *   **Browser Compatibility:** `.browserslistrc` defines target browsers.
+*   **Shared Library (`frontend/src/lib/`):** Contains TypeScript code intended for use across different JavaScript environments (Angular, Web Workers, potentially Node.js). Code in this directory must avoid browser-specific APIs.
 
 ## API & Data Interchange
 
 *   **Frontend-Backend Communication:** The Angular frontend likely communicates with the Go backend via HTTP requests.
 *   **Type Safety:** `tygo.yaml` suggests the use of Tygo to generate TypeScript types from Go structs, ensuring consistency between frontend and backend data models.
 *   **Data Standards:** FHIR (Fast Healthcare Interoperability Resources) is a key data standard, indicated by various frontend components and pipes (e.g., `fhir-card`, `fhir-datatable`, `fhir-path.pipe`).
+*   **Data Fetching & Transformation:** The `conduit` library (located within `frontend/src/lib/`) is a key component responsible for retrieving patient data from various medical providers and transforming it. It currently supports data transfer mechanisms using **FHIR R4** and **FHIR R3** protocols.
+
+## Data Storage (Frontend)
+
+*   **Local Database:** The frontend utilizes a library (located within `frontend/src/lib/database/`) that acts as a wrapper around **PouchDB** for managing local, client-side data storage.
+*   **Synchronization:** This PouchDB wrapper includes built-in functionality to synchronize the local database with an external or hosted **CouchDB** instance.
 
 ## Build, Deployment, and Environment
 
@@ -59,3 +66,8 @@ Fasten On-Prem employs a client-server architecture with a Go-based backend and 
 ## Development Environment
 
 *   **IDE/Editor:** `fasten-onprem.code-workspace` indicates usage of Visual Studio Code with a pre-configured workspace.
+
+## Cross-Cutting Concerns
+
+*   **Event Bus (Frontend):** `EventBusService` suggests a publish-subscribe mechanism for decoupled communication between components or services.
+*   **HTTP Interceptors (Frontend):** `AuthInterceptorService` is used to modify outgoing HTTP requests (e.g., adding authentication tokens) or incoming responses.

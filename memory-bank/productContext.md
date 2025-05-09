@@ -2,12 +2,12 @@
 
 ## Product Vision
 
-Fasten On-Prem aims to be a secure, self-hosted platform for individuals and potentially healthcare entities to manage and interact with health and medical data. It provides tools for data aggregation from various medical sources, visualization of health records, and user-friendly interfaces for data entry and exploration.
+Fasten On-Prem's vision is to empower individuals and families with a secure, self-hosted platform to aggregate, manage, and interact with their personal health records. The core idea is to create a comprehensive health record that remains entirely under the user's control, never leaving their hands. It provides tools for automated data aggregation from diverse medical sources, intuitive visualization of health records, and user-friendly interfaces for data entry, exploration, and understanding.
 
 ## Target Audience
 
-*   **Individuals:** Patients seeking to consolidate and manage their personal health records from different providers.
-*   **Healthcare Providers/Clinics (Potentially):** Smaller clinics or individual practitioners who need a self-managed system for patient data, though the primary focus seems consumer-oriented.
+*   **Primary:** Individuals and families who want to consolidate and manage their personal health records from different providers in a private, self-hosted environment.
+*   **Note:** While potentially usable by small clinics, the project is explicitly designed and optimized for personal/family use, unlike traditional EMR systems.
 
 ## Key Features (Inferred from Project Structure)
 
@@ -22,18 +22,27 @@ Fasten On-Prem aims to be a secure, self-hosted platform for individuals and pot
     *   Detailed views for lab reports (`report-labs`).
     *   Tools for creating and viewing specific health resources (`resource-creator`, `resource-detail`).
     *   Support for FHIR (Fast Healthcare Interoperability Resources) data standards (`fhir-card`, `fhir-datatable`, `fhir-path.pipe`).
+    *   **Automated EMR Pulling:** Integrates with healthcare providers using standards like FHIR R4 and R3 and OAuth2 (specifically Smart-on-FHIR) with the `offline_access` scope to automatically retrieve and update Electronic Medical Records (EMRs). The `conduit` library is responsible for fetching and transforming this data.
 *   **Data Interaction & Visualization:**
     *   Centralized dashboard for an overview of health data (`dashboard`).
     *   Data exploration capabilities (`explore`).
     *   Timeline views for medical history (`report-medical-history-timeline-panel`).
     *   Wizards for guided data entry (e.g., `medical-record-wizard`, `medical-record-wizard-add-attachment`).
     *   Glossary lookup for medical terms (`glossary-lookup`).
+    *   **Condition-specific Dashboards & Tracking:** Provides specialized dashboards and tracking capabilities tailored to specific health conditions or diagnostic tests.
 *   **System Administration & Monitoring:**
     *   Management of background jobs (`background-jobs`).
 *   **User Interface:**
     *   Modern, component-based frontend (Angular).
     *   Responsive design elements (implied by web technologies).
     *   Customizable UI elements (e.g., `gridstack` for dashboard widgets).
+
+### Planned Future Features (from README)
+
+*   **Multi-user support:** Designed to work well for families, allowing multiple user accounts within a single instance with configurable access permissions (admin, viewer roles).
+*   **(Future) Clinical Recommendations:** Vaccination & condition-specific recommendations using NIH/WHO clinical care guidelines (HEDIS/CQL).
+*   **(Future) Offline Querying:** A ChatGPT-style interface to query your own medical history offline.
+*   **(Future) Smart Device Integration:** Integration with smart-devices & wearables.
 
 ## User Scenarios
 
@@ -46,3 +55,9 @@ Fasten On-Prem aims to be a secure, self-hosted platform for individuals and pot
 
 *   **On-Premise:** The core value proposition is self-hosting, giving users control over their data.
 *   **Cloud/Desktop Variants:** The presence of `index-cloud.html` and `index-desktop.html`, along with environment files like `environment.cloud_sandbox.ts` and `environment.desktop_prod.ts`, suggests different build targets or deployment modes (e.g., a cloud-hosted version vs. a local desktop application).
+*   **Distribution:** Primarily distributed as Docker images, with 'sandbox' and 'main' flavors catering to testing with synthetic data vs. using real personal data from a wide network of providers (as detailed in `projectbrief.md`).
+
+## Data Storage
+
+*   **Local Storage:** Utilizes a library that wraps PouchDB for local data storage within the user's self-hosted instance.
+*   **Synchronization:** The PouchDB wrapper includes functionality to sync the local database with an external/hosted CouchDB instance, enabling potential backup or advanced scenarios.

@@ -6,6 +6,7 @@ This document outlines key architectural and design patterns observed or inferre
 
 *   **Monorepo:** The entire project (backend, frontend, and related scripts/configurations) is managed within a single Git repository. This simplifies dependency management between components and build processes.
 *   **Client-Server Architecture:** A clear separation exists between the Angular frontend (client) and the Go backend (server).
+*   **Shared Library:** A dedicated TypeScript library (`frontend/src/lib/`) is used to house code intended for use across different JavaScript environments (frontend, Web Workers, potentially Node.js), enforcing a separation from browser-specific code.
 *   **Component-Based UI (Frontend):** The Angular frontend is built using a modular, component-based architecture.
     *   **Smart/Container Components (Pages):** Located in `frontend/src/app/pages/`, these components are typically route-level components responsible for fetching data and orchestrating presentation components.
     *   **Presentational/Dumb Components:** Located in `frontend/src/app/components/`, these components are focused on UI rendering and emit events to parent components. `shared.module.ts` likely groups common presentational components.
@@ -31,13 +32,14 @@ This document outlines key architectural and design patterns observed or inferre
 
 *   **Model-View-Controller (MVC) or Model-View-ViewModel (MVVM) Variant (Frontend):** Angular applications generally follow these patterns, separating data (models), presentation (views/templates), and logic (components/services).
 *   **Data Transformation Objects (DTOs) / View Models:** The use of `tygo.yaml` to generate TypeScript types from Go structs suggests that specific data structures are used for communication between backend and frontend, acting as DTOs or view models.
-*   **FHIR Standard for Health Data:** The project consistently uses FHIR-related components and pipes, indicating adherence to this standard for healthcare data interoperability.
+*   **FHIR Standard for Health Data:** The project consistently uses FHIR-related components and pipes, indicating adherence to this standard for healthcare data interoperability, specifically supporting **FHIR R4** and **FHIR R3** via the `conduit` library.
+*   **Local Data Storage (PouchDB/CouchDB):** The frontend uses a library wrapping **PouchDB** for local data persistence, with built-in synchronization capabilities to an external **CouchDB** instance.
 
 ## Build and Configuration Patterns
 
 *   **Environment-Specific Configurations:** The `frontend/src/environments/` directory demonstrates a pattern for managing different configurations (API endpoints, feature flags) for various deployment environments (dev, prod, sandbox, desktop, cloud).
 *   **Containerization (Docker):** Packaging the application into Docker containers for consistent deployment across different environments.
-*   **Infrastructure as Code (Nix):** Using Nix (`flake.nix`) to define and manage the development and build environment declaratively.
+*   **Infrastructure as Code (Nix):** Using Nix (`flake.nix`) to define and manage reproducible development and build environments.
 
 ## Cross-Cutting Concerns
 
