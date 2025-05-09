@@ -6,7 +6,7 @@ The user initiated an "update memory bank" task. All core memory bank files (`pr
 The content of these files is assumed to represent the "last current state" of the project. This `activeContext.md` file and `progress.md` are being updated to reflect the completion of this review and update process.
 
 ## Project State Summary (as per reviewed files)
-*   **Repository:** `/Users/vadim/Projects/fasten-onprem`
+*   **Repository:** `./`
 *   **Structure:** Monorepo containing a Go backend and an Angular frontend.
 *   **Key Technologies Identified:** Go (backend), Angular/TypeScript (frontend), Docker, Nix, Git.
 *   **Primary Domain:** Healthcare/Medical data management, with strong support for FHIR standards.
