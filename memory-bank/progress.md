@@ -23,7 +23,7 @@ The Fasten On-Prem project appears to be in a **mature stage of development**, w
 
 ## Ongoing Activities / Immediate Next Steps (General Project)
 
-*   **Memory Bank Updated (Fasten Lighthouse):** The Memory Bank documentation (`productContext.md`, `systemPatterns.md`, `techContext.md`, `activeContext.md`, `progress.md`) has been updated to include detailed information about the purpose, architectural role, and technical mechanisms of Fasten Lighthouse in the authentication flow.
+*   **Memory Bank Updated (Fasten Lighthouse & Provider Sources):** The Memory Bank documentation has been updated to include detailed information about the purpose, architectural role, and technical mechanisms of Fasten Lighthouse in the authentication flow, and to clarify that the provider source catalog is defined in the separate `fastenhealth/fasten-sources` repository and served via Lighthouse.
 *   **Maintenance & Bug Fixing:** Ongoing efforts to maintain the existing codebase and address any identified issues.
 *   **Dependency Updates:** Regular review and updating of backend and frontend dependencies.
 
