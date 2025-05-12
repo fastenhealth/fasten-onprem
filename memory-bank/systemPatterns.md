@@ -38,6 +38,14 @@ This document outlines key architectural and design patterns observed or inferre
     *   **SMART-on-FHIR:** The project utilizes SMART-on-FHIR, an implementation guide that layers OAuth2 on top of FHIR. This provides a secure and standardized way for Fasten On-Prem to authenticate with provider systems and obtain authorization to access patient data on behalf of the user.
     *   **Supported Versions:** The system specifically supports **FHIR R4** and **FHIR R3** via the `conduit` library, ensuring compatibility with a broad range of existing provider implementations.
 
+    *   **SMART-on-FHIR Authorization Flow:** Fasten On-Prem implements the standard OAuth 2.0 authorization code flow as defined by SMART-on-FHIR to securely access patient data from provider systems. This flow involves:
+        1.  **Authorization Request:** Redirecting the user's browser to the healthcare provider's authorization server with required parameters (client ID, redirect URI, requested scopes, etc.).
+        2.  **User Authentication & Consent:** The user authenticates with their provider and grants Fasten On-Prem permission to access their data for the requested scopes (e.g., `patient/*.read` for reading patient data, `offline_access` for long-lived access).
+        3.  **Authorization Code Grant:** Upon user approval, the provider's authorization server redirects the user back to Fasten On-Prem's specified redirect URI with a temporary authorization code.
+        4.  **Token Exchange:** Fasten On-Prem's backend exchanges the authorization code with the provider's token endpoint for an access token. If the `offline_access` scope was requested and granted, a refresh token is also issued.
+        5.  **API Access:** The obtained access token is included in the `Authorization` header (as `Bearer [access_token]`) of subsequent requests to the provider's FHIR API to retrieve patient data.
+        6.  **Token Refresh (if applicable):** If a refresh token was issued, it can be used to obtain new access tokens when the current one expires, allowing Fasten On-Prem to continue fetching data without requiring the user to re-authenticate immediately.
+
 *   **Local Data Storage (PouchDB/CouchDB):** The frontend uses a library wrapping **PouchDB** for local data persistence, with built-in synchronization capabilities to an external **CouchDB** instance.
 
 ## Build and Configuration Patterns
