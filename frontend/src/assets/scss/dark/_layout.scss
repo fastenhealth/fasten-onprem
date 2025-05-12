@@ -1,0 +1,77 @@
+@media (prefers-color-scheme: dark) {
+    body:not(.light-theme) {
+        .az-header {
+            background-color: var(--header);
+            color: #fff;
+            border-color: var(--border);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+
+            // Nested components
+            &-menu {
+                >.nav {
+                    .nav-item {
+                        >.nav-link {
+                            color: var(--dark-text-white-transparent-color);
+
+                            @include hover() {
+                                color: var(--dark-text-white-color);
+
+                                i {
+                                    color: var(--dark-text-white-color);
+                                }
+                            }
+                        }
+
+                        &.active {
+                            >.nav-link {
+                                color: var(--dark-text-white-color);
+                            }
+
+                            >.nav-link::before {
+                                background-color: var(--dark-text-white-color);
+                            }
+                        }
+                    }
+                }
+            }
+
+            &-right {
+
+                .az-header-notification>a,
+                .az-header-theme-toggle i {
+                    color: var(--dark-text-color);
+                }
+            }
+
+            &-notification {
+                >a.new::after {
+                    background-color: var(--card);
+                    border-top-color: var(--border);
+                    border-left-color: var(--border);
+                }
+            }
+        }
+
+
+        .az-footer {
+            background-color: var(--card);
+            color: white;
+            border-color: var(--card);
+        }
+
+
+        .az-content-header-right {
+            >.media {
+                border-color: var(--border);
+            }
+        }
+
+        .az-content-label {
+            color: var(--dark-text-color);
+        }
+
+        .row.row-sm.sticky-top.pt-2 {
+            background-color: var(--card);
+        }
+    }
+}

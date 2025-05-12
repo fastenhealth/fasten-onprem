@@ -9,14 +9,26 @@ import {HttpClient} from '@angular/common/http';
 
 describe('LighthouseService', () => {
   let service: LighthouseService;
+  let mockWindow: any;
 
   beforeEach(() => {
+    mockWindow = {
+      location: {
+        href: jasmine.createSpy('href'),
+        assign: jasmine.createSpy('assign'),
+      },
+    };
+
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
         {
           provide: HTTP_CLIENT_TOKEN,
           useClass: HttpClient,
+        },
+        {
+          provide: 'window',
+          useValue: mockWindow,
         },
       ]
     });

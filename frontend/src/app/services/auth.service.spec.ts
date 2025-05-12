@@ -7,14 +7,26 @@ import {HttpClient} from '@angular/common/http';
 
 describe('AuthService', () => {
   let service: AuthService;
+  let mockWindow: any;
 
   beforeEach(() => {
+    mockWindow = {
+      location: {
+        href: jasmine.createSpy('href'),
+        assign: jasmine.createSpy('assign'),
+      },
+    };
+
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
         {
           provide: HTTP_CLIENT_TOKEN,
           useClass: HttpClient,
+        },
+        {
+          provide: 'window',
+          useValue: mockWindow,
         },
       ]
     });
@@ -23,5 +35,10 @@ describe('AuthService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should set window.location.href', () => {
+    service.IdpConnect("some_idp");
+    expect(mockWindow.location.href).toHaveBeenCalledWith(jasmine.any(String));
   });
 });
