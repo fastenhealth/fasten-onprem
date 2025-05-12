@@ -56,7 +56,13 @@ Fasten On-Prem employs a client-server architecture with a Go-based backend and 
         *   **Access Tokens:** Short-lived credentials used to authorize requests to the FHIR API. These are included in the `Authorization: Bearer <access_token>` header.
         *   **Refresh Tokens:** Long-lived credentials (issued when `offline_access` is granted) used to obtain new access tokens when the current one expires, maintaining continuous data synchronization.
         *   **Client Authentication:** When exchanging the authorization code for tokens at the token endpoint, Fasten On-Prem (as a confidential client) likely uses **symmetric client authentication** by providing its `client_id` and `client_secret` (if registered as confidential) via HTTP Basic authentication or in the request body. Asymmetric authentication (using public/private keys) is also part of the SMART specification but is less common for user-facing apps like Fasten.
-        *   The `conduit` library is responsible for managing this OAuth 2.0 flow, including handling redirects, token exchange, token storage, and using tokens for API calls.
+        *   **Fasten Lighthouse's Role in Authentication:** Fasten Lighthouse acts as an "Auth Gateway" or proxy in the SMART-on-FHIR flow, particularly for providers requiring **Confidential Clients** or when the self-hosted Fasten instance is not directly internet-accessible.
+            *   It securely stores the `client_secret` for Confidential Clients centrally, preventing the need to distribute these secrets to each user's self-hosted instance.
+            *   It proxies the **token exchange** step (exchanging the authorization code for access/refresh tokens) for Confidential Clients, using the securely stored `client_secret`.
+            *   It leverages **PKCE (Proof Key for Code Exchange)** to enhance security, ensuring that even if an authorization code is intercepted, it cannot be exchanged for a token without the `code_verifier` held by the Fasten client.
+            *   It utilizes **Fragment Response Mode** during the redirect back to the client, ensuring the authorization code is passed in the URL fragment and is not sent to the Lighthouse server.
+            *   Patient health data (FHIR resources) **never passes through Lighthouse**. Data retrieval is always a direct connection between the self-hosted Fasten instance and the healthcare provider's FHIR API.
+        *   The `conduit` library is responsible for managing this OAuth 2.0 flow, including handling redirects, token exchange (either directly with the provider for Public Clients or via Lighthouse for Confidential Clients), token storage, and using tokens for API calls.
 
 ## Data Storage (Frontend)
 

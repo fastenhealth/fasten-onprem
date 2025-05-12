@@ -23,7 +23,7 @@ The Fasten On-Prem project appears to be in a **mature stage of development**, w
 
 ## Ongoing Activities / Immediate Next Steps (General Project)
 
-*   **Memory Bank Updated (May 9, 2025):** All memory bank documentation has been reviewed. `activeContext.md` and `progress.md` have been updated to reflect this. The memory bank is now considered current.
+*   **Memory Bank Updated (Fasten Lighthouse):** The Memory Bank documentation (`productContext.md`, `systemPatterns.md`, `techContext.md`, `activeContext.md`, `progress.md`) has been updated to include detailed information about the purpose, architectural role, and technical mechanisms of Fasten Lighthouse in the authentication flow.
 *   **Maintenance & Bug Fixing:** Ongoing efforts to maintain the existing codebase and address any identified issues.
 *   **Dependency Updates:** Regular review and updating of backend and frontend dependencies.
 

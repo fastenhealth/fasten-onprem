@@ -1,21 +1,21 @@
 # Active Context: Fasten On-Prem (Memory Bank Updated May 9, 2025)
 
 ## Current Focus
-The user initiated an "update memory bank" task. All core memory bank files (`projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md`, `progress.md`, and `.clinerules/memory-bank.md`) have been reviewed as of May 9, 2025.
+The user requested to update the Memory Bank with detailed information about Fasten Lighthouse. I have researched Fasten Lighthouse using the provided documentation and updated `productContext.md`, `systemPatterns.md`, and `techContext.md` to include this information.
 
-The content of these files is assumed to represent the "last current state" of the project. This `activeContext.md` file and `progress.md` are being updated to reflect the completion of this review and update process.
-
-## Project State Summary (as per reviewed files)
+## Project State Summary (as per reviewed files and recent updates)
 *   **Repository:** `./`
 *   **Structure:** Monorepo containing a Go backend and an Angular frontend.
-*   **Key Technologies Identified:** Go (backend), Angular/TypeScript (frontend), Docker, Nix, Git.
-*   **Primary Domain:** Healthcare/Medical data management, with strong support for FHIR standards.
+*   **Key Technologies Identified:** Go (backend), Angular/TypeScript (frontend), Docker, Nix, Git, **Fasten Lighthouse (Authentication Gateway)**.
+*   **Primary Domain:** Healthcare/Medical data management, with strong support for FHIR standards and a clear understanding of the role of Fasten Lighthouse in facilitating secure authentication.
 
-## Outcome of this "Update Memory Bank" Task
-*   All core memory bank files have been reviewed.
-*   `activeContext.md` (this file) has been updated to reflect the completion of this review.
-*   `progress.md` has been updated to mark the memory bank as current.
-*   The other memory bank files (`projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md`, `.clinerules/memory-bank.md`) are considered up-to-date based on the information available during this review.
+## Outcome of this Task
+*   Researched Fasten Lighthouse using provided documentation.
+*   Updated `productContext.md` to explain the purpose of Fasten Lighthouse.
+*   Updated `systemPatterns.md` to describe the architectural role of Fasten Lighthouse.
+*   Updated `techContext.md` to detail the technical mechanisms of Fasten Lighthouse in the authentication flow.
+*   `activeContext.md` (this file) is being updated to reflect the completion of these updates.
+*   `progress.md` will be updated next to reflect the updated understanding of the authentication system.
 
 ## Next Steps
-Awaiting the user's next task or confirmation of any further project changes that need to be documented in the memory bank.
+Update `progress.md` and then use `attempt_completion` to finalize the task.
