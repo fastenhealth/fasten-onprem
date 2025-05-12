@@ -32,7 +32,12 @@ This document outlines key architectural and design patterns observed or inferre
 
 *   **Model-View-Controller (MVC) or Model-View-ViewModel (MVVM) Variant (Frontend):** Angular applications generally follow these patterns, separating data (models), presentation (views/templates), and logic (components/services).
 *   **Data Transformation Objects (DTOs) / View Models:** The use of `tygo.yaml` to generate TypeScript types from Go structs suggests that specific data structures are used for communication between backend and frontend, acting as DTOs or view models.
-*   **FHIR Standard for Health Data:** The project consistently uses FHIR-related components and pipes, indicating adherence to this standard for healthcare data interoperability, specifically supporting **FHIR R4** and **FHIR R3** via the `conduit` library.
+*   **FHIR Standard for Health Data:** The project consistently uses FHIR-related components and pipes, indicating adherence to this standard for healthcare data interoperability. This is a core pattern that enables the system to connect to a wide range of healthcare providers.
+    *   **FHIR Resources:** FHIR defines a set of "Resources" (e.g., Patient, Observation, Condition, Medication) which are the fundamental building blocks of healthcare data exchange. Fasten On-Prem leverages these standardized resources to represent and store aggregated patient data consistently, regardless of the source system.
+    *   **FHIR APIs:** Healthcare providers expose patient data through FHIR APIs. Fasten On-Prem interacts with these APIs to retrieve the relevant Resources.
+    *   **SMART-on-FHIR:** The project utilizes SMART-on-FHIR, an implementation guide that layers OAuth2 on top of FHIR. This provides a secure and standardized way for Fasten On-Prem to authenticate with provider systems and obtain authorization to access patient data on behalf of the user.
+    *   **Supported Versions:** The system specifically supports **FHIR R4** and **FHIR R3** via the `conduit` library, ensuring compatibility with a broad range of existing provider implementations.
+
 *   **Local Data Storage (PouchDB/CouchDB):** The frontend uses a library wrapping **PouchDB** for local data persistence, with built-in synchronization capabilities to an external **CouchDB** instance.
 
 ## Build and Configuration Patterns

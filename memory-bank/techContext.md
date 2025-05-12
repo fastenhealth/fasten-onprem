@@ -40,8 +40,14 @@ Fasten On-Prem employs a client-server architecture with a Go-based backend and 
 
 *   **Frontend-Backend Communication:** The Angular frontend likely communicates with the Go backend via HTTP requests.
 *   **Type Safety:** `tygo.yaml` suggests the use of Tygo to generate TypeScript types from Go structs, ensuring consistency between frontend and backend data models.
-*   **Data Standards:** FHIR (Fast Healthcare Interoperability Resources) is a key data standard, indicated by various frontend components and pipes (e.g., `fhir-card`, `fhir-datatable`, `fhir-path.pipe`).
-*   **Data Fetching & Transformation:** The `conduit` library (located within `frontend/src/lib/`) is a key component responsible for retrieving patient data from various medical providers and transforming it. It currently supports data transfer mechanisms using **FHIR R4** and **FHIR R3** protocols.
+*   **Data Standards:** FHIR (Fast Healthcare Interoperability Resources) is the primary data standard used for representing and exchanging healthcare information.
+    *   **What is FHIR?** FHIR is a standard for exchanging healthcare information electronically. It defines a set of "Resources" that represent granular clinical and administrative concepts (like Patient, Observation, Condition, etc.) and specifies how these resources can be exchanged using modern web standards, primarily RESTful APIs.
+    *   **Role in Fasten On-Prem:** FHIR is fundamental to Fasten On-Prem's ability to connect to and retrieve data from diverse healthcare provider systems. It provides the common language and structure needed to understand and store data from thousands of different sources.
+    *   **Supported Versions:** Fasten On-Prem currently supports **FHIR R4** and **FHIR R3**. R4 is the current normative version, while R3 is still widely used. Supporting both ensures compatibility with a broader range of provider systems.
+*   **Data Fetching & Transformation:** The `conduit` library (located within `frontend/src/lib/`) is a key component responsible for retrieving patient data from various medical providers and transforming it into the internal data model used by Fasten On-Prem.
+    *   `conduit` interacts with healthcare provider systems using the **FHIR R4** and **FHIR R3** protocols via their exposed APIs.
+    *   It handles the authentication (using SMART-on-FHIR/OAuth2) and data retrieval process.
+    *   After fetching FHIR Resources, `conduit` transforms this data into a format suitable for local storage and use within the Fasten On-Prem application.
 
 ## Data Storage (Frontend)
 

@@ -23,6 +23,13 @@ Fasten On-Prem's vision is to empower individuals and families with a secure, se
     *   Tools for creating and viewing specific health resources (`resource-creator`, `resource-detail`).
     *   Support for FHIR (Fast Healthcare Interoperability Resources) data standards (`fhir-card`, `fhir-datatable`, `fhir-path.pipe`).
     *   **Automated EMR Pulling:** Integrates with healthcare providers using standards like FHIR R4 and R3 and OAuth2 (specifically Smart-on-FHIR) with the `offline_access` scope to automatically retrieve and update Electronic Medical Records (EMRs). The `conduit` library is responsible for fetching and transforming this data.
+
+*   **Healthcare Interoperability (FHIR):**
+    *   FHIR (Fast Healthcare Interoperability Resources) is a critical standard enabling Fasten On-Prem to achieve its core purpose: aggregating health data from diverse sources.
+    *   By leveraging FHIR, the system can connect to thousands of healthcare providers that expose patient data via FHIR APIs.
+    *   This ensures that users can automatically pull their Electronic Medical Records (EMRs) directly from these providers, creating a comprehensive and up-to-date personal health record without manual data entry.
+    *   FHIR's standardized data models and APIs facilitate seamless exchange of clinical and administrative data, making the vision of a consolidated personal health record a reality.
+
 *   **Data Interaction & Visualization:**
     *   Centralized dashboard for an overview of health data (`dashboard`).
     *   Data exploration capabilities (`explore`).
