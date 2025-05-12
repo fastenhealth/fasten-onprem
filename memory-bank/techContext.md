@@ -49,12 +49,13 @@ Fasten On-Prem employs a client-server architecture with a Go-based backend and 
     *   It handles the authentication (using SMART-on-FHIR/OAuth2) and data retrieval process.
     *   After fetching FHIR Resources, `conduit` transforms this data into a format suitable for local storage and use within the Fasten On-Prem application.
 
-    *   **SMART-on-FHIR Technical Details:** Fasten On-Prem leverages SMART-on-FHIR, which builds upon OAuth 2.0, for secure authorization. Key technical aspects include:
+    *   **SMART-on-FHIR Technical Details:** Fasten On-Prem leverages SMART-on-FHIR, which builds upon OAuth 2.0, for secure authorization. It primarily uses the **Authorization Code Grant** flow for user-facing data access. Key technical aspects include:
         *   **Authorization Server:** Healthcare providers expose an authorization server endpoint where users are directed to grant permissions.
         *   **Token Endpoint:** Providers also expose a token endpoint where Fasten On-Prem exchanges the authorization code for access and refresh tokens.
-        *   **Scopes:** Fasten On-Prem requests specific scopes (e.g., `patient/*.read`, `offline_access`) to define the level of access required. The `offline_access` scope is crucial for enabling the application to fetch data periodically without constant user interaction.
+        *   **Scopes:** Fasten On-Prem requests specific scopes (e.g., `patient/*.read`, `offline_access`) to define the level of access required. The `offline_access` scope is crucial for enabling the application to fetch data periodically in the background without requiring the user to log in repeatedly.
         *   **Access Tokens:** Short-lived credentials used to authorize requests to the FHIR API. These are included in the `Authorization: Bearer <access_token>` header.
-        *   **Refresh Tokens:** Long-lived credentials (issued when `offline_access` is granted) used to obtain new access tokens after the current one expires, maintaining continuous data synchronization.
+        *   **Refresh Tokens:** Long-lived credentials (issued when `offline_access` is granted) used to obtain new access tokens when the current one expires, maintaining continuous data synchronization.
+        *   **Client Authentication:** When exchanging the authorization code for tokens at the token endpoint, Fasten On-Prem (as a confidential client) likely uses **symmetric client authentication** by providing its `client_id` and `client_secret` (if registered as confidential) via HTTP Basic authentication or in the request body. Asymmetric authentication (using public/private keys) is also part of the SMART specification but is less common for user-facing apps like Fasten.
         *   The `conduit` library is responsible for managing this OAuth 2.0 flow, including handling redirects, token exchange, token storage, and using tokens for API calls.
 
 ## Data Storage (Frontend)
