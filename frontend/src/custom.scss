@@ -1,3 +1,7 @@
+@import 'assets/scss/dark/_dark-theme.scss';
+@import "assets/scss/dark/_variables-dark.scss";
+
+
 //Custom
 
 .cursor-pointer {
@@ -86,7 +90,6 @@ select > optgroup > .divider {
     }
 
     .card-title {
-      color: $gray-900;
       font-weight: 700;
       font-size: 14px;
       line-height: 1;
@@ -118,7 +121,6 @@ select > optgroup > .divider {
         + .btn { margin-left: -1px; }
 
         &.active {
-          color: $gray-900;
           background-color: $gray-200;
           border-color: $gray-300;
         }
@@ -246,10 +248,17 @@ app-nlm-typeahead {
 
 app-medical-sources-filter > .az-content-left-components {
   overflow-x: hidden;
+  -webkit-transition: width 0.2s ease-in-out;
+  -moz-transition: width 0.2s ease-in-out;
+  -o-transition: width 0.2s ease-in-out;
+  transition: width 0.2s ease-in-out;
 }
-
-app-medical-sources-filter > .az-content-left-components:hover {
-  overflow-x: auto;
+app-medical-sources-filter > .az-content-left-components:hover{
+  width: 100%;
+  -webkit-transition: width 0.2s ease-in-out;
+  -moz-transition: width 0.2s ease-in-out;
+  -o-transition: width 0.2s ease-in-out;
+  transition: width 0.2s ease-in-out;
 }
 
 //Fhir Datadable

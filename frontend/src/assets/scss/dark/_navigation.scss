@@ -1,0 +1,92 @@
+@media (prefers-color-scheme: dark) {
+    body:not(.light-theme) {
+
+        .nav {
+            >.nav-link {
+                border-color: var(--border)
+            }
+        }
+
+        .az-dashboard-nav {
+            >.nav:first-child {
+                >.nav-link {
+                    color: var(--dark-text-white-transparent-color);
+                    display: none;
+
+                    @include media-breakpoint-up(sm) {
+                        display: block;
+                    }
+
+                    @include hover-focus() {
+                        color: var(--dark-text-white-color);
+                    }
+
+                    &.active {
+                        color: var(--dark-text-white-color);
+                    }
+
+                    &:first-child {
+                        padding-left: 0;
+                    }
+
+                    &:first-child,
+                    &:last-child {
+                        display: block;
+                    }
+                }
+            }
+
+            >.nav:last-child {
+                >.nav-link {
+                    color: var(--dark-text-white-transparent-color);
+                    display: none;
+
+                    @include media-breakpoint-up(sm) {
+                        display: block;
+                    }
+
+                    @include hover-focus() {
+                        color: var(--dark-text-white-color);
+                    }
+
+                    &.active {
+                        color: var(--dark-text-white-color);
+                    }
+                }
+            }
+
+            border-color: var(--border);
+        }
+
+        .pagination {
+            .page-item {
+                &.active .page-link {
+                    background-color: var(--dark-pagination-active-bg);
+                    border-color: var(--dark-pagination-active-border-color);
+                    color: var(--dark-text-color);
+                }
+
+                .page-link {
+                    color: var(--dark-pagination-color);
+                    background-color: var(--dark-pagination-bg);
+                    border: 1px solid var(--dark-pagination-border-color);
+
+                    &:hover {
+                        background-color: var(--dark-pagination-hover-bg);
+                        color: var(--dark-pagination-color);
+                    }
+                }
+
+                &.disabled .page-link {
+                    color: #9B87F5;
+                    background-color: var(--dark-pagination-bg);
+                    border-color: var(--dark-pagination-border-color);
+                }
+            }
+        }
+
+        .az-list-item {
+            border-color: var(--border);
+        }
+    }
+}
