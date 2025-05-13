@@ -1,0 +1,38 @@
+@media (prefers-color-scheme: dark) {
+    body:not(.light-theme) {
+
+        // Main text color
+        p,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: var(--card-foreground) !important;
+        }
+
+        a {
+            color: var(--dark-link-color);
+
+            &:hover {
+                color: var(--dark-link-hover-color);
+            }
+        }
+
+
+        // Secondary text color
+        span {
+            color: var(--dark-text-color) !important;
+        }
+
+        .tx-primary {
+            color: #3d96ff !important;
+        }
+
+        // Text with popover
+        .cursor-pointer {
+            color: var(--dark-text-color);
+        }
+    }
+}
