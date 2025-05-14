@@ -75,11 +75,14 @@ It's pretty basic right now, but it's designed with a easily extensible core aro
 - (Future) ChatGPT-style interface to query your own medical history (offline)
 - (Future) Integration with smart-devices & wearables
 
+
 # Getting Started
 
 There are 2 flavors of Fasten:
 - `ghcr.io/fastenhealth/fasten-onprem:sandbox` - This version only allows you to connect to a handful of Healthcare providers, using Sandbox accounts that are meant for testing, and contain synthetic (fake) data to give you an idea what Fasten will look like, without requiring personal medical information.
 - `ghcr.io/fastenhealth/fasten-onprem:main` - This version allows you to connect to 25,000+ different Healthcare providers, using your existing accounts. It will allow you to connect and retrieve your personal electronic medical record and store it within Fasten. **Be careful, this is YOUR health data**
+
+
 
 ## Instructions
 
@@ -88,6 +91,40 @@ There are 2 flavors of Fasten:
 First, if you don't have Docker installed on your computer, get Docker by following this [install guide](https://docs.docker.com/get-docker/).
 
 Next, run the following commands from the Windows command line or Mac/Linux terminal in order to download and start the Fasten docker container.
+
+
+
+### 🚀 Launch
+
+Launch the application
+
+```bash
+docker compose -f docker-compose-prod.yml up -d
+```
+
+*Optional:*
+
+```bash
+make fasten-prod
+```
+
+### 🧪 Develop
+
+Use local development settings for testing and iteration.
+
+```bash
+docker compose up -d
+```
+
+*Optional:*
+
+```bash
+make fasten-dev
+```
+
+> ⚠️ **Warning:** Do not run both `docker compose up -d` / `(make fasten-dev)` and `docker compose -f docker-compose-prod.yml up -d` / `(make fasten-prod)` simultaneously. Choose one based on your deployment scenario.
+
+### Optional
 
 ```
 docker pull ghcr.io/fastenhealth/fasten-onprem:main
