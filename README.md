@@ -96,7 +96,7 @@ Next, run the following commands from the Windows command line or Mac/Linux term
 Launch the application. Please chose a location where `docker-compose.yml` will be downloaded.
 
 ```bash
-curl https://raw.githubusercontent.com/fastenhealth/fasten-onprem/main/docker-compose-prod.yml -o docker-compose.yml
+curl https://raw.githubusercontent.com/fastenhealth/fasten-onprem/refs/heads/main/docker-compose-prod.yml -o docker-compose.yml
 
 docker compose up -d
 ```
