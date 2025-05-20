@@ -36,9 +36,8 @@
             }
 
             &-right {
-
                 .az-header-notification>a,
-                .az-header-theme-toggle i {
+                .az-header-theme-toggle .theme-icon {
                     color: var(--dark-text-color);
                 }
             }
