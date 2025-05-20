@@ -1,3 +1,7 @@
+@import 'assets/scss/dark/_dark-theme.scss';
+@import "assets/scss/dark/_variables-dark.scss";
+
+
 //Custom
 
 .cursor-pointer {
@@ -86,7 +90,6 @@ select > optgroup > .divider {
     }
 
     .card-title {
-      color: $gray-900;
       font-weight: 700;
       font-size: 14px;
       line-height: 1;
@@ -118,7 +121,6 @@ select > optgroup > .divider {
         + .btn { margin-left: -1px; }
 
         &.active {
-          color: $gray-900;
           background-color: $gray-200;
           border-color: $gray-300;
         }

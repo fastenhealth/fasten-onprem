@@ -55,6 +55,18 @@
   }
 }
 
+
+.az-header-theme-toggle {
+  margin-left: 15px;
+
+  i {
+    font-size: 18px;
+    line-height: 0;
+    color: $gray-900;
+  }
+
+}
+
 .az-header-left {
   display: flex;
   align-items: center;
@@ -71,7 +83,7 @@
   font-size: 28px;
   font-family: 'Poppins', sans-serif;
   text-transform: lowercase;
-  color: $az-color-primary;
+  color: $az-color-primary !important;
   letter-spacing: -1px;
   display: flex;
   align-items: center;
