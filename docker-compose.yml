@@ -1,17 +1,17 @@
+version: "3.9"
 services:
-  fasten-health:
+  fasten:
+    # NOTE: only developers need to build Fasten from source
+    # For production, use the pre-built image from GitHub Packages
+    # ghcr.io/fastenhealth/fasten-onprem:main
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        - FASTEN_ENV=sandbox
-    container_name: fasten-health
-    restart: no
-
+        - FASTEN_ENV=prod
+#        - FASTEN_ENV=sandbox
     ports:
-      - "127.0.0.1:9090:8080"
-
+      - "9090:8080"
     volumes:
-      - ./dev_db:/opt/fasten/db
-      - ./dev_cache:/opt/fasten/cache
-      # - ./config.dev.yaml:/opt/fasten/config/config.yaml
+      - ./db:/opt/fasten/db
+#      - ./config.example.yaml:/opt/fasten/config/config.yaml

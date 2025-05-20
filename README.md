@@ -73,37 +73,14 @@ It's pretty basic right now, but it's designed with a easily extensible core aro
 - (Future) ChatGPT-style interface to query your own medical history (offline)
 - (Future) Integration with smart-devices & wearables
 
-# Running Fasten in Development or Production
-
-Fasten provides two different Docker Compose files, depending on your use case:
-
-### 🧪 Development Mode
-
-This will spin up the Fasten stack using development settings:
-
-```bash
-docker compose up -d
-```
-
-This uses the default `docker-compose.yml` file and is useful for local testing and development.
-
-### 🚀 Production Mode
-
-For a production deployment, use the production Docker Compose file:
-
-```bash
-docker compose -f docker-compose-production.yml up -d
-```
-
-This uses production-grade settings and should be used in production environments.
-
-> ⚠️ **Warning:** Do not run both `docker-compose.yml` and `docker-compose-production.yml` simultaneously. Choose one based on your deployment scenario.
 
 # Getting Started
 
 There are 2 flavors of Fasten:
 - `ghcr.io/fastenhealth/fasten-onprem:sandbox` - This version only allows you to connect to a handful of Healthcare providers, using Sandbox accounts that are meant for testing, and contain synthetic (fake) data to give you an idea what Fasten will look like, without requiring personal medical information.
 - `ghcr.io/fastenhealth/fasten-onprem:main` - This version allows you to connect to 25,000+ different Healthcare providers, using your existing accounts. It will allow you to connect and retrieve your personal electronic medical record and store it within Fasten. **Be careful, this is YOUR health data**
+
+
 
 ## Instructions
 
@@ -112,6 +89,39 @@ There are 2 flavors of Fasten:
 First, if you don't have Docker installed on your computer, get Docker by following this [install guide](https://docs.docker.com/get-docker/).
 
 Next, run the following commands from the Windows command line or Mac/Linux terminal in order to download and start the Fasten docker container.
+
+
+
+### 🚀 Launch
+
+Launch the application. Please chose a location where `docker-compose.yml` will be downloaded.
+
+```bash
+curl -L https://raw.githubusercontent.com/fastenhealth/fasten-onprem/blob/main/docker-compose-prod.yml -o docker-compose.yml
+
+docker compose up -d
+```
+ℹ️ No local repository required.
+
+### 🧪 Develop
+
+Use local development settings for testing and iteration. 
+
+```bash
+docker compose up -d
+```
+
+*Optional:*
+
+```bash
+make fasten
+```
+
+ℹ️ Requires a local clone of the repository.
+
+> ⚠️ **Warning:** Do not run both `docker compose up -d` / `(make fasten)` simultaneously. Choose one based on your deployment scenario.
+
+### Optional
 
 ```
 docker pull ghcr.io/fastenhealth/fasten-onprem:main
