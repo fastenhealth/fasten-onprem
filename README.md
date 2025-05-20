@@ -96,7 +96,7 @@ Next, run the following commands from the Windows command line or Mac/Linux term
 Launch the application. Please chose a location where `docker-compose.yml` will be downloaded.
 
 ```bash
-curl -L https://raw.githubusercontent.com/fastenhealth/fasten-onprem/blob/main/docker-compose-prod.yml -o docker-compose.yml
+curl https://raw.githubusercontent.com/fastenhealth/fasten-onprem/main/docker-compose-prod.yml -o docker-compose.yml
 
 docker compose up -d
 ```
@@ -118,7 +118,7 @@ make serve-docker
 
 ℹ️ Requires a local clone of the repository.
 
-> ⚠️ **Warning:** Do not run both `docker compose up -d` / `(make fasten)` simultaneously. Choose one based on your deployment scenario.
+> ⚠️ **Warning:** Do not run both `docker compose up -d` / `(make serve-docker)` simultaneously. Choose one based on your deployment scenario.
 
 ### Optional
 
