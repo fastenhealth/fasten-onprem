@@ -31,6 +31,14 @@ serve-backend: dep-backend
 migrate: dep-backend
 	go run backend/cmd/fasten/fasten.go migrate --config ./config.dev.yaml --debug
 
+.PHONY: serve-docker-prod
+fasten-prod:
+	docker compose -f docker-compose-prod.yml up -d
+
+.PHONY: serve-docker
+fasten:
+	docker compose up -d
+
 
 ########################################################################################################################
 # Backend
