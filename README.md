@@ -111,7 +111,7 @@ docker compose up -d
 *Optional:*
 
 ```bash
-make fasten
+make serve-docker
 ```
 
 ℹ️ Requires a local clone of the repository.
