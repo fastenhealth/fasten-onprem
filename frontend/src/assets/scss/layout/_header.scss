@@ -55,6 +55,36 @@
   }
 }
 
+
+.az-header-theme-toggle {
+  margin-left: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+  }
+
+  .theme-icon {
+    width: 22px;
+    height: 22px;
+    color: $gray-900;
+    transition: color 0.2s ease-in-out;
+  }
+
+  @include hover-focus() {
+    .theme-icon {
+      color: $az-color-primary;
+    }
+  }
+}
+
 .az-header-left {
   display: flex;
   align-items: center;
@@ -71,7 +101,7 @@
   font-size: 28px;
   font-family: 'Poppins', sans-serif;
   text-transform: lowercase;
-  color: $az-color-primary;
+  color: $az-color-primary !important;
   letter-spacing: -1px;
   display: flex;
   align-items: center;
