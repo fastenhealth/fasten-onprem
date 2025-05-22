@@ -719,6 +719,73 @@ func (gr *GormRepository) FindResourceAssociationsByTypeAndId(ctx context.Contex
 	return relatedResources, result.Error
 }
 
+// find all associations pointing TO the specified target resource
+func (gr *GormRepository) FindAllResourceAssociations(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string) ([]models.RelatedResource, error) {
+	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return nil, currentUserErr
+	}
+
+	if source.UserID != currentUser.ID {
+		return nil, fmt.Errorf("source credential must match the current user id")
+	}
+
+	var relatedResources []models.RelatedResource
+	result := gr.GormClient.WithContext(ctx).
+		Where(models.RelatedResource{
+			ResourceBaseUserID:             currentUser.ID,
+			ResourceBaseSourceID:           source.ID,
+			ResourceBaseSourceResourceType: resourceType,
+			ResourceBaseSourceResourceID:   resourceId,
+			RelatedResourceUserID:          currentUser.ID,
+		}).
+		Or(&models.RelatedResource{
+			RelatedResourceUserID:             currentUser.ID,
+			RelatedResourceSourceID:           source.ID,
+			RelatedResourceSourceResourceType: resourceType,
+			RelatedResourceSourceResourceID:   resourceId,
+			ResourceBaseUserID:                currentUser.ID,
+		}).
+		Find(&relatedResources)
+
+	return relatedResources, result.Error
+}
+
+// remove multiple resource associations in a transaction
+func (gr *GormRepository) RemoveBulkResourceAssociations(ctx context.Context, associationsToDelete []models.RelatedResource) (int64, error) {
+	var totalRowsAffected int64 = 0
+	if len(associationsToDelete) == 0 {
+		return 0, nil
+	}
+
+	txErr := gr.GormClient.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		for _, assoc := range associationsToDelete {
+			result := tx.Delete(&models.RelatedResource{}, map[string]interface{}{
+				"resource_base_user_id":                 assoc.ResourceBaseUserID,
+				"resource_base_source_id":               assoc.ResourceBaseSourceID,
+				"resource_base_source_resource_type":    assoc.ResourceBaseSourceResourceType,
+				"resource_base_source_resource_id":      assoc.ResourceBaseSourceResourceID,
+				"related_resource_user_id":              assoc.RelatedResourceUserID,
+				"related_resource_source_id":            assoc.RelatedResourceSourceID,
+				"related_resource_source_resource_type": assoc.RelatedResourceSourceResourceType,
+				"related_resource_source_resource_id":   assoc.RelatedResourceSourceResourceID,
+			})
+
+			if result.Error != nil {
+				return result.Error
+			}
+			totalRowsAffected += result.RowsAffected
+		}
+		return nil
+	})
+
+	if txErr != nil {
+		return totalRowsAffected, fmt.Errorf("RemoveResourceAssociations transaction failed: %w", txErr)
+	}
+
+	return totalRowsAffected, nil
+}
+
 //</editor-fold>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
