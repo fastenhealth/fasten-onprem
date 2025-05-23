@@ -56,6 +56,12 @@
           <div class="dropdown-footer"><a routerLink="/background-jobs">View History</a></div>
         </div><!-- dropdown-menu -->
       </div><!-- az-header-notification -->
+      <div class="az-header-theme-toggle" >
+        <a class="" (click)="toggleTheme()" >
+          <img *ngIf="isDarkMode" src="assets/icons/sun.svg" alt="Light mode" class="theme-icon">
+          <img *ngIf="!isDarkMode" src="assets/icons/moon.svg" alt="Dark mode" class="theme-icon">
+        </a>
+      </div>
       <div class="dropdown az-profile-menu" ngbDropdown>
         <a class="az-img-user" id="profileDropdown" ngbDropdownToggle><img src="assets/logo/logo-text.png" alt="user"></a>
         <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="profileDropdown">

@@ -13,10 +13,12 @@
 
 **Fasten securely connects your healthcare providers together, creating a personal health record that never leaves your hands**
 
-> [!NOTE]
-> NOTE: Fasten is a Work-in-Progress and can only communicate with a limited number of Healthcare Institutions (approx 25,000 at last count).
-> Please fill out this [Google Form](https://forms.gle/SNsYX9BNMXB6TuTw6) if you'd like to be kept up-to-date on Fasten
-
+> [!IMPORTANT]  
+> **This repository contains the open-source, self-hosted version of Fasten Health. It is maintained by the community and is not the same product as Fasten Connect.**
+>
+> Fasten Connect is our fully-managed, enterprise-grade API platform designed for organizations who need seamless, scalable access to patient-authorized medical records (e.g., for clinical trials, patient recruitment, or research). If you're looking for business support, SLAs, and out-of-the-box integrations, [click here to learn more about Fasten Connect](https://www.fastenhealth.com/).
+>
+> While we welcome contributions and discussion here, **this open-source repo does not include any of the hosted infrastructure, support services, or commercial features available through Fasten Connect**.
 
 <p align="center">
   <br/>
@@ -86,6 +88,39 @@ There are 2 flavors of Fasten:
 First, if you don't have Docker installed on your computer, get Docker by following this [install guide](https://docs.docker.com/get-docker/).
 
 Next, run the following commands from the Windows command line or Mac/Linux terminal in order to download and start the Fasten docker container.
+
+
+
+### 🚀 Launch
+
+Launch the application. Please chose a location where `docker-compose.yml` will be downloaded.
+
+```bash
+curl https://raw.githubusercontent.com/fastenhealth/fasten-onprem/refs/heads/main/docker-compose-prod.yml -o docker-compose.yml
+
+docker compose up -d
+```
+ℹ️ No local repository required.
+
+### 🧪 Develop
+
+Use local development settings for testing and iteration. 
+
+```bash
+docker compose up -d
+```
+
+*Optional:*
+
+```bash
+make serve-docker
+```
+
+ℹ️ Requires a local clone of the repository.
+
+> ⚠️ **Warning:** Do not run both `docker compose up -d` / `(make serve-docker)` simultaneously. Choose one based on your deployment scenario.
+
+### Optional
 
 ```
 docker pull ghcr.io/fastenhealth/fasten-onprem:main
@@ -174,11 +209,7 @@ Jason Kulatunga - Initial Development - @AnalogJ
 
 # Fundraising & Sponsorships
 
-To ensure Fasten's long-term sustainability, we're exploring some funding options. We're still deciding a long-term monetization strategy.
-
-Got questions or want to learn more about our fundraising experiment? [Click here to dive into the details & FAQs](https://docs.fastenhealth.com/FUNDRAISING.html)
-
-I'd also like to thank the following Corporate Sponsors:
+We'd like to thank the following Corporate Sponsors:
 
 <a href="https://depot.dev/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/depot.png" height="100px" /></a>
 <a style="padding-left:5px" href="https://www.macminivault.com/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/macminivault.png" height="100px" /></a>

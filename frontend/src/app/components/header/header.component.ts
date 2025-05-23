@@ -10,6 +10,7 @@ import {environment} from '../../../environments/environment';
 import {versionInfo} from '../../../environments/versions';
 import {Subscription} from 'rxjs';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
+import {ThemeService} from '../../theme.service';
 
 @Component({
   selector: 'app-header',
@@ -30,12 +31,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
   is_environment_desktop: boolean = environment.environment_desktop
 
   isAdmin: boolean = false;
+  isDarkMode: boolean;
+  private isDarkModeSubscription: Subscription;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private fastenApi: FastenApiService,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal,
+    private themeService: ThemeService) {
+      this.themeService.isDarkMode$.subscribe(darkMode => {
+        this.isDarkMode = darkMode;
+      });
+    }
+
 
   ngOnInit() {
     try {
@@ -58,11 +67,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.newSupportRequest.current_page = event.url.toString()
       }
     })
+
+    this.isDarkModeSubscription = this.themeService.isDarkMode$.subscribe(darkMode => {
+      this.isDarkMode = darkMode;
+    });
   }
 
   ngOnDestroy() {
     if(this.routerSubscription){
       this.routerSubscription.unsubscribe()
+    }
+    if (this.isDarkModeSubscription) {
+      this.isDarkModeSubscription.unsubscribe();
     }
   }
 
@@ -74,6 +90,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   toggleHeaderMenu(event) {
     event.preventDefault();
     document.querySelector('body').classList.toggle('az-header-menu-show');
+  }
+  
+  toggleTheme() {
+    this.themeService.setDarkMode(!this.isDarkMode);
   }
 
   signOut(e) {

@@ -1,0 +1,22 @@
+@import 'components';
+@import 'forms';
+@import 'layout';
+@import 'navigation';
+@import 'buttons';
+@import 'typography';
+@import 'tables';
+
+@media (prefers-color-scheme: dark) {
+    body:not(.light-theme) {
+        // Main background color
+        background-color: var(--background);
+
+        .bg-fasten-purple {
+            background-color: var(--primary);
+        }
+
+        .nav-pills {
+            background-color: var(--dark-background-bg);
+        }
+    }
+}
