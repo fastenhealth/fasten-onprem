@@ -8,7 +8,7 @@
       <fhir-ui-badge [status]="displayModel?.status">{{displayModel?.status}}</fhir-ui-badge>
       <ng-content select="[header]"></ng-content>
     </div>
-    <span *ngIf="isUnlinkable && !isCollapsed" class="cursor-pointer float-right" (click)="onUnlinkClicked($event)" aria-hidden="true">
+    <span *ngIf="isUnlinkable && !isCollapsed" class="cursor-pointer float-right ml-4" (click)="onUnlinkClicked($event)" aria-hidden="true">
       <i class="fas fa-trash"></i>
     </span>
   </div>

@@ -5,7 +5,7 @@
       <p class="card-text tx-gray-400" *ngIf="displayModel?.effective_datetime"><strong>Start date</strong> {{displayModel?.effective_datetime | date}}</p>
     </div>
     <fhir-ui-badge class="float-right" [status]="displayModel?.status">{{displayModel?.status}}</fhir-ui-badge>
-    <span *ngIf="isUnlinkable && !isCollapsed" class="cursor-pointer float-right" (click)="onUnlinkClicked($event)" aria-hidden="true">
+    <span *ngIf="isUnlinkable && !isCollapsed" class="cursor-pointer float-right ml-4" (click)="onUnlinkClicked($event)" aria-hidden="true">
       <i class="fas fa-trash"></i>
     </span>
     <!--    <div class="btn-group">-->

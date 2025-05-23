@@ -3,7 +3,7 @@
     <div>
       <h6 class="card-title">{{displayModel?.name}}</h6>
     </div>
-    <span *ngIf="isUnlinkable && !isCollapsed" class="cursor-pointer float-right" (click)="onUnlinkClicked($event)" aria-hidden="true">
+    <span *ngIf="isUnlinkable && !isCollapsed" class="cursor-pointer float-right ml-4" (click)="onUnlinkClicked($event)" aria-hidden="true">
       <i class="fas fa-trash"></i>
     </span>
     <ng-content select="[header]"></ng-content>
