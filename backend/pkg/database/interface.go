@@ -20,6 +20,8 @@ type DatabaseRepository interface {
 	GetCurrentUser(ctx context.Context) (*models.User, error)
 	DeleteCurrentUser(ctx context.Context) error
 	GetUsers(ctx context.Context) ([]models.User, error)
+	GetUser(ctx context.Context, userId uuid.UUID) (*models.User, error)
+	UpdateUserAndPermissions(ctx context.Context, user models.User) error
 
 	GetSummary(ctx context.Context) (*models.Summary, error)
 

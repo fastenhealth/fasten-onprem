@@ -4,21 +4,20 @@ import (
 	"fmt"
 	"strings"
 
-	"golang.org/x/crypto/bcrypt"
-
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
 	ModelBase
-	FullName string `json:"full_name"`
-	Username string `json:"username" gorm:"unique"`
-	Password string `json:"password"`
-
-	//additional optional metadata that Fasten stores with users
-	Picture string       `json:"picture"`
-	Email   string       `json:"email"`
-	Role    pkg.UserRole `json:"role"`
+	FullName        string                     `json:"full_name"`
+	Username        string                     `json:"username" gorm:"unique"`
+	Password        string                     `json:"password"`
+	Picture         string                     `json:"picture"`
+	Email           string                     `json:"email"`
+	Role            pkg.UserRole               `json:"role"`
+	Permissions     map[string]map[string]bool `json:"permissions" gorm:"-:all"`
+	UserPermissions []UserPermission           `json:"-" gorm:"foreignKey:UserID"`
 }
 
 func (user *User) HashPassword(password string) error {
