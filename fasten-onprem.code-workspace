@@ -13,5 +13,8 @@
 			"path": "frontend"
 		},
 	],
-	"settings": {}
+		"settings": {
+		"makefile.configureOnOpen": false,
+		"nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix"
+	}
 }
