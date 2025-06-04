@@ -425,7 +425,6 @@ func (gr *GormRepository) UpsertResource(ctx context.Context, wrappedResourceMod
 	}
 
 	wrappedResourceModel.UserID = currentUser.ID
-	cachedResourceRaw := wrappedResourceModel.ResourceRaw
 
 	gr.Logger.Infof("insert/update FHIRResource (%v) %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID)
 	wrappedFhirResourceModel, err := databaseModel.NewFhirResourceModelByType(wrappedResourceModel.SourceResourceType)
@@ -461,24 +460,13 @@ func (gr *GormRepository) UpsertResource(ctx context.Context, wrappedResourceMod
 		SourceID:           wrappedFhirResourceModel.GetSourceID(),
 		SourceResourceID:   wrappedFhirResourceModel.GetSourceResourceID(),
 		SourceResourceType: wrappedFhirResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-	}).Omit("RelatedResource.*").FirstOrCreate(wrappedFhirResourceModel)
+	}).Omit("RelatedResource.*").Assign(wrappedResourceModel).FirstOrCreate(wrappedFhirResourceModel)
 
 	if createResult.Error != nil {
 		return false, createResult.Error
-	} else if createResult.RowsAffected == 0 {
-		//at this point, wrappedResourceModel contains the data found in the database.
-		// check if the database resource matches the new resource.
-		if wrappedResourceModel.ResourceRaw.String() != string(cachedResourceRaw) {
-			updateResult := createResult.Omit("RelatedResource.*").Updates(wrappedResourceModel)
-			return updateResult.RowsAffected > 0, updateResult.Error
-		} else {
-			return false, nil
-		}
-
-	} else {
-		//resource was created
-		return createResult.RowsAffected > 0, createResult.Error
 	}
+	//resource was upserted
+	return createResult.RowsAffected > 0, createResult.Error
 }
 
 func (gr *GormRepository) ListResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceBase, error) {

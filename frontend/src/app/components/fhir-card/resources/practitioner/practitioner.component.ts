@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FhirCardUnlinkableComponentInterface} from '../../fhir-card/fhir-card-component-interface';
+import {FhirCardEditableComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {ImmunizationModel} from '../../../../../lib/models/resources/immunization-model';
 import {TableRowItem} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
@@ -17,13 +17,14 @@ import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
   templateUrl: './practitioner.component.html',
   styleUrls: ['./practitioner.component.scss']
 })
-export class PractitionerComponent implements OnInit, FhirCardUnlinkableComponentInterface {
+export class PractitionerComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: PractitionerModel | null
   @Input() showDetails: boolean = true
   @Input() isCollapsed: boolean = false
-  @Input() isUnlinkable: boolean = false
+  @Input() isEditable: boolean = false
     
   @Output() unlinkRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
+  @Output() editRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
 
   tableData: TableRowItem[] = []
 
@@ -93,7 +94,11 @@ export class PractitionerComponent implements OnInit, FhirCardUnlinkableComponen
     this.changeRef.markForCheck()
   }
 
-  onUnlinkClicked(event: MouseEvent) {
+  onUnlinkClicked() {
     this.unlinkRequested.emit(this.displayModel)
+  }
+
+  onEditClicked() {
+    this.editRequested.emit(this.displayModel)
   }
 }

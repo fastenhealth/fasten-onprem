@@ -28,6 +28,7 @@ import {
   List
 } from 'fhir/r4';
 import {FormRequestHealthSystem} from '../models/fasten/form-request-health-system';
+import { UpdateResourcePayload } from '../models/fasten/resource_update';
 @Injectable({
   providedIn: 'root'
 })
@@ -254,6 +255,15 @@ export class FastenApiService {
       .pipe(
         map((response: ResponseWrapper) => {
           return response.data as ResourceFhir
+        })
+      );
+  }
+
+  updateResource(resourceType: string, resourceId: string, payload: UpdateResourcePayload) : Observable<ResponseWrapper> {
+    return this._httpClient.patch<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/fhir/${resourceType}/${resourceId}`, payload)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response
         })
       );
   }

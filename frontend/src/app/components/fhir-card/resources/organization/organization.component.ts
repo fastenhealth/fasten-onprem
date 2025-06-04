@@ -7,7 +7,7 @@ import {Router, RouterModule} from '@angular/router';
 import {LocationModel} from '../../../../../lib/models/resources/location-model';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {OrganizationModel} from '../../../../../lib/models/resources/organization-model';
-import { FhirCardUnlinkableComponentInterface } from '../../fhir-card/fhir-card-component-interface';
+import { FhirCardEditableComponentInterface } from '../../fhir-card/fhir-card-component-interface';
 import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 
 @Component({
@@ -17,13 +17,14 @@ import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
   templateUrl: './organization.component.html',
   styleUrls: ['./organization.component.scss']
 })
-export class OrganizationComponent implements OnInit, FhirCardUnlinkableComponentInterface {
+export class OrganizationComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: OrganizationModel
   @Input() showDetails: boolean = true
   @Input() isCollapsed: boolean = false
-  @Input() isUnlinkable: boolean = false
+  @Input() isEditable: boolean = false
 
   @Output() unlinkRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
+  @Output() editRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
 
   tableData: TableRowItem[] = []
 
@@ -79,7 +80,11 @@ export class OrganizationComponent implements OnInit, FhirCardUnlinkableComponen
     this.changeRef.markForCheck()
   }
 
-  onUnlinkClicked(event: MouseEvent) {
+  onUnlinkClicked() {
     this.unlinkRequested.emit(this.displayModel)
+  }
+
+  onEditClicked() {
+    this.editRequested.emit(this.displayModel)
   }
 }

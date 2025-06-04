@@ -25,12 +25,13 @@ import {
 import {
   MedicalRecordWizardAddAttachmentComponent
 } from '../medical-record-wizard-add-attachment/medical-record-wizard-add-attachment.component';
-import {GenerateR4ResourceLookup, WizardFhirResourceWrapper} from './medical-record-wizard.utilities';
+import {EncounterToR4Encounter, GenerateR4ResourceLookup, OrganizationToR4Organization, PractitionerToR4Practitioner, UpdateMedicationRequestToR4MedicationRequest, UpdateMedicationToR4Medication, UpdateProcedureToR4Procedure, WizardFhirResourceWrapper} from './medical-record-wizard.utilities';
 import {EncounterModel} from '../../../lib/models/resources/encounter-model';
 import {SharedModule} from '../shared.module';
 import {FhirCardModule} from '../fhir-card/fhir-card.module';
 import {OrganizationModel} from '../../../lib/models/resources/organization-model';
 import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
+import { UpdateResourcePayload } from '../..//models/fasten/resource_update';
 import {PipesModule} from '../../pipes/pipes.module';
 import {
   MedicalRecordWizardAddEncounterComponent
@@ -47,6 +48,15 @@ import {
 } from '../medical-record-wizard-add-lab-results/medical-record-wizard-add-lab-results.component';
 import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
+import { MedicalRecordWizardEditEncounterComponent } from '../medical-record-wizard-edit-encounter/medical-record-wizard-edit-encounter.component';
+import { MedicalRecordWizardEditMedicationComponent } from '../medical-record-wizard-edit-medication/medical-record-wizard-edit-medication.component';
+import { DiagnosticReportModel, MedicationModel, ObservationModel, ProcedureModel } from 'src/lib/public-api';
+import { MedicalRecordWizardEditPractitionerComponent } from '../medical-record-wizard-edit-practitioner/medical-record-wizard-edit-practitioner.component';
+import { MedicalRecordWizardEditProcedureComponent } from '../medical-record-wizard-edit-procedure/medical-record-wizard-edit-procedure.component';
+import { MedicalRecordWizardEditOrganizationComponent } from '../medical-record-wizard-edit-organization/medical-record-wizard-edit-organization.component';
+import { RecResourceRelatedDisplayModel } from 'src/lib/utils/resource_related_display_model';
+import { MedicalRecordWizardEditLabResultsComponent } from '../medical-record-wizard-edit-lab-results/medical-record-wizard-edit-lab-results.component';
+import { MedicationRequestModel } from 'src/lib/models/resources/medication-request-model';
 
 @Component({
   standalone: true,
@@ -238,13 +248,12 @@ export class MedicalRecordWizardComponent implements OnInit {
   //<editor-fold desc="Open Modals">
   openEncounterModal() {
     let modalRef = this.modalService.open(MedicalRecordWizardAddEncounterComponent, {
-      ariaLabelledBy: 'modal-encounter',
+      ariaLabelledBy: 'modal-edit-encounter',
       size: 'lg',
     })
     modalRef.componentInstance.debugMode = this.debugMode;
     modalRef.result.then(
       (result) => {
-        console.log("Result: ", result)
         // add this to the list of organization
         //TODO
         this.addEncounter(result);
@@ -349,6 +358,149 @@ export class MedicalRecordWizardComponent implements OnInit {
 
   //</editor-fold>
 
+  openEditEncounterModal(encounter: EncounterModel) {
+    let modalRef = this.modalService.open(MedicalRecordWizardEditEncounterComponent, {
+      ariaLabelledBy: 'modal-encounter',
+      size: 'lg',
+    })
+    modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.componentInstance.encounter = encounter;
+    modalRef.result.then(
+      (result) => {
+        let encounter = EncounterToR4Encounter(result)
+
+        this.fastenApi.updateResource(result.source_resource_type, result.source_resource_id, {
+          resource_raw: encounter,
+          sort_title: result.sort_title,
+          sort_date: result.period_start
+        }).subscribe()
+      }
+    );
+
+  }
+
+  openEditMedicationModal(medication: MedicationModel) {
+    let modalRef = this.modalService.open(MedicalRecordWizardEditMedicationComponent, {
+      ariaLabelledBy: 'modal-edit-medication',
+      size: 'lg',
+    })
+    modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.componentInstance.medication = medication;
+    modalRef.componentInstance.practitioners = this.existingEncounter?.related_resources?.['Practitioner'];
+
+    let medicationRequest = this.existingEncounter?.related_resources?.['MedicationRequest'].find((medicationRequest) => {
+      return (medicationRequest as MedicationRequestModel).medication_reference.reference === `Medication/${medication.source_resource_id}`
+    })
+    modalRef.componentInstance.medicationRequest = medicationRequest
+    modalRef.result.then(
+      (result) => {
+        let medication = UpdateMedicationToR4Medication(result.medication)
+        this.fastenApi.updateResource(result.medication.source_resource_type, result.medication.source_resource_id, {
+          resource_raw: medication,
+          sort_title: result.medication.sort_title,
+          sort_date: result.medication.sort_date
+        }).subscribe()
+
+        let medicationRequest = UpdateMedicationRequestToR4MedicationRequest(result.medicationRequest, result.medication)
+        this.fastenApi.updateResource(result.medicationRequest.source_resource_type, result.medicationRequest.source_resource_id, {
+          resource_raw: medicationRequest,
+          sort_title: result.medicationRequest.sort_title,
+          sort_date: result.medicationRequest.sort_date
+        }).subscribe()
+      }
+    );
+  }
+
+  openEditPractitionerModal(practitioner: PractitionerModel) {
+    let modalRef = this.modalService.open(MedicalRecordWizardEditPractitionerComponent, {
+      ariaLabelledBy: 'modal-edit-practitioner',
+      size: 'lg',
+    })
+    modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.componentInstance.practitioner = practitioner;
+    modalRef.result.then(
+      (result) => {
+        let practitioner = PractitionerToR4Practitioner(result)
+        
+        this.fastenApi.updateResource(result.source_resource_type, result.source_resource_id, {
+          resource_raw: practitioner,
+          sort_title: result.sort_title,
+        }).subscribe()
+      }
+    );
+
+  }
+
+  openEditProcedureModal(procedure: ProcedureModel) {
+    let modalRef = this.modalService.open(MedicalRecordWizardEditProcedureComponent, {
+      ariaLabelledBy: 'modal-edit-procedure',
+      size: 'lg',
+    })
+    modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.componentInstance.procedure = procedure;
+    modalRef.componentInstance.practitioners = this.existingEncounter?.related_resources?.['Practitioner']
+    modalRef.componentInstance.organizations = this.existingEncounter?.related_resources?.['Organization']
+    modalRef.result.then(
+      (result) => {
+        let procedure = UpdateProcedureToR4Procedure(result)
+
+        this.fastenApi.updateResource(result.source_resource_type, result.source_resource_id, {
+          resource_raw: procedure,
+          sort_title: result.sort_title,
+          sort_date: result.performed_datetime
+        }).subscribe()
+      }
+    );
+  }
+
+  openEditOrganizationModal(organization: OrganizationModel) {
+    let modalRef = this.modalService.open(MedicalRecordWizardEditOrganizationComponent, {
+      ariaLabelledBy: 'modal-edit-organization',
+      size: 'lg',
+    })
+    modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.componentInstance.organization = organization;
+    modalRef.result.then(
+      (result) => {
+        let organization = OrganizationToR4Organization(result)
+        
+        this.fastenApi.updateResource(result.source_resource_type, result.source_resource_id, {
+          resource_raw: organization,
+          sort_title: result.sort_title,
+        }).subscribe()
+      }
+    );
+  }
+
+  openEditLabResultsModal(diagnosticReport: DiagnosticReportModel) {
+    this.fastenApi.getResourceGraph(null, [{
+      source_resource_type: diagnosticReport.source_resource_type,
+      source_resource_id: diagnosticReport.source_resource_id,
+      source_id: diagnosticReport.source_id,
+    }]).subscribe((graphResponse) => {
+      if (graphResponse.results["DiagnosticReport"]?.[0]) {
+        let parsed = RecResourceRelatedDisplayModel(graphResponse.results["DiagnosticReport"]?.[0])
+        let observations = (parsed.displayModel as DiagnosticReportModel).related_resources?.["Observation"] as ObservationModel[]
+
+        let modalRef = this.modalService.open(MedicalRecordWizardEditLabResultsComponent, {
+          ariaLabelledBy: 'modal-edit-lab-results',
+          size: 'lg',
+        })
+        modalRef.componentInstance.debugMode = this.debugMode;
+        modalRef.componentInstance.diagnosticReport = diagnosticReport;
+        modalRef.componentInstance.observations = observations
+        modalRef.result.then(
+          (result) => {
+            result.forEach((val) => {
+              this.fastenApi.updateResource(val.observation.source_resource_type, val.observation.source_resource_id, {
+                resource_raw: val.resourceRaw,
+              }).subscribe()
+            })
+        });
+      }
+    })
+  }
+
 
   onSubmit() {
     this.form.markAllAsTouched()
@@ -359,8 +511,6 @@ export class MedicalRecordWizardComponent implements OnInit {
 
       //generate a ndjson file from the resourceList
       //make sure we extract the encounter resource
-
-      console.log("Resource storage: ", resourceStorage)
 
       let fhirListResource = {
         resourceType: 'List',
@@ -404,8 +554,6 @@ export class MedicalRecordWizardComponent implements OnInit {
         reference: generateReferenceUriFromResourceOrReference(encounter),
       }
 
-      console.log("FHIR List Resource: ", fhirListResource)
-
       this.fastenApi.createRelatedResourcesFastenSource(fhirListResource).subscribe(
         (resp) => {
           this.submitWizardLoading = false;
@@ -428,7 +576,6 @@ export class MedicalRecordWizardComponent implements OnInit {
   //</editor-fold>
 
   handleUnlinkRequested(model: FastenDisplayModel) {
-    console.log("MODEL: ", model)
     const modalRef = this.modalService.open(ConfirmationModalComponent, {
       ariaLabelledBy: 'modal-confirmation',
       size: 'sm'
@@ -444,8 +591,8 @@ export class MedicalRecordWizardComponent implements OnInit {
         const resourceId = model.source_resource_id
         const resourceType = model.source_resource_type
 
-        const indexOf = this.existingEncounter?.related_resources?.[resourceType]?.indexOf(model)
-        this.existingEncounter?.related_resources?.[resourceType]?.splice(indexOf, 1)
+        const indexOf = this.existingEncounter.related_resources[resourceType].indexOf(model)
+        this.existingEncounter.related_resources[resourceType].splice(indexOf, 1)
 
         this.fastenApi.removeEncounterRelatedResource(encounterId, resourceId, resourceType).subscribe(
           (resp) => {

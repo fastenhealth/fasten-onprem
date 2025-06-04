@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FhirCardUnlinkableComponentInterface} from '../../fhir-card/fhir-card-component-interface';
+import {FhirCardEditableComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
 import {DiagnosticReportModel} from '../../../../../lib/models/resources/diagnostic-report-model';
@@ -18,13 +18,14 @@ import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
   templateUrl: './diagnostic-report.component.html',
   styleUrls: ['./diagnostic-report.component.scss']
 })
-export class DiagnosticReportComponent implements OnInit, FhirCardUnlinkableComponentInterface {
+export class DiagnosticReportComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: DiagnosticReportModel
   @Input() showDetails: boolean = true
   @Input() isCollapsed: boolean = false
-  @Input() isUnlinkable: boolean = false
+  @Input() isEditable: boolean = false
 
   @Output() unlinkRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
+  @Output() editRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
 
   active: number = 0
 
@@ -79,7 +80,11 @@ export class DiagnosticReportComponent implements OnInit, FhirCardUnlinkableComp
     this.changeRef.markForCheck()
   }
 
-  onUnlinkClicked(event: MouseEvent) {
+  onUnlinkClicked() {
     this.unlinkRequested.emit(this.displayModel)
+  }
+
+  onEditClicked() {
+    this.editRequested.emit(this.displayModel)
   }
 }

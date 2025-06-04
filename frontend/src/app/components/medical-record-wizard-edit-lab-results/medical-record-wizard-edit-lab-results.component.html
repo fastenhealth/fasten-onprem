@@ -1,0 +1,38 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-attachment">Edit Lab Results</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()"><span aria-hidden="true">×</span></button>
+</div>
+<div class="modal-body">
+
+  <div *ngIf="debugMode" class="alert alert-warning">
+    <!--    <pre><code  [highlight]="newAttachmentForm.getRawValue() | json"></code></pre>-->
+    <!--    <strong>New Attachment Form Status: {{ newAttachmentForm.status }}</strong>-->
+  </div>
+
+  <div class="row mg-b-15">
+    <div class="col-md-12">
+      <p class="mg-b-10">Lab Panel Name<span ngbTooltip="required" class="text-danger">*</span></p>
+      <form [formGroup]="labPanelTypeaheadForm">
+        <app-nlm-typeahead formControlName="data" searchType="LabPanels" [debugMode]="debugMode"></app-nlm-typeahead>
+      </form>
+    </div>
+  </div>
+
+
+
+  <div *ngIf="questionnaire" class="row">
+    <wc-lhc-form
+      #lhcForm
+      [(questionnaire)]="questionnaire"
+      [options]="options"
+      [fhirVersion]="format"
+      (onFormReady)="onFormReady($event)"
+      (onError)="onError($event)"
+
+    ></wc-lhc-form>
+  </div>
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-az-primary" (click)="submit()">Edit Lab Results</button>
+</div>

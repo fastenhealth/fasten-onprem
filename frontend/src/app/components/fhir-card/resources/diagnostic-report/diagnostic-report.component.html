@@ -5,9 +5,6 @@
       <p class="card-text tx-gray-400" *ngIf="displayModel?.effective_datetime"><strong>Start date</strong> {{displayModel?.effective_datetime | date}}</p>
     </div>
     <fhir-ui-badge class="float-right" [status]="displayModel?.status">{{displayModel?.status}}</fhir-ui-badge>
-    <span *ngIf="isUnlinkable && !isCollapsed" class="cursor-pointer float-right ml-4" (click)="onUnlinkClicked($event)" aria-hidden="true">
-      <i class="fas fa-trash"></i>
-    </span>
     <!--    <div class="btn-group">-->
     <!--      <button class="btn active">Day</button>-->
     <!--      <button class="btn">Week</button>-->
@@ -34,6 +31,10 @@
       <ng-template #showSingle>
         <fhir-binary *ngIf="displayModel?.presented_form?.length == 1"  [attachmentModel]="displayModel?.presented_form?.[0]" [attachmentSourceId]="displayModel?.source_id" ></fhir-binary>
       </ng-template>
+    </div>
+    <div *ngIf="isEditable" class="action-buttons">
+      <button type="button" (click)="onEditClicked()" class="btn btn-indigo">Edit</button>
+      <button type="button" (click)="onUnlinkClicked()" class="btn btn-danger">Delete</button>
     </div>
   </div>
   <div *ngIf="showDetails" class="card-footer">

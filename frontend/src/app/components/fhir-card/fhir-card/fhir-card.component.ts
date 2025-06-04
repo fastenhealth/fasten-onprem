@@ -16,7 +16,7 @@ import {FhirCardOutletDirective} from './fhir-card-outlet.directive';
 import {ResourceType} from '../../../../lib/models/constants';
 import {FallbackComponent} from '../resources/fallback/fallback.component';
 import {BinaryComponent} from '../resources/binary/binary.component';
-import {FhirCardComponentInterface, FhirCardUnlinkableComponentInterface} from './fhir-card-component-interface';
+import {FhirCardComponentInterface, FhirCardEditableComponentInterface} from './fhir-card-component-interface';
 import {ImmunizationComponent} from '../resources/immunization/immunization.component';
 import {AllergyIntoleranceComponent} from '../resources/allergy-intolerance/allergy-intolerance.component';
 import {MedicationComponent} from '../resources/medication/medication.component';
@@ -45,9 +45,10 @@ export class FhirCardComponent implements OnInit, OnChanges {
   @Input() displayModel: FastenDisplayModel
   @Input() showDetails: boolean = true
   @Input() isCollapsed: boolean = false
-  @Input() isUnlinkable: boolean = false
+  @Input() isEditable: boolean = false
 
   @Output() unlinkRequested = new EventEmitter<FastenDisplayModel>()
+  @Output() editRequested = new EventEmitter<FastenDisplayModel>()
 
   //location to dynamically load the displayModel
   @ViewChild(FhirCardOutletDirective, {static: true}) fhirCardOutlet!: FhirCardOutletDirective;
@@ -75,9 +76,12 @@ export class FhirCardComponent implements OnInit, OnChanges {
       componentRef.instance.markForCheck()
 
       if(this.isUnlinkableFhirCardComponent(componentRef.instance)) {
-        componentRef.instance.isUnlinkable = this.isUnlinkable
+        componentRef.instance.isEditable = this.isEditable
         componentRef.instance.unlinkRequested.subscribe(model => {
           this.unlinkRequested.emit(model)
+        })
+        componentRef.instance.editRequested.subscribe(model => {
+          this.editRequested.emit(model)
         })
       }
     }
@@ -187,9 +191,10 @@ export class FhirCardComponent implements OnInit, OnChanges {
     }
   }
 
-  isUnlinkableFhirCardComponent(component: any): component is FhirCardUnlinkableComponentInterface {
-    return (component as FhirCardUnlinkableComponentInterface).isUnlinkable !== undefined &&
-      (component as FhirCardUnlinkableComponentInterface).unlinkRequested instanceof EventEmitter;
+  isUnlinkableFhirCardComponent(component: any): component is FhirCardEditableComponentInterface {
+    return (component as FhirCardEditableComponentInterface).isEditable !== undefined &&
+      (component as FhirCardEditableComponentInterface).editRequested instanceof EventEmitter &&
+      (component as FhirCardEditableComponentInterface).unlinkRequested instanceof EventEmitter;
   }
 
 }

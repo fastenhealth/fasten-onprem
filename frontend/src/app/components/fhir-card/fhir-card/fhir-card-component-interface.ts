@@ -14,8 +14,9 @@ export interface FhirCardComponentInterface {
   markForCheck()
 }
 
-// FHIR Resource components that support unlinking should implement this
-export interface FhirCardUnlinkableComponentInterface extends FhirCardComponentInterface {
-  isUnlinkable: boolean;
+// FHIR Resource components that support editing should implement this
+export interface FhirCardEditableComponentInterface extends FhirCardComponentInterface {
+  isEditable: boolean;
+  editRequested: EventEmitter<FastenDisplayModel>;
   unlinkRequested: EventEmitter<FastenDisplayModel>;
 }
