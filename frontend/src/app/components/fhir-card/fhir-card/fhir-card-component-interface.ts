@@ -1,3 +1,4 @@
+import { EventEmitter } from '@angular/core';
 import {FastenDisplayModel} from '../../../../lib/models/fasten/fasten-display-model';
 
 //all Fhir Resource  components must implement this Interface
@@ -11,4 +12,11 @@ export interface FhirCardComponentInterface {
   resourceCodeSystem?: string;
 
   markForCheck()
+}
+
+// FHIR Resource components that support editing should implement this
+export interface FhirCardEditableComponentInterface extends FhirCardComponentInterface {
+  isEditable: boolean;
+  editRequested: EventEmitter<FastenDisplayModel>;
+  unlinkRequested: EventEmitter<FastenDisplayModel>;
 }

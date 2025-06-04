@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
-import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FhirCardEditableComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {Router, RouterModule} from '@angular/router';
 import {ProcedureModel} from '../../../../../lib/models/resources/procedure-model';
@@ -8,6 +8,7 @@ import {CommonModule} from "@angular/common";
 import {BadgeComponent} from "../../common/badge/badge.component";
 import {TableComponent} from "../../common/table/table.component";
 import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.component';
+import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 
 @Component({
   standalone: true,
@@ -16,10 +17,14 @@ import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.
   templateUrl: './procedure.component.html',
   styleUrls: ['./procedure.component.scss']
 })
-export class ProcedureComponent implements OnInit, FhirCardComponentInterface {
+export class ProcedureComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: ProcedureModel | null
   @Input() showDetails: boolean = true
   @Input() isCollapsed: boolean = false
+  @Input() isEditable: boolean = false
+  
+  @Output() unlinkRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
+  @Output() editRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
 
   //these are used to populate the description of the resource. May not be available for all resources
   resourceCode?: string;
@@ -85,5 +90,13 @@ export class ProcedureComponent implements OnInit, FhirCardComponentInterface {
   }
   markForCheck(){
     this.changeRef.markForCheck()
+  }
+
+  onUnlinkClicked() {
+    this.unlinkRequested.emit(this.displayModel)
+  }
+
+  onEditClicked() {
+    this.editRequested.emit(this.displayModel)
   }
 }

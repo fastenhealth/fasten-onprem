@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http/httptest"
 	"os"
+	"sort"
 	"testing"
 	"time"
 
@@ -1436,4 +1437,443 @@ func (suite *RepositoryTestSuite) TestUpdateBackgroundJob() {
 	require.Equal(suite.T(), backgroundJob.ID, foundAllBackgroundJobs[0].ID)
 	require.Equal(suite.T(), pkg.BackgroundJobStatusFailed, foundAllBackgroundJobs[0].JobStatus)
 	require.NotNil(suite.T(), foundAllBackgroundJobs[0].DoneTime)
+}
+
+func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsBase() {
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+	ctx := context.Background()
+
+	testUser := &models.User{Username: "user-find-assoc-base", Password: "password", Email: "base@example.com"}
+	err = dbRepo.CreateUser(ctx, testUser)
+	require.NoError(suite.T(), err)
+	authCtx := context.WithValue(ctx, pkg.ContextKeyTypeAuthUsername, testUser.Username)
+
+	sc1 := &models.SourceCredential{UserID: testUser.ID, PlatformType: "manual", Display: "Source 1"}
+	err = dbRepo.CreateSource(authCtx, sc1)
+	require.NoError(suite.T(), err)
+
+	sc2 := &models.SourceCredential{UserID: testUser.ID, PlatformType: "manual", Display: "Source 2"}
+	err = dbRepo.CreateSource(authCtx, sc2)
+	require.NoError(suite.T(), err)
+
+	// The "base" resource for our query (encounter1)
+	encounterFhirJson := []byte(`{"resourceType": "Encounter", "id": "enc123", "status": "finished"}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc1, sourceModels.RawResourceFhir{
+		SourceResourceType: "Encounter",
+		SourceResourceID:   "enc123",
+		ResourceRaw:        encounterFhirJson,
+	})
+	require.NoError(suite.T(), err)
+
+	// Related resource 1 (obs456)
+	obsFhirJson := []byte(`{"resourceType": "Observation", "id": "obs456", "status": "final", "code": {"text":"BP"}}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc1, sourceModels.RawResourceFhir{
+		SourceResourceType: "Observation",
+		SourceResourceID:   "obs456",
+		ResourceRaw:        obsFhirJson,
+	})
+	require.NoError(suite.T(), err)
+
+	// Related resource 2 (cond789)
+	condFhirJson := []byte(`{"resourceType": "Condition", "id": "cond789", "code": {"text":"Fever"}}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc2, sourceModels.RawResourceFhir{
+		SourceResourceType: "Condition",
+		SourceResourceID:   "cond789",
+		ResourceRaw:        condFhirJson,
+	})
+	require.NoError(suite.T(), err)
+
+	procFhirJson := []byte(`{"resourceType": "Procedure", "id": "proc000", "status": "completed"}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc1, sourceModels.RawResourceFhir{
+		SourceResourceType: "Procedure",
+		SourceResourceID:   "proc000",
+		ResourceRaw:        procFhirJson,
+	})
+	require.NoError(suite.T(), err)
+
+	// Link enc123 (base) to obs456 (related)
+	err = dbRepo.UpsertRawResourceAssociation(authCtx,
+		sc1.ID.String(), "Encounter", "enc123",
+		sc1.ID.String(), "Observation", "obs456",
+	)
+	require.NoError(suite.T(), err)
+
+	// Link enc123 (base) to cond789 (related)
+	err = dbRepo.UpsertRawResourceAssociation(authCtx,
+		sc1.ID.String(), "Encounter", "enc123",
+		sc2.ID.String(), "Condition", "cond789",
+	)
+	require.NoError(suite.T(), err)
+
+	// Call FindAllResourceAssociations
+	foundAssociations, err := dbRepo.FindAllResourceAssociations(authCtx, sc1, "Encounter", "enc123")
+
+	// Assertions
+	require.NoError(suite.T(), err)
+	require.Len(suite.T(), foundAssociations, 2, "Should find two associations for the encounter")
+
+	// Sort associations for stable assertions
+	sort.Slice(foundAssociations, func(i, j int) bool {
+		keyI := foundAssociations[i].RelatedResourceSourceResourceType + foundAssociations[i].RelatedResourceSourceResourceID
+		keyJ := foundAssociations[j].RelatedResourceSourceResourceType + foundAssociations[j].RelatedResourceSourceResourceID
+		return keyI < keyJ
+	})
+
+	// Detailed checks for each found association
+	// Association 1
+	require.Equal(suite.T(), testUser.ID, foundAssociations[0].ResourceBaseUserID)
+	require.Equal(suite.T(), sc1.ID, foundAssociations[0].ResourceBaseSourceID)
+	require.Equal(suite.T(), "Encounter", foundAssociations[0].ResourceBaseSourceResourceType)
+	require.Equal(suite.T(), "enc123", foundAssociations[0].ResourceBaseSourceResourceID)
+	require.Equal(suite.T(), testUser.ID, foundAssociations[0].RelatedResourceUserID)
+	require.Equal(suite.T(), sc2.ID, foundAssociations[0].RelatedResourceSourceID)
+	require.Equal(suite.T(), "Condition", foundAssociations[0].RelatedResourceSourceResourceType)
+	require.Equal(suite.T(), "cond789", foundAssociations[0].RelatedResourceSourceResourceID)
+
+	// Association 2 (to Observation)
+	require.Equal(suite.T(), testUser.ID, foundAssociations[1].ResourceBaseUserID)
+	require.Equal(suite.T(), sc1.ID, foundAssociations[1].ResourceBaseSourceID)
+	require.Equal(suite.T(), "Encounter", foundAssociations[1].ResourceBaseSourceResourceType)
+	require.Equal(suite.T(), "enc123", foundAssociations[1].ResourceBaseSourceResourceID)
+	require.Equal(suite.T(), testUser.ID, foundAssociations[1].RelatedResourceUserID)
+	require.Equal(suite.T(), sc1.ID, foundAssociations[1].RelatedResourceSourceID)
+	require.Equal(suite.T(), "Observation", foundAssociations[1].RelatedResourceSourceResourceType)
+	require.Equal(suite.T(), "obs456", foundAssociations[1].RelatedResourceSourceResourceID)
+}
+
+func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsRelated() {
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+	ctx := context.Background()
+
+	testUser := &models.User{Username: "user-find-assoc-related", Password: "password", Email: "related@example.com"}
+	err = dbRepo.CreateUser(ctx, testUser)
+	require.NoError(suite.T(), err)
+	authCtx := context.WithValue(ctx, pkg.ContextKeyTypeAuthUsername, testUser.Username)
+
+	sc1 := &models.SourceCredential{UserID: testUser.ID, PlatformType: "manual", Display: "Source 1"}
+	err = dbRepo.CreateSource(authCtx, sc1)
+	require.NoError(suite.T(), err)
+
+	sc2 := &models.SourceCredential{UserID: testUser.ID, PlatformType: "manual", Display: "Source 2"}
+	err = dbRepo.CreateSource(authCtx, sc2)
+	require.NoError(suite.T(), err)
+
+	// The "related" resource for our query (encounter1)
+	encounterFhirJson := []byte(`{"resourceType": "Encounter", "id": "enc123", "status": "finished"}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc1, sourceModels.RawResourceFhir{
+		SourceResourceType: "Encounter",
+		SourceResourceID:   "enc123",
+		ResourceRaw:        encounterFhirJson,
+	})
+	require.NoError(suite.T(), err)
+
+	// Base resource 1 (obs456)
+	obsFhirJson := []byte(`{"resourceType": "Observation", "id": "obs456", "status": "final", "code": {"text":"BP"}}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc1, sourceModels.RawResourceFhir{
+		SourceResourceType: "Observation",
+		SourceResourceID:   "obs456",
+		ResourceRaw:        obsFhirJson,
+	})
+	require.NoError(suite.T(), err)
+
+	// Base resource 2 (cond789)
+	condFhirJson := []byte(`{"resourceType": "Condition", "id": "cond789", "code": {"text":"Fever"}}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc2, sourceModels.RawResourceFhir{
+		SourceResourceType: "Condition",
+		SourceResourceID:   "cond789",
+		ResourceRaw:        condFhirJson,
+	})
+	require.NoError(suite.T(), err)
+
+	// Link obs456 (base) to enc123 (related)
+	err = dbRepo.UpsertRawResourceAssociation(authCtx,
+		sc1.ID.String(), "Observation", "obs456",
+		sc1.ID.String(), "Encounter", "enc123",
+	)
+	require.NoError(suite.T(), err)
+
+	// Link cond789 (base) to enc123 (related)
+	err = dbRepo.UpsertRawResourceAssociation(authCtx,
+		sc2.ID.String(), "Condition", "cond789",
+		sc1.ID.String(), "Encounter", "enc123",
+	)
+	require.NoError(suite.T(), err)
+
+	// Call FindAllResourceAssociations
+	foundAssociations, err := dbRepo.FindAllResourceAssociations(authCtx, sc1, "Encounter", "enc123")
+
+	// Assertions
+	require.NoError(suite.T(), err)
+	require.Len(suite.T(), foundAssociations, 2, "Should find two associations where the encounter is the related resource")
+
+	// Sort associations for stable assertions
+	// Sort by Base Type, then Base ID
+	sort.Slice(foundAssociations, func(i, j int) bool {
+		keyI := foundAssociations[i].ResourceBaseSourceResourceType + foundAssociations[i].ResourceBaseSourceResourceID
+		keyJ := foundAssociations[j].ResourceBaseSourceResourceType + foundAssociations[j].ResourceBaseSourceResourceID
+		return keyI < keyJ
+	})
+
+	// Detailed checks for each found association
+	// Association 1
+	require.Equal(suite.T(), testUser.ID, foundAssociations[0].ResourceBaseUserID)
+	require.Equal(suite.T(), sc2.ID, foundAssociations[0].ResourceBaseSourceID)
+	require.Equal(suite.T(), "Condition", foundAssociations[0].ResourceBaseSourceResourceType)
+	require.Equal(suite.T(), "cond789", foundAssociations[0].ResourceBaseSourceResourceID)
+	require.Equal(suite.T(), testUser.ID, foundAssociations[0].RelatedResourceUserID)
+	require.Equal(suite.T(), sc1.ID, foundAssociations[0].RelatedResourceSourceID)
+	require.Equal(suite.T(), "Encounter", foundAssociations[0].RelatedResourceSourceResourceType)
+	require.Equal(suite.T(), "enc123", foundAssociations[0].RelatedResourceSourceResourceID)
+
+	// Association 2 (from Observation to Encounter)
+	require.Equal(suite.T(), testUser.ID, foundAssociations[1].ResourceBaseUserID)
+	require.Equal(suite.T(), sc1.ID, foundAssociations[1].ResourceBaseSourceID)
+	require.Equal(suite.T(), "Observation", foundAssociations[1].ResourceBaseSourceResourceType)
+	require.Equal(suite.T(), "obs456", foundAssociations[1].ResourceBaseSourceResourceID)
+	require.Equal(suite.T(), testUser.ID, foundAssociations[1].RelatedResourceUserID)
+	require.Equal(suite.T(), sc1.ID, foundAssociations[1].RelatedResourceSourceID)
+	require.Equal(suite.T(), "Encounter", foundAssociations[1].RelatedResourceSourceResourceType)
+	require.Equal(suite.T(), "enc123", foundAssociations[1].RelatedResourceSourceResourceID)
+}
+
+func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsBaseAndRelated() {
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+	ctx := context.Background()
+
+	testUser := &models.User{Username: "user-find-assoc-both", Password: "password", Email: "both@example.com"}
+	err = dbRepo.CreateUser(ctx, testUser)
+	require.NoError(suite.T(), err)
+	authCtx := context.WithValue(ctx, pkg.ContextKeyTypeAuthUsername, testUser.Username)
+
+	sc1 := &models.SourceCredential{UserID: testUser.ID, PlatformType: "manual", Display: "Source 1"}
+	err = dbRepo.CreateSource(authCtx, sc1)
+	require.NoError(suite.T(), err)
+
+	sc2 := &models.SourceCredential{UserID: testUser.ID, PlatformType: "manual", Display: "Source 2"}
+	err = dbRepo.CreateSource(authCtx, sc2)
+	require.NoError(suite.T(), err)
+
+	// The target resource for our query (encounter1)
+	encounterFhirJson := []byte(`{"resourceType": "Encounter", "id": "enc123", "status": "finished"}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc1, sourceModels.RawResourceFhir{
+		SourceResourceType: "Encounter",
+		SourceResourceID:   "enc123",
+		ResourceRaw:        encounterFhirJson,
+	})
+	require.NoError(suite.T(), err)
+
+	// Resource that encounter1 links TO (as base): obs456
+	obsFhirJson := []byte(`{"resourceType": "Observation", "id": "obs456", "status": "final", "code": {"text":"BP"}}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc1, sourceModels.RawResourceFhir{
+		SourceResourceType: "Observation",
+		SourceResourceID:   "obs456",
+		ResourceRaw:        obsFhirJson,
+	})
+	require.NoError(suite.T(), err)
+
+	// Resource that links TO encounter1 (as related): cond789
+	condFhirJson := []byte(`{"resourceType": "Condition", "id": "cond789", "code": {"text":"Fever"}}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc2, sourceModels.RawResourceFhir{
+		SourceResourceType: "Condition",
+		SourceResourceID:   "cond789",
+		ResourceRaw:        condFhirJson,
+	})
+	require.NoError(suite.T(), err)
+
+	// Link enc123 (base) to obs456 (related)
+	err = dbRepo.UpsertRawResourceAssociation(authCtx,
+		sc1.ID.String(), "Encounter", "enc123",
+		sc1.ID.String(), "Observation", "obs456",
+	)
+	require.NoError(suite.T(), err)
+
+	// Link cond789 (base) to enc123 (related)
+	err = dbRepo.UpsertRawResourceAssociation(authCtx,
+		sc2.ID.String(), "Condition", "cond789",
+		sc1.ID.String(), "Encounter", "enc123",
+	)
+	require.NoError(suite.T(), err)
+
+	// Call FindAllResourceAssociations
+	foundAssociations, err := dbRepo.FindAllResourceAssociations(authCtx, sc1, "Encounter", "enc123")
+
+	// Assertions
+	require.NoError(suite.T(), err)
+	require.Len(suite.T(), foundAssociations, 2, "Should find two associations involving the encounter")
+
+	// Sort associations for stable assertions
+	// Sort by Base Type, then Base ID, then Related Type, then Related ID
+	sort.Slice(foundAssociations, func(i, j int) bool {
+		keyI := foundAssociations[i].ResourceBaseSourceResourceType + foundAssociations[i].ResourceBaseSourceResourceID +
+			foundAssociations[i].RelatedResourceSourceResourceType + foundAssociations[i].RelatedResourceSourceResourceID
+		keyJ := foundAssociations[j].ResourceBaseSourceResourceType + foundAssociations[j].ResourceBaseSourceResourceID +
+			foundAssociations[j].RelatedResourceSourceResourceType + foundAssociations[j].RelatedResourceSourceResourceID
+		return keyI < keyJ
+	})
+
+	// Detailed checks for each found association
+	// Association 1 (from Condition to Encounter)
+	require.Equal(suite.T(), testUser.ID, foundAssociations[0].ResourceBaseUserID)
+	require.Equal(suite.T(), sc2.ID, foundAssociations[0].ResourceBaseSourceID)
+	require.Equal(suite.T(), "Condition", foundAssociations[0].ResourceBaseSourceResourceType)
+	require.Equal(suite.T(), "cond789", foundAssociations[0].ResourceBaseSourceResourceID)
+	require.Equal(suite.T(), testUser.ID, foundAssociations[0].RelatedResourceUserID)
+	require.Equal(suite.T(), sc1.ID, foundAssociations[0].RelatedResourceSourceID)
+	require.Equal(suite.T(), "Encounter", foundAssociations[0].RelatedResourceSourceResourceType)
+	require.Equal(suite.T(), "enc123", foundAssociations[0].RelatedResourceSourceResourceID)
+
+	// Association 2 (from Encounter to Observation)
+	require.Equal(suite.T(), testUser.ID, foundAssociations[1].ResourceBaseUserID)
+	require.Equal(suite.T(), sc1.ID, foundAssociations[1].ResourceBaseSourceID)
+	require.Equal(suite.T(), "Encounter", foundAssociations[1].ResourceBaseSourceResourceType)
+	require.Equal(suite.T(), "enc123", foundAssociations[1].ResourceBaseSourceResourceID)
+	require.Equal(suite.T(), testUser.ID, foundAssociations[1].RelatedResourceUserID)
+	require.Equal(suite.T(), sc1.ID, foundAssociations[1].RelatedResourceSourceID)
+	require.Equal(suite.T(), "Observation", foundAssociations[1].RelatedResourceSourceResourceType)
+	require.Equal(suite.T(), "obs456", foundAssociations[1].RelatedResourceSourceResourceID)
+}
+
+func (suite *RepositoryTestSuite) TestRemoveBulkResourceAssociations_Success() {
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+	ctx := context.Background()
+
+	testUser := &models.User{Username: "user-remove-bulk-success", Password: "password", Email: "removebulk@example.com"}
+	err = dbRepo.CreateUser(ctx, testUser)
+	require.NoError(suite.T(), err)
+	authCtx := context.WithValue(ctx, pkg.ContextKeyTypeAuthUsername, testUser.Username)
+
+	sc1 := &models.SourceCredential{UserID: testUser.ID, PlatformType: "manual", Display: "Source 1"}
+	err = dbRepo.CreateSource(authCtx, sc1)
+	require.NoError(suite.T(), err)
+
+	sc2 := &models.SourceCredential{UserID: testUser.ID, PlatformType: "manual", Display: "Source 2"}
+	err = dbRepo.CreateSource(authCtx, sc2)
+	require.NoError(suite.T(), err)
+
+	sc3 := &models.SourceCredential{UserID: testUser.ID, PlatformType: "manual", Display: "Source 3"}
+	err = dbRepo.CreateSource(authCtx, sc3)
+	require.NoError(suite.T(), err)
+
+	enc1FhirJson := []byte(`{"resourceType": "Encounter", "id": "enc101", "status": "finished"}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc1, sourceModels.RawResourceFhir{SourceResourceType: "Encounter", SourceResourceID: "enc101", ResourceRaw: enc1FhirJson})
+	require.NoError(suite.T(), err)
+
+	obs1FhirJson := []byte(`{"resourceType": "Observation", "id": "obs101", "status": "final"}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc1, sourceModels.RawResourceFhir{SourceResourceType: "Observation", SourceResourceID: "obs101", ResourceRaw: obs1FhirJson})
+	require.NoError(suite.T(), err)
+
+	cond1FhirJson := []byte(`{"resourceType": "Condition", "id": "cond101", "code": {"text":"Fever"}}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc2, sourceModels.RawResourceFhir{SourceResourceType: "Condition", SourceResourceID: "cond101", ResourceRaw: cond1FhirJson})
+	require.NoError(suite.T(), err)
+
+	proc1FhirJson := []byte(`{"resourceType": "Procedure", "id": "proc101", "status": "completed"}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc3, sourceModels.RawResourceFhir{SourceResourceType: "Procedure", SourceResourceID: "proc101", ResourceRaw: proc1FhirJson})
+	require.NoError(suite.T(), err)
+
+	patient1FhirJson := []byte(`{"resourceType": "Patient", "id": "pat101"}`)
+	_, err = dbRepo.UpsertRawResource(authCtx, sc1, sourceModels.RawResourceFhir{SourceResourceType: "Patient", SourceResourceID: "pat101", ResourceRaw: patient1FhirJson})
+	require.NoError(suite.T(), err)
+
+	// Assoc A (to be deleted): enc1 (sc1) <-> obs1 (sc1)
+	err = dbRepo.UpsertRawResourceAssociation(authCtx, sc1.ID.String(), "Encounter", "enc101", sc1.ID.String(), "Observation", "obs101")
+	require.NoError(suite.T(), err)
+
+	// Assoc B (to be deleted): enc1 (sc1) <-> cond1 (sc2)
+	err = dbRepo.UpsertRawResourceAssociation(authCtx, sc1.ID.String(), "Encounter", "enc101", sc2.ID.String(), "Condition", "cond101")
+	require.NoError(suite.T(), err)
+
+	// Assoc C (to be kept): obs1 (sc1) <-> proc1 (sc3)
+	err = dbRepo.UpsertRawResourceAssociation(authCtx, sc1.ID.String(), "Observation", "obs101", sc3.ID.String(), "Procedure", "proc101")
+	require.NoError(suite.T(), err)
+
+	// Assoc D (to be deleted): patient1 (sc1) <-> enc1 (sc1)
+	err = dbRepo.UpsertRawResourceAssociation(authCtx, sc1.ID.String(), "Patient", "pat101", sc1.ID.String(), "Encounter", "enc101")
+	require.NoError(suite.T(), err)
+
+	// Assoc E (to be kept): patient1 (sc1) <-> cond1 (sc2)
+	err = dbRepo.UpsertRawResourceAssociation(authCtx, sc1.ID.String(), "Patient", "pat101", sc2.ID.String(), "Condition", "cond101")
+	require.NoError(suite.T(), err)
+
+	// Prepare associationsToDelete slice
+	associationsToDelete := []models.RelatedResource{
+		{ // Matches Assoc A
+			ResourceBaseUserID: testUser.ID, ResourceBaseSourceID: sc1.ID, ResourceBaseSourceResourceType: "Encounter", ResourceBaseSourceResourceID: "enc101",
+			RelatedResourceUserID: testUser.ID, RelatedResourceSourceID: sc1.ID, RelatedResourceSourceResourceType: "Observation", RelatedResourceSourceResourceID: "obs101",
+		},
+		{ // Matches Assoc B
+			ResourceBaseUserID: testUser.ID, ResourceBaseSourceID: sc1.ID, ResourceBaseSourceResourceType: "Encounter", ResourceBaseSourceResourceID: "enc101",
+			RelatedResourceUserID: testUser.ID, RelatedResourceSourceID: sc2.ID, RelatedResourceSourceResourceType: "Condition", RelatedResourceSourceResourceID: "cond101",
+		},
+		{ // Matches Assoc D
+			ResourceBaseUserID: testUser.ID, ResourceBaseSourceID: sc1.ID, ResourceBaseSourceResourceType: "Patient", ResourceBaseSourceResourceID: "pat101",
+			RelatedResourceUserID: testUser.ID, RelatedResourceSourceID: sc1.ID, RelatedResourceSourceResourceType: "Encounter", RelatedResourceSourceResourceID: "enc101",
+		},
+	}
+
+	// Call RemoveBulkResourceAssociations
+	rowsAffected, err := dbRepo.RemoveBulkResourceAssociations(authCtx, associationsToDelete)
+
+	// Assertions
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), int64(3), rowsAffected, "Should have affected 3 rows")
+
+	// Verify DB state using FindAllResourceAssociations
+	// Check associations for enc101 (was base for A, B; related for D) - A, B, D should be gone
+	enc101Associations, err := dbRepo.FindAllResourceAssociations(authCtx, sc1, "Encounter", "enc101")
+	require.NoError(suite.T(), err)
+	require.Len(suite.T(), enc101Associations, 0, "Encounter enc101 should have no associations left")
+
+	// Check associations for pat101 (was base for D, E) - D should be gone, E should remain (E is pat101 -> cond101)
+	pat101Associations, err := dbRepo.FindAllResourceAssociations(authCtx, sc1, "Patient", "pat101")
+	require.NoError(suite.T(), err)
+	require.Len(suite.T(), pat101Associations, 1, "Patient pat101 should only have 1 association left (to cond101)")
+	require.Equal(suite.T(), "Condition", pat101Associations[0].RelatedResourceSourceResourceType)
+	require.Equal(suite.T(), "cond101", pat101Associations[0].RelatedResourceSourceResourceID)
+
+	// Check associations for obs101 (was related for A, base for C) - A should be gone, C should remain (C is obs101 -> proc101)
+	obs101Associations, err := dbRepo.FindAllResourceAssociations(authCtx, sc1, "Observation", "obs101")
+	require.NoError(suite.T(), err)
+	require.Len(suite.T(), obs101Associations, 1, "Observation obs101 should only have 1 association left (to proc101)")
+	require.Equal(suite.T(), "Procedure", obs101Associations[0].RelatedResourceSourceResourceType)
+	require.Equal(suite.T(), "proc101", obs101Associations[0].RelatedResourceSourceResourceID)
+
+	// Check associations for cond101 (was related for B, base for E) - B should be gone, E should remain (E is pat101 -> cond101)
+	cond101Associations, err := dbRepo.FindAllResourceAssociations(authCtx, sc2, "Condition", "cond101")
+	require.NoError(suite.T(), err)
+	require.Len(suite.T(), cond101Associations, 1, "Condition cond101 should only have 1 association left (from pat101)")
+	require.Equal(suite.T(), "Patient", cond101Associations[0].ResourceBaseSourceResourceType) // Check the base side
+	require.Equal(suite.T(), "pat101", cond101Associations[0].ResourceBaseSourceResourceID)
+	require.Equal(suite.T(), sc1.ID, cond101Associations[0].ResourceBaseSourceID) // Check the base source ID
+
+	// Check associations for proc101 (was related for C) - C should remain
+	proc101Associations, err := dbRepo.FindAllResourceAssociations(authCtx, sc3, "Procedure", "proc101")
+	require.NoError(suite.T(), err)
+	require.Len(suite.T(), proc101Associations, 1, "Procedure proc101 should only have 1 association left (from obs101)")
+	require.Equal(suite.T(), "Observation", proc101Associations[0].ResourceBaseSourceResourceType) // Check the base side
+	require.Equal(suite.T(), "obs101", proc101Associations[0].ResourceBaseSourceResourceID)
+	require.Equal(suite.T(), sc1.ID, proc101Associations[0].ResourceBaseSourceID) // Check the base source ID
 }

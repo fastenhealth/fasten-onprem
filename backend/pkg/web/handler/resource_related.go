@@ -3,6 +3,9 @@ package handler
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"strings"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
@@ -12,7 +15,6 @@ import (
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 // mimics functionality in CreateManualSource
@@ -92,4 +94,105 @@ func CreateRelatedResources(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": summary, "source": fastenSourceCredential})
 
+}
+
+func EncounterUnlinkResource(c *gin.Context) {
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	encounterId := strings.Trim(c.Param("encounterId"), "/")
+	resourceId := strings.Trim(c.Param("resourceId"), "/")
+	resourceType := strings.Trim(c.Param("resourceType"), "/")
+
+	// get resource models
+	encounter, err := databaseRepo.GetResourceByResourceTypeAndId(c, "Encounter", encounterId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not find encounter"})
+		return
+	}
+	relatedResource, err := databaseRepo.GetResourceByResourceTypeAndId(c, resourceType, resourceId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not find related resource"})
+		return
+	}
+
+	// get source credential models
+	encounterSourceCredential, err := databaseRepo.GetSource(c, encounter.SourceID.String())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not find Fasten source for encounter"})
+		return
+	}
+	resourceSourceCredential, err := databaseRepo.GetSource(c, relatedResource.SourceID.String())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not find Fasten source for related resource"})
+		return
+	}
+
+	var associationsToRemove []models.RelatedResource
+
+	// first add the possible direct/primary associations between the encounter and the resource
+	associationsToRemove = append(associationsToRemove, models.RelatedResource{
+		ResourceBaseUserID:                encounterSourceCredential.UserID,
+		ResourceBaseSourceID:              encounterSourceCredential.ID,
+		ResourceBaseSourceResourceType:    "Encounter",
+		ResourceBaseSourceResourceID:      encounterId,
+		RelatedResourceUserID:             resourceSourceCredential.UserID,
+		RelatedResourceSourceID:           resourceSourceCredential.ID,
+		RelatedResourceSourceResourceType: resourceType,
+		RelatedResourceSourceResourceID:   resourceId,
+	})
+	associationsToRemove = append(associationsToRemove, models.RelatedResource{
+		ResourceBaseUserID:                resourceSourceCredential.UserID,
+		ResourceBaseSourceID:              resourceSourceCredential.ID,
+		ResourceBaseSourceResourceType:    resourceType,
+		ResourceBaseSourceResourceID:      resourceId,
+		RelatedResourceUserID:             encounterSourceCredential.UserID,
+		RelatedResourceSourceID:           encounterSourceCredential.ID,
+		RelatedResourceSourceResourceType: "Encounter",
+		RelatedResourceSourceResourceID:   encounterId,
+	})
+
+	// now we need to add the secondary associations that link the encounter and the resource
+	// Encounter -> X or Encounter <- X, where Resource -> X or Resource <- X
+	encounterAssociations, err := databaseRepo.FindAllResourceAssociations(c, encounterSourceCredential, "Encounter", encounterId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not get all relations for the encounter"})
+		return
+	}
+	resourceAssociations, err := databaseRepo.FindAllResourceAssociations(c, resourceSourceCredential, resourceType, resourceId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not get all relations for the related resource"})
+		return
+	}
+
+	encounterNeighborsMap := buildNeighborsMapFromAssociations(encounterAssociations, encounterId, "Encounter")
+	resourceNeighborsMap := buildNeighborsMapFromAssociations(resourceAssociations, resourceId, resourceType)
+
+	for key := range resourceNeighborsMap {
+		if relation, ok := encounterNeighborsMap[key]; ok {
+			associationsToRemove = append(associationsToRemove, relation)
+		}
+	}
+
+	rowsAffected, err := databaseRepo.RemoveBulkResourceAssociations(c, associationsToRemove)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not remove resource associations"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "rowsAffected": rowsAffected})
+}
+
+func buildNeighborsMapFromAssociations(associations []models.RelatedResource, resourceId string, resourceType string) map[string]models.RelatedResource {
+	resourceNeighborsMap := make(map[string]models.RelatedResource)
+	for _, association := range associations {
+		var key string
+		if association.ResourceBaseSourceResourceID == resourceId && association.ResourceBaseSourceResourceType == resourceType {
+			key = fmt.Sprintf("%s-%s-%s", association.RelatedResourceSourceID, association.RelatedResourceSourceResourceType, association.RelatedResourceSourceResourceID)
+		} else {
+			key = fmt.Sprintf("%s-%s-%s", association.ResourceBaseSourceID, association.ResourceBaseSourceResourceType, association.ResourceBaseSourceResourceID)
+		}
+		resourceNeighborsMap[key] = association
+	}
+
+	return resourceNeighborsMap
 }

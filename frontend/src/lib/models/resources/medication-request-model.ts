@@ -12,7 +12,7 @@ export class MedicationRequestModel extends FastenDisplayModel {
   medication_reference: ReferenceModel|undefined
   medication_codeable_concept: CodingModel|undefined
   reason_code: string|undefined
-  dosage_instruction: string|undefined
+  dosage_instruction: string|any[]|undefined
   has_dosage_instruction: boolean|undefined
   requester: ReferenceModel|undefined
   created: string|undefined

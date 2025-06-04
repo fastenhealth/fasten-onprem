@@ -20,11 +20,11 @@ export class ProcedureModel extends FastenDisplayModel {
   category: string|undefined;
   location_reference: string|undefined;
   has_performer_data: boolean|undefined;
-  performer: string|undefined;
+  performer: string|any[]|undefined;
   has_reason_code: boolean|undefined;
   reason_code: string|undefined;
   has_note: boolean|undefined;
-  note: string|undefined;
+  note: string|any[]|undefined;
   outcome: string|undefined;
 
   constructor(fhirResource: any, fhirVersion?: fhirVersions, fastenOptions?: FastenOptions) {

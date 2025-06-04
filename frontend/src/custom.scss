@@ -128,6 +128,12 @@ select > optgroup > .divider {
     }
   }
 
+  .action-buttons {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
   //.card-body {
   //  padding: 10px 0 20px;
   //  position: relative;

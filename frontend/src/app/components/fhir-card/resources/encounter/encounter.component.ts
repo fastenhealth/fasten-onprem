@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule} from '@angular/common';
 import {BadgeComponent} from '../../common/badge/badge.component';
@@ -6,8 +6,9 @@ import {TableComponent} from '../../common/table/table.component';
 import {GlossaryLookupComponent} from '../../../glossary-lookup/glossary-lookup.component';
 import {Router, RouterModule} from '@angular/router';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
-import {FhirCardComponentInterface} from '../../fhir-card/fhir-card-component-interface';
+import {FhirCardEditableComponentInterface} from '../../fhir-card/fhir-card-component-interface';
 import {EncounterModel} from '../../../../../lib/models/resources/encounter-model';
+import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 
 @Component({
   standalone: true,
@@ -16,10 +17,14 @@ import {EncounterModel} from '../../../../../lib/models/resources/encounter-mode
   templateUrl: './encounter.component.html',
   styleUrls: ['./encounter.component.scss']
 })
-export class EncounterComponent implements OnInit, FhirCardComponentInterface {
+export class EncounterComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: EncounterModel | null
   @Input() showDetails: boolean = true
   @Input() isCollapsed: boolean = false
+  @Input() isEditable: boolean = false
+
+  @Output() unlinkRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
+  @Output() editRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
 
   //these are used to populate the description of the resource. May not be available for all resources
   resourceCode?: string;
@@ -46,5 +51,13 @@ export class EncounterComponent implements OnInit, FhirCardComponentInterface {
   }
   markForCheck(){
     this.changeRef.markForCheck()
+  }
+
+  onUnlinkClicked() {
+    this.unlinkRequested.emit(this.displayModel)
+  }
+
+  onEditClicked() {
+    this.editRequested.emit(this.displayModel)
   }
 }

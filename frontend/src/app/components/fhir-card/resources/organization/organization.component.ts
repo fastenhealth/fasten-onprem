@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {NgbCollapseModule} from '@ng-bootstrap/ng-bootstrap';
 import {CommonModule} from '@angular/common';
 import {BadgeComponent} from '../../common/badge/badge.component';
@@ -7,6 +7,8 @@ import {Router, RouterModule} from '@angular/router';
 import {LocationModel} from '../../../../../lib/models/resources/location-model';
 import {TableRowItem, TableRowItemDataType} from '../../common/table/table-row-item';
 import {OrganizationModel} from '../../../../../lib/models/resources/organization-model';
+import { FhirCardEditableComponentInterface } from '../../fhir-card/fhir-card-component-interface';
+import { FastenDisplayModel } from 'src/lib/models/fasten/fasten-display-model';
 
 @Component({
   standalone: true,
@@ -15,10 +17,14 @@ import {OrganizationModel} from '../../../../../lib/models/resources/organizatio
   templateUrl: './organization.component.html',
   styleUrls: ['./organization.component.scss']
 })
-export class OrganizationComponent implements OnInit {
+export class OrganizationComponent implements OnInit, FhirCardEditableComponentInterface {
   @Input() displayModel: OrganizationModel
   @Input() showDetails: boolean = true
   @Input() isCollapsed: boolean = false
+  @Input() isEditable: boolean = false
+
+  @Output() unlinkRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
+  @Output() editRequested: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>()
 
   tableData: TableRowItem[] = []
 
@@ -74,4 +80,11 @@ export class OrganizationComponent implements OnInit {
     this.changeRef.markForCheck()
   }
 
+  onUnlinkClicked() {
+    this.unlinkRequested.emit(this.displayModel)
+  }
+
+  onEditClicked() {
+    this.editRequested.emit(this.displayModel)
+  }
 }

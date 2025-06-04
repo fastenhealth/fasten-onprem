@@ -1,0 +1,46 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-location">Edit Encounter</h4>
+
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()"><span aria-hidden="true">×</span></button>
+</div>
+<div class="modal-body">
+
+  <div *ngIf="debugMode" class="alert alert-warning">
+    <pre><code  [highlight]="encounterForm.getRawValue() | json"></code></pre>
+    <strong>Edit Encounter Form Status: {{ encounterForm.status }}</strong>
+  </div>
+
+  <div class="row row-sm pd-t-15">
+    <ng-container [formGroup]="encounterForm">
+      <div class="col-12">
+        <p class="mg-b-10">Encounter Type<span ngbTooltip="required" class="text-danger">*</span></p>
+        <app-nlm-typeahead formControlName="code" searchType="EncounterServiceType" [debugMode]="debugMode"></app-nlm-typeahead>
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Start<span ngbTooltip="required" class="text-danger">*</span></p>
+        <input formControlName="period_start" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cds="ngbDatepicker" (click)="cds.toggle()">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">End</p>
+        <input formControlName="period_end" [minDate]="encounterForm.get('period_start').value" class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #cde="ngbDatepicker" (click)="cde.toggle()">
+      </div><!-- col -->
+    </ng-container>
+  </div>
+</div>
+<div class="modal-footer">
+  <button [ngClass]="{
+    'btn-outline-dark': !debugMode,
+    'text-dark': !debugMode,
+    'btn-dark':debugMode,
+    'text-white':debugMode
+     }" type="button" class="btn float-left" (click)="debugMode = !debugMode">
+    <i class="fas fa-bug"></i>
+  </button>
+  <button *ngIf="!loading; else spinnerButton" type="button" [class.disabled]="!submitEnabled" class="btn btn-az-primary" (click)="submit()">Edit Encounter</button>
+  <ng-template #spinnerButton>
+    <button class="btn btn-primary" type="button" disabled>
+      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      <span class="sr-only">Loading...</span>
+    </button>
+  </ng-template>
+</div>

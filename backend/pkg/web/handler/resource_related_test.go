@@ -5,17 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg"
-	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
-	"github.com/gin-gonic/gin"
-	"github.com/golang/mock/gomock"
-	"github.com/sirupsen/logrus"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 	"io"
 	"io/ioutil"
 	"log"
@@ -24,6 +13,20 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
+	mock_database "github.com/fastenhealth/fasten-onprem/backend/pkg/database/mock"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/gin-gonic/gin"
+	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 )
 
 // Go through this page to understand how this file is structured.
@@ -113,6 +116,296 @@ func (suite *ResourceRelatedHandlerTestSuite) TestResourceRelatedHandlerTestSuit
 	assert.EqualValues(suite.T(), http.StatusOK, w.Code)
 	assert.Equal(suite.T(), summary["TotalResources"], float64(3))
 
+}
+func (suite *ResourceRelatedHandlerTestSuite) TestEncounterUnlinkResource() {
+	suite.T().Run("should successfully unlink resource and its shared neighbors", func(t *testing.T) {
+		ctx, w, mockDB := suite.setupTestContextWithMocks(t)
+
+		encounterId := "enc-success-123"
+		resourceToUnlinkId := "obs-success-456"
+		resourceToUnlinkType := "Observation"
+
+		ctx.Params = gin.Params{
+			{Key: "encounterId", Value: encounterId},
+			{Key: "resourceId", Value: resourceToUnlinkId},
+			{Key: "resourceType", Value: resourceToUnlinkType},
+		}
+
+		userID := uuid.New()
+		encounterSourceID := uuid.New()
+		resourceToUnlinkSourceID := uuid.New()
+		sharedNeighborSourceID := uuid.New()
+
+		mockEncounterDBID := uuid.New()
+		mockPrimaryResourceToUnlinkDBID := uuid.New()
+
+		mockEncounter := &models.ResourceBase{
+			OriginBase: models.OriginBase{
+				ModelBase:          models.ModelBase{ID: mockEncounterDBID},
+				UserID:             userID,
+				SourceID:           encounterSourceID,
+				SourceResourceType: "Encounter",
+				SourceResourceID:   encounterId,
+			},
+		}
+		mockPrimaryResourceToUnlink := &models.ResourceBase{
+			OriginBase: models.OriginBase{
+				ModelBase:          models.ModelBase{ID: mockPrimaryResourceToUnlinkDBID},
+				UserID:             userID,
+				SourceID:           resourceToUnlinkSourceID,
+				SourceResourceType: resourceToUnlinkType,
+				SourceResourceID:   resourceToUnlinkId,
+			},
+		}
+
+		mockEncounterSourceCred := &models.SourceCredential{ModelBase: models.ModelBase{ID: encounterSourceID}, UserID: userID}
+		mockPrimaryResourceToUnlinkSourceCred := &models.SourceCredential{ModelBase: models.ModelBase{ID: resourceToUnlinkSourceID}, UserID: userID}
+
+		directAssocEncToRes := models.RelatedResource{
+			ResourceBaseUserID:                userID,
+			ResourceBaseSourceID:              encounterSourceID,
+			ResourceBaseSourceResourceType:    "Encounter",
+			ResourceBaseSourceResourceID:      encounterId,
+			RelatedResourceUserID:             userID,
+			RelatedResourceSourceID:           resourceToUnlinkSourceID,
+			RelatedResourceSourceResourceType: resourceToUnlinkType,
+			RelatedResourceSourceResourceID:   resourceToUnlinkId,
+		}
+		directAssocResToEnc := models.RelatedResource{
+			ResourceBaseUserID:                userID,
+			ResourceBaseSourceID:              resourceToUnlinkSourceID,
+			ResourceBaseSourceResourceType:    resourceToUnlinkType,
+			ResourceBaseSourceResourceID:      resourceToUnlinkId,
+			RelatedResourceUserID:             userID,
+			RelatedResourceSourceID:           encounterSourceID,
+			RelatedResourceSourceResourceType: "Encounter",
+			RelatedResourceSourceResourceID:   encounterId,
+		}
+
+		sharedNeighborResourceID := "cond-shared-789"
+		sharedNeighborResourceType := "Condition"
+		assocEncToSharedNeighbor := models.RelatedResource{
+			ResourceBaseUserID:                userID,
+			ResourceBaseSourceID:              encounterSourceID,
+			ResourceBaseSourceResourceType:    "Encounter",
+			ResourceBaseSourceResourceID:      encounterId,
+			RelatedResourceUserID:             userID,
+			RelatedResourceSourceID:           sharedNeighborSourceID,
+			RelatedResourceSourceResourceType: sharedNeighborResourceType,
+			RelatedResourceSourceResourceID:   sharedNeighborResourceID,
+		}
+
+		mockEncounterAssocs := []models.RelatedResource{assocEncToSharedNeighbor}
+
+		assocPrimaryToSharedNeighbor := models.RelatedResource{
+			ResourceBaseUserID:                userID,
+			ResourceBaseSourceID:              resourceToUnlinkSourceID,
+			ResourceBaseSourceResourceType:    resourceToUnlinkType,
+			ResourceBaseSourceResourceID:      resourceToUnlinkId,
+			RelatedResourceUserID:             userID,
+			RelatedResourceSourceID:           sharedNeighborSourceID,
+			RelatedResourceSourceResourceType: sharedNeighborResourceType,
+			RelatedResourceSourceResourceID:   sharedNeighborResourceID,
+		}
+		mockPrimaryResourceAssocs := []models.RelatedResource{assocPrimaryToSharedNeighbor}
+
+		expectedAssociationsToRemove := []models.RelatedResource{directAssocEncToRes, directAssocResToEnc, assocEncToSharedNeighbor}
+
+		mockDB.EXPECT().GetResourceByResourceTypeAndId(gomock.Any(), "Encounter", encounterId).Return(mockEncounter, nil)
+		mockDB.EXPECT().GetResourceByResourceTypeAndId(gomock.Any(), resourceToUnlinkType, resourceToUnlinkId).Return(mockPrimaryResourceToUnlink, nil)
+		mockDB.EXPECT().GetSource(gomock.Any(), encounterSourceID.String()).Return(mockEncounterSourceCred, nil)
+		mockDB.EXPECT().GetSource(gomock.Any(), resourceToUnlinkSourceID.String()).Return(mockPrimaryResourceToUnlinkSourceCred, nil)
+
+		mockDB.EXPECT().FindAllResourceAssociations(gomock.Any(), mockEncounterSourceCred, "Encounter", encounterId).Return(mockEncounterAssocs, nil)
+		mockDB.EXPECT().FindAllResourceAssociations(gomock.Any(), mockPrimaryResourceToUnlinkSourceCred, resourceToUnlinkType, resourceToUnlinkId).Return(mockPrimaryResourceAssocs, nil)
+
+		var capturedAssociations []models.RelatedResource
+		mockDB.EXPECT().RemoveBulkResourceAssociations(gomock.Any(), gomock.Any()).
+			DoAndReturn(func(_ context.Context, associations []models.RelatedResource) (int64, error) {
+				capturedAssociations = associations
+				return int64(len(expectedAssociationsToRemove)), nil
+			}).Times(1)
+
+		EncounterUnlinkResource(ctx)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.ElementsMatch(t, expectedAssociationsToRemove, capturedAssociations, "The list of associations to remove is not as expected")
+
+		var responseBody map[string]interface{}
+		err := json.Unmarshal(w.Body.Bytes(), &responseBody)
+		require.NoError(t, err)
+
+		success, ok := responseBody["success"].(bool)
+		assert.True(t, ok, "Response 'success' field is not a boolean or not present")
+		assert.True(t, success, "Response 'success' field was not true")
+
+		rowsAffected, ok := responseBody["rowsAffected"].(float64)
+		assert.True(t, ok, "Response 'rowsAffected' field is not a number or not present")
+		assert.Equal(t, float64(len(expectedAssociationsToRemove)), rowsAffected, "Response 'rowsAffected' does not match")
+	})
+
+	suite.T().Run("should return error if encounter not found", func(t *testing.T) {
+		ctx, w, mockDB := suite.setupTestContextWithMocks(t)
+
+		encounterId := "nonexistent-enc-123"
+		resourceId := "any-res-456"
+		resourceType := "Observation"
+
+		ctx.Params = gin.Params{
+			{Key: "encounterId", Value: encounterId},
+			{Key: "resourceId", Value: resourceId},
+			{Key: "resourceType", Value: resourceType},
+		}
+
+		mockDB.EXPECT().GetResourceByResourceTypeAndId(gomock.Any(), "Encounter", encounterId).
+			Return(nil, fmt.Errorf("simulated db error: record not found")).
+			Times(1)
+
+		EncounterUnlinkResource(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+
+		var responseBody map[string]interface{}
+		err := json.Unmarshal(w.Body.Bytes(), &responseBody)
+		require.NoError(t, err)
+
+		success, ok := responseBody["success"].(bool)
+		assert.True(t, ok, "Response 'success' field is not a boolean or not present")
+		assert.False(t, success, "Response 'success' field was not false")
+
+		errMsg, ok := responseBody["error"].(string)
+		assert.True(t, ok, "Response 'error' field is not a string or not present")
+		assert.Equal(t, "could not find encounter", errMsg)
+	})
+
+	suite.T().Run("should return error if related resource not found", func(t *testing.T) {
+		ctx, w, mockDB := suite.setupTestContextWithMocks(t)
+
+		encounterId := "existing-enc-789"
+		resourceId := "nonexistent-res-012"
+		resourceType := "Procedure"
+
+		ctx.Params = gin.Params{
+			{Key: "encounterId", Value: encounterId},
+			{Key: "resourceId", Value: resourceId},
+			{Key: "resourceType", Value: resourceType},
+		}
+
+		mockDB.EXPECT().GetResourceByResourceTypeAndId(gomock.Any(), "Encounter", encounterId).
+			Return(&models.ResourceBase{}, nil).
+			Times(1)
+		mockDB.EXPECT().GetResourceByResourceTypeAndId(gomock.Any(), resourceType, resourceId).
+			Return(nil, fmt.Errorf("simulated db error: related resource not found")).
+			Times(1)
+
+		EncounterUnlinkResource(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+
+		var responseBody map[string]interface{}
+		err := json.Unmarshal(w.Body.Bytes(), &responseBody)
+		require.NoError(t, err)
+
+		success, ok := responseBody["success"].(bool)
+		assert.True(t, ok, "Response 'success' field is not a boolean or not present")
+		assert.False(t, success, "Response 'success' field was not false")
+
+		errMsg, ok := responseBody["error"].(string)
+		assert.True(t, ok, "Response 'error' field is not a string or not present")
+		assert.Equal(t, "could not find related resource", errMsg)
+	})
+
+	suite.T().Run("should return error if RemoveBulkResourceAssociations fails", func(t *testing.T) {
+		ctx, w, mockDB := suite.setupTestContextWithMocks(t)
+
+		encounterId := "enc-rm-fail-123"
+		resourceId := "obs-rm-fail-456"
+		resourceType := "Observation"
+
+		ctx.Params = gin.Params{
+			{Key: "encounterId", Value: encounterId},
+			{Key: "resourceId", Value: resourceId},
+			{Key: "resourceType", Value: resourceType},
+		}
+
+		userID := uuid.New()
+		encounterSourceID := uuid.New()
+		resourceSourceID := uuid.New()
+
+		mockEncounterDBID := uuid.New()
+		mockPrimaryResourceToUnlinkDBID := uuid.New()
+
+		mockEncounter := &models.ResourceBase{
+			OriginBase: models.OriginBase{
+				ModelBase:          models.ModelBase{ID: mockEncounterDBID},
+				UserID:             userID,
+				SourceID:           encounterSourceID,
+				SourceResourceType: "Encounter",
+				SourceResourceID:   encounterId,
+			},
+		}
+		mockPrimaryResourceToUnlink := &models.ResourceBase{
+			OriginBase: models.OriginBase{
+				ModelBase:          models.ModelBase{ID: mockPrimaryResourceToUnlinkDBID},
+				UserID:             userID,
+				SourceID:           resourceSourceID,
+				SourceResourceType: resourceType,
+				SourceResourceID:   resourceId,
+			},
+		}
+
+		mockEncounterSourceCred := &models.SourceCredential{ModelBase: models.ModelBase{ID: encounterSourceID}, UserID: userID}
+		mockPrimaryResourceToUnlinkSourceCred := &models.SourceCredential{ModelBase: models.ModelBase{ID: resourceSourceID}, UserID: userID}
+
+		assocEncToSharedNeighbor := models.RelatedResource{}
+		mockEncounterAssocs := []models.RelatedResource{assocEncToSharedNeighbor}
+		assocPrimaryToSharedNeighbor := models.RelatedResource{}
+		mockPrimaryResourceAssocs := []models.RelatedResource{assocPrimaryToSharedNeighbor}
+
+		mockDB.EXPECT().GetResourceByResourceTypeAndId(gomock.Any(), "Encounter", encounterId).Return(mockEncounter, nil)
+		mockDB.EXPECT().GetResourceByResourceTypeAndId(gomock.Any(), resourceType, resourceId).Return(mockPrimaryResourceToUnlink, nil)
+		mockDB.EXPECT().GetSource(gomock.Any(), encounterSourceID.String()).Return(mockEncounterSourceCred, nil)
+		mockDB.EXPECT().GetSource(gomock.Any(), resourceSourceID.String()).Return(mockPrimaryResourceToUnlinkSourceCred, nil)
+		mockDB.EXPECT().FindAllResourceAssociations(gomock.Any(), mockEncounterSourceCred, "Encounter", encounterId).Return(mockEncounterAssocs, nil)
+		mockDB.EXPECT().FindAllResourceAssociations(gomock.Any(), mockPrimaryResourceToUnlinkSourceCred, resourceType, resourceId).Return(mockPrimaryResourceAssocs, nil)
+
+		mockDB.EXPECT().RemoveBulkResourceAssociations(gomock.Any(), gomock.Any()).
+			Return(int64(0), fmt.Errorf("simulated db error during bulk remove")).
+			Times(1)
+
+		EncounterUnlinkResource(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+
+		var responseBody map[string]interface{}
+		err := json.Unmarshal(w.Body.Bytes(), &responseBody)
+		require.NoError(t, err)
+
+		success, ok := responseBody["success"].(bool)
+		assert.True(t, ok, "Response 'success' field is not a boolean or not present")
+		assert.False(t, success, "Response 'success' field was not false")
+
+		errMsg, ok := responseBody["error"].(string)
+		assert.True(t, ok, "Response 'error' field is not a string or not present")
+
+		assert.Equal(t, "could not remove resource associations", errMsg)
+	})
+
+}
+
+func (suite *ResourceRelatedHandlerTestSuite) setupTestContextWithMocks(t *testing.T) (*gin.Context, *httptest.ResponseRecorder, *mock_database.MockDatabaseRepository) {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+
+	mockDB := mock_database.NewMockDatabaseRepository(suite.MockCtrl)
+
+	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", t.Name()))
+	ctx.Set(pkg.ContextKeyTypeDatabase, mockDB)
+	ctx.Set(pkg.ContextKeyTypeConfig, suite.AppConfig)
+	ctx.Set(pkg.ContextKeyTypeEventBusServer, suite.AppEventBus)
+	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	return ctx, w, mockDB
 }
 
 // https://stackoverflow.com/a/56696333/1157633
