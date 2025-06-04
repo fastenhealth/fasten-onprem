@@ -113,7 +113,7 @@ export class MedicalRecordWizardEditLabResultsComponent implements OnInit {
       }
     })
 
-    let coding = this.diagnosticReport.code?.coding?.[0]
+    let coding = this.diagnosticReport?.code?.coding?.[0]
     if (coding) {
       this.labPanelTypeaheadForm.get('data').setValue({
         id: coding.code,
