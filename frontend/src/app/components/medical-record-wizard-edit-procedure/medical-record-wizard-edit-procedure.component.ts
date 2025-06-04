@@ -62,6 +62,12 @@ export class MedicalRecordWizardEditProcedureComponent implements OnInit {
   }
 
   private populateForm(procedure: ProcedureModel): void {
+    if (procedure?.code) {
+      if (!procedure.code.text && procedure.code.coding?.[0].display) {
+        procedure.code.text = procedure.code.coding?.[0].display
+      }
+      this.procedureForm.get('data').setValue(procedure?.code)
+    }
     this.procedureForm.get('data').setValue(procedure?.code)
 
     this.procedureForm.get('whendone').setValue(this.convertToNgbDateStruct(procedure?.performed_datetime))
@@ -111,28 +117,21 @@ export class MedicalRecordWizardEditProcedureComponent implements OnInit {
       procedure.note = [{ text: this.procedureForm.get('comment').value }]
     }
 
-    if (this.procedureForm.get('performer').value) {
-      if (procedure.performer.length == 0) {
-        procedure.performer = [{
-          'actor': {
-            'reference': generateReferenceUriFromResourceOrReference(this.procedureForm.get('performer').value)
-          }
-        }]
-      } else {
-        procedure.performer[0]['actor']['reference'] = generateReferenceUriFromResourceOrReference(this.procedureForm.get('performer').value)
+    procedure.performer = [{
+      'actor': {
+        'reference': procedure.performer?.[0]?.actor?.reference
+      },
+      'onBehalfOf': {
+        'reference': procedure.performer?.[0]?.onBehalfOf?.reference
       }
+    }]
+
+    if (this.procedureForm.get('performer').value) {
+      procedure.performer[0].actor.reference = generateReferenceUriFromResourceOrReference(this.procedureForm.get('performer').value)
     }
 
     if (this.procedureForm.get('location').value) {
-      if (procedure.performer.length == 0) {
-        procedure.performer = [{
-          'onBehalfOf': {
-            'reference': generateReferenceUriFromResourceOrReference(this.procedureForm.get('location').value)
-          }
-        }]
-      } else {
-        procedure.performer[0]['onBehalfOf']['reference'] = generateReferenceUriFromResourceOrReference(this.procedureForm.get('location').value)
-      }
+      procedure.performer[0].onBehalfOf.reference = generateReferenceUriFromResourceOrReference(this.procedureForm.get('location').value)
     }
 
     this.activeModal.close(procedure);

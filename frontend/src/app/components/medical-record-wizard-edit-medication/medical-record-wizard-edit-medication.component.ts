@@ -90,6 +90,7 @@ export class MedicalRecordWizardEditMedicationComponent implements OnInit {
     medication.code = this.medicationForm.get("data").value
     if (medication.code?.text) {
       medication.sort_title = medication.code.text
+      medication.title = medication.code.text
     }
     
     let medicationRequest = this.medicationRequest

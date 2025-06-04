@@ -538,6 +538,7 @@ export function OrganizationToR4Organization(organization: OrganizationModel): O
 
 export function UpdateProcedureToR4Procedure(updateProcedure: ProcedureModel): Procedure {
   return {
+    status: updateProcedure.status,
     code: updateProcedure.code,
     performedDateTime: updateProcedure.performed_datetime,
     performer: updateProcedure.performer,
@@ -559,6 +560,9 @@ export function UpdateMedicationRequestToR4MedicationRequest(updateMedRequest: M
     dosageInstruction: updateMedRequest.dosage_instruction,
     medicationCodeableConcept: {
       coding: updateMedication.code.coding
+    },
+    medicationReference: {
+      reference: `Medication/${updateMedication.source_resource_id}`
     }
   } as MedicationRequest
 }
