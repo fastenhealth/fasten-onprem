@@ -160,9 +160,7 @@ func GetResourceFhirGraph(c *gin.Context) {
 }
 
 func UpdateResourceFhir(c *gin.Context) {
-	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
-	logger.Print("BLEBLE")
 
 	resourceType := strings.Trim(c.Param("resourceType"), "/")
 	resourceId := strings.Trim(c.Param("resourceId"), "/")

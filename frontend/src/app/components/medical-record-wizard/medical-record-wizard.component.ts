@@ -178,10 +178,6 @@ export class MedicalRecordWizardComponent implements OnInit {
 
     this.form.get("encounter").get('data').setValue(clonedEncounter);
     this.form.get("encounter").get('action').setValue(openEncounterResult.action);
-
-    this.fastenApi.getSources().subscribe((getSourcesResponse) => {
-      console.log(getSourcesResponse)
-    })
   }
 
   addMedication(){
