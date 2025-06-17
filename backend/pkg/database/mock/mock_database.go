@@ -577,6 +577,21 @@ func (mr *MockDatabaseRepositoryMockRecorder) SaveUserSettings(arg0, arg1 interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveUserSettings", reflect.TypeOf((*MockDatabaseRepository)(nil).SaveUserSettings), arg0, arg1)
 }
 
+// UnlinkResourceWithSharedNeighbors mocks base method.
+func (m *MockDatabaseRepository) UnlinkResourceWithSharedNeighbors(ctx context.Context, resourceType, resourceId, relatedResourceType, relatedResourceId string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UnlinkResourceWithSharedNeighbors", ctx, resourceType, resourceId, relatedResourceType, relatedResourceId)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UnlinkResourceWithSharedNeighbors indicates an expected call of UnlinkResourceWithSharedNeighbors.
+func (mr *MockDatabaseRepositoryMockRecorder) UnlinkResourceWithSharedNeighbors(ctx, resourceType, resourceId, relatedResourceType, relatedResourceId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnlinkResourceWithSharedNeighbors", reflect.TypeOf((*MockDatabaseRepository)(nil).UnlinkResourceWithSharedNeighbors), ctx, resourceType, resourceId, relatedResourceType, relatedResourceId)
+}
+
 // UpdateBackgroundJob mocks base method.
 func (m *MockDatabaseRepository) UpdateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error {
 	m.ctrl.T.Helper()

@@ -707,7 +707,7 @@ func (gr *GormRepository) FindResourceAssociationsByTypeAndId(ctx context.Contex
 	return relatedResources, result.Error
 }
 
-// find all associations pointing TO the specified target resource
+// find all associations pointing TO and FROM the specified target resource
 func (gr *GormRepository) FindAllResourceAssociations(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string) ([]models.RelatedResource, error) {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {

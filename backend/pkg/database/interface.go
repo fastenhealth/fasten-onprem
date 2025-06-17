@@ -75,4 +75,6 @@ type DatabaseRepository interface {
 		targetResourceType string,
 		targetResourceId string,
 	) error
+
+	UnlinkResourceWithSharedNeighbors(ctx context.Context, resourceType string, resourceId string, relatedResourceType string, relatedResourceId string) (int64, error) 
 }
