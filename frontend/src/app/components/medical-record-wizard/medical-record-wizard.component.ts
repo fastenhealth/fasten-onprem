@@ -89,6 +89,7 @@ export class MedicalRecordWizardComponent implements OnInit {
   active = 'encounter';
   submitWizardLoading = false;
 
+  fastenSourceId = '';
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -117,6 +118,12 @@ export class MedicalRecordWizardComponent implements OnInit {
     if(this.existingEncounter){
       this.addEncounter({data: this.existingEncounter, action: 'find'});
     }
+
+    this.fastenApi.getSources().subscribe((sources) => {
+      let fastenSource = sources.find((source) => source.platform_type === 'fasten')
+
+      this.fastenSourceId = fastenSource.id
+    })
   }
 
   //<editor-fold desc="Getters">
@@ -171,6 +178,10 @@ export class MedicalRecordWizardComponent implements OnInit {
 
     this.form.get("encounter").get('data').setValue(clonedEncounter);
     this.form.get("encounter").get('action').setValue(openEncounterResult.action);
+
+    this.fastenApi.getSources().subscribe((getSourcesResponse) => {
+      console.log(getSourcesResponse)
+    })
   }
 
   addMedication(){
