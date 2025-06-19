@@ -1,15 +1,19 @@
 package handler
 
 import (
+	"encoding/json"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
+	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"net/http"
-	"strconv"
-	"strings"
 )
 
 func QueryResourceFhir(c *gin.Context) {
@@ -153,4 +157,70 @@ func GetResourceFhirGraph(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": map[string]interface{}{
 		"results": resourceListDictionary,
 	}})
+}
+
+func UpdateResourceFhir(c *gin.Context) {
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	resourceType := strings.Trim(c.Param("resourceType"), "/")
+	resourceId := strings.Trim(c.Param("resourceId"), "/")
+
+	type UpdatePayload struct {
+		ResourceRaw json.RawMessage `json:"resource_raw"`
+		SortTitle   string          `json:"sort_title"`
+		SortDate    string          `json:"sort_date"`
+	}
+	var payload UpdatePayload
+	err := c.ShouldBindJSON(&payload)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "invalid request payload"})
+		return
+	}
+
+	resource, err := databaseRepo.GetResourceByResourceTypeAndId(c, resourceType, resourceId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not find resource"})
+		return
+	}
+
+	sourceCredential, err := databaseRepo.GetSource(c, resource.SourceID.String())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not find Fasten source for resource"})
+		return
+	}
+
+	resourceToUpsert := sourceModels.RawResourceFhir{
+		SourceResourceType: resourceType,
+		SourceResourceID: resourceId,
+		ResourceRaw: payload.ResourceRaw,
+		SortTitle: &payload.SortTitle,
+		SortDate: parseDateTimeWithFallback(&payload.SortDate),
+	}
+
+	_, updateError := databaseRepo.UpsertRawResource(c, sourceCredential, resourceToUpsert)
+	if updateError != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to update resource"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true})
+}
+
+func parseDateTimeWithFallback(dateTime *string) *time.Time {
+	if dateTime == nil {
+		return nil
+	}
+	var parsedDateTime time.Time
+	var err error
+	parsedDateTime, err = time.Parse(time.RFC3339, *dateTime)
+	if err != nil {
+		parsedDateTime, err = time.Parse("2006-01-02T15:04", *dateTime)
+		if err != nil {
+			parsedDateTime, err = time.Parse("2006-01-02", *dateTime)
+			if err != nil {
+				return nil
+			}
+		}
+	}
+	return &parsedDateTime
 }

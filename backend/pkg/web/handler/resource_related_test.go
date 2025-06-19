@@ -5,17 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg"
-	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
-	"github.com/gin-gonic/gin"
-	"github.com/golang/mock/gomock"
-	"github.com/sirupsen/logrus"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 	"io"
 	"io/ioutil"
 	"log"
@@ -24,6 +13,19 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
+	mock_database "github.com/fastenhealth/fasten-onprem/backend/pkg/database/mock"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/gin-gonic/gin"
+	"github.com/golang/mock/gomock"
+	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 )
 
 // Go through this page to understand how this file is structured.
@@ -113,6 +115,160 @@ func (suite *ResourceRelatedHandlerTestSuite) TestResourceRelatedHandlerTestSuit
 	assert.EqualValues(suite.T(), http.StatusOK, w.Code)
 	assert.Equal(suite.T(), summary["TotalResources"], float64(3))
 
+}
+func (suite *ResourceRelatedHandlerTestSuite) TestEncounterUnlinkResource() {
+	suite.T().Run("should successfully unlink resource", func(t *testing.T) {
+		ctx, w, mockDB := suite.setupTestContextWithMocks(t)
+
+		encounterId := "enc-success-123"
+		resourceToUnlinkId := "obs-success-456"
+		resourceToUnlinkType := "Observation"
+		expectedRowsAffected := int64(3) // Example number of rows affected
+
+		ctx.Params = gin.Params{
+			{Key: "encounterId", Value: encounterId},
+			{Key: "resourceId", Value: resourceToUnlinkId},
+			{Key: "resourceType", Value: resourceToUnlinkType},
+		}
+
+		mockDB.EXPECT().UnlinkResourceWithSharedNeighbors(gomock.Any(), "Encounter", encounterId, resourceToUnlinkType, resourceToUnlinkId).
+			Return(expectedRowsAffected, nil).
+			Times(1)
+
+		EncounterUnlinkResource(ctx)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+
+		var responseBody map[string]interface{}
+		err := json.Unmarshal(w.Body.Bytes(), &responseBody)
+		require.NoError(t, err)
+
+		success, ok := responseBody["success"].(bool)
+		assert.True(t, ok, "Response 'success' field is not a boolean or not present")
+		assert.True(t, success, "Response 'success' field was not true")
+
+		rowsAffected, ok := responseBody["rowsAffected"].(float64)
+		assert.True(t, ok, "Response 'rowsAffected' field is not a number or not present")
+		assert.Equal(t, float64(expectedRowsAffected), rowsAffected, "Response 'rowsAffected' does not match")
+	})
+
+	suite.T().Run("should return error if encounter not found", func(t *testing.T) {
+		ctx, w, mockDB := suite.setupTestContextWithMocks(t)
+
+		encounterId := "nonexistent-enc-123"
+		resourceId := "any-res-456"
+		resourceType := "Observation"
+
+		ctx.Params = gin.Params{
+			{Key: "encounterId", Value: encounterId},
+			{Key: "resourceId", Value: resourceId},
+			{Key: "resourceType", Value: resourceType},
+		}
+
+		mockDB.EXPECT().UnlinkResourceWithSharedNeighbors(gomock.Any(), "Encounter", encounterId, resourceType, resourceId).
+			Return(int64(0), fmt.Errorf("simulated repo error: primary resource not found")).
+			Times(1)
+
+		EncounterUnlinkResource(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+
+		var responseBody map[string]interface{}
+		err := json.Unmarshal(w.Body.Bytes(), &responseBody)
+		require.NoError(t, err)
+
+		success, ok := responseBody["success"].(bool)
+		assert.True(t, ok, "Response 'success' field is not a boolean or not present")
+		assert.False(t, success, "Response 'success' field was not false")
+
+		errMsg, ok := responseBody["error"].(string)
+		assert.True(t, ok, "Response 'error' field is not a string or not present")
+		assert.Equal(t, "simulated repo error: primary resource not found", errMsg)
+	})
+
+	suite.T().Run("should return error if related resource not found", func(t *testing.T) {
+		ctx, w, mockDB := suite.setupTestContextWithMocks(t)
+
+		encounterId := "existing-enc-789"
+		resourceId := "nonexistent-res-012"
+		resourceType := "Procedure"
+
+		ctx.Params = gin.Params{
+			{Key: "encounterId", Value: encounterId},
+			{Key: "resourceId", Value: resourceId},
+			{Key: "resourceType", Value: resourceType},
+		}
+
+		mockDB.EXPECT().UnlinkResourceWithSharedNeighbors(gomock.Any(), "Encounter", encounterId, resourceType, resourceId).
+			Return(int64(0), fmt.Errorf("simulated repo error: secondary resource not found")).
+			Times(1)
+
+		EncounterUnlinkResource(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+
+		var responseBody map[string]interface{}
+		err := json.Unmarshal(w.Body.Bytes(), &responseBody)
+		require.NoError(t, err)
+
+		success, ok := responseBody["success"].(bool)
+		assert.True(t, ok, "Response 'success' field is not a boolean or not present")
+		assert.False(t, success, "Response 'success' field was not false")
+
+		errMsg, ok := responseBody["error"].(string)
+		assert.True(t, ok, "Response 'error' field is not a string or not present")
+		assert.Equal(t, "simulated repo error: secondary resource not found", errMsg)
+	})
+
+	suite.T().Run("should return error if repository unlink operation fails", func(t *testing.T) {
+		ctx, w, mockDB := suite.setupTestContextWithMocks(t)
+
+		encounterId := "enc-repo-fail-123"
+		resourceId := "obs-repo-fail-456"
+		resourceType := "Observation"
+
+		ctx.Params = gin.Params{
+			{Key: "encounterId", Value: encounterId},
+			{Key: "resourceId", Value: resourceId},
+			{Key: "resourceType", Value: resourceType},
+		}
+
+		mockDB.EXPECT().UnlinkResourceWithSharedNeighbors(gomock.Any(), "Encounter", encounterId, resourceType, resourceId).
+			Return(int64(0), fmt.Errorf("simulated db error during unlink")).
+			Times(1)
+
+		EncounterUnlinkResource(ctx)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+
+		var responseBody map[string]interface{}
+		err := json.Unmarshal(w.Body.Bytes(), &responseBody)
+		require.NoError(t, err)
+
+		success, ok := responseBody["success"].(bool)
+		assert.True(t, ok, "Response 'success' field is not a boolean or not present")
+		assert.False(t, success, "Response 'success' field was not false")
+
+		errMsg, ok := responseBody["error"].(string)
+		assert.True(t, ok, "Response 'error' field is not a string or not present")
+		assert.Equal(t, "simulated db error during unlink", errMsg)
+	})
+
+}
+
+func (suite *ResourceRelatedHandlerTestSuite) setupTestContextWithMocks(t *testing.T) (*gin.Context, *httptest.ResponseRecorder, *mock_database.MockDatabaseRepository) {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+
+	mockDB := mock_database.NewMockDatabaseRepository(suite.MockCtrl)
+
+	ctx.Set(pkg.ContextKeyTypeLogger, logrus.WithField("test", t.Name()))
+	ctx.Set(pkg.ContextKeyTypeDatabase, mockDB)
+	ctx.Set(pkg.ContextKeyTypeConfig, suite.AppConfig)
+	ctx.Set(pkg.ContextKeyTypeEventBusServer, suite.AppEventBus)
+	ctx.Set(pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	return ctx, w, mockDB
 }
 
 // https://stackoverflow.com/a/56696333/1157633
