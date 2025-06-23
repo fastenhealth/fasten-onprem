@@ -33,7 +33,9 @@
               </p>
             </div>
             <div *ngIf="existingEncounter; else addEncounter">
-              <fhir-card [showDetails]="false" [displayModel]="existingEncounter" [isCollapsed]="true"></fhir-card>
+              <fhir-card [showDetails]="false" [displayModel]="existingEncounter" [isCollapsed]="true" 
+                [isEditable]="fastenSourceId == existingEncounter.source_id" 
+                (editRequested)="openEditEncounterModal(existingEncounter)"></fhir-card>
             </div>
             <ng-template #addEncounter>
               <div class="row pt-2">
@@ -57,7 +59,11 @@
               </p>
             </div>
 
-            <fhir-card *ngFor="let medication of existingEncounter?.related_resources?.['Medication']" [showDetails]="false" [displayModel]="medication" [isCollapsed]="true"></fhir-card>
+            <fhir-card *ngFor="let medication of existingEncounter?.related_resources?.['Medication']" 
+                [showDetails]="false" [displayModel]="medication" [isCollapsed]="true" 
+                [isEditable]="fastenSourceId == medication.source_id"
+                (unlinkRequested)="handleUnlinkRequested(medication)" 
+                (editRequested)="openEditMedicationModal(medication)"></fhir-card>
 
             <ng-container formArrayName="medications">
               <div class="card pd-20" [formGroup]="medicationGroup" *ngFor="let medicationGroup of medications.controls; let i = index">
@@ -157,7 +163,11 @@
               </p>
             </div>
 
-            <fhir-card *ngFor="let procedure of existingEncounter?.related_resources?.['Procedure']" [showDetails]="false" [displayModel]="procedure" [isCollapsed]="true"></fhir-card>
+            <fhir-card *ngFor="let procedure of existingEncounter?.related_resources?.['Procedure']"
+              [showDetails]="false" [displayModel]="procedure" [isCollapsed]="true" 
+              [isEditable]="fastenSourceId == procedure.source_id"
+              (unlinkRequested)="handleUnlinkRequested(procedure)" 
+              (editRequested)="openEditProcedureModal(procedure)"></fhir-card>
 
 
             <ng-container formArrayName="procedures">
@@ -256,7 +266,11 @@
               <p class="card-text mg-b-10">A practitioner is a healthcare professional, such as a doctor or nurse, who is trained and qualified to provide medical care and support to help you stay healthy or manage any health concerns you may have.</p>
             </div>
 
-            <fhir-card *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']" [showDetails]="false" [displayModel]="practitioner" [isCollapsed]="true"></fhir-card>
+            <fhir-card *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']" 
+              [showDetails]="false" [displayModel]="practitioner" [isCollapsed]="true" 
+              [isEditable]="fastenSourceId == practitioner.source_id"
+              (unlinkRequested)="handleUnlinkRequested(practitioner)" 
+              (editRequested)="openEditPractitionerModal(practitioner)"></fhir-card>
 
             <ng-container formArrayName="practitioners">
               <ng-container *ngFor="let practitionerGroup of practitioners.controls; let i = index">
@@ -293,7 +307,11 @@
               </p>
             </div>
 
-            <fhir-card *ngFor="let organization of existingEncounter?.related_resources?.['Organization']" [showDetails]="false" [displayModel]="organization" [isCollapsed]="true"></fhir-card>
+            <fhir-card *ngFor="let organization of existingEncounter?.related_resources?.['Organization']" 
+              [showDetails]="false" [displayModel]="organization" [isCollapsed]="true" 
+              [isEditable]="fastenSourceId == organization.source_id"
+              (unlinkRequested)="handleUnlinkRequested(organization)" 
+              (editRequested)="openEditOrganizationModal(organization)"></fhir-card>
 
             <ng-container formArrayName="organizations">
               <ng-container *ngFor="let organizationGroup of organizations.controls; let i = index">
@@ -328,7 +346,11 @@
               </p>
             </div>
 
-            <fhir-card *ngFor="let diagnosticReport of existingEncounter?.related_resources?.['DiagnosticReport']" [showDetails]="false" [displayModel]="diagnosticReport" [isCollapsed]="true"></fhir-card>
+            <fhir-card *ngFor="let diagnosticReport of existingEncounter?.related_resources?.['DiagnosticReport']" 
+              [showDetails]="false" [displayModel]="diagnosticReport" [isCollapsed]="true" 
+              [isEditable]="fastenSourceId == diagnosticReport.source_id"
+              (unlinkRequested)="handleUnlinkRequested(diagnosticReport)" 
+              (editRequested)="openEditLabResultsModal(diagnosticReport)"></fhir-card>
 
             <ng-container formArrayName="labresults">
               <ng-container *ngFor="let labresultsGroup of labresults.controls; let i = index">

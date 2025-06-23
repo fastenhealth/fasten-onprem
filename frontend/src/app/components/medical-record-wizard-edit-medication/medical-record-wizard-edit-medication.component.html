@@ -1,0 +1,75 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-location">Edit Medication</h4>
+
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()"><span
+      aria-hidden="true">×</span></button>
+</div>
+<div class="modal-body">
+
+  <div *ngIf="debugMode" class="alert alert-warning">
+    <pre><code  [highlight]="medicationForm.getRawValue() | json"></code></pre>
+    <strong>Edit Medication Form Status: {{ encounterForm.status }}</strong>
+  </div>
+
+  <div class="row row-sm pd-t-15">
+    <div class="card pd-20" [formGroup]="medicationForm">
+      <div class="row row-sm">
+        <div class="col-lg-8">
+          <p class="mg-b-10">Medication name<span ngbTooltip="required" class="text-danger">*</span></p>
+          <app-nlm-typeahead formControlName="data" searchType="Medication" [debugMode]="debugMode"></app-nlm-typeahead>
+        </div><!-- col -->
+        <div class="col-lg-4 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">Status<span ngbTooltip="required" class="text-danger">*</span></p>
+          <select formControlName="status" class="form-control">
+            <option value="" hidden selected>Select Status</option>
+            <option value="active">Active</option>
+            <option value="stopped">Stopped</option>
+          </select>
+        </div><!-- col -->
+        <div class="col-lg-4 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">Dosage</p>
+          <input formControlName="dosage" class="form-control" placeholder="Input box" type="text">
+        </div><!-- col -->
+        <div class="col-lg-4 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">Started<span ngbTooltip="required" class="text-danger">*</span></p>
+          <input formControlName="started" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker
+            #ds="ngbDatepicker" (click)="ds.toggle()">
+        </div><!-- col -->
+        <div class="col-lg-4 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">Prescribing Practitioner<span ngbTooltip="required" class="text-danger">*</span></p>
+          <select class="form-control" formControlName="requester">
+            <option value="" hidden selected>Select Practitioner</option>
+
+            <option *ngFor="let practitioner of practitioners; let i = index" [ngValue]="practitioner">
+              {{practitioner?.name?.[0].displayName}}
+            </option>
+          </select>
+        </div><!-- col -->
+      </div><!-- row -->
+      <div class="row row-sm mg-t-20">
+        <div class="col-lg">
+          <p class="mg-b-10">Instructions</p>
+          <textarea formControlName="instructions" rows="3" class="form-control" placeholder="Textarea"></textarea>
+        </div><!-- col -->
+      </div><!-- row -->
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button [ngClass]="{
+    'btn-outline-dark': !debugMode,
+    'text-dark': !debugMode,
+    'btn-dark':debugMode,
+    'text-white':debugMode
+     }" type="button" class="btn float-left" (click)="debugMode = !debugMode">
+    <i class="fas fa-bug"></i>
+  </button>
+  <button *ngIf="!loading; else spinnerButton" type="button" [class.disabled]="!submitEnabled"
+    class="btn btn-az-primary" (click)="submit()">Edit Medication</button>
+  <ng-template #spinnerButton>
+    <button class="btn btn-primary" type="button" disabled>
+      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      <span class="sr-only">Loading...</span>
+    </button>
+  </ng-template>
+</div>

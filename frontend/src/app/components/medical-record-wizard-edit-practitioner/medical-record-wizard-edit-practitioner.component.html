@@ -1,0 +1,89 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-location">Edit Practitioner</h4>
+
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()"><span
+      aria-hidden="true">×</span></button>
+</div>
+<div class="modal-body">
+
+  <div *ngIf="debugMode" class="alert alert-warning">
+    <pre><code  [highlight]="practitionerForm.getRawValue() | json"></code></pre>
+    <strong>Edit Practitioner Form Status: {{ practitionerForm.status }}</strong>
+  </div>
+
+  <div class="row row-sm pd-t-15">
+    <div class="col-12">
+      <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
+      <form [formGroup]="practitionerTypeaheadForm">
+        <app-nlm-typeahead formControlName="data" searchType="MedicalContactIndividual"
+          [debugMode]="debugMode"></app-nlm-typeahead>
+      </form>
+      <span *ngFor="let extId of practitionerForm.controls['identifier'].getRawValue()"
+        class="badge badge-pill badge-primary">{{extId.type?.coding[0].code}}: {{extId.value}}</span>
+    </div><!-- col -->
+    <ng-container [formGroup]="practitionerForm">
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Type<span ngbTooltip="required" class="text-danger">*</span></p>
+        <app-nlm-typeahead formControlName="profession" searchType="MedicalContactIndividualProfession"
+          [debugMode]="debugMode"></app-nlm-typeahead>
+      </div><!-- col -->
+
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Telephone</p>
+        <input formControlName="phone" class="form-control" placeholder="(123) 456-7890" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Fax</p>
+        <input formControlName="fax" class="form-control" placeholder="(123) 456-7890" type="text">
+      </div><!-- col -->
+      <div class="col-6 mg-t-10 mg-lg-t-0">
+        <p class="mg-b-10">Email</p>
+        <input formControlName="email" class="form-control" placeholder="email@example.com" type="text" email>
+      </div><!-- col -->
+      <ng-container formGroupName="address">
+        <div class="col-12 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">Address</p>
+          <input formControlName="line1" class="form-control" placeholder="Line 1" type="text">
+        </div><!-- col -->
+        <div class="col-12 pd-t-10 mg-t-10 mg-lg-t-0">
+          <input formControlName="line2" class="form-control" placeholder="Line 2" type="text">
+        </div><!-- col -->
+        <div class="col-6 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">City</p>
+          <input formControlName="city" class="form-control" placeholder="City" type="text">
+        </div><!-- col -->
+        <div class="col-6 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">State</p>
+          <input formControlName="state" class="form-control" placeholder="State" type="text">
+        </div><!-- col -->
+        <div class="col-6 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">Zip/Postal</p>
+          <input formControlName="zip" class="form-control" placeholder="Zip" type="text">
+        </div><!-- col -->
+        <div class="col-6 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">Country</p>
+          <app-nlm-typeahead formControlName="country" searchType="Countries"
+            [debugMode]="debugMode"></app-nlm-typeahead>
+        </div><!-- col -->
+      </ng-container>
+    </ng-container>
+  </div>
+</div>
+<div class="modal-footer">
+  <button [ngClass]="{
+    'btn-outline-dark': !debugMode,
+    'text-dark': !debugMode,
+    'btn-dark':debugMode,
+    'text-white':debugMode
+     }" type="button" class="btn float-left" (click)="debugMode = !debugMode">
+    <i class="fas fa-bug"></i>
+  </button>
+  <button *ngIf="!loading; else spinnerButton" type="button" [class.disabled]="!submitEnabled"
+    class="btn btn-az-primary" (click)="submit()">Edit Practitioner</button>
+  <ng-template #spinnerButton>
+    <button class="btn btn-primary" type="button" disabled>
+      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      <span class="sr-only">Loading...</span>
+    </button>
+  </ng-template>
+</div>
