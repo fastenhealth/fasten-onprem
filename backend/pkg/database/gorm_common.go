@@ -15,6 +15,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
+	typesenseClient "github.com/fastenhealth/fasten-onprem/backend/pkg/search"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
 	sourceModel "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/gin-gonic/gin"
@@ -367,8 +368,44 @@ func (gr *GormRepository) UpsertRawResource(ctx context.Context, sourceCredentia
 		}
 	}
 
-	return gr.UpsertResource(ctx, wrappedResourceModel)
+	success, err := gr.UpsertResource(ctx, wrappedResourceModel)
+	if err != nil {
+		return false, err
+	}
 
+	// Add nil checks before launching goroutine
+	if wrappedResourceModel == nil {
+		gr.Logger.Warn("Cannot index nil resource in Typesense")
+		return success, nil
+	}
+
+	if typesenseClient.Client == nil {
+		gr.Logger.Warn("Typesense client is nil, skipping indexing")
+		return success, nil
+	}
+
+	searchClient := &typesenseClient.SearchClient{Client: typesenseClient.Client}
+
+	// Launch goroutine with proper error handling
+	go func(resource *models.ResourceBase) {
+		// Additional safety check inside goroutine
+		if resource == nil {
+			gr.Logger.Warn("Resource is nil in indexing goroutine")
+			return
+		}
+
+		if searchClient == nil {
+			gr.Logger.Warn("SearchClient is nil in indexing goroutine")
+			return
+		}
+
+		err := searchClient.IndexResource(resource)
+		if err != nil {
+			gr.Logger.Warnf("Failed to index resource in Typesense: %v", err)
+		}
+	}(wrappedResourceModel)
+
+	return success, nil
 }
 
 func (gr *GormRepository) UpsertRawResourceAssociation(

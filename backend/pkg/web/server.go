@@ -16,6 +16,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/search"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/handler"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
 	"github.com/gin-gonic/gin"
@@ -49,6 +50,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 	basePath := ae.Config.GetString("web.listen.basepath")
 	ae.Logger.Debugf("basepath: %s", basePath)
+	searchHandler := &handler.GormRepository{}
 
 	base := r.Group(basePath)
 	{
@@ -118,6 +120,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.POST("/resource/composition", handler.CreateResourceComposition)
 				secure.POST("/resource/related", handler.CreateRelatedResources)
 				secure.DELETE("/encounter/:encounterId/related/:resourceType/:resourceId", handler.EncounterUnlinkResource)
+				secure.GET("/resource/search", searchHandler.SearchResourcesHandler)
 
 				secure.GET("/dashboards", handler.GetDashboard)
 				secure.POST("/dashboards", handler.AddDashboardLocation)
@@ -300,6 +303,11 @@ func (ae *AppEngine) Start() error {
 		return err
 	}
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
+
+	err = search.Init(ae.Logger)
+	if err != nil {
+		return fmt.Errorf("failed to initialize Typesense: %w", err)
+	}
 
 	return r.Run(fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port")))
 }
