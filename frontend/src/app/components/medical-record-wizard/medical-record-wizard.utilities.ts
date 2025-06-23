@@ -15,14 +15,16 @@ import {
   Organization,
   Practitioner, MedicationRequest, Patient, Encounter, DocumentReference, Media, DiagnosticReport, Reference, Binary, HumanName, Observation
 } from 'fhir/r4';
-import {uuidV4} from '../../../lib/utils/uuid';
-import {OrganizationModel} from '../../../lib/models/resources/organization-model';
-import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
-import {EncounterModel} from '../../../lib/models/resources/encounter-model';
-import {ReferenceModel} from '../../../lib/models/datatypes/reference-model';
-import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
-import {generateReferenceUriFromResourceOrReference} from '../../../lib/utils/bundle_references';
-import {HumanNameModel} from '../../../lib/models/datatypes/human-name-model';
+import { uuidV4 } from '../../../lib/utils/uuid';
+import { OrganizationModel } from '../../../lib/models/resources/organization-model';
+import { PractitionerModel } from '../../../lib/models/resources/practitioner-model';
+import { EncounterModel } from '../../../lib/models/resources/encounter-model';
+import { ReferenceModel } from '../../../lib/models/datatypes/reference-model';
+import { FastenDisplayModel } from '../../../lib/models/fasten/fasten-display-model';
+import { generateReferenceUriFromResourceOrReference } from '../../../lib/utils/bundle_references';
+import { HumanNameModel } from '../../../lib/models/datatypes/human-name-model';
+import { MedicationModel, ProcedureModel } from 'src/lib/public-api';
+import { MedicationRequestModel } from 'src/lib/models/resources/medication-request-model';
 
 export interface WizardFhirResourceWrapper<T extends OrganizationModel | PractitionerModel | EncounterModel | Bundle> {
   data: T,
@@ -42,8 +44,8 @@ export function GenerateR4ResourceLookup(resourceCreate: MedicalRecordWizardForm
 
   resourceStorage = resourceCreateEncounterToR4Encounter(resourceStorage, resourceCreate.encounter)
 
-  for(let attachment of resourceCreate.attachments) {
-    if(attachment.file_type == 'application/dicom' ||
+  for (let attachment of resourceCreate.attachments) {
+    if (attachment.file_type == 'application/dicom' ||
       attachment.category.id == '18726-0' || //Radiology studies (set)
       attachment.category.id == '27897-8' || //	Neuromuscular electrophysiology studies (set)
       attachment.category.id == '18748-4' // 	Diagnostic imaging study
@@ -56,23 +58,23 @@ export function GenerateR4ResourceLookup(resourceCreate: MedicalRecordWizardForm
     }
   }
 
-  for(let organization of resourceCreate.organizations) {
+  for (let organization of resourceCreate.organizations) {
     resourceStorage = resourceCreateOrganizationToR4Organization(resourceStorage, organization)
   }
-  for(let practitioner of resourceCreate.practitioners) {
+  for (let practitioner of resourceCreate.practitioners) {
     resourceStorage = resourceCreatePractitionerToR4Practitioner(resourceStorage, practitioner)
   }
-  for(let medication of resourceCreate.medications) {
+  for (let medication of resourceCreate.medications) {
     resourceStorage = resourceCreateMedicationToR4MedicationRequest(resourceStorage, medication)
   }
-  for(let procedure of resourceCreate.procedures) {
+  for (let procedure of resourceCreate.procedures) {
     resourceStorage = resourceCreateProcedureToR4Procedure(resourceStorage, procedure)
   }
 
 
   //DocumentReference  -> (Optional) Binary
   //DiagnosticReport -> Media
-  for(let labresult of resourceCreate.labresults) {
+  for (let labresult of resourceCreate.labresults) {
     resourceStorage = resourceCreateLabResultsToR4DiagnosticReports(resourceStorage, labresult)
   }
   //ImagingStudy
@@ -181,16 +183,15 @@ function resourceCreateProcedureToR4Procedure(resourceStorage: ResourceStorage, 
   }
 
   let encounterResource = findEncounter(resourceStorage) as Encounter | Reference
-
   let procedureResource = {
     status: "completed",
     resourceType: 'Procedure',
     id: uuidV4(),
     code: {
-      coding:  resourceCreateProcedure.data.identifier || [],
+      coding: resourceCreateProcedure.data.identifier || [],
       text: resourceCreateProcedure.data.identifier?.[0]?.display,
     },
-    performedDateTime: `${new Date(resourceCreateProcedure.whendone.year, resourceCreateProcedure.whendone.month-1,resourceCreateProcedure.whendone.day).toISOString()}`,
+    performedDateTime: `${new Date(resourceCreateProcedure.whendone.year, resourceCreateProcedure.whendone.month - 1, resourceCreateProcedure.whendone.day).toISOString()}`,
     encounter: {
       reference: generateReferenceUriFromResourceOrReference(encounterResource) //Encounter
     },
@@ -272,7 +273,7 @@ function resourceCreatePractitionerToR4Practitioner(resourceStorage: ResourceSto
       active: true,
     } as Practitioner
 
-    if(resourcePractitioner.data.qualification){
+    if (resourcePractitioner.data.qualification) {
       practitionerResource.qualification = [{
         code: {
           coding: resourcePractitioner.data.qualification || []
@@ -311,7 +312,7 @@ function resourceCreateMedicationToR4MedicationRequest(resourceStorage: Resource
     encounter: {
       reference: generateReferenceUriFromResourceOrReference(encounterResource) //Encounter
     },
-    authoredOn: `${new Date(resourceCreateMedication.started.year,resourceCreateMedication.started.month-1,resourceCreateMedication.started.day).toISOString()}`,
+    authoredOn: `${new Date(resourceCreateMedication.started.year, resourceCreateMedication.started.month - 1, resourceCreateMedication.started.day).toISOString()}`,
     requester: {
       reference: resourceCreateMedication.requester // Practitioner
     },
@@ -327,8 +328,8 @@ function resourceCreateMedicationToR4MedicationRequest(resourceStorage: Resource
     ],
     dispenseRequest: {
       validityPeriod: {
-        start: `${new Date(resourceCreateMedication.started.year,resourceCreateMedication.started.month-1,resourceCreateMedication.started.day).toISOString()}`,
-        end: resourceCreateMedication.stopped ? `${new Date(resourceCreateMedication.stopped.year,resourceCreateMedication.stopped.month-1,resourceCreateMedication.stopped.day).toISOString()}` : null,
+        start: `${new Date(resourceCreateMedication.started.year, resourceCreateMedication.started.month - 1, resourceCreateMedication.started.day).toISOString()}`,
+        end: resourceCreateMedication.stopped ? `${new Date(resourceCreateMedication.stopped.year, resourceCreateMedication.stopped.month - 1, resourceCreateMedication.stopped.day).toISOString()}` : null,
       },
     },
   } as MedicationRequest
@@ -460,4 +461,108 @@ function resourceCreateLabResultsToR4DiagnosticReports(resourceStorage: Resource
 function findEncounter(resourceStorage: ResourceStorage): Encounter | Reference {
   let [encounterId] = Object.keys(resourceStorage['Encounter'])
   return resourceStorage['Encounter'][encounterId] as Encounter | Reference
+}
+
+export function EncounterToR4Encounter(encounter: EncounterModel): Encounter {
+  return {
+    resourceType: 'Encounter',
+    id: encounter.source_resource_id,
+    serviceType: encounter.code,
+    status: "finished",
+    // participant: [
+    //   {
+    //     individual: {
+    //       reference: `urn:uuid:${resourceCreateProcedure.performer}` //Practitioner
+    //     }
+    //   }
+    // ],
+    participant: [],
+    period: {
+      start: encounter.period_start,
+      end: encounter.period_end,
+    },
+    reasonReference: [],
+    serviceProvider: {
+      // reference: `urn:uuid:${resourceCreateProcedure.location}` //Organization
+    }
+  } as Encounter
+}
+
+export function PractitionerToR4Practitioner(practitioner: PractitionerModel): Practitioner {
+  let humanName = [] as HumanName[]
+  if (practitioner.name) {
+    humanName = practitioner.name.map((name: HumanNameModel) => {
+      return {
+        family: name.familyName,
+        given: name.givenName.split(', '),
+        suffix: name.suffix.split(', '),
+        text: name.displayName,
+        use: 'official',
+      }
+    })
+  }
+
+  let practitionerResource = {
+    resourceType: 'Practitioner',
+    id: practitioner.source_resource_id,
+    name: humanName,
+    identifier: practitioner.identifier || [],
+    address: practitioner.address || [],
+    telecom: practitioner.telecom || [],
+    active: true,
+  } as Practitioner
+
+  if (practitioner.qualification) {
+    practitionerResource.qualification = [{
+      code: {
+        coding: practitioner.qualification || []
+      },
+    }]
+  }
+
+  return practitionerResource
+}
+
+export function OrganizationToR4Organization(organization: OrganizationModel): Organization {
+  return {
+    resourceType: 'Organization',
+    id: organization.source_resource_id,
+    name: organization.name,
+    identifier: organization.identifier || [],
+    type: organization.type || [],
+    address: organization.addresses || [],
+    telecom: organization.telecom,
+    active: true,
+  } as Organization
+}
+
+export function UpdateProcedureToR4Procedure(updateProcedure: ProcedureModel): Procedure {
+  return {
+    status: updateProcedure.status,
+    code: updateProcedure.code,
+    performedDateTime: updateProcedure.performed_datetime,
+    performer: updateProcedure.performer,
+    note: updateProcedure.note,
+  } as Procedure
+}
+
+export function UpdateMedicationToR4Medication(updateMedication: MedicationModel): Medication {
+  return {
+    code: updateMedication.code,
+  } as Medication
+}
+
+export function UpdateMedicationRequestToR4MedicationRequest(updateMedRequest: MedicationRequestModel, updateMedication: MedicationModel): MedicationRequest {
+  return {
+    status: updateMedRequest.status,
+    authoredOn: updateMedRequest.created,
+    requester: updateMedRequest.requester,
+    dosageInstruction: updateMedRequest.dosage_instruction,
+    medicationCodeableConcept: {
+      coding: updateMedication.code.coding
+    },
+    medicationReference: {
+      reference: `Medication/${updateMedication.source_resource_id}`
+    }
+  } as MedicationRequest
 }

@@ -15,6 +15,7 @@
   (focus)="typeAheadFocusEvent($event)"
   placeholder="Search"
   #instance="ngbTypeahead"
+  [disabled]="disabled"
 />
 <small *ngIf="searching" class="form-text text-muted">searching...</small>
 <div class="invalid-feedback" *ngIf="searchFailed">Sorry, suggestions could not be loaded.</div>

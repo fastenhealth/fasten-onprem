@@ -103,10 +103,13 @@ export class MedicalRecordWizardAddPractitionerComponent implements OnInit {
   private practitionerFormToDisplayModel(form: FormGroup): PractitionerModel {
     let address = new AddressModel(null)
     address.city = form.get('address').get('city').value
-    address.line = [
-      form.get('address').get('line1').value,
-      form.get('address').get('line2').value,
-    ]
+    address.line = []
+    if (form.get('address').get('line1').value) {
+      address.line.push(form.get('address').get('line1').value)
+    }
+    if (form.get('address').get('line2').value) {
+      address.line.push(form.get('address').get('line2').value)
+    }
     address.state = form.get('address').get('state').value
     address.country = form.get('address').get('country').value
     address.postalCode = form.get('address').get('zip').value

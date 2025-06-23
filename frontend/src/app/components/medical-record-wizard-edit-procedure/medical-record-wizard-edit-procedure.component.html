@@ -1,0 +1,73 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-location">Edit Procedure</h4>
+
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss()"><span
+      aria-hidden="true">×</span></button>
+</div>
+<div class="modal-body">
+
+  <div *ngIf="debugMode" class="alert alert-warning">
+    <pre><code  [highlight]="procedureForm.getRawValue() | json"></code></pre>
+    <strong>Edit Procedure Form Status: {{ procedureForm.status }}</strong>
+  </div>
+
+  <div class="row row-sm pd-t-15">
+    <div class="card pd-20" [formGroup]="procedureForm">
+      <div class="row row-sm">
+        <div class="col-lg-8">
+          <p class="mg-b-10">Surgery or Implant<span ngbTooltip="required" class="text-danger">*</span></p>
+          <app-nlm-typeahead formControlName="data" searchType="Procedure" [debugMode]="debugMode"></app-nlm-typeahead>
+        </div><!-- col -->
+        <div class="col-lg-4 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">When done<span ngbTooltip="required" class="text-danger">*</span></p>
+          <input formControlName="whendone" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker
+            #dwd="ngbDatepicker" (click)="dwd.toggle()">
+        </div><!-- col -->
+        <div class="col-lg-6 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">Performed By</p>
+          <select class="form-control" formControlName="performer">
+            <option value="" hidden selected>Select Practitioner</option>
+
+            <option *ngFor="let practitioner of practitioners; let i = index" [ngValue]="practitioner">
+              {{practitioner?.name?.[0].displayName}}
+            </option>
+          </select>
+
+        </div><!-- col -->
+        <div class="col-lg-6 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">Location</p>
+          <select class="form-control" formControlName="location">
+            <option value="" hidden selected>Select Location</option>
+            
+            <option *ngFor="let organization of organizations; let i = index" [ngValue]="organization">
+              {{organization?.name }}
+            </option>
+
+          </select>
+        </div><!-- col -->
+        <div class="col-lg-12 mg-t-10 mg-lg-t-0">
+          <p class="mg-b-10">Comments</p>
+          <textarea formControlName="comment" class="form-control" placeholder="Input box" rows="3"></textarea>
+        </div><!-- col -->
+      </div><!-- row -->
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button [ngClass]="{
+    'btn-outline-dark': !debugMode,
+    'text-dark': !debugMode,
+    'btn-dark':debugMode,
+    'text-white':debugMode
+     }" type="button" class="btn float-left" (click)="debugMode = !debugMode">
+    <i class="fas fa-bug"></i>
+  </button>
+  <button *ngIf="!loading; else spinnerButton" type="button" [class.disabled]="!submitEnabled"
+    class="btn btn-az-primary" (click)="submit()">Edit Procedure</button>
+  <ng-template #spinnerButton>
+    <button class="btn btn-primary" type="button" disabled>
+      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      <span class="sr-only">Loading...</span>
+    </button>
+  </ng-template>
+</div>

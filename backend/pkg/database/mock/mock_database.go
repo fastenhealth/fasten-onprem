@@ -177,6 +177,21 @@ func (mr *MockDatabaseRepositoryMockRecorder) DeleteSource(ctx, sourceId interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSource", reflect.TypeOf((*MockDatabaseRepository)(nil).DeleteSource), ctx, sourceId)
 }
 
+// FindAllResourceAssociations mocks base method.
+func (m *MockDatabaseRepository) FindAllResourceAssociations(ctx context.Context, source *models.SourceCredential, resourceType, resourceId string) ([]models.RelatedResource, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindAllResourceAssociations", ctx, source, resourceType, resourceId)
+	ret0, _ := ret[0].([]models.RelatedResource)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindAllResourceAssociations indicates an expected call of FindAllResourceAssociations.
+func (mr *MockDatabaseRepositoryMockRecorder) FindAllResourceAssociations(ctx, source, resourceType, resourceId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAllResourceAssociations", reflect.TypeOf((*MockDatabaseRepository)(nil).FindAllResourceAssociations), ctx, source, resourceType, resourceId)
+}
+
 // FindResourceAssociationsByTypeAndId mocks base method.
 func (m *MockDatabaseRepository) FindResourceAssociationsByTypeAndId(ctx context.Context, source *models.SourceCredential, resourceType, resourceId string) ([]models.RelatedResource, error) {
 	m.ctrl.T.Helper()
@@ -505,6 +520,21 @@ func (mr *MockDatabaseRepositoryMockRecorder) QueryResources(ctx, query interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueryResources", reflect.TypeOf((*MockDatabaseRepository)(nil).QueryResources), ctx, query)
 }
 
+// RemoveBulkResourceAssociations mocks base method.
+func (m *MockDatabaseRepository) RemoveBulkResourceAssociations(ctx context.Context, associationsToDelete []models.RelatedResource) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveBulkResourceAssociations", ctx, associationsToDelete)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RemoveBulkResourceAssociations indicates an expected call of RemoveBulkResourceAssociations.
+func (mr *MockDatabaseRepositoryMockRecorder) RemoveBulkResourceAssociations(ctx, associationsToDelete interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveBulkResourceAssociations", reflect.TypeOf((*MockDatabaseRepository)(nil).RemoveBulkResourceAssociations), ctx, associationsToDelete)
+}
+
 // RemoveResourceAssociation mocks base method.
 func (m *MockDatabaseRepository) RemoveResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType, resourceId string, relatedSource *models.SourceCredential, relatedResourceType, relatedResourceId string) error {
 	m.ctrl.T.Helper()
@@ -545,6 +575,21 @@ func (m *MockDatabaseRepository) SaveUserSettings(arg0 context.Context, arg1 *mo
 func (mr *MockDatabaseRepositoryMockRecorder) SaveUserSettings(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveUserSettings", reflect.TypeOf((*MockDatabaseRepository)(nil).SaveUserSettings), arg0, arg1)
+}
+
+// UnlinkResourceWithSharedNeighbors mocks base method.
+func (m *MockDatabaseRepository) UnlinkResourceWithSharedNeighbors(ctx context.Context, resourceType, resourceId, relatedResourceType, relatedResourceId string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UnlinkResourceWithSharedNeighbors", ctx, resourceType, resourceId, relatedResourceType, relatedResourceId)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UnlinkResourceWithSharedNeighbors indicates an expected call of UnlinkResourceWithSharedNeighbors.
+func (mr *MockDatabaseRepositoryMockRecorder) UnlinkResourceWithSharedNeighbors(ctx, resourceType, resourceId, relatedResourceType, relatedResourceId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnlinkResourceWithSharedNeighbors", reflect.TypeOf((*MockDatabaseRepository)(nil).UnlinkResourceWithSharedNeighbors), ctx, resourceType, resourceId, relatedResourceType, relatedResourceId)
 }
 
 // UpdateBackgroundJob mocks base method.

@@ -425,7 +425,6 @@ func (gr *GormRepository) UpsertResource(ctx context.Context, wrappedResourceMod
 	}
 
 	wrappedResourceModel.UserID = currentUser.ID
-	cachedResourceRaw := wrappedResourceModel.ResourceRaw
 
 	gr.Logger.Infof("insert/update FHIRResource (%v) %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID)
 	wrappedFhirResourceModel, err := databaseModel.NewFhirResourceModelByType(wrappedResourceModel.SourceResourceType)
@@ -461,24 +460,13 @@ func (gr *GormRepository) UpsertResource(ctx context.Context, wrappedResourceMod
 		SourceID:           wrappedFhirResourceModel.GetSourceID(),
 		SourceResourceID:   wrappedFhirResourceModel.GetSourceResourceID(),
 		SourceResourceType: wrappedFhirResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-	}).Omit("RelatedResource.*").FirstOrCreate(wrappedFhirResourceModel)
+	}).Omit("RelatedResource.*").Assign(wrappedResourceModel).FirstOrCreate(wrappedFhirResourceModel)
 
 	if createResult.Error != nil {
 		return false, createResult.Error
-	} else if createResult.RowsAffected == 0 {
-		//at this point, wrappedResourceModel contains the data found in the database.
-		// check if the database resource matches the new resource.
-		if wrappedResourceModel.ResourceRaw.String() != string(cachedResourceRaw) {
-			updateResult := createResult.Omit("RelatedResource.*").Updates(wrappedResourceModel)
-			return updateResult.RowsAffected > 0, updateResult.Error
-		} else {
-			return false, nil
-		}
-
-	} else {
-		//resource was created
-		return createResult.RowsAffected > 0, createResult.Error
 	}
+	//resource was upserted
+	return createResult.RowsAffected > 0, createResult.Error
 }
 
 func (gr *GormRepository) ListResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceBase, error) {
@@ -717,6 +705,73 @@ func (gr *GormRepository) FindResourceAssociationsByTypeAndId(ctx context.Contex
 		}).
 		Find(&relatedResources)
 	return relatedResources, result.Error
+}
+
+// find all associations pointing TO and FROM the specified target resource
+func (gr *GormRepository) FindAllResourceAssociations(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string) ([]models.RelatedResource, error) {
+	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return nil, currentUserErr
+	}
+
+	if source.UserID != currentUser.ID {
+		return nil, fmt.Errorf("source credential must match the current user id")
+	}
+
+	var relatedResources []models.RelatedResource
+	result := gr.GormClient.WithContext(ctx).
+		Where(models.RelatedResource{
+			ResourceBaseUserID:             currentUser.ID,
+			ResourceBaseSourceID:           source.ID,
+			ResourceBaseSourceResourceType: resourceType,
+			ResourceBaseSourceResourceID:   resourceId,
+			RelatedResourceUserID:          currentUser.ID,
+		}).
+		Or(&models.RelatedResource{
+			RelatedResourceUserID:             currentUser.ID,
+			RelatedResourceSourceID:           source.ID,
+			RelatedResourceSourceResourceType: resourceType,
+			RelatedResourceSourceResourceID:   resourceId,
+			ResourceBaseUserID:                currentUser.ID,
+		}).
+		Find(&relatedResources)
+
+	return relatedResources, result.Error
+}
+
+// remove multiple resource associations in a transaction
+func (gr *GormRepository) RemoveBulkResourceAssociations(ctx context.Context, associationsToDelete []models.RelatedResource) (int64, error) {
+	var totalRowsAffected int64 = 0
+	if len(associationsToDelete) == 0 {
+		return 0, nil
+	}
+
+	txErr := gr.GormClient.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		for _, assoc := range associationsToDelete {
+			result := tx.Delete(&models.RelatedResource{}, map[string]interface{}{
+				"resource_base_user_id":                 assoc.ResourceBaseUserID,
+				"resource_base_source_id":               assoc.ResourceBaseSourceID,
+				"resource_base_source_resource_type":    assoc.ResourceBaseSourceResourceType,
+				"resource_base_source_resource_id":      assoc.ResourceBaseSourceResourceID,
+				"related_resource_user_id":              assoc.RelatedResourceUserID,
+				"related_resource_source_id":            assoc.RelatedResourceSourceID,
+				"related_resource_source_resource_type": assoc.RelatedResourceSourceResourceType,
+				"related_resource_source_resource_id":   assoc.RelatedResourceSourceResourceID,
+			})
+
+			if result.Error != nil {
+				return result.Error
+			}
+			totalRowsAffected += result.RowsAffected
+		}
+		return nil
+	})
+
+	if txErr != nil {
+		return totalRowsAffected, fmt.Errorf("RemoveResourceAssociations transaction failed: %w", txErr)
+	}
+
+	return totalRowsAffected, nil
 }
 
 //</editor-fold>
