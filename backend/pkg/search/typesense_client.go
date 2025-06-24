@@ -2,6 +2,7 @@ package search
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -36,10 +37,18 @@ func (s *SearchClient) IndexResource(resource *models.ResourceBase) error {
 
 	if resource.SortTitle != nil {
 		doc["sort_title"] = *resource.SortTitle
+		doc["code_text"] = *resource.SortTitle // fallback
 	}
 
 	if resource.SourceUri != nil {
 		doc["source_uri"] = *resource.SourceUri
+	}
+	// Extract `code.text` if present
+	var rawMap map[string]interface{}
+	if err := json.Unmarshal(resource.ResourceRaw, &rawMap); err == nil {
+		if text, ok := extractCodeText(rawMap); ok {
+			doc["code_text"] = text
+		}
 	}
 
 	_, err := s.Client.Collection("resources").Documents().Upsert(context.Background(), doc)
@@ -50,11 +59,16 @@ func (s *SearchClient) IndexResource(resource *models.ResourceBase) error {
 	return nil
 }
 
-func (s *SearchClient) SearchResources(query string) ([]map[string]interface{}, error) {
+func (s *SearchClient) SearchResources(query string, resourceTypeFilter *string) ([]map[string]interface{}, error) {
 	searchParams := &api.SearchCollectionParams{
 		Q:       query,
-		QueryBy: "sort_title,source_resource_type,source_resource_id,source_uri",
-		// Add other search params as needed (e.g., filters, pagination)
+		QueryBy: "sort_title,code_text,source_resource_type,source_resource_id,source_uri",
+		SortBy:  ptr("sort_date:desc"),
+	}
+
+	if resourceTypeFilter != nil {
+		filter := fmt.Sprintf("source_resource_type:=%s", *resourceTypeFilter)
+		searchParams.FilterBy = &filter
 	}
 
 	resp, err := s.Client.Collection("resources").Documents().Search(context.Background(), searchParams)
@@ -78,4 +92,18 @@ func derefStr(s *string) string {
 		return *s
 	}
 	return ""
+}
+
+func extractCodeText(raw map[string]interface{}) (string, bool) {
+	if code, ok := raw["code"].(map[string]interface{}); ok {
+		if text, ok := code["text"].(string); ok {
+			return text, true
+		}
+	}
+	return "", false
+}
+
+// ptr returns a pointer to the given string.
+func ptr(s string) *string {
+	return &s
 }

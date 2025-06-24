@@ -51,6 +51,7 @@ func Init(logger *logrus.Entry) error {
 		logger.Info("📦 Creating Typesense collection 'resources'...")
 
 		optionalTrue := true
+		// Create the "resources" collection with the specified schema
 		_, err = Client.Collections().Create(context.Background(), &api.CollectionSchema{
 			Name: "resources",
 			Fields: []api.Field{
@@ -62,8 +63,11 @@ func Init(logger *logrus.Entry) error {
 				{Name: "sort_date", Type: "float"},
 				{Name: "sort_title", Type: "string", Optional: &optionalTrue},
 				{Name: "source_uri", Type: "string", Optional: &optionalTrue},
+				{Name: "code_text", Type: "string", Optional: &optionalTrue},
+				{Name: "resource_raw", Type: "object", Optional: &optionalTrue}, // JSON blob
 			},
 			DefaultSortingField: func(s string) *string { return &s }("sort_date"),
+			EnableNestedFields:  &optionalTrue,
 		})
 		if err != nil {
 			logger.WithError(err).Error("❌ Failed to create 'resources' collection in Typesense")

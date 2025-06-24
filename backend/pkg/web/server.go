@@ -50,7 +50,6 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 	basePath := ae.Config.GetString("web.listen.basepath")
 	ae.Logger.Debugf("basepath: %s", basePath)
-	searchHandler := &handler.GormRepository{}
 
 	base := r.Group(basePath)
 	{
@@ -120,7 +119,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.POST("/resource/composition", handler.CreateResourceComposition)
 				secure.POST("/resource/related", handler.CreateRelatedResources)
 				secure.DELETE("/encounter/:encounterId/related/:resourceType/:resourceId", handler.EncounterUnlinkResource)
-				secure.GET("/resource/search", searchHandler.SearchResourcesHandler)
+				secure.GET("/resource/search", handler.SearchResourcesHandler)
 
 				secure.GET("/dashboards", handler.GetDashboard)
 				secure.POST("/dashboards", handler.AddDashboardLocation)
