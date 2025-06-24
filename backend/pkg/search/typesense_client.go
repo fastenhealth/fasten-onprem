@@ -59,11 +59,13 @@ func (s *SearchClient) IndexResource(resource *models.ResourceBase) error {
 	return nil
 }
 
-func (s *SearchClient) SearchResources(query string, resourceTypeFilter *string) ([]map[string]interface{}, error) {
+func (s *SearchClient) SearchResources(query string, resourceTypeFilter *string, page int, perPage int) ([]map[string]interface{}, int, error) {
 	searchParams := &api.SearchCollectionParams{
 		Q:       query,
 		QueryBy: "sort_title,code_text,source_resource_type,source_resource_id,source_uri",
 		SortBy:  ptr("sort_date:desc"),
+		Page:    intPtr(page),
+		PerPage: intPtr(perPage),
 	}
 
 	if resourceTypeFilter != nil {
@@ -73,10 +75,9 @@ func (s *SearchClient) SearchResources(query string, resourceTypeFilter *string)
 
 	resp, err := s.Client.Collection("resources").Documents().Search(context.Background(), searchParams)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	// resp.Hits contains the documents matched
 	results := make([]map[string]interface{}, 0, len(*resp.Hits))
 	for _, hit := range *resp.Hits {
 		if hit.Document != nil {
@@ -84,7 +85,13 @@ func (s *SearchClient) SearchResources(query string, resourceTypeFilter *string)
 		}
 	}
 
-	return results, nil
+	// Extract total number of matches
+	total := 0
+	if resp.Found != nil {
+		total = *resp.Found
+	}
+
+	return results, total, nil
 }
 
 func derefStr(s *string) string {
@@ -106,4 +113,9 @@ func extractCodeText(raw map[string]interface{}) (string, bool) {
 // ptr returns a pointer to the given string.
 func ptr(s string) *string {
 	return &s
+}
+
+// intPtr returns a pointer to the given int.
+func intPtr(i int) *int {
+	return &i
 }

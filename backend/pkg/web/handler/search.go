@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	typesenseClient "github.com/fastenhealth/fasten-onprem/backend/pkg/search"
@@ -15,7 +15,6 @@ type GormRepository struct {
 }
 
 func SearchResourcesHandler(c *gin.Context) {
-	// Get logger from context or use a default one
 	logger := logrus.WithFields(logrus.Fields{
 		"handler": "SearchResourcesHandler",
 		"path":    c.Request.URL.Path,
@@ -27,34 +26,33 @@ func SearchResourcesHandler(c *gin.Context) {
 
 	query := c.Query("q")
 	resourceTypeFilter := c.Query("type")
+	pageStr := c.DefaultQuery("page", "1")
+	perPageStr := c.DefaultQuery("per_page", "10")
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	perPage, err := strconv.Atoi(perPageStr)
+	if err != nil || perPage < 1 || perPage > 250 {
+		perPage = 10
+	}
+
 	if query == "" {
 		logger.Warn("Missing required query parameter 'q'")
 		c.JSON(http.StatusBadRequest, gin.H{"error": "query parameter 'q' is required"})
 		return
 	}
 
-	logger.Debug("Checking Typesense client availability")
 	if typesenseClient.Client == nil {
 		logger.Error("Typesense client is not initialized")
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "search service unavailable"})
 		return
 	}
 
-	logger.Debug("Creating search client")
 	searchClient := &typesenseClient.SearchClient{Client: typesenseClient.Client}
 
-	if searchClient == nil {
-		logger.Error("Failed to create search client")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
-		return
-	}
-
-	logger.WithFields(logrus.Fields{
-		"query": query,
-		"type":  resourceTypeFilter,
-	}).Info("Executing search query")
-
-	// Only pass the filter if it's not empty
 	var filterPtr *string
 	if resourceTypeFilter != "" {
 		filterPtr = &resourceTypeFilter
@@ -63,7 +61,7 @@ func SearchResourcesHandler(c *gin.Context) {
 		logger.Debug("No resource type filter provided - searching all types")
 	}
 
-	results, err := searchClient.SearchResources(query, filterPtr)
+	results, total, err := searchClient.SearchResources(query, filterPtr, page, perPage)
 	if err != nil {
 		logger.WithError(err).Error("Search query failed")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
@@ -72,8 +70,15 @@ func SearchResourcesHandler(c *gin.Context) {
 
 	logger.WithFields(logrus.Fields{
 		"resultCount": len(results),
-		"resultType":  fmt.Sprintf("%T", results),
+		"totalFound":  total,
+		"page":        page,
+		"perPage":     perPage,
 	}).Info("Search query completed successfully")
 
-	c.JSON(http.StatusOK, results)
+	c.JSON(http.StatusOK, gin.H{
+		"results":  results,
+		"total":    total,
+		"page":     page,
+		"per_page": perPage,
+	})
 }
