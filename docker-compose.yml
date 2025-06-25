@@ -1,22 +1,22 @@
 version: "3.9"
 services:
-#   fasten:
-#     # NOTE: only developers need to build Fasten from source
-#     # For production, use the pre-built image from GitHub Packages
-#     # ghcr.io/fastenhealth/fasten-onprem:main
-#     build:
-#       context: .
-#       dockerfile: Dockerfile
-#       args:
-# #        - FASTEN_ENV=prod
-#         - FASTEN_ENV=sandbox
-#     ports:
-#       - "9090:8080"
-#     volumes:
-#       - ./db:/opt/fasten/db
-# #      - ./config.example.yaml:/opt/fasten/config/config.yaml
-#     environment:
-#     - TYPESENSE_API_KEY=xyz123
+  fasten:
+    # NOTE: only developers need to build Fasten from source
+    # For production, use the pre-built image from GitHub Packages
+    # ghcr.io/fastenhealth/fasten-onprem:main
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+#        - FASTEN_ENV=prod
+        - FASTEN_ENV=sandbox
+    ports:
+      - "9090:8080"
+    volumes:
+      - ./db:/opt/fasten/db
+#      - ./config.example.yaml:/opt/fasten/config/config.yaml
+    environment:
+    - TYPESENSE_API_KEY=xyz123
   typesense:
     image: typesense/typesense:28.0
     ports:
