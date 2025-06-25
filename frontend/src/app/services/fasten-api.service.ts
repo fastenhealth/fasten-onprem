@@ -29,6 +29,7 @@ import {
 } from 'fhir/r4';
 import {FormRequestHealthSystem} from '../models/fasten/form-request-health-system';
 import { UpdateResourcePayload } from '../models/fasten/resource_update';
+import { TypesenseSearchResponse } from '../models/typesense/typesense-result-model';
 @Injectable({
   providedIn: 'root'
 })
@@ -94,6 +95,37 @@ export class FastenApiService {
           return response.data as DashboardConfig[]
         })
       );
+  }
+
+  searchResources(params: {
+    query?: string;
+    resourceType?: string;
+    page?: number;
+    per_page?: number;
+  }): Observable<TypesenseSearchResponse> {
+       let queryParams = {};
+       if (params.query) {
+         queryParams['q'] = params.query;
+       }
+       if (params.page !== undefined) {
+         queryParams['page'] = params.page;
+       }
+       if (params.per_page !== undefined) {
+         queryParams['per_page'] = params.per_page;
+       }
+       if (params.resourceType) {
+         queryParams['resource_type'] = params.resourceType;
+       }
+
+       return this._httpClient.get<
+         TypesenseSearchResponse
+       >(
+         `${GetEndpointAbsolutePath(
+           globalThis.location,
+           environment.fasten_api_endpoint_base
+         )}/secure/resource/search`,
+         { params: queryParams }
+       );
   }
 
   getSummary(): Observable<Summary> {

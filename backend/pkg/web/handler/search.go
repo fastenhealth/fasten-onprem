@@ -24,7 +24,7 @@ func SearchResourcesHandler(c *gin.Context) {
 
 	logger.Info("Search request started")
 
-	query := c.Query("q")
+	query := c.DefaultQuery("q", "*") // Default to wildcard search if no query is provided
 	resourceTypeFilter := c.Query("type")
 	pageStr := c.DefaultQuery("page", "1")
 	perPageStr := c.DefaultQuery("per_page", "10")
@@ -37,12 +37,6 @@ func SearchResourcesHandler(c *gin.Context) {
 	perPage, err := strconv.Atoi(perPageStr)
 	if err != nil || perPage < 1 || perPage > 250 {
 		perPage = 10
-	}
-
-	if query == "" {
-		logger.Warn("Missing required query parameter 'q'")
-		c.JSON(http.StatusBadRequest, gin.H{"error": "query parameter 'q' is required"})
-		return
 	}
 
 	if typesenseClient.Client == nil {
