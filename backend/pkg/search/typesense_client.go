@@ -8,8 +8,8 @@ import (
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/google/uuid"
-	"github.com/typesense/typesense-go/typesense"
-	"github.com/typesense/typesense-go/typesense/api"
+	"github.com/typesense/typesense-go/v3/typesense"
+	"github.com/typesense/typesense-go/v3/typesense/api"
 )
 
 type SearchClient struct {
@@ -51,7 +51,7 @@ func (s *SearchClient) IndexResource(resource *models.ResourceBase) error {
 		}
 	}
 
-	_, err := s.Client.Collection("resources").Documents().Upsert(context.Background(), doc)
+	_, err := s.Client.Collection("resources").Documents().Upsert(context.Background(), doc, nil)
 	if err != nil {
 		return fmt.Errorf("failed to index resource: %w", err)
 	}
@@ -61,8 +61,8 @@ func (s *SearchClient) IndexResource(resource *models.ResourceBase) error {
 
 func (s *SearchClient) SearchResources(query string, resourceTypeFilter *string, page int, perPage int) ([]map[string]interface{}, int, error) {
 	searchParams := &api.SearchCollectionParams{
-		Q:       query,
-		QueryBy: "sort_title,code_text,source_resource_type,source_resource_id,source_uri",
+		Q:       ptr(query),
+		QueryBy: ptr("sort_title,code_text,source_resource_type,source_resource_id,source_uri"),
 		SortBy:  ptr("sort_date:desc"),
 		Page:    intPtr(page),
 		PerPage: intPtr(perPage),

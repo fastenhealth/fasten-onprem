@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/typesense/typesense-go/typesense"
-	"github.com/typesense/typesense-go/typesense/api"
+	"github.com/typesense/typesense-go/v3/typesense"
+	"github.com/typesense/typesense-go/v3/typesense/api"
 )
 
 var Client *typesense.Client

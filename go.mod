@@ -1,6 +1,8 @@
 module github.com/fastenhealth/fasten-onprem
 
-go 1.18
+go 1.22
+
+toolchain go1.22.12
 
 //replace github.com/fastenhealth/fasten-sources => ../fasten-sources
 
@@ -22,19 +24,19 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v54 v54.0.0
-	github.com/google/uuid v1.5.0
+	github.com/google/uuid v1.6.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/lestrrat-go/jwx/v2 v2.0.11
 	github.com/samber/lo v1.35.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.9.0
-	github.com/typesense/typesense-go v1.1.0
+	github.com/typesense/typesense-go/v3 v3.2.0
 	github.com/urfave/cli/v2 v2.11.2
-	golang.org/x/crypto v0.23.0
+	golang.org/x/crypto v0.24.0
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17
-	golang.org/x/mod v0.17.0
-	golang.org/x/net v0.25.0
+	golang.org/x/mod v0.18.0
+	golang.org/x/net v0.26.0
 	gorm.io/datatypes v1.0.7
 	gorm.io/driver/sqlite v1.5.4
 	gorm.io/gorm v1.25.4
@@ -49,7 +51,7 @@ require (
 	github.com/jackc/pgx/v5 v5.4.3 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/oapi-codegen/runtime v1.1.1 // indirect
-	github.com/sony/gobreaker v0.5.0 // indirect
+	github.com/sony/gobreaker v1.0.0 // indirect
 )
 
 require (
@@ -108,9 +110,9 @@ require (
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/arch v0.4.0 // indirect
 	golang.org/x/oauth2 v0.11.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
-	golang.org/x/term v0.20.0 // indirect
-	golang.org/x/text v0.15.0 // indirect
+	golang.org/x/sys v0.21.0 // indirect
+	golang.org/x/term v0.21.0 // indirect
+	golang.org/x/text v0.18.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
