@@ -27,16 +27,21 @@ func waitForTypesense(client *typesense.Client, maxRetries int, delay time.Durat
 }
 
 func Init(logger *logrus.Entry) error {
+	apiUri := os.Getenv("TYPESENSE_URI")
+	if apiUri == "" {
+		log.Fatal("TYPESENSE_URI not set")
+	}
+
 	apiKey := os.Getenv("TYPESENSE_API_KEY")
 	if apiKey == "" {
 		log.Fatal("TYPESENSE_API_KEY not set")
 	}
 
 	Client = typesense.NewClient(
-		typesense.WithServer("http://typesense:8108"),
+		typesense.WithServer(apiUri),
 		typesense.WithAPIKey(apiKey))
 
-	log.Printf("Typesense client initialized with server: %s", "http://typesense:8108")
+	log.Printf("Typesense client initialized with server: %s", apiUri)
 
 	err := waitForTypesense(Client, 10, 2*time.Second)
 	if err != nil {

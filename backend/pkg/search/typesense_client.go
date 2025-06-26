@@ -51,7 +51,7 @@ func (s *SearchClient) IndexResource(resource *models.ResourceBase) error {
 		}
 	}
 
-	_, err := s.Client.Collection("resources").Documents().Upsert(context.Background(), doc, nil)
+	_, err := s.Client.Collection("resources").Documents().Upsert(context.Background(), doc, &api.DocumentIndexParameters{})
 	if err != nil {
 		return fmt.Errorf("failed to index resource: %w", err)
 	}
