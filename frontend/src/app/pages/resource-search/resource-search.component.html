@@ -30,7 +30,8 @@
                         (click)="viewResource(doc)">
                         <h5 class="mb-2">{{ doc.sort_title || 'Untitled' }}</h5>
                         <p class="mb-1"><strong>Type:</strong> {{ doc.source_resource_type }}</p>
-                        <p class="mb-0"><strong>Date:</strong> {{ doc.sort_date || 'N/A' }}</p>
+                        <p class="mb-0"><strong>Date:</strong> {{ doc.sort_date ? (doc.sort_date | date:'mediumDate') :
+                            'N/A' }}</p>
                     </div>
                 </div>
             </div>

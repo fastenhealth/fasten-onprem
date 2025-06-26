@@ -94,6 +94,15 @@ func (s *SearchClient) SearchResources(query string, resourceTypeFilter *string,
 	return results, total, nil
 }
 
+func (s *SearchClient) GetResourceByID(id string) (map[string]interface{}, error) {
+	doc, err := s.Client.Collection("resources").Document(id).Retrieve(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return doc, nil
+}
+
 func derefStr(s *string) string {
 	if s != nil {
 		return *s

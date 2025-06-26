@@ -76,3 +76,37 @@ func SearchResourcesHandler(c *gin.Context) {
 		"per_page": perPage,
 	})
 }
+
+func GetResourceByIDHandler(c *gin.Context) {
+	logger := logrus.WithFields(logrus.Fields{
+		"handler": "GetResourceByIDHandler",
+		"path":    c.Request.URL.Path,
+		"method":  c.Request.Method,
+		"ip":      c.ClientIP(),
+	})
+
+	resourceID := c.Param("id")
+	logger = logger.WithField("resourceID", resourceID)
+	logger.Info("Fetching single resource by ID")
+
+	if typesenseClient.Client == nil {
+		logger.Error("Typesense client is not initialized")
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "search service unavailable"})
+		return
+	}
+
+	searchClient := &typesenseClient.SearchClient{Client: typesenseClient.Client}
+
+	resource, err := searchClient.GetResourceByID(resourceID)
+	if err != nil {
+		logger.WithError(err).Error("Failed to retrieve resource")
+		c.JSON(http.StatusNotFound, gin.H{"error": "resource not found"})
+		return
+	}
+
+	logger.Info("Resource retrieved successfully")
+
+	c.JSON(http.StatusOK, gin.H{
+		"resource": resource,
+	})
+}

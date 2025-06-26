@@ -29,7 +29,7 @@ import {
 } from 'fhir/r4';
 import {FormRequestHealthSystem} from '../models/fasten/form-request-health-system';
 import { UpdateResourcePayload } from '../models/fasten/resource_update';
-import { TypesenseSearchResponse } from '../models/typesense/typesense-result-model';
+import { TypesenseDocument, TypesenseSearchResponse } from '../models/typesense/typesense-result-model';
 @Injectable({
   providedIn: 'root'
 })
@@ -125,6 +125,23 @@ export class FastenApiService {
            environment.fasten_api_endpoint_base
          )}/secure/resource/search`,
          { params: queryParams }
+       );
+  }
+
+  searchSingleResource(params: {
+    id?: string;
+  }): Observable<{response: {resource: TypesenseDocument}}> {
+       if (!params?.id) {
+         return of({response: null});
+       }
+
+       return this._httpClient.get<
+         {response: {resource: TypesenseDocument}}
+       >(
+         `${GetEndpointAbsolutePath(
+           globalThis.location,
+           environment.fasten_api_endpoint_base
+         )}/secure/resource/search/${params.id}`,
        );
   }
 

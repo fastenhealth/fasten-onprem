@@ -42,6 +42,7 @@ import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard
 import { IconsModule } from './icon-module';
 import { UserListComponent } from './pages/user-list/user-list.component';
 import { ResourceSearchComponent } from './pages/resource-search/resource-search.component';
+import { ViewRawResourceDetailsComponent } from './pages/view-raw-resource-details/view-raw-resource-details.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { ResourceSearchComponent } from './pages/resource-search/resource-search
     AuthSignupWizardComponent,
     UserListComponent,
     ResourceSearchComponent,
+    ViewRawResourceDetailsComponent,
   ],
   imports: [
     FormsModule,

@@ -4,6 +4,7 @@ import {
   TypesenseDocument,
   TypesenseSearchResponse,
 } from '../../models/typesense/typesense-result-model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'resource-search',
@@ -50,15 +51,16 @@ export class ResourceSearchComponent implements OnInit {
     'ServiceRequest',
   ];
 
-  constructor(private fastenApi: FastenApiService) {}
+  constructor(private fastenApi: FastenApiService, private router: Router) {}
 
   ngOnInit(): void {
     this.search();
   }
 
   viewResource(doc: TypesenseDocument): void {
-    console.log('Selected document:', doc);
-    // Next: either show in modal or route to a detail page with the JSON
+    this.router.navigate([`/resource/view/${doc.id}`], {
+      state: { resource: doc },
+    });
   }
 
   search(): void {
