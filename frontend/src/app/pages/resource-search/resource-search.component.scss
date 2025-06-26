@@ -48,11 +48,6 @@
     padding: 0.4rem 0.8rem;
     border-radius: 4px;
     cursor: pointer;
-
-    &:hover {
-      background-color: var(--dark-alert-text-color);
-      color: var(--dark-alert-background-color);
-    }
   }
 }
 

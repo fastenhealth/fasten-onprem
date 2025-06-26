@@ -99,7 +99,7 @@ export class FastenApiService {
 
   searchResources(params: {
     query?: string;
-    resourceType?: string;
+    type?: string;
     page?: number;
     per_page?: number;
   }): Observable<TypesenseSearchResponse> {
@@ -113,8 +113,8 @@ export class FastenApiService {
        if (params.per_page !== undefined) {
          queryParams['per_page'] = params.per_page;
        }
-       if (params.resourceType) {
-         queryParams['resource_type'] = params.resourceType;
+       if (params.type) {
+         queryParams['type'] = params.type;
        }
 
        return this._httpClient.get<

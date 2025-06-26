@@ -65,7 +65,7 @@ export class ResourceSearchComponent implements OnInit {
     this.fastenApi
       .searchResources({
         query: this.searchQuery,
-        resourceType: this.selectedResourceType,
+        type: this.selectedResourceType,
         page: this.page,
         per_page: this.perPage,
       })

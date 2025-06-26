@@ -54,7 +54,7 @@
                     <span class="me-3 mr-4">Page {{ page }} of {{ totalPages }}</span>
                     <nav>
                         <ul class="pagination mb-0">
-                            <li class="page-item mr-2 p-1" [class.disabled]="page === 1">
+                            <li class="page-item mr-1 p-1" [class.disabled]="page === 1">
                                 <a class="page-link full-width-link" (click)="onPageChange(page - 1)">Previous</a>
                             </li>
                             <li class="page-item p-1" [class.disabled]="page >= totalPages">
