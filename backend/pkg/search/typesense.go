@@ -70,6 +70,41 @@ func Init(logger *logrus.Entry) error {
 				{Name: "source_uri", Type: "string", Optional: &optionalTrue},
 				{Name: "code_text", Type: "string", Optional: &optionalTrue},
 				{Name: "resource_raw", Type: "object", Optional: &optionalTrue}, // JSON blob
+				{
+					Name: "embedding",
+					Type: "float[]",
+					Embed: &struct {
+						From  []string `json:"from"`
+						ModelConfig struct {
+							AccessToken    *string `json:"access_token,omitempty"`
+							ApiKey         *string `json:"api_key,omitempty"`
+							ClientId       *string `json:"client_id,omitempty"`
+							ClientSecret   *string `json:"client_secret,omitempty"`
+							IndexingPrefix *string `json:"indexing_prefix,omitempty"`
+							ModelName      string  `json:"model_name"`
+							ProjectId      *string `json:"project_id,omitempty"`
+							QueryPrefix    *string `json:"query_prefix,omitempty"`
+							RefreshToken   *string `json:"refresh_token,omitempty"`
+							Url            *string `json:"url,omitempty"`
+						} `json:"model_config"`
+					}{
+						From: []string{`source_resource_type`, `sort_title`, `code_text`},
+						ModelConfig: struct {
+							AccessToken    *string `json:"access_token,omitempty"`
+							ApiKey         *string `json:"api_key,omitempty"`
+							ClientId       *string `json:"client_id,omitempty"`
+							ClientSecret   *string `json:"client_secret,omitempty"`
+							IndexingPrefix *string `json:"indexing_prefix,omitempty"`
+							ModelName      string  `json:"model_name"`
+							ProjectId      *string `json:"project_id,omitempty"`
+							QueryPrefix    *string `json:"query_prefix,omitempty"`
+							RefreshToken   *string `json:"refresh_token,omitempty"`
+							Url            *string `json:"url,omitempty"`
+						}{
+							ModelName:    "ts/snowflake-arctic-embed-m",
+						},
+					},
+				},
 			},
 			DefaultSortingField: func(s string) *string { return &s }("sort_date"),
 			EnableNestedFields:  &optionalTrue,
