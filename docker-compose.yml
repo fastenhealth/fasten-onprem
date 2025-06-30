@@ -22,9 +22,11 @@ services:
     ports:
       - "8108:8108"
     volumes:
-      - ./typesense-data:/data
+      - typesense-data:/data
     environment:
       - TYPESENSE_API_KEY=xyz123
       - TYPESENSE_DATA_DIR=/data
       - TYPESENSE_ENABLE_CORS=true
     restart: unless-stopped
+volumes:
+  typesense-data:
