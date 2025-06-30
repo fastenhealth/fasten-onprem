@@ -68,7 +68,6 @@ func Init(logger *logrus.Entry) error {
 				{Name: "sort_date", Type: "float"},
 				{Name: "sort_title", Type: "string", Optional: &optionalTrue},
 				{Name: "source_uri", Type: "string", Optional: &optionalTrue},
-				{Name: "code_text", Type: "string", Optional: &optionalTrue},
 				{Name: "resource_raw", Type: "object", Optional: &optionalTrue}, // JSON blob
 			},
 			DefaultSortingField: func(s string) *string { return &s }("sort_date"),
