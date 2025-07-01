@@ -186,10 +186,10 @@
   optionalDependencies:
     parse5 "^5.0.0"
 
-"@angular/cdk@^16.2.14":
-  version "16.2.14"
-  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-16.2.14.tgz#d26f8f1e7d2466b509e60489b6acf31bfe923acf"
-  integrity sha512-n6PrGdiVeSTEmM/HEiwIyg6YQUUymZrb5afaNLGFRM5YL0Y8OBqd+XhCjb0OfD/AfgCUtedVEPwNqrfW8KzgGw==
+"@angular/cdk@^17":
+  version "17.3.10"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-17.3.10.tgz#4a3bab529cd65bb19cb89c89b3548dcc534d1a44"
+  integrity sha512-b1qktT2c1TTTe5nTji/kFAVW92fULK0YhYAvJ+BjZTPKu2FniZNe8o4qqQ0pUuvtMu+ZQxp/QqFYoidIVCjScg==
   dependencies:
     tslib "^2.3.0"
   optionalDependencies:
