@@ -65,7 +65,7 @@ func Init(logger *logrus.Entry) error {
 				{Name: "source_id", Type: "string"},
 				{Name: "source_resource_type", Type: "string"},
 				{Name: "source_resource_id", Type: "string"},
-				{Name: "sort_date", Type: "float"},
+				{Name: "sort_date", Type: "int64"},
 				{Name: "sort_title", Type: "string", Optional: &optionalTrue},
 				{Name: "source_uri", Type: "string", Optional: &optionalTrue},
 				{Name: "resource_raw", Type: "object", Optional: &optionalTrue}, // JSON blob
