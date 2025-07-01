@@ -279,37 +279,37 @@
           "options": {
             "hmr": true,
             "liveReload": true,
-            "browserTarget": "fastenhealth:build",
-            "proxyConfig": "proxy.conf.json"
+            "proxyConfig": "proxy.conf.json",
+            "buildTarget": "fastenhealth:build"
           },
           "configurations": {
             "dev": {
-              "browserTarget": "fastenhealth:build:dev"
+              "buildTarget": "fastenhealth:build:dev"
             },
             "prod": {
-              "browserTarget": "fastenhealth:build:prod"
+              "buildTarget": "fastenhealth:build:prod"
             },
             "sandbox": {
-              "browserTarget": "fastenhealth:build:sandbox"
+              "buildTarget": "fastenhealth:build:sandbox"
             },
             "cloud_sandbox": {
-              "browserTarget": "fastenhealth:build:cloud_sandbox"
+              "buildTarget": "fastenhealth:build:cloud_sandbox"
             },
             "desktop_sandbox": {
-              "browserTarget": "fastenhealth:build:desktop_sandbox"
+              "buildTarget": "fastenhealth:build:desktop_sandbox"
             },
             "offline_sandbox": {
-              "browserTarget": "fastenhealth:build:offline_sandbox"
+              "buildTarget": "fastenhealth:build:offline_sandbox"
             },
             "desktop_prod": {
-              "browserTarget": "fastenhealth:build:desktop_prod"
+              "buildTarget": "fastenhealth:build:desktop_prod"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "fastenhealth:build"
+            "buildTarget": "fastenhealth:build"
           }
         },
         "test": {
