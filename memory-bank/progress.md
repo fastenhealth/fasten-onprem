@@ -18,6 +18,7 @@ The Fasten On-Prem project appears to be in a **mature stage of development**, w
 *   Implementation of core user authentication and authorization flows.
 *   Development of key modules for medical data handling (e.g., medical history, lab reports, FHIR integration).
 *   Creation of a comprehensive set of UI components for data display and interaction.
+*   Implemented a new chat page for LLM interaction.
 *   Establishment of build, testing, and deployment pipelines (Docker, Nix, Makefile).
 *   Configuration for multiple deployment environments.
 

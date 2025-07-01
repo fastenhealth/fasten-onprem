@@ -24,6 +24,7 @@ import { UserCreateComponent } from './pages/user-create/user-create.component';
 import { UserListComponent } from './pages/user-list/user-list.component';
 import { ResourceSearchComponent } from "./pages/resource-search/resource-search.component";
 import { ViewRawResourceDetailsComponent } from "./pages/view-raw-resource-details/view-raw-resource-details.component";
+import { ChatComponent } from './pages/chat/chat.component';
 
 const routes: Routes = [
 
@@ -56,6 +57,8 @@ const routes: Routes = [
   { path: 'medical-history', component: MedicalHistoryComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'labs', component: ReportLabsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'labs/report/:source_id/:resource_type/:resource_id', component: ReportLabsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+
+  { path: 'chat', component: ChatComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
 
   { path: 'users', component: UserListComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
   { path: 'users/new', component: UserCreateComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },

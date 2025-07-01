@@ -45,6 +45,8 @@ Fasten On-Prem's vision is to empower individuals and families with a secure, se
     *   Modern, component-based frontend (Angular).
     *   Responsive design elements (implied by web technologies).
     *   Customizable UI elements (e.g., `gridstack` for dashboard widgets).
+*   **LLM-Powered Chat:**
+    *   A dedicated chat page for interacting with a Large Language Model (LLM).
 
 ### Planned Future Features (from README)
 
@@ -59,6 +61,7 @@ Fasten On-Prem's vision is to empower individuals and families with a secure, se
 *   A user logs in to view their latest lab results and adds a note about a recent doctor's visit.
 *   An administrator (if applicable) views the status of data synchronization jobs.
 *   A user explores their aggregated medical history, filtering by date or condition.
+*   A user navigates to the chat page to ask questions about their medical data.
 
 ## Deployment Model
 
