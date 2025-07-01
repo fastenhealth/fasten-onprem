@@ -1,10 +1,14 @@
 <div class="chat-container">
   <div class="messages-area">
-    <!-- Conversation messages will go here -->
-    <p>Welcome to the chat!</p>
+    <div *ngIf="messages.length === 0" class="welcome-message">
+      <p>Welcome to the chat!</p>
+    </div>
+    <div *ngFor="let message of messages" class="message-bubble" [ngClass]="{'user-message': message.sender === 'user', 'bot-message': message.sender === 'bot'}">
+      <p>{{ message.text }}</p>
+    </div>
   </div>
   <div class="input-area">
-    <textarea placeholder="Type your message here..."></textarea>
-    <button>Send</button>
+    <textarea placeholder="Type your message here..." [(ngModel)]="userMessage" (keyup.enter)="sendMessage()"></textarea>
+    <button (click)="sendMessage()">Send</button>
   </div>
 </div>

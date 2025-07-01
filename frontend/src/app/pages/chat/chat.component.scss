@@ -18,6 +18,38 @@
   margin-bottom: 15px;
 }
 
+.welcome-message {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 10px;
+}
+
+.message-bubble {
+  max-width: 80%;
+  padding: 10px 15px;
+  border-radius: 18px;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+.user-message {
+  background-color: #007bff; /* Blue for user messages */
+  color: white;
+  align-self: flex-end; /* Align to the right */
+  margin-left: auto; /* Push to the right */
+  border-bottom-right-radius: 2px; /* Sharpen corner for user */
+}
+
+.bot-message {
+  background-color: #e9ecef; /* Light grey for bot messages */
+  color: #343a40;
+  align-self: flex-start; /* Align to the left */
+  margin-right: auto; /* Push to the left */
+  border-bottom-left-radius: 2px; /* Sharpen corner for bot */
+}
+
 .input-area {
   display: flex;
   gap: 10px;
