@@ -87,7 +87,7 @@ func Init(logger *logrus.Entry) error {
 							Url            *string `json:"url,omitempty"`
 						} `json:"model_config"`
 					}{
-						From: []string{`source_resource_type`, `sort_title`, `code_text`},
+						From: []string{`source_resource_type`, `sort_title`},
 						ModelConfig: struct {
 							AccessToken    *string `json:"access_token,omitempty"`
 							ApiKey         *string `json:"api_key,omitempty"`
@@ -100,7 +100,8 @@ func Init(logger *logrus.Entry) error {
 							RefreshToken   *string `json:"refresh_token,omitempty"`
 							Url            *string `json:"url,omitempty"`
 						}{
-							ModelName:    "ts/snowflake-arctic-embed-m",
+							// ModelName:    "ts/snowflake-arctic-embed-m",
+							ModelName:    "ts/all-MiniLM-L12-v2",
 						},
 					},
 				},
