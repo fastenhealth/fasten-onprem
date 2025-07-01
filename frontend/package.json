@@ -44,7 +44,7 @@
     "bootstrap": "5.3.2",
     "chart.js": "^4.4.2",
     "dwv": "^0.31.0",
-    "fhirpath": "^3.3.0",
+    "fhirpath": "3.3.0",
     "gridstack": "8.1.1",
     "humanize-duration": "^3.27.3",
     "idb": "^7.1.0",
