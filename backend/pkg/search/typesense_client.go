@@ -2,9 +2,7 @@ package search
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/google/uuid"
@@ -17,7 +15,6 @@ type SearchClient struct {
 }
 
 func (s *SearchClient) IndexResource(resource *models.ResourceBase) error {
-
 	print("Indexing resource in Typesense: ", resource)
 	doc := map[string]interface{}{
 		"id":                   uuid.New().String(), // Generate a new UUID for the document ID in order to avoid overlaps
@@ -27,34 +24,19 @@ func (s *SearchClient) IndexResource(resource *models.ResourceBase) error {
 		"source_id":            resource.SourceID.String(),
 		"source_resource_type": resource.SourceResourceType,
 		"source_resource_id":   resource.SourceResourceID,
-		"sort_date":            float64(time.Now().Unix()),
+		"sort_date":            0, // Default to 0 if SortDate is nil
 		"resource_raw":         resource.ResourceRaw,
 	}
 
 	if resource.SortDate != nil {
-		doc["sort_date"] = resource.SortDate.Unix()
-	}
-
-	if resource.SortTitle != nil {
-		doc["sort_title"] = *resource.SortTitle
-		doc["code_text"] = *resource.SortTitle // fallback
-	}
-
-	if resource.SourceUri != nil {
-		doc["source_uri"] = *resource.SourceUri
-	}
-	// Extract `code.text` if present
-	var rawMap map[string]interface{}
-	if err := json.Unmarshal(resource.ResourceRaw, &rawMap); err == nil {
-		if text, ok := extractCodeText(rawMap); ok {
-			doc["code_text"] = text
-		}
+		doc["sort_date"] = resource.SortDate.UnixMilli() // Convert to milliseconds since epoch
 	}
 
 	_, err := s.Client.Collection("resources").Documents().Upsert(context.Background(), doc, &api.DocumentIndexParameters{})
 	if err != nil {
 		return fmt.Errorf("failed to index resource: %w", err)
 	}
+	print("Resource indexed successfully in Typesense")
 
 	return nil
 }
@@ -62,7 +44,7 @@ func (s *SearchClient) IndexResource(resource *models.ResourceBase) error {
 func (s *SearchClient) SearchResources(query string, resourceTypeFilter *string, page int, perPage int) ([]map[string]interface{}, int, error) {
 	searchParams := &api.SearchCollectionParams{
 		Q:       ptr(query),
-		QueryBy: ptr("sort_title,code_text,source_resource_type,source_resource_id,source_uri"),
+		QueryBy: ptr("sort_title,source_resource_type,source_resource_id,source_uri"),
 		SortBy:  ptr("sort_date:desc"),
 		Page:    intPtr(page),
 		PerPage: intPtr(perPage),
@@ -108,15 +90,6 @@ func derefStr(s *string) string {
 		return *s
 	}
 	return ""
-}
-
-func extractCodeText(raw map[string]interface{}) (string, bool) {
-	if code, ok := raw["code"].(map[string]interface{}); ok {
-		if text, ok := code["text"].(string); ok {
-			return text, true
-		}
-	}
-	return "", false
 }
 
 // ptr returns a pointer to the given string.
