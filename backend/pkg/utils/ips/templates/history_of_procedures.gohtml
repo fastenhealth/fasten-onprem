@@ -20,7 +20,7 @@ Date: Procedure.performedDateTime || Procedure.performedPeriod.start && “-“ 
       {{range $index, $entry := .Procedure }}
          <tr id="{{$entry.SourceResourceID}}">
             <td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Procedure */}}
-            <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td> {{/* Comments - TODO: use FHIRPath */}}
+            <td>{{pluckList "text" ($entry.Note | parseMapList) | uniq | join "," }}</td> {{/* Comments */}}
             <td>{{$entry.Date | date "2006-01-02"}}</td> {{/* Performed Date */}}
          </tr>
       {{end}}

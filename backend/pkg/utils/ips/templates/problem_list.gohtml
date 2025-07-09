@@ -22,7 +22,7 @@ Onset Date: Condition.onsetDateTime || Condition.onsetPeriod.start && “-“ &&
          <tr id="{{$entry.SourceResourceID}}">
             <td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Medical Problems */}}
             <td>{{pluckList "code" ($entry.ClinicalStatus | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
-            <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+            <td>{{pluckList "text" ($entry.Note | parseMapList) | uniq | join "," }}</td> {{/* Comments */}}
             <td>{{$entry.OnsetDate | date "2006-01-02"}}</td> {{/* Onset */}}
          </tr>
       {{end}}

@@ -22,7 +22,7 @@ Date Recorded: DeviceUseStatement.recordedDateTime
          <tr id="{{$entry.SourceResourceID}}">
             <td>{{pluckList "text" ($entry.Type | parseMapList) | uniq | join "," }}</td> {{/* Device */}}
             <td>{{pluckList "code" ($entry.Status | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
-            <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+            <td>{{pluckList "text" ($entry.Note | parseMapList) | uniq | join "," }}</td> {{/* Comments */}}
             <td></td> {{/* Date Recorded */}}
          </tr>
       {{end}}
