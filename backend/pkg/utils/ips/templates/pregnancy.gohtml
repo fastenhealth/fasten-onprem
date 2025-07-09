@@ -22,7 +22,7 @@ Date: Observation.effectiveDateTime || Observation.effectivePeriod.start
          <tr id="{{$entry.SourceResourceID}}">
             <td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Code */}}
             <td>{{template "observation-value.gohtml" (dict "entry" $entry "include_unit" true)}}</td> {{/* Result */}}
-            <td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
+            <td>{{pluckList "text" ($entry.Note | parseMapList) | uniq | join "," }}</td> {{/* Comments */}}
             <td>{{$entry.Date | date "2006-01-02"}}</td> {{/* Date */}}
          </tr>
       {{end}}

@@ -15,10 +15,11 @@ Route: MedicationStatement.dosage[x].{ route.text || route.coding[x].display (se
 Sig: MedicationStatement.dosage[x].text (display all sigs separated by <br />)
 Date: MedicationStatement.effectiveDateTime || MedicationStatement.effectivePeriod.start
 */-->
-<div xmlns:th="http://www.thymeleaf.org">
-
-	<th:block th:if="${narrativeUtil.bundleHasEntriesWithResourceType(resource, 'MedicationRequest')}">
-		<h5>Medication Summary: Medication Requests</h5>
+<div>
+	<h5>Medication Summary: Medication Requests</h5>
+	{{if not .MedicationRequest}} 
+		No data available
+	{{else}}
 		<table class="hapiPropertyTable">
 			<thead>
 			<tr>
@@ -31,35 +32,26 @@ Date: MedicationStatement.effectiveDateTime || MedicationStatement.effectivePeri
 			</tr>
 			</thead>
 			<tbody>
-			<th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
-				<th:block th:if='*{getResourceType().name() == "MedicationRequest"}'>
-					<th:block th:unless='*{getResourceType().name() == "Composition"}'>
-						<th:block
-							th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
-							<tr th:id="${#strings.arraySplit(extension, '#')[1]}">
-								<td th:insert="~{IpsUtilityFragments :: renderMedication (medicationType=*{getMedication()})}">
-									Medication
-								</td>
-								<td th:text="*{getStatus().getDisplay()}">Status</td>
-								<td th:insert="~{IpsUtilityFragments :: concatDosageRoute (list=*{getDosageInstruction()})}">
-									Route
-								</td>
-								<td th:insert="~{IpsUtilityFragments :: concat (list=*{getDosageInstruction()},attr='text')}">
-									Sig
-								</td>
-								<td th:insert="~{IpsUtilityFragments :: concat (list=*{getNote()},attr='text')}">Comments</td>
-								<td th:text="*{getAuthoredOnElement().getValue()}">Authored Date</td>
-							</tr>
-						</th:block>
-					</th:block>
-				</th:block>
-			</th:block>
+			
+			{{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+			{{range $index, $entry := .MedicationRequest }}
+				<tr id="{{$entry.SourceResourceID}}">
+					<td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Medication */}}
+					<td>{{pluckList "code" ($entry.Status | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
+					<td>{{pluckList "text" ($entry.Route | parseMapList) | uniq | join "," }}</td> {{/* Route */}}
+					<td>{{pluckList "text" ($entry.DosageInstruction | parseMapList) | uniq | join "," }}</td> {{/* Sig */}}
+					<td>{{pluckList "text" ($entry.Note | parseMapList) | uniq | join "," }}</td> {{/* Comments */}}
+					<td>{{$entry.Authoredon | date "2006-01-02"}}</td> {{/* Authored Date */}}
+				</tr>
+			{{end}}		
 			</tbody>
 		</table>
-	</th:block>
+	{{end}}
 
-	<th:block th:if="${narrativeUtil.bundleHasEntriesWithResourceType(resource, 'MedicationStatement')}">
-		<h5>Medication Summary: Medication Statements</h5>
+	<h5>Medication Summary: Medication Statements</h5>
+	{{if not .MedicationStatement}} 
+		No data available
+	{{else}}
 		<table class="hapiPropertyTable">
 			<thead>
 			<tr>
@@ -67,27 +59,22 @@ Date: MedicationStatement.effectiveDateTime || MedicationStatement.effectivePeri
 				<th>Status</th>
 				<th>Route</th>
 				<th>Sig</th>
-				<th>Date</th>
+				<th>Authored Date</th>
 			</tr>
 			</thead>
 			<tbody>
-			<th:block th:each="entry : ${resource.entry}" th:object="${entry.getResource()}">
-				<th:block th:if='*{getResourceType().name() == "MedicationStatement"}'>
-					<th:block
-						th:with="extension=${entry.getResource().getExtensionByUrl('http://hl7.org/fhir/StructureDefinition/narrativeLink').getValue().getValue()}">
-						<tr th:id="${#strings.arraySplit(extension, '#')[1]}">
-							<td th:insert="~{IpsUtilityFragments :: renderMedication (medicationType=*{getMedication()})}">
-								Medication
-							</td>
-							<td th:text="*{getStatus().getDisplay()}">Status</td>
-							<td th:insert="~{IpsUtilityFragments :: concatDosageRoute (list=*{getDosage()})}">Route</td>
-							<td th:insert="~{IpsUtilityFragments :: concat (list=*{getDosage()},attr='text')}">Sig</td>
-							<td th:insert="~{IpsUtilityFragments :: renderEffective (effective=*{getEffective()})}">Date</td>
-						</tr>
-					</th:block>
-				</th:block>
-			</th:block>
+			
+			{{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+			{{range $index, $entry := .MedicationStatement }}
+				<tr id="{{$entry.SourceResourceID}}">
+					<td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Medication */}}
+					<td>{{pluckList "code" ($entry.Status | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
+					<td>{{pluckList "text" ($entry.Route | parseMapList) | uniq | join "," }}</td> {{/* Route */}}
+					<td>{{pluckList "text" ($entry.DosageInstruction | parseMapList) | uniq | join "," }}</td> {{/* Sig */}}
+					<td>{{$entry.Authoredon | date "2006-01-02"}}</td> {{/* Authored Date */}}
+				</tr>
+			{{end}}		
 			</tbody>
 		</table>
-	</th:block>
+	{{end}}
 </div>
