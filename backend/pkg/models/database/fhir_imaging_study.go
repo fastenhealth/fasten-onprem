@@ -89,6 +89,9 @@ type FhirImagingStudy struct {
 	// The modality of the series
 	// https://hl7.org/fhir/r4/search.html#token
 	Modality datatypes.JSON `gorm:"column:modality;type:text;serializer:json" json:"modality,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// The person who performed the study
 	// https://hl7.org/fhir/r4/search.html#reference
 	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`
@@ -132,6 +135,7 @@ func (s *FhirImagingStudy) GetSearchParameters() map[string]string {
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
 		"modality":             "token",
+		"note":                 "string",
 		"performer":            "reference",
 		"reason":               "token",
 		"referrer":             "reference",
@@ -262,6 +266,11 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 	modalityResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'ImagingStudy.series.modality')")
 	if err == nil && modalityResult.String() != "undefined" {
 		s.Modality = []byte(modalityResult.String())
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting Performer
 	performerResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'ImagingStudy.series.performer.actor')")

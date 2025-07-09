@@ -12,11 +12,11 @@ import (
 	"time"
 )
 
-type FhirCareTeam struct {
+type FhirClinicalImpression struct {
 	models.ResourceBase
-	// Type of team
-	// https://hl7.org/fhir/r4/search.html#token
-	Category datatypes.JSON `gorm:"column:category;type:text;serializer:json" json:"category,omitempty"`
+	// The clinician performing the assessment
+	// https://hl7.org/fhir/r4/search.html#reference
+	Assessor datatypes.JSON `gorm:"column:assessor;type:text;serializer:json" json:"assessor,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -43,42 +43,18 @@ type FhirCareTeam struct {
 	// Encounter created as part of
 	// https://hl7.org/fhir/r4/search.html#reference
 	Encounter datatypes.JSON `gorm:"column:encounter;type:text;serializer:json" json:"encounter,omitempty"`
-	/*
-	   Multiple Resources:
-
-	   * [AllergyIntolerance](allergyintolerance.html): External ids for this item
-	   * [CarePlan](careplan.html): External Ids for this plan
-	   * [CareTeam](careteam.html): External Ids for this team
-	   * [Composition](composition.html): Version-independent identifier for the Composition
-	   * [Condition](condition.html): A unique identifier of the condition record
-	   * [Consent](consent.html): Identifier for this record (external references)
-	   * [DetectedIssue](detectedissue.html): Unique id for the detected issue
-	   * [DeviceRequest](devicerequest.html): Business identifier for request/order
-	   * [DiagnosticReport](diagnosticreport.html): An identifier for the report
-	   * [DocumentManifest](documentmanifest.html): Unique Identifier for the set of documents
-	   * [DocumentReference](documentreference.html): Master Version Specific Identifier
-	   * [Encounter](encounter.html): Identifier(s) by which this encounter is known
-	   * [EpisodeOfCare](episodeofcare.html): Business Identifier(s) relevant for this EpisodeOfCare
-	   * [FamilyMemberHistory](familymemberhistory.html): A search by a record identifier
-	   * [Goal](goal.html): External Ids for this goal
-	   * [ImagingStudy](imagingstudy.html): Identifiers for the Study, such as DICOM Study Instance UID and Accession number
-	   * [Immunization](immunization.html): Business identifier
-	   * [List](list.html): Business identifier
-	   * [MedicationAdministration](medicationadministration.html): Return administrations with this external identifier
-	   * [MedicationDispense](medicationdispense.html): Returns dispenses with this external identifier
-	   * [MedicationRequest](medicationrequest.html): Return prescriptions with this external identifier
-	   * [MedicationStatement](medicationstatement.html): Return statements with this external identifier
-	   * [NutritionOrder](nutritionorder.html): Return nutrition orders with this external identifier
-	   * [Observation](observation.html): The unique id for a particular observation
-	   * [Procedure](procedure.html): A unique identifier for a procedure
-	   * [RiskAssessment](riskassessment.html): Unique identifier for the assessment
-	   * [ServiceRequest](servicerequest.html): Identifiers assigned to this order
-	   * [SupplyDelivery](supplydelivery.html): External identifier
-	   * [SupplyRequest](supplyrequest.html): Business Identifier for SupplyRequest
-	   * [VisionPrescription](visionprescription.html): Return prescriptions with this external identifier
-	*/
+	// What was found
+	// https://hl7.org/fhir/r4/search.html#token
+	FindingCode datatypes.JSON `gorm:"column:findingCode;type:text;serializer:json" json:"findingCode,omitempty"`
+	// What was found
+	// https://hl7.org/fhir/r4/search.html#reference
+	FindingRef datatypes.JSON `gorm:"column:findingRef;type:text;serializer:json" json:"findingRef,omitempty"`
+	// Business identifier
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
+	// Record of a specific investigation
+	// https://hl7.org/fhir/r4/search.html#reference
+	Investigation datatypes.JSON `gorm:"column:investigation;type:text;serializer:json" json:"investigation,omitempty"`
 	// Language of the resource content
 	// https://hl7.org/fhir/r4/search.html#token
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
@@ -97,34 +73,44 @@ type FhirCareTeam struct {
 	// Notes/comments
 	// https://hl7.org/fhir/r4/search.html#string
 	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
-	// Who is involved
+	// Reference to last assessment
 	// https://hl7.org/fhir/r4/search.html#reference
-	Participant datatypes.JSON `gorm:"column:participant;type:text;serializer:json" json:"participant,omitempty"`
-	// proposed | active | suspended | inactive | entered-in-error
+	Previous datatypes.JSON `gorm:"column:previous;type:text;serializer:json" json:"previous,omitempty"`
+	// Relevant impressions of patient state
+	// https://hl7.org/fhir/r4/search.html#reference
+	Problem datatypes.JSON `gorm:"column:problem;type:text;serializer:json" json:"problem,omitempty"`
+	// in-progress | completed | entered-in-error
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
-	// Who care team is for
+	// Patient or group assessed
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
+	// Information supporting the clinical impression
+	// https://hl7.org/fhir/r4/search.html#reference
+	SupportingInfo datatypes.JSON `gorm:"column:supportingInfo;type:text;serializer:json" json:"supportingInfo,omitempty"`
 	// Text search against the narrative
 	// https://hl7.org/fhir/r4/search.html#string
 	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 }
 
-func (s *FhirCareTeam) GetSearchParameters() map[string]string {
+func (s *FhirClinicalImpression) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
-		"category":             "token",
+		"assessor":             "reference",
 		"date":                 "date",
 		"encounter":            "reference",
+		"findingCode":          "token",
+		"findingRef":           "reference",
 		"id":                   "keyword",
 		"identifier":           "token",
+		"investigation":        "reference",
 		"language":             "token",
 		"metaLastUpdated":      "date",
 		"metaProfile":          "reference",
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
 		"note":                 "string",
-		"participant":          "reference",
+		"previous":             "reference",
+		"problem":              "reference",
 		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
@@ -132,11 +118,12 @@ func (s *FhirCareTeam) GetSearchParameters() map[string]string {
 		"source_uri":           "keyword",
 		"status":               "token",
 		"subject":              "reference",
+		"supportingInfo":       "reference",
 		"text":                 "string",
 	}
 	return searchParameters
 }
-func (s *FhirCareTeam) PopulateAndExtractSearchParameters(resourceRaw json.RawMessage) error {
+func (s *FhirClinicalImpression) PopulateAndExtractSearchParameters(resourceRaw json.RawMessage) error {
 	s.ResourceRaw = datatypes.JSON(resourceRaw)
 	// unmarshal the raw resource (bytes) into a map
 	var resourceRawMap map[string]interface{}
@@ -173,10 +160,10 @@ func (s *FhirCareTeam) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		return err
 	}
 	// execute the fhirpath expression for each search parameter
-	// extracting Category
-	categoryResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'CareTeam.category')")
-	if err == nil && categoryResult.String() != "undefined" {
-		s.Category = []byte(categoryResult.String())
+	// extracting Assessor
+	assessorResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'ClinicalImpression.assessor')")
+	if err == nil && assessorResult.String() != "undefined" {
+		s.Assessor = []byte(assessorResult.String())
 	}
 	// extracting Date
 	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effectiveDateTime | DiagnosticReport.effectivePeriod | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effectiveDateTime | Observation.effectivePeriod | Observation.effectiveTiming | Observation.effectiveInstant | Procedure.performedDateTime | Procedure.performedPeriod | Procedure.performedString | Procedure.performedAge | Procedure.performedRange | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')")
@@ -192,14 +179,29 @@ func (s *FhirCareTeam) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		}
 	}
 	// extracting Encounter
-	encounterResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'CareTeam.encounter')")
+	encounterResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'ClinicalImpression.encounter')")
 	if err == nil && encounterResult.String() != "undefined" {
 		s.Encounter = []byte(encounterResult.String())
 	}
+	// extracting FindingCode
+	findingCodeResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'ClinicalImpression.finding.itemCodeableConcept')")
+	if err == nil && findingCodeResult.String() != "undefined" {
+		s.FindingCode = []byte(findingCodeResult.String())
+	}
+	// extracting FindingRef
+	findingRefResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'ClinicalImpression.finding.itemReference')")
+	if err == nil && findingRefResult.String() != "undefined" {
+		s.FindingRef = []byte(findingRefResult.String())
+	}
 	// extracting Identifier
-	identifierResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'AllergyIntolerance.identifier | CarePlan.identifier | CareTeam.identifier | Composition.identifier | Condition.identifier | Consent.identifier | DetectedIssue.identifier | DeviceRequest.identifier | DiagnosticReport.identifier | DocumentManifest.masterIdentifier | DocumentManifest.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | Encounter.identifier | EpisodeOfCare.identifier | FamilyMemberHistory.identifier | Goal.identifier | ImagingStudy.identifier | Immunization.identifier | List.identifier | MedicationAdministration.identifier | MedicationDispense.identifier | MedicationRequest.identifier | MedicationStatement.identifier | NutritionOrder.identifier | Observation.identifier | Procedure.identifier | RiskAssessment.identifier | ServiceRequest.identifier | SupplyDelivery.identifier | SupplyRequest.identifier | VisionPrescription.identifier')")
+	identifierResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'ClinicalImpression.identifier')")
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
+	}
+	// extracting Investigation
+	investigationResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'ClinicalImpression.investigation.item')")
+	if err == nil && investigationResult.String() != "undefined" {
+		s.Investigation = []byte(investigationResult.String())
 	}
 	// extracting Language
 	languageResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'language')")
@@ -239,20 +241,30 @@ func (s *FhirCareTeam) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	if err == nil && noteResult.String() != "undefined" {
 		s.Note = []byte(noteResult.String())
 	}
-	// extracting Participant
-	participantResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'CareTeam.participant.member')")
-	if err == nil && participantResult.String() != "undefined" {
-		s.Participant = []byte(participantResult.String())
+	// extracting Previous
+	previousResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'ClinicalImpression.previous')")
+	if err == nil && previousResult.String() != "undefined" {
+		s.Previous = []byte(previousResult.String())
+	}
+	// extracting Problem
+	problemResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'ClinicalImpression.problem')")
+	if err == nil && problemResult.String() != "undefined" {
+		s.Problem = []byte(problemResult.String())
 	}
 	// extracting Status
-	statusResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'CareTeam.status')")
+	statusResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'ClinicalImpression.status')")
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
 	}
 	// extracting Subject
-	subjectResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'CareTeam.subject')")
+	subjectResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'ClinicalImpression.subject')")
 	if err == nil && subjectResult.String() != "undefined" {
 		s.Subject = []byte(subjectResult.String())
+	}
+	// extracting SupportingInfo
+	supportingInfoResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'ClinicalImpression.supportingInfo')")
+	if err == nil && supportingInfoResult.String() != "undefined" {
+		s.SupportingInfo = []byte(supportingInfoResult.String())
 	}
 	// extracting Text
 	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
@@ -263,6 +275,6 @@ func (s *FhirCareTeam) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 }
 
 // TableName overrides the table name from fhir_observations (pluralized) to `fhir_observation`. https://gorm.io/docs/conventions.html#TableName
-func (s *FhirCareTeam) TableName() string {
-	return "fhir_care_team"
+func (s *FhirClinicalImpression) TableName() string {
+	return "fhir_clinical_impression"
 }

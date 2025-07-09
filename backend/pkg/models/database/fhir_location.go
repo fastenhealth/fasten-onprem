@@ -56,6 +56,9 @@ type FhirLocation struct {
 	// A portion of the location's name or alias
 	// https://hl7.org/fhir/r4/search.html#string
 	Name datatypes.JSON `gorm:"column:name;type:text;serializer:json" json:"name,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Searches for locations (typically bed/room) that have an operational status (e.g. contaminated, housekeeping)
 	// https://hl7.org/fhir/r4/search.html#token
 	OperationalStatus datatypes.JSON `gorm:"column:operationalStatus;type:text;serializer:json" json:"operationalStatus,omitempty"`
@@ -93,6 +96,7 @@ func (s *FhirLocation) GetSearchParameters() map[string]string {
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
 		"name":                 "string",
+		"note":                 "string",
 		"operationalStatus":    "token",
 		"organization":         "reference",
 		"partof":               "reference",
@@ -221,6 +225,11 @@ func (s *FhirLocation) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	nameResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Location.name | Location.alias')")
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = []byte(nameResult.String())
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting OperationalStatus
 	operationalStatusResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Location.operationalStatus')")

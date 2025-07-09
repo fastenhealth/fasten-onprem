@@ -124,12 +124,18 @@ type FhirCarePlan struct {
 	// Tags applied to this resource
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Part of referenced CarePlan
 	// https://hl7.org/fhir/r4/search.html#reference
 	PartOf datatypes.JSON `gorm:"column:partOf;type:text;serializer:json" json:"partOf,omitempty"`
 	// Matches if the practitioner is listed as a performer in any of the "simple" activities.  (For performers of the detailed activities, chain through the activitydetail search parameter.)
 	// https://hl7.org/fhir/r4/search.html#reference
 	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`
+	// Returns care plan period
+	// https://hl7.org/fhir/r4/search.html#string
+	Period datatypes.JSON `gorm:"column:period;type:text;serializer:json" json:"period,omitempty"`
 	// CarePlan replaced by this CarePlan
 	// https://hl7.org/fhir/r4/search.html#reference
 	Replaces datatypes.JSON `gorm:"column:replaces;type:text;serializer:json" json:"replaces,omitempty"`
@@ -166,8 +172,10 @@ func (s *FhirCarePlan) GetSearchParameters() map[string]string {
 		"metaProfile":           "reference",
 		"metaTag":               "token",
 		"metaVersionId":         "keyword",
+		"note":                  "string",
 		"partOf":                "reference",
 		"performer":             "reference",
+		"period":                "string",
 		"replaces":              "reference",
 		"sort_date":             "date",
 		"source_id":             "keyword",
@@ -336,6 +344,11 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	if err == nil && metaVersionIdResult.String() != "undefined" {
 		s.MetaVersionId = metaVersionIdResult.String()
 	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
+	}
 	// extracting PartOf
 	partOfResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'CarePlan.partOf')")
 	if err == nil && partOfResult.String() != "undefined" {
@@ -345,6 +358,11 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	performerResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'CarePlan.activity.detail.performer')")
 	if err == nil && performerResult.String() != "undefined" {
 		s.Performer = []byte(performerResult.String())
+	}
+	// extracting Period
+	periodResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'CarePlan.period')")
+	if err == nil && periodResult.String() != "undefined" {
+		s.Period = []byte(periodResult.String())
 	}
 	// extracting Replaces
 	replacesResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'CarePlan.replaces')")

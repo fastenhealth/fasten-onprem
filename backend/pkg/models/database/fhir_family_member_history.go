@@ -114,6 +114,9 @@ type FhirFamilyMemberHistory struct {
 	// Tags applied to this resource
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// A search by a relationship type
 	// https://hl7.org/fhir/r4/search.html#token
 	Relationship datatypes.JSON `gorm:"column:relationship;type:text;serializer:json" json:"relationship,omitempty"`
@@ -141,6 +144,7 @@ func (s *FhirFamilyMemberHistory) GetSearchParameters() map[string]string {
 		"metaProfile":           "reference",
 		"metaTag":               "token",
 		"metaVersionId":         "keyword",
+		"note":                  "string",
 		"relationship":          "token",
 		"sex":                   "token",
 		"sort_date":             "date",
@@ -255,6 +259,11 @@ func (s *FhirFamilyMemberHistory) PopulateAndExtractSearchParameters(resourceRaw
 	metaVersionIdResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.versionId')")
 	if err == nil && metaVersionIdResult.String() != "undefined" {
 		s.MetaVersionId = metaVersionIdResult.String()
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting Relationship
 	relationshipResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'FamilyMemberHistory.relationship')")

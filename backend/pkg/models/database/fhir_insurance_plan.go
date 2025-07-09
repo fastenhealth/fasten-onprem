@@ -59,6 +59,9 @@ type FhirInsurancePlan struct {
 	// A portion of the organization's name or alias
 	// https://hl7.org/fhir/r4/search.html#string
 	Name datatypes.JSON `gorm:"column:name;type:text;serializer:json" json:"name,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// An organization of which this organization forms a part
 	// https://hl7.org/fhir/r4/search.html#reference
 	OwnedBy datatypes.JSON `gorm:"column:ownedBy;type:text;serializer:json" json:"ownedBy,omitempty"`
@@ -94,6 +97,7 @@ func (s *FhirInsurancePlan) GetSearchParameters() map[string]string {
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
 		"name":                 "string",
+		"note":                 "string",
 		"ownedBy":              "reference",
 		"phonetic":             "string",
 		"sort_date":            "date",
@@ -226,6 +230,11 @@ func (s *FhirInsurancePlan) PopulateAndExtractSearchParameters(resourceRaw json.
 	nameResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'name | alias')")
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = []byte(nameResult.String())
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting OwnedBy
 	ownedByResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'InsurancePlan.ownedBy')")
