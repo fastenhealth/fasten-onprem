@@ -388,53 +388,34 @@ export class FastenApiService {
   }
 
   getIPSExport(exportType?: string) {
-    // // <a href="https://somedomain.com/api/doc/somefile.pdf" ng-click="openPdf($event)">PDF</a>
-    //
-    // // function openPdf($event) {
-    // // Prevent default behavior when clicking a link
-    // $event.preventDefault();
-    //
-    // // Get filename from href
-    // var filename = $event.target.href;
-    //
-    // $http.get('/api/secure/summary/ips?format=html', {responseType: 'arraybuffer'})
-    //   .success(function (data) {
-    //     var file = new Blob([data], {type: 'application/pdf'});
-    //     var fileURL = URL.createObjectURL(file);
-    //
-    //     // Open new windows and show PDF
-    //     window.open(fileURL);
-    //   });
-    //
-    // $vent.
-    // // }
-
-    let httpHeaders = new HttpHeaders();
-    //.set('Content-Type'
-    httpHeaders.set('Accept', 'text/html');
-
+    let httpHeaders = new HttpHeaders().set('Accept', 'application/pdf');
 
     let queryParams = {
-      "format": exportType || "html"
-    }
-    console.log("requesting", `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/summary/ips`)
-    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/summary/ips`, {
+      "format": "pdf"
+    };
+
+    console.log("requesting", `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/summary/ips`);
+
+    this._httpClient.get(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/summary/ips`, {
       params: queryParams,
       headers: httpHeaders,
-      // observe: 'response',
-      // @ts-ignore
-      responseType: 'arraybuffer'
-    })
-      .subscribe((data) => {
+      responseType: 'blob' // Request the data as a Blob
+    }).subscribe((data: Blob) => {
+      console.log(data)
+      // Create a URL for the blob
+      const fileURL = URL.createObjectURL(data);
 
-        var file = new Blob([data]);
-        var fileURL = URL.createObjectURL(file);
+      // Create a temporary anchor element and trigger the download
+      const link = document.createElement('a');
+      link.href = fileURL;
+      link.setAttribute('download', 'ips_summary.pdf'); // Set the filename for the download
+      document.body.appendChild(link);
+      link.click();
 
-        // Open new windows and show PDF or HTML file
-        window.open(fileURL, "_blank");
-
-      });
-
+      // Clean up by removing the link and revoking the URL
+      document.body.removeChild(link);
+      URL.revokeObjectURL(fileURL);
+    });
   }
 
 }
