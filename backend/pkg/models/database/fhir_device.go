@@ -44,6 +44,9 @@ type FhirDevice struct {
 	// The model of the device
 	// https://hl7.org/fhir/r4/search.html#string
 	Model datatypes.JSON `gorm:"column:model;type:text;serializer:json" json:"model,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// The organization responsible for the device
 	// https://hl7.org/fhir/r4/search.html#reference
 	Organization datatypes.JSON `gorm:"column:organization;type:text;serializer:json" json:"organization,omitempty"`
@@ -80,6 +83,7 @@ func (s *FhirDevice) GetSearchParameters() map[string]string {
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
 		"model":                "string",
+		"note":                 "string",
 		"organization":         "reference",
 		"sort_date":            "date",
 		"source_id":            "keyword",
@@ -189,6 +193,11 @@ func (s *FhirDevice) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 	modelResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Device.modelNumber')")
 	if err == nil && modelResult.String() != "undefined" {
 		s.Model = []byte(modelResult.String())
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting Organization
 	organizationResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Device.owner')")

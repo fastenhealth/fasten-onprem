@@ -74,6 +74,9 @@ type FhirGoal struct {
 	// Tags applied to this resource
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// When goal pursuit begins
 	// https://hl7.org/fhir/r4/search.html#date
 	StartDate *time.Time `gorm:"column:startDate;type:datetime" json:"startDate,omitempty"`
@@ -100,6 +103,7 @@ func (s *FhirGoal) GetSearchParameters() map[string]string {
 		"metaProfile":          "reference",
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
+		"note":                 "string",
 		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
@@ -201,6 +205,11 @@ func (s *FhirGoal) PopulateAndExtractSearchParameters(resourceRaw json.RawMessag
 	metaVersionIdResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.versionId')")
 	if err == nil && metaVersionIdResult.String() != "undefined" {
 		s.MetaVersionId = metaVersionIdResult.String()
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting StartDate
 	startDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, '(Goal.startDate)')")

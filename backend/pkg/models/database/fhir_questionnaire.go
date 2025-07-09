@@ -62,6 +62,9 @@ type FhirQuestionnaire struct {
 	// Computationally friendly name of the questionnaire
 	// https://hl7.org/fhir/r4/search.html#string
 	Name datatypes.JSON `gorm:"column:name;type:text;serializer:json" json:"name,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Name of the publisher of the questionnaire
 	// https://hl7.org/fhir/r4/search.html#string
 	Publisher datatypes.JSON `gorm:"column:publisher;type:text;serializer:json" json:"publisher,omitempty"`
@@ -104,6 +107,7 @@ func (s *FhirQuestionnaire) GetSearchParameters() map[string]string {
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
 		"name":                 "string",
+		"note":                 "string",
 		"publisher":            "string",
 		"sort_date":            "date",
 		"source_id":            "keyword",
@@ -259,6 +263,11 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 	nameResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Questionnaire.name')")
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = []byte(nameResult.String())
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting Publisher
 	publisherResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Questionnaire.publisher')")

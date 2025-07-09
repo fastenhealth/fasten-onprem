@@ -128,6 +128,9 @@ type FhirRelatedPerson struct {
 	// A server defined search that may match any of the string fields in the HumanName, including family, give, prefix, suffix, suffix, and/or text
 	// https://hl7.org/fhir/r4/search.html#string
 	Name datatypes.JSON `gorm:"column:name;type:text;serializer:json" json:"name,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	/*
 	   Multiple Resources:
 
@@ -188,6 +191,7 @@ func (s *FhirRelatedPerson) GetSearchParameters() map[string]string {
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
 		"name":                 "string",
+		"note":                 "string",
 		"phone":                "token",
 		"phonetic":             "string",
 		"relationship":         "token",
@@ -338,6 +342,11 @@ func (s *FhirRelatedPerson) PopulateAndExtractSearchParameters(resourceRaw json.
 	nameResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'RelatedPerson.name')")
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = []byte(nameResult.String())
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting Phone
 	phoneResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Patient.telecom.where(system='phone') | Person.telecom.where(system='phone') | Practitioner.telecom.where(system='phone') | PractitionerRole.telecom.where(system='phone') | RelatedPerson.telecom.where(system='phone')')")

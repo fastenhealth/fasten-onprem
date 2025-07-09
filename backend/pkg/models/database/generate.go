@@ -170,6 +170,11 @@ func main() {
 			Description:        "Text search against the narrative",
 			FHIRPathExpression: "text",
 		}
+		fieldMap["Note"] = DBField{
+			FieldType:          "string",
+			Description:        "Notes/comments",
+			FHIRPathExpression: "note",
+		}
 
 		resourceFieldMap[resourceName] = fieldMap
 	}
@@ -623,6 +628,7 @@ var AllowedResources = []string{
 	"Slot",
 	"Specimen",
 	"VisionPrescription",
+	"ClinicalImpression",
 }
 
 // simple field types are not json encoded in the DB and are always single values (not arrays)

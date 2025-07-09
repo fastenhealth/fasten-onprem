@@ -50,6 +50,9 @@ type FhirOrganizationAffiliation struct {
 	// Health insurance provider network in which the participatingOrganization provides the role's services (if defined) at the indicated locations (if defined)
 	// https://hl7.org/fhir/r4/search.html#reference
 	Network datatypes.JSON `gorm:"column:network;type:text;serializer:json" json:"network,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// The organization that provides services to the primary organization
 	// https://hl7.org/fhir/r4/search.html#reference
 	ParticipatingOrganization datatypes.JSON `gorm:"column:participatingOrganization;type:text;serializer:json" json:"participatingOrganization,omitempty"`
@@ -91,6 +94,7 @@ func (s *FhirOrganizationAffiliation) GetSearchParameters() map[string]string {
 		"metaTag":                   "token",
 		"metaVersionId":             "keyword",
 		"network":                   "reference",
+		"note":                      "string",
 		"participatingOrganization": "reference",
 		"phone":                     "token",
 		"primaryOrganization":       "reference",
@@ -219,6 +223,11 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 	networkResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'OrganizationAffiliation.network')")
 	if err == nil && networkResult.String() != "undefined" {
 		s.Network = []byte(networkResult.String())
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting ParticipatingOrganization
 	participatingOrganizationResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'OrganizationAffiliation.participatingOrganization')")

@@ -156,6 +156,9 @@ type FhirObservation struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
+	// Returns observation interpretation
+	// https://hl7.org/fhir/r4/search.html#token
+	Interpretation datatypes.JSON `gorm:"column:interpretation;type:text;serializer:json" json:"interpretation,omitempty"`
 	// Language of the resource content
 	// https://hl7.org/fhir/r4/search.html#token
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
@@ -174,12 +177,18 @@ type FhirObservation struct {
 	// The method used for the observation
 	// https://hl7.org/fhir/r4/search.html#token
 	Method datatypes.JSON `gorm:"column:method;type:text;serializer:json" json:"method,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Part of referenced event
 	// https://hl7.org/fhir/r4/search.html#reference
 	PartOf datatypes.JSON `gorm:"column:partOf;type:text;serializer:json" json:"partOf,omitempty"`
 	// Who performed the observation
 	// https://hl7.org/fhir/r4/search.html#reference
 	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`
+	// Returns observation referenceRange
+	// https://hl7.org/fhir/r4/search.html#string
+	ReferenceRange datatypes.JSON `gorm:"column:referenceRange;type:text;serializer:json" json:"referenceRange,omitempty"`
 	// Specimen used for this observation
 	// https://hl7.org/fhir/r4/search.html#reference
 	Specimen datatypes.JSON `gorm:"column:specimen;type:text;serializer:json" json:"specimen,omitempty"`
@@ -228,14 +237,17 @@ func (s *FhirObservation) GetSearchParameters() map[string]string {
 		"hasMember":                 "reference",
 		"id":                        "keyword",
 		"identifier":                "token",
+		"interpretation":            "token",
 		"language":                  "token",
 		"metaLastUpdated":           "date",
 		"metaProfile":               "reference",
 		"metaTag":                   "token",
 		"metaVersionId":             "keyword",
 		"method":                    "token",
+		"note":                      "string",
 		"partOf":                    "reference",
 		"performer":                 "reference",
+		"referenceRange":            "string",
 		"sort_date":                 "date",
 		"source_id":                 "keyword",
 		"source_resource_id":        "keyword",
@@ -392,6 +404,11 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
 	}
+	// extracting Interpretation
+	interpretationResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Observation.interpretation')")
+	if err == nil && interpretationResult.String() != "undefined" {
+		s.Interpretation = []byte(interpretationResult.String())
+	}
 	// extracting Language
 	languageResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'language')")
 	if err == nil && languageResult.String() != "undefined" {
@@ -430,6 +447,11 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	if err == nil && methodResult.String() != "undefined" {
 		s.Method = []byte(methodResult.String())
 	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
+	}
 	// extracting PartOf
 	partOfResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Observation.partOf')")
 	if err == nil && partOfResult.String() != "undefined" {
@@ -439,6 +461,11 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	performerResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Observation.performer')")
 	if err == nil && performerResult.String() != "undefined" {
 		s.Performer = []byte(performerResult.String())
+	}
+	// extracting ReferenceRange
+	referenceRangeResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Observation.referenceRange')")
+	if err == nil && referenceRangeResult.String() != "undefined" {
+		s.ReferenceRange = []byte(referenceRangeResult.String())
 	}
 	// extracting Specimen
 	specimenResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Observation.specimen')")

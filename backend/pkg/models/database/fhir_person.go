@@ -128,6 +128,9 @@ type FhirPerson struct {
 	// A server defined search that may match any of the string fields in the HumanName, including family, give, prefix, suffix, suffix, and/or text
 	// https://hl7.org/fhir/r4/search.html#string
 	Name datatypes.JSON `gorm:"column:name;type:text;serializer:json" json:"name,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// The organization at which this person record is being managed
 	// https://hl7.org/fhir/r4/search.html#reference
 	Organization datatypes.JSON `gorm:"column:organization;type:text;serializer:json" json:"organization,omitempty"`
@@ -194,6 +197,7 @@ func (s *FhirPerson) GetSearchParameters() map[string]string {
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
 		"name":                 "string",
+		"note":                 "string",
 		"organization":         "reference",
 		"phone":                "token",
 		"phonetic":             "string",
@@ -346,6 +350,11 @@ func (s *FhirPerson) PopulateAndExtractSearchParameters(resourceRaw json.RawMess
 	nameResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Person.name')")
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = []byte(nameResult.String())
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting Organization
 	organizationResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Person.managingOrganization')")

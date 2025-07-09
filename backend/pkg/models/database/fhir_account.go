@@ -35,6 +35,9 @@ type FhirAccount struct {
 	// Human-readable label
 	// https://hl7.org/fhir/r4/search.html#string
 	Name datatypes.JSON `gorm:"column:name;type:text;serializer:json" json:"name,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Entity managing the Account
 	// https://hl7.org/fhir/r4/search.html#reference
 	Owner datatypes.JSON `gorm:"column:owner;type:text;serializer:json" json:"owner,omitempty"`
@@ -65,6 +68,7 @@ func (s *FhirAccount) GetSearchParameters() map[string]string {
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
 		"name":                 "string",
+		"note":                 "string",
 		"owner":                "reference",
 		"period":               "date",
 		"sort_date":            "date",
@@ -158,6 +162,11 @@ func (s *FhirAccount) PopulateAndExtractSearchParameters(resourceRaw json.RawMes
 	nameResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Account.name')")
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = []byte(nameResult.String())
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting Owner
 	ownerResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Account.owner')")
