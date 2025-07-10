@@ -21,19 +21,19 @@ export class ResourceSearchTableComponent implements OnInit {
   ngOnInit(): void {
     this.loading = true;
     //always request the source summary
-    this.fastenApi.getResourceSummary().subscribe(
-      (sourceSummary) => {
-        this.loading = false;
-        console.log('Source Summary:', sourceSummary);
-        for (let resourceTypeCount of sourceSummary.resource_type_counts) {
-          this.resourceTypeCounts[resourceTypeCount.resource_type] =
-            resourceTypeCount.count;
-        }
-      },
-      (error) => {
-        this.loading = false;
-      }
-    );
+    // this.fastenApi.getResourceSummary().subscribe(
+    //   (sourceSummary) => {
+    //     this.loading = false;
+    //     console.log('Source Summary:', sourceSummary);
+    //     for (let resourceTypeCount of sourceSummary.resource_type_counts) {
+    //       this.resourceTypeCounts[resourceTypeCount.resource_type] =
+    //         resourceTypeCount.count;
+    //     }
+    //   },
+    //   (error) => {
+    //     this.loading = false;
+    //   }
+    // );
   }
 
   selectResourceType(resourceType: string) {
