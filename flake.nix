@@ -25,7 +25,7 @@
             nodejs_20
             (yarn.override { nodejs = nodejs_20; })
             (pkgs.writeShellScriptBin "ng" ''
-              ${nodejs_20}/bin/npx @angular/cli@16 "$@"
+              ${nodejs_20}/bin/npx @angular/cli@17 "$@"
             '')
 
             # Backend dependencies
