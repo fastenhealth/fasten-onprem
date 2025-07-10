@@ -19,7 +19,7 @@ import { ReportMedicalHistoryConditionComponent } from './report-medical-history
 import { ReportMedicalHistoryEditorComponent } from './report-medical-history-editor/report-medical-history-editor.component';
 import { ReportMedicalHistoryExplanationOfBenefitComponent } from './report-medical-history-explanation-of-benefit/report-medical-history-explanation-of-benefit.component';
 import { ToastComponent } from './toast/toast.component';
-import { TreeModule } from '@circlon/angular-tree-component';
+// import { TreeModule } from '@circlon/angular-tree-component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {GridstackComponent} from './gridstack/gridstack.component';
 import {GridstackItemComponent} from './gridstack/gridstack-item.component';
@@ -51,7 +51,7 @@ import { FormRequestHealthSystemComponent } from './form-request-health-system/f
     FormsModule,
     ReactiveFormsModule,
     MomentModule,
-    TreeModule,
+    // TreeModule,
     NgChartsModule,
     HighlightModule,
     PipesModule,

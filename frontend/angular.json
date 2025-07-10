@@ -21,7 +21,7 @@
             "outputPath": "dist/fastenhealth",
             "index": "src/index.html",
             "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": "zone.js",
             "tsConfig": "tsconfig.app.json",
             "allowedCommonJsDependencies": [
               "chart.js",
@@ -317,7 +317,7 @@
           "options": {
             "codeCoverage": true,
             "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": "zone.js",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "assets": [

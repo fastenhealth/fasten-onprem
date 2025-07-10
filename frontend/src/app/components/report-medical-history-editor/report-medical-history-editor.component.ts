@@ -3,7 +3,7 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {FastenApiService} from '../../services/fasten-api.service';
 import * as fhirpath from 'fhirpath';
-import {ITreeOptions} from '@circlon/angular-tree-component';
+// import {ITreeOptions} from '@circlon/angular-tree-component';
 
 class RelatedNode {
   name: string
@@ -53,7 +53,11 @@ export class ReportMedicalHistoryEditorComponent implements OnInit {
     //   ]
     // }
   ];
-  options: ITreeOptions = {
+  // options: ITreeOptions = {
+  //   allowDrag: false,
+  //   allowDrop: false,
+  // }
+  options = {
     allowDrag: false,
     allowDrop: false,
   }
