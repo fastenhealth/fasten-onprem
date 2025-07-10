@@ -14,6 +14,11 @@ type GormRepository struct {
 	*database.GormRepository
 }
 
+type ResourceTypeCount struct {
+	Count        int    `json:"count"`
+	ResourceType string `json:"resource_type"`
+}
+
 func SearchResourcesHandler(c *gin.Context) {
 	logger := logrus.WithFields(logrus.Fields{
 		"handler": "SearchResourcesHandler",
@@ -108,5 +113,69 @@ func GetResourceByIDHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"resource": resource,
+	})
+}
+
+func GetResourceSummaryHandler(c *gin.Context) {
+	logger := logrus.WithFields(logrus.Fields{
+		"handler": "SearchResourcesHandler",
+		"path":    c.Request.URL.Path,
+		"method":  c.Request.Method,
+		"ip":      c.ClientIP(),
+	})
+
+	logger.Info("Resource summary request started")
+	if typesenseClient.Client == nil {
+		logger.Error("Typesense client is not initialized")
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "search service unavailable"})
+		return
+	}
+
+	searchClient := &typesenseClient.SearchClient{Client: typesenseClient.Client}
+
+	perPage := 250
+	page := 1
+	counts := map[string]int{}
+
+	for {
+		results, total, err := searchClient.SearchResources("*", nil, page, perPage)
+		logger.WithFields(logrus.Fields{
+			"page":        page,
+			"perPage":     perPage,
+			"total":       total,
+			"resultCount": len(results),
+		}).Info("Fetching resource type counts")
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Count resource types in current page of results
+		for _, hit := range results {
+			// `hit.Document` is a map[string]interface{}
+			if val, ok := hit["source_resource_type"]; ok {
+				if rt, ok := val.(string); ok {
+					counts[rt]++
+				}
+			}
+		}
+
+		// If last page, break loop
+		if page*perPage >= total {
+			break
+		}
+		page++
+	}
+
+	var results []ResourceTypeCount
+	for rt, count := range counts {
+		results = append(results, ResourceTypeCount{
+			Count:        count,
+			ResourceType: rt,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"resource_type_counts": results,
 	})
 }

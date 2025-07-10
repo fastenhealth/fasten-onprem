@@ -43,6 +43,7 @@ import { IconsModule } from './icon-module';
 import { UserListComponent } from './pages/user-list/user-list.component';
 import { ResourceSearchComponent } from './pages/resource-search/resource-search.component';
 import { ViewRawResourceDetailsComponent } from './pages/view-raw-resource-details/view-raw-resource-details.component';
+import { ResourceSearchTableComponent } from './pages/resource-search-table/resource-search-table.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { ViewRawResourceDetailsComponent } from './pages/view-raw-resource-detai
     UserListComponent,
     ResourceSearchComponent,
     ViewRawResourceDetailsComponent,
+    ResourceSearchTableComponent,
   ],
   imports: [
     FormsModule,
