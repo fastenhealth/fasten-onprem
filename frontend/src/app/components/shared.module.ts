@@ -37,6 +37,7 @@ import {FhirDatatableModule} from './fhir-datatable/fhir-datatable.module';
 import { MedicalRecordWizardAddEncounterComponent } from './medical-record-wizard-add-encounter/medical-record-wizard-add-encounter.component';
 import { MedicalRecordWizardAddLabResultsComponent } from './medical-record-wizard-add-lab-results/medical-record-wizard-add-lab-results.component';
 import { FormRequestHealthSystemComponent } from './form-request-health-system/form-request-health-system.component';
+import { ResourceSearchDatatableComponent } from './resource-search-datatable/resource-search-datatable.component';
 
 @NgModule({
   imports: [
@@ -89,6 +90,7 @@ import { FormRequestHealthSystemComponent } from './form-request-health-system/f
     MedicalSourcesCategoryLookupPipe,
     MedicalSourcesCardComponent,
     FormRequestHealthSystemComponent,
+    ResourceSearchDatatableComponent,
   ],
     exports: [
         ComponentsSidebarComponent,
@@ -104,6 +106,7 @@ import { FormRequestHealthSystemComponent } from './form-request-health-system/f
         MedicalSourcesCardComponent,
         MedicalSourcesConnectedComponent,
         ReportMedicalHistoryTimelinePanelComponent,
+        ResourceSearchDatatableComponent,
 
       //standalone components
       GlossaryLookupComponent,
