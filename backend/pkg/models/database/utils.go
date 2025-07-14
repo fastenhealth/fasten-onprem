@@ -14,7 +14,7 @@ var searchParameterExtractorJs string
 
 // Generates all tables in the database associated with these models
 func Migrate(gormClient *gorm.DB) error {
-	err := gormClient.AutoMigrate(&FhirAccount{}, &FhirAdverseEvent{}, &FhirAllergyIntolerance{}, &FhirAppointment{}, &FhirBinary{}, &FhirCarePlan{}, &FhirCareTeam{}, &FhirClaim{}, &FhirClaimResponse{}, &FhirComposition{}, &FhirCondition{}, &FhirConsent{}, &FhirCoverage{}, &FhirCoverageEligibilityRequest{}, &FhirCoverageEligibilityResponse{}, &FhirDevice{}, &FhirDeviceRequest{}, &FhirDiagnosticReport{}, &FhirDocumentManifest{}, &FhirDocumentReference{}, &FhirEncounter{}, &FhirEndpoint{}, &FhirEnrollmentRequest{}, &FhirEnrollmentResponse{}, &FhirExplanationOfBenefit{}, &FhirFamilyMemberHistory{}, &FhirGoal{}, &FhirImagingStudy{}, &FhirImmunization{}, &FhirInsurancePlan{}, &FhirLocation{}, &FhirMedia{}, &FhirMedication{}, &FhirMedicationAdministration{}, &FhirMedicationDispense{}, &FhirMedicationRequest{}, &FhirMedicationStatement{}, &FhirNutritionOrder{}, &FhirObservation{}, &FhirOrganization{}, &FhirOrganizationAffiliation{}, &FhirPatient{}, &FhirPerson{}, &FhirPractitioner{}, &FhirPractitionerRole{}, &FhirProcedure{}, &FhirProvenance{}, &FhirQuestionnaire{}, &FhirQuestionnaireResponse{}, &FhirRelatedPerson{}, &FhirSchedule{}, &FhirServiceRequest{}, &FhirSlot{}, &FhirSpecimen{}, &FhirVisionPrescription{}, &FhirClinicalImpression{})
+	err := gormClient.AutoMigrate(&FhirAccount{}, &FhirAdverseEvent{}, &FhirAllergyIntolerance{}, &FhirAppointment{}, &FhirBinary{}, &FhirCarePlan{}, &FhirCareTeam{}, &FhirClaim{}, &FhirClaimResponse{}, &FhirClinicalImpression{}, &FhirComposition{}, &FhirCondition{}, &FhirConsent{}, &FhirCoverage{}, &FhirCoverageEligibilityRequest{}, &FhirCoverageEligibilityResponse{}, &FhirDevice{}, &FhirDeviceRequest{}, &FhirDiagnosticReport{}, &FhirDocumentManifest{}, &FhirDocumentReference{}, &FhirEncounter{}, &FhirEndpoint{}, &FhirEnrollmentRequest{}, &FhirEnrollmentResponse{}, &FhirExplanationOfBenefit{}, &FhirFamilyMemberHistory{}, &FhirGoal{}, &FhirImagingStudy{}, &FhirImmunization{}, &FhirInsurancePlan{}, &FhirLocation{}, &FhirMedia{}, &FhirMedication{}, &FhirMedicationAdministration{}, &FhirMedicationDispense{}, &FhirMedicationRequest{}, &FhirMedicationStatement{}, &FhirNutritionOrder{}, &FhirObservation{}, &FhirOrganization{}, &FhirOrganizationAffiliation{}, &FhirPatient{}, &FhirPerson{}, &FhirPractitioner{}, &FhirPractitionerRole{}, &FhirProcedure{}, &FhirProvenance{}, &FhirQuestionnaire{}, &FhirQuestionnaireResponse{}, &FhirRelatedPerson{}, &FhirSchedule{}, &FhirServiceRequest{}, &FhirSlot{}, &FhirSpecimen{}, &FhirVisionPrescription{})
 	if err != nil {
 		return err
 	}
@@ -42,6 +42,8 @@ func NewFhirResourceModelByType(resourceType string) (IFhirResourceModel, error)
 		return &FhirClaim{}, nil
 	case "ClaimResponse":
 		return &FhirClaimResponse{}, nil
+	case "ClinicalImpression":
+		return &FhirClinicalImpression{}, nil
 	case "Composition":
 		return &FhirComposition{}, nil
 	case "Condition":
@@ -134,8 +136,6 @@ func NewFhirResourceModelByType(resourceType string) (IFhirResourceModel, error)
 		return &FhirSpecimen{}, nil
 	case "VisionPrescription":
 		return &FhirVisionPrescription{}, nil
-	case "ClinicalImpression":
-		return &FhirClinicalImpression{}, nil
 	default:
 		return nil, fmt.Errorf("Invalid resource type for model: %s", resourceType)
 	}
@@ -162,6 +162,8 @@ func NewFhirResourceModelSliceByType(resourceType string) (interface{}, error) {
 		return []FhirClaim{}, nil
 	case "ClaimResponse":
 		return []FhirClaimResponse{}, nil
+	case "ClinicalImpression":
+		return []FhirClinicalImpression{}, nil
 	case "Composition":
 		return []FhirComposition{}, nil
 	case "Condition":
@@ -280,6 +282,8 @@ func GetTableNameByResourceType(resourceType string) (string, error) {
 		return "fhir_claim", nil
 	case "ClaimResponse":
 		return "fhir_claim_response", nil
+	case "ClinicalImpression":
+		return "fhir_clinical_impression", nil
 	case "Composition":
 		return "fhir_composition", nil
 	case "Condition":
@@ -372,8 +376,6 @@ func GetTableNameByResourceType(resourceType string) (string, error) {
 		return "fhir_specimen", nil
 	case "VisionPrescription":
 		return "fhir_vision_prescription", nil
-	case "ClinicalImpression":
-		return "fhir_clinical_impression", nil
 	default:
 		return "", fmt.Errorf("Invalid resource type for table name: %s", resourceType)
 	}
@@ -381,5 +383,5 @@ func GetTableNameByResourceType(resourceType string) (string, error) {
 
 // Returns a slice of all allowed resource types
 func GetAllowedResourceTypes() []string {
-	return []string{"Account", "AdverseEvent", "AllergyIntolerance", "Appointment", "Binary", "CarePlan", "CareTeam", "Claim", "ClaimResponse", "Composition", "Condition", "Consent", "Coverage", "CoverageEligibilityRequest", "CoverageEligibilityResponse", "Device", "DeviceRequest", "DiagnosticReport", "DocumentManifest", "DocumentReference", "Encounter", "Endpoint", "EnrollmentRequest", "EnrollmentResponse", "ExplanationOfBenefit", "FamilyMemberHistory", "Goal", "ImagingStudy", "Immunization", "InsurancePlan", "Location", "Media", "Medication", "MedicationAdministration", "MedicationDispense", "MedicationRequest", "MedicationStatement", "NutritionOrder", "Observation", "Organization", "OrganizationAffiliation", "Patient", "Person", "Practitioner", "PractitionerRole", "Procedure", "Provenance", "Questionnaire", "QuestionnaireResponse", "RelatedPerson", "Schedule", "ServiceRequest", "Slot", "Specimen", "VisionPrescription", "ClinicalImpression"}
+	return []string{"Account", "AdverseEvent", "AllergyIntolerance", "Appointment", "Binary", "CarePlan", "CareTeam", "Claim", "ClaimResponse", "ClinicalImpression", "Composition", "Condition", "Consent", "Coverage", "CoverageEligibilityRequest", "CoverageEligibilityResponse", "Device", "DeviceRequest", "DiagnosticReport", "DocumentManifest", "DocumentReference", "Encounter", "Endpoint", "EnrollmentRequest", "EnrollmentResponse", "ExplanationOfBenefit", "FamilyMemberHistory", "Goal", "ImagingStudy", "Immunization", "InsurancePlan", "Location", "Media", "Medication", "MedicationAdministration", "MedicationDispense", "MedicationRequest", "MedicationStatement", "NutritionOrder", "Observation", "Organization", "OrganizationAffiliation", "Patient", "Person", "Practitioner", "PractitionerRole", "Procedure", "Provenance", "Questionnaire", "QuestionnaireResponse", "RelatedPerson", "Schedule", "ServiceRequest", "Slot", "Specimen", "VisionPrescription"}
 }
