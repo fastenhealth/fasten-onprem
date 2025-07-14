@@ -7,8 +7,6 @@ import (
 	"strings"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
-	"github.com/johnfercher/maroto/v2/pkg/components/text"
-	"github.com/johnfercher/maroto/v2/pkg/core"
 	"gorm.io/datatypes"
 )
 
@@ -46,16 +44,20 @@ func pluckStringListValue(raw datatypes.JSON) string {
 	return strings.Join(slices.Compact(parsed), ", ")
 }
 
-func extractValueFromList(list []map[string]interface{}) string {
+func pluckListValue(list []map[string]interface{}, key string, isFloat bool) string {
 	var values []string
 
 	for _, item := range list {
-		value, ok := item["value"]
+		value, ok := item[key]
 		if !ok {
 			continue
 		}
 
-		values = append(values, fmt.Sprintf("%.2f", value))
+		if isFloat {
+			value = fmt.Sprintf("%.2f", value)
+		}
+
+		values = append(values, fmt.Sprintf("%s", value))
 	}
 
 	return strings.Join(values, ", ")
@@ -74,7 +76,7 @@ func getObservationValue(observation database.FhirObservation) string {
 		}
 
 		if len(list) > 0 {
-			return extractValueFromList(list)
+			return pluckListValue(list, "value", true)
 		}
 	}
 	if observation.ValueDate != nil {
@@ -92,26 +94,11 @@ func getObservationValue(observation database.FhirObservation) string {
 		}
 
 		if len(list) > 0 {
-			return extractValueFromList(list)
+			return pluckListValue(list, "value", true)
 		}
 	}
 
 	return ""
-}
-
-func extractUnitFromList(list []map[string]interface{}) string {
-	var units []string
-
-	for _, item := range list {
-		unit, ok := item["unit"]
-		if !ok {
-			continue
-		}
-
-		units = append(units, fmt.Sprintf("%s", unit))
-	}
-
-	return strings.Join(units, ", ")
 }
 
 func getObservationUnit(observation database.FhirObservation) string {
@@ -123,7 +110,7 @@ func getObservationUnit(observation database.FhirObservation) string {
 		}
 
 		if len(list) > 0 {
-			return extractUnitFromList(list)
+			return pluckListValue(list, "unit", false)
 		} 
 	}
 	if (observation.ComponentValueQuantity != nil) {
@@ -134,12 +121,8 @@ func getObservationUnit(observation database.FhirObservation) string {
 		}
 
 		if len(list) > 0 {
-			return extractUnitFromList(list)
+			return pluckListValue(list, "unit", false)
 		} 
 	}
 	return ""
-}
-
-func newTextCol(size int, value string) core.Col {
-	return text.NewCol(size, value, tableTextStyle)
 }
