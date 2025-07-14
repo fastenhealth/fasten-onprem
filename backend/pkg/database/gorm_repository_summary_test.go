@@ -3,22 +3,22 @@ package database
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"os"
+	"testing"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	sourceFactory "github.com/fastenhealth/fasten-sources/clients/factory"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
-	"github.com/fastenhealth/gofhir-models/fhir401"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"io/ioutil"
-	"log"
-	"os"
-	"testing"
 )
 
 // Define the suite, and absorb the built-in basic suite
@@ -103,12 +103,12 @@ func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryBundl
 	require.Equal(suite.T(), 234, len(summary.UpdatedResources))
 
 	//test
-	bundle, composition, err := dbRepo.GetInternationalPatientSummaryBundle(authContext)
+	ipsData, err := dbRepo.GetInternationalPatientSummaryExport(authContext)
 	require.NoError(suite.T(), err)
 
 	//case bundle and composition
-	fhirBundle := bundle.(*fhir401.Bundle)
-	fhirComposition := composition.(*fhir401.Composition)
+	fhirBundle := ipsData.Bundle
+	fhirComposition := ipsData.Composition
 
 	require.NotNil(suite.T(), fhirBundle)
 	require.NotNil(suite.T(), fhirComposition)

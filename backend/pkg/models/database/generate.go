@@ -582,6 +582,7 @@ var AllowedResources = []string{
 	"CareTeam",
 	"Claim",
 	"ClaimResponse",
+	"ClinicalImpression",
 	"Composition",
 	"Condition",
 	"Consent",
@@ -628,7 +629,6 @@ var AllowedResources = []string{
 	"Slot",
 	"Specimen",
 	"VisionPrescription",
-	"ClinicalImpression",
 }
 
 // simple field types are not json encoded in the DB and are always single values (not arrays)

@@ -4,6 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
+	"strings"
+	"time"
+
 	"github.com/TwiN/deepmerge"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
@@ -12,8 +16,6 @@ import (
 	"github.com/fastenhealth/gofhir-models/fhir401"
 	"github.com/google/uuid"
 	"github.com/samber/lo"
-	"log"
-	"time"
 )
 
 // returns IPSBundle and IPSComposition
@@ -25,106 +27,50 @@ func (gr *GormRepository) GetInternationalPatientSummaryExport(ctx context.Conte
 
 	exportData.GenerationDate = summaryTime
 
-	//get a list of all Patients associated with this user (we'll be creating a pseudo Patient for referencing in this Bundle
 	patient, err := gr.GetPatientMerged(ctx)
 	if err != nil {
-		//TODO: determine if we should error out here. If only manually entered records were entered, we wont have a Patient record,
 		return exportData, err
 	}
 	exportData.Patient = patient
 
-	//get a list of all Sources associated with this user
 	sources, err := gr.GetSources(ctx)
 	if err != nil {
 		return exportData, err
 	}
 	exportData.Sources = sources
 
-	narrativeEngine, err := ips.NewNarrative()
+	htmlRenderer, err := ips.NewHTMLRenderer()
 	if err != nil {
 		return exportData, fmt.Errorf("error creating narrative engine: %w", err)
 	}
 
-	//Algorithm to create the IPS bundle
-	// 1. Generate the IPS Section Lists (GetInternationalPatientSummarySectionResources)
-	// 		- Process each resource, generating a Markdown narrative in the text field for each resource
-	//      - keep track of the earliest and latest date of the resources in the section
-	// 2. Create the Composition Section (generateIPSCompositionSection)
-	//      - Populate it with the data from the Header
-	//      - Generate a Section Narrative, written in Markdown, which summarizes the contents of the section at a high level, with dates and counts
-	// 3. Query all the Patient Resources
-	// 		- Merge the Patient resources together?
-	// 4. Create a Fasten Health Organization resource. This is the custodian of the IPS
-	// 5. Create the IPS Composition
-	//      - Populate it with the Composition Sections and references to the Patient resource + Fasten Health Organziation resource
-	//      - Generate a Composition Narrative, written in Markdown, which summarizes the contents of the IPS & Patient at a high level, with dates and counts
-	// 6. Create the IPS Bundle
-
-	//Step 1. Generate the IPS Section Lists
-	summarySectionQueryResults, err := gr.getInternationalPatientSummarySectionResources(ctx)
+	summarySectionResources, err := gr.getInternationalPatientSummarySectionResources(ctx)
 	if err != nil {
 		return exportData, err
 	}
+	exportData.SectionResources = summarySectionResources
 
-	//Step 2. Create the Composition Section
 	compositionSections := []fhir401.CompositionSection{}
 
-	//loop though the various section groups in order (required, recommended, optional)
-	for ndx, _ := range pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsRequired] {
-		section := pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsRequired][ndx]
-		if sectionQueryResultsList, ok := summarySectionQueryResults[section]; ok {
-			compositionSection, err := generateIPSCompositionSection(narrativeEngine, section, sectionQueryResultsList)
-			if err != nil {
-				return exportData, err
+	for _, sectionGroup := range pkg.IPSSectionGroupsOrdered {
+		for _, section := range sectionGroup {
+			if sectionData, ok := summarySectionResources[section]; ok {
+				compositionSection, err := generateIPSCompositionSection(section, sectionData, *htmlRenderer)
+				if err != nil {
+					return exportData, err
+				}
+				compositionSections = append(compositionSections, *compositionSection)
 			}
-			compositionSections = append(compositionSections, *compositionSection)
 		}
 	}
-	for ndx, _ := range pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsRecommended] {
-		section := pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsRecommended][ndx]
-		if sectionQueryResultsList, ok := summarySectionQueryResults[section]; ok {
-			compositionSection, err := generateIPSCompositionSection(narrativeEngine, section, sectionQueryResultsList)
-			if err != nil {
-				return exportData, err
-			}
-			compositionSections = append(compositionSections, *compositionSection)
-		}
-	}
-	for ndx, _ := range pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsOptional] {
-		section := pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsOptional][ndx]
-		if sectionQueryResultsList, ok := summarySectionQueryResults[section]; ok {
-			compositionSection, err := generateIPSCompositionSection(narrativeEngine, section, sectionQueryResultsList)
-			if err != nil {
-				return exportData, err
-			}
-			compositionSections = append(compositionSections, *compositionSection)
-		}
-	}
-
-	//for sectionType, sectionQueryResultsList := range summarySectionQueryResults {
-	//	compositionSection, err := generateIPSCompositionSection(narrativeEngine, sectionType, sectionQueryResultsList)
-	//	if err != nil {
-	//		return exportData, err
-	//	}
-	//	compositionSections = append(compositionSections, *compositionSection)
-	//}
-
-	//TODO: Step 3. Query all the Patient Resources & merge them together
-
-	//TODO: Step 4. Create a Fasten Health Organization resource.
 
 	compositionUUID := uuid.New().String()
 	patientReference := fmt.Sprintf("%s/%s", exportData.Patient.GetSourceResourceType(), exportData.Patient.GetSourceResourceID())
 
-	//Step 5. Create the IPS Composition
 	ipsComposition := &fhir401.Composition{
 		Id: stringPtr(compositionUUID),
-		Text: &fhir401.Narrative{
-			Status: fhir401.NarrativeStatusGenerated,
-			Div:    "PLACEHOLDER NARRATIVE SUMMARY FOR COMPOSITION", //TODO
-		},
 		Identifier: &fhir401.Identifier{
-			System: stringPtr("https://www.fastenhealth.com"), //TODO
+			System: stringPtr("https://www.fastenhealth.com"),
 			Value:  &compositionUUID,
 		},
 		Status: fhir401.CompositionStatusFinal,
@@ -138,12 +84,12 @@ func (gr *GormRepository) GetInternationalPatientSummaryExport(ctx context.Conte
 			},
 		},
 		Subject: &fhir401.Reference{
-			Reference: stringPtr(patientReference), //TODO
+			Reference: stringPtr(patientReference),
 		},
 		Date: timestamp,
 		Author: []fhir401.Reference{
 			{
-				Reference: stringPtr("Organization/fastenhealth.com"), //TODO: The type of author(s) contribute to determine the "nature"of the Patient Summary: e.g. a "human-curated" IPS Vs. an "automatically generated" IPS.
+				Reference: stringPtr("Organization/fastenhealth.com"),
 			},
 		},
 		Title: fmt.Sprintf("Patient Summary as of %s", summaryTime.Format("January 2, 2006 15:04")),
@@ -172,7 +118,7 @@ func (gr *GormRepository) GetInternationalPatientSummaryExport(ctx context.Conte
 					},
 				},
 				Period: &fhir401.Period{
-					Start: &timestamp, //TODO: this should be the oldest record in the summary
+					Start: &timestamp,
 					End:   &timestamp,
 				},
 			},
@@ -180,7 +126,6 @@ func (gr *GormRepository) GetInternationalPatientSummaryExport(ctx context.Conte
 	}
 	ipsComposition.Section = compositionSections
 
-	// Step 6. Create the IPS Bundle
 	bundleUUID := uuid.New().String()
 	ipsBundle := &fhir401.Bundle{
 		Id:        &bundleUUID,
@@ -190,7 +135,6 @@ func (gr *GormRepository) GetInternationalPatientSummaryExport(ctx context.Conte
 		Type:      fhir401.BundleTypeDocument,
 	}
 
-	// Add the Composition to the bundle
 	ipsCompositionJson, err := json.Marshal(ipsComposition)
 	if err != nil {
 		return exportData, err
@@ -198,18 +142,6 @@ func (gr *GormRepository) GetInternationalPatientSummaryExport(ctx context.Conte
 	ipsBundle.Entry = append(ipsBundle.Entry, fhir401.BundleEntry{
 		Resource: json.RawMessage(ipsCompositionJson),
 	})
-
-	// TODO: Add the Patient to the bundle
-	// TODO: Add the Fasten Health Organization to the bundle
-
-	// TODO: Add all the resources to the bundle
-	//for _, sectionResources := range summarySectionResources {
-	//	for _, resource := range sectionResources {
-	//		ipsBundle.Entry = append(ipsBundle.Entry, fhir401.BundleEntry{
-	//			Resource: json.RawMessage(resource.GetResourceRaw()),
-	//		})
-	//	}
-	//}
 
 	exportData.Bundle = ipsBundle
 	exportData.Composition = ipsComposition
@@ -221,39 +153,32 @@ func (gr *GormRepository) GetInternationalPatientSummaryExport(ctx context.Conte
 // The IPS bundle will contain a summary of all the data in the system, including a list of all sources, and the main Patient
 // See: https://github.com/fastenhealth/fasten-onprem/issues/170
 // See: https://github.com/jddamore/fhir-ips-server/blob/main/docs/Summary_Creation_Steps.md
-func (gr *GormRepository) getInternationalPatientSummarySectionResources(ctx context.Context) (map[pkg.IPSSections][]any, error) {
+func (gr *GormRepository) getInternationalPatientSummarySectionResources(ctx context.Context) (map[pkg.IPSSections]*ips.SectionData, error) {
+	summarySectionResources := map[pkg.IPSSections]*ips.SectionData{}
 
-	summarySectionResources := map[pkg.IPSSections][]any{}
-
-	// generate queries for each IPS Section
-	for ndx, _ := range pkg.IPSSectionsList {
-		sectionName := pkg.IPSSectionsList[ndx]
-
-		//initialize the section
-		summarySectionResources[sectionName] = []any{}
+	for _, sectionName := range pkg.IPSSectionsList {
+		summarySectionResources[sectionName] = &ips.SectionData{}
 
 		queries, err := gr.generateIPSSectionQueries(ctx, sectionName)
 		if err != nil {
 			return nil, err
 		}
 
-		for qndx, _ := range queries {
-			results, err := gr.QueryResources(ctx, queries[qndx])
+		for _, query := range queries {
+			results, err := gr.QueryResources(ctx, query)
+
 			if err != nil {
 				return nil, err
 			}
 
-			//resultsList := convertUnknownInterfaceToFhirSlice(results)
-
-			//TODO: generate resource narrative
-			summarySectionResources[sectionName] = append(summarySectionResources[sectionName], results)
+			summarySectionResources[sectionName].PopulateSectionDataFromQuery(results)
 		}
 	}
 
 	return summarySectionResources, nil
 }
 
-func generateIPSCompositionSection(narrativeEngine *ips.Narrative, sectionType pkg.IPSSections, queryResultsList []any) (*fhir401.CompositionSection, error) {
+func generateIPSCompositionSection(sectionType pkg.IPSSections, sectionData *ips.SectionData, htmlRenderer ips.HTMLRenderer) (*fhir401.CompositionSection, error) {
 	sectionTitle, sectionCode, err := generateIPSSectionHeaderInfo(sectionType)
 	if err != nil {
 		return nil, err
@@ -264,9 +189,7 @@ func generateIPSCompositionSection(narrativeEngine *ips.Narrative, sectionType p
 		Code:  &sectionCode,
 	}
 
-	//database.IFhirResourceModel
-
-	resources := flattenQueryResultsToResourcesList(queryResultsList)
+	resources := sectionData.GetAllSectionResources()
 
 	if len(resources) == 0 {
 		section.EmptyReason = &fhir401.CodeableConcept{
@@ -284,17 +207,10 @@ func generateIPSCompositionSection(narrativeEngine *ips.Narrative, sectionType p
 			reference := fhir401.Reference{
 				Reference: stringPtr(fmt.Sprintf("%s/%s", resource.GetSourceResourceType(), resource.GetSourceResourceID())),
 			}
-			if err != nil {
-				return nil, err
-			}
 			section.Entry = append(section.Entry, reference)
 		}
 
-		//TODO: Add the section narrative summary
-		rendered, err := narrativeEngine.RenderSection(
-			sectionType,
-			resources,
-		)
+		rendered, err := htmlRenderer.RenderSection(sectionType, sectionData)
 		if err != nil {
 			return nil, fmt.Errorf("error rendering narrative for section %s: %w", sectionType, err)
 		}
@@ -303,7 +219,6 @@ func generateIPSCompositionSection(narrativeEngine *ips.Narrative, sectionType p
 			Status: fhir401.NarrativeStatusGenerated,
 			Div:    rendered,
 		}
-
 	}
 	return section, nil
 }
@@ -323,7 +238,7 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"verificationStatus:not": []string{"entered-in-error"},
 			},
 		})
-		break
+		
 	case pkg.IPSSectionsProblemList:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -333,7 +248,7 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"verificationStatus:not": []string{"entered-in-error"},
 			},
 		})
-		break
+		
 	case pkg.IPSSectionsMedicationSummary:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -349,81 +264,79 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status": "active,unknown,on-hold",
 			},
 		})
-		break
+		
 	case pkg.IPSSectionsDiagnosticResults:
-		queries = append(queries, models.QueryResource{
-			Select: nil,
-			From:   "DiagnosticReport",
-			Where: map[string]interface{}{
-				"category": "LAB",
+		lastReportsPerCodeQueries, err := gr.generateLastNResourcesPerCodeQueries(
+			ctx,
+			models.QueryResource{
+				Select: nil,
+				From:   "DiagnosticReport",
+				Where: map[string]interface{}{
+					"category": "LAB",
+				},
+				Aggregations: &models.QueryResourceAggregations{
+					GroupBy: &models.QueryResourceAggregation{Field: "code:code"},
+				},
 			},
-		})
-
-		//TODO: group by code, sort by date, limit to the most recent 3
-		queries = append(queries, models.QueryResource{
-			Select: nil,
-			From:   "Observation",
-			Where: map[string]interface{}{
-				"category":   "laboratory",
-				"status:not": "preliminary",
-			},
-		})
-		break
-	case pkg.IPSSectionsVitalSigns:
-		//lets query the database for this user, getting a list of unique codes, associated with this category ('vital-signs').
-		//our goal is to retrieve the 3 most recent values for each code.
-		vitalSignsGrouped, err := gr.QueryResources(ctx, models.QueryResource{
-			Select: nil,
-			From:   "Observation",
-			Where: map[string]interface{}{
-				"category": "vital-signs",
-			},
-			Aggregations: &models.QueryResourceAggregations{
-				GroupBy: &models.QueryResourceAggregation{Field: "code:code"},
-			},
-		})
+			1,
+			[]string{},
+		)
 
 		if err != nil {
 			return nil, err
 		}
 
-		vitalSignsGroupedByCodeList, ok := vitalSignsGrouped.([]map[string]any)
-		if !ok {
-			return nil, fmt.Errorf("could not decode vital signs grouped by code")
-		}
+		queries = append(queries, lastReportsPerCodeQueries...)
 
-		//known codes related to vital signs: https://www.hl7.org/fhir/R4/valueset-observation-vitalsignresult.html#definition
-		vitalSignCodes := []string{
-			"85353-1", "9279-1", "8867-4", "2708-6", "8310-5", "8302-2", "9843-4", "29463-7", "39156-5", "85354-9", "8480-6", "8462-4", "8478-0",
-		}
-
-		for ndx, _ := range vitalSignsGroupedByCodeList {
-			//now that we have a list of codes that are tagged as vital-signs.
-			if labelValue, labelValueOk := vitalSignsGroupedByCodeList[ndx]["label"]; labelValueOk {
-				if labelValueStr, labeValueStrOk := labelValue.(*interface{}); labeValueStrOk {
-					vitalSignCodes = append(vitalSignCodes, (*labelValueStr).(string))
-				} else {
-					gr.Logger.Warnf("could not cast vital-sign codes to string")
-				}
-			} else {
-				gr.Logger.Warnf("could not retrieve vital-sign group-by clause label value")
-			}
-		}
-		vitalSignCodes = lo.Uniq(vitalSignCodes)
-
-		limit := 3
-		//group by code, sort by date, limit to the most recent 3
-		for ndx, _ := range vitalSignCodes {
-			queries = append(queries, models.QueryResource{
+		lastObservationsPerCodeQueries, err := gr.generateLastNResourcesPerCodeQueries(
+			ctx,
+			models.QueryResource{
 				Select: nil,
 				From:   "Observation",
 				Where: map[string]interface{}{
-					"code": vitalSignCodes[ndx],
+					"category": "laboratory",
 				},
-				Limit: &limit,
-			})
+				Aggregations: &models.QueryResourceAggregations{
+					GroupBy: &models.QueryResourceAggregation{Field: "code:code"},
+				},
+			},
+			1,
+			[]string{},
+		)
+
+		if err != nil {
+			return nil, err
 		}
-		break
+
+		queries = append(queries, lastObservationsPerCodeQueries...)
+
+		
+	case pkg.IPSSectionsVitalSigns:
+		lastObservationsPerCodeQueries, err := gr.generateLastNResourcesPerCodeQueries(
+			ctx,
+			models.QueryResource{
+				Select: nil,
+				From:   "Observation",
+				Where: map[string]interface{}{
+					"category": "vital-signs",
+				},
+				Aggregations: &models.QueryResourceAggregations{
+					GroupBy: &models.QueryResourceAggregation{Field: "code:code"},
+				},
+			},
+			3,
+			[]string{
+				"85353-1", "9279-1", "8867-4", "2708-6", "8310-5", "8302-2", "9843-4", "29463-7", "39156-5", "85354-9", "8480-6", "8462-4", "8478-0",
+			},
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		queries = append(queries, lastObservationsPerCodeQueries...)
+
+		
 	case pkg.IPSSectionsSocialHistory:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -433,46 +346,61 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status:not": "preliminary",
 			},
 		})
-		break
+		
 	case pkg.IPSSectionsPregnancy:
-		//TODO: determine the code for pregnancy from IPS specification
 		queries = append(queries, models.QueryResource{
 			Select: nil,
 			From:   "Observation",
 			Where: map[string]interface{}{
 				"status:not": "preliminary",
+				"code":       "82810-3", 	//pregnancy status LOINC code
 			},
 		})
-		break
+		
 	case pkg.IPSSectionsImmunizations:
+		lastImmunizationsPerCodeQueries, err := gr.generateLastNResourcesPerCodeQueries(
+			ctx,
+			models.QueryResource{
+				Select: nil,
+				From:   "Immunization",
+				Where: map[string]interface{}{
+					"status:not": "entered-in-error",
+				},
+				Aggregations: &models.QueryResourceAggregations{
+					GroupBy: &models.QueryResourceAggregation{Field: "vaccineCode:code"},
+				},
+			},
+			3,
+			[]string{},
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		queries = append(queries, lastImmunizationsPerCodeQueries...)
+
+		
+	case pkg.IPSSectionsAdvanceDirectives:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
-			From:   "Immunization",
+			From:   "Consent",
 			Where: map[string]interface{}{
-				"status:not": "entered-in-error",
+				"status": "active",
 			},
 		})
-		break
-	case pkg.IPSSectionsAdvanceDirectives:
-		//queries = append(queries, models.QueryResource{
-		//	Select: nil,
-		//	From:   "Consent",
-		//	Where: map[string]interface{}{
-		//		"status": "active",
-		//	},
-		//})
 		log.Printf("warning: Consent FHIR resources are not supported yet. Skipping")
-		break
+		
 	case pkg.IPSSectionsFunctionalStatus:
-		//queries = append(queries, models.QueryResource{
-		//	Select: nil,
-		//	From:   "ClinicalImpression",
-		//	Where: map[string]interface{}{
-		//		"status": "in-progress,completed",
-		//	},
-		//})
+		queries = append(queries, models.QueryResource{
+			Select: nil,
+			From:   "ClinicalImpression",
+			Where: map[string]interface{}{
+				"status": "in-progress,completed",
+			},
+		})
 		log.Printf("warning: ClinicalImpression FHIR resources are not supported yet. Skipping")
-		break
+		
 	case pkg.IPSSectionsMedicalDevices:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -481,19 +409,16 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status": "entered-in-error",
 			},
 		})
-		break
+		
 	case pkg.IPSSectionsHistoryOfIllness:
-		//TODO: last updated date should be older than 5 years (dateTime or period.high)
-		//TODO: check if where clause with multiple modifiers for the same field works as expected
 		queries = append(queries, models.QueryResource{
 			Select: nil,
 			From:   "Condition",
 			Where: map[string]interface{}{
-				"clinicalStatus:not": []string{"entered-in-error"},
 				"clinicalStatus":     "inactive,remission,resolved",
 			},
 		})
-		break
+		
 	case pkg.IPSSectionsPlanOfCare:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -502,7 +427,7 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status": "active,on-hold,unknown",
 			},
 		})
-		break
+		
 	case pkg.IPSSectionsHistoryOfProcedures:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -511,9 +436,59 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status:not": []string{"entered-in-error", "not-done"},
 			},
 		})
-		break
+		
 	default:
 		return nil, fmt.Errorf("unsupported section type: %s", sectionType)
+	}
+
+	return queries, nil
+}
+
+func (gr *GormRepository) generateLastNResourcesPerCodeQueries(ctx context.Context, groupByQuery models.QueryResource, limit int, initialCodes []string) ([]models.QueryResource, error) {
+	queries := []models.QueryResource{}
+
+	resourcesGrouped, err := gr.QueryResources(ctx, groupByQuery)
+
+	if err != nil {
+		return nil, err
+	}
+
+	resourcesGroupedByCodeList, ok := resourcesGrouped.([]map[string]any)
+	if !ok {
+		return nil, fmt.Errorf("could not decode resources grouped by code")
+	}
+
+	resourcesCodes := initialCodes
+
+	for _, resource := range resourcesGroupedByCodeList {
+		//now that we have a list of codes that are tagged as vital-signs.
+		if labelValue, labelValueOk := resource["label"]; labelValueOk {
+			if labelValueStr, labeValueStrOk := labelValue.(*interface{}); labeValueStrOk {
+				resourcesCodes = append(resourcesCodes, (*labelValueStr).(string))
+			} else {
+				gr.Logger.Warnf("could not cast codes to string")
+			}
+		} else {
+			gr.Logger.Warnf("could not retrieve group-by clause label value")
+		}
+	}
+	resourcesCodes = lo.Uniq(resourcesCodes)
+
+	codeField, _, ok := strings.Cut(groupByQuery.Aggregations.GroupBy.Field, ":")
+	if !ok {
+		return nil, fmt.Errorf("could not determine code field name")
+	}
+
+	//group by code, sort by date, limit to the most recent 3
+	for _, code := range resourcesCodes {
+		queries = append(queries, models.QueryResource{
+			Select: nil,
+			From:   groupByQuery.From,
+			Where: map[string]interface{}{
+				codeField: code,
+			},
+			Limit: &limit,
+		})
 	}
 
 	return queries, nil
@@ -666,93 +641,6 @@ func generateIPSSectionHeaderInfo(sectionType pkg.IPSSections) (string, fhir401.
 		return "", fhir401.CodeableConcept{}, fmt.Errorf("invalid section type: %s", sectionType)
 	}
 
-}
-
-// QueryResources returns an interface{} which is actually a slice of the appropriate FHIR resource type
-// we use this function to "cast" the results to a slice of the IFhirResourceModel interface (so we can use the same code to handle the results)
-// TODO: there has to be a better way to do this :/
-func convertUnknownInterfaceToFhirSlice(unknown interface{}) []database.IFhirResourceModel {
-	results := []database.IFhirResourceModel{}
-
-	switch fhirSlice := unknown.(type) {
-	case []database.FhirAllergyIntolerance:
-		for ndx, _ := range fhirSlice {
-			results = append(results, &fhirSlice[ndx])
-		}
-	case []database.FhirCarePlan:
-		for ndx, _ := range fhirSlice {
-			results = append(results, &fhirSlice[ndx])
-		}
-	case []database.FhirCondition:
-		for ndx, _ := range fhirSlice {
-			results = append(results, &fhirSlice[ndx])
-		}
-	case []database.FhirDevice:
-		for ndx, _ := range fhirSlice {
-			results = append(results, &fhirSlice[ndx])
-		}
-	case []database.FhirDiagnosticReport:
-		for ndx, _ := range fhirSlice {
-			results = append(results, &fhirSlice[ndx])
-		}
-	case []database.FhirEncounter:
-		for ndx, _ := range fhirSlice {
-			results = append(results, &fhirSlice[ndx])
-		}
-	case []database.FhirImmunization:
-		for ndx, _ := range fhirSlice {
-			results = append(results, &fhirSlice[ndx])
-		}
-	case []database.FhirMedicationRequest:
-		for ndx, _ := range fhirSlice {
-			results = append(results, &fhirSlice[ndx])
-		}
-	case []database.FhirMedicationStatement:
-		for ndx, _ := range fhirSlice {
-			results = append(results, &fhirSlice[ndx])
-		}
-	case []database.FhirObservation:
-		for ndx, _ := range fhirSlice {
-			results = append(results, &fhirSlice[ndx])
-		}
-	case []database.FhirPatient:
-		for ndx, _ := range fhirSlice {
-			results = append(results, &fhirSlice[ndx])
-		}
-	case []database.FhirProcedure:
-		for ndx, _ := range fhirSlice {
-			results = append(results, &fhirSlice[ndx])
-		}
-	default:
-		log.Panicf("could not detect type for query results fhir resource list: %v", fhirSlice)
-	}
-
-	return results
-}
-
-// query results may be a list of database.IFhirResourceModel or a map[string][]database.IFhirResourceModel (if we're using aggregations/grouping)
-func flattenQueryResultsToResourcesList(queryResultsList []any) []database.IFhirResourceModel {
-	resources := []database.IFhirResourceModel{}
-
-	for ndx, _ := range queryResultsList {
-		queryResults := queryResultsList[ndx]
-		switch queryResultsTyped := queryResults.(type) {
-		case []map[string]any:
-			//aggregated resources
-			for andx, _ := range queryResultsTyped {
-				queryResultsGrouped := queryResultsTyped[andx]
-				resources = append(resources, convertUnknownInterfaceToFhirSlice(queryResultsGrouped)...)
-			}
-
-		case interface{}:
-			//list of resources
-			resources = append(resources, convertUnknownInterfaceToFhirSlice(queryResultsTyped)...)
-		default:
-			log.Panicf("Unknown Resource Structure: %v", queryResultsTyped)
-		}
-	}
-
-	return resources
 }
 
 // When given a list of Patient database records, we need to merge them together to a Patient record that's usable by the
