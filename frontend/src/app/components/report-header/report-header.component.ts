@@ -49,7 +49,7 @@ export class ReportHeaderComponent implements OnInit {
   }
   getIPSExport(event: Event){
     event.preventDefault()
-    return this.fastenApi.getIPSExport()
+    return this.fastenApi.getIPSExport("pdf")
   }
 
 }

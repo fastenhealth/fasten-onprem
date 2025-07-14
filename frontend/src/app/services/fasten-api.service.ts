@@ -388,10 +388,15 @@ export class FastenApiService {
   }
 
   getIPSExport(exportType?: string) {
-    let httpHeaders = new HttpHeaders().set('Accept', 'application/pdf');
+    let format = exportType || "pdf"
+    let contentType = "application/pdf"
+    if (exportType == "html") {
+      contentType = "text/html"
+    }
 
+    let httpHeaders = new HttpHeaders().set('Accept', contentType);
     let queryParams = {
-      "format": "pdf"
+      "format": format
     };
 
     console.log("requesting", `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/summary/ips`);
@@ -408,7 +413,7 @@ export class FastenApiService {
       // Create a temporary anchor element and trigger the download
       const link = document.createElement('a');
       link.href = fileURL;
-      link.setAttribute('download', 'ips_summary.pdf'); // Set the filename for the download
+      link.setAttribute('download', `ips_summary.${exportType}`); // Set the filename for the download
       document.body.appendChild(link);
       link.click();
 
