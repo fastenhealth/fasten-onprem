@@ -1,0 +1,325 @@
+{
+	"type": "maroto",
+	"details": {
+		"chunk_workers": 1,
+		"config_margin_bottom": 20.0025,
+		"config_margin_left": 10,
+		"config_margin_right": 10,
+		"config_margin_top": 10,
+		"config_max_grid_sum": 12,
+		"config_provider_type": "gofpdf",
+		"generation_mode": "sequential",
+		"maroto_dimension_height": 297,
+		"maroto_dimension_width": 210,
+		"prop_font_color": "RGB(0, 0, 0)",
+		"prop_font_family": "arial",
+		"prop_font_size": 10
+	},
+	"nodes": [
+		{
+			"type": "page",
+			"nodes": [
+				{
+					"value": 10,
+					"type": "row",
+					"details": {
+						"prop_background_color": "RGB(220, 220, 220)",
+						"prop_border_type": "1"
+					},
+					"nodes": [
+						{
+							"value": 3,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Code",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Result",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 1,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Unit",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Interpretation",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Reference Range",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Date",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"value": 7.527777777777779,
+					"type": "row",
+					"details": {
+						"prop_border_type": "1"
+					},
+					"nodes": [
+						{
+							"value": 3,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Smoking Status",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Never smoker",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 1,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "2023-01-01",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"value": 12,
+					"type": "row",
+					"nodes": [
+						{
+							"value": 0,
+							"type": "col",
+							"details": {
+								"is_max": true
+							}
+						}
+					]
+				},
+				{
+					"value": 237.469722222,
+					"type": "row",
+					"nodes": [
+						{
+							"value": 12,
+							"type": "col"
+						}
+					]
+				}
+			]
+		}
+	]
+}

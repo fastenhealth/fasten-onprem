@@ -22,7 +22,7 @@ func renderHeader(m core.Maroto, data *ips.InternationalPatientSummaryExportData
 	patientName := pluckStringListValue(data.Patient.Name)
 	log.Print(patientName)
 	address := pluckStringListValue(data.Patient.Address)
-	phone := pluckMapListValue(data.Patient.Telecom, "value", "")
+	communication := pluckMapListValue(data.Patient.Telecom, "code", "")
 
 	birthDate := "Unknown"
 	if data.Patient.Birthdate != nil {
@@ -57,7 +57,7 @@ func renderHeader(m core.Maroto, data *ips.InternationalPatientSummaryExportData
 		text.NewCol(2, "Language", tableHeaderStyle),
 		text.NewCol(2, "Race/Ethnicity", tableHeaderStyle),
 		text.NewCol(3, "Address", tableHeaderStyle),
-		text.NewCol(3, "Phone", tableHeaderStyle),
+		text.NewCol(3, "Communication", tableHeaderStyle),
 	).WithStyle(&tableHeaderCell)
 
 	m.AddAutoRow(
@@ -65,7 +65,7 @@ func renderHeader(m core.Maroto, data *ips.InternationalPatientSummaryExportData
 		newTextCol(2, "English"),
 		newTextCol(2, "Unknown / Unknown"),
 		newTextCol(3, address),
-		newTextCol(3, phone),
+		newTextCol(3, communication),
 	).WithStyle(&tableBodyCell)
 
 	m.AddRow(16)
