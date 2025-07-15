@@ -11,17 +11,21 @@
     </div>
   </div>
   <div class="chat-container">
-    <div class="messages-area">
-      <div *ngIf="messages.length === 0 && !conversationId" class="welcome-message">
-        <p>Welcome to the chat! Start a new conversation or select an existing one.</p>
+    <div class="messages-area" [ngClass]="{'empty-chat-messages-area': messages.length === 0}">
+      <div *ngIf="messages.length === 0" class="welcome-message">
+        <p>How can I help you today?</p>
       </div>
       <div *ngFor="let message of messages" class="message-bubble" [ngClass]="{'user-message': message.sender === 'user', 'bot-message': message.sender === 'bot'}">
         <p>{{ message.text }}</p>
       </div>
     </div>
     <div class="input-area">
-      <textarea placeholder="Type your message here..." [(ngModel)]="userMessage" (keyup.enter)="sendMessage()"></textarea>
-      <button (click)="sendMessage()">Send</button>
+      <div class="textarea-wrapper">
+        <textarea placeholder="Type your message here..." [(ngModel)]="userMessage" (keyup.enter)="sendMessage()"></textarea>
+        <button class="send-button" (click)="sendMessage()">
+          <img src="assets/icons/send-message.svg" alt="Send">
+        </button>
+      </div>
     </div>
   </div>
 </div>

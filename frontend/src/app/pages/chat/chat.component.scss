@@ -3,12 +3,14 @@
 
 .main-chat-layout {
   display: flex;
-  height: 100%;
-  width: 100%;
+  flex-direction: row;
+  min-height: 800px;
+  max-height: 800px;
 }
 
 .conversations-sidebar {
-  width: 250px;
+  width: 200px;
+  flex-shrink: 0;
   background-color: $gray-100;
   padding: 20px;
   border-right: 1px solid $az-border-color;
@@ -83,13 +85,21 @@
   border: 1px solid $az-border-color;
   border-radius: $border-radius;
   margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-chat-messages-area {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .welcome-message {
-  text-align: center;
   color: $az-color-text;
   font-style: italic;
   padding: 10px;
+  font-size: 1.2rem;
 }
 
 .message-bubble {
@@ -119,30 +129,52 @@
 
 .input-area {
   display: flex;
-  gap: 10px;
+  align-items: flex-end; /* Align to the bottom */
+  padding-top: 10px; /* Add some padding above the input area */
+}
+
+.textarea-wrapper {
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  align-items: flex-end; /* Align content to the bottom within the wrapper */
 }
 
 textarea {
   flex-grow: 1;
-  padding: 10px;
+  padding: 10px 40px 10px 10px; /* Adjust padding for button */
   border: 1px solid $az-border-color;
   border-radius: $border-radius;
   font-size: 1rem;
-  resize: vertical; /* Allow vertical resizing */
+  resize: none; /* Prevent manual resizing */
   min-height: 50px;
+  max-height: 150px; /* Limit max height for textarea */
+  overflow-y: auto; /* Enable scrolling for overflow */
 }
 
-button {
-  padding: 10px 20px;
-  background-color: $az-color-primary;
-  color: white;
+.send-button {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  background-color: transparent;
   border: none;
-  border-radius: $border-radius;
   cursor: pointer;
-  font-size: 1rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%; /* Make it circular */
   transition: background-color 0.2s ease-in-out;
 
+  img {
+    width: 20px;
+    height: 20px;
+    filter: invert(39%) sepia(68%) saturate(577%) hue-rotate(173deg) brightness(94%) contrast(90%); /* Adjust color to match primary blue */
+  }
+
   &:hover {
-    background-color: #0056b3;
+    background-color: $gray-200;
   }
 }
