@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Client } from 'typesense';
+import { SearchParams } from 'typesense/lib/Typesense/Types';
+
+export interface ResourceDocument {
+  source_resource_type: string;
+  sort_title: string;
+  sort_date: BigInt
+}
 
 @Injectable({
   providedIn: 'root',
@@ -16,8 +23,8 @@ export class TypesenseService {
           protocol: 'http',
         },
       ],
+      connectionTimeoutSeconds: 180,
       apiKey: 'xyz123',
-      connectionTimeoutSeconds: 10,
     });
   }
 
@@ -57,6 +64,42 @@ export class TypesenseService {
       return response.conversation;
     } catch (error) {
       console.error('Error starting conversation:', error.message);
+      throw error;
+    }
+  }
+
+  async startConversationStreaming(
+    q: string,
+    collection: string,
+    query_by: string,
+    streamConfig: {
+      onChunk: (result: any) => void;
+      onComplete: (results: any) => void;
+      onError: (error: Error) => void;
+    },
+    conversation_model_id: string,
+    conversation_id?: string
+  ) {
+    try {
+      const searchParams: SearchParams<ResourceDocument> = {
+        q,
+        query_by,
+        conversation: true,
+        conversation_model_id,
+        conversation_stream: true,
+        include_fields: 'source_resource_type,sort_title,sort_date',
+        // exclude_fields: "embedding",
+        streamConfig,
+
+        ...(conversation_id ? { conversation_id } : {}),
+      };
+
+      await this.client
+        .collections<ResourceDocument>(collection)
+        .documents()
+        .search(searchParams);
+    } catch (error) {
+      console.error('Error starting conversation streaming:', error.message);
       throw error;
     }
   }
