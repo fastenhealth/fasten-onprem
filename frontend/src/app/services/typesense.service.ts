@@ -91,12 +91,22 @@ export class TypesenseService {
     conversation_id?: string
   ) {
     try {
+      const include_fields = [
+        'source_resource_type',
+        'sort_title',
+        'sort_date',
+        'resource_raw.code.text',
+        'resource_raw.recordedDate',
+        'resource_raw.effectiveDateTime',
+        'resource_raw.valueQuantity.unit',
+        'resource_raw.valueQuantity.value'
+      ]
       const searchParams: SearchParams<ResourceDocument> = {
         q,
         query_by,
         conversation: true,
         conversation_model_id,
-        include_fields: 'source_resource_type,sort_title,sort_date',
+        include_fields: include_fields.join(`,`),
         // exclude_fields: "embedding",
 
         ...(conversation_id ? { conversation_id } : {}),
