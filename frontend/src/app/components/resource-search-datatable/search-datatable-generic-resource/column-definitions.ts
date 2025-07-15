@@ -22,7 +22,7 @@ class GenericColumnDefn {
 export class DatatableFallbackComponent extends SearchDatatableGenericResourceComponent {
   columnDefinitions: GenericColumnDefn[] = [
     { title: 'Id', versions: '*', getter: (e) => e.id },
-    { title: 'Title', versions: '*', getter: (e) => e.reasonCode?.[0] },
+    { title: 'Title', versions: '*', getter: (e) => e.reasonCode?.[0] || e.code?.text || '-' },
   ];
 }
 
