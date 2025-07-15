@@ -58,9 +58,7 @@ export class ResourceSearchComponent implements OnInit {
   }
 
   viewResource(doc: TypesenseDocument): void {
-    this.router.navigate([`/resource/view/${doc.id}`], {
-      state: { resource: doc },
-    });
+    this.router.navigate([`/resource/view/${doc.id}`]);
   }
 
   search(): void {

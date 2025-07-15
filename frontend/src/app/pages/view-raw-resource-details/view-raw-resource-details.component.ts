@@ -53,8 +53,6 @@ export class ViewRawResourceDetailsComponent implements OnInit {
             response.resource
           );
 
-          console.log({parsed, response});
-
           this.displayModel = parsed;
           this.loading = false;
         } catch (e) {
