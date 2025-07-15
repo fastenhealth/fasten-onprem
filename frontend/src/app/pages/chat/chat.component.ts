@@ -12,8 +12,8 @@ export class ChatComponent implements OnInit {
   conversationId: string | undefined;
 
   private readonly TYPESENSE_COLLECTION = 'resources';
-  private readonly TYPESENSE_CONVERSATION_MODEL_ID = 'conv-model-1';
   private readonly TYPESENSE_QUERY_BY_FIELD = 'embedding';
+  private readonly TYPESENSE_CONVERSATION_MODEL_ID = 'conv-model-1';
 
   constructor(private typesenseService: TypesenseService) { }
 
