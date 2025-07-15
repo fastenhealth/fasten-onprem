@@ -29,6 +29,7 @@ This document outlines key architectural and design patterns observed or inferre
 *   **Directives (Angular):** Custom DOM manipulation and behavior are added via directives (`frontend/src/app/directives/`) like `ExternalLinkDirective`.
 *   **Reactive Programming (RxJS):** Angular's deep integration with RxJS implies its use for handling asynchronous operations, event streams, and state management within services.
 *   **Lazy Loading (Potential):** While not explicitly confirmed, Angular's routing capabilities allow for lazy loading of feature modules, which is a common optimization pattern.
+*   **Real-time Data Streaming (Chat):** The LLM-powered chat feature implements a real-time data streaming pattern. Instead of waiting for a full response, the frontend initiates a streaming connection. The `TypesenseService` uses a callback-based approach (`onChunk`, `onComplete`, `onError`) to process data as it arrives from the server. This pattern provides a responsive user experience by displaying the response incrementally as it is being generated.
 
 ## Data Handling Patterns
 
