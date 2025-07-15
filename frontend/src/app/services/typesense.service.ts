@@ -84,17 +84,46 @@ export class TypesenseService {
   }
 
   async startConversation(
-    query: string,
+    q: string,
     collection: string,
-    conversationModelId: string,
-    queryBy: string,
-    conversationId?: string
+    query_by: string,
+    conversation_model_id: string,
+    conversation_id?: string
+  ) {
+    try {
+      const searchParams: SearchParams<ResourceDocument> = {
+        q,
+        query_by,
+        conversation: true,
+        conversation_model_id,
+        include_fields: 'source_resource_type,sort_title,sort_date',
+        // exclude_fields: "embedding",
+
+        ...(conversation_id ? { conversation_id } : {}),
+      };
+
+      return this.client
+        .collections<ResourceDocument>(collection)
+        .documents()
+        .search(searchParams);
+    } catch (error) {
+      console.error('Error starting conversation streaming:', error.message);
+      throw error;
+    }
+  }
+
+  async startConversationMultisearch(
+    q: string,
+    collection: string,
+    query_by: string,
+    conversation_model_id: string,
+    conversation_id?: string
   ): Promise<any> {
     const searchRequests = {
       searches: [
         {
           collection: collection,
-          query_by: queryBy,
+          query_by,
           include_fields: 'source_resource_type,sort_title,sort_date',
           // exclude_fields: 'embedding'
         },
@@ -102,14 +131,12 @@ export class TypesenseService {
     };
 
     const commonParams: any = {
-      q: query,
+      q,
       conversation: true,
-      conversation_model_id: conversationModelId,
-    };
+      conversation_model_id,
 
-    if (conversationId) {
-      commonParams.conversation_id = conversationId;
-    }
+      ...(conversation_id ? { conversation_id } : {}),
+    };
 
     try {
       const response: any = await this.client.multiSearch.perform(

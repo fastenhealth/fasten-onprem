@@ -50,7 +50,7 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  newChat(): void {
+  newConversation(): void {
     this.conversationId = undefined;
     this.messages = [];
   }
@@ -77,13 +77,13 @@ export class ChatComponent implements OnInit {
       const conversationResponse = await this.typesenseService.startConversation(
         messageText,
         this.TYPESENSE_COLLECTION,
-        this.TYPESENSE_CONVERSATION_MODEL_ID,
         this.TYPESENSE_QUERY_BY_FIELD,
+        this.TYPESENSE_CONVERSATION_MODEL_ID,
         this.conversationId
       );
 
-      const botAnswer = conversationResponse.answer;
-      this.conversationId = conversationResponse.conversation_id;
+      const botAnswer = conversationResponse.conversation.answer;
+      this.conversationId = conversationResponse.conversation.conversation_id;
       this.messages.push({ text: botAnswer, sender: 'bot' });
       this.loadConversations(); // Reload conversations to show the new one
 
