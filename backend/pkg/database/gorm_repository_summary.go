@@ -52,15 +52,31 @@ func (gr *GormRepository) GetInternationalPatientSummaryExport(ctx context.Conte
 
 	compositionSections := []fhir401.CompositionSection{}
 
-	for _, sectionGroup := range pkg.IPSSectionGroupsOrdered {
-		for _, section := range sectionGroup {
-			if sectionData, ok := summarySectionResources[section]; ok {
-				compositionSection, err := generateIPSCompositionSection(section, sectionData, *htmlRenderer)
-				if err != nil {
-					return exportData, err
-				}
-				compositionSections = append(compositionSections, *compositionSection)
+	for _, requiredSection := range pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsRequired] {
+		if sectionData, ok := summarySectionResources[requiredSection]; ok {
+			compositionSection, err := generateIPSCompositionSection(requiredSection, sectionData, *htmlRenderer)
+			if err != nil {
+				return exportData, err
 			}
+			compositionSections = append(compositionSections, *compositionSection)
+		}
+	}
+	for _, recommendedSection := range pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsRecommended] {
+		if sectionData, ok := summarySectionResources[recommendedSection]; ok {
+			compositionSection, err := generateIPSCompositionSection(recommendedSection, sectionData, *htmlRenderer)
+			if err != nil {
+				return exportData, err
+			}
+			compositionSections = append(compositionSections, *compositionSection)
+		}
+	}
+	for _, optionalSection := range pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsOptional] {
+		if sectionData, ok := summarySectionResources[optionalSection]; ok {
+			compositionSection, err := generateIPSCompositionSection(optionalSection, sectionData, *htmlRenderer)
+			if err != nil {
+				return exportData, err
+			}
+			compositionSections = append(compositionSections, *compositionSection)
 		}
 	}
 
@@ -238,7 +254,7 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"verificationStatus:not": []string{"entered-in-error"},
 			},
 		})
-		
+
 	case pkg.IPSSectionsProblemList:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -248,7 +264,7 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"verificationStatus:not": []string{"entered-in-error"},
 			},
 		})
-		
+
 	case pkg.IPSSectionsMedicationSummary:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -264,7 +280,7 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status": "active,unknown,on-hold",
 			},
 		})
-		
+
 	case pkg.IPSSectionsDiagnosticResults:
 		lastReportsPerCodeQueries, err := gr.generateLastNResourcesPerCodeQueries(
 			ctx,
@@ -310,7 +326,6 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 
 		queries = append(queries, lastObservationsPerCodeQueries...)
 
-		
 	case pkg.IPSSectionsVitalSigns:
 		lastObservationsPerCodeQueries, err := gr.generateLastNResourcesPerCodeQueries(
 			ctx,
@@ -336,7 +351,6 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 
 		queries = append(queries, lastObservationsPerCodeQueries...)
 
-		
 	case pkg.IPSSectionsSocialHistory:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -346,17 +360,17 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status:not": "preliminary",
 			},
 		})
-		
+
 	case pkg.IPSSectionsPregnancy:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
 			From:   "Observation",
 			Where: map[string]interface{}{
 				"status:not": "preliminary",
-				"code":       "82810-3", 	//pregnancy status LOINC code
+				"code":       "82810-3", //pregnancy status LOINC code
 			},
 		})
-		
+
 	case pkg.IPSSectionsImmunizations:
 		lastImmunizationsPerCodeQueries, err := gr.generateLastNResourcesPerCodeQueries(
 			ctx,
@@ -380,7 +394,6 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 
 		queries = append(queries, lastImmunizationsPerCodeQueries...)
 
-		
 	case pkg.IPSSectionsAdvanceDirectives:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -389,7 +402,7 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status": "active",
 			},
 		})
-		
+
 	case pkg.IPSSectionsFunctionalStatus:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -398,7 +411,7 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status": "in-progress,completed",
 			},
 		})
-		
+
 	case pkg.IPSSectionsMedicalDevices:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -407,16 +420,16 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status": "entered-in-error",
 			},
 		})
-		
+
 	case pkg.IPSSectionsHistoryOfIllness:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
 			From:   "Condition",
 			Where: map[string]interface{}{
-				"clinicalStatus":     "inactive,remission,resolved",
+				"clinicalStatus": "inactive,remission,resolved",
 			},
 		})
-		
+
 	case pkg.IPSSectionsPlanOfCare:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -425,7 +438,7 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status": "active,on-hold,unknown",
 			},
 		})
-		
+
 	case pkg.IPSSectionsHistoryOfProcedures:
 		queries = append(queries, models.QueryResource{
 			Select: nil,
@@ -434,7 +447,7 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status:not": []string{"entered-in-error", "not-done"},
 			},
 		})
-		
+
 	default:
 		return nil, fmt.Errorf("unsupported section type: %s", sectionType)
 	}
@@ -684,8 +697,8 @@ func mergePatients(patients []database.FhirPatient) (*database.FhirPatient, erro
 	mergedPatientResource := `{}`
 	for _, patient := range patients {
 		mergedPatientResourceBytes, err := deepmerge.JSON(
-			[]byte(mergedPatientResource), 
-			[]byte(patient.ResourceRaw), 
+			[]byte(mergedPatientResource),
+			[]byte(patient.ResourceRaw),
 			deepmerge.Config{PreventMultipleDefinitionsOfKeysWithPrimitiveValue: false},
 		)
 		if err != nil {

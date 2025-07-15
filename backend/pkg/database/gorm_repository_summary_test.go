@@ -96,7 +96,8 @@ func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryBundl
 	})
 
 	manualClient, err := sourceFactory.GetSourceClient(sourcePkg.FastenLighthouseEnvSandbox, authContext, testLogger, &testSourceCredential)
-
+	require.NoError(suite.T(), err)
+	
 	summary, err := manualClient.SyncAllBundle(dbRepo, bundleFile, sourcePkg.FhirVersion401)
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(), 198, summary.TotalResources)
@@ -113,10 +114,61 @@ func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryBundl
 	require.NotNil(suite.T(), fhirBundle)
 	require.NotNil(suite.T(), fhirComposition)
 
-	require.Equal(suite.T(), 211, len(fhirBundle.Entry))
 	require.Equal(suite.T(), 14, len(fhirComposition.Section))
 
-	//require.Equal(suite.T(), "", fhirComposition.Section[0].Title)
-	//require.Equal(suite.T(), "", fhirComposition.Section[0].Text.Div)
+	// Medication Summary
+	require.Equal(suite.T(), 0, len(fhirComposition.Section[0].Entry))
+	require.NotNil(suite.T(), fhirComposition.Section[0].EmptyReason)
 
+	// Allergies and Intolerances
+	require.Equal(suite.T(), 0, len(fhirComposition.Section[1].Entry))
+	require.NotNil(suite.T(), fhirComposition.Section[1].EmptyReason)
+
+	// Problem List
+	require.Equal(suite.T(), 1, len(fhirComposition.Section[2].Entry))
+	require.Nil(suite.T(), fhirComposition.Section[2].EmptyReason)
+
+	// Immunizations
+	require.Equal(suite.T(), 9, len(fhirComposition.Section[3].Entry))
+	require.Nil(suite.T(), fhirComposition.Section[3].EmptyReason)
+
+	// History of Procedures
+	require.Equal(suite.T(), 8, len(fhirComposition.Section[4].Entry))
+	require.Nil(suite.T(), fhirComposition.Section[4].EmptyReason)
+
+	// Medical Devices
+	require.Equal(suite.T(), 0, len(fhirComposition.Section[5].Entry))
+	require.NotNil(suite.T(), fhirComposition.Section[5].EmptyReason)
+
+	// Diagnostic Results
+	require.Equal(suite.T(), 12, len(fhirComposition.Section[6].Entry))
+	require.Nil(suite.T(), fhirComposition.Section[6].EmptyReason)
+
+	// Vital Signs
+	require.Equal(suite.T(), 19, len(fhirComposition.Section[7].Entry))
+	require.Nil(suite.T(), fhirComposition.Section[7].EmptyReason)
+
+	// Past History of Illness
+	require.Equal(suite.T(), 7, len(fhirComposition.Section[8].Entry))
+	require.Nil(suite.T(), fhirComposition.Section[8].EmptyReason)
+
+	// Pregnancy History
+	require.Equal(suite.T(), 0, len(fhirComposition.Section[9].Entry))
+	require.NotNil(suite.T(), fhirComposition.Section[9].EmptyReason)
+
+	// Social History
+	require.Equal(suite.T(), 0, len(fhirComposition.Section[10].Entry))
+	require.NotNil(suite.T(), fhirComposition.Section[10].EmptyReason)
+
+	// Plan of Care
+	require.Equal(suite.T(), 0, len(fhirComposition.Section[11].Entry))
+	require.NotNil(suite.T(), fhirComposition.Section[11].EmptyReason)
+
+	// Functional Status
+	require.Equal(suite.T(), 0, len(fhirComposition.Section[12].Entry))
+	require.NotNil(suite.T(), fhirComposition.Section[12].EmptyReason)
+
+	// Advance Directives
+	require.Equal(suite.T(), 0, len(fhirComposition.Section[13].Entry))
+	require.NotNil(suite.T(), fhirComposition.Section[13].EmptyReason)
 }
