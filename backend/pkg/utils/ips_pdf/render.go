@@ -25,7 +25,7 @@ func GeneratePDF(data *ips.InternationalPatientSummaryExportData) ([]byte, error
 	cfg := config.NewBuilder().
 		WithPageSize(pagesize.A4).
 		WithOrientation(orientation.Vertical).
-		WithTopMargin(20).
+		WithTopMargin(8).
 		WithLeftMargin(15).
 		WithRightMargin(15).
 		WithDefaultFont(&props.Font{
@@ -35,9 +35,9 @@ func GeneratePDF(data *ips.InternationalPatientSummaryExportData) ([]byte, error
 
 	mrt := maroto.New(cfg)
 	m := maroto.NewMetricsDecorator(mrt)
-
-	renderHeader(m, data)
-
+    m.RegisterHeader(getDocumentHeader(data)...)
+	
+	renderPatientSection(m, data.Patient)
 	for _, requiredSection := range pkg.IPSSectionGroupsOrdered[pkg.IPSSectionGroupsRequired] {
 		if sectionData, ok := data.SectionResources[requiredSection]; ok {
 			renderSection(m, requiredSection, sectionData, false)
@@ -53,6 +53,7 @@ func GeneratePDF(data *ips.InternationalPatientSummaryExportData) ([]byte, error
 			renderSection(m, optionalSection, sectionData, true)
 		}
 	}
+	renderSourcesSection(m, data.Sources)
 
 	doc, err := m.Generate()
 	if err != nil {

@@ -2,15 +2,16 @@ package ips_pdf
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips"
 	"github.com/johnfercher/maroto/v2/pkg/components/col"
 	"github.com/johnfercher/maroto/v2/pkg/components/image"
 	"github.com/johnfercher/maroto/v2/pkg/components/line"
+	"github.com/johnfercher/maroto/v2/pkg/components/row"
 	"github.com/johnfercher/maroto/v2/pkg/components/text"
 	"github.com/johnfercher/maroto/v2/pkg/consts/align"
 	"github.com/johnfercher/maroto/v2/pkg/consts/fontstyle"
@@ -18,36 +19,40 @@ import (
 	"github.com/johnfercher/maroto/v2/pkg/props"
 )
 
-func renderHeader(m core.Maroto, data *ips.InternationalPatientSummaryExportData) {
-	patientName := pluckStringListValue(data.Patient.Name)
-	log.Print(patientName)
-	address := pluckStringListValue(data.Patient.Address)
-	communication := pluckMapListValue(data.Patient.Telecom, "code", "")
+func getDocumentHeader(data *ips.InternationalPatientSummaryExportData) []core.Row {
+
+	return []core.Row{
+		row.New().Add(
+			col.New(8).Add(
+				text.New(fmt.Sprintf("Patient Health Summary; Generated: %s", data.GenerationDate.Format("2006-01-02")), props.Text{Top: 3}),
+				text.New(fmt.Sprintf("ID: %s", *data.Composition.Identifier.Value), props.Text{Top: 8}),
+			),
+			image.NewFromFileCol(4, "backend/pkg/utils/ips_pdf/assets/fasten_logo.jpg", props.Rect{Percent: 80, Center: true}),
+		),
+		row.New().Add(
+			col.New(12).Add(
+				text.New(fmt.Sprintf("Author: %s", *data.Composition.Identifier.System), props.Text{Align: align.Right}),
+			),
+		),
+		row.New(12),
+	}
+
+}
+
+func renderPatientSection(m core.Maroto, patient *database.FhirPatient) {
+	patientName := pluckStringListValue(patient.Name)
+	address := pluckStringListValue(patient.Address)
+	communication := pluckMapListValue(patient.Telecom, "code", "")
 
 	birthDate := "Unknown"
-	if data.Patient.Birthdate != nil {
-		birthDate = data.Patient.Birthdate.Format("2006-01-02")
+	if patient.Birthdate != nil {
+		birthDate = patient.Birthdate.Format("2006-01-02")
 	}
 
 	m.AddAutoRow(
-		col.New(8).Add(
+		col.New(12).Add(
 			text.New(patientName, h1Style),
-			
 		),
-		image.NewFromFileCol(4, "backend/pkg/utils/ips_pdf/assets/fasten_logo.jpg"),
-	)
-
-	m.AddAutoRow(
-		col.New(8).Add(
-			text.New(fmt.Sprintf("Patient Health Summary; Generated: %s", data.GenerationDate.Format("2006-01-02")),), 
-		),
-		col.New(4).Add(
-			text.New(fmt.Sprintf("Author: %s", *data.Composition.Identifier.System), props.Text{Align: align.Center},),
-		),
-	)
-
-	m.AddAutoRow(
-		col.New(12).Add(text.New(fmt.Sprintf("ID: %s", *data.Composition.Identifier.Value))),
 	)
 
 	m.AddRow(10)
@@ -69,6 +74,36 @@ func renderHeader(m core.Maroto, data *ips.InternationalPatientSummaryExportData
 	).WithStyle(&tableBodyCell)
 
 	m.AddRow(16)
+}
+
+func renderSourcesSection(m core.Maroto, sources []models.SourceCredential) {
+	m.AddRow(10, text.NewCol(12, "Appendix - Sources", h2Style))
+	m.AddRow(5, line.NewCol(12))
+
+	headers := []string{"Source", "Id", "Added"}
+	colWidths := []int{4, 6, 2}
+	var headerCols []core.Col
+	for i, h := range headers {
+		headerCols = append(headerCols, text.NewCol(colWidths[i], h, tableHeaderStyle))
+	}
+	m.AddRow(10, headerCols...).WithStyle(&tableHeaderCell)
+
+	for _, source := range sources {
+		sourceName := "Fasten (manual)"
+		if source.Display != "" {
+			sourceName = source.Display
+		}
+		addedAt := source.CreatedAt.Format("2006-01-02")
+
+		row := []core.Col{
+			newTextCol(colWidths[0], sourceName),
+			newTextCol(colWidths[1], source.ID.String()),
+			newTextCol(colWidths[2], addedAt),
+		}
+		m.AddAutoRow(row...).WithStyle(&tableBodyCell)
+	}
+
+	m.AddRow(12)
 }
 
 func renderSection(m core.Maroto, sectionType pkg.IPSSections, sectionData *ips.SectionData, isOptional bool) {

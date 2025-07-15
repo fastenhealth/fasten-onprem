@@ -5,9 +5,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips"
 	"github.com/fastenhealth/gofhir-models/fhir401"
+	"github.com/google/uuid"
 	"github.com/johnfercher/maroto/v2"
 	"github.com/johnfercher/maroto/v2/pkg/config"
 	"github.com/johnfercher/maroto/v2/pkg/test"
@@ -507,33 +509,78 @@ func TestRenderPlanOfCare_NoData(t *testing.T) {
 	}
 }
 
-func TestRenderHeader(t *testing.T) {
+func TestGetHeader(t *testing.T) {
 	cfg := config.NewBuilder().Build()
 	mrt := maroto.New(cfg)
 	m := maroto.NewMetricsDecorator(mrt)
 
 	data := &ips.InternationalPatientSummaryExportData{
-		Patient: &database.FhirPatient{
-			Name:      datatypes.JSON(`[{"text": "John Doe"}]`),
-			Address:   datatypes.JSON(`["123 Main St"]`),
-			Telecom:   datatypes.JSON(`[{"code": "555-555-5555"},{"code": "test@email.com"}]`),
-			Birthdate: lo.ToPtr(time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC)),
-		},
 		GenerationDate: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
 		Composition: &fhir401.Composition{
 			Identifier: &fhir401.Identifier{
 				System: lo.ToPtr("Test System"),
-				Value: lo.ToPtr("uuid"),
+				Value:  lo.ToPtr("uuid"),
 			},
 		},
 	}
 
-	renderHeader(m, data)
+	m.RegisterHeader(getDocumentHeader(data)...)
 
 	if *update {
 		test.New(t).Assert(m.GetStructure()).Save("header.json")
 	} else {
 		test.New(t).Assert(m.GetStructure()).Equals("header.json")
+	}
+}
+
+func TestRenderPatientSection(t *testing.T) {
+	cfg := config.NewBuilder().Build()
+	mrt := maroto.New(cfg)
+	m := maroto.NewMetricsDecorator(mrt)
+
+	patient := &database.FhirPatient{
+		Name:      datatypes.JSON(`[{"text": "John Doe"}]`),
+		Address:   datatypes.JSON(`["123 Main St"]`),
+		Telecom:   datatypes.JSON(`[{"code": "555-555-5555"},{"code": "test@email.com"}]`),
+		Birthdate: lo.ToPtr(time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC)),
+	}
+
+	renderPatientSection(m, patient)
+
+	if *update {
+		test.New(t).Assert(m.GetStructure()).Save("patient.json")
+	} else {
+		test.New(t).Assert(m.GetStructure()).Equals("patient.json")
+	}
+}
+
+func TestRenderSections(t *testing.T) {
+	cfg := config.NewBuilder().Build()
+	mrt := maroto.New(cfg)
+	m := maroto.NewMetricsDecorator(mrt)
+	sources := []models.SourceCredential{
+		{
+			Display: "",
+			ModelBase: models.ModelBase{
+				ID: uuid.MustParse("88e06eff-c2d9-4a8c-bf4d-b4c147ea8648"),
+				CreatedAt: time.Date(2025, 7, 15, 0, 0, 0, 0, time.UTC),
+			},
+		},
+		{
+			Display: "Aetna (sandbox)",
+			ModelBase: models.ModelBase{
+				ID: uuid.MustParse("b53c77ed-c0f4-4d6a-bddf-5c0e3934c2d6"),
+				CreatedAt: time.Date(2025, 7, 15, 0, 0, 0, 0, time.UTC),
+			},
+		},
+	}
+	
+	renderSourcesSection(m, sources)
+
+	if *update {
+		test.New(t).Assert(m.GetStructure()).Save("sources.json")
+	} else {
+		test.New(t).Assert(m.GetStructure()).Equals("sources.json")
 	}
 }
 

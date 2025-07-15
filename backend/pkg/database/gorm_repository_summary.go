@@ -389,7 +389,6 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status": "active",
 			},
 		})
-		log.Printf("warning: Consent FHIR resources are not supported yet. Skipping")
 		
 	case pkg.IPSSectionsFunctionalStatus:
 		queries = append(queries, models.QueryResource{
@@ -399,7 +398,6 @@ func (gr *GormRepository) generateIPSSectionQueries(ctx context.Context, section
 				"status": "in-progress,completed",
 			},
 		})
-		log.Printf("warning: ClinicalImpression FHIR resources are not supported yet. Skipping")
 		
 	case pkg.IPSSectionsMedicalDevices:
 		queries = append(queries, models.QueryResource{
@@ -643,7 +641,7 @@ func generateIPSSectionHeaderInfo(sectionType pkg.IPSSections) (string, fhir401.
 
 }
 
-// When given a list of Patient database records, we need to merge them together to a Patient record that's usable by the
+// When given a list of Patient database records, we need to merge them together to a Patient record that's usable by the export
 func (gr *GormRepository) GetPatientMerged(ctx context.Context) (*database.FhirPatient, error) {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
@@ -684,9 +682,12 @@ func mergePatients(patients []database.FhirPatient) (*database.FhirPatient, erro
 		return nil, fmt.Errorf("no patients to merge, ignoring")
 	}
 	mergedPatientResource := `{}`
-	for ndx, _ := range patients {
-		patient := patients[ndx]
-		mergedPatientResourceBytes, err := deepmerge.JSON([]byte(mergedPatientResource), []byte(patient.ResourceRaw))
+	for _, patient := range patients {
+		mergedPatientResourceBytes, err := deepmerge.JSON(
+			[]byte(mergedPatientResource), 
+			[]byte(patient.ResourceRaw), 
+			deepmerge.Config{PreventMultipleDefinitionsOfKeysWithPrimitiveValue: false},
+		)
 		if err != nil {
 			return nil, err
 		}
