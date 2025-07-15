@@ -45,25 +45,25 @@
 
 .conversation-item {
   padding: 10px;
-  background-color: white;
-  border: 1px solid $az-border-color;
-  border-radius: $border-radius;
   cursor: pointer;
   font-size: 0.9rem;
   color: $az-color-text;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out, border-left 0.2s ease-in-out;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  border-radius: $border-radius; /* Keep border-radius for consistency */
 
   &:hover {
     background-color: $gray-200;
   }
 
   &.active {
-    background-color: $az-color-primary;
-    color: white;
+    background-color: transparent; /* No background color for active state */
+    color: $az-color-primary; /* Use primary color for active text */
     font-weight: bold;
+    border-left: 3px solid $az-color-primary; /* Add a left border for active state */
+    padding-left: 7px; /* Adjust padding to account for the new border */
   }
 }
 
