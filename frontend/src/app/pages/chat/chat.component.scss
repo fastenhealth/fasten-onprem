@@ -1,7 +1,71 @@
+.main-chat-layout {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.conversations-sidebar {
+  width: 250px;
+  background-color: #f0f2f5;
+  padding: 20px;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+}
+
+.new-chat-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #28a745; /* Green for new chat */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #218838;
+  }
+}
+
+.conversation-list {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.conversation-item {
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #343a40;
+  transition: background-color 0.2s ease-in-out;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    background-color: #e9ecef;
+  }
+
+  &.active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+  }
+}
+
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex-grow: 1;
   padding: 20px;
   background-color: #f8f9fa; /* Light background, similar to other components */
   border-radius: 8px;

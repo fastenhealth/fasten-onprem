@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TypesenseService } from '../../services/typesense.service';
+import { ConversationDocument, TypesenseService } from '../../services/typesense.service';
 
 @Component({
   selector: 'app-chat',
@@ -10,6 +10,7 @@ export class ChatComponent implements OnInit {
   messages: { text: string, sender: 'user' | 'bot' }[] = [];
   userMessage: string = '';
   conversationId: string | undefined;
+  conversations: { conversation_id: string; firstMessage: string }[] = [];
 
   private readonly TYPESENSE_COLLECTION = 'resources';
   private readonly TYPESENSE_QUERY_BY_FIELD = 'embedding';
@@ -18,6 +19,40 @@ export class ChatComponent implements OnInit {
   constructor(private typesenseService: TypesenseService) { }
 
   ngOnInit(): void {
+    this.loadConversations();
+  }
+
+  async loadConversations(): Promise<void> {
+    try {
+      const groupedHits = await this.typesenseService.getConversations();
+      this.conversations = groupedHits.map((group: any) => ({
+        conversation_id: group.group_key[0],
+        firstMessage: group.hits[0].document.message,
+      }));
+    } catch (error) {
+      console.error('Error loading conversations:', error);
+    }
+  }
+
+  async selectConversation(conversationId: string): Promise<void> {
+    this.conversationId = conversationId;
+    this.messages = []; // Clear current messages
+
+    try {
+      const messages = await this.typesenseService.getConversationMessages(conversationId);
+      this.messages = messages.map((hit: any) => ({
+        text: hit.document.message,
+        sender: hit.document.role,
+      }));
+    } catch (error) {
+      console.error('Error loading conversation messages:', error);
+      this.messages.push({ text: 'Error: Could not load conversation.', sender: 'bot' });
+    }
+  }
+
+  newChat(): void {
+    this.conversationId = undefined;
+    this.messages = [];
   }
 
   async sendMessage(): Promise<void> {
@@ -41,6 +76,7 @@ export class ChatComponent implements OnInit {
       const botAnswer = conversationResponse.answer;
       this.conversationId = conversationResponse.conversation_id;
       this.messages.push({ text: botAnswer, sender: 'bot' });
+      this.loadConversations(); // Reload conversations to show the new one
 
     } catch (error) {
       console.error('Error sending message:', error);
@@ -81,6 +117,7 @@ export class ChatComponent implements OnInit {
             if (results && results.conversation && results.conversation.conversation_id) {
               this.conversationId = results.conversation.conversation_id;
             }
+            this.loadConversations(); // Reload conversations to show the new one
           },
           onError: (error: Error) => {
             console.log(`onError`, { error });

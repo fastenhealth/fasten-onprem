@@ -5,7 +5,16 @@ import { SearchParams } from 'typesense/lib/Typesense/Types';
 export interface ResourceDocument {
   source_resource_type: string;
   sort_title: string;
-  sort_date: BigInt
+  sort_date: BigInt;
+}
+
+export interface ConversationDocument {
+  conversation_id: string,
+  id: string,
+  message: string,
+  model_id: string,
+  role: string,
+  timestamp: BigInt;
 }
 
 @Injectable({
@@ -26,6 +35,51 @@ export class TypesenseService {
       connectionTimeoutSeconds: 180,
       apiKey: 'xyz123',
     });
+  }
+
+  async getConversations(): Promise<any> {
+    try {
+      const searchParams: SearchParams<ConversationDocument> = {
+        q: '*',
+        query_by: 'conversation_id',
+        group_by: 'conversation_id',
+        group_limit: 1,
+        sort_by: 'timestamp:desc',
+        per_page: 250,
+      };
+
+      const response = await this.client
+        .collections<ConversationDocument>('conversation_store')
+        .documents()
+        .search(searchParams);
+
+      return response.grouped_hits;
+    } catch (error) {
+      console.error('Error fetching conversations:', error.message);
+      throw error;
+    }
+  }
+
+  async getConversationMessages(conversationId: string): Promise<any> {
+    try {
+      const searchParams: SearchParams<ConversationDocument> = {
+        q: '*',
+        query_by: 'conversation_id', // Using conversation_id as it's indexed
+        filter_by: `conversation_id:=${conversationId}`,
+        sort_by: 'timestamp:asc,id:asc', // Added secondary sort by id
+        per_page: 250, // Max number of messages to fetch
+      };
+
+      const response = await this.client
+        .collections<ConversationDocument>('conversation_store')
+        .documents()
+        .search(searchParams);
+
+      return response.hits;
+    } catch (error) {
+      console.error('Error fetching conversation messages:', error.message);
+      throw error;
+    }
   }
 
   async startConversation(

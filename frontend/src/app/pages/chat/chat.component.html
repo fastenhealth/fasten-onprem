@@ -1,14 +1,27 @@
-<div class="chat-container">
-  <div class="messages-area">
-    <div *ngIf="messages.length === 0" class="welcome-message">
-      <p>Welcome to the chat!</p>
-    </div>
-    <div *ngFor="let message of messages" class="message-bubble" [ngClass]="{'user-message': message.sender === 'user', 'bot-message': message.sender === 'bot'}">
-      <p>{{ message.text }}</p>
+<div class="main-chat-layout">
+  <div class="conversations-sidebar">
+    <button class="new-chat-button" (click)="newChat()">+ New Chat</button>
+    <div class="conversation-list">
+      <div *ngFor="let conv of conversations"
+           class="conversation-item"
+           [ngClass]="{'active': conversationId === conv.conversation_id}"
+           (click)="selectConversation(conv.conversation_id)">
+        {{ conv.firstMessage | slice:0:50 }}...
+      </div>
     </div>
   </div>
-  <div class="input-area">
-    <textarea placeholder="Type your message here..." [(ngModel)]="userMessage" (keyup.enter)="sendMessage()"></textarea>
-    <button (click)="sendMessage()">Send</button>
+  <div class="chat-container">
+    <div class="messages-area">
+      <div *ngIf="messages.length === 0 && !conversationId" class="welcome-message">
+        <p>Welcome to the chat! Start a new conversation or select an existing one.</p>
+      </div>
+      <div *ngFor="let message of messages" class="message-bubble" [ngClass]="{'user-message': message.sender === 'user', 'bot-message': message.sender === 'bot'}">
+        <p>{{ message.text }}</p>
+      </div>
+    </div>
+    <div class="input-area">
+      <textarea placeholder="Type your message here..." [(ngModel)]="userMessage" (keyup.enter)="sendMessage()"></textarea>
+      <button (click)="sendMessage()">Send</button>
+    </div>
   </div>
 </div>
