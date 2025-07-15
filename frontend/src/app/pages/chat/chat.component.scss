@@ -1,19 +1,51 @@
 @import 'src/assets/scss/bootstrap/variables';
 @import 'src/assets/scss/custom/variables';
 
+// Chat layout dimensions
+$chat-min-height: 800px;
+$chat-max-height: 800px;
+$sidebar-width: 200px;
+$chat-padding: 20px;
+$message-area-padding: 10px;
+$input-area-padding-top: 10px;
+$textarea-min-height: 50px;
+$textarea-max-height: 150px;
+$send-button-size: 30px;
+$send-button-icon-size: 20px;
+$conversation-item-padding: 10px;
+$conversation-item-gap: 8px;
+$new-chat-button-padding: 10px;
+$delete-button-padding: 5px;
+$delete-button-margin-left: 10px;
+$delete-icon-size: 16px;
+
+// Colors
+$chat-bg-color: white;
+$chat-border-color: $az-border-color;
+$chat-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+$user-message-bg: $az-color-primary;
+$user-message-color: white;
+$bot-message-bg: $gray-200;
+$bot-message-color: $az-color-text;
+$welcome-message-color: $az-color-text;
+$new-chat-button-hover-bg: darken($az-color-primary, 10%); // Darker shade for hover
+$delete-icon-filter: invert(20%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%); // Dark gray
+$delete-icon-hover-filter: invert(10%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%); // Slightly darker
+$send-icon-filter: invert(39%) sepia(68%) saturate(577%) hue-rotate(173deg) brightness(94%) contrast(90%); // Primary blue
+
 .main-chat-layout {
   display: flex;
   flex-direction: row;
-  min-height: 800px;
-  max-height: 800px;
+  min-height: $chat-min-height;
+  max-height: $chat-max-height;
 }
 
 .conversations-sidebar {
-  width: 200px;
+  width: $sidebar-width;
   flex-shrink: 0;
   background-color: $gray-100;
-  padding: 20px;
-  border-right: 1px solid $az-border-color;
+  padding: $chat-padding;
+  border-right: 1px solid $chat-border-color;
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -22,7 +54,7 @@
 
 .new-chat-button {
   width: 100%;
-  padding: 10px;
+  padding: $new-chat-button-padding;
   background-color: $az-color-primary;
   color: white;
   border: none;
@@ -32,20 +64,19 @@
   transition: background-color 0.2s ease-in-out;
 
   &:hover {
-    background-color: #0056b3; /* A darker shade of primary blue for hover */
+    background-color: $new-chat-button-hover-bg;
   }
 }
-
 
 .conversation-list {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: $conversation-item-gap;
 }
 
 .conversation-item {
-  padding: 10px;
+  padding: $conversation-item-padding;
   cursor: pointer;
   font-size: 0.9rem;
   color: $az-color-text;
@@ -53,13 +84,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-radius: $border-radius; /* Keep border-radius for consistency */
-  display: flex; /* Enable flexbox for alignment */
-  justify-content: space-between; /* Space out text and button */
-  align-items: center; /* Vertically align items */
+  border-radius: $border-radius;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   .conversation-text {
-    flex-grow: 1; /* Allow text to take available space */
+    flex-grow: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -69,20 +100,20 @@
     background: none;
     border: none;
     cursor: pointer;
-    padding: 5px;
-    margin-left: 10px;
-    opacity: 0; /* Hidden by default */
+    padding: $delete-button-padding;
+    margin-left: $delete-button-margin-left;
+    opacity: 0;
     transition: opacity 0.2s ease-in-out;
 
     img {
-      width: 16px;
-      height: 16px;
-      filter: invert(20%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%); /* Dark gray icon */
+      width: $delete-icon-size;
+      height: $delete-icon-size;
+      filter: $delete-icon-filter;
     }
 
     &:hover {
       img {
-        filter: invert(10%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%); /* Slightly darker on hover */
+        filter: $delete-icon-hover-filter;
       }
     }
   }
@@ -90,16 +121,16 @@
   &:hover {
     background-color: $gray-200;
     .delete-conversation-item-button {
-      opacity: 1; /* Show on hover */
+      opacity: 1;
     }
   }
 
   &.active {
-    background-color: transparent; /* No background color for active state */
-    color: $az-color-primary; /* Use primary color for active text */
+    background-color: transparent;
+    color: $az-color-primary;
     font-weight: bold;
-    border-left: 3px solid $az-color-primary; /* Add a left border for active state */
-    padding-left: 7px; /* Adjust padding to account for the new border */
+    border-left: 3px solid $az-color-primary;
+    padding-left: $conversation-item-padding - 3px; // Adjust padding for border
   }
 }
 
@@ -107,18 +138,18 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  padding: 20px;
-  background-color: white;
+  padding: $chat-padding;
+  background-color: $chat-bg-color;
   border-radius: $border-radius;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: $chat-shadow;
 }
 
 .messages-area {
   flex-grow: 1;
   overflow-y: auto;
-  padding: 10px;
-  background-color: white;
-  border: 1px solid $az-border-color;
+  padding: $message-area-padding;
+  background-color: $chat-bg-color;
+  border: 1px solid $chat-border-color;
   border-radius: $border-radius;
   margin-bottom: 15px;
   display: flex;
@@ -132,9 +163,9 @@
 }
 
 .welcome-message {
-  color: $az-color-text;
+  color: $welcome-message-color;
   font-style: italic;
-  padding: 10px;
+  padding: $message-area-padding;
   font-size: 1.2rem;
 }
 
@@ -148,44 +179,44 @@
 }
 
 .user-message {
-  background-color: $az-color-primary;
-  color: white;
-  align-self: flex-end; /* Align to the right */
-  margin-left: auto; /* Push to the right */
-  border-bottom-right-radius: 2px; /* Sharpen corner for user */
+  background-color: $user-message-bg;
+  color: $user-message-color;
+  align-self: flex-end;
+  margin-left: auto;
+  border-bottom-right-radius: 2px;
 }
 
 .bot-message {
-  background-color: $gray-200;
-  color: $az-color-text;
-  align-self: flex-start; /* Align to the left */
-  margin-right: auto; /* Push to the left */
-  border-bottom-left-radius: 2px; /* Sharpen corner for bot */
+  background-color: $bot-message-bg;
+  color: $bot-message-color;
+  align-self: flex-start;
+  margin-right: auto;
+  border-bottom-left-radius: 2px;
 }
 
 .input-area {
   display: flex;
-  align-items: flex-end; /* Align to the bottom */
-  padding-top: 10px; /* Add some padding above the input area */
+  align-items: flex-end;
+  padding-top: $input-area-padding-top;
 }
 
 .textarea-wrapper {
   flex-grow: 1;
   position: relative;
   display: flex;
-  align-items: flex-end; /* Align content to the bottom within the wrapper */
+  align-items: flex-end;
 }
 
 textarea {
   flex-grow: 1;
-  padding: 10px 40px 10px 10px; /* Adjust padding for button */
-  border: 1px solid $az-border-color;
+  padding: 10px ($send-button-size + 10px) 10px 10px; // Adjust padding for button
+  border: 1px solid $chat-border-color;
   border-radius: $border-radius;
   font-size: 1rem;
-  resize: none; /* Prevent manual resizing */
-  min-height: 50px;
-  max-height: 150px; /* Limit max height for textarea */
-  overflow-y: auto; /* Enable scrolling for overflow */
+  resize: none;
+  min-height: $textarea-min-height;
+  max-height: $textarea-max-height;
+  overflow-y: auto;
 }
 
 .send-button {
@@ -199,15 +230,15 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%; /* Make it circular */
+  width: $send-button-size;
+  height: $send-button-size;
+  border-radius: 50%;
   transition: background-color 0.2s ease-in-out;
 
   img {
-    width: 20px;
-    height: 20px;
-    filter: invert(39%) sepia(68%) saturate(577%) hue-rotate(173deg) brightness(94%) contrast(90%); /* Adjust color to match primary blue */
+    width: $send-button-icon-size;
+    height: $send-button-icon-size;
+    filter: $send-icon-filter;
   }
 
   &:hover {

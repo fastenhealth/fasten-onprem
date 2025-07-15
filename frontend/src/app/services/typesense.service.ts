@@ -1,20 +1,74 @@
 import { Injectable } from '@angular/core';
 import { Client } from 'typesense';
 import { SearchParams } from 'typesense/lib/Typesense/Types';
+import { Observable, Subscriber } from 'rxjs';
+
+const TYPESENSE_CONFIG = {
+  nodes: [
+    {
+      host: 'localhost',
+      port: 8108,
+      protocol: 'http',
+    },
+  ],
+  connectionTimeoutSeconds: 180,
+  apiKey: 'xyz123',
+};
+
+const TYPESENSE_COLLECTION_RESOURCES = 'resources';
+const TYPESENSE_COLLECTION_CONVERSATION_STORE = 'conversation_store';
+const TYPESENSE_QUERY_BY_FIELD = 'embedding';
+const TYPESENSE_CONVERSATION_MODEL_ID = 'conv-model-1';
 
 export interface ResourceDocument {
   source_resource_type: string;
   sort_title: string;
   sort_date: BigInt;
+
+  // Add other fields as they are used in search results or conversation context
+  resource_raw?: {
+    code?: { text?: string };
+    recordedDate?: string;
+    effectiveDateTime?: string;
+    valueQuantity?: { unit?: string; value?: number };
+  };
 }
 
 export interface ConversationDocument {
-  conversation_id: string,
-  id: string,
-  message: string,
-  model_id: string,
-  role: string,
+  conversation_id: string;
+  id: string;
+  message: string;
+  model_id: string;
+  role: 'user' | 'bot';
   timestamp: BigInt;
+}
+
+export interface TypesenseGroupedHit<T> {
+  group_key: string[];
+  hits: Array<{ document: T }>;
+}
+
+export interface TypesenseSearchResponse<T> {
+  hits?: Array<{ document: T }>; // Made optional to match Typesense client's SearchResponse
+  conversation?: {
+    answer: string;
+    conversation_id: string;
+    // Add other conversation-related fields if they exist in the response
+  };
+}
+
+export interface ConversationStreamChunk {
+  message?: string;
+  conversation_id?: string;
+  // Add other chunk-specific fields if they exist
+}
+
+export interface ConversationStreamComplete {
+  conversation?: {
+    answer: string;
+    conversation_id: string;
+  };
+  // Add other complete-specific fields if they exist
 }
 
 @Injectable({
@@ -24,20 +78,14 @@ export class TypesenseService {
   private client: Client;
 
   constructor() {
-    this.client = new Client({
-      nodes: [
-        {
-          host: 'localhost',
-          port: 8108,
-          protocol: 'http',
-        },
-      ],
-      connectionTimeoutSeconds: 180,
-      apiKey: 'xyz123',
-    });
+    this.client = new Client(TYPESENSE_CONFIG);
   }
 
-  async getConversations(): Promise<any> {
+  /**
+   * Fetches a list of existing conversations, grouped by conversation_id.
+   * @returns A promise that resolves to an array of grouped conversation hits.
+   */
+  async getConversations(): Promise<TypesenseGroupedHit<ConversationDocument>[]> {
     try {
       const searchParams: SearchParams<ConversationDocument> = {
         q: '*',
@@ -45,169 +93,170 @@ export class TypesenseService {
         group_by: 'conversation_id',
         group_limit: 1,
         sort_by: 'timestamp:desc',
-        per_page: 250,
+        per_page: 250, // Max number of conversations to fetch
       };
 
       const response = await this.client
-        .collections<ConversationDocument>('conversation_store')
+        .collections<ConversationDocument>(TYPESENSE_COLLECTION_CONVERSATION_STORE)
         .documents()
         .search(searchParams);
 
-      return response.grouped_hits;
-    } catch (error) {
+      return response.grouped_hits || [];
+    } catch (error: any) {
       console.error('Error fetching conversations:', error.message);
       throw error;
     }
   }
 
-  async getConversationMessages(conversationId: string): Promise<any> {
+  /**
+   * Fetches all messages for a specific conversation ID.
+   * @param conversationId The ID of the conversation to fetch messages for.
+   * @returns A promise that resolves to an array of conversation document hits.
+   */
+  async getConversationMessages(
+    conversationId: string
+  ): Promise<Array<{ document: ConversationDocument }>> {
     try {
       const searchParams: SearchParams<ConversationDocument> = {
         q: '*',
-        query_by: 'conversation_id', // Using conversation_id as it's indexed
+        query_by: 'conversation_id',
         filter_by: `conversation_id:=${conversationId}`,
-        // sort_by: 'timestamp:asc,id:asc', // Added secondary sort by id
-        sort_by: 'timestamp:asc', // Added secondary sort by id
+        sort_by: 'timestamp:asc',
         per_page: 250, // Max number of messages to fetch
       };
 
       const response = await this.client
-        .collections<ConversationDocument>('conversation_store')
+        .collections<ConversationDocument>(TYPESENSE_COLLECTION_CONVERSATION_STORE)
         .documents()
         .search(searchParams);
 
-      return response.hits;
-    } catch (error) {
+      return response.hits || [];
+    } catch (error: any) {
       console.error('Error fetching conversation messages:', error.message);
       throw error;
     }
   }
 
+  /**
+   * Starts a new conversation or continues an existing one without streaming.
+   * @param query The user's message.
+   * @param conversationId Optional ID of an existing conversation.
+   * @returns A promise that resolves to the full conversation response.
+   */
   async startConversation(
-    q: string,
-    collection: string,
-    query_by: string,
-    conversation_model_id: string,
-    conversation_id?: string
-  ) {
+    query: string,
+    conversationId?: string
+  ): Promise<TypesenseSearchResponse<ResourceDocument>> {
+    const include_fields = [
+      'source_resource_type',
+      'sort_title',
+      'sort_date',
+      'resource_raw.code.text',
+      'resource_raw.recordedDate',
+      'resource_raw.effectiveDateTime',
+      'resource_raw.valueQuantity.unit',
+      'resource_raw.valueQuantity.value',
+    ];
+
+    const searchParams: SearchParams<ResourceDocument> = {
+      q: query,
+      query_by: TYPESENSE_QUERY_BY_FIELD,
+      conversation: true,
+      conversation_model_id: TYPESENSE_CONVERSATION_MODEL_ID,
+      include_fields: include_fields.join(','),
+      ...(conversationId ? { conversation_id: conversationId } : {}),
+    };
+
     try {
-      const include_fields = [
-        'source_resource_type',
-        'sort_title',
-        'sort_date',
-        'resource_raw.code.text',
-        'resource_raw.recordedDate',
-        'resource_raw.effectiveDateTime',
-        'resource_raw.valueQuantity.unit',
-        'resource_raw.valueQuantity.value'
-      ]
-      const searchParams: SearchParams<ResourceDocument> = {
-        q,
-        query_by,
-        conversation: true,
-        conversation_model_id,
-        include_fields: include_fields.join(`,`),
-        // exclude_fields: "embedding",
-
-        ...(conversation_id ? { conversation_id } : {}),
-      };
-
-      return this.client
-        .collections<ResourceDocument>(collection)
+      return await this.client
+        .collections<ResourceDocument>(TYPESENSE_COLLECTION_RESOURCES)
         .documents()
         .search(searchParams);
-    } catch (error) {
-      console.error('Error starting conversation streaming:', error.message);
-      throw error;
-    }
-  }
-
-  async startConversationMultisearch(
-    q: string,
-    collection: string,
-    query_by: string,
-    conversation_model_id: string,
-    conversation_id?: string
-  ): Promise<any> {
-    const searchRequests = {
-      searches: [
-        {
-          collection: collection,
-          query_by,
-          include_fields: 'source_resource_type,sort_title,sort_date',
-          // exclude_fields: 'embedding'
-        },
-      ],
-    };
-
-    const commonParams: any = {
-      q,
-      conversation: true,
-      conversation_model_id,
-
-      ...(conversation_id ? { conversation_id } : {}),
-    };
-
-    try {
-      const response: any = await this.client.multiSearch.perform(
-        searchRequests,
-        commonParams
-      );
-      return response.conversation;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error starting conversation:', error.message);
       throw error;
     }
   }
 
-  async startConversationStreaming(
-    q: string,
-    collection: string,
-    query_by: string,
-    streamConfig: {
-      onChunk: (result: any) => void;
-      onComplete: (results: any) => void;
-      onError: (error: Error) => void;
-    },
-    conversation_model_id: string,
-    conversation_id?: string
-  ) {
-    try {
-      const searchParams: SearchParams<ResourceDocument> = {
-        q,
-        query_by,
-        conversation: true,
-        conversation_model_id,
-        conversation_stream: true,
-        include_fields: 'source_resource_type,sort_title,sort_date',
-        // exclude_fields: "embedding",
-        streamConfig,
+  /**
+   * Starts a new conversation or continues an existing one with streaming.
+   * Returns an Observable that emits chunks of the conversation response.
+   * @param query The user's message.
+   * @param conversationId Optional ID of an existing conversation.
+   * @returns An Observable that emits ConversationStreamChunk objects.
+   */
+  startConversationStreaming(
+    query: string,
+    conversationId?: string
+  ): Observable<ConversationStreamChunk> {
+    return new Observable((subscriber: Subscriber<ConversationStreamChunk>) => {
+      const include_fields = [
+      'source_resource_type',
+      'sort_title',
+      'sort_date',
+      'resource_raw.code.text',
+      'resource_raw.recordedDate',
+      'resource_raw.effectiveDateTime',
+      'resource_raw.valueQuantity.unit',
+      'resource_raw.valueQuantity.value',
+    ];
 
-        ...(conversation_id ? { conversation_id } : {}),
+      const searchParams: SearchParams<ResourceDocument> = {
+        q: query,
+        query_by: TYPESENSE_QUERY_BY_FIELD,
+        conversation: true,
+        conversation_model_id: TYPESENSE_CONVERSATION_MODEL_ID,
+        conversation_stream: true,
+        include_fields: include_fields.join(','),
+        streamConfig: {
+          onChunk: (result: ConversationStreamChunk) => {
+            subscriber.next(result);
+          },
+          onComplete: (results: ConversationStreamComplete) => {
+            // The last chunk might contain the full conversation object
+            if (results && results.conversation) {
+              subscriber.next({
+                message: results.conversation.answer,
+                conversation_id: results.conversation.conversation_id,
+              });
+            }
+            subscriber.complete();
+          },
+          onError: (error: Error) => {
+            subscriber.error(error);
+          },
+        },
+        ...(conversationId ? { conversation_id: conversationId } : {}),
       };
 
-      await this.client
-        .collections<ResourceDocument>(collection)
+      this.client
+        .collections<ResourceDocument>(TYPESENSE_COLLECTION_RESOURCES)
         .documents()
-        .search(searchParams);
-    } catch (error) {
-      console.error('Error starting conversation streaming:', error.message);
-      throw error;
-    }
+        .search(searchParams)
+        .catch((error) => {
+          // Catch errors from the initial search call itself, not just stream errors
+          subscriber.error(error);
+        });
+    });
   }
 
-  async deleteConversation(conversationId: string | undefined): Promise<void> {
+  /**
+   * Deletes a conversation by its ID.
+   * @param conversationId The ID of the conversation to delete.
+   * @returns A promise that resolves when the conversation is deleted.
+   */
+  async deleteConversation(conversationId: string): Promise<void> {
     if (!conversationId) {
       console.warn('No conversation ID provided for deletion.');
       return;
     }
     try {
       await this.client
-        .collections<ConversationDocument>('conversation_store')
+        .collections<ConversationDocument>(TYPESENSE_COLLECTION_CONVERSATION_STORE)
         .documents()
         .delete({ filter_by: `conversation_id:=${conversationId}` });
       console.log(`Conversation ${conversationId} deleted successfully.`);
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Error deleting conversation ${conversationId}:`, error.message);
       throw error;
     }

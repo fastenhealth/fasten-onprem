@@ -2,9 +2,9 @@
   <div class="conversations-sidebar">
     <button class="new-chat-button" (click)="newConversation()">+ New Chat</button>
     <div class="conversation-list">
-      <div *ngFor="let conv of conversations"
+      <div *ngFor="let conv of (conversations | async)"
            class="conversation-item"
-           [ngClass]="{'active': conversationId === conv.conversation_id}"
+           [ngClass]="{'active': (currentConversationId | async) === conv.conversation_id}"
            (click)="selectConversation(conv.conversation_id)">
         <span class="conversation-text">{{ conv.firstMessage | slice:0:50 }}...</span>
         <button class="delete-conversation-item-button" (click)="deleteConversation(conv.conversation_id); $event.stopPropagation();">
@@ -14,11 +14,11 @@
     </div>
   </div>
   <div class="chat-container">
-    <div class="messages-area" [ngClass]="{'empty-chat-messages-area': messages.length === 0}">
-      <div *ngIf="messages.length === 0" class="welcome-message">
+    <div class="messages-area" [ngClass]="{'empty-chat-messages-area': (messages | async)?.length === 0}">
+      <div *ngIf="(messages | async)?.length === 0" class="welcome-message">
         <p>How can I help you today?</p>
       </div>
-      <div *ngFor="let message of messages" class="message-bubble" [ngClass]="{'user-message': message.sender === 'user', 'bot-message': message.sender === 'bot'}">
+      <div *ngFor="let message of (messages | async)" class="message-bubble" [ngClass]="{'user-message': message.sender === 'user', 'bot-message': message.sender === 'bot'}">
         <p>{{ message.text }}</p>
       </div>
     </div>

@@ -1,146 +1,144 @@
-import { Component, OnInit } from '@angular/core';
-import { ConversationDocument, TypesenseService } from '../../services/typesense.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { TypesenseService } from '../../services/typesense.service';
+import { ChatStateService, Message, Conversation } from './chat-state.service';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.scss']
+  styleUrls: ['./chat.component.scss'],
 })
-export class ChatComponent implements OnInit {
-  messages: { text: string, sender: 'user' | 'bot' }[] = [];
+export class ChatComponent implements OnInit, OnDestroy {
   userMessage: string = '';
-  conversationId: string | undefined;
-  conversations: { conversation_id: string; firstMessage: string }[] = [];
+  messages: Observable<Message[]>;
+  conversations: Observable<Conversation[]>;
+  currentConversationId: Observable<string | undefined>;
 
-  private readonly TYPESENSE_COLLECTION = 'resources';
-  private readonly TYPESENSE_QUERY_BY_FIELD = 'embedding';
-  private readonly TYPESENSE_CONVERSATION_MODEL_ID = 'conv-model-1';
+  private subscriptions = new Subscription();
 
-  constructor(private typesenseService: TypesenseService) { }
+  // Configuration for chat behavior
+  private readonly USE_STREAMING_CHAT = false; // Toggle between streaming and non-streaming
+
+  constructor(
+    private typesenseService: TypesenseService,
+    public chatStateService: ChatStateService // Made public for template access
+  ) {
+    this.messages = this.chatStateService.messages.asObservable();
+    this.conversations = this.chatStateService.conversations.asObservable();
+    this.currentConversationId = this.chatStateService.currentConversationId.asObservable();
+  }
 
   ngOnInit(): void {
-    this.loadConversations();
+    this.chatStateService.loadConversations();
   }
 
-  async loadConversations(): Promise<void> {
-    try {
-      const groupedHits = await this.typesenseService.getConversations();
-      this.conversations = groupedHits.map((group: any) => ({
-        conversation_id: group.group_key[0],
-        firstMessage: group.hits[0].document.message,
-      }));
-    } catch (error) {
-      console.error('Error loading conversations:', error);
-    }
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
-  async selectConversation(conversationId: string): Promise<void> {
-    this.conversationId = conversationId;
-    this.messages = []; // Clear current messages
-
-    try {
-      const messages = await this.typesenseService.getConversationMessages(conversationId);
-      this.messages = messages.map((hit: any) => ({
-        text: hit.document.message,
-        sender: hit.document.role,
-      }));
-    } catch (error) {
-      console.error('Error loading conversation messages:', error);
-      this.messages.push({ text: 'Error: Could not load conversation.', sender: 'bot' });
-    }
-  }
-
-  newConversation(): void {
-    this.conversationId = undefined;
-    this.messages = [];
-  }
-
-  async deleteConversation(conversationIdToDelete: string): Promise<void> {
-    await this.typesenseService.deleteConversation(conversationIdToDelete);
-    if (this.conversationId === conversationIdToDelete) {
-      this.conversationId = undefined;
-      this.messages = [];
-    }
-    await this.loadConversations(); // Reload conversations to reflect deletion
-  }
-
+  /**
+   * Handles sending a message, choosing between streaming and non-streaming based on configuration.
+   */
   async sendMessage(): Promise<void> {
     if (this.userMessage.trim() === '') {
       return;
     }
 
     const messageText = this.userMessage;
-    this.messages.push({ text: messageText, sender: 'user' });
-    this.userMessage = '';
+    this.chatStateService.addUserMessage(messageText);
+    this.userMessage = ''; // Clear input immediately
 
-    try {
-      const conversationResponse = await this.typesenseService.startConversation(
-        messageText,
-        this.TYPESENSE_COLLECTION,
-        this.TYPESENSE_QUERY_BY_FIELD,
-        this.TYPESENSE_CONVERSATION_MODEL_ID,
-        this.conversationId
-      );
+    const currentConversationId = this.chatStateService.currentConversationId.getValue();
 
-      const botAnswer = conversationResponse.conversation.answer;
-      this.conversationId = conversationResponse.conversation.conversation_id;
-      this.messages.push({ text: botAnswer, sender: 'bot' });
-      this.loadConversations(); // Reload conversations to show the new one
-
-    } catch (error) {
-      console.error('Error sending message:', error);
-      this.messages.push({ text: 'Error: Could not get a response.', sender: 'bot' });
+    if (this.USE_STREAMING_CHAT) {
+      this.sendStreamingMessage(messageText, currentConversationId);
+    } else {
+      await this.sendNonStreamingMessage(messageText, currentConversationId);
     }
   }
 
-  _sendMessage(): Promise<void> {
-    if (this.userMessage.trim() === '') {
-      return;
-    }
+  /**
+   * Sends a message and handles the streaming response.
+   * @param messageText The user's message.
+   * @param conversationId The current conversation ID, if any.
+   */
+  private sendStreamingMessage(messageText: string, conversationId?: string): void {
+    const botMessageIndex = this.chatStateService.addBotMessage(''); // Add placeholder
 
-    const messageText = this.userMessage;
-    this.messages.push({ text: messageText, sender: 'user' });
-    this.userMessage = '';
-
-    const botMessageIndex = this.messages.length;
-    this.messages.push({ text: '', sender: 'bot' }); // Placeholder for streaming response
-
-    try {
-      this.typesenseService.startConversationStreaming(
-        messageText,
-        this.TYPESENSE_COLLECTION,
-        this.TYPESENSE_QUERY_BY_FIELD,
-        {
-          onChunk: (result: any) => {
-            if (result && result.message) {
-              this.messages[botMessageIndex].text += result.message;
-            }
-            if (result && result.conversation_id) {
-              this.conversationId = result.conversation_id;
-            }
-          },
-          onComplete: (results: any) => {
-            if (results && results.conversation && results.conversation.answer) {
-              this.messages[botMessageIndex].text = results.conversation.answer;
-            }
-            if (results && results.conversation && results.conversation.conversation_id) {
-              this.conversationId = results.conversation.conversation_id;
-            }
-            this.loadConversations(); // Reload conversations to show the new one
-          },
-          onError: (error: Error) => {
-            console.log(`onError`, { error });
-            // console.error("Error during conversation stream:", error);
-            // setIsPending(false);
-          },
+    this.subscriptions.add(
+      this.typesenseService.startConversationStreaming(messageText, conversationId).subscribe({
+        next: (chunk) => {
+          if (chunk.message) {
+            this.chatStateService.updateBotMessage(
+              botMessageIndex,
+              this.chatStateService.messages.getValue()[botMessageIndex].text + chunk.message
+            );
+          }
+          if (chunk.conversation_id && !this.chatStateService.currentConversationId.getValue()) {
+            this.chatStateService.setCurrentConversationId(chunk.conversation_id);
+          }
         },
-        this.TYPESENSE_CONVERSATION_MODEL_ID,
-        this.conversationId
+        error: (error) => {
+          console.error('Error during conversation stream:', error);
+          this.chatStateService.updateBotMessage(
+            botMessageIndex,
+            'Error: Could not get a response.'
+          );
+        },
+        complete: () => {
+          // On complete, ensure the conversation list is updated if a new conversation was started
+          this.chatStateService.loadConversations();
+        },
+      })
+    );
+  }
+
+  /**
+   * Sends a message and waits for the complete response.
+   * @param messageText The user's message.
+   * @param conversationId The current conversation ID, if any.
+   */
+  private async sendNonStreamingMessage(messageText: string, conversationId?: string): Promise<void> {
+    try {
+      const conversationResponse = await this.typesenseService.startConversation(
+        messageText,
+        conversationId
       );
 
+      const botAnswer = conversationResponse.conversation?.answer || 'No answer received.';
+      const newConversationId = conversationResponse.conversation?.conversation_id;
+
+      if (newConversationId) {
+        this.chatStateService.setCurrentConversationId(newConversationId);
+      }
+      this.chatStateService.addBotMessage(botAnswer);
+      this.chatStateService.loadConversations(); // Reload conversations to show the new one
     } catch (error) {
       console.error('Error sending message:', error);
-      this.messages[botMessageIndex].text = 'Error: Could not get a response.';
+      this.chatStateService.addBotMessage('Error: Could not get a response.');
     }
+  }
+
+  /**
+   * Selects an existing conversation.
+   * @param conversationId The ID of the conversation to select.
+   */
+  selectConversation(conversationId: string): void {
+    this.chatStateService.selectConversation(conversationId);
+  }
+
+  /**
+   * Starts a new conversation.
+   */
+  newConversation(): void {
+    this.chatStateService.newConversation();
+  }
+
+  /**
+   * Deletes a conversation.
+   * @param conversationIdToDelete The ID of the conversation to delete.
+   */
+  deleteConversation(conversationIdToDelete: string): void {
+    this.chatStateService.deleteConversation(conversationIdToDelete);
   }
 }
