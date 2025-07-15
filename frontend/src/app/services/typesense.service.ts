@@ -66,7 +66,8 @@ export class TypesenseService {
         q: '*',
         query_by: 'conversation_id', // Using conversation_id as it's indexed
         filter_by: `conversation_id:=${conversationId}`,
-        sort_by: 'timestamp:asc,id:asc', // Added secondary sort by id
+        // sort_by: 'timestamp:asc,id:asc', // Added secondary sort by id
+        sort_by: 'timestamp:asc', // Added secondary sort by id
         per_page: 250, // Max number of messages to fetch
       };
 
