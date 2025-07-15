@@ -36,6 +36,7 @@
   }
 }
 
+
 .conversation-list {
   flex-grow: 1;
   display: flex;
@@ -53,9 +54,44 @@
   overflow: hidden;
   text-overflow: ellipsis;
   border-radius: $border-radius; /* Keep border-radius for consistency */
+  display: flex; /* Enable flexbox for alignment */
+  justify-content: space-between; /* Space out text and button */
+  align-items: center; /* Vertically align items */
+
+  .conversation-text {
+    flex-grow: 1; /* Allow text to take available space */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .delete-conversation-item-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 10px;
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.2s ease-in-out;
+
+    img {
+      width: 16px;
+      height: 16px;
+      filter: invert(20%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%); /* Dark gray icon */
+    }
+
+    &:hover {
+      img {
+        filter: invert(10%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%); /* Slightly darker on hover */
+      }
+    }
+  }
 
   &:hover {
     background-color: $gray-200;
+    .delete-conversation-item-button {
+      opacity: 1; /* Show on hover */
+    }
   }
 
   &.active {

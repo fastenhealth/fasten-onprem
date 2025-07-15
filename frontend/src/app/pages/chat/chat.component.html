@@ -6,7 +6,10 @@
            class="conversation-item"
            [ngClass]="{'active': conversationId === conv.conversation_id}"
            (click)="selectConversation(conv.conversation_id)">
-        {{ conv.firstMessage | slice:0:50 }}...
+        <span class="conversation-text">{{ conv.firstMessage | slice:0:50 }}...</span>
+        <button class="delete-conversation-item-button" (click)="deleteConversation(conv.conversation_id); $event.stopPropagation();">
+          <img src="assets/icons/delete.svg" alt="Delete Conversation">
+        </button>
       </div>
     </div>
   </div>

@@ -55,6 +55,15 @@ export class ChatComponent implements OnInit {
     this.messages = [];
   }
 
+  async deleteConversation(conversationIdToDelete: string): Promise<void> {
+    await this.typesenseService.deleteConversation(conversationIdToDelete);
+    if (this.conversationId === conversationIdToDelete) {
+      this.conversationId = undefined;
+      this.messages = [];
+    }
+    await this.loadConversations(); // Reload conversations to reflect deletion
+  }
+
   async sendMessage(): Promise<void> {
     if (this.userMessage.trim() === '') {
       return;

@@ -158,4 +158,21 @@ export class TypesenseService {
       throw error;
     }
   }
+
+  async deleteConversation(conversationId: string | undefined): Promise<void> {
+    if (!conversationId) {
+      console.warn('No conversation ID provided for deletion.');
+      return;
+    }
+    try {
+      await this.client
+        .collections<ConversationDocument>('conversation_store')
+        .documents()
+        .delete({ filter_by: `conversation_id:=${conversationId}` });
+      console.log(`Conversation ${conversationId} deleted successfully.`);
+    } catch (error) {
+      console.error(`Error deleting conversation ${conversationId}:`, error.message);
+      throw error;
+    }
+  }
 }
