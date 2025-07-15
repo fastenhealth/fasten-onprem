@@ -93,7 +93,7 @@ export class ResourceSearchDatatableComponent implements OnInit {
           }
         }
       );
-      this.knownResourceType = componentType != DatatableFallbackComponent;
+      this.knownResourceType = componentType != DatatableFallbackComponent || this.resourceListType == 'All';
     }
   }
 
@@ -186,6 +186,10 @@ export class ResourceSearchDatatableComponent implements OnInit {
       }
       case 'ServiceRequest': {
         return DatatableServiceRequestComponent;
+      }
+      case 'All': {
+        // Use fallback component for 'All' type
+        return DatatableFallbackComponent;
       }
       default: {
         console.warn('Unknown component type, using fallback', resourceType);

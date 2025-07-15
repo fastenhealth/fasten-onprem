@@ -136,6 +136,7 @@ func GetResourceSummaryHandler(c *gin.Context) {
 	perPage := 250
 	page := 1
 	counts := map[string]int{}
+	var totalCount int
 
 	for {
 		results, total, err := searchClient.SearchResources("*", nil, page, perPage)
@@ -150,9 +151,13 @@ func GetResourceSummaryHandler(c *gin.Context) {
 			return
 		}
 
+		// Set total count once (since Typesense returns total count for full match)
+		if page == 1 {
+			totalCount = total
+		}
+
 		// Count resource types in current page of results
 		for _, hit := range results {
-			// `hit.Document` is a map[string]interface{}
 			if val, ok := hit["source_resource_type"]; ok {
 				if rt, ok := val.(string); ok {
 					counts[rt]++
@@ -160,12 +165,14 @@ func GetResourceSummaryHandler(c *gin.Context) {
 			}
 		}
 
-		// If last page, break loop
 		if page*perPage >= total {
 			break
 		}
 		page++
 	}
+
+	// Add "all" entry
+	counts["All"] = totalCount
 
 	var results []ResourceTypeCount
 	for rt, count := range counts {

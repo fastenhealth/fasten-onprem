@@ -15,8 +15,10 @@ import {
   SelectionType,
 } from '@swimlane/ngx-datatable';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
-import { TypesenseDocument, TypesenseSearchResponse } from 'src/app/models/typesense/typesense-result-model';
-import { ResourceFhir } from 'src/app/models/fasten/resource_fhir';
+import {
+  TypesenseDocument,
+  TypesenseSearchResponse,
+} from 'src/app/models/typesense/typesense-result-model';
 import { FORMATTERS } from '../../fhir-datatable/datatable-generic-resource/utils';
 
 class PageInfo {
@@ -34,13 +36,9 @@ export class SearchDatatableGenericResourceComponent implements OnInit {
   @Input() sourceId: string;
   @Input() disabledResourceIds: string[] = [];
   @Output() selectionChanged: EventEmitter<FastenDisplayModel> =
-    new EventEmitter<FastenDisplayModel>();
+  new EventEmitter<FastenDisplayModel>();
 
   currentPage: PageInfo = { offset: 0 };
-  // @Input() resourceList: ResourceFhir[] = []
-
-  // description: string
-  // c: ListGenericResourceComponentColumn[] = []
   columnDefinitions: GenericColumnDefn[] = [];
 
   // datatable properties (DO NOT CHANGE)
@@ -49,6 +47,8 @@ export class SearchDatatableGenericResourceComponent implements OnInit {
   columns = []; //{ prop: 'name' }, { name: 'Company' }, { name: 'Gender' }
   ColumnMode = ColumnMode;
   SelectionType = SelectionType;
+
+  searchQuery: string = '';
 
   constructor(
     public changeRef: ChangeDetectorRef,
@@ -69,8 +69,24 @@ export class SearchDatatableGenericResourceComponent implements OnInit {
     this.fastenApi
       .searchResources({
         query: '*',
-        type: this.resourceListType,
+        type: this.resourceListType == 'All' ? '' : this.resourceListType,
         page: this.currentPage.offset,
+        per_page: 10,
+      })
+      .subscribe((response: TypesenseSearchResponse) => {
+        const results = response.results;
+        this.renderList(results as any as TypesenseDocument[]);
+        this.markForCheck();
+      });
+  }
+
+  search(): void {
+    this.currentPage = { offset: 0 }; // reset to first page
+    this.fastenApi
+      .searchResources({
+        query: this.searchQuery,
+        type: this.resourceListType == 'All' ? '' : this.resourceListType,
+        page: 0, // reset to first page
         per_page: 10,
       })
       .subscribe((response: TypesenseSearchResponse) => {
@@ -96,7 +112,7 @@ export class SearchDatatableGenericResourceComponent implements OnInit {
         source_id: resource.source_id,
         source_resource_type: resource.source_resource_type,
         source_resource_id: resource.source_resource_id,
-        id: resource?.id ?? resource?.source_resource_id
+        id: resource?.id ?? resource?.source_resource_id,
       };
 
       this.columnDefinitions.forEach((defn) => {

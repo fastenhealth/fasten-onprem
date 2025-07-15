@@ -39,6 +39,7 @@ import {
   DatatableAdverseEventComponent,
 } from './search-datatable-generic-resource/column-definitions';
 import { ResourceSearchDatatableOutletDirective } from './resource-search-datable-outlet.directive';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,7 @@ import { ResourceSearchDatatableOutletDirective } from './resource-search-databl
     DatatableExplanationOfBenefitComponent,
     DatatableAdverseEventComponent,
   ],
-  imports: [NgxDatatableModule, CommonModule],
+  imports: [NgxDatatableModule, CommonModule, FormsModule],
   exports: [
     SearchDatatableGenericResourceComponent,
     ResourceSearchDatatableComponent,
