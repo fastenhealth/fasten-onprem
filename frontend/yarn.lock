@@ -4724,7 +4724,7 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.13.2.tgz#0aa167216965ac9474ccfa83892cfb6b3e1e52ef"
   integrity sha512-lHe62zvbTB5eEABUVi/AwVh0ZKY9rMMDhmm+eeyuuUQbQ3+J+fONVQOZyj+DdrvD4BY33uYniyRJ4UJIaSKAfw==
 
-axios@^1.7.2:
+axios@^1.8.4:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.10.0.tgz#af320aee8632eaf2a400b6a1979fa75856f38d54"
   integrity sha512-/1xYAC4MP/HEG+3duIhFr4ZQXR4sQXOIe+o6sdqzeykGLx6Upp/1p8MHqhINOvGeP7xyNHe7tsiJByc4SSVUxw==
@@ -6166,9 +6166,9 @@ electron-to-chromium@^1.5.173:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.181.tgz#2f68dc900651858200a423acdf12c644f6b7f014"
   integrity sha512-+ISMj8OIQ+0qEeDj14Rt8WwcTOiqHyAB+5bnK1K7xNNLjBJ4hRCQfUkw8RWtcLbfBzDwc15ZnKH0c7SNOfwiyA==
 
-"elliptic@git+https://github.com/mahrud/elliptic.git":
+"elliptic@https://github.com/mahrud/elliptic":
   version "6.5.0"
-  resolved "git+https://github.com/mahrud/elliptic.git#75637c76678e83c31682fd967c2fa9ff4761b3fc"
+  resolved "https://github.com/mahrud/elliptic#75637c76678e83c31682fd967c2fa9ff4761b3fc"
   dependencies:
     bn.js "^4.4.0"
     brorand "^1.0.1"
@@ -11996,12 +11996,12 @@ typescript@~5.4.5:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.5.tgz#42ccef2c571fdbd0f6718b1d1f5e6e5ef006f611"
   integrity sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==
 
-typesense@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/typesense/-/typesense-2.0.3.tgz#cbce737544186fb338cf90bd2a76b33cb1e3a281"
-  integrity sha512-fRJjFdDNZn6qF9XzIk+bB8n8cm0fiAx1SGcpLDfNcsGtp8znITfG+SO+l/qk63GCRXZwJGq7wrMDLFUvblJSHA==
+typesense@^2.1.0-11:
+  version "2.1.0-11"
+  resolved "https://registry.yarnpkg.com/typesense/-/typesense-2.1.0-11.tgz#6463d30757036ddb0c116feced6fbe01aeba42e9"
+  integrity sha512-r+m3FwUqVsKU5fX5Rt1HBc/0OnTPPMr72yAy8teQqh2pTHH9MkT6uApIfw6yQYYxrTBPYwxhwrXzrsYvT1Fm1A==
   dependencies:
-    axios "^1.7.2"
+    axios "^1.8.4"
     loglevel "^1.8.1"
     tslib "^2.6.2"
 
