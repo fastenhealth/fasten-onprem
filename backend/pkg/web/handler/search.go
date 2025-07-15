@@ -177,5 +177,6 @@ func GetResourceSummaryHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"resource_type_counts": results,
+		"total":                len(results),
 	})
 }

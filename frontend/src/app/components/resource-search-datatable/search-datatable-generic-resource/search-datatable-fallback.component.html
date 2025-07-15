@@ -1,0 +1,7 @@
+<div>
+    <ngx-datatable #table class="bootstrap" [columns]="columns" [columnMode]="ColumnMode.force" [headerHeight]="50"
+        [footerHeight]="50" rowHeight="auto" [externalPaging]="true" [count]="totalElements"
+        [offset]="currentPage.offset" [limit]="20" [rows]="rows" [selectionType]="SelectionType.single"
+        (select)="onSelect($event)" (page)="changePage($event)">
+    </ngx-datatable>
+</div>

@@ -43,7 +43,8 @@ import { IconsModule } from './icon-module';
 import { UserListComponent } from './pages/user-list/user-list.component';
 import { ResourceSearchComponent } from './pages/resource-search/resource-search.component';
 import { ViewRawResourceDetailsComponent } from './pages/view-raw-resource-details/view-raw-resource-details.component';
-// import { ResourceSearchTableComponent } from './pages/resource-search-table/resource-search-table.component';
+import { ResourceSearchTableComponent } from './pages/resource-search-table/resource-search-table.component';
+import { ResourceSearchDatatableModule } from './components/resource-search-datatable/resource-search-datatable.module';
 import { ChatComponent } from './pages/chat/chat.component';
 
 @NgModule({
@@ -68,7 +69,7 @@ import { ChatComponent } from './pages/chat/chat.component';
     UserListComponent,
     ResourceSearchComponent,
     ViewRawResourceDetailsComponent,
-    // ResourceSearchTableComponent,
+    ResourceSearchTableComponent,
     ChatComponent,
   ],
   imports: [
@@ -78,6 +79,7 @@ import { ChatComponent } from './pages/chat/chat.component';
     SharedModule,
     FhirCardModule,
     FhirDatatableModule,
+    ResourceSearchDatatableModule,
     AppRoutingModule,
     HttpClientModule,
     NgbModule,

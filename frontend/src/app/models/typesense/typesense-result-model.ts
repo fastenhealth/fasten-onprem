@@ -16,3 +16,11 @@ export interface TypesenseSearchResponse {
   page: number;
   per_page: number;
 }
+
+export interface TypesenseSearchSummaryResponse {
+  resource_type_counts: {
+    resource_type: string;
+    count: number;
+  }[];
+  totalElements: number;
+}
