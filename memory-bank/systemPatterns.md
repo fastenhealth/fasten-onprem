@@ -13,6 +13,7 @@ This document outlines key architectural and design patterns observed or inferre
     *   **Smart/Container Components (Pages):** Located in `frontend/src/app/pages/`, these components are typically route-level components responsible for fetching data and orchestrating presentation components.
     *   **Presentational/Dumb Components:** Located in `frontend/src/app/components/`, these components are focused on UI rendering and emit events to parent components. `shared.module.ts` likely groups common presentational components.
 *   **Service Layer (Frontend):** Angular services (`frontend/src/app/services/`) encapsulate business logic, API interactions, and shared state. Examples include `AuthService` and `FastenApiService`.
+*   **Dedicated State Management Service:** For complex features like the LLM Chat, a dedicated service (`ChatStateService`) is used to manage all related state (e.g., conversations, messages). This pattern centralizes state logic, making components leaner and improving maintainability.
 *   **Modular Design (Frontend):** Angular modules (`AppModule`, `SharedModule`, `PipesModule`, `DirectivesModule`, `AppRoutingModule`) are used to organize and manage different parts of the application.
 
 ## Backend Patterns

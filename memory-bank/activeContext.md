@@ -1,38 +1,24 @@
-# Active Context: Fasten On-Prem (Memory Bank Updated July 15, 2025)
+# Active Context: Fasten On-Prem (Memory Bank Updated July 16, 2025)
 
-## Current Focus: LLM Chat & Streaming Implementation
+## Current Focus: LLM Chat Feature Maturation
 
-The current focus is on understanding and documenting the recently implemented LLM-powered chat feature, particularly its streaming capabilities. This involves analyzing the interaction between the `ChatComponent` and the `TypesenseService` to provide a clear record of the implementation.
+The current focus is on documenting the mature implementation of the LLM-powered chat feature. The architecture has evolved to include a dedicated state management service, providing a more robust and maintainable design.
+
+### Chat State Service (`frontend/src/app/pages/chat/chat-state.service.ts`)
+
+A new `ChatStateService` has been introduced to handle all state management for the chat feature. This service encapsulates the logic for creating, loading, selecting, and deleting conversations, as well as managing the message history for the active conversation. This decouples state logic from the component, following best practices.
 
 ### Chat Component (`frontend/src/app/pages/chat/chat.component.ts`)
 
-The `ChatComponent` is the user-facing element for the chat functionality. It manages the display of messages and handles user input. Two key methods are implemented for sending messages:
+The `ChatComponent` now acts as the presentation layer, interacting with the `ChatStateService` to display data and handle user input.
 
-1.  **`sendMessage()` (Non-Streaming):**
-    *   This is a standard asynchronous method that sends the user's message to the `TypesenseService`.
-    *   It waits for the complete response from the service before displaying the bot's answer.
-    *   This method is suitable for simple, single-response interactions.
-
-2.  **`_sendMessage()` (Streaming):**
-    *   This method implements the real-time streaming of the bot's response.
-    *   It immediately adds a placeholder for the bot's message in the UI.
-    *   It calls the `startConversationStreaming` method in the `TypesenseService`, providing a set of callbacks to handle the incoming data stream.
-    *   **`onChunk`**: This callback is executed for each piece of the response received from the server. It appends the new text to the bot's message placeholder, creating the appearance of a real-time stream.
-    *   **`onComplete`**: This callback is executed when the full response has been received. It can be used to finalize the message or perform any cleanup actions.
-    *   **`onError`**: This callback handles any errors that occur during the streaming process.
+*   **State Interaction:** It subscribes to observables from the `ChatStateService` to get the current list of messages, conversations, and the active conversation ID.
+*   **Configuration Flag:** It includes a `USE_STREAMING_CHAT` boolean flag, allowing developers to easily switch between streaming and non-streaming modes for debugging and testing.
+*   **Message Handling:** The `sendMessage` method orchestrates the process, calling either the streaming or non-streaming methods based on the configuration flag.
 
 ### Typesense Service (`frontend/src/app/services/typesense.service.ts`)
 
-The `TypesenseService` encapsulates the communication with the Typesense search and conversation API.
+The `TypesenseService` manages all communication with the backend conversation API.
 
-1.  **`startConversation()` (Non-Streaming):**
-    *   This method uses the `multiSearch.perform` method from the Typesense client.
-    *   It sends the user's query and returns a single, complete response.
-
-2.  **`startConversationStreaming()` (Streaming):**
-    *   This is the core of the streaming implementation.
-    *   It uses the `documents().search()` method from the Typesense client.
-    *   Crucially, it sets the `conversation_stream: true` parameter in the search request. This tells the Typesense server to send the response in chunks.
-    *   It passes a `streamConfig` object, which contains the `onChunk`, `onComplete`, and `onError` callbacks provided by the `ChatComponent`. The Typesense client library then invokes these callbacks as data arrives.
-
-This implementation provides a responsive and interactive user experience for the chat feature, allowing users to see the bot's response as it is being generated.
+*   **Streaming Implementation (RxJS):** The `startConversationStreaming` method now returns an RxJS `Observable`. The `ChatComponent` subscribes to this observable and uses the `next`, `error`, and `complete` handlers to process the incoming stream, which is a more idiomatic Angular approach.
+*   **Full Conversation Lifecycle:** The service now supports the full lifecycle of conversations, with methods for `getConversations`, `getConversationMessages`, and `deleteConversation`.
