@@ -57,6 +57,7 @@ This document outlines key architectural and design patterns observed or inferre
 
 *   **Environment-Specific Configurations:** The `frontend/src/environments/` directory demonstrates a pattern for managing different configurations (API endpoints, feature flags) for various deployment environments (dev, prod, sandbox, desktop, cloud).
 *   **Containerization (Docker):** Packaging the application into Docker containers for consistent deployment across different environments.
+*   **Externalized Typesense Model Configuration:** Typesense conversation model parameters (ID, name, vLLM URL, history collection) are externalized into `config.dev.yaml` for flexible management and environment-specific overrides.
 *   **Infrastructure as Code (Nix):** Using Nix (`flake.nix`) to define and manage reproducible development and build environments.
 
 ## Cross-Cutting Concerns

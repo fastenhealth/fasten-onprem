@@ -60,3 +60,17 @@ The schema for the `conversation_store` collection is as follows:
 }
 ```
 This ensures that the necessary data structure for storing chat conversations is in place when the Typesense client is initialized.
+
+### Typesense Conversation Model Creation and Configuration
+
+In addition to the `conversation_store` collection, the `backend/pkg/search/typesense.go` file now also handles the creation of a specific conversation model with the ID "conv-model-1". This model is created upon server initialization if it does not already exist.
+
+The parameters for this conversation model are externalized into `config.dev.yaml` under the `typesense.conversation_model` section. This allows for easy modification of model parameters without code changes.
+
+The configuration keys are:
+*   `typesense.conversation_model.id`: The unique ID for the conversation model (e.g., "conv-model-1").
+*   `typesense.conversation_model.name`: The name of the LLM model (e.g., "vllm/llama3.1:8b").
+*   `typesense.conversation_model.vllm_url`: The URL of the vLLM server (e.g., "http://host.docker.internal:11434").
+*   `typesense.conversation_model.history_collection`: The name of the collection used for conversation history (e.g., "conversation_store").
+
+Validation for these configuration parameters has been added to `backend/pkg/config/config.go` to ensure that all required model parameters are present in the configuration file.

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"net/http" // Added for http.StatusNotFound
 	"time"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
@@ -134,6 +135,41 @@ func Init(cfg config.Interface, logger *logrus.Entry) error {
 			return err
 		}
 		logger.Info("✅ Created 'conversation_store' collection")
+	}
+
+	// Check if conversation model exists
+	modelId := cfg.GetString("typesense.conversation_model.id")
+	_, err = Client.Conversations().Model(modelId).Retrieve(context.Background())
+	if err == nil {
+		logger.Info("📦 Typesense conversation model already exists")
+	} else {
+		var httpErr *typesense.HTTPError
+		if errors.As(err, &httpErr) && httpErr.Status == http.StatusNotFound {
+			logger.Info("📦 Creating Typesense conversation model ...")
+
+			// Create the conversation model
+			systemPrompt := "You are an assistant for question-answering. You can only make conversations based on the provided context. If a response cannot be formed strictly using the provided context, politely say you do not have knowledge about that topic."
+			modelName := cfg.GetString("typesense.conversation_model.name")
+			vllmUrl := cfg.GetString("typesense.conversation_model.vllm_url")
+			historyCollection := cfg.GetString("typesense.conversation_model.history_collection")
+
+			_, err = Client.Conversations().Models().Create(context.Background(), &api.ConversationModelCreateSchema{
+				Id:              &modelId,
+				ModelName:       modelName,
+				VllmUrl:         &vllmUrl,
+				HistoryCollection: historyCollection,
+				SystemPrompt:    &systemPrompt,
+				MaxBytes:        131072,
+			})
+			if err != nil {
+				logger.WithError(err).Error("❌ Failed to create conversation model in Typesense")
+				return err
+			}
+			logger.Info("✅ Created conversation model")
+		} else {
+			logger.WithError(err).Error("❌ Failed to retrieve conversation model from Typesense")
+			return err
+		}
 	}
 
 	logger.Info("✅ Typesense client initialized and collection ready")

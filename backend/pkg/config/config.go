@@ -100,6 +100,22 @@ func (c *configuration) ValidateConfig() error {
 		if key == "" {
 			return errors.ConfigValidationError("typesense.api_key cannot be empty")
 		}
+		key = c.GetString("typesense.conversation_model.id")
+		if key == "" {
+			return errors.ConfigValidationError("typesense.conversation_model.id cannot be empty")
+		}
+		key = c.GetString("typesense.conversation_model.name")
+		if key == "" {
+			return errors.ConfigValidationError("typesense.conversation_model.name cannot be empty")
+		}
+		key = c.GetString("typesense.conversation_model.vllm_url")
+		if key == "" {
+			return errors.ConfigValidationError("typesense.conversation_model.vllm_url cannot be empty")
+		}
+		key = c.GetString("typesense.conversation_model.history_collection")
+		if key == "" {
+			return errors.ConfigValidationError("typesense.conversation_model.history_collection cannot be empty")
+		}
 	}
 	return nil
 }

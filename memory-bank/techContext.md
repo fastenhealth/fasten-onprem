@@ -48,6 +48,7 @@ Fasten On-Prem employs a client-server architecture with a Go-based backend and 
     *   This repository contains structured data, primarily in JSON files located in the `catalog/` directory (e.g., `brands.json`, `endpoints.json`, `portals.json`).
     *   This repository acts as the central source of truth for provider information.
     *   The data from `fasten-sources` is consumed by the **Fasten Lighthouse** service, which then makes this catalog information available to the `fasten-onprem` application for dynamic discovery and connection.
+*   **Typesense Conversation Models:** The project utilizes Typesense's conversation model API to manage and configure large language models (LLMs) used for chat functionalities. This includes defining model parameters such as ID, name, vLLM URL, and history collection.
 *   **Data Fetching & Transformation:** The `conduit` library (located within `frontend/src/lib/`) is a key component responsible for retrieving patient data from various medical providers and transforming it into the internal data model used by Fasten On-Prem.
     *   `conduit` interacts with healthcare provider systems using the **FHIR R4** and **FHIR R3** protocols via their exposed APIs.
     *   It handles the authentication (using SMART-on-FHIR/OAuth2) and data retrieval process.
