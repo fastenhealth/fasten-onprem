@@ -387,4 +387,40 @@ export class FastenApiService {
       );
   }
 
+  getIPSExport(exportType?: string) {
+    let format = exportType || "pdf"
+    let contentType = "application/pdf"
+    if (exportType == "html") {
+      contentType = "text/html"
+    }
+
+    let httpHeaders = new HttpHeaders().set('Accept', contentType);
+    let queryParams = {
+      "format": format
+    };
+
+    console.log("requesting", `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/summary/ips`);
+
+    this._httpClient.get(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/summary/ips`, {
+      params: queryParams,
+      headers: httpHeaders,
+      responseType: 'blob' // Request the data as a Blob
+    }).subscribe((data: Blob) => {
+      console.log(data)
+      // Create a URL for the blob
+      const fileURL = URL.createObjectURL(data);
+
+      // Create a temporary anchor element and trigger the download
+      const link = document.createElement('a');
+      link.href = fileURL;
+      link.setAttribute('download', `ips_summary.${exportType}`); // Set the filename for the download
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up by removing the link and revoking the URL
+      document.body.removeChild(link);
+      URL.revokeObjectURL(fileURL);
+    });
+  }
+
 }

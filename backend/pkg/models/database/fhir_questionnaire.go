@@ -62,6 +62,9 @@ type FhirQuestionnaire struct {
 	// Computationally friendly name of the questionnaire
 	// https://hl7.org/fhir/r4/search.html#string
 	Name datatypes.JSON `gorm:"column:name;type:text;serializer:json" json:"name,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Name of the publisher of the questionnaire
 	// https://hl7.org/fhir/r4/search.html#string
 	Publisher datatypes.JSON `gorm:"column:publisher;type:text;serializer:json" json:"publisher,omitempty"`
@@ -72,14 +75,11 @@ type FhirQuestionnaire struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	SubjectType datatypes.JSON `gorm:"column:subjectType;type:text;serializer:json" json:"subjectType,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// The human-friendly name of the questionnaire
 	// https://hl7.org/fhir/r4/search.html#string
 	Title datatypes.JSON `gorm:"column:title;type:text;serializer:json" json:"title,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 	// The uri that identifies the questionnaire
 	// https://hl7.org/fhir/r4/search.html#uri
 	Url string `gorm:"column:url;type:text" json:"url,omitempty"`
@@ -107,6 +107,7 @@ func (s *FhirQuestionnaire) GetSearchParameters() map[string]string {
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
 		"name":                 "string",
+		"note":                 "string",
 		"publisher":            "string",
 		"sort_date":            "date",
 		"source_id":            "keyword",
@@ -115,9 +116,8 @@ func (s *FhirQuestionnaire) GetSearchParameters() map[string]string {
 		"source_uri":           "keyword",
 		"status":               "token",
 		"subjectType":          "token",
-		"text":                 "keyword",
+		"text":                 "string",
 		"title":                "string",
-		"type":                 "special",
 		"url":                  "uri",
 		"version":              "token",
 	}
@@ -183,14 +183,14 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 	// extracting Date
 	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Questionnaire.date')")
 	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, dateResult.String()); err == nil {
 			s.Date = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", dateResult.String())
-			if err == nil {
-				s.Date = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006-01", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006", dateResult.String()); err == nil {
+			s.Date = &t
 		}
 	}
 	// extracting Definition
@@ -206,14 +206,14 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 	// extracting Effective
 	effectiveResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Questionnaire.effectivePeriod')")
 	if err == nil && effectiveResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, effectiveResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, effectiveResult.String()); err == nil {
 			s.Effective = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", effectiveResult.String())
-			if err == nil {
-				s.Effective = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", effectiveResult.String()); err == nil {
+			s.Effective = &t
+		} else if t, err = time.Parse("2006-01", effectiveResult.String()); err == nil {
+			s.Effective = &t
+		} else if t, err = time.Parse("2006", effectiveResult.String()); err == nil {
+			s.Effective = &t
 		}
 	}
 	// extracting Identifier
@@ -234,14 +234,14 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -264,6 +264,11 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = []byte(nameResult.String())
 	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
+	}
 	// extracting Publisher
 	publisherResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Questionnaire.publisher')")
 	if err == nil && publisherResult.String() != "undefined" {
@@ -280,9 +285,9 @@ func (s *FhirQuestionnaire) PopulateAndExtractSearchParameters(resourceRaw json.
 		s.SubjectType = []byte(subjectTypeResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	// extracting Title
 	titleResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Questionnaire.title')")

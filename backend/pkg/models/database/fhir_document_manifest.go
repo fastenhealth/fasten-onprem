@@ -77,6 +77,9 @@ type FhirDocumentManifest struct {
 	// Tags applied to this resource
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Intended to get notified about this set of documents
 	// https://hl7.org/fhir/r4/search.html#reference
 	Recipient datatypes.JSON `gorm:"column:recipient;type:text;serializer:json" json:"recipient,omitempty"`
@@ -96,10 +99,19 @@ type FhirDocumentManifest struct {
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
+	/*
+	   Multiple Resources:
+
+	   * [AllergyIntolerance](allergyintolerance.html): allergy | intolerance - Underlying mechanism (if known)
+	   * [Composition](composition.html): Kind of composition (LOINC if possible)
+	   * [DocumentManifest](documentmanifest.html): Kind of document set
+	   * [DocumentReference](documentreference.html): Kind of document (LOINC if possible)
+	   * [Encounter](encounter.html): Specific type of encounter
+	   * [EpisodeOfCare](episodeofcare.html): Type/class  - e.g. specialist referral, disease management
+	*/
+	// https://hl7.org/fhir/r4/search.html#token
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
@@ -116,6 +128,7 @@ func (s *FhirDocumentManifest) GetSearchParameters() map[string]string {
 		"metaProfile":          "reference",
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
+		"note":                 "string",
 		"recipient":            "reference",
 		"relatedId":            "token",
 		"relatedRef":           "reference",
@@ -127,8 +140,8 @@ func (s *FhirDocumentManifest) GetSearchParameters() map[string]string {
 		"source_uri":           "keyword",
 		"status":               "token",
 		"subject":              "reference",
-		"text":                 "keyword",
-		"type":                 "special",
+		"text":                 "string",
+		"type":                 "token",
 	}
 	return searchParameters
 }
@@ -177,14 +190,14 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 	// extracting Created
 	createdResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'DocumentManifest.created')")
 	if err == nil && createdResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, createdResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, createdResult.String()); err == nil {
 			s.Created = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", createdResult.String())
-			if err == nil {
-				s.Created = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", createdResult.String()); err == nil {
+			s.Created = &t
+		} else if t, err = time.Parse("2006-01", createdResult.String()); err == nil {
+			s.Created = &t
+		} else if t, err = time.Parse("2006", createdResult.String()); err == nil {
+			s.Created = &t
 		}
 	}
 	// extracting Description
@@ -210,14 +223,14 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -234,6 +247,11 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 	metaVersionIdResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.versionId')")
 	if err == nil && metaVersionIdResult.String() != "undefined" {
 		s.MetaVersionId = metaVersionIdResult.String()
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting Recipient
 	recipientResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'DocumentManifest.recipient')")
@@ -266,9 +284,14 @@ func (s *FhirDocumentManifest) PopulateAndExtractSearchParameters(resourceRaw js
 		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
+	}
+	// extracting Type
+	typeResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'AllergyIntolerance.type | Composition.type | DocumentManifest.type | DocumentReference.type | Encounter.type | EpisodeOfCare.type')")
+	if err == nil && typeResult.String() != "undefined" {
+		s.Type = []byte(typeResult.String())
 	}
 	return nil
 }

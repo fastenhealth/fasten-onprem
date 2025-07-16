@@ -1,0 +1,31 @@
+<!--/* PastHistoryOfIllnesses -->
+<!--
+Medical Problems: Condition.code.text || Condition.code.coding[x].display (separated by <br />)
+Status: Condition.clinicalStatus.text || Condition.clinicalStatus.coding[x].display (separated by <br />)
+Comments: Condition.note[x].text (separated by <br />)
+Onset Date: Condition.onsetDateTime || Condition.onsetPeriod.start && “-“ && Condition.onsetPeriod.end || Condition.onsetAge || Condition.onsetRange.low && “-“ && Condition.onsetRange.high || Condition.onsetString
+*/-->
+<div xmlns:th="http://www.thymeleaf.org">
+   <h5>Past History of Illnesses</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Medical Problems</th>
+         <th>Status</th>
+         <th>Comments</th>
+         <th>Date</th>
+      </tr>
+      </thead>
+      <tbody>
+      {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+      {{range $index, $entry := .Condition }}
+         <tr id="{{$entry.SourceResourceID}}">
+            <td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Medical Problem */}}
+            <td>{{pluckList "code" ($entry.ClinicalStatus | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
+            <td>{{pluckList "text" ($entry.Note | parseMapList) | uniq | join "," }}</td> {{/* Comments */}}
+            <td>{{$entry.OnsetDate | date "2006-01-02"}}</td> {{/* Onset */}}
+         </tr>
+      {{end}}
+      </tbody>
+   </table>
+</div>

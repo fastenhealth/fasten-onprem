@@ -1,0 +1,282 @@
+{
+	"type": "maroto",
+	"details": {
+		"chunk_workers": 1,
+		"config_margin_bottom": 20.0025,
+		"config_margin_left": 10,
+		"config_margin_right": 10,
+		"config_margin_top": 10,
+		"config_max_grid_sum": 12,
+		"config_provider_type": "gofpdf",
+		"generation_mode": "sequential",
+		"maroto_dimension_height": 297,
+		"maroto_dimension_width": 210,
+		"prop_font_color": "RGB(0, 0, 0)",
+		"prop_font_family": "arial",
+		"prop_font_size": 10
+	},
+	"nodes": [
+		{
+			"type": "page",
+			"nodes": [
+				{
+					"value": 10,
+					"type": "row",
+					"details": {
+						"prop_background_color": "RGB(220, 220, 220)",
+						"prop_border_type": "1"
+					},
+					"nodes": [
+						{
+							"value": 5,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Activity",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 1,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Intent",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Comments",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Planned Start",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Planned End",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"value": 11.055555555555557,
+					"type": "row",
+					"details": {
+						"prop_border_type": "1"
+					},
+					"nodes": [
+						{
+							"value": 5,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Follow up with cardiologist",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 1,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "order",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Scheduled for 2023-08-01",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "2023-07-01",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"value": 12,
+					"type": "row",
+					"nodes": [
+						{
+							"value": 0,
+							"type": "col",
+							"details": {
+								"is_max": true
+							}
+						}
+					]
+				},
+				{
+					"value": 233.941944444,
+					"type": "row",
+					"nodes": [
+						{
+							"value": 12,
+							"type": "col"
+						}
+					]
+				}
+			]
+		}
+	]
+}

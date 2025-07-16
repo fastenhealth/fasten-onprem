@@ -101,6 +101,9 @@ type FhirMedicationDispense struct {
 	// Tags applied to this resource
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Returns dispenses performed by a specific individual
 	// https://hl7.org/fhir/r4/search.html#reference
 	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`
@@ -131,10 +134,10 @@ type FhirMedicationDispense struct {
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
+	// Returns dispenses of a specific type
+	// https://hl7.org/fhir/r4/search.html#token
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 	// Returns dispenses handed over on this date
 	// https://hl7.org/fhir/r4/search.html#date
@@ -157,6 +160,7 @@ func (s *FhirMedicationDispense) GetSearchParameters() map[string]string {
 		"metaProfile":          "reference",
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
+		"note":                 "string",
 		"performer":            "reference",
 		"prescription":         "reference",
 		"receiver":             "reference",
@@ -168,8 +172,8 @@ func (s *FhirMedicationDispense) GetSearchParameters() map[string]string {
 		"source_uri":           "keyword",
 		"status":               "token",
 		"subject":              "reference",
-		"text":                 "keyword",
-		"type":                 "special",
+		"text":                 "string",
+		"type":                 "token",
 		"whenhandedover":       "date",
 		"whenprepared":         "date",
 	}
@@ -245,14 +249,14 @@ func (s *FhirMedicationDispense) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -269,6 +273,11 @@ func (s *FhirMedicationDispense) PopulateAndExtractSearchParameters(resourceRaw 
 	metaVersionIdResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'meta.versionId')")
 	if err == nil && metaVersionIdResult.String() != "undefined" {
 		s.MetaVersionId = metaVersionIdResult.String()
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting Performer
 	performerResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'MedicationDispense.performer.actor')")
@@ -301,34 +310,39 @@ func (s *FhirMedicationDispense) PopulateAndExtractSearchParameters(resourceRaw 
 		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
+	}
+	// extracting Type
+	typeResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'MedicationDispense.type')")
+	if err == nil && typeResult.String() != "undefined" {
+		s.Type = []byte(typeResult.String())
 	}
 	// extracting Whenhandedover
 	whenhandedoverResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'MedicationDispense.whenHandedOver')")
 	if err == nil && whenhandedoverResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, whenhandedoverResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, whenhandedoverResult.String()); err == nil {
 			s.Whenhandedover = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", whenhandedoverResult.String())
-			if err == nil {
-				s.Whenhandedover = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", whenhandedoverResult.String()); err == nil {
+			s.Whenhandedover = &t
+		} else if t, err = time.Parse("2006-01", whenhandedoverResult.String()); err == nil {
+			s.Whenhandedover = &t
+		} else if t, err = time.Parse("2006", whenhandedoverResult.String()); err == nil {
+			s.Whenhandedover = &t
 		}
 	}
 	// extracting Whenprepared
 	whenpreparedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'MedicationDispense.whenPrepared')")
 	if err == nil && whenpreparedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, whenpreparedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, whenpreparedResult.String()); err == nil {
 			s.Whenprepared = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", whenpreparedResult.String())
-			if err == nil {
-				s.Whenprepared = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", whenpreparedResult.String()); err == nil {
+			s.Whenprepared = &t
+		} else if t, err = time.Parse("2006-01", whenpreparedResult.String()); err == nil {
+			s.Whenprepared = &t
+		} else if t, err = time.Parse("2006", whenpreparedResult.String()); err == nil {
+			s.Whenprepared = &t
 		}
 	}
 	return nil

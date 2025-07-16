@@ -89,6 +89,9 @@ type FhirImagingStudy struct {
 	// The modality of the series
 	// https://hl7.org/fhir/r4/search.html#token
 	Modality datatypes.JSON `gorm:"column:modality;type:text;serializer:json" json:"modality,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// The person who performed the study
 	// https://hl7.org/fhir/r4/search.html#reference
 	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`
@@ -111,11 +114,8 @@ type FhirImagingStudy struct {
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 }
 
 func (s *FhirImagingStudy) GetSearchParameters() map[string]string {
@@ -135,6 +135,7 @@ func (s *FhirImagingStudy) GetSearchParameters() map[string]string {
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
 		"modality":             "token",
+		"note":                 "string",
 		"performer":            "reference",
 		"reason":               "token",
 		"referrer":             "reference",
@@ -147,8 +148,7 @@ func (s *FhirImagingStudy) GetSearchParameters() map[string]string {
 		"started":              "date",
 		"status":               "token",
 		"subject":              "reference",
-		"text":                 "keyword",
-		"type":                 "special",
+		"text":                 "string",
 	}
 	return searchParameters
 }
@@ -237,14 +237,14 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -266,6 +266,11 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 	modalityResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'ImagingStudy.series.modality')")
 	if err == nil && modalityResult.String() != "undefined" {
 		s.Modality = []byte(modalityResult.String())
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting Performer
 	performerResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'ImagingStudy.series.performer.actor')")
@@ -290,14 +295,14 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 	// extracting Started
 	startedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'ImagingStudy.started')")
 	if err == nil && startedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, startedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, startedResult.String()); err == nil {
 			s.Started = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", startedResult.String())
-			if err == nil {
-				s.Started = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", startedResult.String()); err == nil {
+			s.Started = &t
+		} else if t, err = time.Parse("2006-01", startedResult.String()); err == nil {
+			s.Started = &t
+		} else if t, err = time.Parse("2006", startedResult.String()); err == nil {
+			s.Started = &t
 		}
 	}
 	// extracting Status
@@ -311,9 +316,9 @@ func (s *FhirImagingStudy) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	return nil
 }

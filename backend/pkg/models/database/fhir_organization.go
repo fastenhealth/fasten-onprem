@@ -59,6 +59,9 @@ type FhirOrganization struct {
 	// A portion of the organization's name or alias
 	// https://hl7.org/fhir/r4/search.html#string
 	Name datatypes.JSON `gorm:"column:name;type:text;serializer:json" json:"name,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// An organization of which this organization forms a part
 	// https://hl7.org/fhir/r4/search.html#reference
 	Partof datatypes.JSON `gorm:"column:partof;type:text;serializer:json" json:"partof,omitempty"`
@@ -66,10 +69,10 @@ type FhirOrganization struct {
 	// https://hl7.org/fhir/r4/search.html#string
 	Phonetic datatypes.JSON `gorm:"column:phonetic;type:text;serializer:json" json:"phonetic,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
+	// A code for the type of organization
+	// https://hl7.org/fhir/r4/search.html#token
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 }
 
@@ -91,6 +94,7 @@ func (s *FhirOrganization) GetSearchParameters() map[string]string {
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
 		"name":                 "string",
+		"note":                 "string",
 		"partof":               "reference",
 		"phonetic":             "string",
 		"sort_date":            "date",
@@ -98,8 +102,8 @@ func (s *FhirOrganization) GetSearchParameters() map[string]string {
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",
 		"source_uri":           "keyword",
-		"text":                 "keyword",
-		"type":                 "special",
+		"text":                 "string",
+		"type":                 "token",
 	}
 	return searchParameters
 }
@@ -193,14 +197,14 @@ func (s *FhirOrganization) PopulateAndExtractSearchParameters(resourceRaw json.R
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -223,6 +227,11 @@ func (s *FhirOrganization) PopulateAndExtractSearchParameters(resourceRaw json.R
 	if err == nil && nameResult.String() != "undefined" {
 		s.Name = []byte(nameResult.String())
 	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
+	}
 	// extracting Partof
 	partofResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Organization.partOf')")
 	if err == nil && partofResult.String() != "undefined" {
@@ -234,9 +243,14 @@ func (s *FhirOrganization) PopulateAndExtractSearchParameters(resourceRaw json.R
 		s.Phonetic = []byte(phoneticResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
+	}
+	// extracting Type
+	typeResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Organization.type')")
+	if err == nil && typeResult.String() != "undefined" {
+		s.Type = []byte(typeResult.String())
 	}
 	return nil
 }

@@ -1,0 +1,314 @@
+{
+	"type": "maroto",
+	"details": {
+		"chunk_workers": 1,
+		"config_margin_bottom": 20.0025,
+		"config_margin_left": 10,
+		"config_margin_right": 10,
+		"config_margin_top": 10,
+		"config_max_grid_sum": 12,
+		"config_provider_type": "gofpdf",
+		"generation_mode": "sequential",
+		"maroto_dimension_height": 297,
+		"maroto_dimension_width": 210,
+		"prop_font_color": "RGB(0, 0, 0)",
+		"prop_font_family": "arial",
+		"prop_font_size": 10
+	},
+	"nodes": [
+		{
+			"type": "page",
+			"nodes": [
+				{
+					"value": 10,
+					"type": "row",
+					"nodes": [
+						{
+							"value": 12,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Appendix - Sources",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 18,
+										"prop_font_style": "B"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"value": 5,
+					"type": "row",
+					"nodes": [
+						{
+							"value": 12,
+							"type": "col",
+							"nodes": [
+								{
+									"type": "line",
+									"details": {
+										"prop_offset_percent": 5,
+										"prop_orientation": "horizontal",
+										"prop_size_percent": 90,
+										"prop_style": "solid",
+										"prop_thickness": 0.2
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"value": 10,
+					"type": "row",
+					"details": {
+						"prop_background_color": "RGB(220, 220, 220)",
+						"prop_border_type": "1"
+					},
+					"nodes": [
+						{
+							"value": 4,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Source",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 6,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Id",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Added",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_font_style": "B",
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"value": 7.527777777777779,
+					"type": "row",
+					"details": {
+						"prop_border_type": "1"
+					},
+					"nodes": [
+						{
+							"value": 4,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Fasten (manual)",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 6,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "88e06eff-c2d9-4a8c-bf4d-b4c147ea8648",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "2025-07-15",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"value": 7.527777777777779,
+					"type": "row",
+					"details": {
+						"prop_border_type": "1"
+					},
+					"nodes": [
+						{
+							"value": 4,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "Aetna (sandbox)",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 6,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "b53c77ed-c0f4-4d6a-bddf-5c0e3934c2d6",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						},
+						{
+							"value": 2,
+							"type": "col",
+							"nodes": [
+								{
+									"value": "2025-07-15",
+									"type": "text",
+									"details": {
+										"prop_align": "L",
+										"prop_bottom": 2,
+										"prop_breakline_strategy": "empty_space_strategy",
+										"prop_color": "RGB(0, 0, 0)",
+										"prop_font_family": "arial",
+										"prop_font_size": 10,
+										"prop_left": 2,
+										"prop_right": 2,
+										"prop_top": 2
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"value": 12,
+					"type": "row",
+					"nodes": [
+						{
+							"value": 0,
+							"type": "col",
+							"details": {
+								"is_max": true
+							}
+						}
+					]
+				},
+				{
+					"value": 214.941944444,
+					"type": "row",
+					"nodes": [
+						{
+							"value": 12,
+							"type": "col"
+						}
+					]
+				}
+			]
+		}
+	]
+}

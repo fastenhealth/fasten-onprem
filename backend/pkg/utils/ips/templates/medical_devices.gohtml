@@ -1,0 +1,31 @@
+<!--/* MedicalDevices -->
+<!--
+Device: Device.type.text || Device.type.coding[x].display (separated by <br />)
+Status: DeviceUseStatement.status
+Comments: DeviceUseStatement.note[x].text (separated by <br />)
+Date Recorded: DeviceUseStatement.recordedDateTime
+*/-->
+<div xmlns:th="http://www.thymeleaf.org">
+   <h5>Medical Devices</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Device</th>
+         <th>Status</th>
+         <th>Comments</th>
+         <th>Date Recorded</th>
+      </tr>
+      </thead>
+      <tbody>
+      {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+      {{range $index, $entry := .Device }}
+         <tr id="{{$entry.SourceResourceID}}">
+            <td>{{pluckList "text" ($entry.Type | parseMapList) | uniq | join "," }}</td> {{/* Device */}}
+            <td>{{pluckList "code" ($entry.Status | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
+            <td>{{pluckList "text" ($entry.Note | parseMapList) | uniq | join "," }}</td> {{/* Comments */}}
+            <td></td> {{/* Date Recorded */}}
+         </tr>
+      {{end}}
+      </tbody>
+   </table>
+</div>

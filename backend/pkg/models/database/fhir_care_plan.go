@@ -124,12 +124,18 @@ type FhirCarePlan struct {
 	// Tags applied to this resource
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Part of referenced CarePlan
 	// https://hl7.org/fhir/r4/search.html#reference
 	PartOf datatypes.JSON `gorm:"column:partOf;type:text;serializer:json" json:"partOf,omitempty"`
 	// Matches if the practitioner is listed as a performer in any of the "simple" activities.  (For performers of the detailed activities, chain through the activitydetail search parameter.)
 	// https://hl7.org/fhir/r4/search.html#reference
 	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`
+	// Returns care plan period
+	// https://hl7.org/fhir/r4/search.html#string
+	Period datatypes.JSON `gorm:"column:period;type:text;serializer:json" json:"period,omitempty"`
 	// CarePlan replaced by this CarePlan
 	// https://hl7.org/fhir/r4/search.html#reference
 	Replaces datatypes.JSON `gorm:"column:replaces;type:text;serializer:json" json:"replaces,omitempty"`
@@ -140,11 +146,8 @@ type FhirCarePlan struct {
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 }
 
 func (s *FhirCarePlan) GetSearchParameters() map[string]string {
@@ -169,8 +172,10 @@ func (s *FhirCarePlan) GetSearchParameters() map[string]string {
 		"metaProfile":           "reference",
 		"metaTag":               "token",
 		"metaVersionId":         "keyword",
+		"note":                  "string",
 		"partOf":                "reference",
 		"performer":             "reference",
+		"period":                "string",
 		"replaces":              "reference",
 		"sort_date":             "date",
 		"source_id":             "keyword",
@@ -179,8 +184,7 @@ func (s *FhirCarePlan) GetSearchParameters() map[string]string {
 		"source_uri":            "keyword",
 		"status":                "token",
 		"subject":               "reference",
-		"text":                  "keyword",
-		"type":                  "special",
+		"text":                  "string",
 	}
 	return searchParameters
 }
@@ -229,14 +233,14 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	// extracting ActivityDate
 	activityDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'CarePlan.activity.detail.scheduledTiming | CarePlan.activity.detail.scheduledPeriod | CarePlan.activity.detail.scheduledString')")
 	if err == nil && activityDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, activityDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, activityDateResult.String()); err == nil {
 			s.ActivityDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", activityDateResult.String())
-			if err == nil {
-				s.ActivityDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", activityDateResult.String()); err == nil {
+			s.ActivityDate = &t
+		} else if t, err = time.Parse("2006-01", activityDateResult.String()); err == nil {
+			s.ActivityDate = &t
+		} else if t, err = time.Parse("2006", activityDateResult.String()); err == nil {
+			s.ActivityDate = &t
 		}
 	}
 	// extracting ActivityReference
@@ -267,14 +271,14 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	// extracting Date
 	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effectiveDateTime | DiagnosticReport.effectivePeriod | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effectiveDateTime | Observation.effectivePeriod | Observation.effectiveTiming | Observation.effectiveInstant | Procedure.performedDateTime | Procedure.performedPeriod | Procedure.performedString | Procedure.performedAge | Procedure.performedRange | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')")
 	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, dateResult.String()); err == nil {
 			s.Date = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", dateResult.String())
-			if err == nil {
-				s.Date = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006-01", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006", dateResult.String()); err == nil {
+			s.Date = &t
 		}
 	}
 	// extracting Encounter
@@ -315,14 +319,14 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -340,6 +344,11 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	if err == nil && metaVersionIdResult.String() != "undefined" {
 		s.MetaVersionId = metaVersionIdResult.String()
 	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
+	}
 	// extracting PartOf
 	partOfResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'CarePlan.partOf')")
 	if err == nil && partOfResult.String() != "undefined" {
@@ -349,6 +358,11 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 	performerResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'CarePlan.activity.detail.performer')")
 	if err == nil && performerResult.String() != "undefined" {
 		s.Performer = []byte(performerResult.String())
+	}
+	// extracting Period
+	periodResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'CarePlan.period')")
+	if err == nil && periodResult.String() != "undefined" {
+		s.Period = []byte(periodResult.String())
 	}
 	// extracting Replaces
 	replacesResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'CarePlan.replaces')")
@@ -366,9 +380,9 @@ func (s *FhirCarePlan) PopulateAndExtractSearchParameters(resourceRaw json.RawMe
 		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	return nil
 }

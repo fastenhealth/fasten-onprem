@@ -47,6 +47,9 @@ type FhirMedia struct {
 	// The type of acquisition equipment/process
 	// https://hl7.org/fhir/r4/search.html#token
 	Modality datatypes.JSON `gorm:"column:modality;type:text;serializer:json" json:"modality,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// The person who generated the image
 	// https://hl7.org/fhir/r4/search.html#reference
 	Operator datatypes.JSON `gorm:"column:operator;type:text;serializer:json" json:"operator,omitempty"`
@@ -60,10 +63,10 @@ type FhirMedia struct {
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
+	// Classification of media as image, video, or audio
+	// https://hl7.org/fhir/r4/search.html#token
 	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
 	// Imaging view, e.g. Lateral or Antero-posterior
 	// https://hl7.org/fhir/r4/search.html#token
@@ -84,6 +87,7 @@ func (s *FhirMedia) GetSearchParameters() map[string]string {
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
 		"modality":             "token",
+		"note":                 "string",
 		"operator":             "reference",
 		"site":                 "token",
 		"sort_date":            "date",
@@ -93,8 +97,8 @@ func (s *FhirMedia) GetSearchParameters() map[string]string {
 		"source_uri":           "keyword",
 		"status":               "token",
 		"subject":              "reference",
-		"text":                 "keyword",
-		"type":                 "special",
+		"text":                 "string",
+		"type":                 "token",
 		"view":                 "token",
 	}
 	return searchParameters
@@ -144,14 +148,14 @@ func (s *FhirMedia) PopulateAndExtractSearchParameters(resourceRaw json.RawMessa
 	// extracting Created
 	createdResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Media.createdDateTime | Media.createdPeriod')")
 	if err == nil && createdResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, createdResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, createdResult.String()); err == nil {
 			s.Created = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", createdResult.String())
-			if err == nil {
-				s.Created = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", createdResult.String()); err == nil {
+			s.Created = &t
+		} else if t, err = time.Parse("2006-01", createdResult.String()); err == nil {
+			s.Created = &t
+		} else if t, err = time.Parse("2006", createdResult.String()); err == nil {
+			s.Created = &t
 		}
 	}
 	// extracting Device
@@ -177,14 +181,14 @@ func (s *FhirMedia) PopulateAndExtractSearchParameters(resourceRaw json.RawMessa
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -207,6 +211,11 @@ func (s *FhirMedia) PopulateAndExtractSearchParameters(resourceRaw json.RawMessa
 	if err == nil && modalityResult.String() != "undefined" {
 		s.Modality = []byte(modalityResult.String())
 	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
+	}
 	// extracting Operator
 	operatorResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Media.operator')")
 	if err == nil && operatorResult.String() != "undefined" {
@@ -228,9 +237,14 @@ func (s *FhirMedia) PopulateAndExtractSearchParameters(resourceRaw json.RawMessa
 		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
+	}
+	// extracting Type
+	typeResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Media.type')")
+	if err == nil && typeResult.String() != "undefined" {
+		s.Type = []byte(typeResult.String())
 	}
 	// extracting View
 	viewResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Media.view')")

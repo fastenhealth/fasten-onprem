@@ -10,6 +10,7 @@ import (
 
 	pkg "github.com/fastenhealth/fasten-onprem/backend/pkg"
 	models "github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	ips "github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips"
 	models0 "github.com/fastenhealth/fasten-sources/clients/models"
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
@@ -265,6 +266,21 @@ func (m *MockDatabaseRepository) GetGlossaryEntry(ctx context.Context, code, cod
 func (mr *MockDatabaseRepositoryMockRecorder) GetGlossaryEntry(ctx, code, codeSystem interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGlossaryEntry", reflect.TypeOf((*MockDatabaseRepository)(nil).GetGlossaryEntry), ctx, code, codeSystem)
+}
+
+// GetInternationalPatientSummaryExport mocks base method.
+func (m *MockDatabaseRepository) GetInternationalPatientSummaryExport(ctx context.Context) (*ips.InternationalPatientSummaryExportData, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetInternationalPatientSummaryExport", ctx)
+	ret0, _ := ret[0].(*ips.InternationalPatientSummaryExportData)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetInternationalPatientSummaryExport indicates an expected call of GetInternationalPatientSummaryExport.
+func (mr *MockDatabaseRepositoryMockRecorder) GetInternationalPatientSummaryExport(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInternationalPatientSummaryExport", reflect.TypeOf((*MockDatabaseRepository)(nil).GetInternationalPatientSummaryExport), ctx)
 }
 
 // GetPatientForSources mocks base method.
