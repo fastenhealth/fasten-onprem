@@ -19,6 +19,7 @@ The Fasten On-Prem project appears to be in a **mature stage of development**, w
 *   Development of key modules for medical data handling (e.g., medical history, lab reports, FHIR integration).
 *   Creation of a comprehensive set of UI components for data display and interaction.
 *   **LLM Chat Feature Maturation:** The LLM-powered chat feature has been significantly enhanced with a dedicated state management service, full conversation lifecycle support (create, load, delete), and a refined RxJS-based streaming implementation.
+*   **Typesense `conversation_store` Collection Added:** The `conversation_store` Typesense collection has been successfully added to the backend initialization, ensuring proper data storage for the LLM chat feature.
 *   Establishment of build, testing, and deployment pipelines (Docker, Nix, Makefile).
 *   Configuration for multiple deployment environments.
 

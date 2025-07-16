@@ -1,8 +1,8 @@
 # Active Context: Fasten On-Prem (Memory Bank Updated July 16, 2025)
 
-## Current Focus: LLM Chat Feature Maturation
+## Current Focus: LLM Chat Feature Maturation & Typesense Integration
 
-The current focus is on documenting the mature implementation of the LLM-powered chat feature. The architecture has evolved to include a dedicated state management service, providing a more robust and maintainable design.
+The current focus is on documenting the mature implementation of the LLM-powered chat feature and ensuring its underlying data storage in Typesense is correctly configured. The architecture has evolved to include a dedicated state management service, providing a more robust and maintainable design, complemented by new Typesense collection for conversation data.
 
 ### Chat State Service (`frontend/src/app/pages/chat/chat-state.service.ts`)
 
@@ -22,3 +22,41 @@ The `TypesenseService` manages all communication with the backend conversation A
 
 *   **Streaming Implementation (RxJS):** The `startConversationStreaming` method now returns an RxJS `Observable`. The `ChatComponent` subscribes to this observable and uses the `next`, `error`, and `complete` handlers to process the incoming stream, which is a more idiomatic Angular approach.
 *   **Full Conversation Lifecycle:** The service now supports the full lifecycle of conversations, with methods for `getConversations`, `getConversationMessages`, and `deleteConversation`.
+
+### Backend Typesense Collection (`backend/pkg/search/typesense.go`)
+
+The `backend/pkg/search/typesense.go` file has been updated to include the automatic creation of a new Typesense collection named `conversation_store` during the `Init` function. This collection is designed to store conversation-related data for the LLM chat feature.
+
+The schema for the `conversation_store` collection is as follows:
+
+```json
+{
+    "name": "conversation_store",
+    "fields": [
+        {
+            "name": "conversation_id",
+            "type": "string",
+            "facet": true
+        },
+        {
+            "name": "model_id",
+            "type": "string"
+        },
+        {
+            "name": "timestamp",
+            "type": "int32"
+        },
+        {
+            "name": "role",
+            "type": "string",
+            "index": false
+        },
+        {
+            "name": "message",
+            "type": "string",
+            "index": false
+        }
+    ]
+}
+```
+This ensures that the necessary data structure for storing chat conversations is in place when the Typesense client is initialized.

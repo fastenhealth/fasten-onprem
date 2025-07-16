@@ -41,6 +41,9 @@ func Init(cfg config.Interface, logger *logrus.Entry) error {
 		log.Fatalf("ERROR: failed to initialize Typesense: %v", err)
 	}
 
+	optionalTrue := true
+	optionalFalse := false
+
 	// Check if "resources" collection exists
 	_, err = Client.Collection("resources").Retrieve(context.Background())
 	if err == nil {
@@ -48,7 +51,6 @@ func Init(cfg config.Interface, logger *logrus.Entry) error {
 	} else {
 		logger.Info("📦 Creating Typesense collection 'resources'...")
 
-		optionalTrue := true
 		// Create the "resources" collection with the specified schema
 		_, err = Client.Collections().Create(context.Background(), &api.CollectionSchema{
 			Name: "resources",
@@ -107,6 +109,31 @@ func Init(cfg config.Interface, logger *logrus.Entry) error {
 			return err
 		}
 		logger.Info("✅ Created 'resources' collection")
+	}
+
+	// Check if "conversation_store" collection exists
+	_, err = Client.Collection("conversation_store").Retrieve(context.Background())
+	if err == nil {
+		logger.Info("📦 Typesense collection 'conversation_store' already exists")
+	} else {
+		logger.Info("📦 Creating Typesense collection 'conversation_store'...")
+
+		// Create the "conversation_store" collection with the specified schema
+		_, err = Client.Collections().Create(context.Background(), &api.CollectionSchema{
+			Name: "conversation_store",
+			Fields: []api.Field{
+				{Name: "conversation_id", Type: "string", Facet: &optionalTrue},
+				{Name: "model_id", Type: "string"},
+				{Name: "timestamp", Type: "int32"},
+				{Name: "role", Type: "string", Index: &optionalFalse},
+				{Name: "message", Type: "string", Index: &optionalFalse},
+			},
+		})
+		if err != nil {
+			logger.WithError(err).Error("❌ Failed to create 'conversation_store' collection in Typesense")
+			return err
+		}
+		logger.Info("✅ Created 'conversation_store' collection")
 	}
 
 	logger.Info("✅ Typesense client initialized and collection ready")
