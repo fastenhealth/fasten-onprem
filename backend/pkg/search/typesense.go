@@ -33,7 +33,8 @@ func Init(cfg config.Interface, logger *logrus.Entry) error {
 
 	Client = typesense.NewClient(
 		typesense.WithServer(apiUri),
-		typesense.WithAPIKey(apiKey))
+		typesense.WithAPIKey(apiKey),
+		typesense.WithConnectionTimeout(15 * time.Minute))
 
 	log.Printf("Typesense client initialized with server: %s", apiUri)
 
@@ -50,7 +51,7 @@ func Init(cfg config.Interface, logger *logrus.Entry) error {
 	if err == nil {
 		logger.Info("📦 Typesense collection 'resources' already exists")
 	} else {
-		logger.Info("📦 Creating Typesense collection 'resources'...")
+		logger.Info("📦 Creating 'resources' collection… (May take a while—embedding model is downloading)")
 
 		// Create the "resources" collection with the specified schema
 		_, err = Client.Collections().Create(context.Background(), &api.CollectionSchema{
