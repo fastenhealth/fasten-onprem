@@ -305,7 +305,7 @@ func (ae *AppEngine) Start() error {
 	}
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
 
-	err = search.Init(ae.Logger)
+	err = search.Init(ae.Config, ae.Logger)
 	if err != nil {
 		return fmt.Errorf("failed to initialize Typesense: %w", err)
 	}

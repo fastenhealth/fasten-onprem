@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"log"
-	"os"
 	"time"
 
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/sirupsen/logrus"
 	"github.com/typesense/typesense-go/v3/typesense"
 	"github.com/typesense/typesense-go/v3/typesense/api"
@@ -26,16 +26,9 @@ func waitForTypesense(client *typesense.Client, maxRetries int, delay time.Durat
 	return errors.New("typesense did not become ready in time")
 }
 
-func Init(logger *logrus.Entry) error {
-	apiUri := os.Getenv("TYPESENSE_URI")
-	if apiUri == "" {
-		log.Fatal("TYPESENSE_URI not set")
-	}
-
-	apiKey := os.Getenv("TYPESENSE_API_KEY")
-	if apiKey == "" {
-		log.Fatal("TYPESENSE_API_KEY not set")
-	}
+func Init(cfg config.Interface, logger *logrus.Entry) error {
+	apiUri := cfg.GetString("typesense.uri")
+	apiKey := cfg.GetString("typesense.api_key")
 
 	Client = typesense.NewClient(
 		typesense.WithServer(apiUri),

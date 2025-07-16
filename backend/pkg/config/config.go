@@ -90,5 +90,16 @@ func (c *configuration) ValidateConfig() error {
 			return errors.ConfigValidationError("database.encryption.key must be at least 10 characters")
 		}
 	}
+
+	if c.IsSet("typesense") {
+		key := c.GetString("typesense.uri")
+		if key == "" {
+			return errors.ConfigValidationError("typesense.uri cannot be empty")
+		}
+		key = c.GetString("typesense.api_key")
+		if key == "" {
+			return errors.ConfigValidationError("typesense.api_key cannot be empty")
+		}
+	}
 	return nil
 }
