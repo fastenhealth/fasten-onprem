@@ -23,12 +23,12 @@
         <h3 class="h5 mb-3">Contact Information</h3>
         <ul class="list-unstyled">
           <li><strong>Address:</strong>
-            <address class="mb-0 ml-3">
+            <address class="mb-0 ms-3">
               <div *ngFor="let line of displayModel.patient_address">{{line}}</div>
             </address>
           </li>
           <li><strong>Phone{{ displayModel.patient_phones.length > 0 ? '' : 's' }}:</strong>
-            <ul class="list-unstyled ml-3">
+            <ul class="list-unstyled ms-3">
               <li *ngFor="let phone of displayModel.patient_phones">{{ phone.value }} ({{ phone.use }})</li>
             </ul>
           </li>
@@ -54,14 +54,14 @@
       <div class="col-md-6 mb-4">
         <h3 class="h5 mb-3">Identifiers</h3>
         <ul class="list-unstyled">
-          <li *ngIf="displayModel.mrn"><strong>Medical Record Number:</strong> <code class="ml-2 text-muted">{{ displayModel.mrn }}</code></li>
-          <li *ngIf="displayModel.ssn"><strong>SSN:</strong> <code class="ml-2 text-muted">{{ displayModel.ssn }}</code></li>
+          <li *ngIf="displayModel.mrn"><strong>Medical Record Number:</strong> <code class="ms-2 text-muted">{{ displayModel.mrn }}</code></li>
+          <li *ngIf="displayModel.ssn"><strong>SSN:</strong> <code class="ms-2 text-muted">{{ displayModel.ssn }}</code></li>
         </ul>
         <ng-container *ngIf="displayModel.identifiers && displayModel.identifiers.length > 0">
           <h4 class="h6 mt-3">Other Identifiers:</h4>
-          <ul class="list-unstyled ml-3">
+          <ul class="list-unstyled ms-3">
             <li *ngFor="let identifier of displayModel.identifiers">
-              <strong>{{ identifier.type }}:</strong> <code class="ml-2 text-muted">{{ identifier.value }}</code>
+              <strong>{{ identifier.type }}:</strong> <code class="ms-2 text-muted">{{ identifier.value }}</code>
             </li>
           </ul>
         </ng-container>

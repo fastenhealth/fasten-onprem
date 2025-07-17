@@ -103,7 +103,7 @@
     </div>
   </div>
   <div class="timeline-footer">
-    <div *ngIf="displayModel?.related_resources?.['DocumentReference']?.length > 0 || displayModel?.related_resources?.['DiagnosticReport']?.length > 0" ngbDropdown class="d-inline-block dropdown ml-3">
+    <div *ngIf="displayModel?.related_resources?.['DocumentReference']?.length > 0 || displayModel?.related_resources?.['DiagnosticReport']?.length > 0" ngbDropdown class="d-inline-block dropdown ms-3">
       <button type="button" class="btn btn-outline-indigo" id="dropdownReports" ngbDropdownToggle>
         Clinical Reports
       </button>
@@ -119,7 +119,7 @@
       </div>
     </div>
 
-    <div ngbDropdown class="d-inline-block dropdown ml-3 float-end">
+    <div ngbDropdown class="d-inline-block dropdown ms-3 float-end">
       <button type="button" class="btn text-muted" id="dropdownAll" ngbDropdownToggle>
         View Related
       </button>
