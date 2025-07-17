@@ -20,6 +20,11 @@ This document outlines key architectural and design patterns observed or inferre
 
 *   **RESTful API:** The Go backend likely exposes a RESTful API for the frontend to consume, a common pattern for web applications.
 *   **Command Pattern (CLI):** The `backend/cmd/fasten/fasten.go` structure suggests a command-line interface or entry point for the backend application, possibly following a command pattern for different operations.
+*   **FHIR Resource API Routes:** The backend provides a set of secure, authenticated RESTful endpoints for managing FHIR resources. The routing is defined in `backend/pkg/web/server.go` and the logic is implemented in `backend/pkg/web/handler/resource_fhir.go`.
+    *   `GET /api/secure/resource/fhir`: Lists FHIR resources with support for filtering and pagination.
+    *   `GET /api/secure/resource/fhir/:sourceId/:resourceId`: Retrieves a single FHIR resource by its source and resource ID.
+    *   `PATCH /api/secure/resource/fhir/:resourceType/:resourceId`: Updates an existing FHIR resource, typically for manually edited data.
+    *   `POST /api/secure/resource/graph/:graphType`: Fetches a graph of related FHIR resources, essential for building timeline and relational views.
 
 ## Frontend Design Patterns
 
@@ -41,6 +46,8 @@ This document outlines key architectural and design patterns observed or inferre
     *   **FHIR APIs:** Healthcare providers expose patient data through FHIR APIs. Fasten On-Prem interacts with these APIs to retrieve the relevant Resources.
     *   **SMART-on-FHIR:** The project utilizes SMART-on-FHIR, an implementation guide that layers OAuth2 on top of FHIR. This provides a secure and standardized way for Fasten On-Prem to authenticate with provider systems and obtain authorization to access patient data on behalf of the user.
     *   **Supported Versions:** The system specifically supports **FHIR R4** and **FHIR R3** via the `conduit` library, ensuring compatibility with a broad range of existing provider implementations.
+    *   **Supported FHIR Resources:** Based on the backend models, the system supports the following FHIR resources:
+        *   Account, AdverseEvent, AllergyIntolerance, Appointment, Binary, CarePlan, CareTeam, Claim, ClaimResponse, Composition, Condition, Consent, Coverage, CoverageEligibilityRequest, CoverageEligibilityResponse, Device, DeviceRequest, DiagnosticReport, DocumentManifest, DocumentReference, Encounter, Endpoint, EnrollmentRequest, EnrollmentResponse, ExplanationOfBenefit, FamilyMemberHistory, Goal, ImagingStudy, Immunization, InsurancePlan, Location, Media, Medication, MedicationAdministration, MedicationDispense, MedicationRequest, MedicationStatement, NutritionOrder, Observation, Organization, OrganizationAffiliation, Patient, Person, Practitioner, PractitionerRole, Procedure, Provenance, Questionnaire, QuestionnaireResponse, RelatedPerson, Schedule, ServiceRequest, Slot, Specimen, VisionPrescription.
 
     *   **SMART-on-FHIR Authorization Flow (User-Facing App Launch):** Fasten On-Prem primarily utilizes the user-facing SMART App Launch flow, which implements the standard OAuth 2.0 authorization code grant. This process allows users to securely authorize Fasten On-Prem to access their FHIR-based health data from provider systems. The flow involves several steps:
         1.  **Discovery:** Fasten On-Prem discovers the provider's authorization and token endpoints by fetching the `.well-known/smart-configuration` file from the FHIR server base URL.
@@ -52,6 +59,10 @@ This document outlines key architectural and design patterns observed or inferre
         7.  **Token Refresh (if applicable):** If a refresh token was issued, it can be used to obtain new access tokens when the current one expires, allowing Fasten On-Prem to continue fetching data without requiring the user to re-authenticate immediately.
 
 *   **Local Data Storage (PouchDB/CouchDB):** The frontend uses a library wrapping **PouchDB** for local data persistence, with built-in synchronization capabilities to an external **CouchDB** instance.
+*   **Related Resources and Graph-Based Data Retrieval:** The system creates a connected, timeline-based view of a patient's medical history by understanding the relationships between different FHIR resources.
+    *   **Relationship Creation:** Relationships are established by processing FHIR Bundles via the `POST /api/secure/resource/related` endpoint. The system parses reference fields within each resource (e.g., an `Observation`'s link to an `Encounter`) and stores these connections.
+    *   **Graph Retrieval:** The `POST /api/secure/resource/graph/:graphType` endpoint allows the frontend to fetch a graph of clinically related events. The backend starts with a given resource and traverses the stored relationships to find all connected resources (e.g., a `Condition` and its related `Encounter`, `Procedures`, and `Observations`). This pattern is essential for building contextual views like medical timelines.
+    *   **Relationship Management:** Users can manually manage these connections via endpoints like `DELETE /api/secure/encounter/:encounterId/related/:resourceType/:resourceId`, which allows for unlinking a resource from an encounter.
 
 ## Build and Configuration Patterns
 
