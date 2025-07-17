@@ -2,8 +2,6 @@
 @import 'src/assets/scss/custom/variables';
 
 // Chat layout dimensions
-$chat-min-height: 800px;
-$chat-max-height: 800px;
 $sidebar-width: 200px;
 $chat-padding: 20px;
 $message-area-padding: 10px;
@@ -33,11 +31,16 @@ $delete-icon-filter: invert(20%) sepia(0%) saturate(0%) hue-rotate(0deg) brightn
 $delete-icon-hover-filter: invert(10%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%); // Slightly darker
 $send-icon-filter: invert(39%) sepia(68%) saturate(577%) hue-rotate(173deg) brightness(94%) contrast(90%); // Primary blue
 
+::ng-deep app-chat {
+  height: 90vh;
+  display: flex;
+}
+
 .main-chat-layout {
   display: flex;
   flex-direction: row;
-  min-height: $chat-min-height;
-  max-height: $chat-max-height;
+  flex: 1 1 auto;
+  overflow: auto;
 }
 
 .conversations-sidebar {
