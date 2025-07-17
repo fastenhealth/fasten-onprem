@@ -456,11 +456,16 @@ func (gr *GormRepository) UpsertResource(ctx context.Context, wrappedResourceMod
 		gr.Logger.Warnf("ignoring: an error occurred while publishing event to eventBus (%s/%s): %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID, err)
 	}
 
+	// This is to avoid GORM from trying to create wrong related resources for the RelatedResource field. 
+	// Omit() does not seem to work when we use Assign with a resource that has the things we want to omit
+	assignModel := *wrappedResourceModel
+	assignModel.RelatedResource = nil
+
 	createResult := gr.GormClient.WithContext(ctx).Where(models.OriginBase{
 		SourceID:           wrappedFhirResourceModel.GetSourceID(),
 		SourceResourceID:   wrappedFhirResourceModel.GetSourceResourceID(),
 		SourceResourceType: wrappedFhirResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-	}).Omit("RelatedResource.*").Assign(wrappedResourceModel).FirstOrCreate(wrappedFhirResourceModel)
+	}).Assign(assignModel).FirstOrCreate(wrappedFhirResourceModel)
 
 	if createResult.Error != nil {
 		return false, createResult.Error
