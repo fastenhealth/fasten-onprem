@@ -29,6 +29,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   routerSubscription: Subscription = null
 
   is_environment_desktop: boolean = environment.environment_desktop
+  chatEnabled: boolean = environment.chat
 
   isAdmin: boolean = false;
   isDarkMode: boolean;

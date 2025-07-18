@@ -10,6 +10,7 @@ import {GridstackComponent, NgGridStackOptions} from '../../components/gridstack
 import {DashboardConfig} from '../../models/widget/dashboard-config';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Summary} from '../../models/fasten/summary';
+import {environment} from '../../../environments/environment';
 
 // unique ids sets for each item for correct ngFor updating
 //TODO: fix this
@@ -22,6 +23,8 @@ let ids = 1;
 })
 export class DashboardComponent implements OnInit {
   loading: boolean = false
+
+  searchEnabled: boolean = environment.search
 
   lastUpdated: Date = null
 

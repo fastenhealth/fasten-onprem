@@ -48,36 +48,36 @@ func initClient(cfg config.Interface) error {
 func ensureCollection(ctx context.Context, client *typesense.Client, logger *logrus.Entry, schema *api.CollectionSchema) error {
 	_, err := client.Collection(schema.Name).Retrieve(ctx)
 	if err == nil {
-		logger.Infof("📦 Typesense collection '%s' already exists", schema.Name)
+		logger.Infof("Typesense collection '%s' already exists", schema.Name)
 		return nil
 	}
 
-	logger.Infof("📦 Creating '%s' collection…", schema.Name)
+	logger.Infof("Creating '%s' collection…", schema.Name)
 	_, err = client.Collections().Create(ctx, schema)
 	if err != nil {
-		logger.WithError(err).Errorf("❌ Failed to create '%s' collection in Typesense", schema.Name)
+		logger.WithError(err).Errorf("Failed to create '%s' collection in Typesense", schema.Name)
 		return err
 	}
-	logger.Infof("✅ Created '%s' collection", schema.Name)
+	logger.Infof("Created '%s' collection", schema.Name)
 	return nil
 }
 
 func ensureConversationModel(ctx context.Context, client *typesense.Client, cfg config.Interface, logger *logrus.Entry) error {
-	modelId := cfg.GetString("typesense.conversation_model.id")
+	modelId := cfg.GetString("typesense.chat.conversation_model.id")
 	_, err := client.Conversations().Model(modelId).Retrieve(ctx)
 	if err == nil {
-		logger.Info("📦 Typesense conversation model already exists")
+		logger.Info("Typesense conversation model already exists")
 		return nil
 	}
 
 	var httpErr *typesense.HTTPError
 	if errors.As(err, &httpErr) && httpErr.Status == http.StatusNotFound {
-		logger.Info("📦 Creating Typesense conversation model ...")
+		logger.Info("Creating Typesense conversation model ...")
 
-		systemPrompt := "You are an assistant for question-answering. You can only make conversations based on the provided context. If a response cannot be formed strictly using the provided context, politely say you do not have knowledge about that topic."
-		modelName := cfg.GetString("typesense.conversation_model.name")
-		vllmUrl := cfg.GetString("typesense.conversation_model.vllm_url")
-		historyCollection := cfg.GetString("typesense.conversation_model.history_collection")
+		systemPrompt := "You are an assistant for question-answering, using only the context provided. This context represents personal information belonging to the user. Never mention or reference any technical details from the context, such as field names, data structures, formats (e.g., JSON), timestamps, codes, or metadata. Instead, interpret and convey the actual meaning of the content clearly and naturally. For example, if timestamps are present, convert them into human-readable date formats (e.g.,'March 3, 2019') without mentioning that a timestamp was used. Never repeat or expose field names like 'sort_title', 'resource_raw', or any similar terms. Do not speculate based on metadata or structural hints. Only use the meaning conveyed by the values themselves. If an answer cannot be formed clearly from the context, respond by saying you do not have enough information. Always respond in plain, human-friendly language, as if you're speaking to a non-technical person."
+		modelName := cfg.GetString("typesense.chat.conversation_model.name")
+		vllmUrl := cfg.GetString("typesense.chat.conversation_model.vllm_url")
+		historyCollection := cfg.GetString("typesense.chat.conversation_collection_name")
 
 		_, err = client.Conversations().Models().Create(ctx, &api.ConversationModelCreateSchema{
 			Id:                &modelId,
@@ -85,21 +85,27 @@ func ensureConversationModel(ctx context.Context, client *typesense.Client, cfg 
 			VllmUrl:           &vllmUrl,
 			HistoryCollection: historyCollection,
 			SystemPrompt:      &systemPrompt,
-			MaxBytes:          131072,
+			MaxBytes:          cfg.GetInt("typesense.chat.conversation_model.max_bytes"),
 		})
 		if err != nil {
-			logger.WithError(err).Error("❌ Failed to create conversation model in Typesense")
+			logger.WithError(err).Error("Failed to create conversation model in Typesense")
 			return err
 		}
-		logger.Info("✅ Created conversation model")
+		logger.Info("Created conversation model")
 		return nil
 	} else {
-		logger.WithError(err).Error("❌ Failed to retrieve conversation model from Typesense")
+		logger.WithError(err).Error("Failed to retrieve conversation model from Typesense")
 		return err
 	}
 }
 
 func Init(cfg config.Interface, logger *logrus.Entry) error {
+	// Client will initialize only if config typesense is present
+	if cfg.GetString("typesense.uri") == "" {
+		logger.Info("Typesense URI not configured, skipping Typesense initialization.")
+		return nil
+	}
+
 	if err := initClient(cfg); err != nil {
 		log.Fatalf("ERROR: %v", err)
 	}
@@ -108,84 +114,93 @@ func Init(cfg config.Interface, logger *logrus.Entry) error {
 	optionalTrue := true
 	optionalFalse := false
 
-	// Resources Collection Schema
-	resourcesSchema := &api.CollectionSchema{
-		Name: "resources",
-		Fields: []api.Field{
-			{Name: "id", Type: "string"},
-			{Name: "user_id", Type: "string"},
-			{Name: "source_id", Type: "string"},
-			{Name: "source_resource_type", Type: "string"},
-			{Name: "source_resource_id", Type: "string"},
-			{Name: "sort_date", Type: "int64"},
-			{Name: "sort_title", Type: "string", Optional: &optionalTrue},
-			{Name: "source_uri", Type: "string", Optional: &optionalTrue},
-			{Name: "resource_raw", Type: "object", Optional: &optionalTrue}, // JSON blob
-			{
-				Name: "embedding",
-				Type: "float[]",
-				Embed: &struct {
-					From        []string `json:"from"`
-					ModelConfig struct {
-						AccessToken    *string `json:"access_token,omitempty"`
-						ApiKey         *string `json:"api_key,omitempty"`
-						ClientId       *string `json:"client_id,omitempty"`
-						ClientSecret   *string `json:"client_secret,omitempty"`
-						IndexingPrefix *string `json:"indexing_prefix,omitempty"`
-						ModelName      string  `json:"model_name"`
-						ProjectId      *string `json:"project_id,omitempty"`
-						QueryPrefix    *string `json:"query_prefix,omitempty"`
-						RefreshToken   *string `json:"refresh_token,omitempty"`
-						Url            *string `json:"url,omitempty"`
-					} `json:"model_config"`
-				}{
-					From: []string{`source_resource_type`, `sort_title`},
-					ModelConfig: struct {
-						AccessToken    *string `json:"access_token,omitempty"`
-						ApiKey         *string `json:"api_key,omitempty"`
-						ClientId       *string `json:"client_id,omitempty"`
-						ClientSecret   *string `json:"client_secret,omitempty"`
-						IndexingPrefix *string `json:"indexing_prefix,omitempty"`
-						ModelName      string  `json:"model_name"`
-						ProjectId      *string `json:"project_id,omitempty"`
-						QueryPrefix    *string `json:"query_prefix,omitempty"`
-						RefreshToken   *string `json:"refresh_token,omitempty"`
-						Url            *string `json:"url,omitempty"`
+	// Resources Collection Schema - only when typesense.search is present
+	if cfg.GetString("typesense.search.collection_name") != "" {
+		resourcesSchema := &api.CollectionSchema{
+			Name: cfg.GetString("typesense.search.collection_name"),
+			Fields: []api.Field{
+				{Name: "id", Type: "string"},
+				{Name: "user_id", Type: "string"},
+				{Name: "source_id", Type: "string"},
+				{Name: "source_resource_type", Type: "string"},
+				{Name: "source_resource_id", Type: "string"},
+				{Name: "sort_date", Type: "int64"},
+				{Name: "sort_title", Type: "string", Optional: &optionalTrue},
+				{Name: "source_uri", Type: "string", Optional: &optionalTrue},
+				{Name: "resource_raw", Type: "object", Optional: &optionalTrue}, // JSON blob
+				{
+					Name: "embedding",
+					Type: "float[]",
+					Embed: &struct {
+						From        []string `json:"from"`
+						ModelConfig struct {
+							AccessToken    *string `json:"access_token,omitempty"`
+							ApiKey         *string `json:"api_key,omitempty"`
+							ClientId       *string `json:"client_id,omitempty"`
+							ClientSecret   *string `json:"client_secret,omitempty"`
+							IndexingPrefix *string `json:"indexing_prefix,omitempty"`
+							ModelName      string  `json:"model_name"`
+							ProjectId      *string `json:"project_id,omitempty"`
+							QueryPrefix    *string `json:"query_prefix,omitempty"`
+							RefreshToken   *string `json:"refresh_token,omitempty"`
+							Url            *string `json:"url,omitempty"`
+						} `json:"model_config"`
 					}{
-						// ModelName:    "ts/snowflake-arctic-embed-m",
-						ModelName: "ts/all-MiniLM-L12-v2",
+						From: []string{`source_resource_type`, `sort_title`},
+						ModelConfig: struct {
+							AccessToken    *string `json:"access_token,omitempty"`
+							ApiKey         *string `json:"api_key,omitempty"`
+							ClientId       *string `json:"client_id,omitempty"`
+							ClientSecret   *string `json:"client_secret,omitempty"`
+							IndexingPrefix *string `json:"indexing_prefix,omitempty"`
+							ModelName      string  `json:"model_name"`
+							ProjectId      *string `json:"project_id,omitempty"`
+							QueryPrefix    *string `json:"query_prefix,omitempty"`
+							RefreshToken   *string `json:"refresh_token,omitempty"`
+							Url            *string `json:"url,omitempty"`
+						}{
+							// ModelName:    "ts/snowflake-arctic-embed-m",
+							ModelName: "ts/all-MiniLM-L12-v2",
+						},
 					},
 				},
 			},
-		},
-		DefaultSortingField: func(s string) *string { return &s }("sort_date"),
-		EnableNestedFields:  &optionalTrue,
+			DefaultSortingField: func(s string) *string { return &s }("sort_date"),
+			EnableNestedFields:  &optionalTrue,
+		}
+
+		if err := ensureCollection(ctx, Client, logger, resourcesSchema); err != nil {
+			return err
+		}
+	} else {
+		logger.Info("Typesense search collection name not configured, skipping resources collection initialization.")
 	}
 
-	if err := ensureCollection(ctx, Client, logger, resourcesSchema); err != nil {
-		return err
+	// Conversation Collection Schema and Model - only when typesense.chat is present
+	if cfg.GetString("typesense.chat.conversation_collection_name") != "" {
+		conversationStoreSchema := &api.CollectionSchema{
+			Name: cfg.GetString("typesense.chat.conversation_collection_name"),
+			Fields: []api.Field{
+				{Name: "conversation_id", Type: "string", Facet: &optionalTrue},
+				{Name: "model_id", Type: "string"},
+				{Name: "timestamp", Type: "int32"},
+				{Name: "role", Type: "string", Index: &optionalFalse},
+				{Name: "message", Type: "string", Index: &optionalFalse},
+			},
+		}
+
+		if err := ensureCollection(ctx, Client, logger, conversationStoreSchema); err != nil {
+			return err
+		}
+
+		// Conversation Model
+		if err := ensureConversationModel(ctx, Client, cfg, logger); err != nil {
+			return err
+		}
+	} else {
+		logger.Info("Typesense chat collection name not configured, skipping conversation collection and model initialization.")
 	}
 
-	// Conversation Store Collection Schema
-	conversationStoreSchema := &api.CollectionSchema{
-		Name: "conversation_store",
-		Fields: []api.Field{
-			{Name: "conversation_id", Type: "string", Facet: &optionalTrue},
-			{Name: "model_id", Type: "string"},
-			{Name: "timestamp", Type: "int32"},
-			{Name: "role", Type: "string", Index: &optionalFalse},
-			{Name: "message", Type: "string", Index: &optionalFalse},
-		},
-	}
-
-	if err := ensureCollection(ctx, Client, logger, conversationStoreSchema); err != nil {
-		return err
-	}
-
-	if err := ensureConversationModel(ctx, Client, cfg, logger); err != nil {
-		return err
-	}
-
-	logger.Info("✅ Typesense client initialized and collections ready")
+	logger.Info("Typesense client initialized and collections ready")
 	return nil
 }

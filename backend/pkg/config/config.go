@@ -100,22 +100,40 @@ func (c *configuration) ValidateConfig() error {
 		if key == "" {
 			return errors.ConfigValidationError("typesense.api_key cannot be empty")
 		}
-		key = c.GetString("typesense.conversation_model.id")
+		
+	}
+
+	if c.IsSet("typesense.search") {
+		key := c.GetString("typesense.search.collection_name")
 		if key == "" {
-			return errors.ConfigValidationError("typesense.conversation_model.id cannot be empty")
-		}
-		key = c.GetString("typesense.conversation_model.name")
-		if key == "" {
-			return errors.ConfigValidationError("typesense.conversation_model.name cannot be empty")
-		}
-		key = c.GetString("typesense.conversation_model.vllm_url")
-		if key == "" {
-			return errors.ConfigValidationError("typesense.conversation_model.vllm_url cannot be empty")
-		}
-		key = c.GetString("typesense.conversation_model.history_collection")
-		if key == "" {
-			return errors.ConfigValidationError("typesense.conversation_model.history_collection cannot be empty")
+			return errors.ConfigValidationError("typesense.search.collection_name cannot be empty")
 		}
 	}
+
+	if c.IsSet("typesense.chat") {
+		key := c.GetString("typesense.chat.conversation_collection_name")
+		if key == "" {
+			return errors.ConfigValidationError("typesense.chat.conversation_collection_name cannot be empty")
+		}
+
+		key = c.GetString("typesense.chat.conversation_model.id")
+		if key == "" {
+			return errors.ConfigValidationError("typesense.chat.conversation_model.id cannot be empty")
+		}
+		key = c.GetString("typesense.chat.conversation_model.name")
+		if key == "" {
+			return errors.ConfigValidationError("typesense.chat.conversation_model.name cannot be empty")
+		}
+		key = c.GetString("typesense.chat.conversation_model.vllm_url")
+		if key == "" {
+			return errors.ConfigValidationError("typesense.chat.conversation_model.vllm_url cannot be empty")
+		}
+		key = c.GetString("typesense.chat.conversation_model.max_bytes")
+		if key == "" {
+			return errors.ConfigValidationError("typesense.chat.conversation_model.max_bytes cannot be empty")
+		}
+	}
+
+
 	return nil
 }

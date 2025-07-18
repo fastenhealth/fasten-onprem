@@ -50,7 +50,6 @@ import { ResourceSearchDatatableModule } from './resource-search-datatable/resou
     FormsModule,
     ReactiveFormsModule,
     MomentModule,
-    // TreeModule,
     NgChartsModule,
     HighlightModule,
     PipesModule,
