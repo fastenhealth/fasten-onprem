@@ -48,17 +48,17 @@ func initClient(cfg config.Interface) error {
 func ensureCollection(ctx context.Context, client *typesense.Client, logger *logrus.Entry, schema *api.CollectionSchema) error {
 	_, err := client.Collection(schema.Name).Retrieve(ctx)
 	if err == nil {
-		logger.Infof("📦 Typesense collection '%s' already exists", schema.Name)
+		logger.Infof("Typesense collection '%s' already exists", schema.Name)
 		return nil
 	}
 
-	logger.Infof("📦 Creating '%s' collection…", schema.Name)
+	logger.Infof("Creating '%s' collection…", schema.Name)
 	_, err = client.Collections().Create(ctx, schema)
 	if err != nil {
-		logger.WithError(err).Errorf("❌ Failed to create '%s' collection in Typesense", schema.Name)
+		logger.WithError(err).Errorf("Failed to create '%s' collection in Typesense", schema.Name)
 		return err
 	}
-	logger.Infof("✅ Created '%s' collection", schema.Name)
+	logger.Infof("Created '%s' collection", schema.Name)
 	return nil
 }
 
@@ -66,13 +66,13 @@ func ensureConversationModel(ctx context.Context, client *typesense.Client, cfg 
 	modelId := cfg.GetString("typesense.conversation_model.id")
 	_, err := client.Conversations().Model(modelId).Retrieve(ctx)
 	if err == nil {
-		logger.Info("📦 Typesense conversation model already exists")
+		logger.Info("Typesense conversation model already exists")
 		return nil
 	}
 
 	var httpErr *typesense.HTTPError
 	if errors.As(err, &httpErr) && httpErr.Status == http.StatusNotFound {
-		logger.Info("📦 Creating Typesense conversation model ...")
+		logger.Info("Creating Typesense conversation model ...")
 
 		systemPrompt := "You are an assistant for question-answering. You can only make conversations based on the provided context. If a response cannot be formed strictly using the provided context, politely say you do not have knowledge about that topic."
 		modelName := cfg.GetString("typesense.conversation_model.name")
@@ -88,13 +88,13 @@ func ensureConversationModel(ctx context.Context, client *typesense.Client, cfg 
 			MaxBytes:          131072,
 		})
 		if err != nil {
-			logger.WithError(err).Error("❌ Failed to create conversation model in Typesense")
+			logger.WithError(err).Error("Failed to create conversation model in Typesense")
 			return err
 		}
-		logger.Info("✅ Created conversation model")
+		logger.Info("Created conversation model")
 		return nil
 	} else {
-		logger.WithError(err).Error("❌ Failed to retrieve conversation model from Typesense")
+		logger.WithError(err).Error("Failed to retrieve conversation model from Typesense")
 		return err
 	}
 }
@@ -186,6 +186,6 @@ func Init(cfg config.Interface, logger *logrus.Entry) error {
 		return err
 	}
 
-	logger.Info("✅ Typesense client initialized and collections ready")
+	logger.Info("Typesense client initialized and collections ready")
 	return nil
 }
