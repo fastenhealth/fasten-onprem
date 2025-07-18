@@ -13,4 +13,7 @@ export const environment = {
 
   //used to specify the api server that we're going to use (can be relative or absolute). Must not have trailing slash
   fasten_api_endpoint_base: '/api',
+
+  search: true,
+  chat: true
 };

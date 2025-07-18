@@ -4,6 +4,7 @@ import {FastenApiService} from '../../services/fasten-api.service';
 import * as fhirpath from 'fhirpath';
 import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
 import {Summary} from '../../../app/models/fasten/summary';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'report-header',
@@ -14,6 +15,7 @@ export class ReportHeaderComponent implements OnInit {
   patient: ResourceFhir = null
   primaryCare: PractitionerModel = null
   lastUpdated: Date = null
+  searchEnabled: boolean = environment.search
   @Input() reportHeaderTitle: string = ""
   @Input() reportHeaderSubTitle: string = "Organized by condition and encounters"
   constructor(

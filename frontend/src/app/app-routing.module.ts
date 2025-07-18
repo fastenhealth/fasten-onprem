@@ -47,8 +47,8 @@ const routes: Routes = [
   { path: 'sources', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'sources/callback/:state', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'resource/create', component: ResourceCreatorComponent, canActivate: [ IsAuthenticatedAuthGuard] },
-  { path: 'resource/summary', component: ResourceSearchTableComponent, canActivate: [ IsAuthenticatedAuthGuard] },
-  { path: 'resource/view/:id',component: ViewRawResourceDetailsComponent, canActivate: [ IsAuthenticatedAuthGuard]},
+  ...(environment.search ? [{ path: 'resource/summary', component: ResourceSearchTableComponent, canActivate: [ IsAuthenticatedAuthGuard] }] : []),
+  ...(environment.search ? [{ path: 'resource/view/:id',component: ViewRawResourceDetailsComponent, canActivate: [ IsAuthenticatedAuthGuard]}] : []),
 
   { path: 'desktop/callback/:state', component: DesktopCallbackComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
@@ -58,10 +58,10 @@ const routes: Routes = [
   { path: 'labs', component: ReportLabsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'labs/report/:source_id/:resource_type/:resource_id', component: ReportLabsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
-  { path: 'chat', component: ChatComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
-
   { path: 'users', component: UserListComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
   { path: 'users/new', component: UserCreateComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
+
+  ...(environment.chat ? [{ path: 'chat', component: ChatComponent, canActivate: [ IsAuthenticatedAuthGuard ] }] : []),
 
   // { path: 'general-pages', loadChildren: () => import('./general-pages/general-pages.module').then(m => m.GeneralPagesModule) },
   // { path: 'ui-elements', loadChildren: () => import('./ui-elements/ui-elements.module').then(m => m.UiElementsModule) },
