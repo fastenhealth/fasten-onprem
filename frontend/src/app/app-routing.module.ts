@@ -22,7 +22,6 @@ import { ResourceDetailComponent } from './pages/resource-detail/resource-detail
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
 import { UserCreateComponent } from './pages/user-create/user-create.component';
 import { UserListComponent } from './pages/user-list/user-list.component';
-import { ResourceSearchComponent } from "./pages/resource-search/resource-search.component";
 import { ViewRawResourceDetailsComponent } from "./pages/view-raw-resource-details/view-raw-resource-details.component";
 import { ResourceSearchTableComponent } from "./pages/resource-search-table/resource-search-table.component";
 import { ChatComponent } from './pages/chat/chat.component';
@@ -48,7 +47,6 @@ const routes: Routes = [
   { path: 'sources', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'sources/callback/:state', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'resource/create', component: ResourceCreatorComponent, canActivate: [ IsAuthenticatedAuthGuard] },
-  { path: 'resource/search', component: ResourceSearchComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'resource/summary', component: ResourceSearchTableComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'resource/view/:id',component: ViewRawResourceDetailsComponent, canActivate: [ IsAuthenticatedAuthGuard]},
 
