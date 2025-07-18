@@ -28,6 +28,8 @@ export class ResourceSearchTableComponent implements OnInit {
           this.resourceTypeCounts[resourceTypeCount.resource_type] =
             resourceTypeCount.count;
         }
+
+        this.selectResourceType('All'); // Default to 'All' if no type is selected
       },
       (error) => {
         this.loading = false;
