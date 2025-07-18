@@ -2,7 +2,6 @@ import {
   Component,
   Input,
   OnInit,
-  SimpleChange,
   Type,
   ViewChild,
 } from '@angular/core';
@@ -48,7 +47,7 @@ import { TypesenseDocument } from 'src/app/models/typesense/typesense-result-mod
 })
 export class ResourceSearchDatatableComponent implements OnInit {
   @Input() source: Source;
-  @Input() resourceListType: string;
+  @Input() resourceListType; 
   @Input() selectedTotalElements: number;
   @Input() disabledResourceIds: string[] = [];
 
@@ -63,7 +62,7 @@ export class ResourceSearchDatatableComponent implements OnInit {
   ngOnInit(): void {
     this.loadComponent();
   }
-  ngOnChanges(changes: SimpleChange) {
+  ngOnChanges() {
     this.loadComponent();
   }
 

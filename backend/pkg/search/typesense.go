@@ -38,7 +38,7 @@ func initClient(cfg config.Interface) error {
 
 	log.Printf("Typesense client initialized with server: %s", apiUri)
 
-	err := waitForTypesense(Client, 10, 2*time.Second)
+	err := waitForTypesense(Client, 30, 2*time.Second)
 	if err != nil {
 		return errors.New("failed to initialize Typesense: " + err.Error())
 	}

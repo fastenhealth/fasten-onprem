@@ -33,7 +33,7 @@ jwt:
     # TODO: in future versions, this will be generated on first run with a random value, and stored as a System Setting.
     key: "thisismysupersecuressessionsecretlength"
 typesense:
-  uri: http://localhost:8108
+  uri: http://typesense:8108
   api_key: xyz123
   search:
     collection_name: "resources"
