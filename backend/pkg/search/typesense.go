@@ -63,7 +63,7 @@ func ensureCollection(ctx context.Context, client *typesense.Client, logger *log
 }
 
 func ensureConversationModel(ctx context.Context, client *typesense.Client, cfg config.Interface, logger *logrus.Entry) error {
-	modelId := cfg.GetString("typesense.conversation_model.id")
+	modelId := cfg.GetString("typesense.chat.conversation_model.id")
 	_, err := client.Conversations().Model(modelId).Retrieve(ctx)
 	if err == nil {
 		logger.Info("Typesense conversation model already exists")
@@ -74,10 +74,10 @@ func ensureConversationModel(ctx context.Context, client *typesense.Client, cfg 
 	if errors.As(err, &httpErr) && httpErr.Status == http.StatusNotFound {
 		logger.Info("Creating Typesense conversation model ...")
 
-		systemPrompt := "You are an assistant for question-answering. You can only make conversations based on the provided context. If a response cannot be formed strictly using the provided context, politely say you do not have knowledge about that topic."
-		modelName := cfg.GetString("typesense.conversation_model.name")
-		vllmUrl := cfg.GetString("typesense.conversation_model.vllm_url")
-		historyCollection := cfg.GetString("typesense.conversation_model.history_collection")
+		systemPrompt := "You are an assistant for question-answering, using only the context provided. This context represents personal information belonging to the user. Never mention or reference any technical details from the context, such as field names, data structures, formats (e.g., JSON), timestamps, codes, or metadata. Instead, interpret and convey the actual meaning of the content clearly and naturally. For example, if timestamps are present, convert them into human-readable date formats (e.g.,'March 3, 2019') without mentioning that a timestamp was used. Never repeat or expose field names like 'sort_title', 'resource_raw', or any similar terms. Do not speculate based on metadata or structural hints. Only use the meaning conveyed by the values themselves. If an answer cannot be formed clearly from the context, respond by saying you do not have enough information. Always respond in plain, human-friendly language, as if you're speaking to a non-technical person."
+		modelName := cfg.GetString("typesense.chat.conversation_model.name")
+		vllmUrl := cfg.GetString("typesense.chat.conversation_model.vllm_url")
+		historyCollection := cfg.GetString("typesense.chat.conversation_collection_name")
 
 		_, err = client.Conversations().Models().Create(ctx, &api.ConversationModelCreateSchema{
 			Id:                &modelId,
@@ -85,7 +85,7 @@ func ensureConversationModel(ctx context.Context, client *typesense.Client, cfg 
 			VllmUrl:           &vllmUrl,
 			HistoryCollection: historyCollection,
 			SystemPrompt:      &systemPrompt,
-			MaxBytes:          131072,
+			MaxBytes:          cfg.GetInt("typesense.chat.conversation_model.max_bytes"),
 		})
 		if err != nil {
 			logger.WithError(err).Error("Failed to create conversation model in Typesense")
@@ -110,7 +110,7 @@ func Init(cfg config.Interface, logger *logrus.Entry) error {
 
 	// Resources Collection Schema
 	resourcesSchema := &api.CollectionSchema{
-		Name: "resources",
+		Name: cfg.GetString("typesense.search.collection_name"),
 		Fields: []api.Field{
 			{Name: "id", Type: "string"},
 			{Name: "user_id", Type: "string"},
@@ -166,9 +166,9 @@ func Init(cfg config.Interface, logger *logrus.Entry) error {
 		return err
 	}
 
-	// Conversation Store Collection Schema
+	// Conversation Collection Schema
 	conversationStoreSchema := &api.CollectionSchema{
-		Name: "conversation_store",
+		Name: cfg.GetString("typesense.chat.conversation_collection_name"),
 		Fields: []api.Field{
 			{Name: "conversation_id", Type: "string", Facet: &optionalTrue},
 			{Name: "model_id", Type: "string"},
@@ -182,6 +182,7 @@ func Init(cfg config.Interface, logger *logrus.Entry) error {
 		return err
 	}
 
+	// Conversation Model
 	if err := ensureConversationModel(ctx, Client, cfg, logger); err != nil {
 		return err
 	}
