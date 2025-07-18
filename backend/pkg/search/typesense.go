@@ -100,6 +100,12 @@ func ensureConversationModel(ctx context.Context, client *typesense.Client, cfg 
 }
 
 func Init(cfg config.Interface, logger *logrus.Entry) error {
+	// Client will initialize only if config typesense is present
+	if cfg.GetString("typesense.uri") == "" {
+		logger.Info("Typesense URI not configured, skipping Typesense initialization.")
+		return nil
+	}
+
 	if err := initClient(cfg); err != nil {
 		log.Fatalf("ERROR: %v", err)
 	}
@@ -108,83 +114,91 @@ func Init(cfg config.Interface, logger *logrus.Entry) error {
 	optionalTrue := true
 	optionalFalse := false
 
-	// Resources Collection Schema
-	resourcesSchema := &api.CollectionSchema{
-		Name: cfg.GetString("typesense.search.collection_name"),
-		Fields: []api.Field{
-			{Name: "id", Type: "string"},
-			{Name: "user_id", Type: "string"},
-			{Name: "source_id", Type: "string"},
-			{Name: "source_resource_type", Type: "string"},
-			{Name: "source_resource_id", Type: "string"},
-			{Name: "sort_date", Type: "int64"},
-			{Name: "sort_title", Type: "string", Optional: &optionalTrue},
-			{Name: "source_uri", Type: "string", Optional: &optionalTrue},
-			{Name: "resource_raw", Type: "object", Optional: &optionalTrue}, // JSON blob
-			{
-				Name: "embedding",
-				Type: "float[]",
-				Embed: &struct {
-					From        []string `json:"from"`
-					ModelConfig struct {
-						AccessToken    *string `json:"access_token,omitempty"`
-						ApiKey         *string `json:"api_key,omitempty"`
-						ClientId       *string `json:"client_id,omitempty"`
-						ClientSecret   *string `json:"client_secret,omitempty"`
-						IndexingPrefix *string `json:"indexing_prefix,omitempty"`
-						ModelName      string  `json:"model_name"`
-						ProjectId      *string `json:"project_id,omitempty"`
-						QueryPrefix    *string `json:"query_prefix,omitempty"`
-						RefreshToken   *string `json:"refresh_token,omitempty"`
-						Url            *string `json:"url,omitempty"`
-					} `json:"model_config"`
-				}{
-					From: []string{`source_resource_type`, `sort_title`},
-					ModelConfig: struct {
-						AccessToken    *string `json:"access_token,omitempty"`
-						ApiKey         *string `json:"api_key,omitempty"`
-						ClientId       *string `json:"client_id,omitempty"`
-						ClientSecret   *string `json:"client_secret,omitempty"`
-						IndexingPrefix *string `json:"indexing_prefix,omitempty"`
-						ModelName      string  `json:"model_name"`
-						ProjectId      *string `json:"project_id,omitempty"`
-						QueryPrefix    *string `json:"query_prefix,omitempty"`
-						RefreshToken   *string `json:"refresh_token,omitempty"`
-						Url            *string `json:"url,omitempty"`
+	// Resources Collection Schema - only when typesense.search is present
+	if cfg.GetString("typesense.search.collection_name") != "" {
+		resourcesSchema := &api.CollectionSchema{
+			Name: cfg.GetString("typesense.search.collection_name"),
+			Fields: []api.Field{
+				{Name: "id", Type: "string"},
+				{Name: "user_id", Type: "string"},
+				{Name: "source_id", Type: "string"},
+				{Name: "source_resource_type", Type: "string"},
+				{Name: "source_resource_id", Type: "string"},
+				{Name: "sort_date", Type: "int64"},
+				{Name: "sort_title", Type: "string", Optional: &optionalTrue},
+				{Name: "source_uri", Type: "string", Optional: &optionalTrue},
+				{Name: "resource_raw", Type: "object", Optional: &optionalTrue}, // JSON blob
+				{
+					Name: "embedding",
+					Type: "float[]",
+					Embed: &struct {
+						From        []string `json:"from"`
+						ModelConfig struct {
+							AccessToken    *string `json:"access_token,omitempty"`
+							ApiKey         *string `json:"api_key,omitempty"`
+							ClientId       *string `json:"client_id,omitempty"`
+							ClientSecret   *string `json:"client_secret,omitempty"`
+							IndexingPrefix *string `json:"indexing_prefix,omitempty"`
+							ModelName      string  `json:"model_name"`
+							ProjectId      *string `json:"project_id,omitempty"`
+							QueryPrefix    *string `json:"query_prefix,omitempty"`
+							RefreshToken   *string `json:"refresh_token,omitempty"`
+							Url            *string `json:"url,omitempty"`
+						} `json:"model_config"`
 					}{
-						// ModelName:    "ts/snowflake-arctic-embed-m",
-						ModelName: "ts/all-MiniLM-L12-v2",
+						From: []string{`source_resource_type`, `sort_title`},
+						ModelConfig: struct {
+							AccessToken    *string `json:"access_token,omitempty"`
+							ApiKey         *string `json:"api_key,omitempty"`
+							ClientId       *string `json:"client_id,omitempty"`
+							ClientSecret   *string `json:"client_secret,omitempty"`
+							IndexingPrefix *string `json:"indexing_prefix,omitempty"`
+							ModelName      string  `json:"model_name"`
+							ProjectId      *string `json:"project_id,omitempty"`
+							QueryPrefix    *string `json:"query_prefix,omitempty"`
+							RefreshToken   *string `json:"refresh_token,omitempty"`
+							Url            *string `json:"url,omitempty"`
+						}{
+							// ModelName:    "ts/snowflake-arctic-embed-m",
+							ModelName: "ts/all-MiniLM-L12-v2",
+						},
 					},
 				},
 			},
-		},
-		DefaultSortingField: func(s string) *string { return &s }("sort_date"),
-		EnableNestedFields:  &optionalTrue,
+			DefaultSortingField: func(s string) *string { return &s }("sort_date"),
+			EnableNestedFields:  &optionalTrue,
+		}
+
+		if err := ensureCollection(ctx, Client, logger, resourcesSchema); err != nil {
+			return err
+		}
+	} else {
+		logger.Info("Typesense search collection name not configured, skipping resources collection initialization.")
 	}
 
-	if err := ensureCollection(ctx, Client, logger, resourcesSchema); err != nil {
-		return err
-	}
+	// Conversation Collection Schema and Model - only when typesense.chat is present
+	if cfg.GetString("typesense.chat.conversation_collection_name") != "" {
+		conversationStoreSchema := &api.CollectionSchema{
+			Name: cfg.GetString("typesense.chat.conversation_collection_name"),
+			Fields: []api.Field{
+				{Name: "conversation_id", Type: "string", Facet: &optionalTrue},
+				{Name: "model_id", Type: "string"},
+				{Name: "timestamp", Type: "int32"},
+				{Name: "role", Type: "string", Index: &optionalFalse},
+				{Name: "message", Type: "string", Index: &optionalFalse},
+			},
+		}
 
-	// Conversation Collection Schema
-	conversationStoreSchema := &api.CollectionSchema{
-		Name: cfg.GetString("typesense.chat.conversation_collection_name"),
-		Fields: []api.Field{
-			{Name: "conversation_id", Type: "string", Facet: &optionalTrue},
-			{Name: "model_id", Type: "string"},
-			{Name: "timestamp", Type: "int32"},
-			{Name: "role", Type: "string", Index: &optionalFalse},
-			{Name: "message", Type: "string", Index: &optionalFalse},
-		},
-	}
+		if err := ensureCollection(ctx, Client, logger, conversationStoreSchema); err != nil {
+			return err
+		}
 
-	if err := ensureCollection(ctx, Client, logger, conversationStoreSchema); err != nil {
-		return err
-	}
-
-	// Conversation Model
-	if err := ensureConversationModel(ctx, Client, cfg, logger); err != nil {
-		return err
+		// Conversation Model
+		if err := ensureConversationModel(ctx, Client, cfg, logger); err != nil {
+			return err
+		}
+	} else {
+		logger.Info("Typesense chat collection name not configured, skipping conversation collection and model initialization.")
 	}
 
 	logger.Info("Typesense client initialized and collections ready")
