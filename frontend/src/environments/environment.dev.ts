@@ -2,7 +2,7 @@ export const environment = {
   production: false,
   environment_cloud: false,
   environment_desktop: false,
-  environment_name: "dev",
+  environment_name: 'dev',
   popup_source_auth: false,
 
   lighthouse_api_endpoint_base: 'https://lighthouse.fastenhealth.com/sandbox',
@@ -11,5 +11,17 @@ export const environment = {
   fasten_api_endpoint_base: '/api',
 
   search: true,
-  chat: true
+  chat: true,
+
+  typesense_config: {
+    nodes: [
+      {
+        host: 'localhost',
+        port: 8108,
+        protocol: 'http',
+      },
+    ],
+    connectionTimeoutSeconds: 180,
+    apiKey: 'xyz123',
+  },
 };

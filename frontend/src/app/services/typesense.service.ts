@@ -2,18 +2,7 @@ import { Injectable } from '@angular/core';
 import { Client } from 'typesense';
 import { SearchParams } from 'typesense/lib/Typesense/Types';
 import { Observable, Subscriber } from 'rxjs';
-
-const TYPESENSE_CONFIG = {
-  nodes: [
-    {
-      host: 'localhost',
-      port: 8108,
-      protocol: 'http',
-    },
-  ],
-  connectionTimeoutSeconds: 180,
-  apiKey: 'xyz123',
-};
+import { environment } from 'src/environments/environment';
 
 const TYPESENSE_COLLECTION_RESOURCES = 'resources';
 const TYPESENSE_COLLECTION_CONVERSATION_STORE = 'conversation_store';
@@ -78,7 +67,8 @@ export class TypesenseService {
   private client: Client;
 
   constructor() {
-    this.client = new Client(TYPESENSE_CONFIG);
+    // Use the typesense_config from the environment
+    this.client = new Client(environment.typesense_config);
   }
 
   /**
