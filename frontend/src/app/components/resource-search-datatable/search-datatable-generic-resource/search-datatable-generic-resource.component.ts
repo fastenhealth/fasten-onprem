@@ -70,7 +70,7 @@ export class SearchDatatableGenericResourceComponent implements OnInit {
       .searchResources({
         query: '*',
         type: this.resourceListType == 'All' ? '' : this.resourceListType,
-        page: this.currentPage.offset,
+        page: this.currentPage.offset + 1,
         per_page: 10,
       })
       .subscribe((response: TypesenseSearchResponse) => {
