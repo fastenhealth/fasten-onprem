@@ -15,5 +15,17 @@ export const environment = {
   fasten_api_endpoint_base: '/api',
 
   search: true,
-  chat: true
+  chat: true,
+
+  typesense_config: {
+    nodes: [
+      {
+        host: 'localhost',
+        port: 8108,
+        protocol: 'http',
+      },
+    ],
+    connectionTimeoutSeconds: 180,
+    apiKey: 'xyz123',
+  },
 };
