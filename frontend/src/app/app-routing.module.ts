@@ -6,6 +6,8 @@ import { environment } from '../environments/environment';
 import { IsAdminAuthGuard } from './auth-guards/is-admin-auth-guard';
 import { IsAuthenticatedAuthGuard } from './auth-guards/is-authenticated-auth-guard';
 import { ShowFirstRunWizardGuard } from './auth-guards/show-first-run-wizard-guard';
+import { SearchFeatureGuard } from './auth-guards/search-feature.guard';
+import { ChatFeatureGuard } from './auth-guards/chat-feature.guard';
 import { AuthSigninComponent } from './pages/auth-signin/auth-signin.component';
 import { AuthSignupWizardComponent } from './pages/auth-signup-wizard/auth-signup-wizard.component';
 import { AuthSignupComponent } from './pages/auth-signup/auth-signup.component';
@@ -47,8 +49,8 @@ const routes: Routes = [
   { path: 'sources', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'sources/callback/:state', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard] },
   { path: 'resource/create', component: ResourceCreatorComponent, canActivate: [ IsAuthenticatedAuthGuard] },
-  ...(environment.search ? [{ path: 'resource/summary', component: ResourceSearchTableComponent, canActivate: [ IsAuthenticatedAuthGuard] }] : []),
-  ...(environment.search ? [{ path: 'resource/view/:id',component: ViewRawResourceDetailsComponent, canActivate: [ IsAuthenticatedAuthGuard]}] : []),
+  { path: 'resource/summary', component: ResourceSearchTableComponent, canActivate: [ IsAuthenticatedAuthGuard, SearchFeatureGuard] },
+  { path: 'resource/view/:id',component: ViewRawResourceDetailsComponent, canActivate: [ IsAuthenticatedAuthGuard, SearchFeatureGuard]},
 
   { path: 'desktop/callback/:state', component: DesktopCallbackComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
@@ -61,7 +63,7 @@ const routes: Routes = [
   { path: 'users', component: UserListComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
   { path: 'users/new', component: UserCreateComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
 
-  ...(environment.chat ? [{ path: 'chat', component: ChatComponent, canActivate: [ IsAuthenticatedAuthGuard ] }] : []),
+  { path: 'chat', component: ChatComponent, canActivate: [ IsAuthenticatedAuthGuard, ChatFeatureGuard ] },
 
   // { path: 'general-pages', loadChildren: () => import('./general-pages/general-pages.module').then(m => m.GeneralPagesModule) },
   // { path: 'ui-elements', loadChildren: () => import('./ui-elements/ui-elements.module').then(m => m.UiElementsModule) },
