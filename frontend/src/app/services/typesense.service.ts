@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Client } from 'typesense';
 import { SearchParams } from 'typesense/lib/Typesense/Types';
 import { Observable, Subscriber } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { EnvironmentService } from './environment.service';
 
 const TYPESENSE_COLLECTION_RESOURCES = 'resources';
 const TYPESENSE_COLLECTION_CONVERSATION_STORE = 'conversation_store';
@@ -66,9 +66,25 @@ export interface ConversationStreamComplete {
 export class TypesenseService {
   private client: Client;
 
-  constructor() {
-    // Use the typesense_config from the environment
-    this.client = new Client(environment.typesense_config);
+  constructor(private environmentService: EnvironmentService) {
+    const typesenseEnv = this.environmentService.get('typesense');
+    if (typesenseEnv) {
+      const url = new URL(typesenseEnv.uri);
+      const config = {
+        nodes: [
+          {
+            host: url.hostname,
+            port: Number(url.port),
+            protocol: url.protocol.replace(':', ''),
+          },
+        ],
+        apiKey: typesenseEnv.api_key,
+        connectionTimeoutSeconds: 180, // Default value
+      };
+      this.client = new Client(config);
+    } else {
+      console.error("Typesense configuration not found in environment");
+    }
   }
 
   /**

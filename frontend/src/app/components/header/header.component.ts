@@ -7,6 +7,7 @@ import {BackgroundJob} from '../../models/fasten/background-job';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SupportRequest} from '../../models/fasten/support-request';
 import {environment} from '../../../environments/environment';
+import { EnvironmentService } from 'src/app/services/environment.service';
 import {versionInfo} from '../../../environments/versions';
 import {Subscription} from 'rxjs';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
@@ -29,7 +30,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   routerSubscription: Subscription = null
 
   is_environment_desktop: boolean = environment.environment_desktop
-  chatEnabled: boolean = environment.chat
+  chatEnabled: boolean = false
 
   isAdmin: boolean = false;
   isDarkMode: boolean;
@@ -40,7 +41,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private router: Router,
     private fastenApi: FastenApiService,
     private modalService: NgbModal,
-    private themeService: ThemeService) {
+    private themeService: ThemeService,
+    private environmentService: EnvironmentService) {
       this.themeService.isDarkMode$.subscribe(darkMode => {
         this.isDarkMode = darkMode;
       });
@@ -48,6 +50,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    this.chatEnabled = !!this.environmentService.get('typesense')?.chat;
     try {
       this.current_user_claims = this.authService.GetCurrentUser()
     } catch(e){
