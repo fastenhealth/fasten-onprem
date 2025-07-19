@@ -11,8 +11,8 @@ services:
       - "9090:8080"
   typesense:
     image: typesense/typesense:29.0
-    # ports:
-    #   - "8108:8108"
+    ports:
+      - "8108:8108"
     volumes:
       - typesense-data:/data
     environment:
