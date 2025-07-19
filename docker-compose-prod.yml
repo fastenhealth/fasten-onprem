@@ -2,8 +2,23 @@ version: "3.9"
 services:
   fasten-prod:
     image: ghcr.io/fastenhealth/fasten-onprem:main
+    depends_on:
+      - typesense
     volumes:
       - ./db:/opt/fasten/db
       - ./cache:/opt/fasten/cache
     ports:
       - "9090:8080"
+  typesense:
+    image: typesense/typesense:29.0
+    # ports:
+    #   - "8108:8108"
+    volumes:
+      - typesense-data:/data
+    environment:
+      - TYPESENSE_API_KEY=xyz123
+      - TYPESENSE_DATA_DIR=/data
+      - TYPESENSE_ENABLE_CORS=true
+    restart: unless-stopped
+volumes:
+  typesense-data:
