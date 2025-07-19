@@ -89,6 +89,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 			api.POST("/auth/signup", handler.AuthSignup)
 			api.POST("/auth/signin", handler.AuthSignin)
 
+			api.GET("/env", handler.GetEnv)
+
 			//whitelisted CORS PROXY
 			api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
 			api.POST("/cors/:endpointId/*proxyPath", handler.CORSProxy)
