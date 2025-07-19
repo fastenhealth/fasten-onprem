@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { APP_INITIALIZER, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { EnvironmentService } from './services/environment.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {HttpClientModule, HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
@@ -102,6 +103,12 @@ import { ChatComponent } from './pages/chat/chat.component';
       useClass: AuthInterceptorService,
       multi: true,
       deps: [AuthService, Router]
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (envService: EnvironmentService) => () => envService.load(),
+      deps: [EnvironmentService],
+      multi: true
     },
     IsAuthenticatedAuthGuard,
     ShowFirstRunWizardGuard,

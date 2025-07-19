@@ -4,7 +4,7 @@ import {FastenApiService} from '../../services/fasten-api.service';
 import * as fhirpath from 'fhirpath';
 import {PractitionerModel} from '../../../lib/models/resources/practitioner-model';
 import {Summary} from '../../../app/models/fasten/summary';
-import {environment} from '../../../environments/environment';
+import { EnvironmentService } from 'src/app/services/environment.service';
 
 @Component({
   selector: 'report-header',
@@ -15,14 +15,16 @@ export class ReportHeaderComponent implements OnInit {
   patient: ResourceFhir = null
   primaryCare: PractitionerModel = null
   lastUpdated: Date = null
-  searchEnabled: boolean = environment.search
+  searchEnabled: boolean = false
   @Input() reportHeaderTitle: string = ""
   @Input() reportHeaderSubTitle: string = "Organized by condition and encounters"
   constructor(
     private fastenApi: FastenApiService,
+    private environmentService: EnvironmentService,
   ) { }
 
   ngOnInit(): void {
+    this.searchEnabled = !!this.environmentService.get('typesense')?.search;
     this.fastenApi.getSummary().subscribe((summary: Summary) => {
       if (summary.sources && summary.sources.length > 0) {
         this.lastUpdated = summary.sources.reduce((latest, source) => {

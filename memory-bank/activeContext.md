@@ -1,8 +1,12 @@
-# Active Context: Fasten On-Prem (Memory Bank Updated July 16, 2025)
+# Active Context: Fasten On-Prem (Memory Bank Updated July 19, 2025)
 
-## Current Focus: LLM Chat Feature Maturation & Typesense Integration
+## Current Focus: Backend Refactoring
 
-The current focus is on documenting the mature implementation of the LLM-powered chat feature and ensuring its underlying data storage in Typesense is correctly configured. The architecture has evolved to include a dedicated state management service, providing a more robust and maintainable design, complemented by new Typesense collection for conversation data.
+The current focus is on refactoring the backend to improve modularity and maintainability.
+
+### /env Route Refactoring
+
+The logic for the `/api/env` route has been extracted from `backend/pkg/web/server.go` into a dedicated handler module at `backend/pkg/web/handler/env.go`. The `GetEnv` handler has been updated to expose the `typesense` section of the application configuration, nested under a `typesense` key in the JSON response. This change aligns with the existing pattern of separating route logic into dedicated handler files, making the codebase cleaner and more organized, while also limiting the configuration data exposed by the endpoint.
 
 ### Chat State Service (`frontend/src/app/pages/chat/chat-state.service.ts`)
 

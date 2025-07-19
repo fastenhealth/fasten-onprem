@@ -21,6 +21,7 @@ The Fasten On-Prem project appears to be in a **mature stage of development**, w
 *   **LLM Chat Feature Maturation:** The LLM-powered chat feature has been significantly enhanced with a dedicated state management service, full conversation lifecycle support (create, load, delete), and a refined RxJS-based streaming implementation.
 *   **Typesense `conversation_store` Collection Added:** The `conversation_store` Typesense collection has been successfully added to the backend initialization, ensuring proper data storage for the LLM chat feature.
 *   **Typesense Conversation Model Created and Configured:** The "conv-model-1" conversation model is now created upon server initialization, with its parameters externalized to `config.dev.yaml` for easier management.
+*   **Backend Refactoring (`/env` route):** The logic for the `/api/env` route has been refactored into a dedicated handler, `backend/pkg/web/handler/env.go`, and the endpoint has been updated to expose the `typesense` section of the application configuration, nested under a `typesense` key in the JSON response.
 *   Establishment of build, testing, and deployment pipelines (Docker, Nix, Makefile).
 *   Configuration for multiple deployment environments.
 
