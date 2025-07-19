@@ -24,19 +24,4 @@ export const environment = {
   // fasten_api_endpoint_base: 'https://api.sandbox.fastenhealth.com/v1',
   // if relative, must start with /
   fasten_api_endpoint_base: '/api',
-
-  search: true,
-  chat: true,
-
-  typesense_config: {
-    nodes: [
-      {
-        host: 'localhost',
-        port: 8108,
-        protocol: 'http',
-      },
-    ],
-    connectionTimeoutSeconds: 180,
-    apiKey: 'xyz123',
-  },
 };
