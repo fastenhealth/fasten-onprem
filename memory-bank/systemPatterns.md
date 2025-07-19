@@ -25,6 +25,7 @@ This document outlines key architectural and design patterns observed or inferre
     *   `GET /api/secure/resource/fhir/:sourceId/:resourceId`: Retrieves a single FHIR resource by its source and resource ID.
     *   `PATCH /api/secure/resource/fhir/:resourceType/:resourceId`: Updates an existing FHIR resource, typically for manually edited data.
     *   `POST /api/secure/resource/graph/:graphType`: Fetches a graph of related FHIR resources, essential for building timeline and relational views.
+*   **Configuration Endpoint:** The backend provides a dedicated, unauthenticated endpoint at `/api/env`. The purpose of this endpoint is to expose a limited, curated set of non-sensitive backend configuration values that are required by the frontend for its operation (e.g., feature flags, service URLs). This pattern avoids hardcoding configuration in the frontend and allows for dynamic updates without rebuilding the client application.
 
 ## Frontend Design Patterns
 

@@ -18,18 +18,24 @@ The Fasten On-Prem project appears to be in a **mature stage of development**, w
 *   Implementation of core user authentication and authorization flows.
 *   Development of key modules for medical data handling (e.g., medical history, lab reports, FHIR integration).
 *   Creation of a comprehensive set of UI components for data display and interaction.
-*   **LLM Chat Feature Maturation:** The LLM-powered chat feature has been significantly enhanced with a dedicated state management service, full conversation lifecycle support (create, load, delete), and a refined RxJS-based streaming implementation.
-*   **Typesense `conversation_store` Collection Added:** The `conversation_store` Typesense collection has been successfully added to the backend initialization, ensuring proper data storage for the LLM chat feature.
-*   **Typesense Conversation Model Created and Configured:** The "conv-model-1" conversation model is now created upon server initialization, with its parameters externalized to `config.dev.yaml` for easier management.
-*   **Backend Refactoring (`/env` route):** The logic for the `/api/env` route has been refactored into a dedicated handler, `backend/pkg/web/handler/env.go`, and the endpoint has been updated to expose the `typesense` section of the application configuration, nested under a `typesense` key in the JSON response.
 *   Establishment of build, testing, and deployment pipelines (Docker, Nix, Makefile).
 *   Configuration for multiple deployment environments.
+*   **LLM Chat Feature:** A stable, fully-featured LLM chat capability has been implemented, including:
+    *   A dedicated `ChatStateService` on the frontend for robust state management.
+    *   Full conversation lifecycle support (create, load, delete) via a backend API.
+    *   An RxJS-based streaming implementation for a real-time user experience.
+    *   A `conversation_store` collection in Typesense for persisting chat history.
+    *   Externalized configuration for the "conv-model-1" in `config.dev.yaml`.
+*   **Backend Refactoring & Configuration:**
+    *   The logic for the `/api/env` route has been refactored into a dedicated handler (`backend/pkg/web/handler/env.go`).
+    *   This endpoint now securely exposes necessary configuration (like `typesense` settings) to the frontend, establishing a clear pattern for frontend-backend configuration sharing.
+*   **Memory Bank Update (Lighthouse & Provider Sources):** The Memory Bank documentation has been updated to clarify the architectural roles of Fasten Lighthouse and the `fastenhealth/fasten-sources` repository in the authentication and provider discovery process.
 
 ## Ongoing Activities / Immediate Next Steps (General Project)
 
-*   **Memory Bank Updated (Fasten Lighthouse & Provider Sources):** The Memory Bank documentation has been updated to include detailed information about the purpose, architectural role, and technical mechanisms of Fasten Lighthouse in the authentication flow, and to clarify that the provider source catalog is defined in the separate `fastenhealth/fasten-sources` repository and served via Lighthouse.
 *   **Maintenance & Bug Fixing:** Ongoing efforts to maintain the existing codebase and address any identified issues.
 *   **Dependency Updates:** Regular review and updating of backend and frontend dependencies.
+*   **Iterative Enhancement:** Building upon the stable foundation to add new features and improve existing ones.
 
 ## Potential Future Phases / Long-Term Goals
 

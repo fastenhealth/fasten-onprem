@@ -38,7 +38,7 @@ Fasten On-Prem employs a client-server architecture with a Go-based backend and 
 
 ## API & Data Interchange
 
-*   **Frontend-Backend Communication:** The Angular frontend likely communicates with the Go backend via HTTP requests.
+*   **Frontend-Backend Communication:** The Angular frontend communicates with the Go backend via a RESTful API. A key endpoint is `/api/env`, which provides the frontend with necessary, non-sensitive configuration values from the backend environment.
 *   **Type Safety:** `tygo.yaml` suggests the use of Tygo to generate TypeScript types from Go structs, ensuring consistency between frontend and backend data models.
 *   **Data Standards:** FHIR (Fast Healthcare Interoperability Resources) is the primary data standard used for representing and exchanging healthcare information.
     *   **What is FHIR?** FHIR is a standard for exchanging healthcare information electronically. It defines a set of "Resources" that represent granular clinical and administrative concepts (like Patient, Observation, Condition, etc.) and specifies how these resources can be exchanged using modern web standards, primarily RESTful APIs.
