@@ -2,7 +2,7 @@ export const environment = {
   production: false,
   environment_cloud: false,
   environment_desktop: false,
-  environment_name: 'dev',
+  environment_name: "dev",
   popup_source_auth: false,
 
   lighthouse_api_endpoint_base: 'https://lighthouse.fastenhealth.com/sandbox',
