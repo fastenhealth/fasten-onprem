@@ -1,38 +1,55 @@
-@media (prefers-color-scheme: dark) {
-    body:not(.light-theme) {
+// Mixin containing all dark theme typography styles
+@mixin dark-typography-styles {
+    // Main text color
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: var(--card-foreground) !important;
+    }
 
-        // Main text color
-        p,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            color: var(--card-foreground) !important;
-        }
+    a {
+        color: var(--dark-link-color);
 
-        a {
-            color: var(--dark-link-color);
-
-            &:hover {
-                color: var(--dark-link-hover-color);
-            }
-        }
-
-
-        // Secondary text color
-        span {
-            color: var(--dark-text-color) !important;
-        }
-
-        .tx-primary {
-            color: #3d96ff !important;
-        }
-
-        // Text with popover
-        .cursor-pointer {
-            color: var(--dark-text-color);
+        &:hover {
+            color: var(--dark-link-hover-color);
         }
     }
+
+    // Secondary text color
+    span {
+        color: var(--dark-text-color) !important;
+    }
+
+    .tx-primary {
+        color: #3d96ff !important;
+    }
+
+    // Text with popover
+    .cursor-pointer {
+        color: var(--dark-text-color);
+    }
+
+    .text-muted {
+        color: var(--dark-text-color) !important; 
+    }
+
+    .badge-pill {
+        color: #ffffff;
+    }
+}
+
+// Apply dark typography styles when system prefers dark AND user hasn't chosen light
+@media (prefers-color-scheme: dark) {
+    body:not(.light-theme) {
+        @include dark-typography-styles;
+    }
+}
+
+// Apply dark typography styles when user explicitly chooses dark theme
+body.dark-theme {
+    @include dark-typography-styles;
 }

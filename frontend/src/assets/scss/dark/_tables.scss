@@ -1,20 +1,30 @@
-@media (prefers-color-scheme: dark) {
-    body:not(.light-theme) {
+// Mixin containing all dark theme table styles
+@mixin dark-tables-styles {
+    table {
+        background-color: var(--card);
+        color: var(--dark-text-color);
 
-        table {
-            background-color: var(--card);
-            color: var(--dark-text-color);
-
-            >tbody {
-                background-color: var(--card) !important;
-            }
-        }
-
-        td,
-        th {
-            background-color: var(--card);
-            color: var(--dark-text-color);
-            border-color: var(--border);
+        >tbody {
+            background-color: var(--card) !important;
         }
     }
+
+    td,
+    th {
+        background-color: var(--card);
+        color: var(--dark-text-color);
+        border-color: var(--border);
+    }
+}
+
+// Apply dark table styles when system prefers dark AND user hasn't chosen light
+@media (prefers-color-scheme: dark) {
+    body:not(.light-theme) {
+        @include dark-tables-styles;
+    }
+}
+
+// Apply dark table styles when user explicitly chooses dark theme
+body.dark-theme {
+    @include dark-tables-styles;
 }

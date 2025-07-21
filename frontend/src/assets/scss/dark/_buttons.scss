@@ -1,69 +1,75 @@
-@media (prefers-color-scheme: dark) {
-    body:not(.light-theme) {
+// Mixin containing all dark theme button styles
+@mixin dark-buttons-styles {
+    // Dashboard purple buttons "Add source" & "Add condition"
+    .btn-purple {
+        background-color: var(--dark-button-color);
+        color: var(--dark-text-white-color);
+        border-color: var(--dark-button-color);
 
-
-        // Dashboard purple buttons "Add source" & "Add condition"
-        .btn-purple {
-            background-color: var(--dark-button-color);
+        &:hover {
+            background-color: var(--dark-button-pressed-color);
             color: var(--dark-text-white-color);
-            border-color: var(--dark-button-color);
-
-            &:hover {
-                background-color: var(--dark-button-pressed-color);
-                color: var(--dark-text-white-color);
-                border-color: var(--dark-button-pressed-color);
-            }
-        }
-
-        // Login buttonv
-        .btn-az-primary {
-            background-color: var(--dark-button-color);
-            color: var(--dark-text-white-color);
-            border-color: var(--dark-button-color);
-        }
-
-        // Light mode indigo outline buttons
-        .btn-outline-indigo {
-            border-color: var(--dark-button-outline-color);
-            color: var(--dark-button-outline-color);
-
-            &:hover {
-                background-color: var(--dark-button-color);
-                color: var(--dark-text-white-color);
-                border-color: var(--dark-button-color);
-            }
-
-            &:focus {
-                background-color: var(--dark-button-color);
-                color: var(--dark-text-white-color);
-                border-color: var(--dark-button-color);
-            }
-        }
-
-
-
-        // Light mode indigo buttons
-        .btn-indigo {
-            background-color: var(--dark-button-color);
-            color: var(--dark-text-white-color);
-            border-color: var(--dark-button-color);
-
-            &:hover {
-                background-color: var(--dark-text-white-color);
-                color: var(--dark-button-color);
-                border-color: var(--dark-text-white-color);
-            }
-
-            &:focus {
-                background-color: var(--dark-text-white-color);
-                color: var(--dark-button-color);
-                border-color: var(--dark-text-white-color);
-            }
-        }
-
-
-        .btn-link-collapsed {
-            color: var(--dark-text-color);
+            border-color: var(--dark-button-pressed-color);
         }
     }
+
+    // Login button
+    .btn-az-primary {
+        background-color: var(--dark-button-color);
+        color: var(--dark-text-white-color);
+        border-color: var(--dark-button-color);
+    }
+
+    // Light mode indigo outline buttons
+    .btn-outline-indigo {
+        border-color: var(--dark-button-outline-color);
+        color: var(--dark-button-outline-color);
+
+        &:hover {
+            background-color: var(--dark-button-color);
+            color: var(--dark-text-white-color);
+            border-color: var(--dark-button-color);
+        }
+
+        &:focus {
+            background-color: var(--dark-button-color);
+            color: var(--dark-text-white-color);
+            border-color: var(--dark-button-color);
+        }
+    }
+
+    // Light mode indigo buttons
+    .btn-indigo {
+        background-color: var(--dark-button-color);
+        color: var(--dark-text-white-color);
+        border-color: var(--dark-button-color);
+
+        &:hover {
+            background-color: var(--dark-text-white-color);
+            color: var(--dark-button-color);
+            border-color: var(--dark-text-white-color);
+        }
+
+        &:focus {
+            background-color: var(--dark-text-white-color);
+            color: var(--dark-button-color);
+            border-color: var(--dark-text-white-color);
+        }
+    }
+
+    .btn-link-collapsed {
+        color: var(--dark-text-color);
+    }
+}
+
+// Apply dark button styles when system prefers dark AND user hasn't chosen light
+@media (prefers-color-scheme: dark) {
+    body:not(.light-theme) {
+        @include dark-buttons-styles;
+    }
+}
+
+// Apply dark button styles when user explicitly chooses dark theme
+body.dark-theme {
+    @include dark-buttons-styles;
 }
