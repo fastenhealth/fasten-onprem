@@ -12,6 +12,8 @@ services:
 #        - FASTEN_ENV=sandbox
     ports:
       - "9090:8080"
+    environment:
+      - FASTEN_EXTERNAL_HOST=${FASTEN_EXTERNAL_HOST}
     volumes:
       - ./db:/opt/fasten/db
 #      - ./config.example.yaml:/opt/fasten/config/config.yaml

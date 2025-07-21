@@ -81,6 +81,31 @@ There are 2 flavors of Fasten:
 - `ghcr.io/fastenhealth/fasten-onprem:sandbox` - This version only allows you to connect to a handful of Healthcare providers, using Sandbox accounts that are meant for testing, and contain synthetic (fake) data to give you an idea what Fasten will look like, without requiring personal medical information.
 - `ghcr.io/fastenhealth/fasten-onprem:main` - This version allows you to connect to 25,000+ different Healthcare providers, using your existing accounts. It will allow you to connect and retrieve your personal electronic medical record and store it within Fasten. **Be careful, this is YOUR health data**
 
+---
+
+## 🚦 Local Launch with start scripts
+
+To simplify local development and testing, Fasten provides platform-specific scripts to automatically detect your local network IP address and start the application with the correct configuration:
+
+- **macOS, Linux, WSL, or Git Bash/Cygwin/MSYS on Windows:**
+  ```bash
+  ./start.sh
+  ```
+- **Native Windows Command Prompt or PowerShell:**
+  ```bat
+  start.bat
+  ```
+
+These scripts will:
+- Detect your machine's local network IP address (for use as `FASTEN_EXTERNAL_HOST`)
+- Start the application using `docker-compose up`
+
+> **Note:**
+> - Use `start.sh` if you are on macOS, Linux, WSL, or using a Bash-like shell on Windows (e.g., Git Bash).
+> - Use `start.bat` if you are on native Windows Command Prompt or PowerShell.
+
+---
+
 ## Instructions
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/fastenhealth/fasten-onprem?style=flat-square)](https://github.com/fastenhealth/fasten-onprem/releases/latest)

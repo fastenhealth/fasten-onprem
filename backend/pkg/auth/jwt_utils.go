@@ -10,17 +10,14 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-// JwtGenerateFastenTokenFromUser Note: these functions are duplicated, in Fasten Cloud
-// Any changes here must be replicated in that repo
-func JwtGenerateFastenTokenFromUser(user models.User, issuerSigningKey string) (string, error) {
+// generateToken is a helper to generate JWT tokens with flexible claims
+func generateToken(user models.User, issuerSigningKey string, expiresAt time.Time, tokenID, userAgent, tokenType string) (string, error) {
 	if len(strings.TrimSpace(issuerSigningKey)) == 0 {
 		return "", fmt.Errorf("issuer signing key cannot be empty")
 	}
-	//log.Printf("ISSUER KEY: " + issuerSigningKey)
-	userClaims := UserRegisteredClaims{
+	claims := UserRegisteredClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			// In JWT, the expiry time is expressed as unix milliseconds
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(expiresAt),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			Issuer:    "docker-fastenhealth",
 			Subject:   user.Username,
@@ -30,17 +27,17 @@ func JwtGenerateFastenTokenFromUser(user models.User, issuerSigningKey string) (
 			Email:    user.Email,
 			Role:     user.Role,
 		},
+		TokenID:   tokenID,
+		UserAgent: userAgent,
+		TokenType: tokenType,
 	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(issuerSigningKey))
+}
 
-	//FASTEN_JWT_ISSUER_KEY
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, userClaims)
-	//token.Header["kid"] = "docker"
-	tokenString, err := token.SignedString([]byte(issuerSigningKey))
-
-	if err != nil {
-		return "", err
-	}
-	return tokenString, nil
+// JwtGenerateFastenTokenFromUser generates a standard user token
+func JwtGenerateFastenTokenFromUser(user models.User, issuerSigningKey string) (string, error) {
+	return generateToken(user, issuerSigningKey, time.Now().Add(1*time.Hour), "", "", "")
 }
 
 func JwtValidateFastenToken(encryptionKey string, signedToken string) (*UserRegisteredClaims, error) {
@@ -67,4 +64,25 @@ func JwtValidateFastenToken(encryptionKey string, signedToken string) (*UserRegi
 		return nil, err
 	}
 	return claims, nil
+}
+
+// JwtGenerateSyncToken generates a sync token with custom expiration and metadata
+func JwtGenerateSyncToken(user models.User, issuerSigningKey string, expiresAt time.Time, tokenID string, userAgent string) (string, error) {
+	return generateToken(user, issuerSigningKey, expiresAt, tokenID, userAgent, "sync")
+}
+
+// GetTokenIDFromToken extracts the token ID from a token
+func GetTokenIDFromToken(tokenString string) (string, error) {
+	// Parse without validation first to get the claims
+	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, &UserRegisteredClaims{})
+	if err != nil {
+		return "", fmt.Errorf("failed to parse token: %w", err)
+	}
+	
+	claims, ok := token.Claims.(*UserRegisteredClaims)
+	if !ok {
+		return "", errors.New("token is not a valid token")
+	}
+	
+	return claims.TokenID, nil
 }

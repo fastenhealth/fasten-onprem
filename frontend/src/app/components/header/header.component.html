@@ -29,6 +29,9 @@
         <li class="nav-item" *ngIf="isAdmin" ngbDropdown [ngClass]="{ 'active': users?.isActive }">
           <a routerLink="/users" routerLinkActive="active" #users="routerLinkActive" class="nav-link"><fa-icon [icon]="['fas', 'users']"></fa-icon>&nbsp; Users</a>
         </li>
+        <li class="nav-item" ngbDropdown [ngClass]="{ 'active': sync?.isActive }">
+          <a routerLink="/sync" routerLinkActive="active" #sync="routerLinkActive" class="nav-link"><fa-icon [icon]="['fas', 'sync']"></fa-icon>&nbsp; Sync</a>
+        </li>
       </ul>
     </div><!-- az-header-menu -->
     <div class="az-header-right">

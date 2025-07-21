@@ -1,0 +1,20 @@
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.table th {
+  font-weight: 600;
+}
+
+.badge {
+  font-size: 0.8em;
+  padding: 0.4em 0.7em;
+}
+
+.btn-group .btn {
+  margin-right: 0.5rem;
+}
+
+.btn-group .btn:last-child {
+  margin-right: 0;
+}

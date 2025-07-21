@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"time"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
@@ -76,5 +77,19 @@ type DatabaseRepository interface {
 		targetResourceId string,
 	) error
 
-	UnlinkResourceWithSharedNeighbors(ctx context.Context, resourceType string, resourceId string, relatedResourceType string, relatedResourceId string) (int64, error) 
+	UnlinkResourceWithSharedNeighbors(ctx context.Context, resourceType string, resourceId string, relatedResourceType string, relatedResourceId string) (int64, error)
+	GetLastUpdatedTimestamp(ctx context.Context) (*time.Time, error)
+
+	// Sync Token Management
+	CreateSyncToken(ctx context.Context, syncToken *models.SyncToken) error
+	GetUserSyncTokens(ctx context.Context, userID uuid.UUID) ([]models.SyncToken, error)
+	GetUserSyncHistory(ctx context.Context, userID uuid.UUID, limit int) ([]models.SyncTokenHistory, error)
+	RevokeSyncToken(ctx context.Context, tokenID string, revokedBy string) error
+	RevokeAllSyncTokens(ctx context.Context, userID uuid.UUID, revokedBy string) error
+	DeleteSyncToken(ctx context.Context, tokenID string) error
+	DeleteAllSyncTokens(ctx context.Context, userID uuid.UUID) (int64, error)
+	GetSyncToken(ctx context.Context, tokenID string) (*models.SyncToken, error)
+	UpdateTokenUsage(ctx context.Context, userID uuid.UUID, tokenID string) error
+	CreateDeviceSyncHistory(ctx context.Context, history *models.DeviceSyncHistory) error
+	GetUserDeviceSyncHistory(ctx context.Context, userID uuid.UUID, limit int) ([]models.DeviceSyncHistory, error)
 }

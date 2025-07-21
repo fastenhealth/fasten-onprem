@@ -1,0 +1,183 @@
+<div class="container py-4">
+  <div class="row">
+    <!-- Left Column -->
+    <div class="col-lg-5 mb-4 mb-lg-0">
+      <!-- Generate QR Code Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0"><i class="fas fa-qrcode me-2"></i>Generate QR Code</h5>
+        </div>
+        <div class="card-body text-center">
+          <button class="btn btn-primary mb-3 w-100" (click)="generateToken()" [disabled]="isLoading">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+            Generate New Token
+          </button>
+          <div *ngIf="qrCodeUrl" class="mb-3">
+            <img [src]="qrCodeUrl" alt="QR Code" class="img-fluid border rounded shadow-sm" style="max-width: 350px;">
+          </div>
+          <div *ngIf="hasError" class="alert alert-danger py-2">
+            {{ errorMessage }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Raw QR Code Data Card -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h6 class="mb-0"><i class="fas fa-code me-2"></i>Raw QR Code Data</h6>
+        </div>
+        <div class="card-body">
+          <div class="input-group">
+            <textarea class="form-control font-monospace" rows="4" readonly [value]="qrCodeRaw"></textarea>
+            <button class="btn btn-outline-secondary" type="button" (click)="copyRawQR()">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+          <small class="text-muted">You can copy and paste this data manually if needed.</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-lg-7">
+      <!-- Sync Tokens Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center bg-success text-white">
+          <h5 class="mb-0"><i class="fas fa-key me-2"></i>Sync Tokens</h5>
+          <div>
+            <button class="btn btn-danger btn-sm me-2" (click)="revokeAllTokens()" [disabled]="tokens.length === 0">
+              <i class="fas fa-ban"></i> Revoke All
+            </button>
+            <button class="btn btn-secondary btn-sm" (click)="deleteAllTokens()" [disabled]="tokens.length === 0">
+              <i class="fas fa-trash"></i> Delete All
+            </button>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div *ngIf="tokens.length === 0" class="text-muted text-center py-4">
+            No active tokens
+          </div>
+          <div class="table-responsive" *ngIf="tokens.length > 0">
+            <table class="table table-hover align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Last Used</th>
+                  <th>Used</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let token of tokens">
+                  <td>{{ token.name || 'Sync Token' }}</td>
+                  <td>
+                    <span class="badge"
+                          [ngClass]="{
+                            'bg-success': getTokenStatus(token) === 'Active',
+                            'bg-danger': getTokenStatus(token) === 'Revoked',
+                            'bg-warning text-dark': getTokenStatus(token) === 'Expired',
+                            'bg-secondary': getTokenStatus(token) === 'Suspended'
+                          }">
+                      {{ getTokenStatus(token) }}
+                    </span>
+                  </td>
+                  <td>{{ formatDate(token.issuedAt) }}</td>
+                  <td>{{ token.lastUsedAt ? formatDate(token.lastUsedAt) : 'Never' }}</td>
+                  <td>{{ token.useCount }}</td>
+                  <td class="text-end">
+                    <div class="btn-group">
+                      <button *ngIf="getTokenStatus(token) !== 'Revoked'" class="btn btn-outline-danger btn-sm" (click)="revokeToken(token.tokenId)">
+                        <i class="fas fa-ban"></i>
+                      </button>
+                      <button class="btn btn-outline-secondary btn-sm" (click)="deleteToken(token.tokenId)">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sync History Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+          <h5 class="mb-0"><i class="fas fa-history me-2"></i>Sync History</h5>
+        </div>
+        <div class="card-body p-0">
+          <div *ngIf="history.length === 0" class="text-muted text-center py-4">
+            No sync history available
+          </div>
+          <div class="table-responsive" *ngIf="history.length > 0">
+            <table class="table table-sm align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Event</th>
+                  <th>Token</th>
+                  <th>Time</th>
+                  <th>IP</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let event of history">
+                  <td>{{ event.eventType }}</td>
+                  <td>{{ event.tokenId?.substring(0, 8) }}...</td>
+                  <td>{{ formatDate(event.eventTime) }}</td>
+                  <td>{{ event.ipAddress || '-' }}</td>
+                  <td>
+                    <span class="badge" [class.bg-success]="event.success" [class.bg-danger]="!event.success">
+                      {{ event.success ? 'Success' : 'Failed' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Device Sync History Card -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h5 class="mb-0"><i class="fas fa-tablet-alt me-2"></i>Device Sync History</h5>
+        </div>
+        <div class="card-body p-0">
+          <div *ngIf="deviceSyncHistory.length === 0" class="text-muted text-center py-4">
+            No device sync history available
+          </div>
+          <div class="table-responsive" *ngIf="deviceSyncHistory.length > 0">
+            <table class="table table-sm align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Device</th>
+                  <th>Token</th>
+                  <th>Time</th>
+                  <th>IP</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let event of deviceSyncHistory">
+                  <td>{{ event.deviceId }}</td>
+                  <td>{{ event.tokenId?.substring(0, 8) }}...</td>
+                  <td>{{ formatDate(event.eventTime) }}</td>
+                  <td>{{ event.ipAddress || '-' }}</td>
+                  <td>
+                    <span class="badge" [class.bg-success]="event.success" [class.bg-danger]="!event.success">
+                      {{ event.success ? 'Success' : 'Failed' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

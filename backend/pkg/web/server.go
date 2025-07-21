@@ -102,6 +102,9 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.DELETE("/account/me", handler.DeleteAccount)
 
 				secure.GET("/summary", handler.GetSummary)
+				secure.GET("/ping", func(c *gin.Context) {
+					c.JSON(http.StatusOK, gin.H{"success": true, "message": "Connection valid"})
+				})
 
 				secure.POST("/source", handler.CreateReconnectSource)
 				secure.POST("/source/manual", handler.CreateManualSource)
@@ -130,6 +133,21 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 				secure.GET("/users", handler.GetUsers)
 				secure.POST("/users", handler.CreateUser)
+
+				secure.GET("/sync/initiate", handler.InitiateSync)
+				secure.GET("/sync/status", handler.GetSyncStatus)
+				secure.GET("/sync/discovery", handler.GetServerDiscovery)
+				secure.GET("/sync/data", handler.SyncData)
+				secure.GET("/sync/updates", handler.SyncDataUpdates)
+
+				// Sync token management
+				secure.GET("/sync/tokens", handler.GetSyncTokens)
+				secure.GET("/sync/history", handler.GetSyncHistory)
+				secure.GET("/sync/device-history", handler.GetDeviceSyncHistory)
+				secure.POST("/sync/revoke", handler.RevokeSync)
+				secure.POST("/sync/revoke-all", handler.RevokeAllSyncTokens)
+				secure.POST("/sync/delete", handler.DeleteSyncToken)
+				secure.POST("/sync/delete-all", handler.DeleteAllSyncTokens)
 
 				//server-side-events handler (only supported on mac/linux)
 				// TODO: causes deadlock on Windows
