@@ -21,9 +21,8 @@ const meta: Meta<EncounterComponent> = {
     // }),
   ],
   tags: ['autodocs'],
-  render: (args: EncounterComponent) => ({
+  render: (args) => ({
     props: {
-      backgroundColor: null,
       ...args,
     },
   }),
@@ -67,4 +66,3 @@ export const R4Example3: Story = {
     displayModel: encounterDisplayModel3
   }
 };
-
