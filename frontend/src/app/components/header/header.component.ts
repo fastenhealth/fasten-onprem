@@ -50,7 +50,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    this.chatEnabled = !!this.environmentService.get('typesense')?.chat;
+    this.chatEnabled = !!this.environmentService.get('search')?.chat;
     try {
       this.current_user_claims = this.authService.GetCurrentUser()
     } catch(e){

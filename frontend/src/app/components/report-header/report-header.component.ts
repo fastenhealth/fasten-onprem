@@ -24,7 +24,7 @@ export class ReportHeaderComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.searchEnabled = !!this.environmentService.get('typesense')?.search;
+    this.searchEnabled = !!this.environmentService.get('search');
     this.fastenApi.getSummary().subscribe((summary: Summary) => {
       if (summary.sources && summary.sources.length > 0) {
         this.lastUpdated = summary.sources.reduce((latest, source) => {

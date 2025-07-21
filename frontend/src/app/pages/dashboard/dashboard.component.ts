@@ -54,7 +54,7 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.searchEnabled = !!this.environmentService.get('typesense')?.search;
+    this.searchEnabled = !!this.environmentService.get('search');
     this.loading = true
 
     this.fastenApi.getSummary().subscribe((summary: Summary) => {

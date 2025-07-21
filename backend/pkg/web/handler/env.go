@@ -18,5 +18,5 @@ import (
 // @Router /env [get]
 func GetEnv(c *gin.Context) {
 	cfg := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
-	c.JSON(http.StatusOK, gin.H{"typesense": cfg.Get("typesense")})
+	c.JSON(http.StatusOK, gin.H{"search": cfg.Get("search")})
 }
