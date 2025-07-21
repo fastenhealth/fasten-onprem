@@ -4,6 +4,7 @@ import { ReportHeaderComponent } from './report-header.component';
 import {FastenApiService} from '../../services/fasten-api.service';
 import {of} from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ReportHeaderComponent', () => {
   let component: ReportHeaderComponent;
@@ -14,7 +15,7 @@ describe('ReportHeaderComponent', () => {
     mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['getResources', 'getSummary'])
 
     await TestBed.configureTestingModule({
-      imports: [ RouterTestingModule ],
+      imports: [ RouterTestingModule, HttpClientTestingModule ],
       declarations: [ ReportHeaderComponent ],
       providers: [{
         provide: FastenApiService,

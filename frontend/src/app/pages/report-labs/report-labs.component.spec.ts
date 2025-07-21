@@ -6,6 +6,7 @@ import {of} from 'rxjs';
 import {RouterTestingModule} from '@angular/router/testing';
 import { ReportHeaderComponent } from 'src/app/components/report-header/report-header.component';
 import { LoadingSpinnerComponent } from 'src/app/components/loading-spinner/loading-spinner.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ReportLabsComponent', () => {
   let component: ReportLabsComponent;
@@ -17,7 +18,7 @@ describe('ReportLabsComponent', () => {
     mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['getResources', 'queryResources', 'getSummary'])
     await TestBed.configureTestingModule({
       declarations: [ ReportLabsComponent, ReportHeaderComponent ],
-      imports: [RouterTestingModule, LoadingSpinnerComponent, RouterTestingModule],
+      imports: [RouterTestingModule, LoadingSpinnerComponent, HttpClientTestingModule],
       providers: [{
         provide: FastenApiService,
         useValue: mockedFastenApiService
