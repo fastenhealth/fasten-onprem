@@ -91,46 +91,42 @@ func (c *configuration) ValidateConfig() error {
 		}
 	}
 
-	if c.IsSet("typesense") {
-		key := c.GetString("typesense.uri")
+	if c.IsSet("search") {
+		key := c.GetString("search.uri")
 		if key == "" {
-			return errors.ConfigValidationError("typesense.uri cannot be empty")
+			return errors.ConfigValidationError("search.uri cannot be empty")
 		}
-		key = c.GetString("typesense.api_key")
+		key = c.GetString("search.api_key")
 		if key == "" {
-			return errors.ConfigValidationError("typesense.api_key cannot be empty")
+			return errors.ConfigValidationError("search.api_key cannot be empty")
 		}
-		
-	}
-
-	if c.IsSet("typesense.search") {
-		key := c.GetString("typesense.search.collection_name")
+		key = c.GetString("search.collection_name")
 		if key == "" {
-			return errors.ConfigValidationError("typesense.search.collection_name cannot be empty")
+			return errors.ConfigValidationError("search.collection_name cannot be empty")
 		}
 	}
 
-	if c.IsSet("typesense.chat") {
-		key := c.GetString("typesense.chat.conversation_collection_name")
+	if c.IsSet("search.chat") {
+		key := c.GetString("search.chat.conversation_collection_name")
 		if key == "" {
-			return errors.ConfigValidationError("typesense.chat.conversation_collection_name cannot be empty")
+			return errors.ConfigValidationError("search.chat.conversation_collection_name cannot be empty")
 		}
 
-		key = c.GetString("typesense.chat.conversation_model.id")
+		key = c.GetString("search.chat.model.id")
 		if key == "" {
-			return errors.ConfigValidationError("typesense.chat.conversation_model.id cannot be empty")
+			return errors.ConfigValidationError("search.chat.model.id cannot be empty")
 		}
-		key = c.GetString("typesense.chat.conversation_model.name")
+		key = c.GetString("search.chat.model.name")
 		if key == "" {
-			return errors.ConfigValidationError("typesense.chat.conversation_model.name cannot be empty")
+			return errors.ConfigValidationError("search.chat.model.name cannot be empty")
 		}
-		key = c.GetString("typesense.chat.conversation_model.vllm_url")
+		key = c.GetString("search.chat.model.vllm_url")
 		if key == "" {
-			return errors.ConfigValidationError("typesense.chat.conversation_model.vllm_url cannot be empty")
+			return errors.ConfigValidationError("search.chat.model.vllm_url cannot be empty")
 		}
-		key = c.GetString("typesense.chat.conversation_model.max_bytes")
+		key = c.GetString("search.chat.model.max_bytes")
 		if key == "" {
-			return errors.ConfigValidationError("typesense.chat.conversation_model.max_bytes cannot be empty")
+			return errors.ConfigValidationError("search.chat.model.max_bytes cannot be empty")
 		}
 	}
 

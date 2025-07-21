@@ -67,23 +67,23 @@ export class TypesenseService {
   private client: Client;
 
   constructor(private environmentService: EnvironmentService) {
-    const typesenseEnv = this.environmentService.get('typesense');
-    if (typesenseEnv) {
-      const url = new URL(typesenseEnv.uri);
+    const searchEnv = this.environmentService.get('search');
+    if (searchEnv) {
+      const url = new URL(searchEnv.uri);
       const config = {
         nodes: [
           {
-            host: url.hostname,
+            host: globalThis.location.hostname,
             port: Number(url.port),
             protocol: url.protocol.replace(':', ''),
           },
         ],
-        apiKey: typesenseEnv.api_key,
+        apiKey: searchEnv.api_key,
         connectionTimeoutSeconds: 180, // Default value
       };
       this.client = new Client(config);
     } else {
-      console.error("Typesense configuration not found in environment");
+      console.error("Search configuration not found in environment");
     }
   }
 

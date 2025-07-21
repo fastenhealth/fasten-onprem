@@ -17,7 +17,7 @@ export class ChatFeatureGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    const chatEnabled = !!this.environmentService.get('typesense')?.chat;
+    const chatEnabled = !!this.environmentService.get('search')?.chat;
 
     if (chatEnabled) {
       return true;
