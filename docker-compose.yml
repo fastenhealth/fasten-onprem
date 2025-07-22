@@ -10,13 +10,14 @@ services:
       args:
         - FASTEN_ENV=prod
 #        - FASTEN_ENV=sandbox
+    depends_on:
+      - typesense
     ports:
       - "9090:8080"
     volumes:
       - ./db:/opt/fasten/db
-#      - ./config.example.yaml:/opt/fasten/config/config.yaml
-    environment:
-    - TYPESENSE_API_KEY=xyz123
+      - ./cache:/opt/fasten/cache
+      - ./config.yaml:/opt/fasten/config/config.yaml
   typesense:
     image: typesense/typesense:29.0
     ports:
