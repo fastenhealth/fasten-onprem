@@ -1,9 +1,10 @@
 package models
 
 import (
+	"testing"
+
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestFromSystemSettingsEntry(t *testing.T) {
@@ -46,12 +47,26 @@ func TestToSystemSettingsEntry(t *testing.T) {
 
 	//assert
 	require.NoError(t, err)
-	require.Equal(t, []SystemSettingEntry{{
+
+	require.Contains(t, updatedSystemSettingsEntries, SystemSettingEntry{
 		ModelBase: ModelBase{
 			ID: uuid.MustParse("73057947-af24-4739-a4af-ca3496f85b76"),
 		},
 		SettingKeyName:     "installation_id",
 		SettingDataType:    "string",
 		SettingValueString: "9876",
-	}}, updatedSystemSettingsEntries)
+	})
+
+	// Check that the other fields were added
+	require.Contains(t, updatedSystemSettingsEntries, SystemSettingEntry{
+		SettingKeyName:     "installation_secret",
+		SettingDataType:    "string",
+		SettingValueString: "", // or whatever the zero value is
+	})
+
+	require.Contains(t, updatedSystemSettingsEntries, SystemSettingEntry{
+		SettingKeyName:   "typesense_data_indexed",
+		SettingDataType:  "bool",
+		SettingValueBool: false, // default zero value
+	})
 }
