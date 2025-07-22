@@ -493,7 +493,7 @@ func (gr *GormRepository) UpsertResource(ctx context.Context, wrappedResourceMod
 		gr.Logger.Warnf("ignoring: an error occurred while publishing event to eventBus (%s/%s): %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID, err)
 	}
 
-	// This is to avoid GORM from trying to create wrong related resources for the RelatedResource field. 
+	// This is to avoid GORM from trying to create wrong related resources for the RelatedResource field.
 	// Omit() does not seem to work when we use Assign with a resource that has the things we want to omit
 	assignModel := *wrappedResourceModel
 	assignModel.RelatedResource = nil
@@ -562,6 +562,50 @@ func (gr *GormRepository) ListResources(ctx context.Context, queryOptions models
 		//there is no FHIR Resource name specified, so we're querying across all FHIR resources
 		return gr.getResourcesFromAllTables(queryBuilder, queryParam)
 	}
+}
+
+// Used to query all resources across all tables and use them for Typesense indexing
+func (gr *GormRepository) ListAllResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceBase, error) {
+	queryParam := models.OriginBase{}
+
+	if len(queryOptions.SourceResourceType) > 0 {
+		queryParam.SourceResourceType = queryOptions.SourceResourceType
+	}
+	if len(queryOptions.SourceID) > 0 {
+		sourceUUID, err := uuid.Parse(queryOptions.SourceID)
+		if err != nil {
+			return nil, err
+		}
+		queryParam.SourceID = sourceUUID
+	}
+	if len(queryOptions.SourceResourceID) > 0 {
+		queryParam.SourceResourceID = queryOptions.SourceResourceID
+	}
+
+	queryBuilder := gr.GormClient.WithContext(ctx)
+	if len(queryOptions.SourceResourceType) > 0 {
+		tableName, err := databaseModel.GetTableNameByResourceType(queryOptions.SourceResourceType)
+		if err != nil {
+			return nil, err
+		}
+		queryBuilder = queryBuilder.
+			Where(queryParam).
+			Table(tableName)
+
+		if queryOptions.Limit > 0 {
+			queryBuilder = queryBuilder.Limit(queryOptions.Limit).Offset(queryOptions.Offset)
+		}
+
+		var wrappedResourceModels []models.ResourceBase
+		err = queryBuilder.Find(&wrappedResourceModels).Error
+		return wrappedResourceModels, err
+	}
+
+	// Query all resources across all tables
+	if queryOptions.Limit > 0 {
+		queryBuilder = queryBuilder.Limit(queryOptions.Limit).Offset(queryOptions.Offset)
+	}
+	return gr.getResourcesFromAllTables(queryBuilder, queryParam)
 }
 
 // TODO: should this be deprecated? (replaced by ListResources)

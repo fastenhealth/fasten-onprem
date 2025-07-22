@@ -7,6 +7,7 @@ services:
     volumes:
       - ./db:/opt/fasten/db
       - ./cache:/opt/fasten/cache
+      - ./config.yaml:/opt/fasten/config/config.yaml
     ports:
       - "9090:8080"
   typesense:
