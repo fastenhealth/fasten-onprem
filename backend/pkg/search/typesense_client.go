@@ -3,6 +3,7 @@ package search
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/google/uuid"
@@ -41,7 +42,7 @@ func (s *SearchClient) IndexResource(resource *models.ResourceBase) error {
 	return nil
 }
 
-func (s *SearchClient) SearchResources(query string, resourceTypeFilter *string, page int, perPage int) ([]map[string]interface{}, int, error) {
+func (s *SearchClient) SearchResources(query string, resourceTypeFilter *string, userID *string, page int, perPage int) ([]map[string]interface{}, int, error) {
 	searchParams := &api.SearchCollectionParams{
 		Q:       ptr(query),
 		QueryBy: ptr("sort_title,source_resource_type,source_resource_id,source_uri"),
@@ -50,9 +51,17 @@ func (s *SearchClient) SearchResources(query string, resourceTypeFilter *string,
 		PerPage: intPtr(perPage),
 	}
 
+	filters := []string{}
+
 	if resourceTypeFilter != nil {
-		filter := fmt.Sprintf("source_resource_type:=%s", *resourceTypeFilter)
-		searchParams.FilterBy = &filter
+		filters = append(filters, fmt.Sprintf("source_resource_type:=%s", *resourceTypeFilter))
+	}
+	if userID != nil {
+		filters = append(filters, fmt.Sprintf("user_id:=%s", *userID))
+	}
+	if len(filters) > 0 {
+		filterStr := strings.Join(filters, " && ")
+		searchParams.FilterBy = &filterStr
 	}
 
 	resp, err := s.Client.Collection("resources").Documents().Search(context.Background(), searchParams)

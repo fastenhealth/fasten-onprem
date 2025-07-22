@@ -4,9 +4,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	typesenseClient "github.com/fastenhealth/fasten-onprem/backend/pkg/search"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -28,6 +30,14 @@ func SearchResourcesHandler(c *gin.Context) {
 	})
 
 	logger.Info("Search request started")
+
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	currentUser, err := databaseRepo.GetCurrentUser(c)
+
+	if err != nil {
+		logger.WithError(err).Error("Failed to get current user, data will not be filtered by user")
+	}
 
 	query := c.DefaultQuery("q", "*") // Default to wildcard search if no query is provided
 	resourceTypeFilter := c.Query("type")
@@ -60,7 +70,12 @@ func SearchResourcesHandler(c *gin.Context) {
 		logger.Debug("No resource type filter provided - searching all types")
 	}
 
-	results, total, err := searchClient.SearchResources(query, filterPtr, page, perPage)
+	var userIDStrPtr *string
+	if currentUser.ID != (uuid.UUID{}) {
+		idStr := currentUser.ID.String()
+		userIDStrPtr = &idStr
+	}
+	results, total, err := searchClient.SearchResources(query, filterPtr, userIDStrPtr, page, perPage)
 	if err != nil {
 		logger.WithError(err).Error("Search query failed")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
@@ -124,6 +139,14 @@ func GetResourceSummaryHandler(c *gin.Context) {
 		"ip":      c.ClientIP(),
 	})
 
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	currentUser, err := databaseRepo.GetCurrentUser(c)
+
+	if err != nil {
+		logger.WithError(err).Error("Failed to get current user, data will not be filtered by user")
+	}
+
 	logger.Info("Resource summary request started")
 	if typesenseClient.Client == nil {
 		logger.Error("Typesense client is not initialized")
@@ -138,8 +161,14 @@ func GetResourceSummaryHandler(c *gin.Context) {
 	counts := map[string]int{}
 	var totalCount int
 
+	var userIDStrPtr *string
+	if currentUser.ID != (uuid.UUID{}) {
+		idStr := currentUser.ID.String()
+		userIDStrPtr = &idStr
+	}
+
 	for {
-		results, total, err := searchClient.SearchResources("*", nil, page, perPage)
+		results, total, err := searchClient.SearchResources("*", nil, userIDStrPtr, page, perPage)
 		logger.WithFields(logrus.Fields{
 			"page":        page,
 			"perPage":     perPage,
