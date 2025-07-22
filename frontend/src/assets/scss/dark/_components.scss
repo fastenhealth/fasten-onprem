@@ -1,4 +1,3 @@
-// Mixin containing all dark theme component styles
 @mixin dark-components-styles {
     //Card components
     .card,
@@ -218,14 +217,12 @@
     }
 }
 
-// Apply dark component styles when system prefers dark AND user hasn't chosen light
 @media (prefers-color-scheme: dark) {
     body:not(.light-theme) {
         @include dark-components-styles;
     }
 }
 
-// Apply dark component styles when user explicitly chooses dark theme
 body.dark-theme {
     @include dark-components-styles;
 }

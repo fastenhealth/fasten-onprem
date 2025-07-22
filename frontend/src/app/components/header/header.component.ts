@@ -32,7 +32,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   is_environment_desktop: boolean = environment.environment_desktop
 
   isAdmin: boolean = false;
-  isDarkMode: boolean = false; // Initialize with default value
+  isDarkMode: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -40,7 +40,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private fastenApi: FastenApiService,
     private modalService: NgbModal,
     private themeService: ThemeService) {
-      // Remove the subscription from constructor - do it in ngOnInit instead
     }
 
   ngOnInit() {
@@ -120,7 +119,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.fastenApi.supportRequest(this.newSupportRequest).subscribe((resp: any) => {
         this.loading = false
         this.submitSuccess = true
-        //show success toast? close modal?
       },
       (err)=>{
         this.loading = false
