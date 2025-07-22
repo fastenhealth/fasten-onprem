@@ -52,14 +52,19 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 		"_journal_mode": "WAL",
 	}
 
-	//validation of encryption key happens in ValidateConfig method
-	if appConfig.IsSet("database.encryption.key") {
+	if appConfig.GetBool("database.encryption.enabled") {
+		tokenDB := appConfig.GetString("database.encryption_key")
+		if tokenDB == "" {
+			return nil, fmt.Errorf("database encryption key is not set")
+		}
+
+		// Configure sqlcipher
 		pragmaOpts["_cipher"] = "sqlcipher"
 		pragmaOpts["_legacy"] = "3"
-		pragmaOpts["_hmac_use"] = "off"
+		pragmaOpts["_hmac_use"] = "on"
 		pragmaOpts["_kdf_iter"] = "4000"
 		pragmaOpts["_legacy_page_size"] = "1024"
-		pragmaOpts["_key"] = appConfig.GetString("database.encryption.key")
+		pragmaOpts["_key"] = fmt.Sprintf("x'%s'", tokenDB)
 	}
 
 	pragmaStr := sqlitePragmaString(pragmaOpts)

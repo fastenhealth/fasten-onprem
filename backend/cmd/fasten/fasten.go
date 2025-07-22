@@ -6,6 +6,7 @@ import (
 	"github.com/analogj/go-util/utils"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/encryption"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/version"
@@ -16,6 +17,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -112,16 +114,65 @@ func main() {
 						}
 					}()
 
+					tokenPath := "/opt/fasten/encrypt_db/token"
+					dbPath := appconfig.GetString("database.location")
+					var token string
+					var tokenJustCreated bool
+
+					if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+						// Database does not exist, generate a new token
+						token, err = encryption.GenerateRandomToken(32)
+						if err != nil {
+							return fmt.Errorf("failed to generate encryption token: %w", err)
+						}
+
+						dir := filepath.Dir(tokenPath)
+						if _, err := os.Stat(dir); os.IsNotExist(err) {
+							if err := os.MkdirAll(dir, 0700); err != nil {
+								return fmt.Errorf("failed to create token directory: %w", err)
+							}
+						}
+
+						if err := encryption.SaveTokenToFile(token, tokenPath); err != nil {
+							return fmt.Errorf("failed to save encryption token: %w", err)
+						}
+						tokenJustCreated = true
+					} else {
+						// Database exists, load the token
+						token, err = encryption.LoadTokenFromFile(tokenPath)
+						if err != nil {
+							return fmt.Errorf("failed to load encryption token for existing database: %w", err)
+						}
+						tokenJustCreated = false
+					}
+
+					if token == "" {
+						return fmt.Errorf("failed to get encryption token")
+					}
+
+					tokenDB := encryption.DeriveKeyFromToken(token)
+
+					appconfig.Set("database.encryption_key", fmt.Sprintf("%x", tokenDB))
+
 					settingsData, err := json.Marshal(appconfig.AllSettings())
 					appLogger.Debug(string(settingsData), err)
 
 					relatedVersions, _ := resources.GetRelatedVersions()
 
+					dbRepo, err := database.NewRepository(appconfig, appLogger, event_bus.NewEventBusServer(appLogger))
+					if err != nil {
+						return err
+					}
+
 					webServer := web.AppEngine{
-						Config:          appconfig,
-						Logger:          appLogger,
-						EventBus:        event_bus.NewEventBusServer(appLogger),
-						RelatedVersions: relatedVersions,
+						Config:           appconfig,
+						Logger:           appLogger,
+						EventBus:         event_bus.NewEventBusServer(appLogger),
+						DeviceRepo:       dbRepo,
+						RelatedVersions:  relatedVersions,
+						Token:            token,
+						TokenDB:          fmt.Sprintf("%x", tokenDB),
+						TokenJustCreated: tokenJustCreated,
 					}
 					return webServer.Start()
 				},
@@ -218,7 +269,8 @@ func CreateLogger(appConfig config.Interface) (*logrus.Entry, *os.File, error) {
 		"type": "web",
 	})
 	//set default log level
-	if level, err := logrus.ParseLevel(appConfig.GetString("log.level")); err == nil {
+	logLevel := appConfig.GetString("log.level")
+	if level, err := logrus.ParseLevel(logLevel); err == nil {
 		logger.Logger.SetLevel(level)
 	} else {
 		logger.Logger.SetLevel(logrus.InfoLevel)

@@ -20,13 +20,14 @@ web:
     frontend:
       path: /opt/fasten/web
 database:
-  #  encryption:
+  encryption:
+    enabled: true
   #    key: ''
   type: 'sqlite' # postgres will be supported in the future, but is completely **BROKEN** at the moment.
   location: '/opt/fasten/db/fasten.db' # if postgres (**BROKEN**) use a DSN, eg. `host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=required TimeZone=Asia/Shanghai`
 log:
   file: '' # absolute or relative paths allowed, eg. web.log
-  level: INFO
+  level: DEBUG
 jwt:
   issuer:
     # you should ABSOLUTELY change this value before deploying Fasten.

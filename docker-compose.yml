@@ -1,4 +1,7 @@
 version: "3.9"
+
+volumes:
+  encrypt_db:
 services:
   fasten:
     # NOTE: only developers need to build Fasten from source
@@ -14,4 +17,6 @@ services:
       - "9090:8080"
     volumes:
       - ./db:/opt/fasten/db
+      - ./encrypt_db:/opt/fasten/encrypt_db
+      - encrypt_db:/opt/fasten/encrypt_db
 #      - ./config.example.yaml:/opt/fasten/config/config.yaml

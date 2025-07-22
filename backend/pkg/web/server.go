@@ -26,23 +26,19 @@ type AppEngine struct {
 	Config     config.Interface
 	Logger     *logrus.Entry
 	EventBus   event_bus.Interface
-	deviceRepo database.DatabaseRepository
+	DeviceRepo database.DatabaseRepository
 
-	RelatedVersions map[string]string //related versions metadata provided & embedded by the build process
+	RelatedVersions  map[string]string //related versions metadata provided & embedded by the build process
+	Token            string
+	TokenDB          string
+	TokenJustCreated bool
 }
 
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	r := gin.New()
 
-	//setup database
-	deviceRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
-	if err != nil {
-		panic(err)
-	}
-	ae.deviceRepo = deviceRepo
-
 	r.Use(middleware.LoggerMiddleware(ae.Logger))
-	r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
+	r.Use(middleware.RepositoryMiddleware(ae.DeviceRepo))
 	r.Use(middleware.ConfigMiddleware(ae.Config))
 	r.Use(middleware.EventBusMiddleware(ae.EventBus))
 	r.Use(gin.Recovery())
@@ -215,7 +211,7 @@ func (ae *AppEngine) SetupEmbeddedFrontendRouting(embeddedAssetsFS embed.FS, bas
 
 func (ae *AppEngine) SetupInstallationRegistration() error {
 	//check if installation is already registered
-	systemSettings, err := ae.deviceRepo.LoadSystemSettings(context.Background())
+	systemSettings, err := ae.DeviceRepo.LoadSystemSettings(context.Background())
 	if err != nil {
 		return fmt.Errorf("an error occurred while loading system settings: %s", err)
 	}
@@ -281,7 +277,7 @@ func (ae *AppEngine) SetupInstallationRegistration() error {
 	ae.Logger.Infof("Saving installation id to settings table: %s", systemSettings.InstallationID)
 
 	//save the system settings
-	err = ae.deviceRepo.SaveSystemSettings(context.Background(), systemSettings)
+	err = ae.DeviceRepo.SaveSystemSettings(context.Background(), systemSettings)
 	if err != nil {
 		return fmt.Errorf("an error occurred while saving system settings: %s", err)
 	}
@@ -302,5 +298,10 @@ func (ae *AppEngine) Start() error {
 	}
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
 
-	return r.Run(fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port")))
+	listenAddr := fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port"))
+	if ae.TokenJustCreated || strings.ToLower(ae.Config.GetString("log.level")) == "debug" {
+		ae.Logger.Infof("token: %s\ntoken_db: %s", ae.Token, ae.TokenDB)
+	}
+
+	return r.Run(listenAddr)
 }
