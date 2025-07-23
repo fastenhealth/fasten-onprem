@@ -1,0 +1,80 @@
+<!--/* MedicationSummary -->
+<!--
+Table 1 Medication Requests
+Medication: MedicationRequest.medicationCodeableConcept.text || MedicationRequest.medicationCodeableConcept.coding[x].display (separated by <br />) || Medication.code.text || Medication.code.coding[x].display (separated by <br />)
+Status: MedicationRequest.status.display
+Route: MedicationRequest.dosageInstruction[x].{ route.text || route.coding[x].display (separated by <br />) } (concatenate with comma, e.g. x, y, z)
+Sig: MedicationRequest.dosageInstruction[x].text (display all sigs separated by <br />)
+Comments: MedicationRequest.note[x].text (separated by <br />)
+Authored Date: MedicationRequest.authoredOn
+
+Table 2 Medication Statements
+Medication: MedicationStatement.medicationCodeableConcept.text || MedicationStatement.medicationCodeableConcept.coding[x].display (separated by <br />) || Medication.code.text || Medication.code.coding[x].display (separated by <br />)
+Status: MedicationStatement.status.display
+Route: MedicationStatement.dosage[x].{ route.text || route.coding[x].display (separated by <br />) } (concatenate with comma, e.g. x, y, z)
+Sig: MedicationStatement.dosage[x].text (display all sigs separated by <br />)
+Date: MedicationStatement.effectiveDateTime || MedicationStatement.effectivePeriod.start
+*/-->
+<div>
+	<h5>Medication Summary: Medication Requests</h5>
+	{{if not .MedicationRequest}} 
+		No data available
+	{{else}}
+		<table class="hapiPropertyTable">
+			<thead>
+			<tr>
+				<th>Medication</th>
+				<th>Status</th>
+				<th>Route</th>
+				<th>Sig</th>
+				<th>Comments</th>
+				<th>Authored Date</th>
+			</tr>
+			</thead>
+			<tbody>
+			
+			{{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+			{{range $index, $entry := .MedicationRequest }}
+				<tr id="{{$entry.SourceResourceID}}">
+					<td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Medication */}}
+					<td>{{pluckList "code" ($entry.Status | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
+					<td>{{pluckList "text" ($entry.Route | parseMapList) | uniq | join "," }}</td> {{/* Route */}}
+					<td>{{pluckList "text" ($entry.DosageInstruction | parseMapList) | uniq | join "," }}</td> {{/* Sig */}}
+					<td>{{pluckList "text" ($entry.Note | parseMapList) | uniq | join "," }}</td> {{/* Comments */}}
+					<td>{{$entry.Authoredon | date "2006-01-02"}}</td> {{/* Authored Date */}}
+				</tr>
+			{{end}}		
+			</tbody>
+		</table>
+	{{end}}
+
+	<h5>Medication Summary: Medication Statements</h5>
+	{{if not .MedicationStatement}} 
+		No data available
+	{{else}}
+		<table class="hapiPropertyTable">
+			<thead>
+			<tr>
+				<th>Medication</th>
+				<th>Status</th>
+				<th>Route</th>
+				<th>Sig</th>
+				<th>Authored Date</th>
+			</tr>
+			</thead>
+			<tbody>
+			
+			{{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+			{{range $index, $entry := .MedicationStatement }}
+				<tr id="{{$entry.SourceResourceID}}">
+					<td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Medication */}}
+					<td>{{pluckList "code" ($entry.Status | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
+					<td>{{pluckList "text" ($entry.Route | parseMapList) | uniq | join "," }}</td> {{/* Route */}}
+					<td>{{pluckList "text" ($entry.DosageInstruction | parseMapList) | uniq | join "," }}</td> {{/* Sig */}}
+					<td>{{$entry.Authoredon | date "2006-01-02"}}</td> {{/* Authored Date */}}
+				</tr>
+			{{end}}		
+			</tbody>
+		</table>
+	{{end}}
+</div>

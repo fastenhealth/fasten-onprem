@@ -520,3 +520,231 @@ func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithTokenGroupByNoMo
 		"00000000-0000-0000-0000-000000000000",
 	})
 }
+
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithTokenWithNotModifier() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*GormRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select: []string{},
+		Where: map[string]interface{}{
+			"code:not": "test_code",
+		},
+		From: "Observation",
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT fhir.*",
+			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
+			"WHERE ((codeJson.value ->> '$.code' <> ?)) AND (user_id = ?)",
+			"GROUP BY `fhir`.`id`",
+			"ORDER BY fhir.sort_date DESC",
+		}, " "),
+		sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"test_code", "00000000-0000-0000-0000-000000000000",
+	})
+}
+
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithTokenMultipleANDValuesWithNotModifier() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*GormRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select: []string{},
+		Where: map[string]interface{}{
+			"code:not": []string{"test_code", "test_code2"}, //AND condition
+		},
+		From: "Observation",
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT fhir.*",
+			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
+			"WHERE ((codeJson.value ->> '$.code' <> ?)) AND ((codeJson.value ->> '$.code' <> ?)) AND (user_id = ?)",
+			"GROUP BY `fhir`.`id`",
+			"ORDER BY fhir.sort_date DESC",
+		}, " "),
+		sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"test_code", "test_code2", "00000000-0000-0000-0000-000000000000",
+	})
+}
+
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithTokenMultipleORValues() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*GormRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select: []string{},
+		Where: map[string]interface{}{
+			"code": "test_code,test_code2", //OR condition
+		},
+		From: "Observation",
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT fhir.*",
+			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
+			"WHERE ((codeJson.value ->> '$.code' = ?) OR (codeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
+			"GROUP BY `fhir`.`id`",
+			"ORDER BY fhir.sort_date DESC",
+		}, " "),
+		sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"test_code", "test_code2", "00000000-0000-0000-0000-000000000000",
+	})
+}
+
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithTokenMultipleORANDValues() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*GormRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select: []string{},
+		Where: map[string]interface{}{
+			"code": []string{"test_code,test_code2", "test_code3,test_code4"}, //OR-AND condition
+		},
+		From: "Observation",
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT fhir.*",
+			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
+			"WHERE ((codeJson.value ->> '$.code' = ?) OR (codeJson.value ->> '$.code' = ?)) AND ((codeJson.value ->> '$.code' = ?) OR (codeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
+			"GROUP BY `fhir`.`id`",
+			"ORDER BY fhir.sort_date DESC",
+		}, " "),
+		sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"test_code", "test_code2", "test_code3", "test_code4", "00000000-0000-0000-0000-000000000000",
+	})
+}
+
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_WithTokenMultipleModifiersMultipleANDORValues() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*GormRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select: []string{},
+		Where: map[string]interface{}{
+			"code:not": []string{"test_code", "test_code2,test_code3"}, //AND-OR condition
+			"code":     "test_code4,test_code5,test_code6",             //OR condition
+		},
+		From: "Observation",
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT fhir.*",
+			"FROM fhir_observation as fhir, json_each(fhir.code) as codeJson",
+			"WHERE ((codeJson.value ->> '$.code' <> ?)) AND ((codeJson.value ->> '$.code' <> ?) OR (codeJson.value ->> '$.code' <> ?)) AND ((codeJson.value ->> '$.code' = ?) OR (codeJson.value ->> '$.code' = ?) OR (codeJson.value ->> '$.code' = ?)) AND (user_id = ?)",
+			"GROUP BY `fhir`.`id`",
+			"ORDER BY fhir.sort_date DESC",
+		}, " "),
+		sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"test_code", "test_code2", "test_code3", "test_code4", "test_code5", "test_code6", "00000000-0000-0000-0000-000000000000",
+	})
+}
+
+// Section Vital Signs Codes Lookup
+
+func (suite *RepositorySqlTestSuite) TestQueryResources_SQL_SectionVitalSigns_WithTokenGroupByNoModifier() {
+	//setup
+	sqliteRepo := suite.TestRepository.(*GormRepository)
+	sqliteRepo.GormClient = sqliteRepo.GormClient.Session(&gorm.Session{DryRun: true})
+
+	//test
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	sqlQuery, err := sqliteRepo.sqlQueryResources(authContext, models.QueryResource{
+		Select: []string{},
+		Where: map[string]interface{}{
+			"category": "vital-signs",
+		},
+		From: "Observation",
+		Aggregations: &models.QueryResourceAggregations{
+			GroupBy: &models.QueryResourceAggregation{Field: "code:code"},
+		},
+	})
+	require.NoError(suite.T(), err)
+	var results []map[string]interface{}
+	statement := sqlQuery.Find(&results).Statement
+	sqlString := statement.SQL.String()
+	sqlParams := statement.Vars
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(),
+		strings.Join([]string{
+			"SELECT (codeJson.value ->> '$.code') as label, count(*) as value",
+			"FROM fhir_observation as fhir, json_each(fhir.category) as categoryJson, json_each(fhir.code) as codeJson",
+			"WHERE ((categoryJson.value ->> '$.code' = ?)) AND (user_id = ?)",
+			"GROUP BY (codeJson.value ->> '$.code')",
+			"ORDER BY count(*) DESC",
+		}, " "), sqlString)
+	require.Equal(suite.T(), sqlParams, []interface{}{
+		"vital-signs",
+		"00000000-0000-0000-0000-000000000000",
+	})
+}
