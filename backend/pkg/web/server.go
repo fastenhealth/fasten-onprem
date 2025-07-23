@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"os"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
@@ -22,14 +24,13 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"os"
 )
 
 type AppEngine struct {
-	Config     config.Interface
-	Logger     *logrus.Entry
-	EventBus   event_bus.Interface
-	deviceRepo database.DatabaseRepository
+	Config      config.Interface
+	Logger      *logrus.Entry
+	EventBus    event_bus.Interface
+	deviceRepo  database.DatabaseRepository
 	StandbyMode bool
 
 	RelatedVersions map[string]string //related versions metadata provided & embedded by the build process
@@ -99,8 +100,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					c.JSON(http.StatusOK, gin.H{
 						"success": true,
 						"data": gin.H{
-							"first_run_wizard":   firstRunWizard,
-							"standby_mode":       true,
+							"first_run_wizard": firstRunWizard,
+							"standby_mode":     true,
 						},
 					})
 					return
@@ -125,8 +126,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				c.JSON(http.StatusOK, gin.H{
 					"success": true,
 					"data": gin.H{
-						"first_run_wizard":   firstRunWizard,
-						"standby_mode":       false,
+						"first_run_wizard": firstRunWizard,
+						"standby_mode":     false,
 					},
 				})
 			})
@@ -178,6 +179,11 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
 					secure.PATCH("/resource/fhir/:resourceType/:resourceId", handler.UpdateResourceFhir)
 					secure.DELETE("/resource/fhir/:resourceType/:resourceId", handler.DeleteResourceFhir)
+					secure.POST("/resource/ocr", handler.OcrFileUploadHandler)
+
+					secure.GET("/dashboards", handler.GetDashboard)
+					secure.POST("/dashboards", handler.AddDashboardLocation)
+					//secure.GET("/dashboard/:dashboardId", handler.GetDashboard)
 
 					secure.POST("/resource/composition", handler.CreateResourceComposition)
 					secure.POST("/resource/related", handler.CreateRelatedResources)
