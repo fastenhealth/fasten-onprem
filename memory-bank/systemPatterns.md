@@ -61,3 +61,43 @@ This document outlines key architectural and design patterns observed or inferre
 
 *   **Event Bus (Frontend):** `EventBusService` suggests a publish-subscribe mechanism for decoupled communication between components or services.
 *   **HTTP Interceptors (Frontend):** `AuthInterceptorService` is used to modify outgoing HTTP requests (e.g., adding authentication tokens) or incoming responses.
+
+## Sync Patterns
+
+### Mobile Sync via QR Code
+
+The system supports syncing with a mobile client (e.g., "Health Wallet") through a token-based authorization flow initiated by a QR code. This feature was introduced in pull request #8.
+
+*   **Backend Implementation:**
+    *   **API Endpoints:** A new set of API endpoints under `/api/secure/sync/` was added to handle the entire sync process. This includes endpoints for initiating the sync, generating tokens, managing connected devices, and retrieving sync history.
+    *   **JWT Enhancement:** The JWT generation logic was extended to create special `sync` tokens. These tokens are temporary (24-hour validity) and contain specific claims like `token_id` and `token_type` to distinguish them from regular session tokens.
+    *   **Database Integration:** New GORM models (`SyncToken`, `SyncTokenHistory`, `SyncConnection`, `DeviceSyncHistory`) were added to the database to persist information about sync tokens, their usage, and the devices connected to the system. A corresponding database migration was created to set up the required tables.
+    *   **Authentication Middleware:** The `RequireAuth` middleware was updated to validate these `sync` tokens, ensuring that only authorized mobile clients can access the sync endpoints.
+
+*   **Frontend Implementation:**
+    *   **Sync Page:** A new page was created at `/sync` to provide a user interface for this feature.
+    *   **QR Code Generation:** The page uses the `qrcode` library to generate a QR code containing the sync token and server connection details.
+    *   **Token Management:** The UI displays a list of all active and past sync tokens, allowing users to monitor connected devices and revoke their access if needed.
+    *   **History View:** The page also provides a view of the sync history, giving users an audit trail of sync activities.
+
+*   **User Flow:**
+    1.  The user navigates to the "Sync" page in the web UI.
+    2.  They click a button to generate a new sync token.
+    3.  A QR code is displayed, containing the token and the server's connection details (including its local IP address).
+    4.  The user scans this QR code with their mobile app.
+    5.  The mobile app uses the information from the QR code to connect to the Fasten On-Prem server and start syncing data.
+
+*   **Usability Improvements:**
+    *   The pull request also introduced `start.sh` and `start.bat` scripts. These scripts simplify the process of running the application locally by automatically detecting the host's local IP address and making it available to the Docker container. This is crucial for ensuring the mobile client can connect to the server on the local network.
+
+**Limitation and Proposed Improvement:**
+
+The current implementation is not resilient to network changes. If the server's local IP address changes, the mobile client will lose its connection. A more robust solution has been proposed to address this:
+
+*   **Dynamic Service Discovery (mDNS):**
+    *   **Backend:** The Fasten On-Prem backend could register itself as a service on the local network using mDNS (Bonjour/ZeroConf).
+    *   **Mobile Client:** The mobile client would discover the server's current IP address by querying for the mDNS service on the network, rather than relying on the static IP address from the QR code. This would make the sync feature resilient to network changes and improve the overall user experience.
+
+*   **mDNS Containerization Challenge & Solution:**
+    *   **Challenge:** By default, Docker containers run in an isolated `bridge` network. An mDNS service running inside the container would broadcast the container's internal, unreachable IP address, making discovery from the LAN impossible.
+    *   **Solution:** The backend container is configured to use `network_mode: "host"` in the `docker-compose.yml` file. This makes the container share the host's network stack, allowing the mDNS service to correctly broadcast the host machine's LAN IP address. While this reduces network isolation, it is a necessary trade-off for this feature's usability in a self-hosted context.
