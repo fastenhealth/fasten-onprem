@@ -88,7 +88,7 @@ func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryBundl
 	err = dbRepo.CreateSource(authContext, &testSourceCredential)
 	require.NoError(suite.T(), err)
 
-	bundleFile, err := os.Open("./testdata/Abraham100_Heller342_262b819a-5193-404a-9787-b7f599358035.json")
+	bundleFile, err := os.Open("./testdata/Britt177_Blick895_ad0f0573-f8c7-4704-9eef-50342d37ef50.json")
 	require.NoError(suite.T(), err)
 
 	testLogger := logrus.WithFields(logrus.Fields{
@@ -100,8 +100,8 @@ func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryBundl
 	
 	summary, err := manualClient.SyncAllBundle(dbRepo, bundleFile, sourcePkg.FhirVersion401)
 	require.NoError(suite.T(), err)
-	require.Equal(suite.T(), 198, summary.TotalResources)
-	require.Equal(suite.T(), 234, len(summary.UpdatedResources))
+	require.Equal(suite.T(), 72, summary.TotalResources)
+	require.Equal(suite.T(), 80, len(summary.UpdatedResources))
 
 	//test
 	ipsData, err := dbRepo.GetInternationalPatientSummaryExport(authContext)
@@ -129,11 +129,11 @@ func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryBundl
 	require.Nil(suite.T(), fhirComposition.Section[2].EmptyReason)
 
 	// Immunizations
-	require.Equal(suite.T(), 9, len(fhirComposition.Section[3].Entry))
+	require.Equal(suite.T(), 6, len(fhirComposition.Section[3].Entry))
 	require.Nil(suite.T(), fhirComposition.Section[3].EmptyReason)
 
 	// History of Procedures
-	require.Equal(suite.T(), 8, len(fhirComposition.Section[4].Entry))
+	require.Equal(suite.T(), 3, len(fhirComposition.Section[4].Entry))
 	require.Nil(suite.T(), fhirComposition.Section[4].EmptyReason)
 
 	// Medical Devices
@@ -145,11 +145,11 @@ func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryBundl
 	require.Nil(suite.T(), fhirComposition.Section[6].EmptyReason)
 
 	// Vital Signs
-	require.Equal(suite.T(), 19, len(fhirComposition.Section[7].Entry))
+	require.Equal(suite.T(), 15, len(fhirComposition.Section[7].Entry))
 	require.Nil(suite.T(), fhirComposition.Section[7].EmptyReason)
 
 	// Past History of Illness
-	require.Equal(suite.T(), 7, len(fhirComposition.Section[8].Entry))
+	require.Equal(suite.T(), 1, len(fhirComposition.Section[8].Entry))
 	require.Nil(suite.T(), fhirComposition.Section[8].EmptyReason)
 
 	// Pregnancy History
