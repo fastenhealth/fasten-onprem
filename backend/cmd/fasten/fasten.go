@@ -12,11 +12,10 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web"
 	"github.com/fastenhealth/fasten-onprem/backend/resources"
 	"github.com/sirupsen/logrus"
+	"github.com/huin/goupnp/dcps/internetgateway2"
 	"github.com/urfave/cli/v2"
-	"github.com/grandcat/zeroconf"
 	"io"
 	"log"
-	"net"
 	"os"
 	"time"
 )
@@ -117,14 +116,10 @@ func main() {
 					settingsData, err := json.Marshal(appconfig.AllSettings())
 					appLogger.Debug(string(settingsData), err)
 
-					//zeroconf
-					zeroconfServer, err := startZeroconfServer(appLogger, appconfig)
-					if err != nil {
+					//upnp
+					if err = startUpnpServer(appLogger, appconfig); err != nil {
 						//non-fatal error, so we'll just log it
 						appLogger.Warn(err)
-					}
-					if zeroconfServer != nil {
-						defer zeroconfServer.Shutdown()
 					}
 
 					relatedVersions, _ := resources.GetRelatedVersions()
@@ -225,51 +220,49 @@ func main() {
 	}
 }
 
-func startZeroconfServer(logger *logrus.Entry, cfg config.Interface) (*zeroconf.Server, error) {
-	if !cfg.GetBool("mdns.enabled") {
-		logger.Info("mDNS service is disabled by config.")
-		return nil, nil
+func startUpnpServer(logger *logrus.Entry, cfg config.Interface) error {
+	if !cfg.GetBool("upnp.enabled") {
+		logger.Info("UPnP service is disabled by config.")
+		return nil
 	}
 
-	logger.Info("Registering mDNS service...")
+	logger.Info("Registering UPnP service...")
 
-	txtRecords := []string{fmt.Sprintf("version=%s", version.VERSION)}
-
-	var ifaces []net.Interface
-	if cfg.IsSet("mdns.interfaces") {
-		interfaces := cfg.GetStringSlice("mdns.interfaces")
-		if len(interfaces) > 0 {
-			ifaces = make([]net.Interface, len(interfaces))
-			for i, ifaceName := range interfaces {
-				iface, err := net.InterfaceByName(ifaceName)
-				if err != nil {
-					return nil, fmt.Errorf("mDNS service registration failed: could not find interface %s", ifaceName)
-				}
-				ifaces[i] = *iface
-			}
-			logger.Infof("mDNS service will listen on the following interfaces: %v", interfaces)
-		} else {
-			logger.Info("mDNS service will listen on all available interfaces, as none were specified in the config.")
-		}
-	} else {
-		logger.Info("mDNS service will listen on all available interfaces, as none were specified in the config.")
+	clients, _, err := internetgateway2.NewWANIPConnection1Clients()
+	if err != nil {
+		return fmt.Errorf("UPnP service registration failed: %v. The application will continue without network discovery", err)
 	}
 
-	server, err := zeroconf.Register(
-		cfg.GetString("mdns.name"),
-		cfg.GetString("mdns.service"),
-		cfg.GetString("mdns.domain"),
-		cfg.GetInt("web.listen.port"),
-		txtRecords,
-		ifaces,
+	if len(clients) == 0 {
+		return fmt.Errorf("UPnP service registration failed: no services found. The application will continue without network discovery")
+	}
+
+	client := clients[0]
+
+	externalIP, err := client.GetExternalIPAddress()
+	if err != nil {
+		return fmt.Errorf("UPnP service registration failed: could not get external IP address: %v. The application will continue without network discovery", err)
+	}
+
+	logger.Infof("UPnP service discovered external IP address: %s", externalIP)
+
+	err = client.AddPortMapping(
+		"",
+		uint16(cfg.GetInt("web.listen.port")),
+		"TCP",
+		uint16(cfg.GetInt("web.listen.port")),
+		client.LocalAddr().String(),
+		true,
+		"fasten-onprem",
+		0,
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf("mDNS service registration failed: %v. The application will continue without network discovery", err)
+		return fmt.Errorf("UPnP service registration failed: could not add port mapping: %v. The application will continue without network discovery", err)
 	}
 
-	logger.Info("mDNS service registered successfully.")
-	return server, nil
+	logger.Info("UPnP service registered successfully.")
+	return nil
 }
 
 func CreateLogger(appConfig config.Interface) (*logrus.Entry, *os.File, error) {

@@ -32,10 +32,6 @@ jwt:
     # you should ABSOLUTELY change this value before deploying Fasten.
     # TODO: in future versions, this will be generated on first run with a random value, and stored as a System Setting.
     key: "thisismysupersecuressessionsecretlength"
-# mDNS service discovery settings
-mdns:
+# UPnP service discovery settings
+upnp:
   enabled: true
-  name: "fasten-onprem"
-  service: "_fasten-api._tcp"
-  domain: "local."
-  interfaces: ["eth0"]

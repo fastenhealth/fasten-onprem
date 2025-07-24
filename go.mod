@@ -23,7 +23,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v54 v54.0.0
 	github.com/google/uuid v1.3.0
-	github.com/grandcat/zeroconf v1.0.0
+	github.com/huin/goupnp v1.3.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/lestrrat-go/jwx/v2 v2.0.11
 	github.com/samber/lo v1.35.0
@@ -41,13 +41,12 @@ require (
 )
 
 require (
-	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.4.3 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
-	github.com/miekg/dns v1.1.27 // indirect
+	golang.org/x/sync v0.1.0 // indirect
 )
 
 require (
