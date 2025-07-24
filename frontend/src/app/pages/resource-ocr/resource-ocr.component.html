@@ -33,11 +33,33 @@
                         </div>
                     </div>
 
+                    <!-- Camera Scan Alternative -->
+                    <div class="mt-4">
+                        <label class="form-label">Or use Camera</label>
+                        <div *ngIf="!showCamera">
+                            <button type="button" class="btn btn-outline-secondary" (click)="startCamera()">
+                                <i class="fas fa-camera me-2"></i>Scan Document with Camera
+                            </button>
+                        </div>
+
+                        <!-- Camera Preview -->
+                        <div *ngIf="showCamera">
+                            <video id="videoElement" autoplay playsinline></video>
+                            <button (click)="captureSnapshot()">Capture</button>
+                        </div>
+
+                        <!-- Snapshot Preview -->
+                        <div *ngIf="snapshotDataUrl && !showCamera">
+                            <img [src]="snapshotDataUrl" alt="Snapshot Preview"
+                                style="max-width: 100%; margin: 10px 0;" />
+                            <button (click)="sendSnapshotToOcr()">Send to OCR Scan</button>
+                        </div>
+                    </div>
+
+
                     <!-- Loading State -->
                     <div *ngIf="isUploading" class="text-center py-4">
-                        <div class="spinner-border text-primary mb-3" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
+                        <i class="fas fa-spinner fa-spin fa-3x text-primary mb-3"></i>
                         <p class="text-muted">Extracting text from your document...</p>
                     </div>
 
@@ -56,15 +78,19 @@
                                     Extracted Text
                                 </h5>
                             </div>
+                            <div class="card-body">
+                                <pre>{{ ocrResult }}</pre>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Instructions -->
                     <div *ngIf="!selectedFile && !isUploading && !ocrResult" class="text-center py-5">
                         <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">Upload a Document</h5>
+                        <h5 class="text-muted">Upload or Scan a Document</h5>
                         <p class="text-muted">
-                            Select an image or PDF file to extract text using OCR.<br>
+                            Select an image or PDF file, or scan with your device's camera to extract text using
+                            OCR.<br>
                             Supported formats: JPG, PNG, PDF
                         </p>
                     </div>
