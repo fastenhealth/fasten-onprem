@@ -13,6 +13,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/resources"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"github.com/grandcat/zeroconf"
 	"io"
 	"log"
 	"os"
@@ -115,6 +116,16 @@ func main() {
 					settingsData, err := json.Marshal(appconfig.AllSettings())
 					appLogger.Debug(string(settingsData), err)
 
+					//zeroconf
+					zeroconfServer, err := startZeroconfServer(appLogger, appconfig)
+					if err != nil {
+						//non-fatal error, so we'll just log it
+						appLogger.Warn(err)
+					}
+					if zeroconfServer != nil {
+						defer zeroconfServer.Shutdown()
+					}
+
 					relatedVersions, _ := resources.GetRelatedVersions()
 
 					webServer := web.AppEngine{
@@ -211,6 +222,33 @@ func main() {
 	if err != nil {
 		log.Fatalf("ERROR: %v", err)
 	}
+}
+
+func startZeroconfServer(logger *logrus.Entry, cfg config.Interface) (*zeroconf.Server, error) {
+	if !cfg.GetBool("mdns.enabled") {
+		logger.Info("mDNS service is disabled by config.")
+		return nil, nil
+	}
+
+	logger.Info("Registering mDNS service...")
+
+	txtRecords := []string{fmt.Sprintf("version=%s", version.VERSION)}
+
+	server, err := zeroconf.Register(
+		cfg.GetString("mdns.name"),
+		cfg.GetString("mdns.service"),
+		cfg.GetString("mdns.domain"),
+		cfg.GetInt("web.listen.port"),
+		txtRecords,
+		nil,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("mDNS service registration failed: %v. The application will continue without network discovery", err)
+	}
+
+	logger.Info("mDNS service registered successfully.")
+	return server, nil
 }
 
 func CreateLogger(appConfig config.Interface) (*logrus.Entry, *os.File, error) {

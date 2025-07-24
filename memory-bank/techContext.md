@@ -205,3 +205,10 @@ This explanation outlines the core steps of the SMART-on-FHIR authentication flo
 
 *   **Event Bus (Frontend):** `EventBusService` suggests a publish-subscribe mechanism for decoupled communication between components or services.
 *   **HTTP Interceptors (Frontend):** `AuthInterceptorService` is used to modify outgoing HTTP requests (e.g., adding authentication tokens) or incoming responses.
+
+## Service Discovery
+
+*   **mDNS (Multicast DNS):** The backend uses mDNS to broadcast its presence on the local network. This allows the mobile client to automatically discover the backend's IP address and port without manual configuration.
+    *   **Library:** The `github.com/grandcat/zeroconf` library is used to implement the mDNS server.
+    *   **Service Name:** The service is registered with the name `fasten-onprem`.
+    *   **Service Type:** The service type is `_fasten._tcp`.

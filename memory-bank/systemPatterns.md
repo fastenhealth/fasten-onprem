@@ -90,14 +90,6 @@ The system supports syncing with a mobile client (e.g., "Health Wallet") through
 *   **Usability Improvements:**
     *   The pull request also introduced `start.sh` and `start.bat` scripts. These scripts simplify the process of running the application locally by automatically detecting the host's local IP address and making it available to the Docker container. This is crucial for ensuring the mobile client can connect to the server on the local network.
 
-**Limitation and Proposed Improvement:**
-
-The current implementation is not resilient to network changes. If the server's local IP address changes, the mobile client will lose its connection. A more robust solution has been proposed to address this:
-
 *   **Dynamic Service Discovery (mDNS):**
-    *   **Backend:** The Fasten On-Prem backend could register itself as a service on the local network using mDNS (Bonjour/ZeroConf).
-    *   **Mobile Client:** The mobile client would discover the server's current IP address by querying for the mDNS service on the network, rather than relying on the static IP address from the QR code. This would make the sync feature resilient to network changes and improve the overall user experience.
-
-*   **mDNS Containerization Challenge & Solution:**
-    *   **Challenge:** By default, Docker containers run in an isolated `bridge` network. An mDNS service running inside the container would broadcast the container's internal, unreachable IP address, making discovery from the LAN impossible.
-    *   **Solution:** The backend container is configured to use `network_mode: "host"` in the `docker-compose.yml` file. This makes the container share the host's network stack, allowing the mDNS service to correctly broadcast the host machine's LAN IP address. While this reduces network isolation, it is a necessary trade-off for this feature's usability in a self-hosted context.
+    *   **Backend:** The Fasten On-Prem backend registers itself as a service on the local network using mDNS (Bonjour/ZeroConf). This is implemented using the `github.com/grandcat/zeroconf` library.
+    *   **Mobile Client:** The mobile client can discover the server's current IP address by querying for the `_fasten._tcp` service on the network. This makes the sync feature resilient to network changes and improves the overall user experience.

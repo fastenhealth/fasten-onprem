@@ -40,6 +40,11 @@ func (c *configuration) Init() error {
 	c.SetDefault("log.level", "INFO")
 	c.SetDefault("log.file", "")
 
+	c.SetDefault("mdns.enabled", true)
+	c.SetDefault("mdns.name", "fasten-onprem")
+	c.SetDefault("mdns.service", "_fasten._tcp")
+	c.SetDefault("mdns.domain", "local.")
+
 	//set the default system config file search path.
 	//if you want to load a non-standard location system config file (~/capsule.yml), use ReadConfig
 	//if you want to load a repo specific config file, use ReadConfig

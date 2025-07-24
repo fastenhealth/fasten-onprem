@@ -32,3 +32,9 @@ jwt:
     # you should ABSOLUTELY change this value before deploying Fasten.
     # TODO: in future versions, this will be generated on first run with a random value, and stored as a System Setting.
     key: "thisismysupersecuressessionsecretlength"
+# mDNS service discovery settings
+mdns:
+  enabled: true
+  name: "fasten-onprem"
+  service: "_fasten._tcp"
+  domain: "local."
