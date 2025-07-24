@@ -43,7 +43,7 @@ RUN mkdir -p /opt/fasten/db \
 #########################################################################################################
 # Distribution Build
 #########################################################################################################
-FROM gcr.io/distroless/static-debian11
+FROM gcr.io/distroless/static-debian11:debug
 
 EXPOSE 8080
 WORKDIR /opt/fasten/
@@ -52,10 +52,6 @@ COPY --from=frontend-build /usr/src/fastenhealth/dist /opt/fasten/web
 COPY --from=backend-build /go/bin/fasten /opt/fasten/fasten
 COPY LICENSE.md /opt/fasten/LICENSE.md
 COPY config.yaml /opt/fasten/config/config.yaml
-RUN ["/opt/fasten/fasten", "--help"]
-CMD ["/opt/fasten/fasten", "start", "--config", "/opt/fasten/config/config.yaml"]
-
-
-
-
-
+# RUN ["/opt/fasten/fasten", "--help"]
+ENTRYPOINT ["/opt/fasten/fasten"]
+CMD ["start", "--config", "/opt/fasten/config/config.yaml"]

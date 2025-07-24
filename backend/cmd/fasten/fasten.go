@@ -16,6 +16,7 @@ import (
 	"github.com/grandcat/zeroconf"
 	"io"
 	"log"
+	"net"
 	"os"
 	"time"
 )
@@ -234,13 +235,33 @@ func startZeroconfServer(logger *logrus.Entry, cfg config.Interface) (*zeroconf.
 
 	txtRecords := []string{fmt.Sprintf("version=%s", version.VERSION)}
 
+	var ifaces []net.Interface
+	if cfg.IsSet("mdns.interfaces") {
+		interfaces := cfg.GetStringSlice("mdns.interfaces")
+		if len(interfaces) > 0 {
+			ifaces = make([]net.Interface, len(interfaces))
+			for i, ifaceName := range interfaces {
+				iface, err := net.InterfaceByName(ifaceName)
+				if err != nil {
+					return nil, fmt.Errorf("mDNS service registration failed: could not find interface %s", ifaceName)
+				}
+				ifaces[i] = *iface
+			}
+			logger.Infof("mDNS service will listen on the following interfaces: %v", interfaces)
+		} else {
+			logger.Info("mDNS service will listen on all available interfaces, as none were specified in the config.")
+		}
+	} else {
+		logger.Info("mDNS service will listen on all available interfaces, as none were specified in the config.")
+	}
+
 	server, err := zeroconf.Register(
 		cfg.GetString("mdns.name"),
 		cfg.GetString("mdns.service"),
 		cfg.GetString("mdns.domain"),
 		cfg.GetInt("web.listen.port"),
 		txtRecords,
-		nil,
+		ifaces,
 	)
 
 	if err != nil {

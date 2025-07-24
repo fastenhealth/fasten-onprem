@@ -38,3 +38,4 @@ mdns:
   name: "fasten-onprem"
   service: "_fasten-api._tcp"
   domain: "local."
+  interfaces: ["eth0"]

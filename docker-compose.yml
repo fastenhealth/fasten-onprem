@@ -11,8 +11,8 @@ services:
         - FASTEN_ENV=prod
 #        - FASTEN_ENV=sandbox
     network_mode: "host"
-    environment:
-      - FASTEN_EXTERNAL_HOST=${FASTEN_EXTERNAL_HOST}
+    # environment:
+    #   - FASTEN_EXTERNAL_HOST=${FASTEN_EXTERNAL_HOST}
     volumes:
       - ./db:/opt/fasten/db
       # - ./config.yaml:/opt/fasten/config/config.yaml
