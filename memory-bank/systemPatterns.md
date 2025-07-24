@@ -90,9 +90,9 @@ The system supports syncing with a mobile client (e.g., "Health Wallet") through
 *   **Usability Improvements:**
     *   The pull request also introduced `start.sh` and `start.bat` scripts. These scripts simplify the process of running the application locally by automatically detecting the host's local IP address and making it available to the Docker container. This is crucial for ensuring the mobile client can connect to the server on the local network.
 
-*   **Dynamic Service Discovery (mDNS):**
-    *   **Backend:** The Fasten On-Prem backend registers itself as a service on the local network using mDNS (Bonjour/ZeroConf). This is implemented in a dedicated `startZeroconfServer` function in `backend/cmd/fasten/fasten.go` using the `github.com/grandcat/zeroconf` library.
-    *   **Configuration:** The service is configurable via `config.yaml` and can be enabled/disabled. Default settings are managed centrally in `backend/pkg/config/config.go`.
-    *   **Resilience:** The application is designed to be resilient; a failure in the mDNS registration process is logged as a non-fatal warning, allowing the main application to continue running.
-    *   **Dynamic Metadata:** The service broadcasts dynamic information, such as the application version, in its TXT records.
-    *   **Mobile Client:** The mobile client can discover the server's current IP address by querying for the `_fasten._tcp` service on the network. This makes the sync feature resilient to network changes and improves the overall user experience.
+*   **Automatic Port Forwarding (UPnP):**
+    *   **Backend:** The Fasten On-Prem backend can automatically configure port forwarding on a user's router using UPnP. This is implemented in the `startUpnpServer` function in `backend/cmd/fasten/fasten.go`.
+    *   **Library:** It uses the `github.com/huin/goupnp` library to interact with UPnP-enabled routers.
+    *   **Functionality:** The implementation discovers the router's external IP address and attempts to create a TCP port mapping from the external port to the internal port the application is running on.
+    *   **Configuration:** The feature can be enabled or disabled via the `upnp.enabled` setting in `config.yaml`.
+    *   **Resilience:** Failures in the UPnP process (e.g., router not found, port mapping not supported) are logged as non-fatal warnings, allowing the application to continue running without interruption. This makes the feature a convenience rather than a requirement.

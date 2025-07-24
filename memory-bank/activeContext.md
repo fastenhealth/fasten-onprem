@@ -1,12 +1,14 @@
 # Active Context: Fasten On-Prem (Memory Bank Updated July 23, 2025)
 
 ## Current Focus
-The mDNS (Zeroconf) service discovery feature has been refactored to improve robustness, configurability, and maintainability.
+The application now includes a UPnP (Universal Plug and Play) feature for automatic port forwarding. This enhances ease of use for self-hosted instances by attempting to automatically configure the user's router.
 
 ## Architectural Decisions
 
-*   **mDNS Refactoring:** The mDNS implementation has been moved to a dedicated, encapsulated function (`startZeroconfServer`). It now includes graceful error handling, is fully configurable via `config.yaml`, and centralizes its default settings in `backend/pkg/config/config.go` to align with existing patterns. The service also broadcasts dynamic data, such as the application version, via TXT records.
+*   **UPnP Integration:** The UPnP logic is implemented in `backend/cmd/fasten/fasten.go` within the `startUpnpServer` function. It uses the `github.com/huin/goupnp` library to discover the external IP address and create a port mapping.
+*   **Configuration:** The feature is enabled or disabled via the `upnp.enabled` flag in `config.yaml`.
+*   **Error Handling:** The implementation includes non-fatal error handling, allowing the application to start even if UPnP operations fail.
 
 ## Next Steps
 
-*   **Mobile Client Update:** The mobile client needs to be updated to perform mDNS discovery to take advantage of the improved backend service.
+*   There are no immediate next steps for this feature.
