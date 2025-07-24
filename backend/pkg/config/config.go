@@ -42,7 +42,7 @@ func (c *configuration) Init() error {
 
 	c.SetDefault("mdns.enabled", true)
 	c.SetDefault("mdns.name", "fasten-onprem")
-	c.SetDefault("mdns.service", "_fasten._tcp")
+	c.SetDefault("mdns.service", "_fasten-api._tcp")
 	c.SetDefault("mdns.domain", "local.")
 
 	//set the default system config file search path.
