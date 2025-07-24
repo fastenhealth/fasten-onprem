@@ -20,6 +20,7 @@ The Fasten On-Prem project appears to be in a **mature stage of development**, w
 *   Creation of a comprehensive set of UI components for data display and interaction.
 *   Establishment of build, testing, and deployment pipelines (Docker, Nix, Makefile).
 *   Configuration for multiple deployment environments.
+*   Refactoring of the mDNS (Zeroconf) service for improved robustness, configurability, and maintainability.
 
 ## Ongoing Activities / Immediate Next Steps (General Project)
 

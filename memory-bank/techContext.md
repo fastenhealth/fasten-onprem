@@ -210,5 +210,5 @@ This explanation outlines the core steps of the SMART-on-FHIR authentication flo
 
 *   **mDNS (Multicast DNS):** The backend uses mDNS to broadcast its presence on the local network. This allows the mobile client to automatically discover the backend's IP address and port without manual configuration.
     *   **Library:** The `github.com/grandcat/zeroconf` library is used to implement the mDNS server.
-    *   **Service Name:** The service is registered with the name `fasten-onprem`.
-    *   **Service Type:** The service type is `_fasten._tcp`.
+    *   **Configuration:** The service is highly configurable. Default settings are centralized in `backend/pkg/config/config.go`, and can be overridden by the user in `config.yaml` under the `mdns` key. This allows for enabling/disabling the service and customizing the name, service type, and domain.
+    *   **Dynamic TXT Records:** The implementation dynamically includes metadata, such as the application version, in the broadcasted TXT records.

@@ -91,5 +91,8 @@ The system supports syncing with a mobile client (e.g., "Health Wallet") through
     *   The pull request also introduced `start.sh` and `start.bat` scripts. These scripts simplify the process of running the application locally by automatically detecting the host's local IP address and making it available to the Docker container. This is crucial for ensuring the mobile client can connect to the server on the local network.
 
 *   **Dynamic Service Discovery (mDNS):**
-    *   **Backend:** The Fasten On-Prem backend registers itself as a service on the local network using mDNS (Bonjour/ZeroConf). This is implemented using the `github.com/grandcat/zeroconf` library.
+    *   **Backend:** The Fasten On-Prem backend registers itself as a service on the local network using mDNS (Bonjour/ZeroConf). This is implemented in a dedicated `startZeroconfServer` function in `backend/cmd/fasten/fasten.go` using the `github.com/grandcat/zeroconf` library.
+    *   **Configuration:** The service is configurable via `config.yaml` and can be enabled/disabled. Default settings are managed centrally in `backend/pkg/config/config.go`.
+    *   **Resilience:** The application is designed to be resilient; a failure in the mDNS registration process is logged as a non-fatal warning, allowing the main application to continue running.
+    *   **Dynamic Metadata:** The service broadcasts dynamic information, such as the application version, in its TXT records.
     *   **Mobile Client:** The mobile client can discover the server's current IP address by querying for the `_fasten._tcp` service on the network. This makes the sync feature resilient to network changes and improves the overall user experience.
