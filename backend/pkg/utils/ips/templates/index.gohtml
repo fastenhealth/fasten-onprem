@@ -1,0 +1,25 @@
+{{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>title</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{template "styles.gohtml" .}}
+</head>
+<body>
+
+{{template "header.gohtml" .}}
+{{template "toc.gohtml" .}}
+
+<article class="markdown-body">
+    {{template "composition.gohtml" .}}
+</article>
+
+{{template "footer.gohtml" .}}
+
+
+</body>
+</html>
+

@@ -102,6 +102,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.DELETE("/account/me", handler.DeleteAccount)
 
 				secure.GET("/summary", handler.GetSummary)
+				secure.GET("/summary/ips", handler.GetIPSSummary)
 				secure.GET("/ping", func(c *gin.Context) {
 					c.JSON(http.StatusOK, gin.H{"success": true, "message": "Connection valid"})
 				})
