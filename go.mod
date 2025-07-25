@@ -1,8 +1,6 @@
 module github.com/fastenhealth/fasten-onprem
 
-go 1.21.1
-
-toolchain go1.22.12
+go 1.22
 
 //replace github.com/fastenhealth/fasten-sources => ../fasten-sources
 
