@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"os"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/auth"
@@ -119,18 +118,20 @@ func getClientIP(c *gin.Context) string {
 
 // getServerAddress gets the server address and port, prioritizing non-local addresses
 func getServerAddress(c *gin.Context, appConfig config.Interface) (string, string) {
-	// Get the external port from environment variable or use default
-	externalPort := os.Getenv("FASTEN_EXTERNAL_PORT")
-	if externalPort == "" {
-		externalPort = "9090" // Default external port for Docker
+	// Get the port from the app config
+	port := appConfig.GetString("web.listen.port")
+
+	// Priority 1: UPnP discovered IP
+	if upnpHost := appConfig.GetString("upnp.local_ip"); upnpHost != "" {
+		return upnpHost, port
 	}
 
-	// Priority 1: Environment variable override
-	if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {
-		return envHost, externalPort
-	}
+	// Priority 2: Environment variable override (deprecated, but kept for compatibility)
+	//if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {
+	//	return envHost, externalPort
+	//}
 
-	// Priority 2: Headers from reverse proxies
+	// Priority 3: Headers from reverse proxies
 	if forwardedHost := c.GetHeader("X-Forwarded-Host"); forwardedHost != "" {
 		if host, _, err := net.SplitHostPort(forwardedHost); err == nil {
 			return host, externalPort
@@ -156,15 +157,12 @@ func getServerAddress(c *gin.Context, appConfig config.Interface) (string, strin
 	}
 
 	// Final fallback to localhost
-	return "localhost", externalPort
+	return "localhost", port
 }
 
 // getServerAddresses returns multiple possible server addresses for network change resilience
 func getServerAddresses(c *gin.Context, appConfig config.Interface) []string {
-	port := os.Getenv("FASTEN_EXTERNAL_PORT")
-	if port == "" {
-		port = "9090" // Default external port for Docker
-	}
+	port := appConfig.GetString("web.listen.port")
 
 	// Use a map to automatically handle uniqueness and a slice to maintain order
 	seen := make(map[string]bool)
@@ -177,12 +175,17 @@ func getServerAddresses(c *gin.Context, appConfig config.Interface) []string {
 		}
 	}
 
-	// Priority 1: Environment variable override
-	if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {
-		addAddress(fmt.Sprintf("%s:%s", envHost, port))
+	// Priority 1: UPnP discovered IP
+	if upnpHost := appConfig.GetString("upnp.local_ip"); upnpHost != "" {
+		addAddress(fmt.Sprintf("%s:%s", upnpHost, port))
 	}
 
-	// Priority 2: Headers from reverse proxies
+	// Priority 2: Environment variable override (deprecated, but kept for compatibility)
+	//if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {
+	//	addAddress(fmt.Sprintf("%s:%s", envHost, port))
+	//}
+
+	// Priority 3: Headers from reverse proxies
 	if forwardedHost := c.GetHeader("X-Forwarded-Host"); forwardedHost != "" {
 		if host, _, err := net.SplitHostPort(forwardedHost); err == nil {
 			addAddress(fmt.Sprintf("%s:%s", host, port))

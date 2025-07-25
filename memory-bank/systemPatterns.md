@@ -88,7 +88,7 @@ The system supports syncing with a mobile client (e.g., "Health Wallet") through
     5.  The mobile app uses the information from the QR code to connect to the Fasten On-Prem server and start syncing data.
 
 *   **Usability Improvements:**
-    *   The pull request also introduced `start.sh` and `start.bat` scripts. These scripts simplify the process of running the application locally by automatically detecting the host's local IP address and making it available to the Docker container. This is crucial for ensuring the mobile client can connect to the server on the local network.
+    *   The application now automatically discovers the host's local IP address at startup using UPnP and makes it available to the API handlers. This is crucial for ensuring a mobile client can connect to the server on the local network without manual configuration.
 
 *   **Automatic Port Forwarding (UPnP):**
     *   **Backend:** The Fasten On-Prem backend can automatically configure port forwarding on a user's router using UPnP. This is implemented in the `startUpnpServer` function in `backend/cmd/fasten/fasten.go`.
