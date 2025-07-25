@@ -35,3 +35,5 @@ jwt:
 # UPnP service discovery settings
 upnp:
   enabled: true
+ssdp:
+  enabled: true

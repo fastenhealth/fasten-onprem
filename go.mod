@@ -1,6 +1,8 @@
 module github.com/fastenhealth/fasten-onprem
 
-go 1.22
+go 1.23.0
+
+toolchain go1.23.11
 
 //replace github.com/fastenhealth/fasten-sources => ../fasten-sources
 
@@ -28,16 +30,17 @@ require (
 	github.com/huin/goupnp v1.3.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/johnfercher/maroto/v2 v2.3.1
+	github.com/koron/go-ssdp v0.0.6
 	github.com/lestrrat-go/jwx/v2 v2.0.11
 	github.com/samber/lo v1.35.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.8.4
 	github.com/urfave/cli/v2 v2.11.2
-	golang.org/x/crypto v0.14.0
+	golang.org/x/crypto v0.37.0
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17
 	golang.org/x/mod v0.17.0
-	golang.org/x/net v0.17.0
+	golang.org/x/net v0.39.0
 	gorm.io/datatypes v1.0.7
 	gorm.io/driver/sqlite v1.5.4
 	gorm.io/gorm v1.25.4
@@ -67,7 +70,7 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
 	golang.org/x/image v0.18.0 // indirect
-	golang.org/x/sync v0.7.0 // indirect
+	golang.org/x/sync v0.13.0 // indirect
 )
 
 require (
@@ -126,9 +129,9 @@ require (
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/oauth2 v0.11.0 // indirect
-	golang.org/x/sys v0.13.0 // indirect
-	golang.org/x/term v0.13.0 // indirect
-	golang.org/x/text v0.16.0 // indirect
+	golang.org/x/sys v0.32.0 // indirect
+	golang.org/x/term v0.31.0 // indirect
+	golang.org/x/text v0.24.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect

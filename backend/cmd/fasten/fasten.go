@@ -10,6 +10,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/version"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/discovery"
 	"github.com/fastenhealth/fasten-onprem/backend/resources"
 	"github.com/sirupsen/logrus"
 	"github.com/huin/goupnp/dcps/internetgateway2"
@@ -120,6 +121,21 @@ func main() {
 					if err = startUpnpServer(appLogger, appconfig); err != nil {
 						//non-fatal error, so we'll just log it
 						appLogger.Warn(err)
+					}
+
+					//ssdp
+					if appconfig.GetBool("ssdp.enabled") {
+						ssdpServer, err := discovery.NewSsdpService(appLogger)
+						if err != nil {
+							appLogger.Warn(err)
+						} else {
+							go func() {
+								if err := ssdpServer.Start(appconfig.GetString("upnp.local_ip"), appconfig.GetInt("web.listen.port")); err != nil {
+									appLogger.Warn(err)
+								}
+							}()
+							defer ssdpServer.Stop()
+						}
 					}
 
 					relatedVersions, _ := resources.GetRelatedVersions()
