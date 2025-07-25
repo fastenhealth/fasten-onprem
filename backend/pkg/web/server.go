@@ -102,6 +102,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.DELETE("/account/me", handler.DeleteAccount)
 
 				secure.GET("/summary", handler.GetSummary)
+				secure.GET("/summary/ips", handler.GetIPSSummary)
 
 				secure.POST("/source", handler.CreateReconnectSource)
 				secure.POST("/source/manual", handler.CreateManualSource)
