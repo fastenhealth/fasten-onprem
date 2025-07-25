@@ -105,17 +105,6 @@ func InitiateSync(c *gin.Context) {
 	})
 }
 
-// getClientIP gets the client IP address
-func getClientIP(c *gin.Context) string {
-	if ip := c.GetHeader("X-Forwarded-For"); ip != "" {
-		return ip
-	}
-	if ip := c.GetHeader("X-Real-IP"); ip != "" {
-		return ip
-	}
-	return c.ClientIP()
-}
-
 // getServerAddress gets the server address and port, prioritizing non-local addresses
 func getServerAddress(c *gin.Context, appConfig config.Interface) (string, string) {
 	// Get the port from the app config
@@ -134,12 +123,12 @@ func getServerAddress(c *gin.Context, appConfig config.Interface) (string, strin
 	// Priority 3: Headers from reverse proxies
 	if forwardedHost := c.GetHeader("X-Forwarded-Host"); forwardedHost != "" {
 		if host, _, err := net.SplitHostPort(forwardedHost); err == nil {
-			return host, externalPort
+			return host, port
 		}
-		return forwardedHost, externalPort
+		return forwardedHost, port
 	}
 	if realIP := c.GetHeader("X-Real-IP"); realIP != "" {
-		return realIP, externalPort
+		return realIP, port
 	}
 
 	// Priority 3: Detect a private, non-loopback IP address
@@ -150,7 +139,7 @@ func getServerAddress(c *gin.Context, appConfig config.Interface) (string, strin
 		for _, addr := range addrs {
 			if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
 				if ip := ipnet.IP.To4(); ip != nil && ip.IsPrivate() {
-					return ip.String(), externalPort
+					return ip.String(), port
 				}
 			}
 		}

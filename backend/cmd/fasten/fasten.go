@@ -239,27 +239,29 @@ func startUpnpServer(logger *logrus.Entry, cfg config.Interface) error {
 
 	client := clients[0]
 
-	externalIP, err := client.GetExternalIPAddress()
-	if err != nil {
-		return fmt.Errorf("UPnP service registration failed: could not get external IP address: %v. The application will continue without network discovery", err)
-	}
+	logger.Infof("UPnP service discovered local IP address: %s", client.LocalAddr().String())
 
-	logger.Infof("UPnP service discovered external IP address: %s", externalIP)
+	cfg.Set("upnp.local_ip", client.LocalAddr().String())
 
-	err = client.AddPortMapping(
-		"",
-		uint16(cfg.GetInt("web.listen.port")),
-		"TCP",
-		uint16(cfg.GetInt("web.listen.port")),
-		client.LocalAddr().String(),
-		true,
-		"fasten-onprem",
-		0,
-	)
+	// externalIP, err := client.GetExternalIPAddress()
+	// if err != nil {
+	// 	return fmt.Errorf("UPnP service registration failed: could not get external IP address: %v. The application will continue without network discovery", err)
+	// }
 
-	if err != nil {
-		return fmt.Errorf("UPnP service registration failed: could not add port mapping: %v. The application will continue without network discovery", err)
-	}
+	//err = client.AddPortMapping(
+	//	"",
+	//	uint16(cfg.GetInt("web.listen.port")),
+	//	"TCP",
+	//	uint16(cfg.GetInt("web.listen.port")),
+	//	client.LocalAddr().String(),
+	//	true,
+	//	"fasten-onprem",
+	//	0,
+	//)
+	//
+	//if err != nil {
+	//	return fmt.Errorf("UPnP service registration failed: could not add port mapping: %v. The application will continue without network discovery", err)
+	//}
 
 	logger.Info("UPnP service registered successfully.")
 	return nil
