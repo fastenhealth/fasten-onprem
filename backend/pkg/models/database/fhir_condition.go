@@ -115,6 +115,9 @@ type FhirCondition struct {
 	// Tags applied to this resource
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Onsets as age or age range
 	// https://hl7.org/fhir/r4/search.html#quantity
 	OnsetAge datatypes.JSON `gorm:"column:onsetAge;type:text;serializer:json" json:"onsetAge,omitempty"`
@@ -137,11 +140,8 @@ type FhirCondition struct {
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// unconfirmed | provisional | differential | confirmed | refuted | entered-in-error
 	// https://hl7.org/fhir/r4/search.html#token
 	VerificationStatus datatypes.JSON `gorm:"column:verificationStatus;type:text;serializer:json" json:"verificationStatus,omitempty"`
@@ -167,6 +167,7 @@ func (s *FhirCondition) GetSearchParameters() map[string]string {
 		"metaProfile":          "reference",
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
+		"note":                 "string",
 		"onsetAge":             "quantity",
 		"onsetDate":            "date",
 		"onsetInfo":            "string",
@@ -179,8 +180,7 @@ func (s *FhirCondition) GetSearchParameters() map[string]string {
 		"source_uri":           "keyword",
 		"stage":                "token",
 		"subject":              "reference",
-		"text":                 "keyword",
-		"type":                 "special",
+		"text":                 "string",
 		"verificationStatus":   "token",
 	}
 	return searchParameters
@@ -230,14 +230,14 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	// extracting AbatementDate
 	abatementDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Condition.abatementDateTime | Condition.abatementPeriod')")
 	if err == nil && abatementDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, abatementDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, abatementDateResult.String()); err == nil {
 			s.AbatementDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", abatementDateResult.String())
-			if err == nil {
-				s.AbatementDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", abatementDateResult.String()); err == nil {
+			s.AbatementDate = &t
+		} else if t, err = time.Parse("2006-01", abatementDateResult.String()); err == nil {
+			s.AbatementDate = &t
+		} else if t, err = time.Parse("2006", abatementDateResult.String()); err == nil {
+			s.AbatementDate = &t
 		}
 	}
 	// extracting AbatementString
@@ -298,14 +298,14 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -323,6 +323,11 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	if err == nil && metaVersionIdResult.String() != "undefined" {
 		s.MetaVersionId = metaVersionIdResult.String()
 	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
+	}
 	// extracting OnsetAge
 	onsetAgeResult, err := vm.RunString("extractCatchallSearchParameters(fhirResource, 'Condition.onsetAge | Condition.onsetRange')")
 	if err == nil && onsetAgeResult.String() != "undefined" {
@@ -331,14 +336,14 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	// extracting OnsetDate
 	onsetDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Condition.onsetDateTime | Condition.onsetPeriod')")
 	if err == nil && onsetDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, onsetDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, onsetDateResult.String()); err == nil {
 			s.OnsetDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", onsetDateResult.String())
-			if err == nil {
-				s.OnsetDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", onsetDateResult.String()); err == nil {
+			s.OnsetDate = &t
+		} else if t, err = time.Parse("2006-01", onsetDateResult.String()); err == nil {
+			s.OnsetDate = &t
+		} else if t, err = time.Parse("2006", onsetDateResult.String()); err == nil {
+			s.OnsetDate = &t
 		}
 	}
 	// extracting OnsetInfo
@@ -349,14 +354,14 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 	// extracting RecordedDate
 	recordedDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Condition.recordedDate')")
 	if err == nil && recordedDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, recordedDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, recordedDateResult.String()); err == nil {
 			s.RecordedDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", recordedDateResult.String())
-			if err == nil {
-				s.RecordedDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", recordedDateResult.String()); err == nil {
+			s.RecordedDate = &t
+		} else if t, err = time.Parse("2006-01", recordedDateResult.String()); err == nil {
+			s.RecordedDate = &t
+		} else if t, err = time.Parse("2006", recordedDateResult.String()); err == nil {
+			s.RecordedDate = &t
 		}
 	}
 	// extracting Severity
@@ -375,9 +380,9 @@ func (s *FhirCondition) PopulateAndExtractSearchParameters(resourceRaw json.RawM
 		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	// extracting VerificationStatus
 	verificationStatusResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Condition.verificationStatus')")
