@@ -81,3 +81,4 @@ fasten.db-wal
 
 backend/resources/related_versions.json
 frontend/documentation.json
+encrypt_db

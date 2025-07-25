@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"runtime"
 	"strings"
 
@@ -55,6 +56,17 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				// This function does a quick check to see if the server is up and running
 				// it will also determine if we should show the first run wizard
 
+				// Check if the encrypt token is present
+				tokenPath := "/opt/fasten/encrypt_db/token"
+				// Check if the token file exists
+				if _, err := os.Stat(tokenPath); os.IsNotExist(err) {
+					c.JSON(http.StatusInternalServerError, gin.H{
+						"success": false,
+						"error":   "no_encryption_token", // <-- specific code/message for FE
+					})
+					return
+				}
+
 				//TODO:
 				// check if the /web folder is populated.
 
@@ -92,6 +104,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 			api.GET("/glossary/code", handler.GlossarySearchByCode)
 			api.POST("/support/request", handler.SupportRequest)
 			api.POST("/support/healthsystem", handler.HealthSystemRequest)
+			api.POST("/set-token", handler.SetupToken)
 
 			secure := api.Group("/secure").Use(middleware.RequireAuth())
 			{

@@ -5,6 +5,7 @@ import {AuthService} from '../../services/auth.service';
 import {Router} from '@angular/router';
 import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
+import { FastenApiService } from 'src/app/services/fasten-api.service';
 
 class UserWizard extends User {
   password_confirm: string = ""
@@ -112,6 +113,7 @@ export class AuthSignupWizardComponent implements OnInit {
   submitted: boolean = false
   newUser: UserWizard = new UserWizard()
   errorMsg: string = ""
+  fastenService: FastenApiService
 
   constructor(
     private authService: AuthService,
@@ -119,7 +121,19 @@ export class AuthSignupWizardComponent implements OnInit {
     private toastService: ToastService
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+     try {
+      // Check if encryption token is set by running the health check
+      await this.fastenService.getHealth().toPromise();
+    } catch (e: any) {
+      if (e?.error?.error === 'no_encryption_token') {
+        console.warn('No encryption token found. Redirecting to wizard.');
+        await this.router.navigate(['/setup-token']);
+        return;
+      }
+
+      console.error('ignoring error:', e);
+    }
   }
 
   signupSubmit(){

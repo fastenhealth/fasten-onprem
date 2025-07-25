@@ -1,0 +1,21 @@
+<div class="container">
+    <div *ngIf="!isTokenSet && !error">
+        <h1>Enter Your Token</h1>
+        <form [formGroup]="tokenForm" (ngSubmit)="onSubmit()">
+            <input type="text" formControlName="token" placeholder="Enter token" required>
+            <button type="submit" [disabled]="!tokenForm.valid">Set Token</button>
+        </form>
+        <a href="/">Go to Main Page</a>
+    </div>
+
+    <div *ngIf="isTokenSet">
+        <h1>Token set successfully!</h1>
+        <p>The container has been stopped. Please run the `docker run` command again to start the application in full
+            mode.</p>
+    </div>
+
+    <div *ngIf="error">
+        <h1>Error</h1>
+        <p>Failed to set token. Please try again.</p>
+    </div>
+</div>

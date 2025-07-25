@@ -22,9 +22,10 @@ import { ResourceDetailComponent } from './pages/resource-detail/resource-detail
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
 import { UserCreateComponent } from './pages/user-create/user-create.component';
 import { UserListComponent } from './pages/user-list/user-list.component';
+import { SetupTokenComponent } from "./pages/setup-token/setup-token.component";
 
 const routes: Routes = [
-
+  { path: 'setup-token', component: SetupTokenComponent },
   { path: 'auth/signup/wizard', component: AuthSignupWizardComponent },
 
   { path: 'auth/signin', component: AuthSigninComponent, canActivate: [ ShowFirstRunWizardGuard] },

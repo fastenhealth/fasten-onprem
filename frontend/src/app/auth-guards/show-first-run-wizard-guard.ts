@@ -1,27 +1,39 @@
 import { Injectable } from '@angular/core';
-import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router} from '@angular/router';
-import {FastenApiService} from '../services/fasten-api.service';
+import {
+  CanActivate,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+  UrlTree,
+  Router,
+} from '@angular/router';
+import { FastenApiService } from '../services/fasten-api.service';
 
 @Injectable()
 export class ShowFirstRunWizardGuard implements CanActivate {
-  constructor(private fastenService: FastenApiService, private router: Router) {
+  constructor(
+    private fastenService: FastenApiService,
+    private router: Router
+  ) {}
 
-  }
-
-  async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise <boolean> {
+  async canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Promise<boolean> {
     try {
-      //check if the server requires the first run wizard to be shown, if not, continue to login/signup
-      let healthData = await this.fastenService.getHealth().toPromise()
+      const healthData = await this.fastenService.getHealth().toPromise();
 
       if (healthData.first_run_wizard) {
         return await this.router.navigate(['/auth/signup/wizard']);
       }
+    } catch (e: any) {
+      if (e?.error?.error === 'no_encryption_token') {
+        console.warn('No encryption token found. Redirecting to wizard.');
+        return await this.router.navigate(['/setup-token']);
+      }
 
-    } catch (e) {
-      // if there is an error, just ignore it, and continue to the signin/signup page.
-      console.error("ignoring error:", e)
+      console.error('ignoring error:', e);
     }
-    // continue as normal
-    return true
+
+    return true;
   }
 }
