@@ -50,6 +50,9 @@ type FhirOrganizationAffiliation struct {
 	// Health insurance provider network in which the participatingOrganization provides the role's services (if defined) at the indicated locations (if defined)
 	// https://hl7.org/fhir/r4/search.html#reference
 	Network datatypes.JSON `gorm:"column:network;type:text;serializer:json" json:"network,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// The organization that provides services to the primary organization
 	// https://hl7.org/fhir/r4/search.html#reference
 	ParticipatingOrganization datatypes.JSON `gorm:"column:participatingOrganization;type:text;serializer:json" json:"participatingOrganization,omitempty"`
@@ -72,11 +75,8 @@ type FhirOrganizationAffiliation struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	Telecom datatypes.JSON `gorm:"column:telecom;type:text;serializer:json" json:"telecom,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 }
 
 func (s *FhirOrganizationAffiliation) GetSearchParameters() map[string]string {
@@ -94,6 +94,7 @@ func (s *FhirOrganizationAffiliation) GetSearchParameters() map[string]string {
 		"metaTag":                   "token",
 		"metaVersionId":             "keyword",
 		"network":                   "reference",
+		"note":                      "string",
 		"participatingOrganization": "reference",
 		"phone":                     "token",
 		"primaryOrganization":       "reference",
@@ -106,8 +107,7 @@ func (s *FhirOrganizationAffiliation) GetSearchParameters() map[string]string {
 		"source_uri":                "keyword",
 		"specialty":                 "token",
 		"telecom":                   "token",
-		"text":                      "keyword",
-		"type":                      "special",
+		"text":                      "string",
 	}
 	return searchParameters
 }
@@ -156,14 +156,14 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 	// extracting Date
 	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'OrganizationAffiliation.period')")
 	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, dateResult.String()); err == nil {
 			s.Date = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", dateResult.String())
-			if err == nil {
-				s.Date = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006-01", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006", dateResult.String()); err == nil {
+			s.Date = &t
 		}
 	}
 	// extracting Email
@@ -194,14 +194,14 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -223,6 +223,11 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 	networkResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'OrganizationAffiliation.network')")
 	if err == nil && networkResult.String() != "undefined" {
 		s.Network = []byte(networkResult.String())
+	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
 	}
 	// extracting ParticipatingOrganization
 	participatingOrganizationResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'OrganizationAffiliation.participatingOrganization')")
@@ -260,9 +265,9 @@ func (s *FhirOrganizationAffiliation) PopulateAndExtractSearchParameters(resourc
 		s.Telecom = []byte(telecomResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	return nil
 }
