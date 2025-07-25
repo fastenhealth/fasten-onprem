@@ -1,0 +1,30 @@
+<!--/* HistoryOfProcedures -->
+<!--
+Procedure: Procedure.code.text || Procedure.code.coding[x].display (separated by <br />)
+Comments: Procedure.note[x].text(separated by <br />)
+Date: Procedure.performedDateTime || Procedure.performedPeriod.start && “-“ && Procedure.performedPeriod.end || Procedure.performedAge || Procedure.performedRange.low && “-“ && Procedure.performedRange.high || Procedure.performedString
+*/-->
+<div xmlns:th="http://www.thymeleaf.org">
+   <h5>History Of Procedures</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Procedure</th>
+         <th>Comments</th>
+         <th>Date</th>
+      </tr>
+      </thead>
+      <tbody>
+
+      {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+      {{range $index, $entry := .Procedure }}
+         <tr id="{{$entry.SourceResourceID}}">
+            <td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Procedure */}}
+            <td>{{pluckList "text" ($entry.Note | parseMapList) | uniq | join "," }}</td> {{/* Comments */}}
+            <td>{{$entry.Date | date "2006-01-02"}}</td> {{/* Performed Date */}}
+         </tr>
+      {{end}}
+
+      </tbody>
+   </table>
+</div>

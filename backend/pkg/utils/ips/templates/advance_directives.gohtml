@@ -1,0 +1,33 @@
+<!--/* AdvanceDirectives -->
+<!--
+Scope: Consent.scope.text || Consent.scope.coding[x].display (separated by <br />)
+Status: Consent.status.code
+Action Controlled: Consent.provision.action[x].{ text || coding[x].display (separated by <br />)} (concatenate with comma, e.g. x, y, z)
+Date: Consent.dateTime
+*/-->
+<div>
+   <h5>Advance Directives</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Scope</th>
+         <th>Status</th>
+         <th>Action Controlled</th>
+         <th>Date</th>
+      </tr>
+      </thead>
+      <tbody>
+      {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+      {{range $index, $entry := .Consent }}
+         <tr th:id="${#strings.arraySplit(extension, '#')[1]}">
+            <td>{{pluckList "text" ($entry.Scope | parseMapList) | uniq | join "," }}</td> {{/* Scope */}}
+            <td>{{pluckList "code" ($entry.Status | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
+            <td>{{pluckList "text" ($entry.Action | parseMapList) | uniq | join "," }}</td> {{/* Action Controlled */}}
+            <td>{{$entry.Date | date "2006-01-02"}}</td> {{/* Date */}}
+         </tr>
+      {{end}}
+      </tbody>
+   </table>
+</div>
+
+

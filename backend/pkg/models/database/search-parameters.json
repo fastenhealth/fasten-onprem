@@ -65036,5 +65036,122 @@
       "xpath" : "f:VisionPrescription/f:status",
       "xpathUsage" : "normal"
     }
+  },
+  {
+    "resource" : {
+      "id" : "Medication-dosageInstruction",
+      "name" : "dosageInstruction",
+      "status" : "draft",
+      "experimental" : false,
+      "description" : "Returns medication dosage instructions",
+      "code" : "dosageInstruction",
+      "base" : ["Medication"],
+      "type" : "string",
+      "expression" : "Medication.dosageInstruction"
+    }
+  },
+  {
+    "resource" : {
+      "id" : "MedicationRequest-dosageInstruction",
+      "name" : "dosageInstruction",
+      "status" : "draft",
+      "experimental" : false,
+      "description" : "Returns medication request dosage instructions",
+      "code" : "dosageInstruction",
+      "base" : ["MedicationRequest"],
+      "type" : "string",
+      "expression" : "MedicationRequest.dosageInstruction"
+    }
+  },
+  {
+    "resource" : {
+      "id" : "MedicationStatement-dosageInstruction",
+      "name" : "dosageInstruction",
+      "status" : "draft",
+      "experimental" : false,
+      "description" : "Returns medication statemen dosage instructions",
+      "code" : "dosageInstruction",
+      "base" : ["MedicationStatement"],
+      "type" : "string",
+      "expression" : "MedicationStatement.dosageInstruction"
+    }
+  },
+  {
+    "resource" : {
+      "id" : "Medication-route",
+      "name" : "route",
+      "status" : "draft",
+      "experimental" : false,
+      "description" : "Returns medication route",
+      "code" : "route",
+      "base" : ["Medication"],
+      "type" : "string",
+      "expression" : "Medication.dosageInstruction.route"
+    }
+  },
+  {
+    "resource" : {
+      "id" : "MedicationRequest-route",
+      "name" : "route",
+      "status" : "draft",
+      "experimental" : false,
+      "description" : "Returns medication request route",
+      "code" : "route",
+      "base" : ["MedicationRequest"],
+      "type" : "string",
+      "expression" : "MedicationRequest.dosageInstruction.route"
+    }
+  },
+  {
+    "resource" : {
+      "id" : "Observation-referenceRange",
+      "name" : "referenceRange",
+      "status" : "draft",
+      "experimental" : false,
+      "description" : "Returns observation referenceRange",
+      "code" : "referenceRange",
+      "base" : ["Observation"],
+      "type" : "string",
+      "expression" : "Observation.referenceRange"
+    }
+  },
+  {
+    "resource" : {
+      "id" : "Observation-interpretation",
+      "name" : "interpretation",
+      "status" : "draft",
+      "experimental" : false,
+      "description" : "Returns observation interpretation",
+      "code" : "interpretation",
+      "base" : ["Observation"],
+      "type" : "token",
+      "expression" : "Observation.interpretation"
+    }
+  },
+  {
+    "resource" : {
+      "id" : "Immunization-doseNumber",
+      "name" : "doseNumber",
+      "status" : "draft",
+      "experimental" : false,
+      "description" : "Returns immunizaton dose number",
+      "code" : "doseNumber",
+      "base" : ["Immunization"],
+      "type" : "token",
+      "expression" : "Immunization.protocolApplied.doseNumber"
+    }
+  },
+  {
+    "resource" : {
+      "id" : "CarePlan-period",
+      "name" : "period",
+      "status" : "draft",
+      "experimental" : false,
+      "description" : "Returns care plan period",
+      "code" : "period",
+      "base" : ["CarePlan"],
+      "type" : "string",
+      "expression" : "CarePlan.period"
+    }
   }]
 }

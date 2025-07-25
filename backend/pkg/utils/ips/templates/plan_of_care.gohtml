@@ -1,0 +1,34 @@
+<!--/* PlanOfCare -->
+<!--
+Activity: CarePlan.description
+Intent: CarePlan.intent.code
+Comments: CarePlan.note[x].text (separated by <br />)
+Planned Start: CarePlan.period.start
+Planned End: CarePlan.period.end
+*/-->
+<div xmlns:th="http://www.thymeleaf.org">
+   <h5>Plan of Care</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Activity</th>
+         <th>Intent</th>
+         <th>Comments</th>
+         <th>Planned Start</th>
+         <th>Planned End</th>
+      </tr>
+      </thead>
+      <tbody>
+      {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+      {{range $index, $entry := .CarePlan }}
+         <tr id="{{$entry.SourceResourceID}}">
+            <td>{{pluckList "text" ($entry.ActivityCode | parseMapList) | uniq | join ", " }}</td> {{/* Activity */}}
+            <td>{{pluckList "code" ($entry.Intent | parseMapList) | uniq | join "," }}</td> {{/* Intent */}}
+            <td>{{pluckList "text" ($entry.Note | parseMapList) | uniq | join "," }}</td> {{/* Comments */}}
+            <td>{{$entry.Date}}</td>{{/* Planned Start */}}
+            <td></td>{{/* Planned End */}}
+         </tr>
+      {{end}}
+      </tbody>
+   </table>
+</div>

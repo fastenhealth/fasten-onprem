@@ -1,0 +1,42 @@
+<!--/* AllergiesAndIntolerances -->
+<!--
+Allergen: AllergyIntolerance.code.text || AllergyIntolerance.code.coding[x].display (separated by <br />)
+Status: AllergyIntolerance.clinicalStatus.text || AllergyIntolerance.clinicalStatus.coding[x].code (separated by <br />)
+Category: AllergyIntolerance.category[x] (separated by <br />)
+Reaction: AllergyIntolerance.reaction.manifestation.description || AllergyIntolerance.reaction.manifestation.text || AllergyIntolerance.reaction.manifestation.coding[x].display (separated by <br />)
+Severity: AllergyIntolerance.reaction.severity[x].code (separated by <br />)
+Comments: AllergyIntolerance.note[x].text (separated by <br />)
+*/-->
+<div>
+   <h5>Allergies And Intolerances</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Allergen</th>
+         <th>Status</th>
+         <th>Category</th>
+         <th>Reaction</th>
+         <th>Severity</th>
+         <th>Comments</th>
+         <th>Onset</th>
+      </tr>
+      </thead>
+      <tbody>
+
+      {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+      {{range $index, $entry := .AllergyIntolerance }}
+         <tr id="{{$entry.SourceResourceID}}">
+            <td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Allergen */}}
+            <td>{{pluckList "code" ($entry.ClinicalStatus | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
+            <td>{{pluckList "code" ($entry.Category | parseMapList) | uniq | join "," }}</td> {{/* Category */}}
+            <td>{{pluckList "text" ($entry.Manifestation | parseMapList) | uniq | join "," }}</td> {{/* Reaction */}}
+            <td>{{pluckList "code" ($entry.Criticality | parseMapList) | uniq | join ","}}</td> {{/* Severity */}}
+            <td>{{pluckList "text" ($entry.Note | parseMapList) | uniq | join "<br />"}}</td> {{/* Comments */}}
+            <td>{{default "unknown" $entry.Onset | date "2006-01-02"}}</td> {{/* Onset */}}
+         </tr>
+      {{end}}
+      </tbody>
+   </table>
+</div>
+
+

@@ -86,6 +86,9 @@ type FhirVisionPrescription struct {
 	// Tags applied to this resource
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Who authorized the vision prescription
 	// https://hl7.org/fhir/r4/search.html#reference
 	Prescriber datatypes.JSON `gorm:"column:prescriber;type:text;serializer:json" json:"prescriber,omitempty"`
@@ -93,11 +96,8 @@ type FhirVisionPrescription struct {
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 }
 
 func (s *FhirVisionPrescription) GetSearchParameters() map[string]string {
@@ -111,6 +111,7 @@ func (s *FhirVisionPrescription) GetSearchParameters() map[string]string {
 		"metaProfile":          "reference",
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
+		"note":                 "string",
 		"prescriber":           "reference",
 		"sort_date":            "date",
 		"source_id":            "keyword",
@@ -118,8 +119,7 @@ func (s *FhirVisionPrescription) GetSearchParameters() map[string]string {
 		"source_resource_type": "keyword",
 		"source_uri":           "keyword",
 		"status":               "token",
-		"text":                 "keyword",
-		"type":                 "special",
+		"text":                 "string",
 	}
 	return searchParameters
 }
@@ -163,14 +163,14 @@ func (s *FhirVisionPrescription) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting Datewritten
 	datewrittenResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'VisionPrescription.dateWritten')")
 	if err == nil && datewrittenResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, datewrittenResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, datewrittenResult.String()); err == nil {
 			s.Datewritten = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", datewrittenResult.String())
-			if err == nil {
-				s.Datewritten = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", datewrittenResult.String()); err == nil {
+			s.Datewritten = &t
+		} else if t, err = time.Parse("2006-01", datewrittenResult.String()); err == nil {
+			s.Datewritten = &t
+		} else if t, err = time.Parse("2006", datewrittenResult.String()); err == nil {
+			s.Datewritten = &t
 		}
 	}
 	// extracting Encounter
@@ -191,14 +191,14 @@ func (s *FhirVisionPrescription) PopulateAndExtractSearchParameters(resourceRaw 
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -216,6 +216,11 @@ func (s *FhirVisionPrescription) PopulateAndExtractSearchParameters(resourceRaw 
 	if err == nil && metaVersionIdResult.String() != "undefined" {
 		s.MetaVersionId = metaVersionIdResult.String()
 	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
+	}
 	// extracting Prescriber
 	prescriberResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'VisionPrescription.prescriber')")
 	if err == nil && prescriberResult.String() != "undefined" {
@@ -227,9 +232,9 @@ func (s *FhirVisionPrescription) PopulateAndExtractSearchParameters(resourceRaw 
 		s.Status = []byte(statusResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	return nil
 }
