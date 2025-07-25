@@ -7,6 +7,7 @@ package mock_database
 import (
 	context "context"
 	reflect "reflect"
+	"time"
 
 	pkg "github.com/fastenhealth/fasten-onprem/backend/pkg"
 	models "github.com/fastenhealth/fasten-onprem/backend/pkg/models"
@@ -119,6 +120,180 @@ func (m *MockDatabaseRepository) CreateGlossaryEntry(ctx context.Context, glossa
 func (mr *MockDatabaseRepositoryMockRecorder) CreateGlossaryEntry(ctx, glossaryEntry interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGlossaryEntry", reflect.TypeOf((*MockDatabaseRepository)(nil).CreateGlossaryEntry), ctx, glossaryEntry)
+}
+
+// CreateDeviceSyncHistory mocks base method.
+func (m *MockDatabaseRepository) CreateDeviceSyncHistory(ctx context.Context, history *models.DeviceSyncHistory) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateDeviceSyncHistory", ctx, history)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateDeviceSyncHistory indicates an expected call of CreateDeviceSyncHistory.
+func (mr *MockDatabaseRepositoryMockRecorder) CreateDeviceSyncHistory(ctx, history interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateDeviceSyncHistory", reflect.TypeOf((*MockDatabaseRepository)(nil).CreateDeviceSyncHistory), ctx, history)
+}
+
+// GetLastUpdatedTimestamp mocks base method.
+func (m *MockDatabaseRepository) GetLastUpdatedTimestamp(ctx context.Context) (*time.Time, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetLastUpdatedTimestamp", ctx)
+	ret0, _ := ret[0].(*time.Time)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetLastUpdatedTimestamp indicates an expected call of GetLastUpdatedTimestamp.
+func (mr *MockDatabaseRepositoryMockRecorder) GetLastUpdatedTimestamp(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLastUpdatedTimestamp", reflect.TypeOf((*MockDatabaseRepository)(nil).GetLastUpdatedTimestamp), ctx)
+}
+
+// CreateSyncToken mocks base method.
+func (m *MockDatabaseRepository) CreateSyncToken(ctx context.Context, syncToken *models.SyncToken) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateSyncToken", ctx, syncToken)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateSyncToken indicates an expected call of CreateSyncToken.
+func (mr *MockDatabaseRepositoryMockRecorder) CreateSyncToken(ctx, syncToken interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSyncToken", reflect.TypeOf((*MockDatabaseRepository)(nil).CreateSyncToken), ctx, syncToken)
+}
+
+// GetUserSyncTokens mocks base method.
+func (m *MockDatabaseRepository) GetUserSyncTokens(ctx context.Context, userID uuid.UUID) ([]models.SyncToken, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserSyncTokens", ctx, userID)
+	ret0, _ := ret[0].([]models.SyncToken)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserSyncTokens indicates an expected call of GetUserSyncTokens.
+func (mr *MockDatabaseRepositoryMockRecorder) GetUserSyncTokens(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserSyncTokens", reflect.TypeOf((*MockDatabaseRepository)(nil).GetUserSyncTokens), ctx, userID)
+}
+
+// GetUserSyncHistory mocks base method.
+func (m *MockDatabaseRepository) GetUserSyncHistory(ctx context.Context, userID uuid.UUID, limit int) ([]models.SyncTokenHistory, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserSyncHistory", ctx, userID, limit)
+	ret0, _ := ret[0].([]models.SyncTokenHistory)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserSyncHistory indicates an expected call of GetUserSyncHistory.
+func (mr *MockDatabaseRepositoryMockRecorder) GetUserSyncHistory(ctx, userID, limit interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserSyncHistory", reflect.TypeOf((*MockDatabaseRepository)(nil).GetUserSyncHistory), ctx, userID, limit)
+}
+
+// RevokeSyncToken mocks base method.
+func (m *MockDatabaseRepository) RevokeSyncToken(ctx context.Context, tokenID, revokedBy string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RevokeSyncToken", ctx, tokenID, revokedBy)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RevokeSyncToken indicates an expected call of RevokeSyncToken.
+func (mr *MockDatabaseRepositoryMockRecorder) RevokeSyncToken(ctx, tokenID, revokedBy interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RevokeSyncToken", reflect.TypeOf((*MockDatabaseRepository)(nil).RevokeSyncToken), ctx, tokenID, revokedBy)
+}
+
+// RevokeAllSyncTokens mocks base method.
+func (m *MockDatabaseRepository) RevokeAllSyncTokens(ctx context.Context, userID uuid.UUID, revokedBy string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RevokeAllSyncTokens", ctx, userID, revokedBy)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RevokeAllSyncTokens indicates an expected call of RevokeAllSyncTokens.
+func (mr *MockDatabaseRepositoryMockRecorder) RevokeAllSyncTokens(ctx, userID, revokedBy interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RevokeAllSyncTokens", reflect.TypeOf((*MockDatabaseRepository)(nil).RevokeAllSyncTokens), ctx, userID, revokedBy)
+}
+
+// DeleteSyncToken mocks base method.
+func (m *MockDatabaseRepository) DeleteSyncToken(ctx context.Context, tokenID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteSyncToken", ctx, tokenID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteSyncToken indicates an expected call of DeleteSyncToken.
+func (mr *MockDatabaseRepositoryMockRecorder) DeleteSyncToken(ctx, tokenID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSyncToken", reflect.TypeOf((*MockDatabaseRepository)(nil).DeleteSyncToken), ctx, tokenID)
+}
+
+// DeleteAllSyncTokens mocks base method.
+func (m *MockDatabaseRepository) DeleteAllSyncTokens(ctx context.Context, userID uuid.UUID) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteAllSyncTokens", ctx, userID)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteAllSyncTokens indicates an expected call of DeleteAllSyncTokens.
+func (mr *MockDatabaseRepositoryMockRecorder) DeleteAllSyncTokens(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAllSyncTokens", reflect.TypeOf((*MockDatabaseRepository)(nil).DeleteAllSyncTokens), ctx, userID)
+}
+
+// GetSyncToken mocks base method.
+func (m *MockDatabaseRepository) GetSyncToken(ctx context.Context, tokenID string) (*models.SyncToken, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSyncToken", ctx, tokenID)
+	ret0, _ := ret[0].(*models.SyncToken)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSyncToken indicates an expected call of GetSyncToken.
+func (mr *MockDatabaseRepositoryMockRecorder) GetSyncToken(ctx, tokenID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSyncToken", reflect.TypeOf((*MockDatabaseRepository)(nil).GetSyncToken), ctx, tokenID)
+}
+
+// UpdateTokenUsage mocks base method.
+func (m *MockDatabaseRepository) UpdateTokenUsage(ctx context.Context, userID uuid.UUID, tokenID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateTokenUsage", ctx, userID, tokenID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateTokenUsage indicates an expected call of UpdateTokenUsage.
+func (mr *MockDatabaseRepositoryMockRecorder) UpdateTokenUsage(ctx, userID, tokenID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTokenUsage", reflect.TypeOf((*MockDatabaseRepository)(nil).UpdateTokenUsage), ctx, userID, tokenID)
+}
+
+// GetUserDeviceSyncHistory mocks base method.
+func (m *MockDatabaseRepository) GetUserDeviceSyncHistory(ctx context.Context, userID uuid.UUID, limit int) ([]models.DeviceSyncHistory, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserDeviceSyncHistory", ctx, userID, limit)
+	ret0, _ := ret[0].([]models.DeviceSyncHistory)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserDeviceSyncHistory indicates an expected call of GetUserDeviceSyncHistory.
+func (mr *MockDatabaseRepositoryMockRecorder) GetUserDeviceSyncHistory(ctx, userID, limit interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserDeviceSyncHistory", reflect.TypeOf((*MockDatabaseRepository)(nil).GetUserDeviceSyncHistory), ctx, userID, limit)
 }
 
 // CreateSource mocks base method.
