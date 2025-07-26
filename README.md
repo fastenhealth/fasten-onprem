@@ -4,7 +4,7 @@
   </a>
 </p>
 
-# Fasten - On Premise/Self-Hosted
+# Fasten - On-Prem/Self-Hosted
 
 [![CI](https://github.com/fastenhealth/fasten-onprem/actions/workflows/ci.yaml/badge.svg)](https://github.com/fastenhealth/fasten-onprem/actions/workflows/ci.yaml)
 [![Discord Join](https://img.shields.io/discord/1023634406935642223?style=flat-square&logo=discord)](https://discord.gg/Bykz6BAN8p)
