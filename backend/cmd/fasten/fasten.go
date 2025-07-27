@@ -138,12 +138,36 @@ func main() {
 						}
 						tokenJustCreated = true
 					} else {
-						// Database exists, load the token
-						token, err = encryption.LoadTokenFromFile(tokenPath)
-						if err != nil {
-							return fmt.Errorf("failed to load encryption token for existing database: %w", err)
+						// Database exists, check for token
+						if _, err := os.Stat(tokenPath); os.IsNotExist(err) {
+							appLogger.Warningf("Database exists but token file is missing from '%s'. The frontend should prompt for the token.", tokenPath)
+							tokenJustCreated = false
+
+							appconfig.Set("database.encryption_key", "")
+
+							relatedVersions, _ := resources.GetRelatedVersions()
+
+							webServer := web.AppEngine{
+								Config:           appconfig,
+								Logger:           appLogger,
+								EventBus:         event_bus.NewEventBusServer(appLogger),
+								DeviceRepo:       nil,
+								RelatedVersions:  relatedVersions,
+								Token:            "",
+								TokenDB:          "",
+								TokenJustCreated: false,
+							}
+
+							return webServer.Start()
+						} else {
+							// DB and token both exist. Load token.
+							appLogger.Info("Database and token found. Loading token...")
+							token, err = encryption.LoadTokenFromFile(tokenPath)
+							if err != nil {
+								return fmt.Errorf("failed to load encryption token from '%s' for existing database: %w", tokenPath, err)
+							}
+							tokenJustCreated = false
 						}
-						tokenJustCreated = false
 					}
 
 					if token == "" {

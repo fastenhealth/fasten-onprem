@@ -305,15 +305,22 @@ func (ae *AppEngine) Start() error {
 	}
 
 	baseRouterGroup, ginRouter := ae.Setup()
-	err := ae.SetupInstallationRegistration()
-	if err != nil {
-		return err
+	if ae.DeviceRepo != nil {
+		err := ae.SetupInstallationRegistration()
+		if err != nil {
+			ae.Logger.Panicf("panic occurred:%v", err)
+		}
+	} else {
+		ae.Logger.Warn("Skipping SetupInstallationRegistration because DeviceRepo is nil")
 	}
+
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
 
 	listenAddr := fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port"))
-	if ae.TokenJustCreated || strings.ToLower(ae.Config.GetString("log.level")) == "debug" {
+	if strings.ToLower(ae.Config.GetString("log.level")) == "debug" {
 		ae.Logger.Infof("token: %s\ntoken_db: %s", ae.Token, ae.TokenDB)
+	} else {
+		ae.Logger.Infof("token: %s", ae.Token)
 	}
 
 	return r.Run(listenAddr)
