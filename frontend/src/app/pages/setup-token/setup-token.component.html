@@ -1,21 +1,28 @@
-<div class="container">
-    <div *ngIf="!isTokenSet && !error">
-        <h1>Enter Your Token</h1>
+<div class="az-signin-wrapper">
+  <div class="az-card-signin">
+    <h1 class="az-logo">fasten</h1>
+    <div class="az-signin-header">
+      <div *ngIf="!isTokenSet && !error">
+        <h2>Enter Your Token</h2>
+        <h4 *ngIf="!loading">Please enter your token to continue</h4>
         <form [formGroup]="tokenForm" (ngSubmit)="onSubmit()">
-            <input type="text" formControlName="token" placeholder="Enter token" required>
-            <button type="submit" [disabled]="!tokenForm.valid">Set Token</button>
+          <div class="form-group">
+            <label>Token</label>
+            <input type="text" formControlName="token" class="form-control" placeholder="Enter your token" required>
+          </div><!-- form-group -->
+          <button type="submit" [disabled]="!tokenForm.valid" class="btn btn-az-primary btn-block">Set Token</button>
         </form>
-        <a href="/">Go to Main Page</a>
-    </div>
+      </div>
 
-    <div *ngIf="isTokenSet">
-        <h1>Token set successfully!</h1>
-        <p>The container has been stopped. Please run the `docker run` command again to start the application in full
-            mode.</p>
-    </div>
+      <div *ngIf="isTokenSet">
+        <h2>Token set successfully!</h2>
+        <p>The token has been set successfully. The container has been stopped. Please run the `docker run` command again to start the application in full mode.</p>
+      </div>
 
-    <div *ngIf="error">
-        <h1>Error</h1>
+      <div *ngIf="error">
+        <h2>Error</h2>
         <p>Failed to set token. Please try again.</p>
-    </div>
-</div>
+      </div>
+    </div><!-- az-signin-header -->
+  </div><!-- az-card-signin -->
+</div><!-- az-signin-wrapper -->
