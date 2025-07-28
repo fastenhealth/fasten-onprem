@@ -22,6 +22,12 @@ import { ResourceDetailComponent } from './pages/resource-detail/resource-detail
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
 import { UserCreateComponent } from './pages/user-create/user-create.component';
 import { UserListComponent } from './pages/user-list/user-list.component';
+import { PractitionerListComponent } from './pages/practitioner-list/practitioner-list.component';
+import { PractitionerCreateComponent } from './pages/practitioner-create/practitioner-create.component';
+import { PractitionerViewComponent } from './pages/practitioner-view/practitioner-view.component';
+import { PractitionerEditPageComponent } from './pages/practitioner-edit/practitioner-edit.component';
+
+
 
 const routes: Routes = [
 
@@ -55,6 +61,12 @@ const routes: Routes = [
 
   { path: 'users', component: UserListComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
   { path: 'users/new', component: UserCreateComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
+
+  { path: 'practitioners', component: PractitionerListComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
+  { path: 'practitioners/new', component: PractitionerCreateComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
+  { path: 'practitioners/view/:id', component: PractitionerViewComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
+  { path: 'practitioners/edit/:id', component: PractitionerEditPageComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
+
 
   // { path: 'general-pages', loadChildren: () => import('./general-pages/general-pages.module').then(m => m.GeneralPagesModule) },
   // { path: 'ui-elements', loadChildren: () => import('./ui-elements/ui-elements.module').then(m => m.UiElementsModule) },

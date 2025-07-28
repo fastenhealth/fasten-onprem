@@ -1,0 +1,435 @@
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.selection-header {
+  .dropdown {
+    .btn {
+      background: none;
+      color: #6c757d;
+      
+      &:hover {
+        color: #495057;
+        background-color: rgba(108, 117, 125, 0.1);
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+// Ensure both header rows have identical heights and styling
+.sticky-header {
+  th {
+    padding: 8px 16px;
+    vertical-align: middle;
+    height: 48px; // Fixed height for consistency
+    border-bottom: 1px solid #dee2e6;
+    
+    // Ensure normal headers align text to start
+    &:not(.selection-header):not(.actions-column) {
+      text-align: left !important;
+    }
+    
+    // Keep checkbox centered
+    &.selection-header {
+      text-align: center;
+      width: 50px !important;
+      min-width: 50px;
+      max-width: 50px;
+    }
+    
+    // Actions column
+    &.actions-column {
+      text-align: center;
+      width: 120px !important;
+      min-width: 120px;
+      max-width: 120px;
+      position: relative; // Add positioning context
+      overflow: visible; // Allow dropdown to overflow
+    }
+  }
+
+  // Normal header styling
+  .normal-header {
+    background-color: #f8f9fa;
+    
+    th {
+      background-color: #f8f9fa;
+    }
+  }
+
+  // Selection mode header styling - same background as normal
+  .selection-mode-header {
+    background-color: #e3f2fd;
+    
+    th {
+      background-color: #e3f2fd;
+      
+      // Empty columns during selection should be invisible
+      &:not(.selection-header):not(.selection-controls-column):not(.actions-column) {
+        background-color: #e3f2fd;
+        border-left: none;
+        border-right: none;
+      }
+    }
+    
+    .selection-controls-column {
+      .selection-controls-container {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        
+        .dropdown {
+          position: relative;
+
+          .btn {
+            background: none;
+            color: #6c757d;
+            font-size: 14px;
+            min-width: 20px; // Smaller width
+            min-height: 20px; // Smaller height
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            &:hover {
+              color: #495057;
+              background-color: rgba(108, 117, 125, 0.1);
+              border-radius: 4px;
+            }
+
+            &:focus {
+              outline: none;
+              box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.25);
+              border-radius: 4px;
+            }
+
+            i {
+              font-size: 12px; // Smaller icon
+            }
+          }
+
+          .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            z-index: 1000;
+            display: none;
+            
+            &.show {
+              display: block;
+            }
+          }
+        }
+        
+        .selected-count {
+          font-weight: 600;
+          color: #1976d2;
+          font-size: 14px;
+        }
+      }
+    }
+    
+    .actions-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      position: relative; // Add positioning context
+      
+      .dropdown {
+        position: relative; // Ensure dropdown has positioning context
+        
+        .btn {
+          background: none;
+          color: #6c757d;
+          font-size: 14px;
+          min-width: 24px;
+          min-height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          &:hover {
+            color: #495057;
+            background-color: rgba(108, 117, 125, 0.1);
+            border-radius: 4px;
+          }
+        }
+
+        // Fix the dropdown menu positioning
+        .dropdown-menu {
+          position: absolute !important;
+          top: 100% !important;
+          right: 0 !important; // Align to right edge of button
+          left: auto !important; // Override any left positioning
+          z-index: 1050 !important; // Higher z-index to ensure it's on top
+          transform: translateX(10px) !important; // Pull slightly left to stay in bounds
+          margin-top: 2px; // Small gap from button
+          
+          // Ensure it's fully visible
+          &.dropdown-menu-end {
+            right: 0 !important;
+            left: auto !important;
+            transform: translateX(10px) !important; // Adjust to keep in view
+          }
+          
+          &.show {
+            display: block !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Regular actions container (not in selection mode) - ADD THIS NEW SECTION
+.actions-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative; // Add positioning context
+  
+  .dropdown {
+    position: relative; // Ensure dropdown has positioning context
+    
+    .btn {
+      background: none;
+      color: #6c757d;
+      font-size: 14px;
+      min-width: 24px;
+      min-height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      &:hover {
+        color: #495057;
+        background-color: rgba(108, 117, 125, 0.1);
+        border-radius: 4px;
+      }
+    }
+
+    // Fix the dropdown menu positioning
+    .dropdown-menu {
+      position: absolute !important;
+      top: 100% !important;
+      right: 0 !important; // Align to right edge of button
+      left: auto !important; // Override any left positioning
+      z-index: 1050 !important; // Higher z-index to ensure it's on top
+      transform: translateX(10px) !important; // Pull slightly left to stay in bounds
+      margin-top: 2px; // Small gap from button
+      
+      // Ensure it's fully visible
+      &.dropdown-menu-end {
+        right: 0 !important;
+        left: auto !important;
+        transform: translateX(10px) !important; // Adjust to keep in view
+      }
+      
+      &.show {
+        display: block !important;
+      }
+    }
+  }
+}
+
+.dropdown-menu-sm {
+  min-width: 150px;
+  font-size: 14px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  background-color: #fff;
+  padding: 4px 0;
+  z-index: 1050 !important; // Ensure it's above everything
+  
+  // Positioning fixes
+  position: absolute !important;
+  will-change: transform; // Optimize for position changes
+
+  .dropdown-item {
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    color: #212529;
+    white-space: nowrap; // Prevent text wrapping
+    
+    &:hover {
+      background-color: #f8f9fa;
+    }
+
+    &.text-danger {
+      color: #dc3545;
+      
+      &:hover {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+    }
+
+    i {
+      width: 16px;
+      text-align: center;
+    }
+  }
+
+  .dropdown-divider {
+    margin: 4px 0;
+    border-top: 1px solid #dee2e6;
+  }
+}
+
+// Custom dropdown toggle to remove Bootstrap styles
+.dropdown-toggle-custom::after {
+  display: none !important;
+}
+
+// Ensure table doesn't clip dropdowns
+.table-responsive,
+.table-container {
+  overflow: visible !important; // Allow dropdowns to overflow
+}
+
+// If you're using a container that clips overflow
+.az-content,
+.container {
+  overflow-x: auto;
+  overflow-y: visible; // Allow vertical overflow for dropdowns
+}
+
+// Ensure table body cells align with headers
+.table {
+  thead th {
+    vertical-align: middle;
+  }
+
+  // Column width consistency
+  .checkbox-cell {
+    width: 50px;
+    text-align: center;
+  }
+
+  .actions-cell {
+    width: 120px;
+    text-align: center;
+    position: relative; // Add positioning context
+    overflow: visible; // Allow dropdown to overflow
+  }
+
+  // Ensure text doesn't shift in table body
+  tbody td {
+    vertical-align: middle;
+    padding: 8px 16px;
+  }
+
+  // Table row hover actions
+  .table-row {
+    .action-buttons {
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+    }
+
+    &:hover .action-buttons {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
+// Remove any transitions that might cause jumping
+.sticky-header tr {
+  transition: none; // Remove transitions that cause jumping
+}
+
+// Ensure consistent column widths
+.name-column { min-width: 200px; }
+.email-column { min-width: 180px; }
+.phone-column { min-width: 140px; }
+.job-title-column { min-width: 150px; }
+.organization-column { min-width: 150px; }
+
+// Contact copy functionality styles
+.contact-with-copy {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px; // Reduced gap to place icon closer to text
+
+  .copy-btn {
+    opacity: 0;
+    visibility: hidden;
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-size: 12px;
+    padding: 2px 4px; // Smaller padding for tighter spacing
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    margin-left: 2px; // Small margin to keep it close to text
+
+    &:hover {
+      background-color: #f8f9fa;
+      color: #495057;
+      transform: scale(1.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+      background-color: #e9ecef;
+    }
+
+    i {
+      font-size: 9px;
+    }
+  }
+
+  &:hover .copy-btn {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+// Ensure the contact cells have enough space
+.contact-cell, .phone-cell {
+  .contact-info {
+    min-height: 24px;
+    display: flex;
+    align-items: center;
+  }
+
+  .email-link, .phone-link {
+    color: #6f42c1;
+    text-decoration: none;
+    white-space: nowrap; // Prevent text wrapping
+    
+    &:hover {
+      text-decoration: underline;
+      color: #5a359a;
+    }
+  }
+}
+
+// Optional: Add a subtle animation when copying
+.copy-btn.copied {
+  color: #28a745;
+  
+  i::before {
+    content: "\f00c"; // FontAwesome check icon
+  }
+}

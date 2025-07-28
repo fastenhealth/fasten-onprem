@@ -456,7 +456,7 @@ func (gr *GormRepository) UpsertResource(ctx context.Context, wrappedResourceMod
 		gr.Logger.Warnf("ignoring: an error occurred while publishing event to eventBus (%s/%s): %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID, err)
 	}
 
-	// This is to avoid GORM from trying to create wrong related resources for the RelatedResource field. 
+	// This is to avoid GORM from trying to create wrong related resources for the RelatedResource field.
 	// Omit() does not seem to work when we use Assign with a resource that has the things we want to omit
 	assignModel := *wrappedResourceModel
 	assignModel.RelatedResource = nil
@@ -465,12 +465,11 @@ func (gr *GormRepository) UpsertResource(ctx context.Context, wrappedResourceMod
 		SourceID:           wrappedFhirResourceModel.GetSourceID(),
 		SourceResourceID:   wrappedFhirResourceModel.GetSourceResourceID(),
 		SourceResourceType: wrappedFhirResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-	}).Assign(assignModel).FirstOrCreate(wrappedFhirResourceModel)
+	}).Omit("RelatedResource.*").Assign(wrappedResourceModel).FirstOrCreate(wrappedFhirResourceModel)
 
 	if createResult.Error != nil {
 		return false, createResult.Error
 	}
-	//resource was upserted
 	return createResult.RowsAffected > 0, createResult.Error
 }
 
@@ -1387,4 +1386,77 @@ func (gr *GormRepository) getResourcesFromAllTables(queryBuilder *gorm.DB, query
 		wrappedResourceModels = append(wrappedResourceModels, tempWrappedResourceModels...)
 	}
 	return wrappedResourceModels, nil
+}
+
+func (gr *GormRepository) DeleteResourceByTypeAndId(ctx context.Context, sourceResourceType string, sourceResourceId string) error {
+	fmt.Printf("DeleteResourceByTypeAndId called with type: %s, id: %s\n", sourceResourceType, sourceResourceId)
+
+	queryOptions := models.ListResourceQueryOptions{
+		SourceResourceType: sourceResourceType,
+		SourceResourceID:   sourceResourceId,
+		Limit:              1,
+	}
+
+	resources, err := gr.ListResources(ctx, queryOptions)
+	if err != nil {
+		fmt.Printf("ListResources failed: %v\n", err)
+		return fmt.Errorf("failed to find resource: %w", err)
+	}
+
+	if len(resources) == 0 {
+		fmt.Printf("No resources found with type: %s, id: %s\n", sourceResourceType, sourceResourceId)
+		return fmt.Errorf("resource not found")
+	}
+
+	if len(resources) > 1 {
+		fmt.Printf("Warning: found %d resources, expected 1\n", len(resources))
+	}
+
+	resource := resources[0]
+	fmt.Printf("Found resource: ID=%s, Type=%s, SourceID=%s\n",
+		resource.ID.String(), resource.SourceResourceType, resource.SourceResourceID)
+
+	tableName, err := databaseModel.GetTableNameByResourceType(sourceResourceType)
+	if err != nil {
+		fmt.Printf("Failed to get table name for resource type %s: %v\n", sourceResourceType, err)
+		return fmt.Errorf("failed to get table name: %w", err)
+	}
+
+	fmt.Printf("Using table: %s\n", tableName)
+
+	tx := gr.GormClient.WithContext(ctx).Begin()
+	if tx.Error != nil {
+		fmt.Printf("Failed to begin transaction: %v\n", tx.Error)
+		return fmt.Errorf("failed to begin transaction: %w", tx.Error)
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Panic during delete, rolling back: %v\n", r)
+			tx.Rollback()
+		}
+	}()
+
+	deleteResult := tx.Table(tableName).Where("id = ?", resource.ID).Delete(&models.ResourceBase{})
+	if deleteResult.Error != nil {
+		fmt.Printf("Failed to delete resource from table %s: %v\n", tableName, deleteResult.Error)
+		tx.Rollback()
+		return fmt.Errorf("failed to delete resource: %w", deleteResult.Error)
+	}
+
+	fmt.Printf("Deleted %d resource(s) from table %s\n", deleteResult.RowsAffected, tableName)
+
+	if deleteResult.RowsAffected == 0 {
+		fmt.Printf("No rows affected during delete\n")
+		tx.Rollback()
+		return fmt.Errorf("resource not found or already deleted")
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		fmt.Printf("Failed to commit transaction: %v\n", err)
+		return fmt.Errorf("failed to commit delete transaction: %w", err)
+	}
+
+	fmt.Printf("Successfully deleted resource: %s from table: %s\n", sourceResourceId, tableName)
+	return nil
 }
