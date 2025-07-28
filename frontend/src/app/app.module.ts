@@ -45,6 +45,9 @@ import { SettingsComponent } from './pages/settings/settings.component';
 import { SetupEncryptionKeyComponent } from './pages/setup-encryption-key/setup-encryption-key.component';
 import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wizard/get-encryption-key-wizard.component';
 import { ResourceOcrComponent } from './pages/resource-ocr/resource-ocr.component';
+import { PdfOcrComponent } from './pages/resource-ocr/pdf-ocr/pdf-ocr.component';
+import { ImageOcrComponent } from './pages/resource-ocr/image-ocr/image-ocr.component';
+import { CameraOcrComponent } from './pages/resource-ocr/camera-ocr/camera-ocr.component';
 
 @NgModule({
   declarations: [
@@ -71,6 +74,9 @@ import { ResourceOcrComponent } from './pages/resource-ocr/resource-ocr.componen
     SetupEncryptionKeyComponent,
     GetEncryptionKeyWizardComponent,
     ResourceOcrComponent,
+    PdfOcrComponent,
+    ImageOcrComponent,
+    CameraOcrComponent,
   ],
   imports: [
     FormsModule,

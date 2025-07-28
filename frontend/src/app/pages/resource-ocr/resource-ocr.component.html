@@ -4,97 +4,40 @@
             <div class="panel panel-default">
                 <div class="panel-header">
                     <h3 class="text-primary">Document OCR Upload</h3>
-                    <p class="text-muted">Upload a document to extract text using OCR technology</p>
+                    <p class="text-muted">Choose how you want to provide your document</p>
                 </div>
 
-                <div class="panel-body p-4">
-                    <!-- File Selection Section -->
-                    <div class="mb-4">
-                        <label for="fileInput" class="form-label">Select Document</label>
-                        <div class="input-group">
-                            <input type="file" id="fileInput" class="form-control" (change)="onFileSelected($event)"
-                                accept="image/*,.pdf" [disabled]="isUploading">
-                            <button type="button" class="btn btn-primary" (click)="onUpload()"
-                                [disabled]="!selectedFile || isUploading">
-                                <span *ngIf="isUploading" class="spinner-border spinner-border-sm me-2" role="status"
-                                    aria-hidden="true"></span>
-                                <i *ngIf="!isUploading" class="fas fa-upload me-2"></i>
-                                {{ isUploading ? 'Processing...' : 'Upload & Extract Text' }}
-                            </button>
+                <!-- 📋 OCR Mode Settings -->
+                <form [formGroup]="settingsForm" class="mb-4">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-6">
+                            <label for="uploadMode" class="form-label">Upload Mode</label>
+                            <select id="uploadMode" class="form-select" formControlName="mode">
+                                <option value="pdf">PDF File</option>
+                                <option value="image">Images (JPG/PNG)</option>
+                                <option value="capture">Camera Capture</option>
+                            </select>
                         </div>
 
-                        <!-- File Info -->
-                        <div *ngIf="selectedFile && !isUploading" class="mt-2">
-                            <small class="text-muted">
-                                <i class="fas fa-file me-1"></i>
-                                Selected: {{ selectedFile.name }} ({{ (selectedFile.size / 1024 / 1024).toFixed(2) }}
-                                MB)
-                            </small>
+                        <div class="col-md-6" *ngIf="settingsForm.value.uploadType !== 'pdf'">
+                            <label for="maxPages" class="form-label">Pages (maximum 30)</label>
+                            <input id="maxPages" type="number" class="form-control" formControlName="maxPages" min="1"
+                                max="30" />
                         </div>
                     </div>
+                </form>
 
-                    <!-- Camera Scan Alternative -->
-                    <div class="mt-4">
-                        <label class="form-label">Or use Camera</label>
-                        <div *ngIf="!showCamera">
-                            <button type="button" class="btn btn-outline-secondary" (click)="startCamera()">
-                                <i class="fas fa-camera me-2"></i>Scan Document with Camera
-                            </button>
-                        </div>
+                <!-- 🧩 Dynamic Component Load -->
+                <ng-container [ngSwitch]="settingsForm.value.mode">
+                    <app-pdf-ocr *ngSwitchCase="'pdf'" [maxPages]="settingsForm.value.maxPages">
+                    </app-pdf-ocr>
 
-                        <!-- Camera Preview -->
-                        <div *ngIf="showCamera">
-                            <video id="videoElement" autoplay playsinline></video>
-                            <button (click)="captureSnapshot()">Capture</button>
-                        </div>
+                    <app-image-ocr *ngSwitchCase="'image'" [maxPages]="settingsForm.value.maxPages">
+                    </app-image-ocr>
 
-                        <!-- Snapshot Preview -->
-                        <div *ngIf="snapshotDataUrl && !showCamera">
-                            <img [src]="snapshotDataUrl" alt="Snapshot Preview"
-                                style="max-width: 100%; margin: 10px 0;" />
-                            <button (click)="sendSnapshotToOcr()">Send to OCR Scan</button>
-                        </div>
-                    </div>
-
-
-                    <!-- Loading State -->
-                    <div *ngIf="isUploading" class="text-center py-4">
-                        <i class="fas fa-spinner fa-spin fa-3x text-primary mb-3"></i>
-                        <p class="text-muted">Extracting text from your document...</p>
-                    </div>
-
-                    <!-- Error Message -->
-                    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <strong>Error:</strong> {{ errorMessage }}
-                    </div>
-
-                    <!-- Success Result -->
-                    <div *ngIf="ocrResult && !isUploading" class="mt-4">
-                        <div class="card">
-                            <div class="card-header bg-success text-white">
-                                <h5 class="mb-0">
-                                    <i class="fas fa-check-circle me-2"></i>
-                                    Extracted Text
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <pre>{{ ocrResult }}</pre>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Instructions -->
-                    <div *ngIf="!selectedFile && !isUploading && !ocrResult" class="text-center py-5">
-                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">Upload or Scan a Document</h5>
-                        <p class="text-muted">
-                            Select an image or PDF file, or scan with your device's camera to extract text using
-                            OCR.<br>
-                            Supported formats: JPG, PNG, PDF
-                        </p>
-                    </div>
-                </div>
+                    <app-camera-ocr *ngSwitchCase="'capture'" [maxPages]="settingsForm.value.maxPages">
+                    </app-camera-ocr>
+                </ng-container>
             </div>
         </div>
     </div>
