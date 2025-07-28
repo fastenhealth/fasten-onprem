@@ -1,1 +1,44 @@
-<p>image-ocr works!</p>
+<div class="mb-3">
+    <label class="form-label">Upload Images</label>
+    <input type="file" class="form-control" (change)="onFileSelected($event)" accept=".jpg,.jpeg,.png" multiple />
+</div>
+
+<!-- 📉 Error -->
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<!-- 🔍 Page-by-Page Review -->
+<div *ngIf="imageFiles.length" class="mt-4">
+    <h5>Reviewing image {{ currentPageIndex + 1 }} of {{ imageFiles.length }}</h5>
+
+    <div class="row">
+        <!-- Image Preview (Left) -->
+        <div class="col-md-6 mb-3">
+            <img [src]="imagePreviews[currentPageIndex]" class="img-fluid border rounded"
+                style="max-height: 400px; object-fit: contain;" />
+        </div>
+
+        <!-- OCR Textarea (Right) -->
+        <div class="col-md-6 mb-3">
+            <label for="ocrTextarea" class="form-label">OCR Result</label>
+            <textarea id="ocrTextarea" class="form-control" rows="12"
+                [(ngModel)]="ocrResults[currentPageIndex]"></textarea>
+        </div>
+    </div>
+
+    <!-- Navigation + Action Buttons -->
+    <div class="d-flex justify-content-end gap-2">
+        <button class="btn btn-outline-secondary" (click)="goToPreviousImage()" [disabled]="currentPageIndex === 0">
+            ← Previous
+        </button>
+
+        <button class="btn btn-outline-secondary" (click)="goToNextImage()"
+            [disabled]="currentPageIndex === imageFiles.length - 1">
+            Next →
+        </button>
+
+        <button class="btn btn-success" (click)="sendCurrentImageToOcr()" [disabled]="isProcessing">
+            <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
+            Send to OCR
+        </button>
+    </div>
+</div>
