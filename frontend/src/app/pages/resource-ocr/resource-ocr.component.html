@@ -18,12 +18,6 @@
                                 <option value="capture">Camera Capture</option>
                             </select>
                         </div>
-
-                        <div class="col-md-6" *ngIf="settingsForm.value.uploadType !== 'pdf'">
-                            <label for="maxPages" class="form-label">Pages (maximum 30)</label>
-                            <input id="maxPages" type="number" class="form-control" formControlName="maxPages" min="1"
-                                max="30" />
-                        </div>
                     </div>
                 </form>
 

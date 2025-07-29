@@ -1,1 +1,60 @@
-<p>camera-ocr works!</p>
+<!-- 📸 Camera View -->
+<div *ngIf="!capturedImages.length" class="mb-3">
+    <label class="form-label">Live Camera</label>
+    <video #video class="w-100 border rounded" autoplay playsinline></video>
+</div>
+
+<!-- 📸 Canvas for internal use (hidden) -->
+<canvas #canvas hidden></canvas>
+
+<!-- ❌ Error -->
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<!-- 📷 Capture & Review Controls -->
+<div *ngIf="isCapturingNew && isCameraReady" class="d-flex flex-column align-items-center mt-4">
+    <video #video class="w-100 border rounded mb-3" autoplay playsinline></video>
+
+    <button class="btn btn-primary w-100" (click)="captureImage()" [disabled]="capturedImages.length >= 30">
+        📸 Capture Image ({{ capturedImages.length }}/30)
+    </button>
+</div>
+
+<!-- 🔁 REVIEW MODE -->
+<div *ngIf="!isCapturingNew && capturedImages.length" class="d-flex mt-4">
+    <!-- 🖼 Image Preview -->
+    <div class="col-6 pe-3">
+        <img [src]="capturedImages[currentIndex]" class="img-fluid border rounded mb-3" />
+
+        <div class="mt-3 d-flex justify-content-between">
+            <button class="btn btn-outline-secondary" (click)="goToPrevious()" [disabled]="currentIndex === 0">
+                ← Previous
+            </button>
+
+            <button class="btn btn-outline-secondary" (click)="goToNext()"
+                [disabled]="currentIndex === capturedImages.length - 1">
+                Next →
+            </button>
+        </div>
+    </div>
+
+    <!-- 🧠 OCR Result + Controls -->
+    <div class="col-6 ps-3 d-flex flex-column">
+        <div class="form-group flex-grow-1">
+            <label>OCR Result</label>
+            <textarea class="form-control h-100" [(ngModel)]="ocrResults[currentIndex]" rows="10">
+      </textarea>
+        </div>
+
+        <div class="mt-3 d-flex justify-content-between align-items-center">
+            <button class="btn btn-secondary me-2" (click)="prepareNewCapture()"
+                [disabled]="capturedImages.length >= 30">
+                ➕ Capture Next Image
+            </button>
+
+            <button class="btn btn-success" (click)="sendToOcr()" [disabled]="isProcessing">
+                <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
+                Send to OCR
+            </button>
+        </div>
+    </div>
+</div>
