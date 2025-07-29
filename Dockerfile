@@ -27,6 +27,15 @@ FROM golang:1.21 as backend-build
 WORKDIR /go/src/github.com/fastenhealth/fasten-onprem
 COPY . .
 
+RUN apt-get update && apt-get install -y curl libnss3-tools
+RUN curl -L -o mkcert https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64 \
+  && chmod +x mkcert \
+  && mv mkcert /usr/local/bin/mkcert
+
+RUN mkcert -install \
+  && mkdir -p /opt/fasten/certs \
+  && mkcert -cert-file /opt/fasten/certs/localhost.crt -key-file /opt/fasten/certs/localhost.key localhost 127.0.0.1 ::1
+
 RUN --mount=type=cache,target=/tmp/lock,sharing=locked \
     go mod vendor \
     && go install github.com/golang/mock/mockgen@v1.6.0 \
@@ -50,6 +59,7 @@ WORKDIR /opt/fasten/
 COPY --from=backend-build  /opt/fasten/ /opt/fasten/
 COPY --from=frontend-build /usr/src/fastenhealth/dist /opt/fasten/web
 COPY --from=backend-build /go/bin/fasten /opt/fasten/fasten
+COPY --from=backend-build /opt/fasten/certs /opt/fasten/certs
 COPY LICENSE.md /opt/fasten/LICENSE.md
 COPY config.yaml /opt/fasten/config/config.yaml
 RUN ["/opt/fasten/fasten", "--help"]

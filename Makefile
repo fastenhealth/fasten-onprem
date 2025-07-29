@@ -17,7 +17,11 @@ serve-storybook: dep-frontend
 
 .PHONY: serve-frontend
 serve-frontend: dep-frontend
-	cd frontend && ng serve --hmr --live-reload -c dev
+	cd frontend && ng serve \
+		--ssl true \
+		--ssl-cert ../certs/localhost.crt \
+		--ssl-key ../certs/localhost.key \
+		--hmr --live-reload -c dev
 
 .PHONY: serve-frontend-prod
 serve-frontend-prod: dep-frontend

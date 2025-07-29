@@ -297,17 +297,18 @@ func (ae *AppEngine) SetupInstallationRegistration() error {
 }
 
 func (ae *AppEngine) Start() error {
-	//set the gin mode
+	// Set the gin mode
 	gin.SetMode(gin.ReleaseMode)
 	if strings.ToLower(ae.Config.GetString("log.level")) == "debug" {
 		gin.SetMode(gin.DebugMode)
 	}
 
 	baseRouterGroup, ginRouter := ae.Setup()
+
 	if ae.DeviceRepo != nil && !ae.StandbyMode {
 		err := ae.SetupInstallationRegistration()
 		if err != nil {
-			ae.Logger.Panicf("panic occurred:%v", err)
+			ae.Logger.Panicf("panic occurred: %v", err)
 		}
 	} else {
 		ae.Logger.Warn("Skipping SetupInstallationRegistration because DeviceRepo is nil or in StandbyMode")
@@ -315,9 +316,21 @@ func (ae *AppEngine) Start() error {
 
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
 
-	listenAddr := fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port"))
-	
+	host := ae.Config.GetString("web.listen.host")
+	port := ae.Config.GetString("web.listen.port")
+
 	ae.Logger.Infof("token: %s", ae.Token)
 
-	return r.Run(listenAddr)
+	// HTTPS support
+	if ae.Config.GetBool("web.https.enabled") {
+		certFile := ae.Config.GetString("web.https.certFile")
+		keyFile := ae.Config.GetString("web.https.keyFile")
+
+		ae.Logger.Infof("Using HTTPS cert: %s", certFile)
+		ae.Logger.Infof("Using HTTPS key:  %s", keyFile)
+
+		return r.RunTLS(fmt.Sprintf("%s:%s", host, port), certFile, keyFile)
+	}
+
+	return r.Run(fmt.Sprintf("%s:%s", host, port))
 }
