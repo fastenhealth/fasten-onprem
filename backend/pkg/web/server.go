@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"runtime"
 	"strings"
 
@@ -32,13 +31,16 @@ type AppEngine struct {
 	RelatedVersions  map[string]string //related versions metadata provided & embedded by the build process
 	Token            string
 	TokenJustCreated bool
+	StandbyMode      bool
 }
 
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	r := gin.New()
 
 	r.Use(middleware.LoggerMiddleware(ae.Logger))
-	r.Use(middleware.RepositoryMiddleware(ae.DeviceRepo))
+	if !ae.StandbyMode {
+		r.Use(middleware.RepositoryMiddleware(ae.DeviceRepo))
+	}
 	r.Use(middleware.ConfigMiddleware(ae.Config))
 	r.Use(middleware.EventBusMiddleware(ae.EventBus))
 	r.Use(gin.Recovery())
@@ -50,24 +52,17 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	{
 		api := base.Group("/api")
 		{
-			api.Use(middleware.CacheMiddleware())
 			api.GET("/health", func(c *gin.Context) {
 				// This function does a quick check to see if the server is up and running
 				// it will also determine if we should show the first run wizard
 
-				// Check if the encrypt token is present
-				tokenPath := "/opt/fasten/encrypt_db/token"
-				// Check if the token file exists
-				if _, err := os.Stat(tokenPath); os.IsNotExist(err) {
-					c.JSON(http.StatusInternalServerError, gin.H{
+				if ae.StandbyMode {
+					c.JSON(http.StatusOK, gin.H{
 						"success": false,
-						"error":   "no_encryption_token", // <-- specific code/message for FE
+						"error":   "server_standby",
 					})
 					return
 				}
-
-				//TODO:
-				// check if the /web folder is populated.
 
 				//get the count of users in the DB
 				databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
@@ -92,7 +87,13 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				})
 			})
 
-			api.POST("/auth/signup", handler.AuthSignup)
+			api.GET("/get-token", handler.GetToken(ae.Config))
+			api.POST("/set-token", handler.SetupToken(ae.Config))
+
+			//in standby mode, we only want to expose the minimum required endpoints
+			if !ae.StandbyMode {
+				api.Use(middleware.CacheMiddleware())
+				api.POST("/auth/signup", handler.AuthSignup)
 			api.POST("/auth/signin", handler.AuthSignin)
 
 			//whitelisted CORS PROXY
@@ -103,9 +104,6 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 			api.GET("/glossary/code", handler.GlossarySearchByCode)
 			api.POST("/support/request", handler.SupportRequest)
 			api.POST("/support/healthsystem", handler.HealthSystemRequest)
-			api.GET("/get-token", handler.GetToken(ae.Config))
-			api.POST("/set-token", handler.SetupToken(ae.Config))
-
 			secure := api.Group("/secure").Use(middleware.RequireAuth())
 			{
 				secure.DELETE("/account/me", handler.DeleteAccount)
@@ -149,6 +147,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 						handler.SSEEventBusServerHandler(ae.EventBus),
 					)
 				}
+			}
 			}
 
 			if ae.Config.GetBool("web.allow_unsafe_endpoints") {
@@ -305,13 +304,13 @@ func (ae *AppEngine) Start() error {
 	}
 
 	baseRouterGroup, ginRouter := ae.Setup()
-	if ae.DeviceRepo != nil {
+	if ae.DeviceRepo != nil && !ae.StandbyMode {
 		err := ae.SetupInstallationRegistration()
 		if err != nil {
 			ae.Logger.Panicf("panic occurred:%v", err)
 		}
 	} else {
-		ae.Logger.Warn("Skipping SetupInstallationRegistration because DeviceRepo is nil")
+		ae.Logger.Warn("Skipping SetupInstallationRegistration because DeviceRepo is nil or in StandbyMode")
 	}
 
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)

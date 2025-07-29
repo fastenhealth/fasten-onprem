@@ -128,13 +128,10 @@ func main() {
 
 						tokenJustCreated = true
 					} else {
-						tokenDB := appconfig.GetString("database.encryption_key")
 						// Database exists, check for token
-						if _, err := os.Stat(tokenDB); os.IsNotExist(err) {
-							appLogger.Warningf("Database exists but token is missing. The frontend should prompt for the token.")
-							tokenJustCreated = false
-
-							appconfig.Set("database.encryption_key", "")
+						token = appconfig.GetString("database.encryption_key")
+						if token == "" {
+							appLogger.Warningf("Database exists but token is missing. Starting in standby mode.")
 
 							relatedVersions, _ := resources.GetRelatedVersions()
 
@@ -146,18 +143,14 @@ func main() {
 								RelatedVersions:  relatedVersions,
 								Token:            "",
 								TokenJustCreated: false,
+								StandbyMode:      true,
 							}
 
 							return webServer.Start()
-						} else {
-							// DB and token both exist. Token wrong...
-							appLogger.Info("Database and token found. Token wrong...")
-							tokenJustCreated = false
 						}
-					}
-
-					if token == "" {
-						return fmt.Errorf("failed to get encryption token")
+						// DB and token both exist.
+						appLogger.Info("Database and token found.")
+						tokenJustCreated = false
 					}
 
 					appconfig.Set("database.encryption_key", token)
