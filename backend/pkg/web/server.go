@@ -31,7 +31,6 @@ type AppEngine struct {
 
 	RelatedVersions  map[string]string //related versions metadata provided & embedded by the build process
 	Token            string
-	TokenDB          string
 	TokenJustCreated bool
 }
 
@@ -104,6 +103,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 			api.GET("/glossary/code", handler.GlossarySearchByCode)
 			api.POST("/support/request", handler.SupportRequest)
 			api.POST("/support/healthsystem", handler.HealthSystemRequest)
+			api.GET("/get-token", handler.GetToken)
 			api.POST("/set-token", handler.SetupToken)
 
 			secure := api.Group("/secure").Use(middleware.RequireAuth())
@@ -317,11 +317,8 @@ func (ae *AppEngine) Start() error {
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
 
 	listenAddr := fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port"))
-	if strings.ToLower(ae.Config.GetString("log.level")) == "debug" {
-		ae.Logger.Infof("token: %s\ntoken_db: %s", ae.Token, ae.TokenDB)
-	} else {
-		ae.Logger.Infof("token: %s", ae.Token)
-	}
+	
+	ae.Logger.Infof("token: %s", ae.Token)
 
 	return r.Run(listenAddr)
 }

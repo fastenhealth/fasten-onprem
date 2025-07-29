@@ -114,7 +114,6 @@ func main() {
 						}
 					}()
 
-					tokenPath := "/opt/fasten/encrypt_db/token"
 					dbPath := appconfig.GetString("database.location")
 					var token string
 					var tokenJustCreated bool
@@ -126,21 +125,14 @@ func main() {
 							return fmt.Errorf("failed to generate encryption token: %w", err)
 						}
 
-						dir := filepath.Dir(tokenPath)
-						if _, err := os.Stat(dir); os.IsNotExist(err) {
-							if err := os.MkdirAll(dir, 0700); err != nil {
-								return fmt.Errorf("failed to create token directory: %w", err)
-							}
-						}
+						appconfig.Set("database.encryption_key", token)
 
-						if err := encryption.SaveTokenToFile(token, tokenPath); err != nil {
-							return fmt.Errorf("failed to save encryption token: %w", err)
-						}
 						tokenJustCreated = true
 					} else {
+						tokenDB := appConfig.GetString("database.encryption_key")
 						// Database exists, check for token
-						if _, err := os.Stat(tokenPath); os.IsNotExist(err) {
-							appLogger.Warningf("Database exists but token file is missing from '%s'. The frontend should prompt for the token.", tokenPath)
+						if _, err := os.Stat(tokenDB); os.IsNotExist(err) {
+							appLogger.Warningf("Database exists but token is missing. The frontend should prompt for the token.")
 							tokenJustCreated = false
 
 							appconfig.Set("database.encryption_key", "")
@@ -154,18 +146,13 @@ func main() {
 								DeviceRepo:       nil,
 								RelatedVersions:  relatedVersions,
 								Token:            "",
-								TokenDB:          "",
 								TokenJustCreated: false,
 							}
 
 							return webServer.Start()
 						} else {
-							// DB and token both exist. Load token.
-							appLogger.Info("Database and token found. Loading token...")
-							token, err = encryption.LoadTokenFromFile(tokenPath)
-							if err != nil {
-								return fmt.Errorf("failed to load encryption token from '%s' for existing database: %w", tokenPath, err)
-							}
+							// DB and token both exist. Token wrong...
+							appLogger.Info("Database and token found. Token wrong...")
 							tokenJustCreated = false
 						}
 					}
@@ -174,9 +161,7 @@ func main() {
 						return fmt.Errorf("failed to get encryption token")
 					}
 
-					tokenDB := encryption.DeriveKeyFromToken(token)
-
-					appconfig.Set("database.encryption_key", fmt.Sprintf("%x", tokenDB))
+					appconfig.Set("database.encryption_key", fmt.Sprintf("%x", token))
 
 					settingsData, err := json.Marshal(appconfig.AllSettings())
 					appLogger.Debug(string(settingsData), err)
@@ -195,7 +180,6 @@ func main() {
 						DeviceRepo:       dbRepo,
 						RelatedVersions:  relatedVersions,
 						Token:            token,
-						TokenDB:          fmt.Sprintf("%x", tokenDB),
 						TokenJustCreated: tokenJustCreated,
 					}
 					return webServer.Start()
