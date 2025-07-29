@@ -64,7 +64,7 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 		pragmaOpts["_hmac_use"] = "on"
 		pragmaOpts["_kdf_iter"] = "4000"
 		pragmaOpts["_legacy_page_size"] = "1024"
-		pragmaOpts["_key"] = fmt.Sprintf("x'%s'", tokenDB)
+		pragmaOpts["_key"] = tokenDB
 	}
 
 	pragmaStr := sqlitePragmaString(pragmaOpts)

@@ -160,7 +160,7 @@ func main() {
 						return fmt.Errorf("failed to get encryption token")
 					}
 
-					appconfig.Set("database.encryption_key", fmt.Sprintf("%x", token))
+					appconfig.Set("database.encryption_key", token)
 
 					settingsData, err := json.Marshal(appconfig.AllSettings())
 					appLogger.Debug(string(settingsData), err)
