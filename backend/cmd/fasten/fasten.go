@@ -17,7 +17,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"path/filepath"
 	"time"
 )
 
@@ -129,7 +128,7 @@ func main() {
 
 						tokenJustCreated = true
 					} else {
-						tokenDB := appConfig.GetString("database.encryption_key")
+						tokenDB := appconfig.GetString("database.encryption_key")
 						// Database exists, check for token
 						if _, err := os.Stat(tokenDB); os.IsNotExist(err) {
 							appLogger.Warningf("Database exists but token is missing. The frontend should prompt for the token.")

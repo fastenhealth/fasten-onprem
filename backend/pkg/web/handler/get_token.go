@@ -5,21 +5,24 @@ import (
 	"os"
 	"time"
 
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/gin-gonic/gin"
 )
 
-func GetToken(c *gin.Context) {
-	token := appConfig.GetString("database.encryption_key")
-	if token == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "token is miss"})
-		return
+func GetToken(appConfig config.Interface) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := appConfig.GetString("database.encryption_key")
+		if token == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "token is miss"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"success": true, "data": token})
+
+		// Shutdown the server gracefully
+		go func() {
+			time.Sleep(1 * time.Second)
+			os.Exit(0)
+		}()
 	}
-
-	c.JSON(http.StatusOK, gin.H{"success": true, "data": token})
-
-	// Shutdown the server gracefully
-	go func() {
-		time.Sleep(1 * time.Second)
-		os.Exit(0)
-	}()
 }
