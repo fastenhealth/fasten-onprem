@@ -52,6 +52,11 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 		"_journal_mode": "WAL",
 	}
 
+	isValidation := appConfig.GetBool("database.validation_mode")
+	if isValidation {
+		pragmaOpts["mode"] = "ro"
+	}
+
 	if appConfig.GetBool("database.encryption.enabled") {
 		tokenDB := appConfig.GetString("database.encryption_key")
 		if tokenDB == "" {
@@ -104,15 +109,17 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 		EventBus:   eventBus,
 	}
 
-	err = fastenRepo.Migrate()
-	if err != nil {
-		return nil, err
-	}
+	if !isValidation {
+		err = fastenRepo.Migrate()
+		if err != nil {
+			return nil, err
+		}
 
-	//fail any Locked jobs. This is necessary because the job may have been locked by a process that was killed.
-	err = fastenRepo.CancelAllLockedBackgroundJobsAndFail()
-	if err != nil {
-		return nil, err
+		//fail any Locked jobs. This is necessary because the job may have been locked by a process that was killed.
+		err = fastenRepo.CancelAllLockedBackgroundJobsAndFail()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &fastenRepo, nil
