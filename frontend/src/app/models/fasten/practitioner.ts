@@ -34,4 +34,6 @@ export interface Practitioner {
 
   isFavorite?: boolean;
 
+  resource_raw?: any;
+
 }

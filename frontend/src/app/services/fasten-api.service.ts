@@ -556,7 +556,10 @@ export class FastenApiService {
               },
               
               formattedAddress: '',
-              formattedTelecom: '' 
+              formattedTelecom: '',
+
+              resource_raw: item.resource_raw
+              // isFavorite: ...
             };
   
             return practitioner;

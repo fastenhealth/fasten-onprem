@@ -165,21 +165,29 @@ export class PractitionerEditPageComponent implements OnInit {
     const formData: any = {
       id: this.practitioner.source_resource_id,
       name: this.practitioner.full_name,
-      identifier: [], // You might need to extract this from the raw FHIR data
+      identifier: [],
     };
-
-    // Handle telecom data
-    if (this.practitioner.telecom) {
-      switch (this.practitioner.telecom.system) {
-        case 'phone':
-          formData.phone = this.practitioner.telecom.value;
-          break;
-        case 'fax':
-          formData.fax = this.practitioner.telecom.value;
-          break;
-        case 'email':
-          formData.email = this.practitioner.telecom.value;
-          break;
+  
+    // Handle contact information
+    formData.email = this.practitioner.email || '';
+    formData.phone = this.practitioner.phone || '';  
+    formData.fax = this.practitioner.fax || '';
+  
+    // Handle profession from jobTitle or qualification
+    if (this.practitioner.jobTitle) {
+      formData.profession = {
+        text: this.practitioner.jobTitle
+      };
+    } else if (this.practitioner.resource_raw?.qualification && Array.isArray(this.practitioner.resource_raw.qualification)) {
+      const firstQualification = this.practitioner.resource_raw.qualification[0];
+      if (firstQualification?.code?.text) {
+        formData.profession = {
+          text: firstQualification.code.text
+        };
+      } else if (firstQualification?.code?.coding?.[0]?.display) {
+        formData.profession = {
+          text: firstQualification.code.coding[0].display
+        };
       }
     }
 
@@ -191,14 +199,17 @@ export class PractitionerEditPageComponent implements OnInit {
         city: this.practitioner.address.city || '',
         state: this.practitioner.address.state || '',
         zip: this.practitioner.address.postalCode || '',
-        country: this.practitioner.address.country || ''
+        country: this.practitioner.address.country ? {
+          text: this.practitioner.address.country
+        } : null
       };
     } else {
       formData.address = {
-        line1: '', line2: '', city: '', state: '', zip: '', country: ''
+        line1: '', line2: '', city: '', state: '', zip: '', country: null
       };
     }
-
+  
+    console.log('Form data being set:', formData);
     this.newPractitionerForm.patchValue(formData);
   }
 
@@ -263,7 +274,16 @@ export class PractitionerEditPageComponent implements OnInit {
         use: 'work'
       });
     }
-
+  
+    const qualification = [];
+    if (formValue.profession?.text) {
+      qualification.push({
+        code: {
+          text: formValue.profession.text
+        }
+      });
+    }
+  
     // Build address array
     const address = [];
     if (formValue.address.line1 || formValue.address.city || formValue.address.state) {
@@ -276,11 +296,11 @@ export class PractitionerEditPageComponent implements OnInit {
         city: formValue.address.city,
         state: formValue.address.state,
         postalCode: formValue.address.zip,
-        country: formValue.address.country
+        country: formValue.address.country?.text || formValue.address.country
       });
     }
-
-    return {
+  
+    const fhirPractitioner = {
       resourceType: 'Practitioner',
       id: this.practitionerId,
       name: [{
@@ -289,11 +309,14 @@ export class PractitionerEditPageComponent implements OnInit {
       }],
       telecom: telecom,
       address: address,
+      qualification: qualification,
       identifier: formValue.identifier || [],
       active: true
     };
+  
+    console.log('Generated FHIR practitioner:', fhirPractitioner);
+    return fhirPractitioner;
   }
-
   resetForm(): void {
     if (confirm('Are you sure you want to reset all changes? This will restore the original values.')) {
       this.populateForm();

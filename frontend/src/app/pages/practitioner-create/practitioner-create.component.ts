@@ -95,10 +95,12 @@ export class PractitionerCreateComponent implements OnInit {
       name: this.formatName(practitionerData.name || practitionerData.full_name),
       identifier: practitionerData.identifier || [],
       address: this.formatAddress(practitionerData.address),
-      telecom: practitionerData.telecom ? [practitionerData.telecom] : [],
+      telecom: this.formatTelecom(practitionerModel), // Fixed this line
       active: true,
       qualification: this.formatQualification(practitionerData.qualification || [])
     };
+    
+    console.log('Final FHIR practitioner:', fhirPractitioner);
     
     // Create the practitioner using the available API method
     this.fastenApi.createPractitioner(fhirPractitioner).subscribe(
@@ -119,6 +121,25 @@ export class PractitionerCreateComponent implements OnInit {
         alert(`Failed to create practitioner: ${errorMessage}`);
       }
     );
+  }
+
+  private formatTelecom(practitionerModel: PractitionerModel): any[] {
+    const telecom = [];
+    
+    if (practitionerModel.telecom && Array.isArray(practitionerModel.telecom)) {
+      // Use the telecom array from the model
+      practitionerModel.telecom.forEach(contact => {
+        if (contact.value) {
+          telecom.push({
+            system: contact.system,
+            value: contact.value,
+            use: contact.use || 'work'
+          });
+        }
+      });
+    }
+    
+    return telecom;
   }
 
   private formatName(nameString: string): any[] {
@@ -163,7 +184,18 @@ export class PractitionerCreateComponent implements OnInit {
   }
 
   private formatQualification(qualifications: any[]): any[] {
-    if (!qualifications || !Array.isArray(qualifications)) return [];
+    if (!qualifications || !Array.isArray(qualifications)) {
+      // If no qualifications array, check if we have profession from form
+      const profession = this.newPractitionerForm.get('profession')?.value;
+      if (profession?.text) {
+        return [{
+          code: {
+            text: profession.text
+          }
+        }];
+      }
+      return [];
+    }
     
     return qualifications.map(qual => ({
       code: {
@@ -171,7 +203,8 @@ export class PractitionerCreateComponent implements OnInit {
           system: qual.system || 'http://nucc.org/provider-taxonomy',
           code: qual.code,
           display: qual.display
-        }]
+        }],
+        text: qual.text || qual.display
       }
     }));
   }
@@ -209,11 +242,11 @@ export class PractitionerCreateComponent implements OnInit {
     address.line = [
       form.get('address')?.get('line1')?.value,
       form.get('address')?.get('line2')?.value,
-    ].filter(line => line); // Remove empty lines
+    ].filter(line => line);
     address.state = form.get('address')?.get('state')?.value;
     address.country = form.get('address')?.get('country')?.value;
     address.postalCode = form.get('address')?.get('zip')?.value;
-
+  
     let model = new PractitionerModel({});
     model.source_resource_id = form.get('id')?.value;
     model.identifier = form.get('identifier')?.value || [];
@@ -247,8 +280,17 @@ export class PractitionerCreateComponent implements OnInit {
       });
     }
     
-    if (form.get('profession')?.value) {
-      model.qualification = form.get('profession')?.value.identifier || [];
+    const professionValue = form.get('profession')?.value;
+    if (professionValue) {
+      if (professionValue.identifier && Array.isArray(professionValue.identifier)) {
+        model.qualification = professionValue.identifier;
+      } else if (professionValue.text) {
+        model.qualification = [{
+          code: professionValue.text, 
+          display: professionValue.text,
+          system: 'http://nucc.org/provider-taxonomy'
+        }];
+      }
     }
     
     if (form.get('name')?.value) {
@@ -262,12 +304,12 @@ export class PractitionerCreateComponent implements OnInit {
         displayName: form.get('name')?.value,
       });
     }
-
+  
     if (!model.source_resource_id) {
       console.warn("No source_resource_id set for Practitioner, generating one");
       model.source_resource_id = uuidV4();
     }
-
+  
     return model;
   }
 
