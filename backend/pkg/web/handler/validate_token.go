@@ -27,6 +27,7 @@ func ValidateToken(appConfig config.Interface, logger *logrus.Entry) gin.Handler
 		}
 		tempConfig.Set("database.encryption_key", token)
 		tempConfig.Set("database.location", appConfig.GetString("database.location"))
+		tempConfig.Set("database.encryption.enabled", true)
 
 		// Attempt to initialize the database with the provided token
 		_, err = database.NewRepository(tempConfig, logger, event_bus.NewNoopEventBusServer())
