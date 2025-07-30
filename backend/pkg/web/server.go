@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
@@ -32,6 +33,7 @@ type AppEngine struct {
 	Token            string
 	TokenJustCreated bool
 	StandbyMode      bool
+	RestartChan      chan bool
 }
 
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
@@ -88,7 +90,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 			})
 
 			api.GET("/get-token", handler.GetToken(ae.Config))
-			api.POST("/set-token", handler.SetupToken(ae.Config))
+			api.POST("/set-token", handler.SetupToken(ae.Config, ae.RestartChan))
 
 			//in standby mode, we only want to expose the minimum required endpoints
 			if !ae.StandbyMode {
@@ -319,5 +321,27 @@ func (ae *AppEngine) Start() error {
 
 	ae.Logger.Infof("token: %s", ae.Token)
 
-	return r.Run(listenAddr)
+	srv := &http.Server{
+		Addr:    listenAddr,
+		Handler: r,
+	}
+
+	go func() {
+		// service connections
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			ae.Logger.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	// Wait for the restart signal
+	<-ae.RestartChan
+
+	// Shutdown the server
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		ae.Logger.Fatal("Server Shutdown:", err)
+	}
+	ae.Logger.Println("Server exiting")
+	return nil
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupToken(appConfig config.Interface) gin.HandlerFunc {
+func SetupToken(appConfig config.Interface, restartChan chan bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.PostForm("token")
 
@@ -20,5 +20,7 @@ func SetupToken(appConfig config.Interface) gin.HandlerFunc {
 
 		c.JSON(http.StatusOK, gin.H{"success": true})
 
+		//signal to restart the server
+		restartChan <- true
 	}
 }

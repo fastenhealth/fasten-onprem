@@ -77,104 +77,113 @@ func main() {
 				Name:  "start",
 				Usage: "Start the fasten server",
 				Action: func(c *cli.Context) error {
-					//fmt.Fprintln(c.App.Writer, c.Command.Usage)
-					if c.IsSet("config") {
-						err = appconfig.ReadConfig(c.String("config")) // Find and read the config file
-						if err != nil {                                // Handle errors reading the config file
-							//ignore "could not find config file"
-							fmt.Printf("Could not find config file at specified path: %s", c.String("config"))
+					for {
+						//fmt.Fprintln(c.App.Writer, c.Command.Usage)
+						if c.IsSet("config") {
+							err = appconfig.ReadConfig(c.String("config")) // Find and read the config file
+							if err != nil {                                // Handle errors reading the config file
+								//ignore "could not find config file"
+								fmt.Printf("Could not find config file at specified path: %s", c.String("config"))
+								return err
+							}
+						}
+
+						//process cli variables
+						if c.IsSet("variable") {
+							appconfig.Set("variable", c.String("variable"))
+						}
+						if c.Bool("debug") {
+							appconfig.Set("log.level", "DEBUG")
+						}
+						if c.IsSet("log-file") {
+							appconfig.Set("log.file", c.String("log-file"))
+						}
+
+						appLogger, logFile, err := CreateLogger(appconfig)
+						if logFile != nil {
+							defer logFile.Close()
+						}
+						if err != nil {
 							return err
 						}
-					}
 
-					//process cli variables
-					if c.IsSet("variable") {
-						appconfig.Set("variable", c.String("variable"))
-					}
-					if c.Bool("debug") {
-						appconfig.Set("log.level", "DEBUG")
-					}
-					if c.IsSet("log-file") {
-						appconfig.Set("log.file", c.String("log-file"))
-					}
+						// ensure panics are written to the log file.
+						defer func() {
+							if err := recover(); err != nil {
+								appLogger.Panic("panic occurred:", err)
+							}
+						}()
 
-					appLogger, logFile, err := CreateLogger(appconfig)
-					if logFile != nil {
-						defer logFile.Close()
-					}
-					if err != nil {
-						return err
-					}
+						dbPath := appconfig.GetString("database.location")
+						var token string
+						var tokenJustCreated bool
 
-					// ensure panics are written to the log file.
-					defer func() {
-						if err := recover(); err != nil {
-							appLogger.Panic("panic occurred:", err)
-						}
-					}()
+						if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+							// Database does not exist, generate a new token
+							token, err = encryption.GenerateRandomToken(32)
+							if err != nil {
+								return fmt.Errorf("failed to generate encryption token: %w", err)
+							}
 
-					dbPath := appconfig.GetString("database.location")
-					var token string
-					var tokenJustCreated bool
+							appconfig.Set("database.encryption_key", token)
 
-					if _, err := os.Stat(dbPath); os.IsNotExist(err) {
-						// Database does not exist, generate a new token
-						token, err = encryption.GenerateRandomToken(32)
-						if err != nil {
-							return fmt.Errorf("failed to generate encryption token: %w", err)
+							tokenJustCreated = true
+						} else {
+							// Database exists, check for token
+							token = appconfig.GetString("database.encryption_key")
+							if token == "" {
+								appLogger.Warningf("Database exists but token is missing. Starting in standby mode.")
+
+								relatedVersions, _ := resources.GetRelatedVersions()
+								restartChan := make(chan bool)
+
+								webServer := web.AppEngine{
+									Config:           appconfig,
+									Logger:           appLogger,
+									EventBus:         event_bus.NewEventBusServer(appLogger),
+									DeviceRepo:       nil,
+									RelatedVersions:  relatedVersions,
+									Token:            "",
+									TokenJustCreated: false,
+									StandbyMode:      true,
+									RestartChan:      restartChan,
+								}
+
+								err := webServer.Start()
+								if err != nil {
+									return err
+								}
+								continue
+							}
+							// DB and token both exist.
+							appLogger.Info("Database and token found.")
+							tokenJustCreated = false
 						}
 
 						appconfig.Set("database.encryption_key", token)
 
-						tokenJustCreated = true
-					} else {
-						// Database exists, check for token
-						token = appconfig.GetString("database.encryption_key")
-						if token == "" {
-							appLogger.Warningf("Database exists but token is missing. Starting in standby mode.")
+						settingsData, err := json.Marshal(appconfig.AllSettings())
+						appLogger.Debug(string(settingsData), err)
 
-							relatedVersions, _ := resources.GetRelatedVersions()
+						relatedVersions, _ := resources.GetRelatedVersions()
 
-							webServer := web.AppEngine{
-								Config:           appconfig,
-								Logger:           appLogger,
-								EventBus:         event_bus.NewEventBusServer(appLogger),
-								DeviceRepo:       nil,
-								RelatedVersions:  relatedVersions,
-								Token:            "",
-								TokenJustCreated: false,
-								StandbyMode:      true,
-							}
-
-							return webServer.Start()
+						dbRepo, err := database.NewRepository(appconfig, appLogger, event_bus.NewEventBusServer(appLogger))
+						if err != nil {
+							return err
 						}
-						// DB and token both exist.
-						appLogger.Info("Database and token found.")
-						tokenJustCreated = false
+
+						webServer := web.AppEngine{
+							Config:           appconfig,
+							Logger:           appLogger,
+							EventBus:         event_bus.NewEventBusServer(appLogger),
+							DeviceRepo:       dbRepo,
+							RelatedVersions:  relatedVersions,
+							Token:            token,
+							TokenJustCreated: tokenJustCreated,
+							RestartChan:      make(chan bool),
+						}
+						return webServer.Start()
 					}
-
-					appconfig.Set("database.encryption_key", token)
-
-					settingsData, err := json.Marshal(appconfig.AllSettings())
-					appLogger.Debug(string(settingsData), err)
-
-					relatedVersions, _ := resources.GetRelatedVersions()
-
-					dbRepo, err := database.NewRepository(appconfig, appLogger, event_bus.NewEventBusServer(appLogger))
-					if err != nil {
-						return err
-					}
-
-					webServer := web.AppEngine{
-						Config:           appconfig,
-						Logger:           appLogger,
-						EventBus:         event_bus.NewEventBusServer(appLogger),
-						DeviceRepo:       dbRepo,
-						RelatedVersions:  relatedVersions,
-						Token:            token,
-						TokenJustCreated: tokenJustCreated,
-					}
-					return webServer.Start()
 				},
 
 				Flags: []cli.Flag{
