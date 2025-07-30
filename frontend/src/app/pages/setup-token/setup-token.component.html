@@ -4,33 +4,45 @@
 
     <div class="az-signin-header">
 
-      <!-- Missing Token Message -->
-      <div *ngIf="!isTokenSet && !error">
+      <!-- Token Setup Flow -->
+      <div *ngIf="!isTokenSet">
         <h2 class="mb-3">🔒 Access Restricted</h2>
         <p class="text-muted">
-          It looks like your access token is missing.<br>
+          It looks like your access token is missing.<br />
           Please restore it to regain access to the application.
         </p>
 
-        <form [formGroup]="tokenForm" (ngSubmit)="onSubmit()" class="mt-4">
+        <form [formGroup]="tokenForm" class="mt-4" (ngSubmit)="onSubmit()">
           <div class="form-group">
             <label for="token">Access Token</label>
             <input type="text" id="token" formControlName="token" class="form-control"
-              placeholder="Paste your token here" required />
+              [ngClass]="{ 'is-invalid': error }" placeholder="Paste your token here" required />
+            <div *ngIf="error" class="invalid-feedback">
+              Invalid token. Please check and try again.
+            </div>
           </div>
 
-          <button type="submit" class="btn btn-az-primary btn-block mt-3" [disabled]="!tokenForm.valid || loading">
-            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
-            Restore Access
-          </button>
+          <div class="d-grid mt-3">
+            <button type="button" class="btn btn-outline-primary btn-block"
+              [disabled]="!tokenForm.valid || loading || testSuccess" (click)="testConnection()">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+              Test Connection
+            </button>
+
+            <button *ngIf="testSuccess" type="submit" class="btn btn-az-primary btn-block mt-2"
+              [disabled]="!tokenForm.valid || loading">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+              Set Token
+            </button>
+          </div>
         </form>
       </div>
 
-      <!-- Token Successfully Set -->
-      <div *ngIf="isTokenSet">
+      <!-- Token Set Successfully -->
+      <div *ngIf="isTokenSet" class="mt-4">
         <h2 class="text-success">✅ Token Restored</h2>
         <p class="text-muted">
-          Your token has been successfully set.<br>
+          Your token has been successfully set.<br />
           The application will now resume full access.
         </p>
         <div class="mt-4 text-end">
@@ -40,14 +52,6 @@
         </div>
       </div>
 
-      <!-- Error State -->
-      <div *ngIf="error">
-        <h2 class="text-danger">❌ Failed to Set Token</h2>
-        <p class="text-muted">
-          There was a problem setting the token. Please check your input and try again.
-        </p>
-      </div>
-
-    </div><!-- az-signin-header -->
-  </div><!-- az-card-signin -->
-</div><!-- az-signin-wrapper -->
+    </div>
+  </div>
+</div>

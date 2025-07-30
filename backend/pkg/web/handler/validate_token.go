@@ -32,7 +32,7 @@ func ValidateToken(appConfig config.Interface, logger *logrus.Entry) gin.Handler
 		_, err = database.NewRepository(tempConfig, logger, event_bus.NewNoopEventBusServer())
 		if err != nil {
 			logger.Errorf("failed to validate token: %v", err)
-			c.JSON(http.StatusOK, gin.H{"success": false})
+			c.JSON(http.StatusBadRequest, gin.H{"success": false})
 			return
 		}
 

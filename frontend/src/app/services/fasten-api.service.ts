@@ -79,6 +79,19 @@ export class FastenApiService {
       );
   }
 
+  testToken(formData: string): Observable<any> {
+    const headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    };
+  
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/validate-token`, formData, { headers: new HttpHeaders(headers) })
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data
+        })
+      );
+  }
+
   /*
   SECURE ENDPOINTS
   */
