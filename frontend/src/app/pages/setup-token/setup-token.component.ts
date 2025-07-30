@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
 
 @Component({
@@ -15,7 +14,6 @@ export class SetupTokenComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
     private fastenService: FastenApiService
   ) {}
 
@@ -26,19 +24,22 @@ export class SetupTokenComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.tokenForm.valid) {
-      const formData = new URLSearchParams();
-      formData.append('token', this.tokenForm.value.token);
-      this.fastenService.setupToken(formData.toString()).subscribe(
-        () => {
-          this.isTokenSet = true;
-          this.error = false;
-        },
-        () => {
-          this.isTokenSet = false;
-          this.error = true;
-        }
-      );
-    }
+    if (!this.tokenForm.valid) return;
+
+    this.error = false;
+    this.isTokenSet = false;
+
+    const formData = new URLSearchParams();
+    formData.append('token', this.tokenForm.value.token);
+
+    this.fastenService.setupToken(formData.toString()).subscribe({
+      next: () => {
+        this.isTokenSet = true;
+        this.tokenForm.reset();
+      },
+      error: () => {
+        this.error = true;
+        console.error('Failed to set token.');},
+    });
   }
 }
