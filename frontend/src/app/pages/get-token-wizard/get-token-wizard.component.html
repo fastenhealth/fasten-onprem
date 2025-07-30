@@ -11,29 +11,43 @@
     <div *ngIf="token && !loading">
         <p class="text-muted">
             This access token has been generated for you automatically and will only be shown once.
-            Please save it securely by copying or downloading it.
+            Please save it securely by downloading it before continuing.
         </p>
 
         <label for="token" class="form-label fw-bold">Your Token</label>
-        <textarea id="token" class="form-control font-monospace" rows="4" readonly>{{ token }}</textarea>
+        <div class="input-group mb-3">
+            <input [type]="showToken ? 'text' : 'password'" class="form-control font-monospace" id="token"
+                [value]="token" readonly />
+            <button class="btn btn-outline-secondary" type="button" (click)="toggleTokenVisibility()">
+                {{ showToken ? 'Hide' : 'Show' }}
+            </button>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="acknowledge" [(ngModel)]="acknowledged"
+                name="acknowledge" />
+            <label class="form-check-label" for="acknowledge">
+                I understand that I will no longer have access to this token once I leave this page.
+            </label>
+        </div>
 
         <div class="mt-3 d-flex gap-2">
             <button class="btn btn-outline-secondary" (click)="copyToClipboard()">
                 📋 Copy
             </button>
-            <button class="btn btn-outline-success" (click)="downloadToken()">
+            <button class="btn btn-outline-success" (click)="downloadToken()" [disabled]="tokenDownloaded">
                 💾 Download as .txt
             </button>
         </div>
 
         <div class="alert alert-warning mt-3">
-            <strong>Important:</strong> You won’t be able to see this token again. Store it safely.
+            <strong>Important:</strong> You must download this token before continuing. It will not be shown again.
         </div>
 
-        <div *ngIf="tokenSaved" class="mt-4 text-end">
-            <a routerLink="/auth/signup/wizard" class="btn btn-primary">
+        <div class="mt-4 text-end">
+            <button class="btn btn-primary" [disabled]="!acknowledged || !tokenDownloaded" (click)="proceedToSignup()">
                 Continue to Sign Up →
-            </a>
+            </button>
         </div>
     </div>
 </div>

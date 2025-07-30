@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ToastNotification, ToastType } from 'src/app/models/fasten/toast';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
 import { ToastService } from 'src/app/services/toast.service';
@@ -12,11 +13,14 @@ export class GetTokenWizardComponent implements OnInit {
   token: string | null = null;
   loading = false;
   error: string | null = null;
-  tokenSaved = false; // tracks whether user copied or downloaded
+  tokenDownloaded = false;
+  acknowledged = false;
+  showToken = false;
 
   constructor(
     private fastenApiService: FastenApiService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -40,10 +44,13 @@ export class GetTokenWizardComponent implements OnInit {
     });
   }
 
+  toggleTokenVisibility(): void {
+    this.showToken = !this.showToken;
+  }
+
   copyToClipboard(): void {
     if (this.token) {
       navigator.clipboard.writeText(this.token).then(() => {
-        this.tokenSaved = true;
         const toastNotification = new ToastNotification();
         toastNotification.type = ToastType.Success;
         toastNotification.message = `Successfully copied token to clipboard!`;
@@ -56,18 +63,25 @@ export class GetTokenWizardComponent implements OnInit {
     if (this.token) {
       const blob = new Blob([this.token], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
-
       const a = document.createElement('a');
       a.href = url;
       a.download = 'token.txt';
       a.click();
-
       URL.revokeObjectURL(url);
-      this.tokenSaved = true;
+
+      this.tokenDownloaded = true;
+
       const toastNotification = new ToastNotification();
       toastNotification.type = ToastType.Success;
       toastNotification.message = `Successfully downloaded token!`;
       this.toastService.show(toastNotification);
     }
+  }
+
+  proceedToSignup(): void {
+    if (this.token) {
+      this.downloadToken(); 
+    }
+    this.router.navigate(['/auth/signup/wizard']);
   }
 }
