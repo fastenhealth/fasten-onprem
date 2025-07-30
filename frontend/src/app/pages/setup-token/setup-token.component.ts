@@ -28,7 +28,6 @@ export class SetupTokenComponent implements OnInit {
   onSubmit() {
     if (this.tokenForm.valid) {
       const formData = new URLSearchParams();
-      //TODO: use a more secure way to handle the token (in this.tokenForm.value.token)
       formData.append('token', this.tokenForm.value.token);
       this.fastenService.setupToken(formData.toString()).subscribe(
         () => {

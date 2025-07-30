@@ -1,0 +1,39 @@
+<div class="card shadow-sm p-4">
+    <h4>👋 Welcome to FastenHealth</h4>
+
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <div *ngIf="loading" class="d-flex align-items-center gap-2 text-muted">
+        <span class="spinner-border spinner-border-sm"></span>
+        Fetching your secure token...
+    </div>
+
+    <div *ngIf="token && !loading">
+        <p class="text-muted">
+            This access token has been generated for you automatically and will only be shown once.
+            Please save it securely by copying or downloading it.
+        </p>
+
+        <label for="token" class="form-label fw-bold">Your Token</label>
+        <textarea id="token" class="form-control font-monospace" rows="4" readonly>{{ token }}</textarea>
+
+        <div class="mt-3 d-flex gap-2">
+            <button class="btn btn-outline-secondary" (click)="copyToClipboard()">
+                📋 Copy
+            </button>
+            <button class="btn btn-outline-success" (click)="downloadToken()">
+                💾 Download as .txt
+            </button>
+        </div>
+
+        <div class="alert alert-warning mt-3">
+            <strong>Important:</strong> You won’t be able to see this token again. Store it safely.
+        </div>
+
+        <div *ngIf="tokenSaved" class="mt-4 text-end">
+            <a routerLink="/auth/signup/wizard" class="btn btn-primary">
+                Continue to Sign Up →
+            </a>
+        </div>
+    </div>
+</div>

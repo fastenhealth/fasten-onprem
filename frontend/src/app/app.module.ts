@@ -42,6 +42,7 @@ import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard
 import { IconsModule } from './icon-module';
 import { UserListComponent } from './pages/user-list/user-list.component';
 import { SetupTokenComponent } from './pages/setup-token/setup-token.component';
+import { GetTokenWizardComponent } from './pages/get-token-wizard/get-token-wizard.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { SetupTokenComponent } from './pages/setup-token/setup-token.component';
     AuthSignupWizardComponent,
     UserListComponent,
     SetupTokenComponent,
+    GetTokenWizardComponent,
   ],
   imports: [
     FormsModule,

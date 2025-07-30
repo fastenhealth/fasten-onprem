@@ -435,4 +435,11 @@ export class FastenApiService {
     });
   }
 
+  getToken(): Observable<string> {
+    return this._httpClient.get<{ data: string }>(
+      `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/get-token`
+    ).pipe(
+      map(response => response?.data)
+    );
+  }
 }

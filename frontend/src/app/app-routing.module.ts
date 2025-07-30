@@ -23,9 +23,11 @@ import { SourceDetailComponent } from './pages/source-detail/source-detail.compo
 import { UserCreateComponent } from './pages/user-create/user-create.component';
 import { UserListComponent } from './pages/user-list/user-list.component';
 import { SetupTokenComponent } from "./pages/setup-token/setup-token.component";
+import { GetTokenWizardComponent } from "./pages/get-token-wizard/get-token-wizard.component";
 
 const routes: Routes = [
-  { path: 'setup-token', component: SetupTokenComponent },
+  { path: 'token/wizard', component: GetTokenWizardComponent },
+  { path: 'token/wizard-restore', component: SetupTokenComponent },
   { path: 'auth/signup/wizard', component: AuthSignupWizardComponent },
 
   { path: 'auth/signin', component: AuthSigninComponent, canActivate: [ ShowFirstRunWizardGuard] },

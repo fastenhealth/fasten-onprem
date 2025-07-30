@@ -121,20 +121,7 @@ export class AuthSignupWizardComponent implements OnInit {
     private toastService: ToastService
   ) { }
 
-  async ngOnInit(): Promise<void> {
-     try {
-      // Check if encryption token is set by running the health check
-      await this.fastenService.getHealth().toPromise();
-    } catch (e: any) {
-      if (e?.error?.error === 'no_encryption_token') {
-        console.warn('No encryption token found. Redirecting to wizard.');
-        await this.router.navigate(['/setup-token']);
-        return;
-      }
-
-      console.error('ignoring error:', e);
-    }
-  }
+  async ngOnInit(): Promise<void> {}
 
   signupSubmit(){
     this.loading = true

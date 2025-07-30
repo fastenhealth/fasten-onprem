@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
   routerEvent(event) {
     if (event instanceof NavigationEnd) {
       //modify header
-      if (event.url?.startsWith('/auth') || event.url?.startsWith('/desktop') || event.url?.startsWith('/setup-token')) {
+      if (event.url?.startsWith('/auth') || event.url?.startsWith('/desktop') || event.url?.startsWith('/token')) {
         this.showHeader = false;
       } else {
         this.showHeader = true;

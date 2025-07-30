@@ -3,7 +3,6 @@ import {
   CanActivate,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
-  UrlTree,
   Router,
 } from '@angular/router';
 import { FastenApiService } from '../services/fasten-api.service';
@@ -22,13 +21,13 @@ export class ShowFirstRunWizardGuard implements CanActivate {
     try {
       const healthData = await this.fastenService.getHealth().toPromise();
 
-      if (healthData.first_run_wizard) {
-        return await this.router.navigate(['/auth/signup/wizard']);
+      if (healthData?.first_run_wizard) {
+        return await this.router.navigate(['/token/wizard']);
       }
     } catch (e: any) {
-      if (e?.error?.error === 'no_encryption_token') {
-        console.warn('No encryption token found. Redirecting to wizard.');
-        return await this.router.navigate(['/setup-token']);
+      if (e?.error?.error === 'server_standby') {
+        console.warn('Server is on standby, token needs to be restored.');
+        return await this.router.navigate(['/token/wizard-restore']);
       }
 
       console.error('ignoring error:', e);

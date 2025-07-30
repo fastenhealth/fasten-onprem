@@ -57,7 +57,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				// it will also determine if we should show the first run wizard
 
 				if ae.StandbyMode {
-					c.JSON(http.StatusOK, gin.H{
+					c.JSON(http.StatusBadRequest, gin.H{
 						"success": false,
 						"error":   "server_standby",
 					})
@@ -94,60 +94,60 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 			if !ae.StandbyMode {
 				api.Use(middleware.CacheMiddleware())
 				api.POST("/auth/signup", handler.AuthSignup)
-			api.POST("/auth/signin", handler.AuthSignin)
+				api.POST("/auth/signin", handler.AuthSignin)
 
-			//whitelisted CORS PROXY
-			api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
-			api.POST("/cors/:endpointId/*proxyPath", handler.CORSProxy)
-			api.OPTIONS("/cors/:endpointId/*proxyPath", handler.CORSProxy)
+				//whitelisted CORS PROXY
+				api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
+				api.POST("/cors/:endpointId/*proxyPath", handler.CORSProxy)
+				api.OPTIONS("/cors/:endpointId/*proxyPath", handler.CORSProxy)
 
-			api.GET("/glossary/code", handler.GlossarySearchByCode)
-			api.POST("/support/request", handler.SupportRequest)
-			api.POST("/support/healthsystem", handler.HealthSystemRequest)
-			secure := api.Group("/secure").Use(middleware.RequireAuth())
-			{
-				secure.DELETE("/account/me", handler.DeleteAccount)
+				api.GET("/glossary/code", handler.GlossarySearchByCode)
+				api.POST("/support/request", handler.SupportRequest)
+				api.POST("/support/healthsystem", handler.HealthSystemRequest)
+				secure := api.Group("/secure").Use(middleware.RequireAuth())
+				{
+					secure.DELETE("/account/me", handler.DeleteAccount)
 
-				secure.GET("/summary", handler.GetSummary)
-				secure.GET("/summary/ips", handler.GetIPSSummary)
+					secure.GET("/summary", handler.GetSummary)
+					secure.GET("/summary/ips", handler.GetIPSSummary)
 
-				secure.POST("/source", handler.CreateReconnectSource)
-				secure.POST("/source/manual", handler.CreateManualSource)
-				secure.GET("/source", handler.ListSource)
-				secure.GET("/source/:sourceId", handler.GetSource)
-				secure.DELETE("/source/:sourceId", handler.DeleteSource)
-				secure.POST("/source/:sourceId/sync", handler.SourceSync)
-				secure.GET("/source/:sourceId/summary", handler.GetSourceSummary)
-				secure.GET("/resource/fhir", handler.ListResourceFhir)
-				secure.POST("/resource/graph/:graphType", handler.GetResourceFhirGraph)
-				secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
-				secure.PATCH("/resource/fhir/:resourceType/:resourceId", handler.UpdateResourceFhir)
+					secure.POST("/source", handler.CreateReconnectSource)
+					secure.POST("/source/manual", handler.CreateManualSource)
+					secure.GET("/source", handler.ListSource)
+					secure.GET("/source/:sourceId", handler.GetSource)
+					secure.DELETE("/source/:sourceId", handler.DeleteSource)
+					secure.POST("/source/:sourceId/sync", handler.SourceSync)
+					secure.GET("/source/:sourceId/summary", handler.GetSourceSummary)
+					secure.GET("/resource/fhir", handler.ListResourceFhir)
+					secure.POST("/resource/graph/:graphType", handler.GetResourceFhirGraph)
+					secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
+					secure.PATCH("/resource/fhir/:resourceType/:resourceId", handler.UpdateResourceFhir)
 
-				secure.POST("/resource/composition", handler.CreateResourceComposition)
-				secure.POST("/resource/related", handler.CreateRelatedResources)
-				secure.DELETE("/encounter/:encounterId/related/:resourceType/:resourceId", handler.EncounterUnlinkResource)
+					secure.POST("/resource/composition", handler.CreateResourceComposition)
+					secure.POST("/resource/related", handler.CreateRelatedResources)
+					secure.DELETE("/encounter/:encounterId/related/:resourceType/:resourceId", handler.EncounterUnlinkResource)
 
-				secure.GET("/dashboards", handler.GetDashboard)
-				secure.POST("/dashboards", handler.AddDashboardLocation)
-				//secure.GET("/dashboard/:dashboardId", handler.GetDashboard)
+					secure.GET("/dashboards", handler.GetDashboard)
+					secure.POST("/dashboards", handler.AddDashboardLocation)
+					//secure.GET("/dashboard/:dashboardId", handler.GetDashboard)
 
-				secure.GET("/jobs", handler.ListBackgroundJobs)
-				secure.POST("/jobs/error", handler.CreateBackgroundJobError)
+					secure.GET("/jobs", handler.ListBackgroundJobs)
+					secure.POST("/jobs/error", handler.CreateBackgroundJobError)
 
-				secure.POST("/query", handler.QueryResourceFhir)
+					secure.POST("/query", handler.QueryResourceFhir)
 
-				secure.GET("/users", handler.GetUsers)
-				secure.POST("/users", handler.CreateUser)
+					secure.GET("/users", handler.GetUsers)
+					secure.POST("/users", handler.CreateUser)
 
-				//server-side-events handler (only supported on mac/linux)
-				// TODO: causes deadlock on Windows
-				if runtime.GOOS != "windows" {
-					secure.GET("/events/stream",
-						middleware.SSEHeaderMiddleware(),
-						handler.SSEEventBusServerHandler(ae.EventBus),
-					)
+					//server-side-events handler (only supported on mac/linux)
+					// TODO: causes deadlock on Windows
+					if runtime.GOOS != "windows" {
+						secure.GET("/events/stream",
+							middleware.SSEHeaderMiddleware(),
+							handler.SSEEventBusServerHandler(ae.EventBus),
+						)
+					}
 				}
-			}
 			}
 
 			if ae.Config.GetBool("web.allow_unsafe_endpoints") {
@@ -316,7 +316,7 @@ func (ae *AppEngine) Start() error {
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
 
 	listenAddr := fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port"))
-	
+
 	ae.Logger.Infof("token: %s", ae.Token)
 
 	return r.Run(listenAddr)

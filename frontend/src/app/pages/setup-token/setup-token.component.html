@@ -1,28 +1,51 @@
 <div class="az-signin-wrapper">
   <div class="az-card-signin">
-    <h1 class="az-logo">fasten</h1>
+    <h1 class="az-logo">FastenHealth</h1>
+
     <div class="az-signin-header">
+
+      <!-- Missing Token Message -->
       <div *ngIf="!isTokenSet && !error">
-        <h2>Enter Your Token</h2>
-        <h4 *ngIf="!loading">Please enter your token to continue</h4>
-        <form [formGroup]="tokenForm" (ngSubmit)="onSubmit()">
+        <h2 class="mb-3">🔒 Access Restricted</h2>
+        <p class="text-muted">
+          It looks like your access token is missing.<br>
+          Please restore it to regain access to the application.
+        </p>
+
+        <form [formGroup]="tokenForm" (ngSubmit)="onSubmit()" class="mt-4">
           <div class="form-group">
-            <label>Token</label>
-            <input type="text" formControlName="token" class="form-control" placeholder="Enter your token" required>
-          </div><!-- form-group -->
-          <button type="submit" [disabled]="!tokenForm.valid" class="btn btn-az-primary btn-block">Set Token</button>
+            <label for="token">Access Token</label>
+            <input type="text" id="token" formControlName="token" class="form-control"
+              placeholder="Paste your token here" required />
+          </div>
+
+          <button type="submit" class="btn btn-az-primary btn-block mt-3" [disabled]="!tokenForm.valid || loading">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+            Restore Access
+          </button>
         </form>
       </div>
 
+      <!-- Token Successfully Set -->
       <div *ngIf="isTokenSet">
-        <h2>Token set successfully!</h2>
-        <p>The token has been set successfully. The container has been stopped. Please run the `docker run` command again to start the application in full mode.</p>
+        <h2 class="text-success">✅ Token Restored</h2>
+        <p class="text-muted">
+          Your token has been successfully set.<br>
+          The application will now resume full access.
+        </p>
+        <p class="mt-2 small">
+          If you're using Docker, please restart the container with the proper `docker run` command.
+        </p>
       </div>
 
+      <!-- Error State -->
       <div *ngIf="error">
-        <h2>Error</h2>
-        <p>Failed to set token. Please try again.</p>
+        <h2 class="text-danger">❌ Failed to Set Token</h2>
+        <p class="text-muted">
+          There was a problem setting the token. Please check your input and try again.
+        </p>
       </div>
+
     </div><!-- az-signin-header -->
   </div><!-- az-card-signin -->
 </div><!-- az-signin-wrapper -->
