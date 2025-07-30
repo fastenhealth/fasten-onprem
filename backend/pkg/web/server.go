@@ -91,6 +91,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 			api.GET("/get-token", handler.GetToken(ae.Config))
 			api.POST("/set-token", handler.SetupToken(ae.Config, ae.RestartChan))
+			api.POST("/validate-token", handler.ValidateToken(ae.Config, ae.Logger))
 
 			//in standby mode, we only want to expose the minimum required endpoints
 			if !ae.StandbyMode {
