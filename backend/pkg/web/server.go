@@ -136,10 +136,10 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.POST("/practitioners", handler.CreatePractitioner)
 				secure.PUT("/practitioners/:practitionerId", handler.UpdatePractitioner)
 
-				// User Favorites routes - uncomment after adding the functions
-				// secure.POST("/user/favorites", handler.AddPractitionerToFavorites)
-				// secure.DELETE("/user/favorites", handler.RemovePractitionerFromFavorites)
-				// secure.GET("/user/favorites", handler.GetUserFavoritePractitioners)
+				// Address book favorite actions
+				secure.POST("/user/favorites", handler.AddPractitionerToFavorites)
+				secure.DELETE("/user/favorites", handler.RemovePractitionerFromFavorites)
+				secure.GET("/user/favorites", handler.GetUserFavoritePractitioners)
 
 				//server-side-events handler (only supported on mac/linux)
 				// TODO: causes deadlock on Windows

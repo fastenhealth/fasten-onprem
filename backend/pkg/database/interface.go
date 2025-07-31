@@ -60,6 +60,12 @@ type DatabaseRepository interface {
 	UpdateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error
 	ListBackgroundJobs(ctx context.Context, queryOptions models.BackgroundJobQueryOptions) ([]models.BackgroundJob, error)
 
+	//favorites (Address book)
+	AddFavorite(ctx context.Context, userId string, resourceType string, resourceId string) error
+	RemoveFavorite(ctx context.Context, userId string, resourceType string, resourceId string) error
+	CheckFavoriteExists(ctx context.Context, userId string, resourceType string, resourceId string) (bool, error)
+	GetUserFavorites(ctx context.Context, userId string, resourceType string) ([]models.Favorite, error)
+
 	//settings
 	LoadSystemSettings(ctx context.Context) (*models.SystemSettings, error)
 	SaveSystemSettings(ctx context.Context, newSettings *models.SystemSettings) error

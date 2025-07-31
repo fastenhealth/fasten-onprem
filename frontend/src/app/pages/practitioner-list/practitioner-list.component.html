@@ -159,6 +159,12 @@
                             Delete Selected
                           </button>
                         </li>
+                        <li>
+                           <button class="dropdown-item" (click)="toggleFavorite(practitioner, $event); hideActionsDropdown()">
+                              <i class="fas fa-download me-2"></i>
+                                *favorite*
+                          </button>
+                        </li>
                       </ul>
                     </div>
                   </div>
@@ -272,6 +278,12 @@
                           <button class="dropdown-item text-danger" (click)="deleteSinglePractitioner(practitioner); hidePractitionerDropdown()">
                             <i class="fas fa-trash me-2"></i>
                             Delete
+                          </button>
+                        </li>
+                         <li>
+                          <button class="dropdown-item" (click)="toggleFavorite(practitioner, $event); hidePractitionerDropdown()">
+                            <i class="fas fa-download me-2"></i>
+                             *favorite*
                           </button>
                         </li>
                       </ul>

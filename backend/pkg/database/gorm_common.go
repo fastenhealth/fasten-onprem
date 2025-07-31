@@ -1356,6 +1356,72 @@ func (gr *GormRepository) CancelAllLockedBackgroundJobsAndFail() error {
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Address book
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (gr *GormRepository) AddFavorite(ctx context.Context, userID string, resourceType, resourceID string) error {
+	favorite := models.Favorite{
+		UserID:       userID,
+		ResourceType: resourceType,
+		ResourceID:   resourceID,
+	}
+
+	err := gr.GormClient.
+		Create(&favorite).Error
+
+	return err
+}
+
+func (gr *GormRepository) CheckFavoriteExists(
+	ctx context.Context,
+	userID string,
+	resourceType string,
+	resourceID string,
+) (bool, error) {
+	var favorite models.Favorite
+
+	err := gr.GormClient.
+		Where("user_id = ? AND resource_type = ? AND resource_id = ?", userID, resourceType, resourceID).
+		First(&favorite).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (gr *GormRepository) RemoveFavorite(
+	ctx context.Context,
+	userID string,
+	resourceType string,
+	resourceID string,
+) error {
+	err := gr.GormClient.
+		Where("user_id = ? AND resource_type = ? AND resource_id = ?", userID, resourceType, resourceID).
+		Delete(&models.Favorite{}).Error
+
+	return err
+}
+
+func (gr *GormRepository) GetUserFavorites(
+	ctx context.Context,
+	userID string,
+	resourceType string,
+) ([]models.Favorite, error) {
+	var favorites []models.Favorite
+
+	err := gr.GormClient.
+		Where("user_id = ? AND resource_type = ?", userID, resourceType).
+		Find(&favorites).Error
+
+	return favorites, err
+}
+
 //</editor-fold>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
