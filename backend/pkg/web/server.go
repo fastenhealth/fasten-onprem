@@ -295,6 +295,11 @@ func (ae *AppEngine) SetupInstallationRegistration() error {
 }
 
 func (ae *AppEngine) IndexData(logger *logrus.Entry) error {
+	if ae.Config.GetString("search.uri") == "" {
+		logger.Info("Search URI not configured, skipping data indexing.")
+		return nil
+	}
+
 	indexer := search.IndexerService{Client: search.Client}
 	ctx := context.Background()
 

@@ -102,7 +102,7 @@ func ensureConversationModel(ctx context.Context, client *typesense.Client, cfg 
 func Init(cfg config.Interface, logger *logrus.Entry) error {
 	// Client will initialize only if config search is present
 	if cfg.GetString("search.uri") == "" {
-		logger.Info("Search URI not configured, skipping Typesense initialization.")
+		logger.Info("Search is disabled, skipping Typesense initialization.")
 		return nil
 	}
 
