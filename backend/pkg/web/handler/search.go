@@ -6,7 +6,7 @@ import (
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
-	typesenseClient "github.com/fastenhealth/fasten-onprem/backend/pkg/search"
+	search "github.com/fastenhealth/fasten-onprem/backend/pkg/search"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -54,13 +54,13 @@ func SearchResourcesHandler(c *gin.Context) {
 		perPage = 10
 	}
 
-	if typesenseClient.Client == nil {
-		logger.Error("Typesense client is not initialized")
+	if search.Client == nil {
+		logger.Error("Search client is not initialized")
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "search service unavailable"})
 		return
 	}
 
-	searchClient := &typesenseClient.SearchClient{Client: typesenseClient.Client}
+	indexer := &search.IndexerService{Client: search.Client}
 
 	var filterPtr *string
 	if resourceTypeFilter != "" {
@@ -75,7 +75,7 @@ func SearchResourcesHandler(c *gin.Context) {
 		idStr := currentUser.ID.String()
 		userIDStrPtr = &idStr
 	}
-	results, total, err := searchClient.SearchResources(query, filterPtr, userIDStrPtr, page, perPage)
+	results, total, err := indexer.SearchResources(query, filterPtr, userIDStrPtr, page, perPage)
 	if err != nil {
 		logger.WithError(err).Error("Search query failed")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
@@ -109,15 +109,15 @@ func GetResourceByIDHandler(c *gin.Context) {
 	logger = logger.WithField("resourceID", resourceID)
 	logger.Info("Fetching single resource by ID")
 
-	if typesenseClient.Client == nil {
-		logger.Error("Typesense client is not initialized")
+	if search.Client == nil {
+		logger.Error("Search client is not initialized")
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "search service unavailable"})
 		return
 	}
 
-	searchClient := &typesenseClient.SearchClient{Client: typesenseClient.Client}
+	indexer := &search.IndexerService{Client: search.Client}
 
-	resource, err := searchClient.GetResourceByID(resourceID)
+	resource, err := indexer.GetResourceByID(resourceID)
 	if err != nil {
 		logger.WithError(err).Error("Failed to retrieve resource")
 		c.JSON(http.StatusNotFound, gin.H{"error": "resource not found"})
@@ -148,13 +148,13 @@ func GetResourceSummaryHandler(c *gin.Context) {
 	}
 
 	logger.Info("Resource summary request started")
-	if typesenseClient.Client == nil {
-		logger.Error("Typesense client is not initialized")
+	if search.Client == nil {
+		logger.Error("Search client is not initialized")
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "search service unavailable"})
 		return
 	}
 
-	searchClient := &typesenseClient.SearchClient{Client: typesenseClient.Client}
+	indexer := &search.IndexerService{Client: search.Client}
 
 	perPage := 250
 	page := 1
@@ -168,7 +168,7 @@ func GetResourceSummaryHandler(c *gin.Context) {
 	}
 
 	for {
-		results, total, err := searchClient.SearchResources("*", nil, userIDStrPtr, page, perPage)
+		results, total, err := indexer.SearchResources("*", nil, userIDStrPtr, page, perPage)
 		logger.WithFields(logrus.Fields{
 			"page":        page,
 			"perPage":     perPage,

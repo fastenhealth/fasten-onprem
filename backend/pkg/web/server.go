@@ -295,7 +295,7 @@ func (ae *AppEngine) SetupInstallationRegistration() error {
 }
 
 func (ae *AppEngine) IndexTypesenseData(logger *logrus.Entry) error {
-	searchClient := search.SearchClient{Client: search.Client}
+	indexer := search.IndexerService{Client: search.Client}
 	ctx := context.Background()
 
 	systemSettings, err := ae.deviceRepo.LoadSystemSettings(ctx)
@@ -317,7 +317,7 @@ func (ae *AppEngine) IndexTypesenseData(logger *logrus.Entry) error {
 	}
 
 	for i, r := range resources {
-		if err := searchClient.IndexResource(&r); err != nil {
+		if err := indexer.IndexResource(&r); err != nil {
 			logger.WithFields(logrus.Fields{
 				"index": i,
 				"id":    r.ID,

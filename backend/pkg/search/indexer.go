@@ -11,11 +11,11 @@ import (
 	"github.com/typesense/typesense-go/v3/typesense/api"
 )
 
-type SearchClient struct {
+type IndexerService struct {
 	Client *typesense.Client
 }
 
-func (s *SearchClient) IndexResource(resource *models.ResourceBase) error {
+func (s *IndexerService) IndexResource(resource *models.ResourceBase) error {
 	print("Indexing resource in Typesense: ", resource)
 	doc := map[string]interface{}{
 		"id":                   uuid.New().String(), // Generate a new UUID for the document ID in order to avoid overlaps
@@ -42,7 +42,7 @@ func (s *SearchClient) IndexResource(resource *models.ResourceBase) error {
 	return nil
 }
 
-func (s *SearchClient) SearchResources(query string, resourceTypeFilter *string, userID *string, page int, perPage int) ([]map[string]interface{}, int, error) {
+func (s *IndexerService) SearchResources(query string, resourceTypeFilter *string, userID *string, page int, perPage int) ([]map[string]interface{}, int, error) {
 	searchParams := &api.SearchCollectionParams{
 		Q:       ptr(query),
 		QueryBy: ptr("sort_title,source_resource_type,source_resource_id,source_uri"),
@@ -85,7 +85,7 @@ func (s *SearchClient) SearchResources(query string, resourceTypeFilter *string,
 	return results, total, nil
 }
 
-func (s *SearchClient) GetResourceByID(id string) (map[string]interface{}, error) {
+func (s *IndexerService) GetResourceByID(id string) (map[string]interface{}, error) {
 	doc, err := s.Client.Collection("resources").Document(id).Retrieve(context.Background())
 	if err != nil {
 		return nil, err
