@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Client } from 'typesense';
 import { SearchParams } from 'typesense/lib/Typesense/Types';
 import { Observable, Subscriber } from 'rxjs';
-import { EnvironmentService } from './environment.service';
+import { SettingsService } from './settings.service';
 
 const TYPESENSE_COLLECTION_RESOURCES = 'resources';
 const TYPESENSE_COLLECTION_CONVERSATION_STORE = 'conversation_store';
@@ -66,10 +66,10 @@ export interface ConversationStreamComplete {
 export class TypesenseService {
   private client: Client;
 
-  constructor(private environmentService: EnvironmentService) {
-    const searchEnv = this.environmentService.get('search');
-    if (searchEnv) {
-      const url = new URL(searchEnv.uri);
+  constructor(private settingsService: SettingsService) {
+    const searchSettings = this.settingsService.get('search');
+    if (searchSettings) {
+      const url = new URL(searchSettings.uri);
       const config = {
         nodes: [
           {
@@ -78,12 +78,12 @@ export class TypesenseService {
             protocol: url.protocol.replace(':', ''),
           },
         ],
-        apiKey: searchEnv.api_key,
+        apiKey: searchSettings.api_key,
         connectionTimeoutSeconds: 180, // Default value
       };
       this.client = new Client(config);
     } else {
-      console.error("Search configuration not found in environment");
+      console.error("Search configuration not found in settings");
     }
   }
 

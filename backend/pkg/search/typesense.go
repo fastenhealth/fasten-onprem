@@ -15,18 +15,6 @@ import (
 
 var Client *typesense.Client
 
-func waitForTypesense(client *typesense.Client, maxRetries int, delay time.Duration) error {
-	for i := 0; i < maxRetries; i++ {
-		_, err := client.Collections().Retrieve(context.Background()) // simple ping to check if Typesense is ready
-		if err == nil {
-			return nil // Typesense is ready
-		}
-		log.Printf("Typesense not ready yet (attempt %d/%d): %v", i+1, maxRetries, err)
-		time.Sleep(delay)
-	}
-	return errors.New("typesense did not become ready in time")
-}
-
 func initClient(cfg config.Interface) error {
 	apiUri := cfg.GetString("search.uri")
 	apiKey := cfg.GetString("search.api_key")
@@ -43,6 +31,18 @@ func initClient(cfg config.Interface) error {
 		return errors.New("failed to initialize Typesense: " + err.Error())
 	}
 	return nil
+}
+
+func waitForTypesense(client *typesense.Client, maxRetries int, delay time.Duration) error {
+	for i := 0; i < maxRetries; i++ {
+		_, err := client.Collections().Retrieve(context.Background()) // simple ping to check if Typesense is ready
+		if err == nil {
+			return nil // Typesense is ready
+		}
+		log.Printf("Typesense not ready yet (attempt %d/%d): %v", i+1, maxRetries, err)
+		time.Sleep(delay)
+	}
+	return errors.New("typesense did not become ready in time")
 }
 
 func ensureCollection(ctx context.Context, client *typesense.Client, logger *logrus.Entry, schema *api.CollectionSchema) error {
@@ -102,7 +102,7 @@ func ensureConversationModel(ctx context.Context, client *typesense.Client, cfg 
 func Init(cfg config.Interface, logger *logrus.Entry) error {
 	// Client will initialize only if config search is present
 	if cfg.GetString("search.uri") == "" {
-		logger.Info("Search URI not configured, skipping Typesense initialization.")
+		logger.Info("Search is disabled, skipping Typesense initialization.")
 		return nil
 	}
 

@@ -10,7 +10,7 @@ import {GridstackComponent, NgGridStackOptions} from '../../components/gridstack
 import {DashboardConfig} from '../../models/widget/dashboard-config';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Summary} from '../../models/fasten/summary';
-import { EnvironmentService } from 'src/app/services/environment.service';
+import { SettingsService } from 'src/app/services/settings.service';
 
 // unique ids sets for each item for correct ngFor updating
 //TODO: fix this
@@ -50,11 +50,11 @@ export class DashboardComponent implements OnInit {
     private componentFactoryResolver: ComponentFactoryResolver,
     private vcRef: ViewContainerRef,
     private modalService: NgbModal,
-    private environmentService: EnvironmentService,
+    private settingsService: SettingsService,
   ) { }
 
   ngOnInit() {
-    this.searchEnabled = !!this.environmentService.get('search');
+    this.searchEnabled = !!this.settingsService.get('search');
     this.loading = true
 
     this.fastenApi.getSummary().subscribe((summary: Summary) => {
