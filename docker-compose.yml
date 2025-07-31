@@ -19,4 +19,5 @@ services:
       - ./db:/opt/fasten/db
       - ./encrypt_db:/opt/fasten/encrypt_db
       - encrypt_db:/opt/fasten/encrypt_db
+      - ./certs:/opt/fasten/certs
 #      - ./config.example.yaml:/opt/fasten/config/config.yaml
