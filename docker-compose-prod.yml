@@ -10,6 +10,9 @@ services:
       - ./config.yaml:/opt/fasten/config/config.yaml
     ports:
       - "9090:8080"
+
+  # typesense is an optional service that is used for the "Search" and "Chat" features.
+  # it is configured in `config.yaml` under the `search:` key.
   typesense:
     image: typesense/typesense:29.0
     ports:
