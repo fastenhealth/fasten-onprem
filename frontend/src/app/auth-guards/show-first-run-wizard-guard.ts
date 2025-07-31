@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
+import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router} from '@angular/router';
 import {FastenApiService} from '../services/fasten-api.service';
 
 @Injectable()
-export class ShowFirstRunWizardGuard  {
+export class ShowFirstRunWizardGuard implements CanActivate {
   constructor(private fastenService: FastenApiService, private router: Router) {
 
   }
