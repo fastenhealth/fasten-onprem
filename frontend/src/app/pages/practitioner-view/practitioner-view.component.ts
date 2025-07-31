@@ -475,4 +475,57 @@ export class PractitionerViewComponent implements OnInit {
       window.open(`tel:${phone}`, '_blank');
     }
   }
+
+  copyToClipboard(text: string, type: 'email' | 'phone', event: Event): void {
+    // Prevent the click from bubbling up to the row click handler
+    event.stopPropagation();
+    event.preventDefault();
+    
+    if (!text) return;
+
+    // Use the modern Clipboard API if available
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => {
+        this.showCopyFeedback(type);
+      }).catch(err => {
+        console.error('Failed to copy to clipboard:', err);
+        // Fallback to the older method
+        this.fallbackCopyToClipboard(text, type);
+      });
+    } else {
+      // Fallback for older browsers or non-secure contexts
+      this.fallbackCopyToClipboard(text, type);
+    }
+  }
+
+  private fallbackCopyToClipboard(text: string, type: 'email' | 'phone'): void {
+    // Create a temporary textarea element
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+      document.execCommand('copy');
+      this.showCopyFeedback(type);
+    } catch (err) {
+      console.error('Fallback copy failed:', err);
+      alert(`Failed to copy ${type}. Please copy manually: ${text}`);
+    } finally {
+      document.body.removeChild(textArea);
+    }
+  }
+  
+  private showCopyFeedback(type: 'email' | 'phone'): void {
+    // Optional: Show a brief success message
+    // You can implement a toast notification here
+    console.log(`${type} copied to clipboard!`);
+    
+    // Optional: You could show a temporary tooltip or change the icon briefly
+    // For now, we'll just log it, but you could add visual feedback here
+  }
 }

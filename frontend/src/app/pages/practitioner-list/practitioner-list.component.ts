@@ -25,6 +25,10 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
   showActionsDropdown: boolean = false;
   favoriteIds: Set<string> = new Set();
   filterType: 'all' | 'favorites' = 'all';
+  currentLetter: string = 'A';
+  isScrolling: boolean = false;
+  private scrollTimeout: any;
+  showPractitionerDropdown: string | null = null;
 
   constructor(
     private fastenApi: FastenApiService, 
@@ -329,31 +333,6 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Mouse Events - Simplified since no avatar switching needed
-  onMouseEnter(event: MouseEvent): void {
-    if (this.isHoverable) {
-      const row = event.currentTarget as HTMLElement;
-      const actions = row.querySelector('.action-buttons') as HTMLElement;
-      
-      if (actions) {
-        actions.style.visibility = 'visible';
-        actions.style.opacity = '1';
-      }
-    }
-  }
-
-  onMouseLeave(event: MouseEvent): void {
-    if (this.isHoverable) {
-      const row = event.currentTarget as HTMLElement;
-      const actions = row.querySelector('.action-buttons') as HTMLElement;
-      
-      if (actions) {
-        actions.style.visibility = 'hidden';
-        actions.style.opacity = '0';
-      }
-    }
-  }
-
   // Row Click Handler
   onRowClick(practitioner: Practitioner): void {
     console.log('Row clicked, practitioner:', practitioner);
@@ -609,25 +588,6 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
 
   private clickOutsideListener?: (event: Event) => void;
 
-  private addClickOutsideListener(type: 'selection' | 'actions'): void {
-    this.removeClickOutsideListener(); // Remove existing listener
-    
-    this.clickOutsideListener = (event: Event) => {
-      const target = event.target as HTMLElement;
-      const dropdown = target.closest('.dropdown');
-      
-      if (!dropdown) {
-        if (type === 'selection') {
-          this.hideSelectionDropdown();
-        } else {
-          this.hideActionsDropdown();
-        }
-      }
-    };
-    
-    document.addEventListener('click', this.clickOutsideListener);
-  }
-
   private removeClickOutsideListener(): void {
     if (this.clickOutsideListener) {
       document.removeEventListener('click', this.clickOutsideListener);
@@ -638,6 +598,9 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
   // Don't forget to cleanup on destroy
   ngOnDestroy(): void {
     this.removeClickOutsideListener();
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
+    }
   }
 
   deleteSelectedPractitioners(): void {
@@ -747,4 +710,166 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
     // Fallback to a generic title
     return 'Healthcare Provider';
   }
+
+    // Alphabetical scrollbar methods
+    onTableScroll(event: Event): void {
+      const scrollElement = event.target as HTMLElement;
+      
+      // Show the letter indicator
+      this.isScrolling = true;
+      
+      // Clear existing timeout
+      if (this.scrollTimeout) {
+        clearTimeout(this.scrollTimeout);
+      }
+      
+      // Hide the indicator after scrolling stops
+      this.scrollTimeout = setTimeout(() => {
+        this.isScrolling = false;
+      }, 1500);
+  
+      // Calculate current letter based on scroll position
+      if (this.filteredPractitioners.length > 0) {
+        const scrollTop = scrollElement.scrollTop;
+        const rowHeight = 60; // Approximate row height
+        const currentIndex = Math.floor(scrollTop / rowHeight);
+        
+        // Ensure we don't go out of bounds
+        const safeIndex = Math.min(currentIndex, this.filteredPractitioners.length - 1);
+        const currentPractitioner = this.filteredPractitioners[safeIndex];
+        
+        if (currentPractitioner?.full_name) {
+          const firstLetter = currentPractitioner.full_name.charAt(0).toUpperCase();
+          // Only update if it's a valid letter
+          if (firstLetter.match(/[A-Z]/)) {
+            this.currentLetter = firstLetter;
+          }
+        }
+      }
+    }
+  
+    // Individual practitioner dropdown methods
+    showPractitionerActions(event: MouseEvent, practitioner: Practitioner): void {
+      event.stopPropagation();
+      event.preventDefault();
+      
+      // Toggle dropdown for this specific practitioner
+      if (this.showPractitionerDropdown === practitioner.source_resource_id) {
+        this.hidePractitionerDropdown();
+      } else {
+        this.showPractitionerDropdown = practitioner.source_resource_id || null;
+        // Add click listener to close on outside click
+        setTimeout(() => this.addClickOutsideListener('practitioner'), 0);
+      }
+    }
+  
+    hidePractitionerDropdown(): void {
+      this.showPractitionerDropdown = null;
+      this.removeClickOutsideListener();
+    }
+  
+    exportSinglePractitioner(practitioner: Practitioner): void {
+
+      if (event) {
+        event.stopPropagation(); // Prevent row click
+        event.preventDefault();
+      }
+      
+      // Close the dropdown
+      this.hidePractitionerDropdown();
+
+      // Temporarily set selection to just this practitioner
+      const originalSelection = [...this.selectedPractitioners];
+      this.selectedPractitioners = [practitioner];
+      
+      // Export CSV
+      this.exportToCSV();
+      
+      // Restore original selection
+      this.selectedPractitioners = originalSelection;
+    }
+  
+    deleteSinglePractitioner(practitioner: Practitioner): void {
+
+      if (event) {
+        event.stopPropagation(); // Prevent row click
+        event.preventDefault(); // Prevent any default behavior
+      }
+      
+      // Close the dropdown
+      this.hidePractitionerDropdown();
+
+      const confirmMessage = `Are you sure you want to delete ${practitioner.full_name}? This action cannot be undone.`;
+      
+      if (!confirm(confirmMessage)) {
+        return;
+      }
+  
+      this.fastenApi.deleteResourceFhir('Practitioner', practitioner.source_resource_id!).subscribe({
+        next: (response) => {
+          if (response && response.success) {
+            // Remove from local arrays
+            this.practitioners = this.practitioners.filter(p => 
+              p.source_resource_id !== practitioner.source_resource_id
+            );
+            this.applyFilters(); // Refresh filtered list
+            
+            alert(`Successfully deleted ${practitioner.full_name}.`);
+          } else {
+            alert('Failed to delete practitioner. Please try again.');
+          }
+        },
+        error: (error) => {
+          console.error('Error deleting practitioner:', error);
+          alert('Failed to delete practitioner. Please try again.');
+        }
+      });
+    }
+  
+    // Updated click outside listener to handle practitioner dropdowns
+    private addClickOutsideListener(type: 'selection' | 'actions' | 'practitioner'): void {
+      this.removeClickOutsideListener(); // Remove existing listener
+      
+      this.clickOutsideListener = (event: Event) => {
+        const target = event.target as HTMLElement;
+        const dropdown = target.closest('.dropdown');
+        
+        if (!dropdown) {
+          if (type === 'selection') {
+            this.hideSelectionDropdown();
+          } else if (type === 'actions') {
+            this.hideActionsDropdown();
+          } else if (type === 'practitioner') {
+            this.hidePractitionerDropdown();
+          }
+        }
+      };
+      
+      document.addEventListener('click', this.clickOutsideListener);
+    }
+  
+    // Update the existing mouse events to respect selection state
+    onMouseEnter(event: MouseEvent): void {
+      if (this.isHoverable && this.selectedPractitioners.length === 0) {
+        const row = event.currentTarget as HTMLElement;
+        const actions = row.querySelector('.action-buttons') as HTMLElement;
+        
+        if (actions && !actions.classList.contains('hidden')) {
+          actions.style.visibility = 'visible';
+          actions.style.opacity = '1';
+        }
+      }
+    }
+  
+    onMouseLeave(event: MouseEvent): void {
+      if (this.isHoverable) {
+        const row = event.currentTarget as HTMLElement;
+        const actions = row.querySelector('.action-buttons') as HTMLElement;
+        
+        if (actions) {
+          actions.style.visibility = 'hidden';
+          actions.style.opacity = '0';
+        }
+      }
+    }
 }

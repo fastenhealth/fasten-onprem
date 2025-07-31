@@ -39,7 +39,7 @@
             </button>
 
             <!-- Action Buttons (Right Side) -->
-            <div class="header-actions d-flex align-items-center gap-2">
+            <div class="header-actions d-flex align-items-center">
 
               <!-- Edit Button -->
               <button 
@@ -159,20 +159,34 @@
                       <!-- Email -->
                       <div class="contact-item" *ngIf="getEmailAddress()">
                         <i class="fas fa-envelope contact-icon"></i>
-                        <div class="contact-content">
+                        <div class="contact-content contact-with-copy">
                           <a [href]="'mailto:' + getEmailAddress()" class="contact-link">
                             {{ getEmailAddress() }}
                           </a>
+                          <button 
+                            class="copy-btn" 
+                            (click)="copyToClipboard(practitioner.email, 'email', $event)"
+                            title="Copy email to clipboard"
+                          >
+                            <i class="fas fa-copy"></i>
+                          </button>
                         </div>
                       </div>
 
                       <!-- Phone -->
                       <div class="contact-item" *ngIf="getPhoneNumber()">
                         <i class="fas fa-phone contact-icon"></i>
-                        <div class="contact-content">
+                        <div class="contact-content contact-with-copy">
                           <a [href]="'tel:' + getPhoneNumber()" class="contact-link">
                             {{ getPhoneNumber() }}
                           </a>
+                          <button 
+                            class="copy-btn" 
+                            (click)="copyToClipboard(practitioner.phone, 'phone', $event)"
+                            title="Copy phone to clipboard"
+                          >
+                            <i class="fas fa-copy"></i>
+                          </button>
                         </div>
                       </div>
 

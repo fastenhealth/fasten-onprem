@@ -12,9 +12,6 @@
         <div class="col-md-8">
           <div class="search-container">
             <div class="input-group">
-              <!-- <span class="input-group-text">
-                <i class="fas fa-search"></i>
-              </span> -->
               <input 
                 type="text" 
                 class="form-control" 
@@ -51,219 +48,250 @@
         </div>
       </div>
 
-      <!-- Table Container -->
-      <div class="table-container" *ngIf="!loading" [class.auto-height]="filteredPractitioners.length <= 10">
-        <table class="table table-hover modern-table">
-          <thead class="sticky-header">
-            <!-- Normal Header Row (when nothing is selected) -->
-            <tr *ngIf="selectedPractitioners.length === 0" class="normal-header">
-              <th style="width: 50px;" class="selection-header">
-                <div class="checkbox-container">
-                  <input 
-                    class="form-check-input" 
-                    type="checkbox" 
-                    [checked]="isAllSelected()"
-                    [indeterminate]="isIndeterminate()"
-                    (change)="toggleSelectAll()"
-                  >
-                </div>
-              </th>
-              <th class="text-start name-column">Name</th>
-              <th class="text-start email-column">Email</th>
-              <th class="text-start phone-column">Phone</th>
-              <th class="text-start job-title-column">Job Title</th>
-              <th class="text-start organization-column">Organization</th>
-              <th class="hover-actions text-center actions-column" style="width: 120px;">&nbsp;</th>
-            </tr>
-      
-            <!-- Selection Header Row (when items are selected) -->
-            <tr *ngIf="selectedPractitioners.length > 0" class="selection-mode-header">
-              <!-- Checkbox Column - Same exact structure -->
-              <th style="width: 50px;" class="selection-header position-relative">
-                <div class="checkbox-container">
-                  <input 
-                    class="form-check-input" 
-                    type="checkbox" 
-                    [checked]="isAllSelected()"
-                    [indeterminate]="isIndeterminate()"
-                    (change)="toggleSelectAll()"
-                  >
-                </div>
-                <!-- Dropdown positioned absolutely next to checkbox -->
-                <div class="dropdown position-absolute" style="top: 50%; right: 8px; transform: translateY(-50%);">
-                  <button 
-                    class="btn btn-sm p-1 border-0 dropdown-toggle-custom" 
-                    type="button" 
-                    (click)="toggleSelectionDropdown()"
-                    [attr.aria-expanded]="showSelectionDropdown"
-                    title="Selection options"
-                  >
-                    <i class="fas fa-chevron-down text-muted"></i>
-                  </button>
-                  <ul class="dropdown-menu dropdown-menu-sm" [class.show]="showSelectionDropdown">
-                    <li>
-                      <button class="dropdown-item" (click)="selectAll(); hideSelectionDropdown()">
-                        <i class="fas fa-check-square me-2"></i>
-                        Select All
-                      </button>
-                    </li>
-                    <li>
-                      <button class="dropdown-item" (click)="selectNone(); hideSelectionDropdown()">
-                        <i class="far fa-square me-2"></i>
-                        Select None
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </th>
-              
-              <!-- Name Column with Selection Controls -->
-              <th class="text-start name-column selection-controls-column">
-                <div class="selection-controls-container">
-                  <!-- Selected Count -->
-                  <span class="selected-count">
-                    {{ selectedPractitioners.length }} selected
-                  </span>
-                </div>
-              </th>
-              
-              <!-- Empty columns to maintain structure -->
-              <th class="text-start email-column"></th>
-              <th class="text-start phone-column"></th>
-              <th class="text-start job-title-column"></th>
-              <th class="text-start organization-column"></th>
-              
-              <!-- Actions Column with Three Dots -->
-              <th class="hover-actions text-center actions-column" style="width: 120px;">
-                <div class="actions-container">
-                  <div class="dropdown">
-                    <button 
-                      class="btn btn-sm p-1 border-0" 
-                      type="button" 
-                      (click)="toggleActionsDropdown()"
-                      [attr.aria-expanded]="showActionsDropdown"
-                      title="More actions"
+      <!-- Table Container with Alphabetical Scrollbar -->
+      <div class="table-wrapper" *ngIf="!loading">
+        <!-- Fixed Header -->
+        <div class="table-header-fixed">
+          <table class="table modern-table">
+            <thead>
+              <!-- Normal Header Row (when nothing is selected) -->
+              <tr *ngIf="selectedPractitioners.length === 0" class="normal-header">
+                <th style="width: 50px;" class="selection-header">
+                  <div class="checkbox-container">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      [checked]="isAllSelected()"
+                      [indeterminate]="isIndeterminate()"
+                      (change)="toggleSelectAll()"
                     >
-                      <i class="fas fa-ellipsis-v text-muted"></i>
+                  </div>
+                </th>
+                <th class="text-start name-column">Name</th>
+                <th class="text-start email-column">Email</th>
+                <th class="text-start phone-column">Phone</th>
+                <th class="text-start job-title-column">Job Title</th>
+                <th class="text-start organization-column">Organization</th>
+                <th class="hover-actions text-center actions-column" style="width: 120px;">&nbsp;</th>
+              </tr>
+        
+              <!-- Selection Header Row (when items are selected) -->
+              <tr *ngIf="selectedPractitioners.length > 0" class="selection-mode-header">
+                <!-- Checkbox Column - Same exact structure -->
+                <th style="width: 50px;" class="selection-header position-relative">
+                  <div class="checkbox-container">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      [checked]="isAllSelected()"
+                      [indeterminate]="isIndeterminate()"
+                      (change)="toggleSelectAll()"
+                    >
+                  </div>
+                  <!-- Dropdown positioned absolutely next to checkbox -->
+                  <div class="dropdown position-absolute" style="top: 50%; right: 8px; transform: translateY(-50%);">
+                    <button 
+                      class="btn btn-sm p-1 border-0 dropdown-toggle-custom" 
+                      type="button" 
+                      (click)="toggleSelectionDropdown()"
+                      [attr.aria-expanded]="showSelectionDropdown"
+                      title="Selection options"
+                    >
+                      <i class="fas fa-chevron-down text-muted"></i>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-start dropdown-menu-sm" [class.show]="showActionsDropdown">
+                    <ul class="dropdown-menu dropdown-menu-sm" [class.show]="showSelectionDropdown">
                       <li>
-                        <button class="dropdown-item" (click)="exportToCSV(); hideActionsDropdown()">
-                          <i class="fas fa-download me-2"></i>
-                          Export CSV
+                        <button class="dropdown-item" (click)="selectAll(); hideSelectionDropdown()">
+                          <i class="fas fa-check-square me-2"></i>
+                          Select All
                         </button>
                       </li>
-                      <li><hr class="dropdown-divider"></li>
                       <li>
-                        <button class="dropdown-item text-danger" (click)="deleteSelectedPractitioners(); hideActionsDropdown()">
-                          <i class="fas fa-trash me-2"></i>
-                          Delete Selected
+                        <button class="dropdown-item" (click)="selectNone(); hideSelectionDropdown()">
+                          <i class="far fa-square me-2"></i>
+                          Select None
                         </button>
                       </li>
                     </ul>
                   </div>
-                </div>
-              </th>
-            </tr>
-          </thead>
-          
-          <!-- Table Body -->
-          <tbody>
-            <tr 
-              *ngFor="let practitioner of filteredPractitioners; trackBy: trackByPractitioner"
-              class="table-row"
-              [class.selected]="isSelected(practitioner)"
-              (click)="onRowClick(practitioner)"
-              (mouseenter)="onMouseEnter($event)"
-              (mouseleave)="onMouseLeave($event)"
-            >
-              <!-- Checkbox/Selection Column -->
-              <td class="checkbox-cell">
-                <div class="d-flex justify-content-center align-items-center">
-                  <input 
-                    class="form-check-input" 
-                    type="checkbox" 
-                    [checked]="isSelected(practitioner)"
-                    (change)="toggleSelection(practitioner)"
-                    (click)="$event.stopPropagation()"
-                  >
-                </div>
-              </td>
-      
-              <!-- Name Column -->
-              <td class="name-cell">
-                <div class="practitioner-name">
-                  {{ practitioner.full_name }}
-                </div>
-              </td>
-      
-              <!-- Email Column -->
-              <td class="contact-cell">
-                <div *ngIf="practitioner.email" class="contact-info contact-with-copy">
-                  <a [href]="'mailto:' + practitioner.email" class="email-link">
-                    {{ practitioner.email }}
-                  </a>
-                  <button 
-                    class="copy-btn" 
-                    (click)="copyToClipboard(practitioner.email, 'email', $event)"
-                    title="Copy email to clipboard"
-                  >
-                    <i class="fas fa-copy"></i>
-                  </button>
-                </div>
-              </td>
-      
-              <!-- Phone Column -->
-              <td class="phone-cell">
-                <div *ngIf="practitioner.phone" class="contact-info contact-with-copy">
-                  <a [href]="'tel:' + practitioner.phone" class="phone-link">
-                    {{ practitioner.phone }}
-                  </a>
-                  <button 
-                    class="copy-btn" 
-                    (click)="copyToClipboard(practitioner.phone, 'phone', $event)"
-                    title="Copy phone to clipboard"
-                  >
-                    <i class="fas fa-copy"></i>
-                  </button>
-                </div>
-              </td>
-      
-              <!-- Job Title Column -->
-              <td class="job-title-cell">
-                <div *ngIf="practitioner.jobTitle" class="job-title">
-                  {{ practitioner.jobTitle }}
-                </div>
-                <div *ngIf="!practitioner.jobTitle && practitioner.qualification" class="job-title text-muted">
-                  {{ getJobTitleFromQualification(practitioner) }}
-                </div>
-              </td>
-      
-              <!-- Organization Column -->
-              <td class="organization-cell">
-                <div *ngIf="practitioner.organization" class="organization">
-                  {{ practitioner.organization }}
-                </div>
-              </td>
-      
-              <!-- Actions Column -->
-              <td class="actions-cell">
-                <div class="action-buttons">
-                  <button 
-                    class="btn btn-sm btn-link text-secondary p-1"
-                    (click)="showMoreActions($event, practitioner)"
-                    title="More actions"
-                  >
-                    <i class="fas fa-ellipsis-v"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                </th>
+                
+                <!-- Name Column with Selection Controls -->
+                <th class="text-start name-column selection-controls-column">
+                  <div class="selection-controls-container">
+                    <!-- Selected Count -->
+                    <span class="selected-count">
+                      {{ selectedPractitioners.length }} selected
+                    </span>
+                  </div>
+                </th>
+                
+                <!-- Empty columns to maintain structure -->
+                <th class="text-start email-column"></th>
+                <th class="text-start phone-column"></th>
+                <th class="text-start job-title-column"></th>
+                <th class="text-start organization-column"></th>
+                
+                <!-- Actions Column with Three Dots -->
+                <th class="hover-actions text-center actions-column" style="width: 120px;">
+                  <div class="actions-container">
+                    <div class="dropdown">
+                      <button 
+                        class="btn btn-sm p-1 border-0" 
+                        type="button" 
+                        (click)="toggleActionsDropdown()"
+                        [attr.aria-expanded]="showActionsDropdown"
+                        title="More actions"
+                      >
+                        <i class="fas fa-ellipsis-v text-muted"></i>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-sm" [class.show]="showActionsDropdown">
+                        <li>
+                          <button class="dropdown-item" (click)="exportToCSV(); hideActionsDropdown()">
+                            <i class="fas fa-download me-2"></i>
+                            Export CSV
+                          </button>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                          <button class="dropdown-item text-danger" (click)="deleteSelectedPractitioners(); hideActionsDropdown()">
+                            <i class="fas fa-trash me-2"></i>
+                            Delete Selected
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+
+        <!-- Scrollable Table Body -->
+        <div class="table-body-scrollable" (scroll)="onTableScroll($event)">
+          <table class="table table-hover modern-table">
+            <tbody>
+              <tr 
+                *ngFor="let practitioner of filteredPractitioners; trackBy: trackByPractitioner"
+                class="table-row"
+                [class.selected]="isSelected(practitioner)"
+                (click)="onRowClick(practitioner)"
+                (mouseenter)="onMouseEnter($event)"
+                (mouseleave)="onMouseLeave($event)"
+              >
+                <!-- Checkbox/Selection Column -->
+                <td class="checkbox-cell" style="width: 50px;">
+                  <div class="d-flex justify-content-center align-items-center">
+                    <input 
+                      class="form-check-input" 
+                      type="checkbox" 
+                      [checked]="isSelected(practitioner)"
+                      (change)="toggleSelection(practitioner)"
+                      (click)="$event.stopPropagation()"
+                    >
+                  </div>
+                </td>
+        
+                <!-- Name Column -->
+                <td class="name-cell">
+                  <div class="practitioner-name">
+                    {{ practitioner.full_name }}
+                  </div>
+                </td>
+        
+                <!-- Email Column -->
+                <td class="contact-cell">
+                  <div *ngIf="practitioner.email" class="contact-info contact-with-copy">
+                    <a [href]="'mailto:' + practitioner.email" class="email-link">
+                      {{ practitioner.email }}
+                    </a>
+                    <button 
+                      class="copy-btn" 
+                      (click)="copyToClipboard(practitioner.email, 'email', $event)"
+                      title="Copy email to clipboard"
+                    >
+                      <i class="fas fa-copy"></i>
+                    </button>
+                  </div>
+                </td>
+        
+                <!-- Phone Column -->
+                <td class="phone-cell">
+                  <div *ngIf="practitioner.phone" class="contact-info contact-with-copy">
+                    <a [href]="'tel:' + practitioner.phone" class="phone-link">
+                      {{ practitioner.phone }}
+                    </a>
+                    <button 
+                      class="copy-btn" 
+                      (click)="copyToClipboard(practitioner.phone, 'phone', $event)"
+                      title="Copy phone to clipboard"
+                    >
+                      <i class="fas fa-copy"></i>
+                    </button>
+                  </div>
+                </td>
+        
+                <!-- Job Title Column -->
+                <td class="job-title-cell">
+                  <div *ngIf="practitioner.jobTitle" class="job-title">
+                    {{ practitioner.jobTitle }}
+                  </div>
+                  <div *ngIf="!practitioner.jobTitle && practitioner.qualification" class="job-title text-muted">
+                    {{ getJobTitleFromQualification(practitioner) }}
+                  </div>
+                </td>
+        
+                <!-- Organization Column -->
+                <td class="organization-cell">
+                  <div *ngIf="practitioner.organization" class="organization">
+                    {{ practitioner.organization }}
+                  </div>
+                </td>
+        
+                <!-- Actions Column -->
+                <td class="actions-cell" style="width: 120px;">
+                  <div class="action-buttons" [class.hidden]="selectedPractitioners.length > 0">
+                    <div class="dropdown">
+                      <button 
+                        class="btn btn-sm btn-link text-secondary p-1"
+                        (click)="showPractitionerActions($event, practitioner)"
+                        title="More actions"
+                      >
+                        <i class="fas fa-ellipsis-v"></i>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-start dropdown-menu-sm" [class.show]="showPractitionerDropdown === practitioner.source_resource_id">
+                        <li>
+                          <button class="dropdown-item" (click)="exportSinglePractitioner(practitioner); hidePractitionerDropdown()">
+                            <i class="fas fa-download me-2"></i>
+                            Export CSV
+                          </button>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                          <button class="dropdown-item text-danger" (click)="deleteSinglePractitioner(practitioner); hidePractitionerDropdown()">
+                            <i class="fas fa-trash me-2"></i>
+                            Delete
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Alphabetical Indicator (Google Contacts Style) -->
+        <div class="alphabetical-indicator" [class.visible]="isScrolling">
+          <div class="current-letter">
+            {{ currentLetter }}
+          </div>
+        </div>
         
         <!-- Empty State -->
-        <div *ngIf="filteredPractitioners.length === 0 && !loading" class="text-center py-5">
+        <div *ngIf="filteredPractitioners.length === 0 && !loading" class="text-center py-5 empty-state-overlay">
           <div class="empty-state">
             <i class="fas fa-user-md fa-3x text-muted mb-3"></i>
             <h5 class="text-muted">

@@ -1,4 +1,15 @@
+// Fix checkbox positioning issues
+.checkbox-cell {
+  .form-check-input {
+    position: static !important; // Ensure checkboxes are not absolutely positioned
+    transform: none !important; // Remove any transforms that might cause positioning issues
+  }
+}
+
+// Remove any problematic positioning from checkbox containers
 .checkbox-container {
+  position: static !important;
+  transform: none !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -187,7 +198,7 @@
   }
 }
 
-// Regular actions container (not in selection mode) - ADD THIS NEW SECTION
+// Regular actions container (not in selection mode)
 .actions-container {
   display: flex;
   align-items: center;
@@ -262,6 +273,8 @@
     text-align: left;
     color: #212529;
     white-space: nowrap; // Prevent text wrapping
+    display: flex;
+    align-items: center;
     
     &:hover {
       background-color: #f8f9fa;
@@ -279,6 +292,7 @@
     i {
       width: 16px;
       text-align: center;
+      margin-right: 8px;
     }
   }
 
@@ -293,17 +307,17 @@
   display: none !important;
 }
 
+// Ensure containers don't clip dropdowns
+.az-content,
+.container-fluid,
+.az-content-body {
+  overflow: visible !important; // Allow dropdowns to overflow
+}
+
 // Ensure table doesn't clip dropdowns
 .table-responsive,
 .table-container {
   overflow: visible !important; // Allow dropdowns to overflow
-}
-
-// If you're using a container that clips overflow
-.az-content,
-.container {
-  overflow-x: auto;
-  overflow-y: visible; // Allow vertical overflow for dropdowns
 }
 
 // Ensure table body cells align with headers
@@ -431,5 +445,336 @@
   
   i::before {
     content: "\f00c"; // FontAwesome check icon
+  }
+}
+
+// NEW STYLES FOR FIXED HEADER AND ALPHABETICAL INDICATOR
+
+/* Table wrapper with fixed header - UPDATED TO ALLOW DROPDOWN OVERFLOW */
+.table-wrapper {
+  position: relative;
+  height: 70vh;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  overflow: visible; // CHANGED: Allow dropdowns to overflow
+  background: white;
+}
+
+/* Fixed header */
+.table-header-fixed {
+  position: sticky;
+  top: 0;
+  z-index: 10; // Lower than dropdowns
+  background: white;
+  border-bottom: 2px solid #dee2e6;
+
+  table {
+    margin-bottom: 0;
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  th {
+    background: white;
+    border-bottom: none;
+    padding: 1rem 0.75rem;
+    font-weight: 600;
+    height: 60px;
+    vertical-align: middle;
+    
+    // Ensure column widths match body
+    &:nth-child(1) {
+      width: 50px;
+      min-width: 50px;
+      max-width: 50px;
+    }
+    
+    &:nth-child(2) {
+      width: 25%;
+      min-width: 200px;
+    }
+    
+    &:nth-child(3) {
+      width: 20%;
+      min-width: 180px;
+    }
+    
+    &:nth-child(4) {
+      width: 15%;
+      min-width: 140px;
+    }
+    
+    &:nth-child(5) {
+      width: 15%;
+      min-width: 150px;
+    }
+    
+    &:nth-child(6) {
+      width: 15%;
+      min-width: 150px;
+    }
+    
+    &:nth-child(7) {
+      width: 120px;
+      min-width: 120px;
+      max-width: 120px;
+    }
+  }
+}
+
+/* Scrollable body - UPDATED TO ALLOW DROPDOWN OVERFLOW */
+.table-body-scrollable {
+  height: calc(100% - 60px);
+  overflow-y: auto;
+  overflow-x: visible; // CHANGED: Allow horizontal overflow for dropdowns
+  
+  // Custom scrollbar styling
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+    
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+
+  table {
+    margin-bottom: 0;
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  // FIXED: Individual row actions cell
+  .actions-cell {
+    position: relative;
+    overflow: visible; // Allow dropdown overflow
+    
+    .action-buttons {
+      position: relative;
+      
+      .dropdown {
+        position: relative;
+        
+        .btn {
+          background: none;
+          color: #6c757d;
+          font-size: 14px;
+          min-width: 24px;
+          min-height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: none;
+          
+          &:hover {
+            color: #495057;
+            background-color: rgba(108, 117, 125, 0.1);
+            border-radius: 4px;
+          }
+          
+          &:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.25);
+          }
+        }
+
+        // FIXED: Individual row dropdown positioning
+        .dropdown-menu {
+          position: absolute !important;
+          top: 100% !important;
+          right: 0 !important;
+          left: auto !important;
+          z-index: 1050 !important;
+          transform: translateX(0) !important; // Remove problematic transform
+          margin-top: 2px;
+          min-width: 150px;
+          
+          // Ensure proper positioning for right-aligned dropdown
+          &.dropdown-menu-start {
+            right: 0 !important;
+            left: auto !important;
+          }
+          
+          &.show {
+            display: block !important;
+          }
+        }
+      }
+    }
+  }
+
+  td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: middle;
+    
+    // Match header column widths exactly
+    &:nth-child(1) {
+      width: 50px;
+      min-width: 50px;
+      max-width: 50px;
+    }
+    
+    &:nth-child(2) {
+      width: 25%;
+      min-width: 200px;
+    }
+    
+    &:nth-child(3) {
+      width: 20%;
+      min-width: 180px;
+    }
+    
+    &:nth-child(4) {
+      width: 15%;
+      min-width: 140px;
+    }
+    
+    &:nth-child(5) {
+      width: 15%;
+      min-width: 150px;
+    }
+    
+    &:nth-child(6) {
+      width: 15%;
+      min-width: 150px;
+    }
+    
+    &:nth-child(7) {
+      width: 120px;
+      min-width: 120px;
+      max-width: 120px;
+      position: relative; // Ensure positioning context
+      overflow: visible; // Allow dropdown overflow
+    }
+  }
+}
+
+/* Alphabetical indicator (Google Contacts style) */
+.alphabetical-indicator {
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 15; // Below dropdowns
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .current-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    background: rgba(0, 123, 255, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Hide actions when items are selected */
+.action-buttons.hidden {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Empty state overlay */
+.empty-state-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 100%;
+  
+  .empty-state {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+  }
+}
+
+/* Ensure proper table styling */
+.modern-table {
+  margin-bottom: 0;
+  width: 100%;
+  table-layout: fixed;
+  
+  .table-row {
+    transition: background-color 0.15s ease;
+    
+    &:hover {
+      background-color: rgba(0, 123, 255, 0.05);
+      
+      .action-buttons {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+    
+    &.selected {
+      background-color: rgba(0, 123, 255, 0.1);
+    }
+    
+    .action-buttons {
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+      
+      &.hidden {
+        visibility: hidden !important;
+        opacity: 0 !important;
+      }
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .table-wrapper {
+    height: 60vh;
+  }
+  
+  .alphabetical-indicator {
+    right: 20px; // Closer to edge on mobile
+    
+    .current-letter {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+    }
+  }
+  
+  .table-header-fixed th,
+  .table-body-scrollable td {
+    padding: 0.5rem;
+    font-size: 14px;
+    
+    &:nth-child(5),
+    &:nth-child(6) {
+      display: none; // Hide job title and organization on mobile
+    }
   }
 }

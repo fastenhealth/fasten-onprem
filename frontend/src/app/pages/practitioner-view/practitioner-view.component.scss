@@ -55,6 +55,7 @@
         padding: 8px 16px;
         font-size: 14px;
         font-weight: 500;
+        margin-right: 8px !important;
   
         &:hover {
           background-color: #5a359a;
@@ -348,5 +349,51 @@
       .details-card {
         padding: 16px 0;
       }
+    }
+  }
+
+  .contact-with-copy {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px; // Reduced gap to place icon closer to text
+  
+    .copy-btn {
+      opacity: 0;
+      visibility: hidden;
+      background: none;
+      border: none;
+      color: #6c757d;
+      font-size: 12px;
+      padding: 2px 4px; // Smaller padding for tighter spacing
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      margin-left: 2px; // Small margin to keep it close to text
+  
+      &:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+        transform: scale(1.1);
+      }
+  
+      &:active {
+        transform: scale(0.95);
+        background-color: #e9ecef;
+      }
+  
+      i {
+        font-size: 9px;
+      }
+    }
+  
+    &:hover .copy-btn {
+      opacity: 1;
+      visibility: visible;
     }
   }

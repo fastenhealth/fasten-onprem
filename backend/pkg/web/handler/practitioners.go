@@ -189,3 +189,148 @@ func extractPractitionerSortTitle(resource map[string]interface{}) string {
 
 	return ""
 }
+
+//DO-TO add practitioner favorites functionality inside gorm_common
+// func AddPractitionerToFavorites(c *gin.Context) {
+// 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+// 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+// 	type AddFavoriteRequest struct {
+// 		ResourceType string `json:"resource_type" binding:"required"`
+// 		ResourceID   string `json:"resource_id" binding:"required"`
+// 	}
+
+// 	var request AddFavoriteRequest
+// 	if err := c.ShouldBindJSON(&request); err != nil {
+// 		logger.Errorln("Error binding request:", err)
+// 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "invalid request payload"})
+// 		return
+// 	}
+
+// 	// Validate resource type
+// 	if request.ResourceType != "Practitioner" {
+// 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "only Practitioner resources are supported"})
+// 		return
+// 	}
+
+// 	// Get current user
+// 	currentUser, err := databaseRepo.GetCurrentUser(c)
+// 	if err != nil {
+// 		logger.Errorln("Error getting current user:", err)
+// 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not get current user"})
+// 		return
+// 	}
+
+// 	// Check if already favorited
+// 	exists, err := databaseRepo.CheckFavoriteExists(c, currentUser.ID, request.ResourceType, request.ResourceID)
+// 	if err != nil {
+// 		logger.Errorln("Error checking if favorite exists:", err)
+// 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to check favorite status"})
+// 		return
+// 	}
+
+// 	if exists {
+// 		c.JSON(http.StatusOK, gin.H{"success": true, "message": "practitioner already in favorites"})
+// 		return
+// 	}
+
+// 	// Add to favorites
+// 	err = databaseRepo.AddFavorite(c, currentUser.ID, request.ResourceType, request.ResourceID)
+// 	if err != nil {
+// 		logger.Errorln("Error adding favorite:", err)
+// 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to add to favorites"})
+// 		return
+// 	}
+
+// 	logger.Infof("Successfully added practitioner %s to favorites for user %s", request.ResourceID, currentUser.ID)
+// 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "practitioner added to favorites"})
+// }
+
+// // NEW: Remove practitioner from favorites
+// func RemovePractitionerFromFavorites(c *gin.Context) {
+// 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+// 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+// 	type RemoveFavoriteRequest struct {
+// 		ResourceType string `json:"resource_type" binding:"required"`
+// 		ResourceID   string `json:"resource_id" binding:"required"`
+// 	}
+
+// 	var request RemoveFavoriteRequest
+// 	if err := c.ShouldBindJSON(&request); err != nil {
+// 		logger.Errorln("Error binding request:", err)
+// 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "invalid request payload"})
+// 		return
+// 	}
+
+// 	// Validate resource type
+// 	if request.ResourceType != "Practitioner" {
+// 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "only Practitioner resources are supported"})
+// 		return
+// 	}
+
+// 	// Get current user
+// 	currentUser, err := databaseRepo.GetCurrentUser(c)
+// 	if err != nil {
+// 		logger.Errorln("Error getting current user:", err)
+// 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not get current user"})
+// 		return
+// 	}
+
+// 	// Remove from favorites
+// 	err = databaseRepo.RemoveFavorite(c, currentUser.ID, request.ResourceType, request.ResourceID)
+// 	if err != nil {
+// 		logger.Errorln("Error removing favorite:", err)
+// 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to remove from favorites"})
+// 		return
+// 	}
+
+// 	logger.Infof("Successfully removed practitioner %s from favorites for user %s", request.ResourceID, currentUser.ID)
+// 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "practitioner removed from favorites"})
+// }
+
+// // NEW: Get user's favorite practitioners
+// func GetUserFavoritePractitioners(c *gin.Context) {
+// 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+// 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+// 	// Get query parameters
+// 	resourceType := c.Query("resource_type")
+// 	if resourceType == "" {
+// 		resourceType = "Practitioner" // Default to Practitioner
+// 	}
+
+// 	// Validate resource type
+// 	if resourceType != "Practitioner" {
+// 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "only Practitioner resources are supported"})
+// 		return
+// 	}
+
+// 	// Get current user
+// 	currentUser, err := databaseRepo.GetCurrentUser(c)
+// 	if err != nil {
+// 		logger.Errorln("Error getting current user:", err)
+// 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not get current user"})
+// 		return
+// 	}
+
+// 	// Get user's favorites
+// 	favorites, err := databaseRepo.GetUserFavorites(c, currentUser.ID, resourceType)
+// 	if err != nil {
+// 		logger.Errorln("Error getting user favorites:", err)
+// 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to get favorites"})
+// 		return
+// 	}
+
+// 	// Transform to the expected format (array of objects with resource_id)
+// 	favoriteObjects := make([]map[string]interface{}, len(favorites))
+// 	for i, resourceID := range favorites {
+// 		favoriteObjects[i] = map[string]interface{}{
+// 			"resource_id":   resourceID,
+// 			"resource_type": resourceType,
+// 		}
+// 	}
+
+// 	logger.Infof("Retrieved %d favorite practitioners for user %s", len(favorites), currentUser.ID)
+// 	c.JSON(http.StatusOK, gin.H{"success": true, "data": favoriteObjects})
+// }
