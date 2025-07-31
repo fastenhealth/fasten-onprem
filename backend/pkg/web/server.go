@@ -294,7 +294,7 @@ func (ae *AppEngine) SetupInstallationRegistration() error {
 	return nil
 }
 
-func (ae *AppEngine) IndexTypesenseData(logger *logrus.Entry) error {
+func (ae *AppEngine) IndexData(logger *logrus.Entry) error {
 	indexer := search.IndexerService{Client: search.Client}
 	ctx := context.Background()
 
@@ -304,11 +304,11 @@ func (ae *AppEngine) IndexTypesenseData(logger *logrus.Entry) error {
 	}
 
 	if systemSettings.TypesenseDataIndexed {
-		logger.Info("Typesense data already indexed, skipping...")
+		logger.Info("Data already indexed, skipping...")
 		return nil
 	}
 
-	logger.Info("Typesense data not indexed. Indexing existing resources...")
+	logger.Info("Data not indexed. Indexing existing resources...")
 
 	listResourceQueryOptions := models.ListResourceQueryOptions{}
 	resources, err := ae.deviceRepo.ListAllResources(ctx, listResourceQueryOptions)
@@ -333,7 +333,7 @@ func (ae *AppEngine) IndexTypesenseData(logger *logrus.Entry) error {
 	}
 
 	logger.Infof("Indexed %d resources", len(resources))
-	logger.Info("Typesense indexing completed and flag updated.")
+	logger.Info("Indexing completed and flag updated.")
 	return nil
 }
 
@@ -357,8 +357,8 @@ func (ae *AppEngine) Start() error {
 	}
 
 	// Index existing data if needed
-	if err := ae.IndexTypesenseData(ae.Logger); err != nil {
-		return fmt.Errorf("failed to index Typesense data: %w", err)
+	if err := ae.IndexData(ae.Logger); err != nil {
+		return fmt.Errorf("failed to index data: %w", err)
 	}
 
 	return r.Run(fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port")))

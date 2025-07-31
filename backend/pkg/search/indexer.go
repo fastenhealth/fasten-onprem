@@ -101,12 +101,10 @@ func derefStr(s *string) string {
 	return ""
 }
 
-// ptr returns a pointer to the given string.
 func ptr(s string) *string {
 	return &s
 }
 
-// intPtr returns a pointer to the given int.
 func intPtr(i int) *int {
 	return &i
 }
