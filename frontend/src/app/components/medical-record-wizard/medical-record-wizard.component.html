@@ -279,7 +279,7 @@
                 </div>
                 <fhir-practitioner class="fhir-card-callout-warning" [formGroup]="practitionerGroup"  [showDetails]="false" [displayModel]="practitionerGroup.controls.data.value" [isCollapsed]="true">
                   <div header>
-                    <span class="cursor-pointer float-right" (click)="deletePractitioner(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                    <span class="cursor-pointer float-end" (click)="deletePractitioner(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
                   </div>
                 </fhir-practitioner>
               </ng-container>
@@ -320,7 +320,7 @@
                 </div>
                 <fhir-organization class="fhir-card-callout-warning" [formGroup]="organizationGroup"  [showDetails]="false" [displayModel]="organizationGroup.controls.data.value" [isCollapsed]="true">
                   <div header>
-                    <span class="cursor-pointer float-right" (click)="deleteOrganization(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                    <span class="cursor-pointer float-end" (click)="deleteOrganization(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
                   </div>
                 </fhir-organization>
               </ng-container>
@@ -359,7 +359,7 @@
                 </div>
                 <fhir-diagnostic-report class="fhir-card-callout-warning" [formGroup]="labresultsGroup"  [showDetails]="false" [displayModel]="labresultsGroup.controls.data.value?.entry?.[0]?.resource | fastenDisplayModel" [isCollapsed]="true">
                   <div header>
-                    <span class="cursor-pointer float-right" (click)="deleteLabResults(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
+                    <span class="cursor-pointer float-end" (click)="deleteLabResults(i)" aria-hidden="true"><i class="fas fa-trash"></i></span>
                   </div>
                 </fhir-diagnostic-report>
               </ng-container>
@@ -455,7 +455,7 @@
     'text-dark': !debugMode,
     'btn-dark':debugMode,
     'text-white':debugMode
-     }" type="button" class="btn float-left" (click)="debugMode = !debugMode">
+     }" type="button" class="btn float-start" (click)="debugMode = !debugMode">
       <i class="fas fa-bug"></i>
     </button>
     <button type="submit" class="btn btn-indigo" [disabled]="submitWizardLoading">

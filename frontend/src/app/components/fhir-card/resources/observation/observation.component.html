@@ -3,7 +3,7 @@
     <div>
       <h6 class="card-title">{{displayModel?.sort_title}}</h6>
     </div>
-    <fhir-ui-badge class="float-right" [status]="displayModel?.status">{{displayModel?.status}}</fhir-ui-badge>
+    <fhir-ui-badge class="float-end" [status]="displayModel?.status">{{displayModel?.status}}</fhir-ui-badge>
     <!--    <div class="btn-group">-->
     <!--      <button class="btn active">Day</button>-->
     <!--      <button class="btn">Week</button>-->
@@ -17,6 +17,6 @@
     <observation-visualization *ngIf="displayVisualization" [observations]="[displayModel]"></observation-visualization>
   </div>
   <div *ngIf="showDetails" class="card-footer">
-    <a class="float-right" [routerLink]="['/explore', displayModel?.source_id, 'resource', displayModel?.source_resource_id]">details</a>
+    <a class="float-end" [routerLink]="['/explore', displayModel?.source_id, 'resource', displayModel?.source_resource_id]">details</a>
   </div>
 </div>
