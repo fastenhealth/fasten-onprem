@@ -30,6 +30,8 @@ import {
 } from 'fhir/r4';
 import {FormRequestHealthSystem} from '../models/fasten/form-request-health-system';
 import { UpdateResourcePayload } from '../models/fasten/resource_update';
+import { Favorite } from '../pages/practitioner-list/practitioner-list.component';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -634,7 +636,7 @@ export class FastenApiService {
     );
   }
 
-  getUserFavorites(resourceType?: string): Observable<string[]> {
+  getUserFavorites(resourceType?: string): Observable<Favorite[]> {
     let endpointUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/user/favorites`;
     let queryParams = {};
     

@@ -5,6 +5,15 @@ import { FastenApiService } from '../../services/fasten-api.service';
 import { Practitioner } from 'src/app/models/fasten/practitioner';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { forkJoin } from 'rxjs';
+export interface Favorite {
+  id: string; // From ModelBase
+  created_at: string; // ISO date string
+  updated_at: string; // ISO date string (optional if not used)
+  UserID: string;
+  ResourceType: string;
+  ResourceID: string;
+  CreatedAt: string; // duplicate of created_at, possibly for legacy reasons
+}
 
 @Component({
   selector: 'app-practitioner-list',
@@ -24,6 +33,7 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
   showSelectionDropdown: boolean = false;
   showActionsDropdown: boolean = false;
   favoriteIds: Set<string> = new Set();
+  favoritePractitioners: Practitioner[] = [];
   filterType: 'all' | 'favorites' = 'all';
   currentLetter: string = 'A';
   isScrolling: boolean = false;
@@ -69,8 +79,8 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
 
   loadFavorites(): void {
     this.fastenApi.getUserFavorites('Practitioner').subscribe(
-      (favorites: string[]) => {
-        this.favoriteIds = new Set(favorites);
+      (favorites: Favorite[]) => {
+        this.favoriteIds = new Set(favorites.map(fav => fav.ResourceID));
         this.updatePractitionersFavoriteStatus();
       },
       error => {
@@ -84,6 +94,10 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
       practitioner.isFavorite = this.favoriteIds.has(practitioner.source_resource_id || '');
     });
     this.sortPractitioners();
+  }
+
+  hasFavorites(): boolean {
+    return this.filteredPractitioners.some(p => p.isFavorite);
   }
 
   // Toggle favorite status
