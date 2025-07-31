@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { APP_INITIALIZER, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { EnvironmentService } from './services/environment.service';
+import { SettingsService } from './services/settings.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {HttpClientModule, HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
@@ -106,8 +106,8 @@ import { ChatComponent } from './pages/chat/chat.component';
     },
     {
       provide: APP_INITIALIZER,
-      useFactory: (envService: EnvironmentService) => () => envService.load(),
-      deps: [EnvironmentService],
+      useFactory: (settingsService: SettingsService) => () => settingsService.load(),
+      deps: [SettingsService],
       multi: true
     },
     IsAuthenticatedAuthGuard,

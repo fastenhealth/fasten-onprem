@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { EnvironmentService } from '../services/environment.service';
+import { SettingsService } from '../services/settings.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,7 @@ import { EnvironmentService } from '../services/environment.service';
 export class ChatFeatureGuard implements CanActivate {
 
   constructor(
-    private environmentService: EnvironmentService,
+    private settingsService: SettingsService,
     private router: Router
   ) {}
 
@@ -17,7 +17,7 @@ export class ChatFeatureGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    const chatEnabled = !!this.environmentService.get('search')?.chat;
+    const chatEnabled = !!this.settingsService.get('search')?.chat;
 
     if (chatEnabled) {
       return true;
