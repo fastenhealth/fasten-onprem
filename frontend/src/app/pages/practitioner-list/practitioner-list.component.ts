@@ -180,6 +180,14 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
     return this.practitioners.filter(p => p.isFavorite).length;
   }
 
+  getFavorites(): any[] {
+    return this.filteredPractitioners.filter(p => p.isFavorite);
+  }
+  
+  getNonFavorites(): any[] {
+    return this.filteredPractitioners.filter(p => !p.isFavorite);
+  }
+
   // Export only favorites
   exportFavoritesToCSV(): void {
     const originalSelection = [...this.selectedPractitioners];
@@ -426,7 +434,7 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
           this.escapeCsvValue(practitioner.full_name || ''),
           this.escapeCsvValue(practitioner.organization || ''),
           this.escapeCsvValue(practitioner.jobTitle || ''),
-          this.escapeCsvValue('FHIR'),
+          this.escapeCsvValue('Fasten Health'),
           this.escapeCsvValue(practitioner.emailUse),
           this.escapeCsvValue(practitioner.email),
           this.escapeCsvValue(practitioner.phoneUse),

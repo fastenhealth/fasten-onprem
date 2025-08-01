@@ -1,12 +1,106 @@
-// Fix checkbox positioning issues
-.checkbox-cell {
-  .form-check-input {
-    position: static !important; // Ensure checkboxes are not absolutely positioned
-    transform: none !important; // Remove any transforms that might cause positioning issues
+.favorite-row {
+  background-color: #ffffff !important;
+}
+
+.favorite-row:hover {
+  background-color: rgba(0, 123, 255, 0.05) !important;
+}
+
+.favorite-row.selected {
+  background-color: #e3f2fd !important;
+  border-left: 3px solid #1976d2 !important;
+}
+
+/* Name cell container with star */
+.practitioner-name-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.practitioner-name {
+  flex: 1;
+  min-width: 0; /* Allow text to truncate if needed */
+}
+
+/* Favorite star button */
+.favorite-star {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0;
+  visibility: hidden;
+  margin-left: auto;
+  
+  &:hover {
+    color: #ffc107;
+    background-color: rgba(255, 193, 7, 0.1);
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &.active {
+    color: #ffc107;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.3);
+  }
+  
+  /* Star in actions column styling */
+  &.actions-star {
+    margin-left: 0;
+    margin-right: 8px;
+    font-size: 14px;
+    padding: 6px;
+    min-width: 28px;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
-// Remove any problematic positioning from checkbox containers
+/* Show star on row hover or when favorite */
+.table-row:hover .favorite-star {
+  opacity: 1;
+  visibility: visible;
+}
+
+.table-row .favorite-star.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Ensure name cell has enough space */
+.name-cell {
+  position: relative;
+  min-width: 200px;
+}
+
+/* CHECKBOX AND HEADER FIXES */
+
+/* Fix checkbox positioning issues */
+.checkbox-cell {
+  .form-check-input {
+    position: static !important; /* Ensure checkboxes are not absolutely positioned */
+    transform: none !important; /* Remove any transforms that might cause positioning issues */
+  }
+}
+
+/* Remove any problematic positioning from checkbox containers */
 .checkbox-container {
   position: static !important;
   transform: none !important;
@@ -32,20 +126,20 @@
   }
 }
 
-// Ensure both header rows have identical heights and styling
+/* Ensure both header rows have identical heights and styling */
 .sticky-header {
   th {
     padding: 8px 16px;
     vertical-align: middle;
-    height: 48px; // Fixed height for consistency
+    height: 48px; /* Fixed height for consistency */
     border-bottom: 1px solid #dee2e6;
     
-    // Ensure normal headers align text to start
+    /* Ensure normal headers align text to start */
     &:not(.selection-header):not(.actions-column) {
       text-align: left !important;
     }
     
-    // Keep checkbox centered
+    /* Keep checkbox centered */
     &.selection-header {
       text-align: center;
       width: 50px !important;
@@ -53,18 +147,18 @@
       max-width: 50px;
     }
     
-    // Actions column
+    /* Actions column */
     &.actions-column {
       text-align: center;
-      width: 120px !important;
-      min-width: 120px;
-      max-width: 120px;
-      position: relative; // Add positioning context
-      overflow: visible; // Allow dropdown to overflow
+      width: 150px !important;
+      min-width: 150px;
+      max-width: 150px;
+      position: relative; /* Add positioning context */
+      overflow: visible; /* Allow dropdown to overflow */
     }
   }
 
-  // Normal header styling
+  /* Normal header styling */
   .normal-header {
     background-color: #f8f9fa;
     
@@ -73,14 +167,14 @@
     }
   }
 
-  // Selection mode header styling - same background as normal
+  /* Selection mode header styling - same background as normal */
   .selection-mode-header {
     background-color: #e3f2fd;
     
     th {
       background-color: #e3f2fd;
       
-      // Empty columns during selection should be invisible
+      /* Empty columns during selection should be invisible */
       &:not(.selection-header):not(.selection-controls-column):not(.actions-column) {
         background-color: #e3f2fd;
         border-left: none;
@@ -101,8 +195,8 @@
             background: none;
             color: #6c757d;
             font-size: 14px;
-            min-width: 20px; // Smaller width
-            min-height: 20px; // Smaller height
+            min-width: 20px; /* Smaller width */
+            min-height: 20px; /* Smaller height */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -120,7 +214,7 @@
             }
 
             i {
-              font-size: 12px; // Smaller icon
+              font-size: 12px; /* Smaller icon */
             }
           }
 
@@ -150,10 +244,10 @@
       justify-content: center;
       width: 100%;
       height: 100%;
-      position: relative; // Add positioning context
+      position: relative; /* Add positioning context */
       
       .dropdown {
-        position: relative; // Ensure dropdown has positioning context
+        position: relative; /* Ensure dropdown has positioning context */
         
         .btn {
           background: none;
@@ -172,21 +266,21 @@
           }
         }
 
-        // Fix the dropdown menu positioning
+        /* Fix the dropdown menu positioning */
         .dropdown-menu {
           position: absolute !important;
           top: 100% !important;
-          right: 0 !important; // Align to right edge of button
-          left: auto !important; // Override any left positioning
-          z-index: 1050 !important; // Higher z-index to ensure it's on top
-          transform: translateX(10px) !important; // Pull slightly left to stay in bounds
-          margin-top: 2px; // Small gap from button
+          right: 0 !important; /* Align to right edge of button */
+          left: auto !important; /* Override any left positioning */
+          z-index: 1050 !important; /* Higher z-index to ensure it's on top */
+          transform: translateX(10px) !important; /* Pull slightly left to stay in bounds */
+          margin-top: 2px; /* Small gap from button */
           
-          // Ensure it's fully visible
+          /* Ensure it's fully visible */
           &.dropdown-menu-end {
             right: 0 !important;
             left: auto !important;
-            transform: translateX(10px) !important; // Adjust to keep in view
+            transform: translateX(10px) !important; /* Adjust to keep in view */
           }
           
           &.show {
@@ -198,17 +292,17 @@
   }
 }
 
-// Regular actions container (not in selection mode)
+/* Regular actions container (not in selection mode) */
 .actions-container {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  position: relative; // Add positioning context
+  position: relative; /* Add positioning context */
   
   .dropdown {
-    position: relative; // Ensure dropdown has positioning context
+    position: relative; /* Ensure dropdown has positioning context */
     
     .btn {
       background: none;
@@ -227,21 +321,21 @@
       }
     }
 
-    // Fix the dropdown menu positioning
+    /* Fix the dropdown menu positioning */
     .dropdown-menu {
       position: absolute !important;
       top: 100% !important;
-      right: 0 !important; // Align to right edge of button
-      left: auto !important; // Override any left positioning
-      z-index: 1050 !important; // Higher z-index to ensure it's on top
-      transform: translateX(10px) !important; // Pull slightly left to stay in bounds
-      margin-top: 2px; // Small gap from button
+      right: 0 !important; /* Align to right edge of button */
+      left: auto !important; /* Override any left positioning */
+      z-index: 1050 !important; /* Higher z-index to ensure it's on top */
+      transform: translateX(10px) !important; /* Pull slightly left to stay in bounds */
+      margin-top: 2px; /* Small gap from button */
       
-      // Ensure it's fully visible
+      /* Ensure it's fully visible */
       &.dropdown-menu-end {
         right: 0 !important;
         left: auto !important;
-        transform: translateX(10px) !important; // Adjust to keep in view
+        transform: translateX(10px) !important; /* Adjust to keep in view */
       }
       
       &.show {
@@ -251,6 +345,8 @@
   }
 }
 
+/* DROPDOWN STYLES */
+
 .dropdown-menu-sm {
   min-width: 150px;
   font-size: 14px;
@@ -259,11 +355,11 @@
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   background-color: #fff;
   padding: 4px 0;
-  z-index: 1050 !important; // Ensure it's above everything
+  z-index: 1050 !important; /* Ensure it's above everything */
   
-  // Positioning fixes
+  /* Positioning fixes */
   position: absolute !important;
-  will-change: transform; // Optimize for position changes
+  will-change: transform; /* Optimize for position changes */
 
   .dropdown-item {
     padding: 8px 12px;
@@ -272,7 +368,7 @@
     width: 100%;
     text-align: left;
     color: #212529;
-    white-space: nowrap; // Prevent text wrapping
+    white-space: nowrap; /* Prevent text wrapping */
     display: flex;
     align-items: center;
     
@@ -302,82 +398,101 @@
   }
 }
 
-// Custom dropdown toggle to remove Bootstrap styles
+/* Custom dropdown toggle to remove Bootstrap styles */
 .dropdown-toggle-custom::after {
   display: none !important;
 }
 
-// Ensure containers don't clip dropdowns
+/* Ensure containers don't clip dropdowns */
 .az-content,
 .container-fluid,
 .az-content-body {
-  overflow: visible !important; // Allow dropdowns to overflow
+  overflow: visible !important; /* Allow dropdowns to overflow */
 }
 
-// Ensure table doesn't clip dropdowns
+/* Ensure table doesn't clip dropdowns */
 .table-responsive,
 .table-container {
-  overflow: visible !important; // Allow dropdowns to overflow
+  overflow: visible !important; /* Allow dropdowns to overflow */
 }
 
-// Ensure table body cells align with headers
+/* TABLE STYLING */
+
+/* Ensure table body cells align with headers */
 .table {
   thead th {
     vertical-align: middle;
   }
 
-  // Column width consistency
+  /* Column width consistency */
   .checkbox-cell {
     width: 50px;
     text-align: center;
   }
 
   .actions-cell {
-    width: 120px;
+    width: 150px;
     text-align: center;
-    position: relative; // Add positioning context
-    overflow: visible; // Allow dropdown to overflow
+    position: relative; /* Add positioning context */
+    overflow: visible; /* Allow dropdown to overflow */
   }
 
-  // Ensure text doesn't shift in table body
+  /* Ensure text doesn't shift in table body */
   tbody td {
     vertical-align: middle;
     padding: 8px 16px;
   }
 
-  // Table row hover actions
+  /* Table row hover actions */
   .table-row {
     .action-buttons {
       opacity: 0;
       visibility: hidden;
       transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
     }
 
     &:hover .action-buttons {
       opacity: 1;
       visibility: visible;
     }
+    
+    /* Show actions star on hover or when active */
+    &:hover .actions-star {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .actions-star.active {
+      opacity: 1;
+      visibility: visible;
+    }
   }
 }
 
-// Remove any transitions that might cause jumping
+/* Remove any transitions that might cause jumping */
 .sticky-header tr {
-  transition: none; // Remove transitions that cause jumping
+  transition: none; /* Remove transitions that cause jumping */
 }
 
-// Ensure consistent column widths
+/* Ensure consistent column widths */
 .name-column { min-width: 200px; }
 .email-column { min-width: 180px; }
 .phone-column { min-width: 140px; }
 .job-title-column { min-width: 150px; }
 .organization-column { min-width: 150px; }
 
-// Contact copy functionality styles
+/* CONTACT COPY FUNCTIONALITY */
+
+/* Contact copy functionality styles */
 .contact-with-copy {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 4px; // Reduced gap to place icon closer to text
+  gap: 4px; /* Reduced gap to place icon closer to text */
 
   .copy-btn {
     opacity: 0;
@@ -386,7 +501,7 @@
     border: none;
     color: #6c757d;
     font-size: 12px;
-    padding: 2px 4px; // Smaller padding for tighter spacing
+    padding: 2px 4px; /* Smaller padding for tighter spacing */
     border-radius: 3px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -395,7 +510,7 @@
     justify-content: center;
     min-width: 20px;
     height: 20px;
-    margin-left: 2px; // Small margin to keep it close to text
+    margin-left: 2px; /* Small margin to keep it close to text */
 
     &:hover {
       background-color: #f8f9fa;
@@ -419,7 +534,7 @@
   }
 }
 
-// Ensure the contact cells have enough space
+/* Ensure the contact cells have enough space */
 .contact-cell, .phone-cell {
   .contact-info {
     min-height: 24px;
@@ -430,7 +545,7 @@
   .email-link, .phone-link {
     color: #6f42c1;
     text-decoration: none;
-    white-space: nowrap; // Prevent text wrapping
+    white-space: nowrap; /* Prevent text wrapping */
     
     &:hover {
       text-decoration: underline;
@@ -439,16 +554,16 @@
   }
 }
 
-// Optional: Add a subtle animation when copying
+/* Optional: Add a subtle animation when copying */
 .copy-btn.copied {
   color: #28a745;
   
   i::before {
-    content: "\f00c"; // FontAwesome check icon
+    content: "\f00c"; /* FontAwesome check icon */
   }
 }
 
-// NEW STYLES FOR FIXED HEADER AND ALPHABETICAL INDICATOR
+/* FIXED HEADER AND SCROLLABLE TABLE LAYOUT */
 
 /* Table wrapper with fixed header - UPDATED TO ALLOW DROPDOWN OVERFLOW */
 .table-wrapper {
@@ -456,7 +571,7 @@
   height: 70vh;
   border: 1px solid #dee2e6;
   border-radius: 0.375rem;
-  overflow: visible; // CHANGED: Allow dropdowns to overflow
+  overflow: visible; /* CHANGED: Allow dropdowns to overflow */
   background: white;
 }
 
@@ -464,7 +579,7 @@
 .table-header-fixed {
   position: sticky;
   top: 0;
-  z-index: 10; // Lower than dropdowns
+  z-index: 10; /* Lower than dropdowns */
   background: white;
   border-bottom: 2px solid #dee2e6;
 
@@ -482,7 +597,7 @@
     height: 60px;
     vertical-align: middle;
     
-    // Ensure column widths match body
+    /* Ensure column widths match body */
     &:nth-child(1) {
       width: 50px;
       min-width: 50px;
@@ -515,9 +630,9 @@
     }
     
     &:nth-child(7) {
-      width: 120px;
-      min-width: 120px;
-      max-width: 120px;
+      width: 150px;
+      min-width: 150px;
+      max-width: 150px;
     }
   }
 }
@@ -526,9 +641,9 @@
 .table-body-scrollable {
   height: calc(100% - 60px);
   overflow-y: auto;
-  overflow-x: visible; // CHANGED: Allow horizontal overflow for dropdowns
+  overflow-x: visible; /* CHANGED: Allow horizontal overflow for dropdowns */
   
-  // Custom scrollbar styling
+  /* Custom scrollbar styling */
   &::-webkit-scrollbar {
     width: 8px;
   }
@@ -553,10 +668,10 @@
     width: 100%;
   }
 
-  // FIXED: Individual row actions cell
+  /* FIXED: Individual row actions cell */
   .actions-cell {
     position: relative;
-    overflow: visible; // Allow dropdown overflow
+    overflow: visible; /* Allow dropdown overflow */
     
     .action-buttons {
       position: relative;
@@ -577,7 +692,7 @@
           
           &:hover {
             color: #495057;
-            background-color: rgba(108, 117, 125, 0.1);
+            background-color: rgba(24, 108, 182, 0.1);
             border-radius: 4px;
           }
           
@@ -587,18 +702,18 @@
           }
         }
 
-        // FIXED: Individual row dropdown positioning
+        /* FIXED: Individual row dropdown positioning */
         .dropdown-menu {
           position: absolute !important;
           top: 100% !important;
           right: 0 !important;
           left: auto !important;
           z-index: 1050 !important;
-          transform: translateX(0) !important; // Remove problematic transform
+          transform: translateX(0) !important; /* Remove problematic transform */
           margin-top: 2px;
           min-width: 150px;
           
-          // Ensure proper positioning for right-aligned dropdown
+          /* Ensure proper positioning for right-aligned dropdown */
           &.dropdown-menu-start {
             right: 0 !important;
             left: auto !important;
@@ -617,7 +732,7 @@
     border-bottom: 1px solid #dee2e6;
     vertical-align: middle;
     
-    // Match header column widths exactly
+    /* Match header column widths exactly */
     &:nth-child(1) {
       width: 50px;
       min-width: 50px;
@@ -650,14 +765,16 @@
     }
     
     &:nth-child(7) {
-      width: 120px;
-      min-width: 120px;
-      max-width: 120px;
-      position: relative; // Ensure positioning context
-      overflow: visible; // Allow dropdown overflow
+      width: 150px;
+      min-width: 150px;
+      max-width: 150px;
+      position: relative; /* Ensure positioning context */
+      overflow: visible; /* Allow dropdown overflow */
     }
   }
 }
+
+/* ALPHABETICAL INDICATOR AND EMPTY STATE */
 
 /* Alphabetical indicator (Google Contacts style) */
 .alphabetical-indicator {
@@ -665,7 +782,7 @@
   right: 30px;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 15; // Below dropdowns
+  z-index: 15; /* Below dropdowns */
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
@@ -716,6 +833,8 @@
   }
 }
 
+/* MODERN TABLE STYLING */
+
 /* Ensure proper table styling */
 .modern-table {
   margin-bottom: 0;
@@ -751,6 +870,8 @@
   }
 }
 
+/* RESPONSIVE ADJUSTMENTS */
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .table-wrapper {
@@ -758,7 +879,7 @@
   }
   
   .alphabetical-indicator {
-    right: 20px; // Closer to edge on mobile
+    right: 20px; /* Closer to edge on mobile */
     
     .current-letter {
       width: 40px;
@@ -774,7 +895,12 @@
     
     &:nth-child(5),
     &:nth-child(6) {
-      display: none; // Hide job title and organization on mobile
+      display: none; /* Hide job title and organization on mobile */
     }
+  }
+  
+  /* Hide star on mobile for space */
+  .favorite-star {
+    display: none;
   }
 }
