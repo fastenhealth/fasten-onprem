@@ -802,9 +802,9 @@
     font-size: 24px;
     font-weight: 700;
     color: white;
-    background: rgba(0, 123, 255, 0.9);
+    background: var(--primary);
     border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 4px 12px var(--primary);
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.2);
   }
