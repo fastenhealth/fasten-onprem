@@ -1,0 +1,294 @@
+<div class="az-content">
+  <div class="container">
+    <div class="az-content-body">
+      
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="d-flex justify-content-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading practitioner details...</span>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="loadError" class="alert alert-danger">
+        <h6 class="alert-heading">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          Error Loading Practitioner
+        </h6>
+        <p class="mb-0">{{ loadError }}</p>
+        <hr>
+        <button class="btn btn-outline-danger btn-sm" (click)="loadPractitioner()">
+          <i class="fas fa-redo me-1"></i>
+          Try Again
+        </button>
+      </div>
+
+      <!-- Main Content -->
+      <div *ngIf="!isLoading && !loadError && practitioner">
+        
+        <!-- Page Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h2 class="az-content-title mb-0">Edit Practitioner</h2>
+            <p class="text-muted">Update {{ practitioner.full_name }}'s information</p>
+          </div>
+          <button 
+            type="button" 
+            class="btn btn-outline-secondary"
+            (click)="navigateBack()"
+          >
+            <i class="fas fa-arrow-left me-2"></i>
+            Back to Profile
+          </button>
+        </div>
+
+        <!-- Debug Mode Alert -->
+        <div *ngIf="debugMode" class="alert alert-warning mb-4">
+          <h6 class="alert-heading">Debug Mode</h6>
+          <pre><code [highlight]="newPractitionerForm.getRawValue() | json"></code></pre>
+          <strong>Practitioner Form Status: {{ newPractitionerForm.status }}</strong>
+        </div>
+
+        <!-- Main Form Card -->
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-user-md me-2"></i>
+              Practitioner Information
+            </h5>
+          </div>
+          
+          <div class="card-body">
+            <!-- Form Content -->
+            <form [formGroup]="newPractitionerForm" (ngSubmit)="submit()">
+              
+              <!-- Name Section -->
+              <div class="row mb-4">
+                <div class="col-12">
+                  <h6 class="form-section-title">
+                    <i class="fas fa-user me-2"></i>
+                    Personal Information
+                  </h6>
+                  <hr class="form-section-divider">
+                </div>
+                
+                <div class="col-12">
+                  <label class="form-label">
+                    Name
+                    <span class="text-danger" ngbTooltip="required">*</span>
+                  </label>
+                  <div [formGroup]="newPractitionerTypeaheadForm">
+                    <app-nlm-typeahead 
+                      formControlName="data" 
+                      searchType="MedicalContactIndividual" 
+                      [debugMode]="debugMode"
+                      placeholder="Search or enter practitioner name..."
+                    ></app-nlm-typeahead>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Professional Information -->
+              <div class="row mb-4">
+                <div class="col-12">
+                  <h6 class="form-section-title">
+                    <i class="fas fa-briefcase me-2"></i>
+                    Professional Information
+                  </h6>
+                  <hr class="form-section-divider">
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">
+                    Profession/Specialty
+                    <span class="text-danger" ngbTooltip="required">*</span>
+                  </label>
+                  <app-nlm-typeahead 
+                    formControlName="profession" 
+                    searchType="MedicalContactIndividualProfession" 
+                    [debugMode]="debugMode"
+                    placeholder="Select profession..."
+                  ></app-nlm-typeahead>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">NPI/License ID</label>
+                  <input 
+                    formControlName="id" 
+                    class="form-control" 
+                    placeholder="Enter NPI or License ID"
+                    type="text"
+                    readonly
+                  >
+                  <small class="form-text text-muted">
+                    This field shows the resource ID
+                  </small>
+                </div>
+              </div>
+
+              <!-- Contact Information -->
+              <div class="row mb-4">
+                <div class="col-12">
+                  <h6 class="form-section-title">
+                    <i class="fas fa-phone me-2"></i>
+                    Contact Information
+                  </h6>
+                  <hr class="form-section-divider">
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">Telephone</label>
+                  <input 
+                    formControlName="phone" 
+                    class="form-control" 
+                    placeholder="(123) 456-7890" 
+                    type="text"
+                    [class.is-invalid]="newPractitionerForm.get('phone')?.invalid && newPractitionerForm.get('phone')?.touched"
+                  >
+                  <div class="invalid-feedback">
+                    Please enter a valid phone number
+                  </div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">Fax</label>
+                  <input 
+                    formControlName="fax" 
+                    class="form-control" 
+                    placeholder="(123) 456-7890" 
+                    type="text"
+                    [class.is-invalid]="newPractitionerForm.get('fax')?.invalid && newPractitionerForm.get('fax')?.touched"
+                  >
+                  <div class="invalid-feedback">
+                    Please enter a valid fax number
+                  </div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">Email</label>
+                  <input 
+                    formControlName="email" 
+                    class="form-control" 
+                    placeholder="email@example.com" 
+                    type="email"
+                    [class.is-invalid]="newPractitionerForm.get('email')?.invalid && newPractitionerForm.get('email')?.touched"
+                  >
+                  <div class="invalid-feedback">
+                    Please enter a valid email address
+                  </div>
+                </div>
+              </div>
+
+              <!-- Address Information -->
+              <div class="row mb-4" formGroupName="address">
+                <div class="col-12">
+                  <h6 class="form-section-title">
+                    <i class="fas fa-map-marker-alt me-2"></i>
+                    Address Information
+                  </h6>
+                  <hr class="form-section-divider">
+                </div>
+                
+                <div class="col-12 mb-3">
+                  <label class="form-label">Address Line 1</label>
+                  <input 
+                    formControlName="line1" 
+                    class="form-control" 
+                    placeholder="Street address, P.O. box, company name, c/o" 
+                    type="text"
+                  >
+                </div>
+                
+                <div class="col-12 mb-3">
+                  <label class="form-label">Address Line 2</label>
+                  <input 
+                    formControlName="line2" 
+                    class="form-control" 
+                    placeholder="Apartment, suite, unit, building, floor, etc." 
+                    type="text"
+                  >
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">City</label>
+                  <input 
+                    formControlName="city" 
+                    class="form-control" 
+                    placeholder="City" 
+                    type="text"
+                  >
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">State/Province</label>
+                  <input 
+                    formControlName="state" 
+                    class="form-control" 
+                    placeholder="State or Province" 
+                    type="text"
+                  >
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Zip/Postal Code</label>
+                  <input 
+                    formControlName="zip" 
+                    class="form-control" 
+                    placeholder="Zip or postal code" 
+                    type="text"
+                  >
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Country</label>
+                  <app-nlm-typeahead 
+                    formControlName="country" 
+                    searchType="Countries" 
+                    [debugMode]="debugMode"
+                    placeholder="Select country..."
+                  ></app-nlm-typeahead>
+                </div>
+              </div>
+
+              <!-- Form Actions -->
+              <div class="row">
+                <div class="col-12">
+                  <hr>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <!-- Debug Toggle -->
+                    <button 
+                      type="button"
+                      class="btn btn-sm"
+                      [ngClass]="{
+                        'btn-outline-dark': !debugMode,
+                        'btn-dark': debugMode
+                      }"
+                      (click)="debugMode = !debugMode"
+                    >
+                      <i class="fas fa-bug me-1"></i>
+                      Debug
+                    </button>
+                    
+                    <!-- Form Actions -->
+                    <div class="btn-group">
+                      <button 
+                        type="submit"
+                        class="btn btn-purple"
+                        [disabled]="!submitEnabled"
+                      >
+                        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+                        <i *ngIf="!isSubmitting" class="fas fa-save me-2"></i>
+                        {{ isSubmitting ? 'Updating...' : 'Update Practitioner' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

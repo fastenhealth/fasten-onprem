@@ -1776,8 +1776,6 @@ func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsRelated() {
 		return keyI < keyJ
 	})
 
-	// Detailed checks for each found association
-	// Association 1
 	require.Equal(suite.T(), testUser.ID, foundAssociations[0].ResourceBaseUserID)
 	require.Equal(suite.T(), sc2.ID, foundAssociations[0].ResourceBaseSourceID)
 	require.Equal(suite.T(), "Condition", foundAssociations[0].ResourceBaseSourceResourceType)
@@ -1787,7 +1785,6 @@ func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsRelated() {
 	require.Equal(suite.T(), "Encounter", foundAssociations[0].RelatedResourceSourceResourceType)
 	require.Equal(suite.T(), "enc123", foundAssociations[0].RelatedResourceSourceResourceID)
 
-	// Association 2 (from Observation to Encounter)
 	require.Equal(suite.T(), testUser.ID, foundAssociations[1].ResourceBaseUserID)
 	require.Equal(suite.T(), sc1.ID, foundAssociations[1].ResourceBaseSourceID)
 	require.Equal(suite.T(), "Observation", foundAssociations[1].ResourceBaseSourceResourceType)
@@ -1821,7 +1818,6 @@ func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsBaseAndRelat
 	err = dbRepo.CreateSource(authCtx, sc2)
 	require.NoError(suite.T(), err)
 
-	// The target resource for our query (encounter1)
 	encounterFhirJson := []byte(`{"resourceType": "Encounter", "id": "enc123", "status": "finished"}`)
 	_, err = dbRepo.UpsertRawResource(authCtx, sc1, sourceModels.RawResourceFhir{
 		SourceResourceType: "Encounter",
@@ -1830,7 +1826,6 @@ func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsBaseAndRelat
 	})
 	require.NoError(suite.T(), err)
 
-	// Resource that encounter1 links TO (as base): obs456
 	obsFhirJson := []byte(`{"resourceType": "Observation", "id": "obs456", "status": "final", "code": {"text":"BP"}}`)
 	_, err = dbRepo.UpsertRawResource(authCtx, sc1, sourceModels.RawResourceFhir{
 		SourceResourceType: "Observation",
@@ -1839,7 +1834,6 @@ func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsBaseAndRelat
 	})
 	require.NoError(suite.T(), err)
 
-	// Resource that links TO encounter1 (as related): cond789
 	condFhirJson := []byte(`{"resourceType": "Condition", "id": "cond789", "code": {"text":"Fever"}}`)
 	_, err = dbRepo.UpsertRawResource(authCtx, sc2, sourceModels.RawResourceFhir{
 		SourceResourceType: "Condition",
@@ -1848,21 +1842,18 @@ func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsBaseAndRelat
 	})
 	require.NoError(suite.T(), err)
 
-	// Link enc123 (base) to obs456 (related)
 	err = dbRepo.UpsertRawResourceAssociation(authCtx,
 		sc1.ID.String(), "Encounter", "enc123",
 		sc1.ID.String(), "Observation", "obs456",
 	)
 	require.NoError(suite.T(), err)
 
-	// Link cond789 (base) to enc123 (related)
 	err = dbRepo.UpsertRawResourceAssociation(authCtx,
 		sc2.ID.String(), "Condition", "cond789",
 		sc1.ID.String(), "Encounter", "enc123",
 	)
 	require.NoError(suite.T(), err)
 
-	// Call FindAllResourceAssociations
 	foundAssociations, err := dbRepo.FindAllResourceAssociations(authCtx, sc1, "Encounter", "enc123")
 
 	// Assertions

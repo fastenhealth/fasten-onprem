@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -191,10 +192,10 @@ func UpdateResourceFhir(c *gin.Context) {
 
 	resourceToUpsert := sourceModels.RawResourceFhir{
 		SourceResourceType: resourceType,
-		SourceResourceID: resourceId,
-		ResourceRaw: payload.ResourceRaw,
-		SortTitle: &payload.SortTitle,
-		SortDate: parseDateTimeWithFallback(&payload.SortDate),
+		SourceResourceID:   resourceId,
+		ResourceRaw:        payload.ResourceRaw,
+		SortTitle:          &payload.SortTitle,
+		SortDate:           parseDateTimeWithFallback(&payload.SortDate),
 	}
 
 	_, updateError := databaseRepo.UpsertRawResource(c, sourceCredential, resourceToUpsert)
@@ -204,6 +205,28 @@ func UpdateResourceFhir(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"success": true})
+}
+
+func DeleteResourceFhir(c *gin.Context) {
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	resourceType := strings.Trim(c.Param("resourceType"), "/")
+	resourceId := strings.Trim(c.Param("resourceId"), "/")
+
+	deleteError := databaseRepo.DeleteResourceByTypeAndId(c, resourceType, resourceId)
+	if deleteError != nil {
+		fmt.Printf("Delete operation failed: %v\n", deleteError)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success":       false,
+			"error":         "failed to delete resource",
+			"details":       deleteError.Error(),
+			"resource_type": resourceType,
+			"resource_id":   resourceId,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "message": "resource deleted successfully"})
 }
 
 func parseDateTimeWithFallback(dateTime *string) *time.Time {
