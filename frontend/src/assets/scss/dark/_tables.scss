@@ -1,20 +1,27 @@
-@media (prefers-color-scheme: dark) {
-    body:not(.light-theme) {
+@mixin dark-tables-styles {
+    table {
+        background-color: var(--card);
+        color: var(--dark-text-color);
 
-        table {
-            background-color: var(--card);
-            color: var(--dark-text-color);
-
-            >tbody {
-                background-color: var(--card) !important;
-            }
-        }
-
-        td,
-        th {
-            background-color: var(--card);
-            color: var(--dark-text-color);
-            border-color: var(--border);
+        >tbody {
+            background-color: var(--card) !important;
         }
     }
+
+    td,
+    th {
+        background-color: var(--card);
+        color: var(--dark-text-color);
+        border-color: var(--border);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    body:not(.light-theme) {
+        @include dark-tables-styles;
+    }
+}
+
+body.dark-theme {
+    @include dark-tables-styles;
 }
