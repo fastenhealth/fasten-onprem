@@ -14,7 +14,7 @@
 **Fasten securely connects your healthcare providers together, creating a personal health record that never leaves your hands**
 
 > [!IMPORTANT]  
-> **This repository contains the open-source, self-hosted version of Fasten Health. It is maintained by the community and is not the same product as Fasten Connect.**
+> **This repository contains the open-source, self-hosted [Personal Health Record](https://en.wikipedia.org/wiki/Personal_health_record) app. It is maintained by the community and is not the same product as [Fasten Connect](https://www.fastenhealth.com/).**
 >
 > Fasten Connect is our fully-managed, enterprise-grade API platform designed for organizations who need seamless, scalable access to patient-authorized medical records (e.g., for clinical trials, patient recruitment, or research). If you're looking for business support, SLAs, and out-of-the-box integrations, [click here to learn more about Fasten Connect](https://www.fastenhealth.com/).
 >
