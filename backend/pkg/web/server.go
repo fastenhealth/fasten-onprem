@@ -16,6 +16,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/search"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/handler"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
 	"github.com/gin-gonic/gin"
@@ -88,6 +89,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 			api.POST("/auth/signup", handler.AuthSignup)
 			api.POST("/auth/signin", handler.AuthSignin)
 
+			api.GET("/settings", handler.GetSettings)
+
 			//whitelisted CORS PROXY
 			api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
 			api.POST("/cors/:endpointId/*proxyPath", handler.CORSProxy)
@@ -119,6 +122,9 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.POST("/resource/composition", handler.CreateResourceComposition)
 				secure.POST("/resource/related", handler.CreateRelatedResources)
 				secure.DELETE("/encounter/:encounterId/related/:resourceType/:resourceId", handler.EncounterUnlinkResource)
+				secure.GET("/resource/search", handler.SearchResourcesHandler)
+				secure.GET("/resource/search/:id", handler.GetResourceByIDHandler)
+				secure.GET("/resource/summary", handler.GetResourceSummaryHandler)
 
 				secure.GET("/dashboards", handler.GetDashboard)
 				secure.POST("/dashboards", handler.AddDashboardLocation)
@@ -288,6 +294,54 @@ func (ae *AppEngine) SetupInstallationRegistration() error {
 	return nil
 }
 
+func (ae *AppEngine) IndexData(logger *logrus.Entry) error {
+	if ae.Config.GetString("search.uri") == "" {
+		logger.Info("Search URI not configured, skipping data indexing.")
+		return nil
+	}
+
+	indexer := search.IndexerService{Client: search.Client}
+	ctx := context.Background()
+
+	systemSettings, err := ae.deviceRepo.LoadSystemSettings(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to load system settings: %w", err)
+	}
+
+	if systemSettings.TypesenseDataIndexed {
+		logger.Info("Data already indexed, skipping...")
+		return nil
+	}
+
+	logger.Info("Data not indexed. Indexing existing resources...")
+
+	listResourceQueryOptions := models.ListResourceQueryOptions{}
+	resources, err := ae.deviceRepo.ListAllResources(ctx, listResourceQueryOptions)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve resources: %w", err)
+	}
+
+	for i, r := range resources {
+		if err := indexer.IndexResource(&r); err != nil {
+			logger.WithFields(logrus.Fields{
+				"index": i,
+				"id":    r.ID,
+				"error": err.Error(),
+			}).Warn("Failed to index resource, skipping.")
+			continue // skip this record, don't break the loop
+		}
+	}
+
+	systemSettings.TypesenseDataIndexed = true
+	if err := ae.deviceRepo.SaveSystemSettings(ctx, systemSettings); err != nil {
+		return fmt.Errorf("failed to update system settings: %w", err)
+	}
+
+	logger.Infof("Indexed %d resources", len(resources))
+	logger.Info("Indexing completed and flag updated.")
+	return nil
+}
+
 func (ae *AppEngine) Start() error {
 	//set the gin mode
 	gin.SetMode(gin.ReleaseMode)
@@ -301,6 +355,16 @@ func (ae *AppEngine) Start() error {
 		return err
 	}
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
+
+	err = search.Init(ae.Config, ae.Logger)
+	if err != nil {
+		return fmt.Errorf("failed to initialize Typesense: %w", err)
+	}
+
+	// Index existing data if needed
+	if err := ae.IndexData(ae.Logger); err != nil {
+		return fmt.Errorf("failed to index data: %w", err)
+	}
 
 	return r.Run(fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port")))
 }

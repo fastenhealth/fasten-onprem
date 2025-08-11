@@ -1,0 +1,17 @@
+<div class="az-content">
+    <div class="container">
+        <div class="az-content-left">
+            <ul class="list-group">
+                <li *ngFor="let resourceGroup of resourceTypeCounts | keyvalue"
+                    (click)="selectResourceType(resourceGroup.key)"
+                    class="list-group-item d-flex justify-content-between align-items-center cursor-pointer">
+                    {{resourceGroup.key}} <span class="badge badge-primary badge-pill">{{resourceGroup.value}}</span>
+                </li>
+            </ul>
+        </div>
+        <div class="az-content-body pd-lg-l-40 d-flex flex-column">
+            <resource-search-datatable [source]="selectedSource" [resourceListType]="selectedResourceType"
+                [selectedTotalElements]="selectedTotalElements"></resource-search-datatable>
+        </div><!-- az-content-body -->
+    </div><!-- container -->
+</div><!-- az-content -->

@@ -21,9 +21,8 @@ const meta: Meta<PractitionerComponent> = {
     // }),
   ],
   tags: ['autodocs'],
-  render: (args: PractitionerComponent) => ({
+  render: (args) => ({
     props: {
-      backgroundColor: null,
       ...args,
     },
   }),
@@ -67,4 +66,3 @@ export const R4Example3: Story = {
     displayModel: r4Example3DisplayModel
   }
 };
-

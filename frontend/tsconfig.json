@@ -1,14 +1,14 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    //customizations
-    "allowSyntheticDefaultImports": true, // required for pouchdb/fhirclient or oauth2
-    "strictPropertyInitialization":false, // otherwise every class requires complex contrutor or defaults
-    "strict": false, //lots of failures
-    "noImplicitOverride": false, //requires override decorator everywhere
-    "noImplicitReturns": false, //lots of failures.
-    "typeRoots": ["node_modules/@types"],
-
+    "allowSyntheticDefaultImports": true,
+    "strictPropertyInitialization": false,
+    "strict": false,
+    "noImplicitOverride": false,
+    "noImplicitReturns": false,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
@@ -20,14 +20,15 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es2020",
+    "target": "ES2022",
     "module": "es2020",
     "lib": [
       "es2020",
-      "dom",
+      "dom"
     ],
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     //customizations
