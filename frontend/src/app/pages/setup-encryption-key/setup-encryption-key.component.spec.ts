@@ -3,20 +3,20 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { SetupTokenComponent } from './setup-token.component';
+import { SetupEncryptionKeyComponent } from './setup-encryption-key.component';
 
-describe('SetupTokenComponent', () => {
-  let component: SetupTokenComponent;
-  let fixture: ComponentFixture<SetupTokenComponent>;
+describe('SetupEncryptionKeyComponent', () => {
+  let component: SetupEncryptionKeyComponent;
+  let fixture: ComponentFixture<SetupEncryptionKeyComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [SetupTokenComponent],
+      declarations: [SetupEncryptionKeyComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SetupTokenComponent);
+    fixture = TestBed.createComponent(SetupEncryptionKeyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -15,7 +15,7 @@ import (
 )
 
 // uses github.com/mattn/go-sqlite3 driver (warning, uses CGO)
-func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, eventBus event_bus.Interface) (DatabaseRepository, error) {
+func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, eventBus event_bus.Interface, validationMode bool) (DatabaseRepository, error) {
 	//backgroundContext := context.Background()
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,8 +52,7 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 		"_journal_mode": "WAL",
 	}
 
-	isValidation := appConfig.GetBool("database.validation_mode")
-	if isValidation {
+	if validationMode {
 		pragmaOpts["mode"] = "ro"
 	}
 
@@ -109,7 +108,7 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 		EventBus:   eventBus,
 	}
 
-	if !isValidation {
+	if !validationMode {
 		err = fastenRepo.Migrate()
 		if err != nil {
 			return nil, err
