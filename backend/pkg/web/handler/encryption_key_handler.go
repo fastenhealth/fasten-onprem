@@ -11,18 +11,23 @@ import (
 )
 
 // EncryptionKeyHandler holds dependencies for encryption key-related operations
+type AppEngineInterface interface {
+	Reinitialize() error
+}
+
+// EncryptionKeyHandler holds dependencies for encryption key-related operations
 type EncryptionKeyHandler struct {
 	AppConfig   config.Interface
 	Logger      *logrus.Entry
-	RestartChan chan bool
+	AppEngine   AppEngineInterface
 }
 
 // NewEncryptionKeyHandler creates a new EncryptionKeyHandler
-func NewEncryptionKeyHandler(appConfig config.Interface, logger *logrus.Entry, restartChan chan bool) *EncryptionKeyHandler {
+func NewEncryptionKeyHandler(appConfig config.Interface, logger *logrus.Entry, appEngine AppEngineInterface) *EncryptionKeyHandler {
 	return &EncryptionKeyHandler{
 		AppConfig:   appConfig,
 		Logger:      logger,
-		RestartChan: restartChan,
+		AppEngine:   appEngine,
 	}
 }
 
@@ -50,8 +55,12 @@ func (h *EncryptionKeyHandler) SetupEncryptionKey(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"success": true})
 
-	//signal to restart the server
-	h.RestartChan <- true
+	// Reinitialize the server after setting the encryption key
+	go func() {
+		if err := h.AppEngine.Reinitialize(); err != nil {
+			h.Logger.Errorf("Failed to reinitialize AppEngine: %v", err)
+		}
+	}()
 }
 
 // ValidateEncryptionKey handles the POST /api/encryption-key/validate endpoint

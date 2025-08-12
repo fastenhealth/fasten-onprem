@@ -27,20 +27,65 @@ type AppEngine struct {
 	Config     config.Interface
 	Logger     *logrus.Entry
 	EventBus   event_bus.Interface
-	DeviceRepo database.DatabaseRepository
+	deviceRepo database.DatabaseRepository // Renamed to lowercase to match main branch
 
-	RelatedVersions  map[string]string //related versions metadata provided & embedded by the build process
-	StandbyMode      bool
-	RestartChan      chan bool
+	RelatedVersions map[string]string //related versions metadata provided & embedded by the build process
+	Srv             *http.Server      // Added to manage the HTTP server lifecycle
+}
+
+// Reinitialize re-initializes the AppEngine's components, specifically the database and routes.
+func (ae *AppEngine) Reinitialize() error {
+	ae.Logger.Info("Reinitializing AppEngine...")
+
+	// Shutdown existing server if it's running
+	if ae.Srv != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := ae.Srv.Shutdown(ctx); err != nil {
+			ae.Logger.Errorf("Error shutting down existing server: %v", err)
+			return err
+		}
+		ae.Logger.Info("Existing server shut down.")
+	}
+
+	// Initialize DeviceRepo if not already initialized
+	if ae.deviceRepo == nil { // Use ae.deviceRepo
+		dbRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
+		if err != nil {
+			return fmt.Errorf("failed to initialize database repository: %w", err)
+		}
+		ae.deviceRepo = dbRepo // Use ae.deviceRepo
+		ae.Logger.Info("Database repository initialized.")
+	}
+
+	// Re-setup routes
+	baseRouterGroup, ginRouter := ae.Setup()
+	ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
+
+	listenAddr := fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port"))
+	ae.Srv = &http.Server{
+		Addr:    listenAddr,
+		Handler: ginRouter,
+	}
+
+	go func() {
+		if err := ae.Srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			ae.Logger.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	ae.Logger.Info("AppEngine reinitialized and server restarted.")
+	return nil
 }
 
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	r := gin.New()
 
-	r.Use(middleware.LoggerMiddleware(ae.Logger))
-	if !ae.StandbyMode {
-		r.Use(middleware.RepositoryMiddleware(ae.DeviceRepo))
+	// Only apply RepositoryMiddleware if deviceRepo is initialized
+	if ae.deviceRepo != nil {
+		r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
 	}
+	r.Use(middleware.LoggerMiddleware(ae.Logger))
 	r.Use(middleware.ConfigMiddleware(ae.Config))
 	r.Use(middleware.EventBusMiddleware(ae.EventBus))
 	r.Use(gin.Recovery())
@@ -56,7 +101,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				// This function does a quick check to see if the server is up and running
 				// it will also determine if we should show the first run wizard
 
-				if ae.StandbyMode {
+				if ae.deviceRepo == nil { // Check ae.deviceRepo for standby mode
 					c.JSON(http.StatusBadRequest, gin.H{
 						"success": false,
 						"error":   "server_standby",
@@ -87,13 +132,13 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				})
 			})
 
-			encryptionKeyHandler := handler.NewEncryptionKeyHandler(ae.Config, ae.Logger, ae.RestartChan)
+			encryptionKeyHandler := handler.NewEncryptionKeyHandler(ae.Config, ae.Logger, ae)
 			api.GET("/encryption-key", encryptionKeyHandler.GetEncryptionKey)
 			api.POST("/encryption-key", encryptionKeyHandler.SetupEncryptionKey)
 			api.POST("/encryption-key/validate", encryptionKeyHandler.ValidateEncryptionKey)
 
 			//in standby mode, we only want to expose the minimum required endpoints
-			if !ae.StandbyMode {
+			if ae.deviceRepo != nil { // Check ae.deviceRepo for standby mode
 				api.Use(middleware.CacheMiddleware())
 				api.POST("/auth/signup", handler.AuthSignup)
 				api.POST("/auth/signin", handler.AuthSignin)
@@ -225,7 +270,7 @@ func (ae *AppEngine) SetupEmbeddedFrontendRouting(embeddedAssetsFS embed.FS, bas
 
 func (ae *AppEngine) SetupInstallationRegistration() error {
 	//check if installation is already registered
-	systemSettings, err := ae.DeviceRepo.LoadSystemSettings(context.Background())
+	systemSettings, err := ae.deviceRepo.LoadSystemSettings(context.Background())
 	if err != nil {
 		return fmt.Errorf("an error occurred while loading system settings: %s", err)
 	}
@@ -291,7 +336,7 @@ func (ae *AppEngine) SetupInstallationRegistration() error {
 	ae.Logger.Infof("Saving installation id to settings table: %s", systemSettings.InstallationID)
 
 	//save the system settings
-	err = ae.DeviceRepo.SaveSystemSettings(context.Background(), systemSettings)
+	err = ae.deviceRepo.SaveSystemSettings(context.Background(), systemSettings)
 	if err != nil {
 		return fmt.Errorf("an error occurred while saving system settings: %s", err)
 	}
@@ -305,41 +350,49 @@ func (ae *AppEngine) Start() error {
 		gin.SetMode(gin.DebugMode)
 	}
 
+	// Check for encryption key and initialize deviceRepo accordingly
+	encryptionKey := ae.Config.GetString("database.encryption_key")
+
+	if encryptionKey == "" {
+		ae.Logger.Warningf("Database exists but encryption key is missing. Starting in STANDBY mode.")
+		// In standby mode, deviceRepo remains nil
+	} else {
+		ae.Logger.Info("Database and encryption key found. Initializing database.")
+		dbRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
+		if err != nil {
+			return fmt.Errorf("failed to initialize database repository: %w", err)
+		}
+		ae.deviceRepo = dbRepo
+	}
+
 	baseRouterGroup, ginRouter := ae.Setup()
-	if ae.DeviceRepo != nil && !ae.StandbyMode {
+
+	// Only setup installation registration if deviceRepo is initialized
+	if ae.deviceRepo != nil {
 		err := ae.SetupInstallationRegistration()
 		if err != nil {
 			ae.Logger.Panicf("panic occurred:%v", err)
 		}
 	} else {
-		ae.Logger.Warn("Skipping SetupInstallationRegistration because deviceRepo is nil or in StandbyMode")
+		ae.Logger.Warn("Skipping SetupInstallationRegistration because deviceRepo is nil (in StandbyMode)")
 	}
 
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
 
 	listenAddr := fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port"))
 
-	srv := &http.Server{
+	ae.Srv = &http.Server{
 		Addr:    listenAddr,
 		Handler: r,
 	}
 
+	// Start the server in a goroutine
 	go func() {
-		// service connections
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := ae.Srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			ae.Logger.Fatalf("listen: %s\n", err)
 		}
 	}()
 
-	// Wait for the restart signal
-	<-ae.RestartChan
-
-	// Shutdown the server
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		ae.Logger.Fatal("Server Shutdown:", err)
-	}
-	ae.Logger.Println("Server exiting")
-	return nil
+	// Block indefinitely to keep the server running until process termination
+	select {}
 }

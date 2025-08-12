@@ -77,106 +77,77 @@ func main() {
 				Name:  "start",
 				Usage: "Start the fasten server",
 				Action: func(c *cli.Context) error {
-					for {
-						//fmt.Fprintln(c.App.Writer, c.Command.Usage)
-						if c.IsSet("config") {
-							err = appconfig.ReadConfig(c.String("config")) // Find and read the config file
-							if err != nil {                                // Handle errors reading the config file
-								//ignore "could not find config file"
-								fmt.Printf("Could not find config file at specified path: %s", c.String("config"))
-								return err
-							}
-						}
-
-						//process cli variables
-						if c.IsSet("variable") {
-							appconfig.Set("variable", c.String("variable"))
-						}
-						if c.Bool("debug") {
-							appconfig.Set("log.level", "DEBUG")
-						}
-						if c.IsSet("log-file") {
-							appconfig.Set("log.file", c.String("log-file"))
-						}
-
-						appLogger, logFile, err := CreateLogger(appconfig)
-						if logFile != nil {
-							defer logFile.Close()
-						}
-						if err != nil {
+					if c.IsSet("config") {
+						err = appconfig.ReadConfig(c.String("config")) // Find and read the config file
+						if err != nil {                                // Handle errors reading the config file
+							//ignore "could not find config file"
+							fmt.Printf("Could not find config file at specified path: %s", c.String("config"))
 							return err
 						}
+					}
 
-						// ensure panics are written to the log file.
-						defer func() {
-							if err := recover(); err != nil {
-								appLogger.Panic("panic occurred:", err)
-							}
-						}()
+					//process cli variables
+					if c.IsSet("variable") {
+						appconfig.Set("variable", c.String("variable"))
+					}
+					if c.Bool("debug") {
+						appconfig.Set("log.level", "DEBUG")
+					}
+					if c.IsSet("log-file") {
+						appconfig.Set("log.file", c.String("log-file"))
+					}
 
-						dbPath := appconfig.GetString("database.location")
-						var encryptionKey string
+					appLogger, logFile, err := CreateLogger(appconfig)
+					if logFile != nil {
+						defer logFile.Close()
+					}
+					if err != nil {
+						return err
+					}
 
-						if _, err := os.Stat(dbPath); os.IsNotExist(err) {
-							// Database does not exist, generate a new encryption key
-							encryptionKey, err = encryption.GenerateRandomKey(32)
-							if err != nil {
-								return fmt.Errorf("failed to generate encryption key: %w", err)
-							}
+					// ensure panics are written to the log file.
+					defer func() {
+						if err := recover(); err != nil {
+							appLogger.Panic("panic occurred:", err)
+						}
+					}()
 
-							appconfig.Set("database.encryption_key", encryptionKey)
+					dbPath := appconfig.GetString("database.location")
+					var encryptionKey string
 
+					if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+						// Database does not exist, generate a new encryption key
+						encryptionKey, err = encryption.GenerateRandomKey(32)
+						if err != nil {
+							return fmt.Errorf("failed to generate encryption key: %w", err)
+						}
+						appconfig.Set("database.encryption_key", encryptionKey)
+						appLogger.Info("New database, encryption key generated.")
+					} else {
+						// Database exists, check for encryption key
+						encryptionKey = appconfig.GetString("database.encryption_key")
+						if encryptionKey == "" {
+							appLogger.Warningf("Database exists but encryption key is missing. Starting in standby mode.")
 						} else {
-							// Database exists, check for encryption key
-							encryptionKey = appconfig.GetString("database.encryption_key")
-							if encryptionKey == "" {
-								appLogger.Warningf("Database exists but encryption key is missing. Starting in standby mode.")
-
-								relatedVersions, _ := resources.GetRelatedVersions()
-								restartChan := make(chan bool)
-
-								webServer := web.AppEngine{
-									Config:           appconfig,
-									Logger:           appLogger,
-									EventBus:         event_bus.NewEventBusServer(appLogger),
-									DeviceRepo:       nil,
-									RelatedVersions:  relatedVersions,
-									StandbyMode:      true,
-									RestartChan:      restartChan,
-								}
-
-								err := webServer.Start()
-								if err != nil {
-									return err
-								}
-								continue
-							}
 							// DB and encryption key both exist.
 							appLogger.Info("Database and encryption key found.")
 						}
-
-						appconfig.Set("database.encryption_key", encryptionKey)
-
-						settingsData, err := json.Marshal(appconfig.AllSettings())
-						appLogger.Debug(string(settingsData), err)
-
-						relatedVersions, _ := resources.GetRelatedVersions()
-
-						dbRepo, err := database.NewRepository(appconfig, appLogger, event_bus.NewEventBusServer(appLogger))
-						if err != nil {
-							return err
-						}
-
-						webServer := web.AppEngine{
-							Config:           appconfig,
-							Logger:           appLogger,
-							EventBus:         event_bus.NewEventBusServer(appLogger),
-							DeviceRepo:       dbRepo,
-							RelatedVersions:  relatedVersions,
-							RestartChan:      make(chan bool),
-						}
-						return webServer.Start()
 					}
+
+					appconfig.Set("database.encryption_key", encryptionKey)
+
+					settingsData, err := json.Marshal(appconfig.AllSettings())
+					appLogger.Debug(string(settingsData), err)
+
+					relatedVersions, _ := resources.GetRelatedVersions()
+
+					webServer := web.AppEngine{
+						Config:           appconfig,
+						Logger:           appLogger,
+						EventBus:         event_bus.NewEventBusServer(appLogger),
+						RelatedVersions:  relatedVersions,
+					}
+					return webServer.Start()
 				},
 
 				Flags: []cli.Flag{
