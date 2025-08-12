@@ -34,6 +34,9 @@ type FhirMedication struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#token
 	Code datatypes.JSON `gorm:"column:code;type:text;serializer:json" json:"code,omitempty"`
+	// Returns medication dosage instructions
+	// https://hl7.org/fhir/r4/search.html#string
+	DosageInstruction datatypes.JSON `gorm:"column:dosageInstruction;type:text;serializer:json" json:"dosageInstruction,omitempty"`
 	// Returns medications in a batch with this expiration date
 	// https://hl7.org/fhir/r4/search.html#date
 	ExpirationDate *time.Time `gorm:"column:expirationDate;type:datetime" json:"expirationDate,omitempty"`
@@ -70,20 +73,24 @@ type FhirMedication struct {
 	// Tags applied to this resource
 	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
 	MetaVersionId string `gorm:"column:metaVersionId;type:text" json:"metaVersionId,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
+	// Returns medication route
+	// https://hl7.org/fhir/r4/search.html#string
+	Route datatypes.JSON `gorm:"column:route;type:text;serializer:json" json:"route,omitempty"`
 	// Returns medications for this status
 	// https://hl7.org/fhir/r4/search.html#token
 	Status datatypes.JSON `gorm:"column:status;type:text;serializer:json" json:"status,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 }
 
 func (s *FhirMedication) GetSearchParameters() map[string]string {
 	searchParameters := map[string]string{
 		"code":                 "token",
+		"dosageInstruction":    "string",
 		"expirationDate":       "date",
 		"form":                 "token",
 		"id":                   "keyword",
@@ -97,14 +104,15 @@ func (s *FhirMedication) GetSearchParameters() map[string]string {
 		"metaProfile":          "reference",
 		"metaTag":              "token",
 		"metaVersionId":        "keyword",
+		"note":                 "string",
+		"route":                "string",
 		"sort_date":            "date",
 		"source_id":            "keyword",
 		"source_resource_id":   "keyword",
 		"source_resource_type": "keyword",
 		"source_uri":           "keyword",
 		"status":               "token",
-		"text":                 "keyword",
-		"type":                 "special",
+		"text":                 "string",
 	}
 	return searchParameters
 }
@@ -150,17 +158,22 @@ func (s *FhirMedication) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 	if err == nil && codeResult.String() != "undefined" {
 		s.Code = []byte(codeResult.String())
 	}
+	// extracting DosageInstruction
+	dosageInstructionResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Medication.dosageInstruction')")
+	if err == nil && dosageInstructionResult.String() != "undefined" {
+		s.DosageInstruction = []byte(dosageInstructionResult.String())
+	}
 	// extracting ExpirationDate
 	expirationDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'Medication.batch.expirationDate')")
 	if err == nil && expirationDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, expirationDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, expirationDateResult.String()); err == nil {
 			s.ExpirationDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", expirationDateResult.String())
-			if err == nil {
-				s.ExpirationDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", expirationDateResult.String()); err == nil {
+			s.ExpirationDate = &t
+		} else if t, err = time.Parse("2006-01", expirationDateResult.String()); err == nil {
+			s.ExpirationDate = &t
+		} else if t, err = time.Parse("2006", expirationDateResult.String()); err == nil {
+			s.ExpirationDate = &t
 		}
 	}
 	// extracting Form
@@ -201,14 +214,14 @@ func (s *FhirMedication) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -226,15 +239,25 @@ func (s *FhirMedication) PopulateAndExtractSearchParameters(resourceRaw json.Raw
 	if err == nil && metaVersionIdResult.String() != "undefined" {
 		s.MetaVersionId = metaVersionIdResult.String()
 	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
+	}
+	// extracting Route
+	routeResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Medication.dosageInstruction.route')")
+	if err == nil && routeResult.String() != "undefined" {
+		s.Route = []byte(routeResult.String())
+	}
 	// extracting Status
 	statusResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Medication.status')")
 	if err == nil && statusResult.String() != "undefined" {
 		s.Status = []byte(statusResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	return nil
 }

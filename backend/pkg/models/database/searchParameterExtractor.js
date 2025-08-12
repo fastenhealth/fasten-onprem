@@ -49,6 +49,9 @@ function extractStringSearchParameters(fhirResource, expression){
                 addressParts.push(currentValue.country)
             }
             accumulator.push(addressParts.join(" "))
+        } else if (currentValue.status && currentValue.div) {
+            // Text (Narrative - http://hl7.org/fhir/R4/narrative.html#Narrative)
+            accumulator.push(currentValue.div)
         } else {
             //string, boolean
             accumulator.push(currentValue)

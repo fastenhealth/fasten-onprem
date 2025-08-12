@@ -1,0 +1,42 @@
+<!--/* Immunizations -->
+<!--
+Immunization: Immunization.vaccineCode.text || Immunization.vaccineCode.coding[x].display (separated by <br />)
+Status: Immunization.status
+Dose Number: Immunization.protocolApplied[x]{doseNumberPositiveInt || doseNumberString} (concatenate with comma, e.g. x, y, z)
+Manufacturer: Organization.name
+Lot Number: Immunization.lotNumber
+Comments: Immunization.note[x].text (separated by <br />)
+Date: Immunization.occurrenceDateTime || Immunization.occurrenceString
+*/-->
+<div xmlns:th="http://www.thymeleaf.org">
+   <h5>Immunizations</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Immunization</th>
+         <th>Status</th>
+         <th>Dose Number</th>
+         <th>Manufacturer</th>
+         <th>Lot Number</th>
+         <th>Comments</th>
+         <th>Date</th>
+      </tr>
+      </thead>
+      <tbody>
+
+      {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+      {{range $index, $entry := .Immunization }}
+         <tr id="{{$entry.SourceResourceID}}">
+            <td>{{pluckList "text" ($entry.VaccineCode | parseMapList) | uniq | join "," }}</td> {{/* Immunization */}}
+            <td>{{pluckList "code" ($entry.Status | parseMapList) | uniq | join "," }}</td> {{/* Status */}}
+            <td>{{pluckList "text" ($entry.DoseNumber | parseMapList) | uniq | join "," }}</td> {{/* Dose Number */}}
+            <td>{{pluckList "display" ($entry.Manufacturer | parseMapList) | uniq | join "," }}</td> {{/* Manufacturer */}}
+            <td>{{$entry.LotNumber}}</td> {{/* Lot Number */}}
+            <td>{{pluckList "text" ($entry.Note | parseMapList) | uniq | join "," }}</td> {{/* Comments */}}
+            <td>{{$entry.Date | date "2006-01-02"}}</td> {{/* Performed Date */}}
+         </tr>
+      {{end}}
+
+      </tbody>
+   </table>
+</div>
