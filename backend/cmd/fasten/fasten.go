@@ -115,22 +115,22 @@ func main() {
 						}()
 
 						dbPath := appconfig.GetString("database.location")
-						var token string
+						var encryptionKey string
 
 						if _, err := os.Stat(dbPath); os.IsNotExist(err) {
-							// Database does not exist, generate a new token
-							token, err = encryption.GenerateRandomKey(32)
+							// Database does not exist, generate a new encryption key
+							encryptionKey, err = encryption.GenerateRandomKey(32)
 							if err != nil {
-								return fmt.Errorf("failed to generate encryption token: %w", err)
+								return fmt.Errorf("failed to generate encryption key: %w", err)
 							}
 
-							appconfig.Set("database.encryption_key", token)
+							appconfig.Set("database.encryption_key", encryptionKey)
 
 						} else {
-							// Database exists, check for token
-							token = appconfig.GetString("database.encryption_key")
-							if token == "" {
-								appLogger.Warningf("Database exists but token is missing. Starting in standby mode.")
+							// Database exists, check for encryption key
+							encryptionKey = appconfig.GetString("database.encryption_key")
+							if encryptionKey == "" {
+								appLogger.Warningf("Database exists but encryption key is missing. Starting in standby mode.")
 
 								relatedVersions, _ := resources.GetRelatedVersions()
 								restartChan := make(chan bool)
@@ -139,9 +139,8 @@ func main() {
 									Config:           appconfig,
 									Logger:           appLogger,
 									EventBus:         event_bus.NewEventBusServer(appLogger),
-									DeviceRepo:       nil,
+									deviceRepo:       nil,
 									RelatedVersions:  relatedVersions,
-									Token:            "",
 									StandbyMode:      true,
 									RestartChan:      restartChan,
 								}
@@ -152,11 +151,11 @@ func main() {
 								}
 								continue
 							}
-							// DB and token both exist.
-							appLogger.Info("Database and token found.")
+							// DB and encryption key both exist.
+							appLogger.Info("Database and encryption key found.")
 						}
 
-						appconfig.Set("database.encryption_key", token)
+						appconfig.Set("database.encryption_key", encryptionKey)
 
 						settingsData, err := json.Marshal(appconfig.AllSettings())
 						appLogger.Debug(string(settingsData), err)
@@ -172,9 +171,8 @@ func main() {
 							Config:           appconfig,
 							Logger:           appLogger,
 							EventBus:         event_bus.NewEventBusServer(appLogger),
-							DeviceRepo:       dbRepo,
+							deviceRepo:       dbRepo,
 							RelatedVersions:  relatedVersions,
-							Token:            token,
 							RestartChan:      make(chan bool),
 						}
 						return webServer.Start()

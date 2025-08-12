@@ -27,10 +27,9 @@ type AppEngine struct {
 	Config     config.Interface
 	Logger     *logrus.Entry
 	EventBus   event_bus.Interface
-	DeviceRepo database.DatabaseRepository
+	deviceRepo database.DatabaseRepository
 
 	RelatedVersions  map[string]string //related versions metadata provided & embedded by the build process
-	Token            string
 	StandbyMode      bool
 	RestartChan      chan bool
 }
@@ -40,7 +39,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 	r.Use(middleware.LoggerMiddleware(ae.Logger))
 	if !ae.StandbyMode {
-		r.Use(middleware.RepositoryMiddleware(ae.DeviceRepo))
+		r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
 	}
 	r.Use(middleware.ConfigMiddleware(ae.Config))
 	r.Use(middleware.EventBusMiddleware(ae.EventBus))
@@ -226,7 +225,7 @@ func (ae *AppEngine) SetupEmbeddedFrontendRouting(embeddedAssetsFS embed.FS, bas
 
 func (ae *AppEngine) SetupInstallationRegistration() error {
 	//check if installation is already registered
-	systemSettings, err := ae.DeviceRepo.LoadSystemSettings(context.Background())
+	systemSettings, err := ae.deviceRepo.LoadSystemSettings(context.Background())
 	if err != nil {
 		return fmt.Errorf("an error occurred while loading system settings: %s", err)
 	}
@@ -292,7 +291,7 @@ func (ae *AppEngine) SetupInstallationRegistration() error {
 	ae.Logger.Infof("Saving installation id to settings table: %s", systemSettings.InstallationID)
 
 	//save the system settings
-	err = ae.DeviceRepo.SaveSystemSettings(context.Background(), systemSettings)
+	err = ae.deviceRepo.SaveSystemSettings(context.Background(), systemSettings)
 	if err != nil {
 		return fmt.Errorf("an error occurred while saving system settings: %s", err)
 	}
@@ -307,13 +306,13 @@ func (ae *AppEngine) Start() error {
 	}
 
 	baseRouterGroup, ginRouter := ae.Setup()
-	if ae.DeviceRepo != nil && !ae.StandbyMode {
+	if ae.deviceRepo != nil && !ae.StandbyMode {
 		err := ae.SetupInstallationRegistration()
 		if err != nil {
 			ae.Logger.Panicf("panic occurred:%v", err)
 		}
 	} else {
-		ae.Logger.Warn("Skipping SetupInstallationRegistration because DeviceRepo is nil or in StandbyMode")
+		ae.Logger.Warn("Skipping SetupInstallationRegistration because deviceRepo is nil or in StandbyMode")
 	}
 
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
