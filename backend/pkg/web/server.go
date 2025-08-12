@@ -31,7 +31,6 @@ type AppEngine struct {
 
 	RelatedVersions  map[string]string //related versions metadata provided & embedded by the build process
 	Token            string
-	TokenJustCreated bool
 	StandbyMode      bool
 	RestartChan      chan bool
 }

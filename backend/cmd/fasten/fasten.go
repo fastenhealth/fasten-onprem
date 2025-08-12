@@ -116,7 +116,6 @@ func main() {
 
 						dbPath := appconfig.GetString("database.location")
 						var token string
-						var tokenJustCreated bool
 
 						if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 							// Database does not exist, generate a new token
@@ -127,7 +126,6 @@ func main() {
 
 							appconfig.Set("database.encryption_key", token)
 
-							tokenJustCreated = true
 						} else {
 							// Database exists, check for token
 							token = appconfig.GetString("database.encryption_key")
@@ -144,7 +142,6 @@ func main() {
 									DeviceRepo:       nil,
 									RelatedVersions:  relatedVersions,
 									Token:            "",
-									TokenJustCreated: false,
 									StandbyMode:      true,
 									RestartChan:      restartChan,
 								}
@@ -157,7 +154,6 @@ func main() {
 							}
 							// DB and token both exist.
 							appLogger.Info("Database and token found.")
-							tokenJustCreated = false
 						}
 
 						appconfig.Set("database.encryption_key", token)
@@ -179,7 +175,6 @@ func main() {
 							DeviceRepo:       dbRepo,
 							RelatedVersions:  relatedVersions,
 							Token:            token,
-							TokenJustCreated: tokenJustCreated,
 							RestartChan:      make(chan bool),
 						}
 						return webServer.Start()
