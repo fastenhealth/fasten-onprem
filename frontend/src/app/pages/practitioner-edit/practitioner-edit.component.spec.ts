@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PractitionerEditPageComponent } from './practitioner-edit.component';
 import { ActivatedRoute } from '@angular/router';
 import { HTTP_CLIENT_TOKEN } from 'src/app/dependency-injection';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 
 describe('PractitionerEditComponent', () => {
@@ -12,7 +12,7 @@ describe('PractitionerEditComponent', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      imports: [PractitionerEditPageComponent],
+      imports: [PractitionerEditPageComponent, HttpClientModule],
       providers: [
         {
           provide: ActivatedRoute,

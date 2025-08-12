@@ -3,7 +3,7 @@ import { PractitionerViewComponent } from './practitioner-view.component';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { HTTP_CLIENT_TOKEN } from 'src/app/dependency-injection';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 describe('PractitionerViewComponent', () => {
   let component: PractitionerViewComponent;
@@ -11,7 +11,7 @@ describe('PractitionerViewComponent', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      imports: [PractitionerViewComponent],
+      imports: [PractitionerViewComponent, HttpClientModule],
       providers: [
         {
           provide: ActivatedRoute,

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PractitionerCreateComponent } from './practitioner-create.component';
 import { HTTP_CLIENT_TOKEN } from 'src/app/dependency-injection';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 describe('PractitionerCreateComponent', () => {
   let component: PractitionerCreateComponent;
@@ -9,7 +9,7 @@ describe('PractitionerCreateComponent', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      imports: [PractitionerCreateComponent],
+      imports: [PractitionerCreateComponent, HttpClientModule],
       providers: [
         {
           provide: HTTP_CLIENT_TOKEN,
