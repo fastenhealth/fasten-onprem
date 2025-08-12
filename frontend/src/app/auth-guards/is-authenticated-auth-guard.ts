@@ -1,25 +1,15 @@
 import { Injectable } from '@angular/core';
-import {
-  CanActivate,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  Router,
-} from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router} from '@angular/router';
+import {AuthService} from '../services/auth.service';
 import { FastenApiService } from '../services/fasten-api.service';
 
 @Injectable()
 export class IsAuthenticatedAuthGuard implements CanActivate {
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private fastenService: FastenApiService
-  ) {}
+  constructor(private authService: AuthService, private router: Router, private fastenService: FastenApiService) {
 
-  async canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Promise<boolean> {
+  }
+
+  async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise <boolean> {
     // First, check if the server is running and accessible
     try {
       await this.fastenService.getHealth().toPromise();
@@ -29,14 +19,14 @@ export class IsAuthenticatedAuthGuard implements CanActivate {
         return await this.router.navigate(['/encryption-key/wizard-restore']);
       }
 
-      console.error('ignoring error:', e);
+      console.error("ignoring error:", e)
     }
 
     //check if the user is authenticated, if not, redirect to login
-    if (!(await this.authService.IsAuthenticated())) {
+    if (! await this.authService.IsAuthenticated()) {
       return await this.router.navigate(['/auth/signin']);
     }
     // continue as normal
-    return true;
+    return true
   }
 }
