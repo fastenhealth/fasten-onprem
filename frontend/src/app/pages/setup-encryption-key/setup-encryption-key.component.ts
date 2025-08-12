@@ -27,7 +27,7 @@ export class SetupEncryptionKeyComponent implements OnInit {
   }
 
   private handleApiResponse(
-    apiCall: (formData: string) => Observable<any>,
+    apiCall: (encryptionKey: string) => Observable<any>,
     successCallback: () => void,
     errorCallback: () => void = () => {},
   ): void {
@@ -37,10 +37,9 @@ export class SetupEncryptionKeyComponent implements OnInit {
     this.error = false;
     this.testSuccess = false;
 
-    const formData = new URLSearchParams();
-    formData.append('encryption_key', this.encryptionKeyForm.value.encryptionKey);
+    const encryptionKey = this.encryptionKeyForm.value.encryptionKey;
 
-    apiCall(formData.toString()).subscribe({
+    apiCall(encryptionKey).subscribe({
       next: () => {
         successCallback();
         this.loading = false;
@@ -55,7 +54,7 @@ export class SetupEncryptionKeyComponent implements OnInit {
 
   testConnection(): void {
     this.handleApiResponse(
-      (formData) => this.fastenService.validateEncryptionKey(formData),
+      (encryptionKey) => this.fastenService.validateEncryptionKey(encryptionKey),
       () => {
         this.testSuccess = true;
       },
@@ -70,7 +69,7 @@ export class SetupEncryptionKeyComponent implements OnInit {
     if (!this.testSuccess) return;
 
     this.handleApiResponse(
-      (formData) => this.fastenService.setupEncryptionKey(formData),
+      (encryptionKey) => this.fastenService.setupEncryptionKey(encryptionKey),
       () => {
         this.isEncryptionKeySet = true;
         this.encryptionKeyForm.reset();

@@ -10,6 +10,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// EncryptionKeyPayload defines the structure for the encryption key JSON payload
+type EncryptionKeyPayload struct {
+	EncryptionKey string `json:"encryption_key"`
+}
+
 // EncryptionKeyHandler holds dependencies for encryption key-related operations
 type AppEngineInterface interface {
 	Reinitialize() error
@@ -44,14 +49,18 @@ func (h *EncryptionKeyHandler) GetEncryptionKey(c *gin.Context) {
 
 // SetupEncryptionKey handles the POST /api/encryption-key endpoint
 func (h *EncryptionKeyHandler) SetupEncryptionKey(c *gin.Context) {
-	encryptionKey := c.PostForm("encryption_key")
+	var payload EncryptionKeyPayload
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
+		return
+	}
 
-	if encryptionKey == "" {
+	if payload.EncryptionKey == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "encryption key is required"})
 		return
 	}
 
-	h.AppConfig.Set("database.encryption.key", encryptionKey)
+	h.AppConfig.Set("database.encryption.key", payload.EncryptionKey)
 
 	c.JSON(http.StatusOK, gin.H{"success": true})
 
@@ -65,8 +74,15 @@ func (h *EncryptionKeyHandler) SetupEncryptionKey(c *gin.Context) {
 
 // ValidateEncryptionKey handles the POST /api/encryption-key/validate endpoint
 func (h *EncryptionKeyHandler) ValidateEncryptionKey(c *gin.Context) {
-	encryptionKey := c.PostForm("encryption_key")
-	if encryptionKey == "" {
+	var payload EncryptionKeyPayload
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
+	h.Logger.Info(payload.EncryptionKey)
+	
+	if payload.EncryptionKey == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "encryption key is required"})
 		return
 	}
@@ -78,7 +94,7 @@ func (h *EncryptionKeyHandler) ValidateEncryptionKey(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "internal server error"})
 		return
 	}
-	tempConfig.Set("database.encryption.key", encryptionKey)
+	tempConfig.Set("database.encryption.key", payload.EncryptionKey)
 	tempConfig.Set("database.location", h.AppConfig.GetString("database.location"))
 	tempConfig.Set("database.encryption.enabled", true)
 	tempConfig.Set("database.validation_mode", true)
