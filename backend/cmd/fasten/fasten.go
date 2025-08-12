@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/analogj/go-util/utils"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	futils "github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/encryption"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/version"
@@ -118,7 +118,7 @@ func main() {
 					if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 						// Database does not exist, generate a new encryption key
 						if encryptionKey == "" {
-							newEncryptionKey, err := encryption.GenerateRandomKey(32)
+							newEncryptionKey, err := futils.GenerateRandomKey(32)
 							if err != nil {
 								return fmt.Errorf("failed to generate encryption key: %w", err)
 							}

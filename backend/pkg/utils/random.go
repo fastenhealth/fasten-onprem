@@ -1,4 +1,4 @@
-package encryption
+package utils
 
 import (
 	"crypto/rand"
@@ -12,3 +12,4 @@ func GenerateRandomKey(length int) (string, error) {
 	}
 	return hex.EncodeToString(bytes), nil
 }
+
