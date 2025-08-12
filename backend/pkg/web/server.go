@@ -351,7 +351,7 @@ func (ae *AppEngine) Start() error {
 	}
 
 	// Check for encryption key and initialize deviceRepo accordingly
-	encryptionKey := ae.Config.GetString("database.encryption_key")
+	encryptionKey := ae.Config.GetString("database.encryption.key")
 
 	if encryptionKey == "" {
 		ae.Logger.Warningf("Database exists but encryption key is missing. Starting in STANDBY mode.")

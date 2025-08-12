@@ -57,7 +57,7 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 	}
 
 	if appConfig.GetBool("database.encryption.enabled") {
-		encryptionKey := appConfig.GetString("database.encryption_key")
+		encryptionKey := appConfig.GetString("database.encryption.key")
 		if encryptionKey == "" {
 			return nil, fmt.Errorf("database encryption key is not set")
 		}

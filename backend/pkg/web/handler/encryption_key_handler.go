@@ -33,7 +33,7 @@ func NewEncryptionKeyHandler(appConfig config.Interface, logger *logrus.Entry, a
 
 // GetEncryptionKey handles the GET /api/encryption-key endpoint
 func (h *EncryptionKeyHandler) GetEncryptionKey(c *gin.Context) {
-	encryptionKey := h.AppConfig.GetString("database.encryption_key")
+	encryptionKey := h.AppConfig.GetString("database.encryption.key")
 	if encryptionKey == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "encryption key is missing"})
 		return
@@ -51,7 +51,7 @@ func (h *EncryptionKeyHandler) SetupEncryptionKey(c *gin.Context) {
 		return
 	}
 
-	h.AppConfig.Set("database.encryption_key", encryptionKey)
+	h.AppConfig.Set("database.encryption.key", encryptionKey)
 
 	c.JSON(http.StatusOK, gin.H{"success": true})
 
@@ -78,7 +78,7 @@ func (h *EncryptionKeyHandler) ValidateEncryptionKey(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "internal server error"})
 		return
 	}
-	tempConfig.Set("database.encryption_key", encryptionKey)
+	tempConfig.Set("database.encryption.key", encryptionKey)
 	tempConfig.Set("database.location", h.AppConfig.GetString("database.location"))
 	tempConfig.Set("database.encryption.enabled", true)
 	tempConfig.Set("database.validation_mode", true)
