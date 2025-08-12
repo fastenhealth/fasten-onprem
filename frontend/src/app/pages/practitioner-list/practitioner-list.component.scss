@@ -445,6 +445,8 @@
 
   /* Table row hover actions */
   .table-row {
+    cursor: pointer;
+
     .action-buttons {
       opacity: 0;
       visibility: hidden;

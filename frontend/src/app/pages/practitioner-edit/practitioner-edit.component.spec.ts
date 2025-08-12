@@ -1,7 +1,4 @@
-/* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PractitionerEditPageComponent } from './practitioner-edit.component';
 
@@ -9,12 +6,11 @@ describe('PractitionerEditComponent', () => {
   let component: PractitionerEditPageComponent;
   let fixture: ComponentFixture<PractitionerEditPageComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
-      declarations: [ PractitionerEditPageComponent ]
-    })
-    .compileComponents();
-  }));
+      imports: [PractitionerEditPageComponent],
+    }).compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(PractitionerEditPageComponent);
