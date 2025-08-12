@@ -48,14 +48,8 @@ func (ae *AppEngine) Reinitialize() error {
 		ae.Logger.Info("Existing server shut down.")
 	}
 
-	// Initialize DeviceRepo if not already initialized
-	if ae.deviceRepo == nil { // Use ae.deviceRepo
-		dbRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
-		if err != nil {
-			return fmt.Errorf("failed to initialize database repository: %w", err)
-		}
-		ae.deviceRepo = dbRepo // Use ae.deviceRepo
-		ae.Logger.Info("Database repository initialized.")
+	if err := ae.initializeDatabase(); err != nil {
+		return err
 	}
 
 	// Re-setup routes
@@ -132,10 +126,14 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				})
 			})
 
-			encryptionKeyHandler := handler.NewEncryptionKeyHandler(ae.Config, ae.Logger, ae)
-			api.GET("/encryption-key", encryptionKeyHandler.GetEncryptionKey)
-			api.POST("/encryption-key", encryptionKeyHandler.SetupEncryptionKey)
-			api.POST("/encryption-key/validate", encryptionKeyHandler.ValidateEncryptionKey)
+			if ae.Config.GetBool("database.encryption.enabled") {
+				encryptionKeyHandler := handler.NewEncryptionKeyHandler(ae.Config, ae.Logger, ae)
+				api.GET("/encryption-key", encryptionKeyHandler.GetEncryptionKey)
+				api.POST("/encryption-key", encryptionKeyHandler.SetupEncryptionKey)
+				api.POST("/encryption-key/validate", encryptionKeyHandler.ValidateEncryptionKey)
+			} else {
+				ae.Logger.Info("Database encryption is disabled, skipping encryption key endpoints.")
+			}
 
 			//in standby mode, we only want to expose the minimum required endpoints
 			if ae.deviceRepo != nil { // Check ae.deviceRepo for standby mode
@@ -350,19 +348,8 @@ func (ae *AppEngine) Start() error {
 		gin.SetMode(gin.DebugMode)
 	}
 
-	// Check for encryption key and initialize deviceRepo accordingly
-	encryptionKey := ae.Config.GetString("database.encryption.key")
-
-	if encryptionKey == "" {
-		ae.Logger.Warningf("Database exists but encryption key is missing. Starting in STANDBY mode.")
-		// In standby mode, deviceRepo remains nil
-	} else {
-		ae.Logger.Info("Database and encryption key found. Initializing database.")
-		dbRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
-		if err != nil {
-			return fmt.Errorf("failed to initialize database repository: %w", err)
-		}
-		ae.deviceRepo = dbRepo
+	if err := ae.initializeDatabase(); err != nil {
+		return err
 	}
 
 	baseRouterGroup, ginRouter := ae.Setup()
@@ -395,4 +382,31 @@ func (ae *AppEngine) Start() error {
 
 	// Block indefinitely to keep the server running until process termination
 	select {}
+}
+
+func (ae *AppEngine) initializeDatabase() error {
+	encryptionEnabled := ae.Config.GetBool("database.encryption.enabled")
+	encryptionKey := ae.Config.GetString("database.encryption.key")
+
+	if encryptionEnabled {
+		if encryptionKey == "" {
+			ae.Logger.Warningf("Database exists but encryption key is missing. Starting in STANDBY mode.")
+			// In standby mode, deviceRepo remains nil
+		} else {
+			ae.Logger.Info("Database and encryption key found. Initializing database.")
+			dbRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
+			if err != nil {
+				return fmt.Errorf("failed to initialize database repository: %w", err)
+			}
+			ae.deviceRepo = dbRepo
+		}
+	} else {
+		ae.Logger.Info("Database encryption is disabled. Initializing database without encryption.")
+		dbRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
+		if err != nil {
+			return fmt.Errorf("failed to initialize database repository: %w", err)
+		}
+		ae.deviceRepo = dbRepo
+	}
+	return nil
 }

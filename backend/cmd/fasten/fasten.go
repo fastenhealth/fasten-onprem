@@ -112,26 +112,8 @@ func main() {
 						}
 					}()
 
-					dbPath := appconfig.GetString("database.location")
-					encryptionKey := appconfig.GetString("database.encryption.key")
-
-					if _, err := os.Stat(dbPath); os.IsNotExist(err) {
-						// Database does not exist, generate a new encryption key
-						if encryptionKey == "" {
-							newEncryptionKey, err := futils.GenerateRandomKey(32)
-							if err != nil {
-								return fmt.Errorf("failed to generate encryption key: %w", err)
-							}
-							appconfig.Set("database.encryption.key", newEncryptionKey)
-							appLogger.Info("New database, encryption key generated.")
-						}
-					} else {
-						// Database exists, check for encryption key
-						if encryptionKey == "" {
-							appLogger.Warningf("Database exists but encryption key is missing. Starting in standby mode.")
-						} else {
-							appLogger.Info("Database and encryption key found.")
-						}
+					if err := setupEncryption(appconfig, appLogger); err != nil {
+						return err
 					}
 
 					settingsData, err := json.Marshal(appconfig.AllSettings())
@@ -257,4 +239,40 @@ func CreateLogger(appConfig config.Interface) (*logrus.Entry, *os.File, error) {
 		logger.Logger.SetOutput(io.MultiWriter(os.Stderr, logFile))
 	}
 	return logger, logFile, nil
+}
+
+func setupEncryption(appconfig config.Interface, appLogger *logrus.Entry) error {
+	dbPath := appconfig.GetString("database.location")
+	encryptionEnabled := appconfig.GetBool("database.encryption.enabled")
+	encryptionKey := appconfig.GetString("database.encryption.key")
+
+	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+		// Database does not exist
+		if encryptionEnabled {
+			// If encryption is enabled, generate a new encryption key if missing
+			if encryptionKey == "" {
+				newEncryptionKey, err := futils.GenerateRandomKey(32)
+				if err != nil {
+					return fmt.Errorf("failed to generate encryption key: %w", err)
+				}
+				appconfig.Set("database.encryption.key", newEncryptionKey)
+				appLogger.Info("New database, encryption key generated.")
+			}
+		} else {
+			appLogger.Info("Database encryption is disabled. Skipping encryption key generation.")
+		}
+	} else {
+		// Database exists
+		if encryptionEnabled {
+			// If encryption is enabled, check for encryption key
+			if encryptionKey == "" {
+				appLogger.Warningf("Database exists but encryption key is missing. Starting in standby mode.")
+			} else {
+				appLogger.Info("Database and encryption key found.")
+			}
+		} else {
+			appLogger.Info("Database encryption is disabled. Skipping encryption key check.")
+		}
+	}
+	return nil
 }
