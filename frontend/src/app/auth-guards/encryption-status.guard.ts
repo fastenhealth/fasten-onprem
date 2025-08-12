@@ -21,13 +21,7 @@ export class EncryptionStatusGuard implements CanActivate {
       const healthData: Health = await this.fastenService.getHealth().toPromise();
 
       if (!healthData.encryption_enabled) {
-        // If encryption is not enabled, bypass this guard
         return true;
-      }
-
-      if (healthData.first_run_wizard) {
-        // If first run wizard is required, navigate to encryption setup
-        return await this.router.navigate(['/encryption-key/wizard']);
       }
     } catch (e: any) {
       if (e?.error?.error === 'server_standby') {

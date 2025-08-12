@@ -14,7 +14,11 @@ export class ShowFirstRunWizardGuard implements CanActivate {
       let healthData = await this.fastenService.getHealth().toPromise()
 
       if (healthData.first_run_wizard) {
-        return await this.router.navigate(['/auth/signup/wizard']);
+        if (healthData.encryption_enabled) {
+          return await this.router.navigate(['/encryption-key/wizard']);
+        } else {
+          return await this.router.navigate(['/auth/signup/wizard']);
+        }
       }
 
     } catch (e) {
