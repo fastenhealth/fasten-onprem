@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PractitionerEditPageComponent } from './practitioner-edit.component';
+import { ActivatedRoute } from '@angular/router';
+import { HTTP_CLIENT_TOKEN } from 'src/app/dependency-injection';
+import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
 
 describe('PractitionerEditComponent', () => {
   let component: PractitionerEditPageComponent;
@@ -9,6 +13,21 @@ describe('PractitionerEditComponent', () => {
   beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [PractitionerEditPageComponent],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: { get: (key: string) => 'test-practitioner-id' },
+            },
+            params: of({ id: 'test-practitioner-id' })
+          },
+        },
+        {
+          provide: HTTP_CLIENT_TOKEN,
+          useClass: HttpClient,
+        },
+      ],
     }).compileComponents();
   });
 
