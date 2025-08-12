@@ -23,8 +23,8 @@ import { ResourceDetailComponent } from './pages/resource-detail/resource-detail
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
 import { UserCreateComponent } from './pages/user-create/user-create.component';
 import { UserListComponent } from './pages/user-list/user-list.component';
-import { SetupEncryptionKeyComponent } from "./pages/setup-encryption-key/setup-encryption-key.component";
-import { GetEncryptionKeyWizardComponent } from "./pages/get-encryption-key-wizard/get-encryption-key-wizard.component";
+import { SetupEncryptionKeyComponent } from './pages/setup-encryption-key/setup-encryption-key.component';
+import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wizard/get-encryption-key-wizard.component';
 
 const routes: Routes = [
   { path: 'encryption-key/wizard', component: GetEncryptionKeyWizardComponent },
