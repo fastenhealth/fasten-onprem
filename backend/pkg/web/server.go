@@ -121,7 +121,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				c.JSON(http.StatusOK, gin.H{
 					"success": true,
 					"data": gin.H{
-						"first_run_wizard": userCount == 0,
+						"first_run_wizard":  userCount == 0,
+						"encryption_enabled": ae.Config.GetBool("database.encryption.enabled"),
 					},
 				})
 			})
