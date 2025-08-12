@@ -81,6 +81,8 @@ func (suite *RepositoryTestSuite) TestNewRepository() {
 	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
 	//test
 	_, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
