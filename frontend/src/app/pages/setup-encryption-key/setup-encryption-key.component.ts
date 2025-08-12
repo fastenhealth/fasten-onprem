@@ -24,6 +24,15 @@ export class SetupEncryptionKeyComponent implements OnInit {
     this.encryptionKeyForm = this.fb.group({
       encryptionKey: ['', Validators.required],
     });
+
+    this.encryptionKeyForm.get('encryptionKey')?.valueChanges.subscribe(() => {
+      this.onEncryptionKeyChange();
+    });
+  }
+
+  onEncryptionKeyChange(): void {
+    this.testSuccess = false;
+    this.error = false;
   }
 
   private handleApiResponse(
