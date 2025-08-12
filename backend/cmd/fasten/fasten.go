@@ -146,7 +146,6 @@ func main() {
 						Logger:          appLogger,
 						EventBus:        event_bus.NewEventBusServer(appLogger),
 						RelatedVersions: relatedVersions,
-
 					}
 					return webServer.Start()
 				},
