@@ -83,14 +83,15 @@ func (c *configuration) ReadConfig(configFilePath string) error {
 // This function ensures that required configuration keys (that must be manually set) are present
 func (c *configuration) ValidateConfig() error {
 	if c.GetBool("database.encryption.enabled") {
-		if c.IsSet("database.encryption.key") {
-			key := c.GetString("database.encryption.key")
-			if key == "" {
-				return errors.ConfigValidationError("database.encryption.key cannot be empty")
-			}
-			if len(key) < 10 {
-				return errors.ConfigValidationError("database.encryption.key must be at least 10 characters")
-			}
+		if !c.IsSet("database.encryption.key") {
+			return errors.ConfigValidationError("database.encryption.key must be set when encryption is enabled")
+		}
+		key := c.GetString("database.encryption.key")
+		if key == "" {
+			return errors.ConfigValidationError("database.encryption.key cannot be empty")
+		}
+		if len(key) < 10 {
+			return errors.ConfigValidationError("database.encryption.key must be at least 10 characters")
 		}
 	}
 	return nil
