@@ -119,7 +119,7 @@ func main() {
 
 						if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 							// Database does not exist, generate a new token
-							token, err = encryption.GenerateRandomToken(32)
+							token, err = encryption.GenerateRandomKey(32)
 							if err != nil {
 								return fmt.Errorf("failed to generate encryption token: %w", err)
 							}
