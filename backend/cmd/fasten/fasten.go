@@ -139,7 +139,7 @@ func main() {
 									Config:           appconfig,
 									Logger:           appLogger,
 									EventBus:         event_bus.NewEventBusServer(appLogger),
-									deviceRepo:       nil,
+									DeviceRepo:       nil,
 									RelatedVersions:  relatedVersions,
 									StandbyMode:      true,
 									RestartChan:      restartChan,
@@ -171,7 +171,7 @@ func main() {
 							Config:           appconfig,
 							Logger:           appLogger,
 							EventBus:         event_bus.NewEventBusServer(appLogger),
-							deviceRepo:       dbRepo,
+							DeviceRepo:       dbRepo,
 							RelatedVersions:  relatedVersions,
 							RestartChan:      make(chan bool),
 						}
