@@ -142,10 +142,11 @@ func main() {
 					relatedVersions, _ := resources.GetRelatedVersions()
 
 					webServer := web.AppEngine{
-						Config:           appconfig,
-						Logger:           appLogger,
-						EventBus:         event_bus.NewEventBusServer(appLogger),
-						RelatedVersions:  relatedVersions,
+						Config:          appconfig,
+						Logger:          appLogger,
+						EventBus:        event_bus.NewEventBusServer(appLogger),
+						RelatedVersions: relatedVersions,
+
 					}
 					return webServer.Start()
 				},
@@ -242,8 +243,7 @@ func CreateLogger(appConfig config.Interface) (*logrus.Entry, *os.File, error) {
 		"type": "web",
 	})
 	//set default log level
-	logLevel := appConfig.GetString("log.level")
-	if level, err := logrus.ParseLevel(logLevel); err == nil {
+	if level, err := logrus.ParseLevel(appConfig.GetString("log.level")); err == nil {
 		logger.Logger.SetLevel(level)
 	} else {
 		logger.Logger.SetLevel(logrus.InfoLevel)
