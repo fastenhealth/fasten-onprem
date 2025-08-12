@@ -5,7 +5,6 @@ import {AuthService} from '../../services/auth.service';
 import {Router} from '@angular/router';
 import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
-import { FastenApiService } from 'src/app/services/fasten-api.service';
 
 class UserWizard extends User {
   password_confirm: string = ""
@@ -113,7 +112,6 @@ export class AuthSignupWizardComponent implements OnInit {
   submitted: boolean = false
   newUser: UserWizard = new UserWizard()
   errorMsg: string = ""
-  fastenService: FastenApiService
 
   constructor(
     private authService: AuthService,
@@ -121,7 +119,8 @@ export class AuthSignupWizardComponent implements OnInit {
     private toastService: ToastService
   ) { }
 
-  async ngOnInit(): Promise<void> {}
+  ngOnInit(): void {
+  }
 
   signupSubmit(){
     this.loading = true

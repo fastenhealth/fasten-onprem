@@ -66,11 +66,15 @@ export class FastenApiService {
       );
   }
 
-  setupEncryptionKey(formData: string): Observable<any> {
-    const headers = {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    };
+  getEncryptionKey(): Observable<string> {
+    return this._httpClient.get<{ data: string }>(
+      `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/encryption-key`
+    ).pipe(
+      map(response => response?.data)
+    );
+  }
 
+  setupEncryptionKey(formData: string): Observable<any> {
     return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/encryption-key`, formData, { headers: new HttpHeaders(headers) })
       .pipe(
         map((response: ResponseWrapper) => {
@@ -80,10 +84,6 @@ export class FastenApiService {
   }
 
   validateEncryptionKey(formData: string): Observable<any> {
-    const headers = {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    };
-
     return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/encryption-key/validate`, formData, { headers: new HttpHeaders(headers) })
       .pipe(
         map((response: ResponseWrapper) => {
@@ -448,11 +448,4 @@ export class FastenApiService {
     });
   }
 
-  getEncryptionKey(): Observable<string> {
-    return this._httpClient.get<{ data: string }>(
-      `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/encryption-key`
-    ).pipe(
-      map(response => response?.data)
-    );
-  }
 }
