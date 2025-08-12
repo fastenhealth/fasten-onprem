@@ -27,7 +27,7 @@ type AppEngine struct {
 	Config     config.Interface
 	Logger     *logrus.Entry
 	EventBus   event_bus.Interface
-	deviceRepo database.DatabaseRepository // Renamed to lowercase to match main branch
+	deviceRepo database.DatabaseRepository
 
 	RelatedVersions map[string]string //related versions metadata provided & embedded by the build process
 	Srv             *http.Server      // Added to manage the HTTP server lifecycle
