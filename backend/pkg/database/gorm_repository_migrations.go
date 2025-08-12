@@ -227,7 +227,7 @@ func (gr *GormRepository) Migrate() error {
 			},
 		},
 		{
-			ID: "20250730100000", // or any unique future timestamp
+			ID: "20250730100000",
 			Migrate: func(tx *gorm.DB) error {
 				return tx.AutoMigrate(&_20250730100000.Favorite{})
 			},
