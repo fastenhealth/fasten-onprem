@@ -465,7 +465,7 @@ func (gr *GormRepository) UpsertResource(ctx context.Context, wrappedResourceMod
 		SourceID:           wrappedFhirResourceModel.GetSourceID(),
 		SourceResourceID:   wrappedFhirResourceModel.GetSourceResourceID(),
 		SourceResourceType: wrappedFhirResourceModel.GetSourceResourceType(), //TODO: and UpdatedAt > old UpdatedAt
-	}).Omit("RelatedResource.*").Assign(wrappedResourceModel).FirstOrCreate(wrappedFhirResourceModel)
+	}).Assign(assignModel).FirstOrCreate(wrappedFhirResourceModel)
 
 	if createResult.Error != nil {
 		return false, createResult.Error
