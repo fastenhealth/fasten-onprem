@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { FastenApiService } from '../services/fasten-api.service';
-import { Health } from '../models/health.model';
+
+interface Health {
+  first_run_wizard: boolean;
+  encryption_enabled: boolean;
+}
 
 @Injectable({
   providedIn: 'root'
