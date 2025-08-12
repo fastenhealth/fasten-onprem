@@ -75,7 +75,7 @@ export class FastenApiService {
   }
 
   setupEncryptionKey(formData: string): Observable<any> {
-    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/encryption-key`, formData, { headers: new HttpHeaders(headers) })
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/encryption-key`, formData)
       .pipe(
         map((response: ResponseWrapper) => {
           return response.data
@@ -84,7 +84,7 @@ export class FastenApiService {
   }
 
   validateEncryptionKey(formData: string): Observable<any> {
-    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/encryption-key/validate`, formData, { headers: new HttpHeaders(headers) })
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/encryption-key/validate`, formData)
       .pipe(
         map((response: ResponseWrapper) => {
           return response.data
