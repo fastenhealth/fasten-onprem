@@ -25,8 +25,8 @@ export class IsAuthenticatedAuthGuard implements CanActivate {
       await this.fastenService.getHealth().toPromise();
     } catch (e: any) {
       if (e?.error?.error === 'server_standby') {
-        console.warn('Server is on standby, token needs to be restored.');
-        return await this.router.navigate(['/token/wizard-restore']);
+        console.warn('Server is on standby, encryption key needs to be restored.');
+        return await this.router.navigate(['/encryption-key/wizard-restore']);
       }
 
       console.error('ignoring error:', e);

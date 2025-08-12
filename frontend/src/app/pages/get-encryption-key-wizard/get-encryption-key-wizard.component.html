@@ -5,21 +5,21 @@
 
     <div *ngIf="loading" class="d-flex align-items-center gap-2 text-muted">
         <span class="spinner-border spinner-border-sm"></span>
-        Fetching your secure token...
+        Fetching your secure encryption key...
     </div>
 
-    <div *ngIf="token && !loading">
+    <div *ngIf="encryptionKey && !loading">
         <p class="text-muted">
-            This access token has been generated for you automatically and will only be shown once.
+            This encryption key has been generated for you automatically and will only be shown once.
             Please save it securely by downloading it before continuing.
         </p>
 
-        <label for="token" class="form-label fw-bold">Your Token</label>
+        <label for="encryptionKey" class="form-label fw-bold">Your Encryption Key</label>
         <div class="input-group mb-3">
-            <input [type]="showToken ? 'text' : 'password'" class="form-control font-monospace" id="token"
-                [value]="token" readonly />
-            <button class="btn btn-outline-secondary" type="button" (click)="toggleTokenVisibility()">
-                {{ showToken ? 'Hide' : 'Show' }}
+            <input [type]="showEncryptionKey ? 'text' : 'password'" class="form-control font-monospace" id="encryptionKey"
+                [value]="encryptionKey" readonly />
+            <button class="btn btn-outline-secondary" type="button" (click)="toggleEncryptionKeyVisibility()">
+                {{ showEncryptionKey ? 'Hide' : 'Show' }}
             </button>
         </div>
 
@@ -27,7 +27,7 @@
             <input type="checkbox" class="form-check-input" id="acknowledge" [(ngModel)]="acknowledged"
                 name="acknowledge" />
             <label class="form-check-label" for="acknowledge">
-                I understand that I will no longer have access to this token once I leave this page.
+                I understand that I will no longer have access to this encryption key once I leave this page.
             </label>
         </div>
 
@@ -35,17 +35,17 @@
             <button class="btn btn-outline-secondary" (click)="copyToClipboard()">
                 📋 Copy
             </button>
-            <button class="btn btn-outline-success" (click)="downloadToken()" [disabled]="tokenDownloaded">
+            <button class="btn btn-outline-success" (click)="downloadEncryptionKey()" [disabled]="encryptionKeyDownloaded">
                 💾 Download as .txt
             </button>
         </div>
 
         <div class="alert alert-warning mt-3">
-            <strong>Important:</strong> You must download this token before continuing. It will not be shown again.
+            <strong>Important:</strong> You must download this encryption key before continuing. It will not be shown again.
         </div>
 
         <div class="mt-4 text-end">
-            <button class="btn btn-primary" [disabled]="!acknowledged || !tokenDownloaded" (click)="proceedToSignup()">
+            <button class="btn btn-primary" [disabled]="!acknowledged || !encryptionKeyDownloaded" (click)="proceedToSignup()">
                 Continue to Sign Up →
             </button>
         </div>

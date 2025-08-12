@@ -22,12 +22,12 @@ export class ShowFirstRunWizardGuard implements CanActivate {
       const healthData = await this.fastenService.getHealth().toPromise();
 
       if (healthData?.first_run_wizard) {
-        return await this.router.navigate(['/token/wizard']);
+        return await this.router.navigate(['/encryption-key/wizard']);
       }
     } catch (e: any) {
       if (e?.error?.error === 'server_standby') {
-        console.warn('Server is on standby, token needs to be restored.');
-        return await this.router.navigate(['/token/wizard-restore']);
+        console.warn('Server is on standby, encryption key needs to be restored.');
+        return await this.router.navigate(['/encryption-key/wizard-restore']);
       }
 
       console.error('ignoring error:', e);

@@ -22,12 +22,12 @@ import { ResourceDetailComponent } from './pages/resource-detail/resource-detail
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
 import { UserCreateComponent } from './pages/user-create/user-create.component';
 import { UserListComponent } from './pages/user-list/user-list.component';
-import { SetupTokenComponent } from "./pages/setup-token/setup-token.component";
-import { GetTokenWizardComponent } from "./pages/get-token-wizard/get-token-wizard.component";
+import { SetupEncryptionKeyComponent } from "./pages/setup-encryption-key/setup-encryption-key.component";
+import { GetEncryptionKeyWizardComponent } from "./pages/get-encryption-key-wizard/get-encryption-key-wizard.component";
 
 const routes: Routes = [
-  { path: 'token/wizard', component: GetTokenWizardComponent },
-  { path: 'token/wizard-restore', component: SetupTokenComponent },
+  { path: 'encryption-key/wizard', component: GetEncryptionKeyWizardComponent },
+  { path: 'encryption-key/wizard-restore', component: SetupEncryptionKeyComponent },
   { path: 'auth/signup/wizard', component: AuthSignupWizardComponent },
 
   { path: 'auth/signin', component: AuthSigninComponent, canActivate: [ ShowFirstRunWizardGuard] },

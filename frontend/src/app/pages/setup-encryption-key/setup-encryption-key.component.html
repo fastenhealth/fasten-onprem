@@ -4,45 +4,45 @@
 
     <div class="az-signin-header">
 
-      <!-- Token Setup Flow -->
-      <div *ngIf="!isTokenSet">
+      <!-- Encryption Key Setup Flow -->
+      <div *ngIf="!isEncryptionKeySet">
         <h2 class="mb-3">🔒 Access Restricted</h2>
         <p class="text-muted">
-          It looks like your access token is missing.<br />
+          It looks like your encryption key is missing.<br />
           Please restore it to regain access to the application.
         </p>
 
-        <form [formGroup]="tokenForm" class="mt-4" (ngSubmit)="onSubmit()">
+        <form [formGroup]="encryptionKeyForm" class="mt-4" (ngSubmit)="onSubmit()">
           <div class="form-group">
-            <label for="token">Access Token</label>
-            <input type="text" id="token" formControlName="token" class="form-control"
-              [ngClass]="{ 'is-invalid': error }" placeholder="Paste your token here" required />
+            <label for="encryptionKey">Encryption Key</label>
+            <input type="text" id="encryptionKey" formControlName="encryptionKey" class="form-control"
+              [ngClass]="{ 'is-invalid': error }" placeholder="Paste your encryption key here" required />
             <div *ngIf="error" class="invalid-feedback">
-              Invalid token. Please check and try again.
+              Invalid encryption key. Please check and try again.
             </div>
           </div>
 
           <div class="d-grid mt-3">
             <button type="button" class="btn btn-outline-primary btn-block"
-              [disabled]="!tokenForm.valid || loading || testSuccess" (click)="testConnection()">
+              [disabled]="!encryptionKeyForm.valid || loading || testSuccess" (click)="testConnection()">
               <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
               Test Connection
             </button>
 
             <button *ngIf="testSuccess" type="submit" class="btn btn-az-primary btn-block mt-2"
-              [disabled]="!tokenForm.valid || loading">
+              [disabled]="!encryptionKeyForm.valid || loading">
               <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
-              Set Token
+              Set Encryption Key
             </button>
           </div>
         </form>
       </div>
 
-      <!-- Token Set Successfully -->
-      <div *ngIf="isTokenSet" class="mt-4">
-        <h2 class="text-success">✅ Token Restored</h2>
+      <!-- Encryption Key Set Successfully -->
+      <div *ngIf="isEncryptionKeySet" class="mt-4">
+        <h2 class="text-success">✅ Encryption Key Restored</h2>
         <p class="text-muted">
-          Your token has been successfully set.<br />
+          Your encryption key has been successfully set.<br />
           The application will now resume full access.
         </p>
         <div class="mt-4 text-end">

@@ -41,8 +41,8 @@ import { AuthSignupWizardComponent } from './pages/auth-signup-wizard/auth-signu
 import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard';
 import { IconsModule } from './icon-module';
 import { UserListComponent } from './pages/user-list/user-list.component';
-import { SetupTokenComponent } from './pages/setup-token/setup-token.component';
-import { GetTokenWizardComponent } from './pages/get-token-wizard/get-token-wizard.component';
+import { SetupEncryptionKeyComponent } from './pages/setup-encryption-key/setup-encryption-key.component';
+import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wizard/get-encryption-key-wizard.component';
 
 @NgModule({
   declarations: [
@@ -64,8 +64,8 @@ import { GetTokenWizardComponent } from './pages/get-token-wizard/get-token-wiza
     BackgroundJobsComponent,
     AuthSignupWizardComponent,
     UserListComponent,
-    SetupTokenComponent,
-    GetTokenWizardComponent,
+    SetupEncryptionKeyComponent,
+    GetEncryptionKeyWizardComponent,
   ],
   imports: [
     FormsModule,

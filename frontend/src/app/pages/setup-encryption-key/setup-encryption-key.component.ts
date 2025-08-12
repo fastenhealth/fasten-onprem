@@ -3,13 +3,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
 
 @Component({
-  selector: 'app-setup-token',
-  templateUrl: './setup-token.component.html',
-  styleUrls: ['./setup-token.component.scss'],
+  selector: 'app-setup-encryption-key',
+  templateUrl: './setup-encryption-key.component.html',
+  styleUrls: ['./setup-encryption-key.component.scss'],
 })
-export class SetupTokenComponent implements OnInit {
-  tokenForm: FormGroup;
-  isTokenSet = false;
+export class SetupEncryptionKeyComponent implements OnInit {
+  encryptionKeyForm: FormGroup;
+  isEncryptionKeySet = false;
   testSuccess = false;
   loading = false;
   error = false;
@@ -20,29 +20,29 @@ export class SetupTokenComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.tokenForm = this.fb.group({
-      token: ['', Validators.required],
+    this.encryptionKeyForm = this.fb.group({
+      encryptionKey: ['', Validators.required],
     });
   }
 
   testConnection(): void {
-    if (!this.tokenForm.valid) return;
+    if (!this.encryptionKeyForm.valid) return;
 
     this.loading = true;
     this.error = false;
     this.testSuccess = false;
 
     const formData = new URLSearchParams();
-    formData.append('token', this.tokenForm.value.token);
+    formData.append('encryption_key', this.encryptionKeyForm.value.encryptionKey);
 
-    this.fastenService.testToken(formData.toString()).subscribe({
+    this.fastenService.validateEncryptionKey(formData.toString()).subscribe({
       next: () => {
         this.testSuccess = true;
         this.loading = false;
       },
       error: () => {
         this.error = true;
-        this.tokenForm.get('token')?.setErrors({ invalid: true });
+        this.encryptionKeyForm.get('encryptionKey')?.setErrors({ invalid: true });
         this.loading = false;
         this.testSuccess = false;
       },
@@ -50,19 +50,19 @@ export class SetupTokenComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.tokenForm.valid || !this.testSuccess) return;
+    if (!this.encryptionKeyForm.valid || !this.testSuccess) return;
 
     this.loading = true;
     this.error = false;
 
     const formData = new URLSearchParams();
-    formData.append('token', this.tokenForm.value.token);
+    formData.append('encryption_key', this.encryptionKeyForm.value.encryptionKey);
 
-    this.fastenService.setupToken(formData.toString()).subscribe({
+    this.fastenService.setupEncryptionKey(formData.toString()).subscribe({
       next: () => {
-        this.isTokenSet = true;
+        this.isEncryptionKeySet = true;
         this.loading = false;
-        this.tokenForm.reset();
+        this.encryptionKeyForm.reset();
       },
       error: () => {
         this.error = true;

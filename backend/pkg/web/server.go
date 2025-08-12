@@ -88,9 +88,10 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				})
 			})
 
-			api.GET("/get-token", handler.GetToken(ae.Config))
-			api.POST("/set-token", handler.SetupToken(ae.Config, ae.RestartChan))
-			api.POST("/validate-token", handler.ValidateToken(ae.Config, ae.Logger))
+			encryptionKeyHandler := handler.NewEncryptionKeyHandler(ae.Config, ae.Logger, ae.RestartChan)
+			api.GET("/encryption-key", encryptionKeyHandler.GetEncryptionKey)
+			api.POST("/encryption-key", encryptionKeyHandler.SetupEncryptionKey)
+			api.POST("/encryption-key/validate", encryptionKeyHandler.ValidateEncryptionKey)
 
 			//in standby mode, we only want to expose the minimum required endpoints
 			if !ae.StandbyMode {

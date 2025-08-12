@@ -5,17 +5,17 @@ import { FastenApiService } from 'src/app/services/fasten-api.service';
 import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
-  selector: 'app-get-token-wizard',
-  templateUrl: './get-token-wizard.component.html',
-  styleUrls: ['./get-token-wizard.component.scss'],
+  selector: 'app-get-encryption-key-wizard',
+  templateUrl: './get-encryption-key-wizard.component.html',
+  styleUrls: ['./get-encryption-key-wizard.component.scss'],
 })
-export class GetTokenWizardComponent implements OnInit {
-  token: string | null = null;
+export class GetEncryptionKeyWizardComponent implements OnInit {
+  encryptionKey: string | null = null;
   loading = false;
   error: string | null = null;
-  tokenDownloaded = false;
+  encryptionKeyDownloaded = false;
   acknowledged = false;
-  showToken = false;
+  showEncryptionKey = false;
 
   constructor(
     private fastenApiService: FastenApiService,
@@ -24,63 +24,63 @@ export class GetTokenWizardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fetchToken();
+    this.fetchEncryptionKey();
   }
 
-  fetchToken(): void {
+  fetchEncryptionKey(): void {
     this.loading = true;
     this.error = null;
 
-    this.fastenApiService.getToken().subscribe({
+    this.fastenApiService.getEncryptionKey().subscribe({
       next: (response) => {
-        this.token = response;
+        this.encryptionKey = response;
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to fetch token.';
+        this.error = 'Failed to fetch encryption key.';
         console.error(err);
         this.loading = false;
       },
     });
   }
 
-  toggleTokenVisibility(): void {
-    this.showToken = !this.showToken;
+  toggleEncryptionKeyVisibility(): void {
+    this.showEncryptionKey = !this.showEncryptionKey;
   }
 
   copyToClipboard(): void {
-    if (this.token) {
-      navigator.clipboard.writeText(this.token).then(() => {
+    if (this.encryptionKey) {
+      navigator.clipboard.writeText(this.encryptionKey).then(() => {
         const toastNotification = new ToastNotification();
         toastNotification.type = ToastType.Success;
-        toastNotification.message = `Successfully copied token to clipboard!`;
+        toastNotification.message = `Successfully copied encryption key to clipboard!`;
         this.toastService.show(toastNotification);
       });
     }
   }
 
-  downloadToken(): void {
-    if (this.token) {
-      const blob = new Blob([this.token], { type: 'text/plain' });
+  downloadEncryptionKey(): void {
+    if (this.encryptionKey) {
+      const blob = new Blob([this.encryptionKey], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'token.txt';
+      a.download = 'encryption_key.txt';
       a.click();
       URL.revokeObjectURL(url);
 
-      this.tokenDownloaded = true;
+      this.encryptionKeyDownloaded = true;
 
       const toastNotification = new ToastNotification();
       toastNotification.type = ToastType.Success;
-      toastNotification.message = `Successfully downloaded token!`;
+      toastNotification.message = `Successfully downloaded encryption key!`;
       this.toastService.show(toastNotification);
     }
   }
 
   proceedToSignup(): void {
-    if (this.token) {
-      this.downloadToken(); 
+    if (this.encryptionKey) {
+      this.downloadEncryptionKey();
     }
     this.router.navigate(['/auth/signup/wizard']);
   }
