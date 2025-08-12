@@ -113,11 +113,10 @@ func main() {
 					}()
 
 					dbPath := appconfig.GetString("database.location")
-					var encryptionKey string
 
 					if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 						// Database does not exist, generate a new encryption key
-						encryptionKey, err = encryption.GenerateRandomKey(32)
+						encryptionKey, err := encryption.GenerateRandomKey(32)
 						if err != nil {
 							return fmt.Errorf("failed to generate encryption key: %w", err)
 						}
@@ -125,16 +124,13 @@ func main() {
 						appLogger.Info("New database, encryption key generated.")
 					} else {
 						// Database exists, check for encryption key
-						encryptionKey = appconfig.GetString("database.encryption_key")
-						if encryptionKey == "" {
+						if appconfig.GetString("database.encryption_key") == "" {
 							appLogger.Warningf("Database exists but encryption key is missing. Starting in standby mode.")
 						} else {
 							// DB and encryption key both exist.
 							appLogger.Info("Database and encryption key found.")
 						}
 					}
-
-					appconfig.Set("database.encryption_key", encryptionKey)
 
 					settingsData, err := json.Marshal(appconfig.AllSettings())
 					appLogger.Debug(string(settingsData), err)
