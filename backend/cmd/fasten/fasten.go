@@ -8,6 +8,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/ssdp"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/version"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web"
 	"github.com/fastenhealth/fasten-onprem/backend/resources"
@@ -123,6 +124,23 @@ func main() {
 						EventBus:        event_bus.NewEventBusServer(appLogger),
 						RelatedVersions: relatedVersions,
 					}
+
+					// Start SSDP service for automatic network discovery
+					ssdpService := ssdp.NewSSDPService(
+						appconfig,
+						appLogger,
+						appconfig.GetString("web.listen.host"),
+						appconfig.GetString("web.listen.port"),
+					)
+					
+					if err := ssdpService.Start(); err != nil {
+						appLogger.Errorf("Failed to start SSDP service: %v", err)
+						return err
+					}
+					defer ssdpService.Stop()
+
+					appLogger.Info("SSDP service started successfully for automatic mobile discovery")
+					
 					return webServer.Start()
 				},
 

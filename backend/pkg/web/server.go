@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
@@ -96,9 +97,18 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 			api.GET("/glossary/code", handler.GlossarySearchByCode)
 			api.POST("/support/request", handler.SupportRequest)
 			api.POST("/support/healthsystem", handler.HealthSystemRequest)
+			
+			// SSDP Discovery endpoints (public, no authentication required)
+			api.GET("/ssdp/device", handler.GetDeviceDescription)
+			api.GET("/ssdp/scpd.xml", handler.GetServiceDescription)
+			api.GET("/ssdp/status", handler.GetSSDPStatus)
+			
+			// Mobile SSDP sync endpoint (public, no authentication required)
+			api.GET("/mobile/sync", handler.MobileSync)
 
 			secure := api.Group("/secure").Use(middleware.RequireAuth())
 			{
+				secure.GET("/account/me", handler.GetCurrentUser)
 				secure.DELETE("/account/me", handler.DeleteAccount)
 
 				secure.GET("/summary", handler.GetSummary)
@@ -116,7 +126,17 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
 				secure.PATCH("/resource/fhir/:resourceType/:resourceId", handler.UpdateResourceFhir)
 
-				secure.POST("/resource/composition", handler.CreateResourceComposition)
+							// Mobile sync endpoints
+			secure.GET("/sync/data", handler.SyncData)
+			secure.GET("/sync/test", func(c *gin.Context) {
+				c.JSON(http.StatusOK, gin.H{
+					"success": true,
+					"message": "Sync test endpoint working",
+					"timestamp": time.Now().Format(time.RFC3339),
+				})
+			})
+
+			secure.POST("/resource/composition", handler.CreateResourceComposition)
 				secure.POST("/resource/related", handler.CreateRelatedResources)
 				secure.DELETE("/encounter/:encounterId/related/:resourceType/:resourceId", handler.EncounterUnlinkResource)
 
