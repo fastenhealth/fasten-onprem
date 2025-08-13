@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.8'
 services:
   fasten:
     # NOTE: only developers need to build Fasten from source
@@ -10,8 +10,14 @@ services:
       args:
         - FASTEN_ENV=prod
 #        - FASTEN_ENV=sandbox
+    container_name: fasten-health-server
     ports:
       - "9090:8080"
+      - "1901:1901"
     volumes:
-      - ./db:/opt/fasten/db
-#      - ./config.example.yaml:/opt/fasten/config/config.yaml
+      - ./fasten.db:/opt/fasten/db/fasten.db
+      - ./dist:/opt/fasten/web
+      - ./backend:/opt/fasten/backend  # Mount our local backend code
+    environment:
+      - FASTEN_ENV=development
+    restart: unless-stopped
