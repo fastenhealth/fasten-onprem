@@ -1,48 +1,54 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ComponentFixture, TestBed, fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
+import { ReactiveFormsModule, FormBuilder, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { of } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
 
 import { SetupEncryptionKeyComponent } from './setup-encryption-key.component';
 import { FastenApiService } from '../../services/fasten-api.service';
-import { AuthService } from '../../services/auth.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('SetupEncryptionKeyComponent', () => {
   let component: SetupEncryptionKeyComponent;
   let fixture: ComponentFixture<SetupEncryptionKeyComponent>;
+  let mockFastenApiService: any;
+  let mockRouter: any;
+  let mockChangeDetectorRef: any;
 
-  const mockRouter = {
-    navigateByUrl: jasmine.createSpy('navigateByUrl')
-  };
+  beforeEach(async () => {
+    mockRouter = {
+      navigate: jasmine.createSpy('navigate')
+    };
 
-  const mockAuthService = {
-    Logout: jasmine.createSpy('Logout').and.returnValue(Promise.resolve())
-  };
+    mockFastenApiService = {
+      setupEncryptionKey: jasmine.createSpy('setupEncryptionKey'),
+      validateEncryptionKey: jasmine.createSpy('validateEncryptionKey')
+    };
 
-  const mockFastenApiService = {
-    setupEncryptionKey: jasmine.createSpy('setupEncryptionKey').and.returnValue(of({ data: 'mockKey' })),
-    validateEncryptionKey: jasmine.createSpy('validateEncryptionKey').and.returnValue(of({ data: 'mockKey' }))
-  };
+    mockChangeDetectorRef = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       declarations: [SetupEncryptionKeyComponent],
-      imports: [ReactiveFormsModule, HttpClientTestingModule],
+      imports: [ReactiveFormsModule, FormsModule, HttpClientTestingModule],
       providers: [
+        FormBuilder,
         { provide: Router, useValue: mockRouter },
-        { provide: AuthService, useValue: mockAuthService },
-        { provide: FastenApiService, useValue: mockFastenApiService }
+        { provide: FastenApiService, useValue: mockFastenApiService },
+        { provide: ChangeDetectorRef, useValue: mockChangeDetectorRef }
       ]
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SetupEncryptionKeyComponent);
     component = fixture.componentInstance;
+    // Mock the sleep method
+    spyOn<any>(component, 'sleep').and.returnValue(Promise.resolve());
+    // Reset mocks before each test
+    mockFastenApiService.setupEncryptionKey.calls.reset();
+    mockFastenApiService.validateEncryptionKey.calls.reset();
+    mockRouter.navigate.calls.reset();
+    mockChangeDetectorRef.detectChanges.calls.reset();
     fixture.detectChanges();
   });
 
