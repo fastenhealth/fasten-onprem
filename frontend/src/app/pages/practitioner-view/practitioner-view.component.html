@@ -41,6 +41,16 @@
             <!-- Action Buttons (Right Side) -->
             <div class="header-actions d-flex align-items-center">
 
+              <!-- History button-->
+              <button 
+                type="button"
+                class="btn btn-primary btn-edit me-2"
+                (click)="viewPractitionerHistory()"
+              >
+                <i class="fas fa-history me-2"></i>
+                Encounters
+              </button>
+
               <!-- Edit Button -->
               <button 
                 type="button"
@@ -61,10 +71,6 @@
                 <i [class]="deleteLoading ? 'fas fa-spinner fa-spin' : 'fas fa-trash'"></i>
               </button>
 
-              <!-- More Options -->
-              <button type="button" class="btn btn-icon">
-                <i class="fas fa-ellipsis-v"></i>
-              </button>
             </div>
           </div>
         </div>

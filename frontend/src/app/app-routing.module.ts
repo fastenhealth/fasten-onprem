@@ -26,6 +26,7 @@ import { PractitionerListComponent } from './pages/practitioner-list/practitione
 import { PractitionerCreateComponent } from './pages/practitioner-create/practitioner-create.component';
 import { PractitionerViewComponent } from './pages/practitioner-view/practitioner-view.component';
 import { PractitionerEditPageComponent } from './pages/practitioner-edit/practitioner-edit.component';
+import { PractitionerHistoryComponent } from "./pages/practitioner-history/practitioner-history.component";
 
 
 
@@ -66,6 +67,7 @@ const routes: Routes = [
   { path: 'practitioners/new', component: PractitionerCreateComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
   { path: 'practitioners/view/:id', component: PractitionerViewComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
   { path: 'practitioners/edit/:id', component: PractitionerEditPageComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
+  { path: 'practitioner-history/:id', component: PractitionerHistoryComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
 
 
   // { path: 'general-pages', loadChildren: () => import('./general-pages/general-pages.module').then(m => m.GeneralPagesModule) },

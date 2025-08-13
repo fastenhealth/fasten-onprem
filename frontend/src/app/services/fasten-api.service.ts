@@ -226,6 +226,26 @@ export class FastenApiService {
       );
   }
 
+  /**
+   * Retrieves the history for a specific practitioner.
+   * @param practitionerId The ID of the practitioner (e.g., '1043089352').
+   * @returns An Observable array of FHIR Resources representing the practitioner's history.
+   */
+  getPractitionerHistory(practitionerId: string): Observable<ResourceFhir[]> {
+    // Construct the full URL by embedding the practitionerId directly into the path
+    const endpointUrl = `${GetEndpointAbsolutePath(
+      globalThis.location,
+      environment.fasten_api_endpoint_base
+    )}/secure/practitioners/${practitionerId}/history`;
+
+    return this._httpClient.get<ResponseWrapper>(endpointUrl).pipe(
+      map((response: any) => {
+        // Extract the data array from the response, just like in your example
+        return response.relatedResources as ResourceFhir[];
+      })
+    );
+  }
+
   //TODO: add caching here, we dont want the same query to be run multiple times whne loading the dashboard.
   // we should also add a way to invalidate the cache when a source is synced
   //this function is special, as it returns the raw response, for processing in the DashboardWidgetComponent

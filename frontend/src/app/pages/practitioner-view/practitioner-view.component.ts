@@ -100,6 +100,10 @@ export class PractitionerViewComponent implements OnInit {
     this.router.navigate(['/practitioners/edit', this.practitionerId]);
   }
 
+  viewPractitionerHistory(): void {
+    this.router.navigate(['/practitioner-history', this.practitionerId]);
+  }
+
   toggleStar(): void {
     this.isStarred = !this.isStarred;
     console.log('Practitioner starred:', this.isStarred);
