@@ -513,9 +513,6 @@ export class FastenApiService {
               } else if (firstQualification?.code?.text) {
                 jobTitle = firstQualification.code.text;
               }
-  
-
-
 
               if (firstQualification?.issuer?.display) {
                 organization = firstQualification.issuer.display;
@@ -551,7 +548,7 @@ export class FastenApiService {
               source_resource_id: item.source_resource_id,
               source_id: item.source_id,
               source_resource_type: item.source_resource_type,
-              full_name: item.resource_raw.name?.[0]?.text || '',
+              full_name: item.resource_raw.name?.[0]?.text || item?.sort_title || 'N/A',
               address: item.resource_raw.address?.[0] || {
                 line: [], 
                 city: '', 
@@ -559,7 +556,6 @@ export class FastenApiService {
                 postalCode: '', 
                 country: ''
               },
-              
               email: email,
               emailUse: emailUse,
               phone: phone,
@@ -581,7 +577,6 @@ export class FastenApiService {
               formattedTelecom: '',
 
               resource_raw: item.resource_raw
-              // isFavorite: ...
             };
   
             return practitioner;
