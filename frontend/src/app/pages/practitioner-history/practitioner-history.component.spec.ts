@@ -21,8 +21,8 @@ describe('PractitionerHistoryComponent', () => {
       'getSummary',
     ]);
     await TestBed.configureTestingModule({
-      declarations: [PractitionerHistoryComponent, ReportHeaderComponent, MedicalHistoryComponent, HttpClientModule],
-      imports: [RouterTestingModule],
+      declarations: [PractitionerHistoryComponent, ReportHeaderComponent, MedicalHistoryComponent],
+      imports: [RouterTestingModule, HttpClientModule],
       providers: [
         {
           provide: ActivatedRoute,
