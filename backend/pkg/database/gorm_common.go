@@ -743,6 +743,45 @@ func (gr *GormRepository) FindAllResourceAssociations(ctx context.Context, sourc
 	return relatedResources, result.Error
 }
 
+// FindPractitionerEncounters finds all Encounter records associated with a specific practitioner.
+// It scopes the search to the current user to ensure data privacy and access control.
+func (gr *GormRepository) FindPractitionerEncounters(ctx context.Context, practitionerId string) ([]models.ResourceBase, error) {
+	// First, retrieve the current user from the context. This is a crucial security step.
+	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return nil, currentUserErr
+	}
+
+	var relatedResources []models.RelatedResource
+	result := gr.GormClient.WithContext(ctx).
+		Where(models.RelatedResource{
+			ResourceBaseUserID:                currentUser.ID,
+			ResourceBaseSourceResourceType:    "Encounter",
+			RelatedResourceSourceResourceType: "Practitioner",
+		}).
+		Find(&relatedResources)
+
+	var relatedEncounters []models.ResourceBase
+	// Parse through the related resources to filter encounters that are related
+	for _, relatedResource := range relatedResources {
+		queryOptions := models.ListResourceQueryOptions{
+			SourceResourceType: "Encounter",
+			SourceResourceID:   relatedResource.ResourceBaseSourceResourceID,
+		}
+
+		resources, err := gr.ListResources(ctx, queryOptions)
+		// Log resources for debugging purposes
+		relatedEncounters = append(relatedEncounters, resources...)
+
+		if err != nil {
+			gr.Logger.Errorf("Error listing resources for Encounter %s/%s: %v", relatedResource.ResourceBaseSourceResourceType, relatedResource.ResourceBaseSourceResourceID, err)
+			continue // Skip this resource if there's an error
+		}
+	}
+
+	return relatedEncounters, result.Error
+}
+
 // remove multiple resource associations in a transaction
 func (gr *GormRepository) RemoveBulkResourceAssociations(ctx context.Context, associationsToDelete []models.RelatedResource) (int64, error) {
 	var totalRowsAffected int64 = 0

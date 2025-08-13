@@ -83,6 +83,29 @@ func CreatePractitioner(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "practitioner created successfully", "id": resourceId, "resource": createdResource})
 }
 
+func GetPractitionerEncounterHistory(c *gin.Context) {
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	practitionerId := c.Param("practitionerId")
+	if practitionerId == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "practitioner ID is required"})
+		return
+	}
+
+	relatedResources, err := databaseRepo.FindPractitionerEncounters(c, practitionerId)
+	if err != nil {
+		logger.Errorln("Error fetching encounters:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to fetch encounters"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success":          true,
+		"relatedResources": relatedResources,
+	})
+}
+
 func UpdatePractitioner(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)

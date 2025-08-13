@@ -38,6 +38,7 @@ type DatabaseRepository interface {
 	FindAllResourceAssociations(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string) ([]models.RelatedResource, error)
 	GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, error)
 	DeleteResourceByTypeAndId(ctx context.Context, sourceResourceType string, sourceResourceId string) error
+	FindPractitionerEncounters(ctx context.Context, practitionerId string) ([]models.ResourceBase, error)
 
 	// Deprecated:This method has been deprecated. It has been replaced in favor of Fasten SourceCredential & associations
 	AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceBase) error

@@ -135,6 +135,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 				secure.POST("/practitioners", handler.CreatePractitioner)
 				secure.PUT("/practitioners/:practitionerId", handler.UpdatePractitioner)
+				secure.GET("/practitioners/:practitionerId/history", handler.GetPractitionerEncounterHistory)
 
 				// Address book favorite actions
 				secure.POST("/user/favorites", handler.AddPractitionerToFavorites)
