@@ -4,52 +4,44 @@
 
     <div class="az-signin-header">
 
-      <!-- Encryption Key Setup Flow -->
-      <div *ngIf="!isEncryptionKeySet">
-        <h2 class="mb-3">🔒 Access Restricted</h2>
+      <div>
+        <h2 class="mb-3">
+          <span>🔒 Access Restricted</span>
+        </h2>
         <p class="text-muted">
-          It looks like your encryption key is missing.<br />
-          Please restore it to regain access to the application.
+          <span>
+            It looks like your encryption key is missing.<br />
+            Please restore it to regain access to the application.
+          </span>
         </p>
 
-        <form [formGroup]="encryptionKeyForm" class="mt-4" (ngSubmit)="onSubmit()">
+        <form [formGroup]="encryptionKeyForm" class="mt-4" (ngSubmit)="validateAndSetKey()">
           <div class="form-group">
             <label for="encryptionKey">Encryption Key</label>
             <input type="text" id="encryptionKey" formControlName="encryptionKey" class="form-control"
-              [ngClass]="{ 'is-invalid': error }" placeholder="Paste your encryption key here" required />
+              [ngClass]="{ 'is-invalid': error }" placeholder="Paste your encryption key here" required [disabled]="isProcessing" />
             <div *ngIf="error" class="invalid-feedback">
-              Invalid encryption key. Please check and try again.
+              {{ statusMessage }}
             </div>
           </div>
 
           <div class="d-grid mt-3">
-            <button type="button" class="btn btn-outline-primary btn-block"
-              [disabled]="!encryptionKeyForm.valid || loading || testSuccess" (click)="testConnection()">
-              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
-              Test Connection
-            </button>
-
-            <button *ngIf="testSuccess" type="submit" class="btn btn-az-primary btn-block mt-2"
-              [disabled]="!encryptionKeyForm.valid || loading">
-              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
-              Set Encryption Key
+            <button type="button" class="btn btn-az-primary btn-block"
+              [disabled]="isProcessing"
+              (click)="handleButtonClick()">
+              <span class="button-content-wrapper">
+                <span *ngIf="isProcessing && !isValidated" class="spinner-border spinner-border-sm me-2"></span>
+                <fa-icon *ngIf="isValidated" [icon]="['fas', 'check-circle']" class="me-2"></fa-icon>
+                <span>
+                  <ng-container *ngIf="!isProcessing && !isValidated && !error">Validate Key</ng-container>
+                  <ng-container *ngIf="isProcessing && !isValidated">{{ statusMessage }}</ng-container>
+                  <ng-container *ngIf="isValidated">{{ statusMessage }} ({{ countdown }}s)</ng-container>
+                  <ng-container *ngIf="error"><span>Try Again</span></ng-container>
+                </span>
+              </span>
             </button>
           </div>
         </form>
-      </div>
-
-      <!-- Encryption Key Set Successfully -->
-      <div *ngIf="isEncryptionKeySet" class="mt-4">
-        <h2 class="text-success">✅ Encryption Key Restored</h2>
-        <p class="text-muted">
-          Your encryption key has been successfully set.<br />
-          The application will now resume full access.
-        </p>
-        <div class="mt-4 text-end">
-          <a routerLink="/" class="btn btn-primary">
-            Continue to application →
-          </a>
-        </div>
       </div>
 
     </div>
