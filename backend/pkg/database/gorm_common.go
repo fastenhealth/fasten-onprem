@@ -758,6 +758,7 @@ func (gr *GormRepository) FindPractitionerEncounters(ctx context.Context, practi
 			ResourceBaseUserID:                currentUser.ID,
 			ResourceBaseSourceResourceType:    "Encounter",
 			RelatedResourceSourceResourceType: "Practitioner",
+			RelatedResourceSourceResourceID:   practitionerId,
 		}).
 		Find(&relatedResources)
 
@@ -770,7 +771,6 @@ func (gr *GormRepository) FindPractitionerEncounters(ctx context.Context, practi
 		}
 
 		resources, err := gr.ListResources(ctx, queryOptions)
-		// Log resources for debugging purposes
 		relatedEncounters = append(relatedEncounters, resources...)
 
 		if err != nil {
