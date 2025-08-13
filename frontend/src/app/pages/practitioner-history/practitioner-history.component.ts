@@ -25,7 +25,6 @@ export class PractitionerHistoryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    //load the first page
     this.loading = true;
 
     this.route.params.subscribe((params) => {
@@ -35,6 +34,12 @@ export class PractitionerHistoryComponent implements OnInit {
         this.fastenApi
           .getPractitionerHistory(this.practitionerId)
           .subscribe((response: ResourceFhir[]) => {
+            if (!response?.length) {
+              this.loading = false;
+              console.warn('No encounters found for this practitioner');
+              return;
+            }
+
             this.allEncountersIds = response.map(
               (resource: ResourceFhir): Partial<ResourceFhir> => {
                 return {
@@ -56,8 +61,6 @@ export class PractitionerHistoryComponent implements OnInit {
   }
 
   pageChange() {
-    this.loading = true;
-
     const encounterIds = this.allEncountersIds.slice(
       (this.currentPage - 1) * this.pageSize,
       this.currentPage * this.pageSize
@@ -65,11 +68,12 @@ export class PractitionerHistoryComponent implements OnInit {
 
     this.fastenApi.getResourceGraph(null, encounterIds).subscribe(
       (graphResponse: ResourceGraphResponse) => {
-        this.loading = false;
 
         this.encounters = graphResponse.results['Encounter'] || [];
+        this.loading = false;
       },
       (error) => {
+        console.error('Error fetching resource graph:', error);
         this.loading = false;
       }
     );

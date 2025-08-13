@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import { ReportHeaderComponent } from 'src/app/components/report-header/report-header.component';
 import { ActivatedRoute } from '@angular/router';
 import { HTTP_CLIENT_TOKEN } from 'src/app/dependency-injection';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MedicalHistoryComponent } from '../medical-history/medical-history.component';
 
 describe('PractitionerHistoryComponent', () => {
@@ -21,7 +21,7 @@ describe('PractitionerHistoryComponent', () => {
       'getSummary',
     ]);
     await TestBed.configureTestingModule({
-      declarations: [PractitionerHistoryComponent, ReportHeaderComponent, MedicalHistoryComponent],
+      declarations: [PractitionerHistoryComponent, ReportHeaderComponent, MedicalHistoryComponent, HttpClientModule],
       imports: [RouterTestingModule],
       providers: [
         {
