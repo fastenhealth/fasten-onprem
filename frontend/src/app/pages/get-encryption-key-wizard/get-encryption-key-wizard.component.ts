@@ -1,25 +1,15 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {User} from '../../models/fasten/user';
-import {AuthService} from '../../services/auth.service';
-import {Router} from '@angular/router';
-import {ToastService} from '../../services/toast.service';
-import {ToastNotification, ToastType} from '../../models/fasten/toast';
-
-class UserWizard extends User {
-  password_confirm: string = ""
-  agree_terms: boolean = false
-  join_mailing_list: boolean = true
-}
-
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ToastNotification, ToastType } from 'src/app/models/fasten/toast';
+import { FastenApiService } from 'src/app/services/fasten-api.service';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
-  selector: 'app-auth-signup-wizard',
-  templateUrl: './auth-signup-wizard.component.html',
-  styleUrls: ['./auth-signup-wizard.component.scss']
+  selector: 'app-get-encryption-key-wizard',
+  templateUrl: './get-encryption-key-wizard.component.html',
+  styleUrls: ['./get-encryption-key-wizard.component.scss'],
 })
-export class AuthSignupWizardComponent implements OnInit {
-
+export class GetEncryptionKeyWizardComponent implements OnInit {
   gridImages: string[] = [
     "f8f9ce28-d79b-4b54-9f7d-3f0aaba88c2c.png",
     "89bb6993-b806-49a2-84e2-6e70705c504a.png",
@@ -105,49 +95,76 @@ export class AuthSignupWizardComponent implements OnInit {
     "a7a87c72-1d8a-42d6-b0a4-c72b7dd8933a.png",
     "2630415e-1871-437a-84de-52ad7ce88f3e.png",
     "b53ff282-4725-45f7-a436-89f77320f062.png",
-  ]
-
-  loading: boolean = false
-
-  submitted: boolean = false
-  newUser: UserWizard = new UserWizard()
-  errorMsg: string = ""
+  ];
+  encryptionKey: string | null = null;
+  loading = false;
+  error: string | null = null;
+  encryptionKeyDownloaded = false;
+  acknowledged = false;
+  showEncryptionKey = false;
 
   constructor(
-    private authService: AuthService,
-    private router: Router,
-    private toastService: ToastService
-  ) { }
+    private fastenApiService: FastenApiService,
+    private toastService: ToastService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    this.fetchEncryptionKey();
   }
 
-  signupSubmit(){
-    this.loading = true
-    this.submitted = true;
+  fetchEncryptionKey(): void {
+    this.loading = true;
+    this.error = null;
 
-    this.authService.Signup(this.newUser).then((tokenResp: any) => {
-        this.loading = false
-        this.router.navigateByUrl('/dashboard');
+    this.fastenApiService.getEncryptionKey().subscribe({
+      next: (response) => {
+        this.encryptionKey = response;
+        this.loading = false;
       },
-      (err)=>{
-        this.loading = false
-        console.error("an error occured while signup",err)
-        if(err.name === 'conflict') {
-          // "batman" already exists, choose another username
-          this.errorMsg = "username already exists"
-        } else if (err.name === 'forbidden') {
-          // invalid username
-          this.errorMsg = "invalid username"
-        } else {
-          this.errorMsg = "an unknown error occurred during sign-up"
-        }
-
-        const toastNotificaiton = new ToastNotification()
-        toastNotificaiton.type = ToastType.Error
-        toastNotificaiton.message = this.errorMsg
-        this.toastService.show(toastNotificaiton)
-      })
+      error: (err) => {
+        this.error = 'Failed to fetch encryption key.';
+        console.error(err);
+        this.loading = false;
+      },
+    });
   }
 
+  toggleEncryptionKeyVisibility(): void {
+    this.showEncryptionKey = !this.showEncryptionKey;
+  }
+
+  private showToast(type: ToastType, message: string): void {
+    const toastNotification = new ToastNotification();
+    toastNotification.type = type;
+    toastNotification.message = message;
+    this.toastService.show(toastNotification);
+  }
+
+  copyToClipboard(): void {
+    if (this.encryptionKey) {
+      navigator.clipboard.writeText(this.encryptionKey).then(() => {
+        this.showToast(ToastType.Success, `Successfully copied encryption key to clipboard!`);
+      });
+    }
+  }
+
+  downloadEncryptionKey(): void {
+    if (this.encryptionKey) {
+      const blob = new Blob([this.encryptionKey], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'encryption_key.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+
+      this.encryptionKeyDownloaded = true;
+      this.showToast(ToastType.Success, `Successfully downloaded encryption key!`);
+    }
+  }
+
+  proceedToSignup(): void {
+    this.router.navigate(['/auth/signup/wizard']);
+  }
 }

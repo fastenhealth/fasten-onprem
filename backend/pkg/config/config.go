@@ -32,6 +32,7 @@ func (c *configuration) Init() error {
 	c.SetDefault("web.src.frontend.path", "/opt/fasten/web")
 	c.SetDefault("database.type", "sqlite")
 	c.SetDefault("database.location", "/opt/fasten/db/fasten.db")
+	c.SetDefault("database.encryption.enabled", false)
 	//c.SetDefault("database.encryption.key", "") //encryption key must be set by the user.
 	c.SetDefault("cache.location", "/opt/fasten/cache/")
 

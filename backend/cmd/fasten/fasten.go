@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/analogj/go-util/utils"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	futils "github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/encryption"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/version"
@@ -77,7 +77,6 @@ func main() {
 				Name:  "start",
 				Usage: "Start the fasten server",
 				Action: func(c *cli.Context) error {
-					//fmt.Fprintln(c.App.Writer, c.Command.Usage)
 					if c.IsSet("config") {
 						err = appconfig.ReadConfig(c.String("config")) // Find and read the config file
 						if err != nil {                                // Handle errors reading the config file
@@ -113,66 +112,20 @@ func main() {
 						}
 					}()
 
-					dbPath := appconfig.GetString("database.location")
-					var token string
-					var tokenJustCreated bool
-
-					if _, err := os.Stat(dbPath); os.IsNotExist(err) {
-						// Database does not exist, generate a new token
-						token, err = encryption.GenerateRandomToken(32)
-						if err != nil {
-							return fmt.Errorf("failed to generate encryption token: %w", err)
-						}
-
-						appconfig.Set("database.encryption_key", token)
-
-						tokenJustCreated = true
-					} else {
-						// Database exists, check for token
-						token = appconfig.GetString("database.encryption_key")
-						if token == "" {
-							appLogger.Warningf("Database exists but token is missing. Starting in standby mode.")
-
-							relatedVersions, _ := resources.GetRelatedVersions()
-
-							webServer := web.AppEngine{
-								Config:           appconfig,
-								Logger:           appLogger,
-								EventBus:         event_bus.NewEventBusServer(appLogger),
-								DeviceRepo:       nil,
-								RelatedVersions:  relatedVersions,
-								Token:            "",
-								TokenJustCreated: false,
-								StandbyMode:      true,
-							}
-
-							return webServer.Start()
-						}
-						// DB and token both exist.
-						appLogger.Info("Database and token found.")
-						tokenJustCreated = false
+					if err := setupEncryption(appconfig, appLogger); err != nil {
+						return err
 					}
-
-					appconfig.Set("database.encryption_key", token)
 
 					settingsData, err := json.Marshal(appconfig.AllSettings())
 					appLogger.Debug(string(settingsData), err)
 
 					relatedVersions, _ := resources.GetRelatedVersions()
 
-					dbRepo, err := database.NewRepository(appconfig, appLogger, event_bus.NewEventBusServer(appLogger))
-					if err != nil {
-						return err
-					}
-
 					webServer := web.AppEngine{
-						Config:           appconfig,
-						Logger:           appLogger,
-						EventBus:         event_bus.NewEventBusServer(appLogger),
-						DeviceRepo:       dbRepo,
-						RelatedVersions:  relatedVersions,
-						Token:            token,
-						TokenJustCreated: tokenJustCreated,
+						Config:          appconfig,
+						Logger:          appLogger,
+						EventBus:        event_bus.NewEventBusServer(appLogger),
+						RelatedVersions: relatedVersions,
 					}
 					return webServer.Start()
 				},
@@ -269,8 +222,7 @@ func CreateLogger(appConfig config.Interface) (*logrus.Entry, *os.File, error) {
 		"type": "web",
 	})
 	//set default log level
-	logLevel := appConfig.GetString("log.level")
-	if level, err := logrus.ParseLevel(logLevel); err == nil {
+	if level, err := logrus.ParseLevel(appConfig.GetString("log.level")); err == nil {
 		logger.Logger.SetLevel(level)
 	} else {
 		logger.Logger.SetLevel(logrus.InfoLevel)
@@ -287,4 +239,40 @@ func CreateLogger(appConfig config.Interface) (*logrus.Entry, *os.File, error) {
 		logger.Logger.SetOutput(io.MultiWriter(os.Stderr, logFile))
 	}
 	return logger, logFile, nil
+}
+
+func setupEncryption(appconfig config.Interface, appLogger *logrus.Entry) error {
+	dbPath := appconfig.GetString("database.location")
+	encryptionEnabled := appconfig.GetBool("database.encryption.enabled")
+	encryptionKey := appconfig.GetString("database.encryption.key")
+
+	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
+		// Database does not exist
+		if encryptionEnabled {
+			// If encryption is enabled, generate a new encryption key if missing
+			if encryptionKey == "" {
+				newEncryptionKey, err := futils.GenerateRandomKey(32)
+				if err != nil {
+					return fmt.Errorf("failed to generate encryption key: %w", err)
+				}
+				appconfig.Set("database.encryption.key", newEncryptionKey)
+				appLogger.Info("New database, encryption key generated.")
+			}
+		} else {
+			appLogger.Info("Database encryption is disabled. Skipping encryption key generation.")
+		}
+	} else {
+		// Database exists
+		if encryptionEnabled {
+			// If encryption is enabled, check for encryption key
+			if encryptionKey == "" {
+				appLogger.Warningf("Database exists but encryption key is missing. Starting in standby mode.")
+			} else {
+				appLogger.Info("Database and encryption key found.")
+			}
+		} else {
+			appLogger.Info("Database encryption is disabled. Skipping encryption key check.")
+		}
+	}
+	return nil
 }
