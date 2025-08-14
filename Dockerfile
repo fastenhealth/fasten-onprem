@@ -27,14 +27,12 @@ FROM golang:1.21 as backend-build
 WORKDIR /go/src/github.com/fastenhealth/fasten-onprem
 COPY . .
 
-RUN apt-get update && apt-get install -y curl
-
 RUN --mount=type=cache,target=/tmp/lock,sharing=locked \
     go mod vendor \
     && go install github.com/golang/mock/mockgen@v1.6.0 \
     && go generate ./... \
     && go vet ./... \
-    #&& go test -timeout=20m ./... \
+    && go test -timeout=20m ./... \
     && go build -ldflags "-extldflags=-static" -tags "static" -o /go/bin/fasten ./backend/cmd/fasten/
 
 # create folder structure
@@ -56,3 +54,8 @@ COPY LICENSE.md /opt/fasten/LICENSE.md
 COPY config.yaml /opt/fasten/config/config.yaml
 RUN ["/opt/fasten/fasten", "--help"]
 CMD ["/opt/fasten/fasten", "start", "--config", "/opt/fasten/config/config.yaml"]
+
+
+
+
+
