@@ -19,6 +19,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/handler"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/tls"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -56,17 +57,7 @@ func (ae *AppEngine) Reinitialize() error {
 	baseRouterGroup, ginRouter := ae.Setup()
 	ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
 
-	listenAddr := fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port"))
-	ae.Srv = &http.Server{
-		Addr:    listenAddr,
-		Handler: ginRouter,
-	}
-
-	go func() {
-		if err := ae.Srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			ae.Logger.Fatalf("listen: %s\n", err)
-		}
-	}()
+	ae.startServer(ginRouter)
 
 	ae.Logger.Info("AppEngine reinitialized and server restarted.")
 	return nil
@@ -367,36 +358,48 @@ func (ae *AppEngine) Start() error {
 
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
 
-	host := ae.Config.GetString("web.listen.host")
-	port := ae.Config.GetString("web.listen.port")
-
-	// HTTPS support
-	if ae.Config.GetBool("web.https.enabled") {
-		certFile := ae.Config.GetString("web.https.certFile")
-		keyFile := ae.Config.GetString("web.https.keyFile")
-
-		ae.Logger.Infof("Using HTTPS cert: %s", certFile)
-		ae.Logger.Infof("Using HTTPS key:  %s", keyFile)
-
-		return r.RunTLS(fmt.Sprintf("%s:%s", host, port), certFile, keyFile)
+	if ae.Config.GetBool("web.listen.https.enabled") {
+		certFile, keyFile, err := ae.setupTLS()
+		if err != nil {
+			return err
+		}
+		ae.Config.Set("web.listen.https.certFile", certFile)
+		ae.Config.Set("web.listen.https.keyFile", keyFile)
 	}
 
-	listenAddr := fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port"))
+	ae.startServer(r)
+
+	// Block indefinitely to keep the server running until process termination
+	select {}
+}
+
+func (ae *AppEngine) startServer(r *gin.Engine) {
+	host := ae.Config.GetString("web.listen.host")
+	port := ae.Config.GetString("web.listen.port")
+	listenAddr := fmt.Sprintf("%s:%s", host, port)
 
 	ae.Srv = &http.Server{
 		Addr:    listenAddr,
 		Handler: r,
 	}
 
-	// Start the server in a goroutine
 	go func() {
-		if err := ae.Srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			ae.Logger.Fatalf("listen: %s\n", err)
+		if ae.Config.GetBool("web.listen.https.enabled") {
+			certFile := ae.Config.GetString("web.listen.https.certFile")
+			keyFile := ae.Config.GetString("web.listen.https.keyFile")
+
+			ae.Logger.Infof("Using HTTPS cert: %s", certFile)
+			ae.Logger.Infof("Using HTTPS key:  %s", keyFile)
+
+			if err := ae.Srv.ListenAndServeTLS(certFile, keyFile); err != nil && err != http.ErrServerClosed {
+				ae.Logger.Fatalf("listen TLS: %s\n", err)
+			}
+		} else {
+			if err := ae.Srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+				ae.Logger.Fatalf("listen: %s\n", err)
+			}
 		}
 	}()
-
-	// Block indefinitely to keep the server running until process termination
-	select {}
 }
 
 func (ae *AppEngine) initializeDatabase() error {
@@ -424,4 +427,23 @@ func (ae *AppEngine) initializeDatabase() error {
 		ae.deviceRepo = dbRepo
 	}
 	return nil
+}
+
+func (ae *AppEngine) setupTLS() (string, string, error) {
+	certDir := ae.Config.GetString("web.listen.https.certDir")
+	if certDir == "" {
+		certDir = "certs" // Default certificate directory for server certs and all keys
+	}
+	sharedDir := ae.Config.GetString("web.listen.https.sharedDir")
+	if sharedDir == "" {
+		sharedDir = "certs/shared" // Default shared directory for root CA public cert
+	}
+
+	ae.Logger.Infof("Ensuring TLS certificates in: %s", certDir)
+	ae.Logger.Infof("Ensuring TLS shared certificates in: %s", sharedDir)
+	certFile, keyFile, err := tls.GenerateCertificates(certDir, sharedDir, ae.Logger)
+	if err != nil {
+		return "", "", fmt.Errorf("failed to setup TLS certificates: %w", err)
+	}
+	return certFile, keyFile, nil
 }
