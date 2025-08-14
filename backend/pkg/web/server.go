@@ -343,7 +343,7 @@ func (ae *AppEngine) SetupInstallationRegistration() error {
 }
 
 func (ae *AppEngine) Start() error {
-	// Set the gin mode
+	//set the gin mode
 	gin.SetMode(gin.ReleaseMode)
 	if strings.ToLower(ae.Config.GetString("log.level")) == "debug" {
 		gin.SetMode(gin.DebugMode)
@@ -355,10 +355,11 @@ func (ae *AppEngine) Start() error {
 
 	baseRouterGroup, ginRouter := ae.Setup()
 
-	if ae.DeviceRepo != nil && !ae.StandbyMode {
+	// Only setup installation registration if deviceRepo is initialized
+	if ae.deviceRepo != nil {
 		err := ae.SetupInstallationRegistration()
 		if err != nil {
-			ae.Logger.Panicf("panic occurred: %v", err)
+			ae.Logger.Panicf("panic occurred:%v", err)
 		}
 	} else {
 		ae.Logger.Warn("Skipping SetupInstallationRegistration because deviceRepo is nil (in StandbyMode)")
