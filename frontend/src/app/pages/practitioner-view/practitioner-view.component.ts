@@ -101,7 +101,10 @@ export class PractitionerViewComponent implements OnInit {
   }
 
   viewPractitionerHistory(): void {
-    this.router.navigate(['/practitioner-history', this.practitionerId]);
+    // Send practitioner data in state to avoid re-fetching
+    this.router.navigate(['/practitioner-history', this.practitionerId], {
+      state: { practitioner: this.practitioner }
+    });
   }
 
   toggleStar(): void {

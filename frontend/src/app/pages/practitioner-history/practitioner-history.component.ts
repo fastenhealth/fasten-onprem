@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Practitioner } from 'src/app/models/fasten/practitioner';
 import { ResourceGraphResponse } from 'src/app/models/fasten/resource-graph-response';
 import { ResourceFhir } from 'src/app/models/fasten/resource_fhir';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
@@ -18,11 +19,19 @@ export class PractitionerHistoryComponent implements OnInit {
   allEncountersIds: any[] = [];
   encounters: ResourceFhir[] = [];
   practitionerId: string | null = null;
+  practitioner: Practitioner | null = null;
 
   constructor(
     public fastenApi: FastenApiService,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
+    // Initialize the practitioner from the route state if available
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras.state) {
+      this.practitioner = navigation.extras.state['practitioner'] || null;
+    }
+  }
 
   ngOnInit(): void {
     this.loading = true;
