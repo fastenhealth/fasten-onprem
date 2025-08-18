@@ -14,4 +14,5 @@ services:
       - "9090:8080"
     volumes:
       - ./db:/opt/fasten/db
+      - ./certs:/opt/fasten/certs/shared
 #      - ./config.example.yaml:/opt/fasten/config/config.yaml
