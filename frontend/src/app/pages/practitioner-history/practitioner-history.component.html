@@ -4,7 +4,8 @@
             <!-- Header Row -->
             <report-header
                 [reportHeaderTitle]="practitioner?.full_name ? practitioner.full_name + ' History' : 'Practitioner History'"
-                [reportHeaderSubTitle]="'Organized by conditions, describes the scope and breadth of medical care involving selected practitioner'"></report-header>
+                [reportHeaderSubTitle]="'Organized by conditions, describes the scope and breadth of medical care involving ' + (practitioner?.full_name || 'selected practitioner')">
+            </report-header>
 
             <ng-container
                 [ngTemplateOutlet]="loading ? isLoadingTemplate : (encounters.length == 0) ? emptyReport : report"></ng-container>
