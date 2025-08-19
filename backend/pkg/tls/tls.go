@@ -18,7 +18,7 @@ import (
 // GenerateCertificates ensures that CA and server certificates exist, generating them if necessary.
 func GenerateCertificates(certDir, sharedDir string, logger *logrus.Entry) (string, string, error) {
 	caCertPath := filepath.Join(sharedDir, "rootCA.pem")
-	caKeyPath := filepath.Join(certDir, "rootCA-key.pem")
+	caKeyPath := filepath.Join(sharedDir, "rootCA-key.pem")
 	serverCertPath := filepath.Join(certDir, "server.pem")
 	serverKeyPath := filepath.Join(certDir, "server-key.pem")
 
