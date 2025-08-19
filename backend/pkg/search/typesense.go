@@ -22,7 +22,7 @@ func initClient(cfg config.Interface) error {
 	Client = typesense.NewClient(
 		typesense.WithServer(apiUri),
 		typesense.WithAPIKey(apiKey),
-		typesense.WithConnectionTimeout(15 * time.Minute))
+		typesense.WithConnectionTimeout(15*time.Minute))
 
 	log.Printf("Typesense client initialized with server: %s", apiUri)
 
@@ -100,12 +100,6 @@ func ensureConversationModel(ctx context.Context, client *typesense.Client, cfg 
 }
 
 func Init(cfg config.Interface, logger *logrus.Entry) error {
-	// Client will initialize only if config search is present
-	if cfg.GetString("search.uri") == "" {
-		logger.Info("Search is disabled, skipping Typesense initialization.")
-		return nil
-	}
-
 	if err := initClient(cfg); err != nil {
 		log.Fatalf("ERROR: %v", err)
 	}
