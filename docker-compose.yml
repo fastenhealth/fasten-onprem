@@ -10,6 +10,8 @@ services:
       args:
         - FASTEN_ENV=prod
 #        - FASTEN_ENV=sandbox
+    ports:
+      - "9090:8080"
     volumes:
       - ./db:/opt/fasten/db
 #      - ./config.example.yaml:/opt/fasten/config/config.yaml
