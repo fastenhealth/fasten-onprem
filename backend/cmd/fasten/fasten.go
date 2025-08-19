@@ -10,7 +10,6 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/version"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/discovery"
 	"github.com/fastenhealth/fasten-onprem/backend/resources"
 	"github.com/sirupsen/logrus"
 	"github.com/huin/goupnp/dcps/internetgateway2"
@@ -117,25 +116,8 @@ func main() {
 					settingsData, err := json.Marshal(appconfig.AllSettings())
 					appLogger.Debug(string(settingsData), err)
 
-					//upnp
-					if err = startUpnpServer(appLogger, appconfig); err != nil {
-						//non-fatal error, so we'll just log it
+					if err = discoverLocalIpViaUpnp(appLogger, appconfig); err != nil {
 						appLogger.Warn(err)
-					}
-
-					//ssdp
-					if appconfig.GetBool("ssdp.enabled") {
-						ssdpServer, err := discovery.NewSsdpService(appLogger)
-						if err != nil {
-							appLogger.Warn(err)
-						} else {
-							go func() {
-								if err := ssdpServer.Start(appconfig.GetString("upnp.local_ip"), appconfig.GetInt("web.listen.port")); err != nil {
-									appLogger.Warn(err)
-								}
-							}()
-							defer ssdpServer.Stop()
-						}
 					}
 
 					relatedVersions, _ := resources.GetRelatedVersions()
@@ -236,50 +218,30 @@ func main() {
 	}
 }
 
-func startUpnpServer(logger *logrus.Entry, cfg config.Interface) error {
+func discoverLocalIpViaUpnp(logger *logrus.Entry, cfg config.Interface) error {
 	if !cfg.GetBool("upnp.enabled") {
-		logger.Info("UPnP service is disabled by config.")
+		logger.Info("UPnP local IP discovery is disabled by config.")
 		return nil
 	}
 
-	logger.Info("Registering UPnP service...")
+	logger.Info("Discovering local IP via UPnP...")
 
 	clients, _, err := internetgateway2.NewWANIPConnection1Clients()
 	if err != nil {
-		return fmt.Errorf("UPnP service registration failed: %v. The application will continue without network discovery", err)
+		return fmt.Errorf("UPnP local IP discovery failed: %v. The application will continue without network discovery", err)
 	}
 
 	if len(clients) == 0 {
-		return fmt.Errorf("UPnP service registration failed: no services found. The application will continue without network discovery")
+		return fmt.Errorf("UPnP local IP discovery failed: no services found. The application will continue without network discovery")
 	}
 
 	client := clients[0]
 
-	logger.Infof("UPnP service discovered local IP address: %s", client.LocalAddr().String())
+	logger.Infof("UPnP discovered local IP address: %s", client.LocalAddr().String())
 
 	cfg.Set("upnp.local_ip", client.LocalAddr().String())
 
-	// externalIP, err := client.GetExternalIPAddress()
-	// if err != nil {
-	// 	return fmt.Errorf("UPnP service registration failed: could not get external IP address: %v. The application will continue without network discovery", err)
-	// }
-
-	//err = client.AddPortMapping(
-	//	"",
-	//	uint16(cfg.GetInt("web.listen.port")),
-	//	"TCP",
-	//	uint16(cfg.GetInt("web.listen.port")),
-	//	client.LocalAddr().String(),
-	//	true,
-	//	"fasten-onprem",
-	//	0,
-	//)
-	//
-	//if err != nil {
-	//	return fmt.Errorf("UPnP service registration failed: could not add port mapping: %v. The application will continue without network discovery", err)
-	//}
-
-	logger.Info("UPnP service registered successfully.")
+	logger.Info("UPnP local IP discovery completed successfully.")
 	return nil
 }
 

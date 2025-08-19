@@ -30,7 +30,6 @@ require (
 	github.com/huin/goupnp v1.3.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/johnfercher/maroto/v2 v2.3.1
-	github.com/koron/go-ssdp v0.0.6
 	github.com/lestrrat-go/jwx/v2 v2.0.11
 	github.com/samber/lo v1.35.0
 	github.com/sirupsen/logrus v1.9.0

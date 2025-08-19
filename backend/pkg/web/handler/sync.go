@@ -115,10 +115,10 @@ func getServerAddress(c *gin.Context, appConfig config.Interface) (string, strin
 		return upnpHost, port
 	}
 
-	// Priority 2: Environment variable override (deprecated, but kept for compatibility)
-	//if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {
-	//	return envHost, externalPort
-	//}
+	Priority 2: Environment variable override (deprecated, but kept for compatibility)
+	if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {
+		return envHost, externalPort
+	}
 
 	// Priority 3: Headers from reverse proxies
 	if forwardedHost := c.GetHeader("X-Forwarded-Host"); forwardedHost != "" {
@@ -170,9 +170,9 @@ func getServerAddresses(c *gin.Context, appConfig config.Interface) []string {
 	}
 
 	// Priority 2: Environment variable override (deprecated, but kept for compatibility)
-	//if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {
-	//	addAddress(fmt.Sprintf("%s:%s", envHost, port))
-	//}
+	if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {
+		addAddress(fmt.Sprintf("%s:%s", envHost, port))
+	}
 
 	// Priority 3: Headers from reverse proxies
 	if forwardedHost := c.GetHeader("X-Forwarded-Host"); forwardedHost != "" {
