@@ -5,6 +5,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"log"
+	"mime/multipart"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"testing"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
@@ -15,15 +25,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"io"
-	"io/ioutil"
-	"log"
-	"mime/multipart"
-	"net/http"
-	"net/http/httptest"
-	"os"
-	"path/filepath"
-	"testing"
 )
 
 // Go through this page to understand how this file is structured.
@@ -56,6 +57,7 @@ func (suite *SourceHandlerTestSuite) BeforeTest(suiteName, testName string) {
 	appConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	appConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	appConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	appConfig.EXPECT().IsSet("search").Return(false).AnyTimes()
 	appConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	suite.AppConfig = appConfig
 
