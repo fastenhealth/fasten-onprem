@@ -3,20 +3,22 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
+	"os"
+	"time"
+
 	"github.com/analogj/go-util/utils"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/search"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/version"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web"
 	"github.com/fastenhealth/fasten-onprem/backend/resources"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"io"
-	"log"
-	"os"
-	"time"
 )
 
 var goos string
@@ -111,6 +113,18 @@ func main() {
 							appLogger.Panic("panic occurred:", err)
 						}
 					}()
+
+					// Check if Typesense (search) is enabled and initialize it
+					if appconfig.IsSet("search") && appconfig.GetString("search.uri") != "" {
+						err = search.Init(appconfig, appLogger)
+						if err != nil {
+							appLogger.Error("failed to initialize Typesense: %w", err)
+						}
+
+						appLogger.Info("Typesense initialized successfully")
+					} else {
+						appLogger.Info("Search is disabled, skipping Typesense initialization.")
+					}
 
 					settingsData, err := json.Marshal(appconfig.AllSettings())
 					appLogger.Debug(string(settingsData), err)

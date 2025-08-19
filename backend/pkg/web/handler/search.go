@@ -6,7 +6,7 @@ import (
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
-	search "github.com/fastenhealth/fasten-onprem/backend/pkg/search"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/search"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
