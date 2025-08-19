@@ -3,11 +3,6 @@ package database
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"os"
-	"testing"
-
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
@@ -19,6 +14,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"io/ioutil"
+	"log"
+	"os"
+	"testing"
 )
 
 // Define the suite, and absorb the built-in basic suite
@@ -62,7 +61,6 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph() {
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
-	fakeConfig.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
@@ -131,7 +129,6 @@ func (suite *RepositoryGraphTestSuite) TestGetFlattenedResourceGraph_NDJson() {
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
-	fakeConfig.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
