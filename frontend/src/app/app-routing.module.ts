@@ -58,6 +58,7 @@ const routes: Routes = [
 
   { path: 'desktop/callback/:state', component: DesktopCallbackComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
   { path: 'resource/ocr-scan', component: ResourceOcrComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+  { path: 'scan', component: ResourceOcrComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
   { path: 'desktop/callback/:state', component: DesktopCallbackComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
