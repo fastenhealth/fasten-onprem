@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"strconv"
 	"time"
+	"net"
+	"os"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/auth"
@@ -16,6 +18,13 @@ import (
 	"github.com/iancoleman/strcase"
 	"github.com/sirupsen/logrus"
 )
+
+// Connection represents server connection information for mobile apps.
+type Connection struct {
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	Protocol string `json:"protocol"`
+}
 
 // authenticateAndLogUsage handles common authentication and usage logging for sync endpoints
 func authenticateAndLogUsage(c *gin.Context, log *logrus.Entry, databaseRepo database.DatabaseRepository) (*models.User, string, error) {
@@ -384,27 +393,89 @@ func SyncDataUpdates(c *gin.Context) {
 func GetSecureServerDiscovery(c *gin.Context) {
 	appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
 
-	// Get server address and port
-	serverAddress, serverPort := getServerAddress(c, appConfig)
+	serverAddresses := getServerAddresses(c, appConfig)
 	
-	// Return minimal connection info
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data": gin.H{
-			"connection": gin.H{
-				"host": serverAddress,
-				"port": serverPort,
-				"protocol": "https", // Always use HTTPS in production
-			},
+			"connections": serverAddresses,
 			"endpoints": gin.H{
 				"sync_data": "/api/secure/sync/data",
 				"sync_updates": "/api/secure/sync/updates",
 				"access_tokens": "/api/secure/access/tokens",
 			},
-			"security": gin.H{
-				"requires_auth": true,
-				"token_type": "Bearer",
-			},
 		},
 	})
+}
+
+// getServerAddresses returns multiple possible server addresses for network change resilience
+func getServerAddresses(c *gin.Context, appConfig config.Interface) []Connection {
+	log := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	port := appConfig.GetString("web.listen.port")
+
+	var connections []Connection
+
+	// Priority 0: use mDNS hostname
+	hostname, err := os.Hostname()
+	if err != nil {
+		log.Errorf("Failed to get hostname: %v", err)
+		// Continue without hostname if there's an error, or handle as appropriate
+	} else {
+		connections = append(connections, Connection{Host: hostname, Port: port, Protocol: "https"})
+	}
+
+	// Priority 1: UPnP discovered IP
+	if upnpHost := appConfig.GetString("upnp.local_ip"); upnpHost != "" {
+		connections = append(connections, Connection{Host: upnpHost, Port: port, Protocol: "https"})
+	}
+
+	// Priority 2: Environment variable override (deprecated, but kept for compatibility)
+	// if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {
+	// 	connections = append(connections, Connection{Host: envHost, Port: port, Protocol: "https"})
+	// }
+
+	// Priority 3: Headers from reverse proxies
+	// X-Forwarded-Host can contain a host:port pair or just a host.
+	// We attempt to split it, but if it fails, we use the whole string as the host.
+	if forwardedHost := c.GetHeader("X-Forwarded-Host"); forwardedHost != "" {
+		host, p, err := net.SplitHostPort(forwardedHost)
+		if err != nil {
+			host = forwardedHost // If splitting fails, use the whole string as host
+			p = port // Use default port if not specified in header
+		}
+		connections = append(connections, Connection{Host: host, Port: p, Protocol: "https"})
+	}
+	if realIP := c.GetHeader("X-Real-IP"); realIP != "" {
+		connections = append(connections, Connection{Host: realIP, Port: port, Protocol: "https"})
+	}
+
+	// Priority 3: All private, non-loopback IP addresses
+	if addrs, err := net.InterfaceAddrs(); err == nil {
+		for _, addr := range addrs {
+			if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+				if ip := ipnet.IP.To4(); ip != nil && ip.IsPrivate() {
+					connections = append(connections, Connection{Host: ip.String(), Port: port, Protocol: "https"})
+				}
+			}
+		}
+	}
+
+	// Final fallback to localhost
+	connections = append(connections, Connection{Host: "localhost", Port: port, Protocol: "https"})
+
+	return uniqueConnections(connections)
+}
+
+// uniqueConnections removes duplicate Connection entries while preserving order.
+func uniqueConnections(conns []Connection) []Connection {
+	seen := make(map[string]bool)
+	var unique []Connection
+	for _, conn := range conns {
+		key := net.JoinHostPort(conn.Host, conn.Port) // Use host:port as the unique key
+		if !seen[key] {
+			seen[key] = true
+			unique = append(unique, conn)
+		}
+	}
+	return unique
 }

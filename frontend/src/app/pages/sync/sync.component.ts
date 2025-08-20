@@ -140,9 +140,8 @@ export class SyncComponent implements OnInit, OnDestroy {
     // Create minimal QR code data with only necessary information
     const qrData = {
       token: this.accessToken,
-      server: this.serverInfo.connection,
+      connections: this.serverInfo.connections,
       endpoints: this.serverInfo.endpoints,
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     };
 
     console.log('QR data created:', qrData);

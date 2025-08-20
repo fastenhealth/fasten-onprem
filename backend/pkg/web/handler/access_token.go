@@ -5,7 +5,6 @@ import (
 	// "os"
 	"encoding/hex"
 	"fmt"
-	"net"
 	"net/http"
 	"time"
 
@@ -17,104 +16,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
-
-// getServerAddress gets the server address and port, prioritizing non-local addresses
-func getServerAddress(c *gin.Context, appConfig config.Interface) (string, string) {
-	// Get the port from the app config
-	port := appConfig.GetString("web.listen.port")
-
-	// Priority 1: UPnP discovered IP
-	if upnpHost := appConfig.GetString("upnp.local_ip"); upnpHost != "" {
-		return upnpHost, port
-	}
-
-	// Priority 2: Environment variable override (deprecated, but kept for compatibility)
-	// if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {
-	// 	return envHost, externalPort
-	// }
-
-	// Priority 3: Headers from reverse proxies
-	if forwardedHost := c.GetHeader("X-Forwarded-Host"); forwardedHost != "" {
-		if host, _, err := net.SplitHostPort(forwardedHost); err == nil {
-			return host, port
-		}
-		return forwardedHost, port
-	}
-	if realIP := c.GetHeader("X-Real-IP"); realIP != "" {
-		return realIP, port
-	}
-
-	// Priority 3: Detect a private, non-loopback IP address
-	// In a Docker container, this will be the container's IP, which is not what we want.
-	// However, we will return all possible IPs in getServerAddresses, so the client can try them all.
-	// For the primary address, we'll prefer a private IP, but fallback gracefully.
-	if addrs, err := net.InterfaceAddrs(); err == nil {
-		for _, addr := range addrs {
-			if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-				if ip := ipnet.IP.To4(); ip != nil && ip.IsPrivate() {
-					return ip.String(), port
-				}
-			}
-		}
-	}
-
-	// Final fallback to localhost
-	return "localhost", port
-}
-
-// getServerAddresses returns multiple possible server addresses for network change resilience
-func getServerAddresses(c *gin.Context, appConfig config.Interface) []string {
-	port := appConfig.GetString("web.listen.port")
-
-	// Use a map to automatically handle uniqueness and a slice to maintain order
-	seen := make(map[string]bool)
-	var addresses []string
-
-	addAddress := func(addr string) {
-		if addr != "" && !seen[addr] {
-			seen[addr] = true
-			addresses = append(addresses, addr)
-		}
-	}
-
-	// Priority 1: UPnP discovered IP
-	if upnpHost := appConfig.GetString("upnp.local_ip"); upnpHost != "" {
-		addAddress(fmt.Sprintf("%s:%s", upnpHost, port))
-	}
-
-	// Priority 2: Environment variable override (deprecated, but kept for compatibility)
-	// if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {
-	// 	addAddress(fmt.Sprintf("%s:%s", envHost, port))
-	// }
-
-	// Priority 3: Headers from reverse proxies
-	if forwardedHost := c.GetHeader("X-Forwarded-Host"); forwardedHost != "" {
-		if host, _, err := net.SplitHostPort(forwardedHost); err == nil {
-			addAddress(fmt.Sprintf("%s:%s", host, port))
-		} else {
-			addAddress(fmt.Sprintf("%s:%s", forwardedHost, port))
-		}
-	}
-	if realIP := c.GetHeader("X-Real-IP"); realIP != "" {
-		addAddress(fmt.Sprintf("%s:%s", realIP, port))
-	}
-
-	// Priority 3: All private, non-loopback IP addresses
-	if addrs, err := net.InterfaceAddrs(); err == nil {
-		for _, addr := range addrs {
-			if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-				if ip := ipnet.IP.To4(); ip != nil && ip.IsPrivate() {
-					addAddress(fmt.Sprintf("%s:%s", ip.String(), port))
-				}
-			}
-		}
-	}
-
-	// Final fallback to localhost
-	addAddress(fmt.Sprintf("localhost:%s", port))
-
-	return addresses
-}
 
 // InitiateAccess generates a new access token for mobile app authentication
 func InitiateAccess(c *gin.Context) {
