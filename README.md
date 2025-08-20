@@ -95,14 +95,49 @@ Next, run the following commands from the Windows command line or Mac/Linux term
 
 ### 🚀 Launch
 
-Launch the application. Please chose a location where `docker-compose.yml` will be downloaded.
+Launch the application. Please choose a location where `docker-compose.yml` and `set_env.sh` will be downloaded.
 
-```bash
-curl https://raw.githubusercontent.com/fastenhealth/fasten-onprem/refs/heads/main/docker-compose-prod.yml -o docker-compose.yml
+To make your Fasten instance discoverable by companion mobile apps and other devices on your local network, you need to run the `set_env.sh` script before starting Docker Compose. This script sets the necessary `HOST_HOSTNAME` and `HOST_IP` values in a `.env` file, which is required for syncing.
 
-docker compose up -d
-```
-ℹ️ No local repository required.
+Here are the step-by-step instructions:
+
+1.  **Download necessary files:**
+    ```bash
+    curl https://raw.githubusercontent.com/fastenhealth/fasten-onprem/refs/heads/main/docker-compose-prod.yml -o docker-compose.yml
+    curl https://raw.githubusercontent.com/fastenhealth/fasten-onprem/refs/heads/main/set_env.sh -o set_env.sh
+    ```
+
+2.  **Prepare and run the environment setup script:**
+    Make the script executable and run it to generate your `.env` file. This will configure network variables required for Docker Compose.
+    ```bash
+    chmod +x ./set_env.sh
+    ./set_env.sh
+    ```
+
+3.  **Start the application:**
+    ```bash
+    docker compose up -d
+    ```
+
+**Manual Configuration (Optional)**
+
+If you prefer not to run the `set_env.sh` script, you can configure the `.env` file manually. You will need to create a `.env` file and add the following variables:
+
+1.  **Find your hostname:**
+    ```bash
+    hostname
+    ```
+2.  **Find your local IP address:**
+    *   **macOS:** `ifconfig | grep "inet " | grep -v 127.0.0.1 | cut -d' ' -f2`
+    *   **Linux:** `hostname -I | awk '{print $1}'`
+    *   **Windows (Command Prompt):** `ipconfig | findstr /i "ipv4"`
+
+3.  **Create and edit the `.env` file:**
+    Create a file named `.env` in the same directory as your `docker-compose.yml` and add the following lines, replacing `<your_hostname>` and `<your_ip_address>` with the values you found:
+    ```
+    HOST_HOSTNAME=<your_hostname>
+    HOST_IP=<your_ip_address>
+    ```
 
 ### 🧪 Develop
 
