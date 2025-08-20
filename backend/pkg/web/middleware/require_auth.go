@@ -41,23 +41,23 @@ func RequireAuth() gin.HandlerFunc {
 			return
 		}
 		
-		// Check if it's a sync token
-		if claims.TokenType == "sync" {
+		// Check if it's an access token
+		if claims.TokenType == "access" {
 			databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
-			token, err := databaseRepo.GetSyncToken(c, claims.TokenID)
+			token, err := databaseRepo.GetAccessToken(c, claims.TokenID)
 			if err != nil || token == nil {
-				c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Invalid sync token"})
+				c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Invalid access token"})
 				c.Abort()
 				return
 			}
 			if !token.IsActive || token.IsRevoked || token.IsExpired() {
-				c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Sync token is revoked, inactive, or expired"})
+				c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Access token is revoked, inactive, or expired"})
 				c.Abort()
 				return
 			}
 		}
 		
-		// Set context for both regular and sync tokens
+		// Set context for both regular and access tokens
 		c.Set(pkg.ContextKeyTypeAuthToken, tokenString)
 		c.Set(pkg.ContextKeyTypeAuthUsername, claims.Subject)
 		c.Next()

@@ -66,9 +66,9 @@ func JwtValidateFastenToken(encryptionKey string, signedToken string) (*UserRegi
 	return claims, nil
 }
 
-// JwtGenerateSyncToken generates a sync token with custom expiration and metadata
-func JwtGenerateSyncToken(user models.User, issuerSigningKey string, expiresAt time.Time, tokenID string, userAgent string) (string, error) {
-	return generateToken(user, issuerSigningKey, expiresAt, tokenID, userAgent, "sync")
+// JwtGenerateAccessToken generates an access token with custom expiration and metadata
+func JwtGenerateAccessToken(user models.User, issuerSigningKey string, expiresAt time.Time, tokenID string, userAgent string) (string, error) {
+	return generateToken(user, issuerSigningKey, expiresAt, tokenID, userAgent, "access")
 }
 
 // GetTokenIDFromToken extracts the token ID from a token

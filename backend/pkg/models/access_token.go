@@ -5,8 +5,8 @@ import (
 	"github.com/google/uuid"
 )
 
-// SyncToken represents a sync token stored in the database
-type SyncToken struct {
+// AccessToken represents an access token stored in the database
+type AccessToken struct {
 	//GORM Model
 	ModelBase
 	
@@ -47,8 +47,8 @@ type SyncToken struct {
 	Restrictions string    `json:"restrictions,omitempty"`                  // JSON string for IP restrictions, etc.
 }
 
-// SyncTokenHistory represents a history entry for sync token usage
-type SyncTokenHistory struct {
+// AccessTokenHistory represents a history entry for access token usage
+type AccessTokenHistory struct {
 	//GORM Model
 	ModelBase
 	
@@ -68,18 +68,18 @@ type SyncTokenHistory struct {
 	ErrorMsg   string    `json:"error_msg,omitempty"`
 }
 
-// SyncTokenStatus represents different token statuses
-type SyncTokenStatus string
+// AccessTokenStatus represents different token statuses
+type AccessTokenStatus string
 
 const (
-	SyncTokenStatusActive     SyncTokenStatus = "active"
-	SyncTokenStatusExpired    SyncTokenStatus = "expired"
-	SyncTokenStatusRevoked    SyncTokenStatus = "revoked"
-	SyncTokenStatusSuspended  SyncTokenStatus = "suspended"
+	AccessTokenStatusActive     AccessTokenStatus = "active"
+	AccessTokenStatusExpired    AccessTokenStatus = "expired"
+	AccessTokenStatusRevoked    AccessTokenStatus = "revoked"
+	AccessTokenStatusSuspended  AccessTokenStatus = "suspended"
 )
 
-// SyncConnection represents active sync connections
-type SyncConnection struct {
+// AccessConnection represents active access connections
+type AccessConnection struct {
 	//GORM Model  
 	ModelBase
 	
@@ -108,60 +108,60 @@ type SyncConnection struct {
 	Location      string    `json:"location,omitempty"` // Geo location if available
 }
 
-// Helper methods for SyncToken
+// Helper methods for AccessToken
 
 // IsExpired checks if the token has expired
-func (st *SyncToken) IsExpired() bool {
-	return time.Now().After(st.ExpiresAt)
+func (at *AccessToken) IsExpired() bool {
+	return time.Now().After(at.ExpiresAt)
 }
 
 // IsValid checks if the token is valid and usable
-func (st *SyncToken) IsValid() bool {
-	return st.IsActive && !st.IsRevoked && !st.IsExpired()
+func (at *AccessToken) IsValid() bool {
+	return at.IsActive && !at.IsRevoked && !at.IsExpired()
 }
 
 // GetStatus returns the current status of the token
-func (st *SyncToken) GetStatus() SyncTokenStatus {
-	if st.IsRevoked {
-		return SyncTokenStatusRevoked
+func (at *AccessToken) GetStatus() AccessTokenStatus {
+	if at.IsRevoked {
+		return AccessTokenStatusRevoked
 	}
-	if st.IsExpired() {
-		return SyncTokenStatusExpired
+	if at.IsExpired() {
+		return AccessTokenStatusExpired
 	}
-	if !st.IsActive {
-		return SyncTokenStatusSuspended
+	if !at.IsActive {
+		return AccessTokenStatusSuspended
 	}
-	return SyncTokenStatusActive
+	return AccessTokenStatusActive
 }
 
 // TimeUntilExpiration returns the duration until token expires
-func (st *SyncToken) TimeUntilExpiration() time.Duration {
-	if st.IsExpired() {
+func (at *AccessToken) TimeUntilExpiration() time.Duration {
+	if at.IsExpired() {
 		return 0
 	}
-	return st.ExpiresAt.Sub(time.Now())
+	return at.ExpiresAt.Sub(time.Now())
 }
 
 // DaysSinceLastUse returns days since token was last used
-func (st *SyncToken) DaysSinceLastUse() int {
-	if st.LastUsedAt == nil {
+func (at *AccessToken) DaysSinceLastUse() int {
+	if at.LastUsedAt == nil {
 		return -1 // Never used
 	}
-	return int(time.Since(*st.LastUsedAt).Hours() / 24)
+	return int(time.Since(*at.LastUsedAt).Hours() / 24)
 }
 
 // MarkAsUsed updates the last used timestamp and increments use count
-func (st *SyncToken) MarkAsUsed() {
+func (at *AccessToken) MarkAsUsed() {
 	now := time.Now()
-	st.LastUsedAt = &now
-	st.UseCount++
+	at.LastUsedAt = &now
+	at.UseCount++
 }
 
 // Revoke marks the token as revoked
-func (st *SyncToken) Revoke(revokedBy string) {
+func (at *AccessToken) Revoke(revokedBy string) {
 	now := time.Now()
-	st.RevokedAt = &now
-	st.RevokedBy = revokedBy
-	st.IsRevoked = true
-	st.IsActive = false
+	at.RevokedAt = &now
+	at.RevokedBy = revokedBy
+	at.IsRevoked = true
+	at.IsActive = false
 }

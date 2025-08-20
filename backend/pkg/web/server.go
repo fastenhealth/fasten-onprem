@@ -104,7 +104,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 				secure.GET("/summary", handler.GetSummary)
 				secure.GET("/summary/ips", handler.GetIPSSummary)
-				secure.GET("/ping", func(c *gin.Context) {
+				secure.GET("/health", func(c *gin.Context) {
 					c.JSON(http.StatusOK, gin.H{"success": true, "message": "Connection valid"})
 				})
 
@@ -136,20 +136,20 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.GET("/users", handler.GetUsers)
 				secure.POST("/users", handler.CreateUser)
 
-				secure.GET("/sync/initiate", handler.InitiateSync)
-				secure.GET("/sync/status", handler.GetSyncStatus)
-				secure.GET("/sync/discovery", handler.GetServerDiscovery)
+				secure.POST("/sync/initiate", handler.InitiateAccess)
+				secure.GET("/sync/status", handler.GetAccessStatus)
+				secure.GET("/sync/discovery", handler.GetSecureServerDiscovery)
 				secure.GET("/sync/data", handler.SyncData)
 				secure.GET("/sync/updates", handler.SyncDataUpdates)
 
-				// Sync token management
-				secure.GET("/sync/tokens", handler.GetSyncTokens)
-				secure.GET("/sync/history", handler.GetSyncHistory)
-				secure.GET("/sync/device-history", handler.GetDeviceSyncHistory)
-				secure.POST("/sync/revoke", handler.RevokeSync)
-				secure.POST("/sync/revoke-all", handler.RevokeAllSyncTokens)
-				secure.POST("/sync/delete", handler.DeleteSyncToken)
-				secure.POST("/sync/delete-all", handler.DeleteAllSyncTokens)
+				// Access token management
+				secure.GET("/access/tokens", handler.GetAccessTokens)
+				secure.GET("/access/history", handler.GetAccessHistory)
+				secure.GET("/access/device-history", handler.GetDeviceAccessHistory)
+				secure.POST("/access/revoke", handler.RevokeAccess)
+				secure.POST("/access/revoke-all", handler.RevokeAllAccessTokens)
+				secure.POST("/access/delete", handler.DeleteAccessToken)
+				secure.POST("/access/delete-all", handler.DeleteAllAccessTokens)
 
 				//server-side-events handler (only supported on mac/linux)
 				// TODO: causes deadlock on Windows

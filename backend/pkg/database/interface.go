@@ -83,16 +83,16 @@ type DatabaseRepository interface {
 	UnlinkResourceWithSharedNeighbors(ctx context.Context, resourceType string, resourceId string, relatedResourceType string, relatedResourceId string) (int64, error)
 	GetLastUpdatedTimestamp(ctx context.Context) (*time.Time, error)
 
-	// Sync Token Management
-	CreateSyncToken(ctx context.Context, syncToken *models.SyncToken) error
-	GetUserSyncTokens(ctx context.Context, userID uuid.UUID) ([]models.SyncToken, error)
-	GetUserSyncHistory(ctx context.Context, userID uuid.UUID, limit int) ([]models.SyncTokenHistory, error)
-	RevokeSyncToken(ctx context.Context, tokenID string, revokedBy string) error
-	RevokeAllSyncTokens(ctx context.Context, userID uuid.UUID, revokedBy string) error
-	DeleteSyncToken(ctx context.Context, tokenID string) error
-	DeleteAllSyncTokens(ctx context.Context, userID uuid.UUID) (int64, error)
-	GetSyncToken(ctx context.Context, tokenID string) (*models.SyncToken, error)
+	// Access Token Management
+	CreateAccessToken(ctx context.Context, accessToken *models.AccessToken) error
+	GetUserAccessTokens(ctx context.Context, userID uuid.UUID) ([]models.AccessToken, error)
+	GetUserAccessHistory(ctx context.Context, userID uuid.UUID, limit int) ([]models.AccessTokenHistory, error)
+	RevokeAccessToken(ctx context.Context, tokenID string, revokedBy string) error
+	RevokeAllAccessTokens(ctx context.Context, userID uuid.UUID, revokedBy string) error
+	DeleteAccessToken(ctx context.Context, tokenID string) error
+	DeleteAllAccessTokens(ctx context.Context, userID uuid.UUID) (int64, error)
+	GetAccessToken(ctx context.Context, tokenID string) (*models.AccessToken, error)
 	UpdateTokenUsage(ctx context.Context, userID uuid.UUID, tokenID string) error
-	CreateDeviceSyncHistory(ctx context.Context, history *models.DeviceSyncHistory) error
-	GetUserDeviceSyncHistory(ctx context.Context, userID uuid.UUID, limit int) ([]models.DeviceSyncHistory, error)
+	CreateDeviceAccessHistory(ctx context.Context, history *models.DeviceAccessHistory) error
+	GetUserDeviceAccessHistory(ctx context.Context, userID uuid.UUID, limit int) ([]models.DeviceAccessHistory, error)
 }

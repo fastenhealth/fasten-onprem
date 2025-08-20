@@ -226,18 +226,14 @@ func (gr *GormRepository) Migrate() error {
 			},
 		},
 		{
-			ID: "20250117131051", // add sync token models for health wallet
+			ID: "20250117131051", // add access token models for health wallet
 			Migrate: func(tx *gorm.DB) error {
-				err := tx.AutoMigrate(
-					&models.SyncToken{},
-					&models.SyncTokenHistory{},
-					&models.SyncConnection{},
-					&models.DeviceSyncHistory{},
+				return tx.AutoMigrate(
+					&models.AccessToken{},
+					&models.AccessTokenHistory{},
+					&models.AccessConnection{},
+					&models.DeviceAccessHistory{},
 				)
-				if err != nil {
-					return err
-				}
-				return nil
 			},
 		},
 	})

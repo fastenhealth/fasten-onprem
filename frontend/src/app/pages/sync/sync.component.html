@@ -8,9 +8,8 @@
           <h5 class="mb-0"><i class="fas fa-qrcode me-2"></i>Generate QR Code</h5>
         </div>
         <div class="card-body text-center">
-          <button class="btn btn-primary mb-3 w-100" (click)="generateToken()" [disabled]="isLoading">
-            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-            Generate New Token
+          <button class="btn btn-success btn-sm" (click)="generateAccessToken()" [disabled]="isLoading">
+            <i class="fas fa-plus me-1"></i>Generate Access Token
           </button>
           <div *ngIf="qrCodeUrl" class="mb-3">
             <img [src]="qrCodeUrl" alt="QR Code" class="img-fluid border rounded shadow-sm" style="max-width: 350px;">
@@ -27,23 +26,29 @@
           <h6 class="mb-0"><i class="fas fa-code me-2"></i>Raw QR Code Data</h6>
         </div>
         <div class="card-body">
-          <div class="input-group">
-            <textarea class="form-control font-monospace" rows="4" readonly [value]="qrCodeRaw"></textarea>
-            <button class="btn btn-outline-secondary" type="button" (click)="copyRawQR()">
-              <i class="fas fa-copy"></i>
-            </button>
+          <div *ngIf="qrCodeData" class="mb-3">
+            <div class="input-group">
+              <textarea class="form-control font-monospace" rows="6" readonly [value]="qrCodeData"></textarea>
+              <button class="btn btn-outline-secondary" type="button" (click)="copyRawQR()">
+                <i class="fas fa-copy"></i>
+              </button>
+            </div>
+            <small class="text-muted">You can copy and paste this data manually if needed.</small>
           </div>
-          <small class="text-muted">You can copy and paste this data manually if needed.</small>
+          <div *ngIf="!qrCodeData" class="text-muted text-center py-3">
+            <i class="fas fa-qrcode fa-2x mb-2"></i>
+            <p class="mb-0">Generate an access token to see the QR code data</p>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Right Column -->
     <div class="col-lg-7">
-      <!-- Sync Tokens Card -->
+      <!-- Access Tokens Card -->
       <div class="card shadow-sm mb-4">
         <div class="card-header d-flex justify-content-between align-items-center bg-success text-white">
-          <h5 class="mb-0"><i class="fas fa-key me-2"></i>Sync Tokens</h5>
+          <h5 class="mb-0"><i class="fas fa-key me-2"></i>Access Tokens</h5>
           <div>
             <button class="btn btn-danger btn-sm me-2" (click)="revokeAllTokens()" [disabled]="tokens.length === 0">
               <i class="fas fa-ban"></i> Revoke All
@@ -71,7 +76,7 @@
               </thead>
               <tbody>
                 <tr *ngFor="let token of tokens">
-                  <td>{{ token.name || 'Sync Token' }}</td>
+                  <td>{{ token.name || 'Access Token' }}</td>
                   <td>
                     <span class="badge"
                           [ngClass]="{
@@ -103,16 +108,17 @@
         </div>
       </div>
 
-      <!-- Sync History Card -->
+      <!-- Access Token History Card -->
       <div class="card shadow-sm mb-4">
-        <div class="card-header bg-light">
-          <h5 class="mb-0"><i class="fas fa-history me-2"></i>Sync History</h5>
+        <div class="card-header d-flex justify-content-between align-items-center bg-info text-white">
+          <h5 class="mb-0"><i class="fas fa-history me-2"></i>Access Token History</h5>
         </div>
         <div class="card-body p-0">
-          <div *ngIf="history.length === 0" class="text-muted text-center py-4">
-            No sync history available
+          <div *ngIf="deviceSyncHistory.length === 0" class="text-muted text-center py-4">
+            <i class="fas fa-history fa-3x text-muted mb-3"></i>
+            <p class="text-muted">No access token history found.</p>
           </div>
-          <div class="table-responsive" *ngIf="history.length > 0">
+          <div class="table-responsive" *ngIf="deviceSyncHistory.length > 0">
             <table class="table table-sm align-middle mb-0">
               <thead class="table-light">
                 <tr>
@@ -124,7 +130,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let event of history">
+                <tr *ngFor="let event of deviceSyncHistory">
                   <td>{{ event.eventType }}</td>
                   <td>{{ event.tokenId?.substring(0, 8) }}...</td>
                   <td>{{ formatDate(event.eventTime) }}</td>
@@ -141,14 +147,14 @@
         </div>
       </div>
 
-      <!-- Device Sync History Card -->
+      <!-- Device Access History Card -->
       <div class="card shadow-sm">
-        <div class="card-header bg-light">
-          <h5 class="mb-0"><i class="fas fa-tablet-alt me-2"></i>Device Sync History</h5>
+        <div class="card-header d-flex justify-content-between align-items-center bg-warning text-dark">
+          <h5 class="mb-0"><i class="fas fa-tablet-alt me-2"></i>Device Access History</h5>
         </div>
         <div class="card-body p-0">
           <div *ngIf="deviceSyncHistory.length === 0" class="text-muted text-center py-4">
-            No device sync history available
+            No device access history available
           </div>
           <div class="table-responsive" *ngIf="deviceSyncHistory.length > 0">
             <table class="table table-sm align-middle mb-0">
