@@ -27,7 +27,6 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v54 v54.0.0
 	github.com/google/uuid v1.5.0
-	github.com/huin/goupnp v1.3.0
 	github.com/iancoleman/strcase v0.2.0
 	github.com/johnfercher/maroto/v2 v2.3.1
 	github.com/lestrrat-go/jwx/v2 v2.0.11
@@ -69,7 +68,6 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
 	golang.org/x/image v0.18.0 // indirect
-	golang.org/x/sync v0.13.0 // indirect
 )
 
 require (

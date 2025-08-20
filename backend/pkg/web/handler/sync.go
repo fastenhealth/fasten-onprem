@@ -425,9 +425,9 @@ func getServerAddresses(c *gin.Context, appConfig config.Interface) []Connection
 	}
 
 	// Priority 1: UPnP discovered IP
-	if upnpHost := appConfig.GetString("upnp.local_ip"); upnpHost != "" {
-		connections = append(connections, Connection{Host: upnpHost, Port: port, Protocol: "https"})
-	}
+	// if upnpHost := appConfig.GetString("upnp.local_ip"); upnpHost != "" {
+	// 	connections = append(connections, Connection{Host: upnpHost, Port: port, Protocol: "https"})
+	// }
 
 	// Priority 2: Environment variable override (deprecated, but kept for compatibility)
 	// if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {

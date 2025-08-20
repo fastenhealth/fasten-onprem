@@ -88,11 +88,4 @@ The system supports syncing with a mobile client (e.g., "Health Wallet") through
     5.  The mobile app uses the information from the QR code to connect to the Fasten On-Prem server and start syncing data.
 
 *   **Usability Improvements:**
-    *   The application now automatically discovers the host's local IP address at startup using UPnP and makes it available to the API handlers. This is crucial for ensuring a mobile client can connect to the server on the local network without manual configuration.
-
-*   **Automatic Port Forwarding (UPnP):**
-    *   **Backend:** The Fasten On-Prem backend can automatically configure port forwarding on a user's router using UPnP. This is implemented in the `startUpnpServer` function in `backend/cmd/fasten/fasten.go`.
-    *   **Library:** It uses the `github.com/huin/goupnp` library to interact with UPnP-enabled routers.
-    *   **Functionality:** The implementation discovers the router's external IP address and attempts to create a TCP port mapping from the external port to the internal port the application is running on.
-    *   **Configuration:** The feature can be enabled or disabled via the `upnp.enabled` setting in `config.yaml`.
-    *   **Resilience:** Failures in the UPnP process (e.g., router not found, port mapping not supported) are logged as non-fatal warnings, allowing the application to continue running without interruption. This makes the feature a convenience rather than a requirement.
+    *   The application previously automatically discovered the host's local IP address at startup using UPnP and made it available to the API handlers. This functionality has been removed.
