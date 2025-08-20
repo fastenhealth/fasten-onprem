@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
 
@@ -8,6 +8,8 @@ import { FastenApiService } from 'src/app/services/fasten-api.service';
   styleUrls: ['./image-ocr.component.scss'],
 })
 export class ImageOcrComponent {
+  @Input() selectedFiles: File[] | null = null;
+
   imageFiles: File[] = [];
   imagePreviews: SafeUrl[] = [];
   currentPageIndex = 0;
@@ -20,11 +22,18 @@ export class ImageOcrComponent {
     private fastenApiService: FastenApiService
   ) {}
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files) return;
+  ngOnInit(): void {
+    if (!this.selectedFiles || this.selectedFiles.length === 0) {
+      this.error = 'No files selected.';
+      return;
+    }
+    this.loadFiles();
+  }
 
-    const files = Array.from(input.files);
+  loadFiles(): void {
+    const files = Array.from(this.selectedFiles).filter((file) =>
+      file.type.startsWith('image/')
+    );
 
     // Validate
     if (files.length > 30) {

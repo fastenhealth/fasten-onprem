@@ -13,11 +13,57 @@ export class ResourceOcrComponent implements OnInit {
 
   ngOnInit(): void {
     this.settingsForm = this.fb.group({
-      mode: ['pdf', Validators.required], // 'pdf' | 'image' | 'capture'
-      maxPages: [
-        10,
-        [Validators.required, Validators.min(1), Validators.max(30)],
-      ],
+      mode: [null],
+      file: [null],
     });
+  }
+
+  // 📂 Drag & drop file
+  onFileDrop(event: DragEvent) {
+    event.preventDefault();
+    const file = event.dataTransfer?.files?.[0];
+    if (file) {
+      this.detectFileType(file);
+    }
+  }
+
+  // Allow drop zone
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+  }
+
+  // 📂 Manual file select
+  onFileSelect(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      this.detectFileType(file);
+    }
+  }
+
+  // 📸 Camera button
+  onCameraClick() {
+    this.settingsForm.value.mode = 'capture';
+  }
+
+  // 🔍 Detect PDF vs Image
+  private detectFileType(file: File) {
+    if (file.type === 'application/pdf') {
+      this.settingsForm.patchValue({
+        mode: 'pdf',
+        file: file,
+      });
+    } else if (file.type.startsWith('image/')) {
+      this.settingsForm.patchValue({
+        mode: 'image',
+        file: file,
+      });
+    } else {
+      console.warn('Unsupported file type:', file.type);
+      this.settingsForm.patchValue({
+        mode: null,
+        file: null,
+      });
+    }
   }
 }

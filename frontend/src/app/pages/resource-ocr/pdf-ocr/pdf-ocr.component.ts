@@ -12,15 +12,16 @@ GlobalWorkerOptions.workerSrc = '/assets/pdfjs/pdf.worker.min.js';
   styleUrls: ['./pdf-ocr.component.scss'],
 })
 export class PdfOcrComponent implements OnInit {
-  @Input() maxPages = 30;
+  @Input() selectedFiles: File | null = null;
 
-  pdfFile: File | null = null;
   totalPages: number | null = null;
   error: string | null = null;
   currentPageIndex = 0;
   pageImages: SafeUrl[] = [];
   ocrResults: string[] = [];
   pageBlobs: Blob[] = [];
+  maxPages = 30; // Default max pages
+  scannedPages: number[] = [];
 
   isProcessing = false;
   scanningStarted = false;
@@ -30,20 +31,15 @@ export class PdfOcrComponent implements OnInit {
     private fastenApiService: FastenApiService
   ) {}
 
-  ngOnInit(): void {}
-
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input?.files?.[0];
-    if (file && file.type === 'application/pdf') {
-      this.pdfFile = file;
-      this.loadPdf(file);
-    } else {
-      this.error = 'Please select a valid PDF file.';
+  ngOnInit(): void {
+    if (!this.selectedFiles) {
+      console.error('No file input provided for PDF OCR component.');
+      return;
     }
+    this.loadPdf(this.selectedFiles);
   }
 
-  async loadPdf(file: File) {
+  async loadPdf(incomingFile: File) {
     this.pageImages = [];
     this.pageBlobs = [];
     this.error = null;
@@ -85,7 +81,7 @@ export class PdfOcrComponent implements OnInit {
         this.pageImages.push(this.sanitizer.bypassSecurityTrustUrl(url));
       }
     };
-    reader.readAsArrayBuffer(file);
+    reader.readAsArrayBuffer(incomingFile);
   }
 
   async sendCurrentPageToOcr() {
@@ -110,6 +106,8 @@ export class PdfOcrComponent implements OnInit {
         this.isProcessing = false;
       },
     });
+
+    this.scannedPages.push(this.currentPageIndex);
   }
 
   startScanning() {

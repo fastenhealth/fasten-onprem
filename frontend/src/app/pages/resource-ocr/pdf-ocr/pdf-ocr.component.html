@@ -1,13 +1,8 @@
-<div class="mb-3">
-    <label class="form-label">Upload PDF</label>
-    <input type="file" class="form-control" (change)="onFileSelected($event)" accept=".pdf" />
-</div>
-
 <!-- 📉 Error -->
 <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
 <!-- ✅ File Summary -->
-<div *ngIf="pdfFile && totalPages !== null && !scanningStarted">
+<div *ngIf="selectedFiles && totalPages !== null && !scanningStarted">
     <p>Pages detected: {{ totalPages }}</p>
     <button class="btn btn-primary" (click)="startScanning()">Start Scanning</button>
 </div>
@@ -42,7 +37,7 @@
                 </button>
             </div>
 
-            <button class="btn btn-success" (click)="sendCurrentPageToOcr()" [disabled]="isProcessing">
+            <button class="btn btn-success" (click)="sendCurrentPageToOcr()" [disabled]="isProcessing || scannedPages.includes(currentPageIndex)">
                 <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
                 Send to OCR
             </button>
