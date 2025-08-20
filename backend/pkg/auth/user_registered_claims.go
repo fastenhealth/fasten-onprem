@@ -8,6 +8,5 @@ type UserRegisteredClaims struct {
 
 	// Optional fields for access tokens
 	TokenID   string `json:"token_id,omitempty"`
-	UserAgent string `json:"user_agent,omitempty"`
 	TokenType string `json:"token_type,omitempty"`
 }
