@@ -10,19 +10,20 @@
                 <!-- 📂 Drag & Drop Upload -->
                 <div class="upload-dropzone border border-2 rounded p-4 text-center mb-3" (drop)="onFileDrop($event)"
                     (dragover)="onDragOver($event)">
+                    <i class="fas fa-upload fa-lg" style="color: #FFFFFF;"></i>
                     <p class="mb-2">Drag & drop your file here or choose an option below</p>
                     <input type="file" id="fileInput" hidden (change)="onFileSelect($event)" #fileInput />
                 </div>
 
                 <!-- 📸 Action Buttons -->
                 <div class="d-flex gap-3 mb-4 justify-content-center">
-                    <button class="btn btn-outline-secondary d-flex align-items-center mr-4" type="button"
+                    <button class="btn btn-outline-secondary d-flex align-items-center mr-2" type="button"
                         (click)="onCameraClick()">
-                        <i class="bi bi-camera"></i> Camera
+                        <i class="fas fa-camera mr-2"></i> Use Camera
                     </button>
                     <button class="btn btn-outline-success d-flex align-items-center" type="button"
                         (click)="fileInput.click()">
-                        <i class="bi bi-upload me-2"></i> Upload Files
+                        <i class="fas fa-file mr-2"></i> Choose Files
                     </button>
                 </div>
 
