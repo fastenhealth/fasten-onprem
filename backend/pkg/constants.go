@@ -24,7 +24,6 @@ const (
 
 	ContextKeyTypeAuthUsername    string = "AUTH_USERNAME"
 	ContextKeyTypeAuthToken       string = "AUTH_TOKEN"
-	ContextKeyTypeToken           string = "TOKEN"
 	ContextKeyTypeBackgroundJobID string = "BACKGROUND_JOB_ID"
 
 	FhirResourceTypeComposition string = "Composition"
