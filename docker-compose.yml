@@ -10,6 +10,7 @@ services:
       args:
         - FASTEN_ENV=prod
 #        - FASTEN_ENV=sandbox
+    hostname: ${HOST_HOSTNAME}
     ports:
       - "9090:8080"
     volumes:
