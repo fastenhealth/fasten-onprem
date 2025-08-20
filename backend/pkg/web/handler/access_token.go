@@ -2,6 +2,7 @@ package handler
 
 import (
 	"crypto/rand"
+	// "os"
 	"encoding/hex"
 	"fmt"
 	"net"
@@ -175,13 +176,19 @@ func InitiateAccess(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data": gin.H{
-			"token":   accessToken,
-			"expiresAt": expiresAt.Format(time.RFC3339),
-			"token_info": gin.H{
-				"type": "access",
-				"scopes": "access:read,access:write",
-				"expires_in": "24h",
-			},
+			"token": accessToken,
+			// "token_details": gin.H{
+			// 	"token_id":     dbAccessToken.TokenID,
+			// 	"name":         dbAccessToken.Name,
+			// 	"description":  dbAccessToken.Description,
+			// 	"issued_at":    dbAccessToken.IssuedAt.Format(time.RFC3339),
+			// 	"expires_at":   dbAccessToken.ExpiresAt.Format(time.RFC3339),
+			// 	"last_used_at": dbAccessToken.LastUsedAt,
+			// 	"is_active":    dbAccessToken.IsActive,
+			// 	"is_revoked":   dbAccessToken.IsRevoked,
+			// 	"use_count":    dbAccessToken.UseCount,
+			// 	"status":       dbAccessToken.GetStatus(),
+			// },
 		},
 	})
 }
