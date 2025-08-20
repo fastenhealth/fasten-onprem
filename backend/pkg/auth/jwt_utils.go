@@ -11,7 +11,7 @@ import (
 )
 
 // generateToken is a helper to generate JWT tokens with flexible claims
-func generateToken(user models.User, issuerSigningKey string, expiresAt time.Time, tokenID, userAgent, tokenType string) (string, error) {
+func generateToken(user models.User, issuerSigningKey string, expiresAt time.Time, tokenID, tokenType string) (string, error) {
 	if len(strings.TrimSpace(issuerSigningKey)) == 0 {
 		return "", fmt.Errorf("issuer signing key cannot be empty")
 	}
@@ -28,7 +28,6 @@ func generateToken(user models.User, issuerSigningKey string, expiresAt time.Tim
 			Role:     user.Role,
 		},
 		TokenID:   tokenID,
-		UserAgent: userAgent,
 		TokenType: tokenType,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -37,7 +36,7 @@ func generateToken(user models.User, issuerSigningKey string, expiresAt time.Tim
 
 // JwtGenerateFastenTokenFromUser generates a standard user token
 func JwtGenerateFastenTokenFromUser(user models.User, issuerSigningKey string) (string, error) {
-	return generateToken(user, issuerSigningKey, time.Now().Add(1*time.Hour), "", "", "")
+	return generateToken(user, issuerSigningKey, time.Now().Add(1*time.Hour), "", "")
 }
 
 func JwtValidateFastenToken(encryptionKey string, signedToken string) (*UserRegisteredClaims, error) {
@@ -67,8 +66,8 @@ func JwtValidateFastenToken(encryptionKey string, signedToken string) (*UserRegi
 }
 
 // JwtGenerateAccessToken generates an access token with custom expiration and metadata
-func JwtGenerateAccessToken(user models.User, issuerSigningKey string, expiresAt time.Time, tokenID string, userAgent string) (string, error) {
-	return generateToken(user, issuerSigningKey, expiresAt, tokenID, userAgent, "access")
+func JwtGenerateAccessToken(user models.User, issuerSigningKey string, expiresAt time.Time, tokenID string) (string, error) {
+	return generateToken(user, issuerSigningKey, expiresAt, tokenID, "access")
 }
 
 // GetTokenIDFromToken extracts the token ID from a token

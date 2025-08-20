@@ -37,14 +37,11 @@ func InitiateAccess(c *gin.Context) {
 	rand.Read(tokenIDBytes)
 	tokenID := hex.EncodeToString(tokenIDBytes)
 
-	// Get client info
-	userAgent := c.GetHeader("User-Agent")
-	
 	// Generate access token with 24-hour expiration
 	now := time.Now()
 	expiresAt := now.Add(24 * time.Hour)
 	
-	accessToken, err := auth.JwtGenerateAccessToken(*currentUser, appConfig.GetString("jwt.issuer.key"), expiresAt, tokenID, userAgent)
+	accessToken, err := auth.JwtGenerateAccessToken(*currentUser, appConfig.GetString("jwt.issuer.key"), expiresAt, tokenID)
 	if err != nil {
 		log.Errorf("Failed to generate access token: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
