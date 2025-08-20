@@ -40,7 +40,6 @@ func (gr *GormRepository) CreateAccessToken(ctx context.Context, accessToken *mo
 		UserID:    accessToken.UserID,
 		EventType: "created",
 		EventTime: accessToken.IssuedAt,
-		UserAgent: accessToken.UserAgent,
 	}
 
 	return gr.CreateAccessTokenHistory(ctx, history)
@@ -138,7 +137,6 @@ func (gr *GormRepository) RevokeAccessToken(ctx context.Context, tokenID string,
 		UserID:    token.UserID,
 		EventType: "revoked",
 		EventTime: time.Now(),
-		UserAgent: token.UserAgent,
 		Metadata:  fmt.Sprintf("revoked_by:%s", revokedBy),
 	}
 

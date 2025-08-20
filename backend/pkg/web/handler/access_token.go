@@ -151,22 +151,16 @@ func InitiateAccess(c *gin.Context) {
 
 	// Store token metadata in database  
 	tokenHash := database.HashToken(accessToken)
-	serverAddress, serverPort := getServerAddress(c, appConfig)
 	
 	dbAccessToken := &models.AccessToken{
 		UserID:      currentUser.ID,
 		TokenID:     tokenID,
 		TokenHash:   tokenHash,
-		Name:        fmt.Sprintf("Mobile Access - %s", time.Now().Format("Jan 2, 2006")),
-		Description: "Access token for Health Wallet mobile app",
-		UserAgent:   userAgent,
+		Name:        fmt.Sprintf("Access Token - %s", time.Now().Format("Jan 2, 2006")),
 		IssuedAt:    now,
 		ExpiresAt:   expiresAt,
 		IsActive:    true,
 		IsRevoked:   false,
-		ServerName:  fmt.Sprintf("Fasten Health Server (%s:%s)", serverAddress, serverPort),
-		ServerHost:  serverAddress,
-		ServerPort:  serverPort,
 		Scopes:      "access:read,access:write",
 	}
 
@@ -225,11 +219,6 @@ func GetAccessTokens(c *gin.Context) {
 			"is_revoked":   token.IsRevoked,
 			"use_count":    token.UseCount,
 			"status":       token.GetStatus(),
-			"server_info": gin.H{
-				"name": token.ServerName,
-				"host": token.ServerHost,
-				"port": token.ServerPort,
-			},
 		})
 	}
 
@@ -267,7 +256,6 @@ func GetAccessHistory(c *gin.Context) {
 			"token_id":   entry.TokenID,
 			"event_type": entry.EventType,
 			"event_time": entry.EventTime.Format(time.RFC3339),
-			"user_agent": entry.UserAgent,
 			"success":    entry.Success,
 			"error_msg":  entry.ErrorMsg,
 		})

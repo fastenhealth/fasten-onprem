@@ -21,7 +21,6 @@ type AccessToken struct {
 	// Token metadata
 	Name        string    `json:"name"`                                    // User-friendly name
 	Description string    `json:"description"`                             // Optional description
-	UserAgent   string    `json:"user_agent"`                              // Device/app that created the token
 	
 	// Token lifecycle
 	IssuedAt     time.Time  `json:"issued_at"`
@@ -33,11 +32,6 @@ type AccessToken struct {
 	// Status tracking
 	IsActive     bool   `json:"is_active" gorm:"default:true"`
 	IsRevoked    bool   `json:"is_revoked" gorm:"default:false"`
-	
-	// Connection metadata
-	ServerName   string `json:"server_name"`
-	ServerHost   string `json:"server_host"`
-	ServerPort   string `json:"server_port"`
 	
 	// Usage statistics
 	UseCount     int64     `json:"use_count" gorm:"default:0"`
@@ -60,7 +54,6 @@ type AccessTokenHistory struct {
 	// Event details
 	EventType  string    `json:"event_type"`  // created, used, revoked, expired
 	EventTime  time.Time `json:"event_time"`
-	UserAgent  string    `json:"user_agent"`
 	
 	// Additional metadata
 	Metadata   string    `json:"metadata,omitempty"` // JSON string for additional event data
