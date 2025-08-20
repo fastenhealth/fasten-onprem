@@ -8,6 +8,7 @@ import (
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/auth"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
@@ -379,3 +380,31 @@ func SyncDataUpdates(c *gin.Context) {
 	})
 }
 
+// GetSecureServerDiscovery returns minimal server connection information for mobile apps
+func GetSecureServerDiscovery(c *gin.Context) {
+	appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
+
+	// Get server address and port
+	serverAddress, serverPort := getServerAddress(c, appConfig)
+	
+	// Return minimal connection info
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data": gin.H{
+			"connection": gin.H{
+				"host": serverAddress,
+				"port": serverPort,
+				"protocol": "https", // Always use HTTPS in production
+			},
+			"endpoints": gin.H{
+				"sync_data": "/api/secure/sync/data",
+				"sync_updates": "/api/secure/sync/updates",
+				"access_tokens": "/api/secure/access/tokens",
+			},
+			"security": gin.H{
+				"requires_auth": true,
+				"token_type": "Bearer",
+			},
+		},
+	})
+}
