@@ -86,7 +86,6 @@ type DatabaseRepository interface {
 	// Access Token Management
 	CreateAccessToken(ctx context.Context, accessToken *models.AccessToken) error
 	GetUserAccessTokens(ctx context.Context, userID uuid.UUID) ([]models.AccessToken, error)
-	GetUserAccessHistory(ctx context.Context, userID uuid.UUID, limit int) ([]models.AccessTokenHistory, error)
 	RevokeAccessToken(ctx context.Context, tokenID string, revokedBy string) error
 	RevokeAllAccessTokens(ctx context.Context, userID uuid.UUID, revokedBy string) error
 	DeleteAccessToken(ctx context.Context, tokenID string) error
@@ -94,5 +93,4 @@ type DatabaseRepository interface {
 	GetAccessToken(ctx context.Context, tokenID string) (*models.AccessToken, error)
 	UpdateTokenUsage(ctx context.Context, userID uuid.UUID, tokenID string) error
 	CreateDeviceAccessHistory(ctx context.Context, history *models.DeviceAccessHistory) error
-	GetUserDeviceAccessHistory(ctx context.Context, userID uuid.UUID, limit int) ([]models.DeviceAccessHistory, error)
 }
