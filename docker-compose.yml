@@ -11,6 +11,8 @@ services:
         - FASTEN_ENV=prod
 #        - FASTEN_ENV=sandbox
     hostname: ${HOST_HOSTNAME}
+    environment:
+      - HOST_IP=${HOST_IP}
     ports:
       - "9090:8080"
     volumes:

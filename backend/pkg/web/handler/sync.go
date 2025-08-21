@@ -429,10 +429,10 @@ func getServerAddresses(c *gin.Context, appConfig config.Interface) []Connection
 	// 	connections = append(connections, Connection{Host: upnpHost, Port: port, Protocol: "https"})
 	// }
 
-	// Priority 2: Environment variable override (deprecated, but kept for compatibility)
-	// if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {
-	// 	connections = append(connections, Connection{Host: envHost, Port: port, Protocol: "https"})
-	// }
+	// Priority 2: Environment variable override
+	if envHost := os.Getenv("HOST_IP"); envHost != "" {
+		connections = append(connections, Connection{Host: envHost, Port: port, Protocol: "https"})
+	}
 
 	// Priority 3: Headers from reverse proxies
 	// X-Forwarded-Host can contain a host:port pair or just a host.
@@ -449,19 +449,6 @@ func getServerAddresses(c *gin.Context, appConfig config.Interface) []Connection
 		connections = append(connections, Connection{Host: realIP, Port: port, Protocol: "https"})
 	}
 
-	// Priority 3: All private, non-loopback IP addresses
-	if addrs, err := net.InterfaceAddrs(); err == nil {
-		for _, addr := range addrs {
-			if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-				if ip := ipnet.IP.To4(); ip != nil && ip.IsPrivate() {
-					connections = append(connections, Connection{Host: ip.String(), Port: port, Protocol: "https"})
-				}
-			}
-		}
-	}
-
-	// Final fallback to localhost
-	connections = append(connections, Connection{Host: "localhost", Port: port, Protocol: "https"})
 
 	return uniqueConnections(connections)
 }
