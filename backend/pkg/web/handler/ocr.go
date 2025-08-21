@@ -2,9 +2,12 @@ package handler
 
 import (
 	"bytes"
+	"encoding/json"
 	"io"
 	"mime/multipart"
 	"net/http"
+	"regexp"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -78,11 +81,100 @@ func OcrFileUploadHandler(c *gin.Context) {
 	ocrResponseBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logger.Errorln("Error reading response from OCR service:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to read ocr response"})
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to read OCR response"})
 		return
 	}
 
-	// 8. Proxy the response from the OCR service directly to the original client.
-	// This forwards the status code, content-type, and body.
-	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), ocrResponseBody)
+	// 8. Convert OCR response to string
+	ocrText := string(ocrResponseBody)
+
+	// 9. Extract structured medical report data
+	jsonData, err := extractMedicalReportData(ocrText)
+	if err != nil {
+		logger.Errorln("Error extracting medical report data:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to extract medical data"})
+		return
+	}
+
+	// 10. Return structured JSON to the client
+	c.Data(http.StatusOK, "application/json", jsonData)
+}
+
+type MedicalReport struct {
+	PatientName string `json:"patientName,omitempty"`
+	DoctorName  string `json:"doctorName,omitempty"`
+	Hospital    string `json:"hospital,omitempty"`
+	Date        string `json:"date,omitempty"`
+}
+
+// --- Helpers ---
+func cleanText(text string) string {
+	t := strings.TrimSpace(text)
+	t = regexp.MustCompile(`^\s*[:\-]?\s*`).ReplaceAllString(t, "")
+	t = regexp.MustCompile(`NRIC.*$`).ReplaceAllString(t, "")
+	t = regexp.MustCompile(`\s{2,}`).ReplaceAllString(t, " ")
+	return strings.TrimSpace(t)
+}
+
+func fallbackAfterKeyword(text string, keywordPattern string) string {
+	lines := strings.Split(text, "\n")
+	re := regexp.MustCompile(keywordPattern)
+
+	for i, line := range lines {
+		if re.MatchString(line) {
+			parts := strings.SplitN(line, ":", 2)
+			if len(parts) > 1 && strings.TrimSpace(parts[1]) != "" {
+				return strings.TrimSpace(parts[1])
+			}
+			if i+1 < len(lines) && len(strings.TrimSpace(lines[i+1])) > 2 {
+				return strings.TrimSpace(lines[i+1])
+			}
+		}
+	}
+	return ""
+}
+
+func extractMedicalReportData(ocrText string) ([]byte, error) {
+	result := MedicalReport{}
+
+	// --- Regex-based extraction ---
+	patientRe := regexp.MustCompile(`(?i)(?:Full\s+name\s+of\s+patient|Patient\s*name|Patient)\s*:\s*([^\n\r]+)`)
+	if match := patientRe.FindStringSubmatch(ocrText); len(match) > 1 {
+		result.PatientName = cleanText(match[1])
+	}
+
+	doctorRe := regexp.MustCompile(`(?i)(?:Full\s+name\s+of\s+doctor|Doctor\s*name|Doctor)\s*:\s*([^\n\r]+)`)
+	if match := doctorRe.FindStringSubmatch(ocrText); len(match) > 1 {
+		result.DoctorName = cleanText(match[1])
+	}
+
+	hospitalRe := regexp.MustCompile(`(?i)(?:Hospital|Clinic)(?:\s*\/\s*Clinic)?(?:\s*name\s*and\s*address)?\s*:\s*([^\n\r]+)`)
+	if match := hospitalRe.FindStringSubmatch(ocrText); len(match) > 1 {
+		result.Hospital = cleanText(match[1])
+	}
+
+	dateRe := regexp.MustCompile(`(?i)(\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b)`)
+	if match := dateRe.FindStringSubmatch(ocrText); len(match) > 1 {
+		result.Date = strings.TrimSpace(match[1])
+	}
+
+	// --- Fallback heuristics ---
+	if result.PatientName == "" {
+		if fallback := fallbackAfterKeyword(ocrText, `(?i)\bPatient\b`); fallback != "" {
+			result.PatientName = cleanText(fallback)
+		}
+	}
+	if result.DoctorName == "" {
+		if fallback := fallbackAfterKeyword(ocrText, `(?i)\bDoctor\b`); fallback != "" {
+			result.DoctorName = cleanText(fallback)
+		}
+	}
+	if result.Hospital == "" {
+		if fallback := fallbackAfterKeyword(ocrText, `(?i)\b(Hospital|Clinic)\b`); fallback != "" {
+			result.Hospital = cleanText(fallback)
+		}
+	}
+
+	// Return JSON
+	return json.MarshalIndent(result, "", "  ")
 }

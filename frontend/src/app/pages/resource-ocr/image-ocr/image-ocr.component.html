@@ -7,10 +7,17 @@
 
     <div class="row">
         <!-- Image Preview (Left) -->
-        <div class="col-md-6 mb-3">
-            <img [src]="imagePreviews[currentPageIndex]" class="img-fluid border rounded"
-                style="max-height: 400px; object-fit: contain;" />
+        <div class="col-md-6 mb-3 d-flex flex-column align-items-center">
+            <div class="col-md-6 mb-3">
+                <img [src]="imagePreviews[currentPageIndex]" class="img-fluid border rounded"
+                    style="max-height: 400px; object-fit: contain;" />
+            </div>
+            <button class="btn btn-success" (click)="sendCurrentImageToOcr()" [disabled]="isProcessing">
+                <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
+                Send to OCR
+            </button>
         </div>
+
 
         <!-- OCR Textarea (Right) -->
         <div class="col-md-6 mb-3">
@@ -29,11 +36,6 @@
         <button class="btn btn-outline-secondary" (click)="goToNextImage()"
             [disabled]="currentPageIndex === imageFiles.length - 1">
             Next →
-        </button>
-
-        <button class="btn btn-success" (click)="sendCurrentImageToOcr()" [disabled]="isProcessing">
-            <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
-            Send to OCR
         </button>
     </div>
 </div>

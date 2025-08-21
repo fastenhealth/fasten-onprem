@@ -12,8 +12,15 @@
     <div class="col-md-4">
         <!-- 📷 Smaller Image Preview -->
         <h6 class="text-muted mb-2">Page {{ currentPageIndex + 1 }} of {{ pageImages.length }}</h6>
-        <img [src]="pageImages[currentPageIndex]" class="img-thumbnail mb-3"
-            style="max-width: 100%; height: auto; max-height: 300px; object-fit: contain" />
+        <div class="d-flex flex-column align-items-center">
+            <img [src]="pageImages[currentPageIndex]" class="img-thumbnail mb-3"
+                style="max-width: 100%; height: auto; max-height: 300px; object-fit: contain" />
+            <button class="btn btn-success mt-2" (click)="sendCurrentPageToOcr()"
+                [disabled]="isProcessing || scannedPages.includes(currentPageIndex)">
+                <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
+                Send to OCR
+            </button>
+        </div>
     </div>
 
     <div class="col-md-8 d-flex flex-column">
@@ -36,11 +43,6 @@
                     Next →
                 </button>
             </div>
-
-            <button class="btn btn-success" (click)="sendCurrentPageToOcr()" [disabled]="isProcessing || scannedPages.includes(currentPageIndex)">
-                <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
-                Send to OCR
-            </button>
         </div>
     </div>
 </div>
