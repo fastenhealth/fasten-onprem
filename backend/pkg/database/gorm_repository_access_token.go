@@ -205,7 +205,21 @@ func (gr *GormRepository) GetAccessTokenHistory(ctx context.Context, tokenID str
 	return history, nil
 }
 
+func (gr *GormRepository) GetUserAccessHistory(ctx context.Context, userID uuid.UUID, limit int) ([]models.AccessTokenHistory, error) {
+	var history []models.AccessTokenHistory
+	result := gr.GormClient.WithContext(ctx).
+		Joins("JOIN access_tokens ON access_token_histories.token_id = access_tokens.token_id").
+		Where("access_tokens.user_id = ?", userID).
+		Order("access_token_histories.event_time DESC").
+		Limit(limit).
+		Find(&history)
 
+	if result.Error != nil {
+		return nil, fmt.Errorf("failed to get user access history: %w", result.Error)
+	}
+
+	return history, nil
+}
 
 // Access Connections
 
@@ -281,7 +295,21 @@ func (gr *GormRepository) CreateDeviceAccessHistory(ctx context.Context, history
 	return nil
 }
 
+func (gr *GormRepository) GetUserDeviceAccessHistory(ctx context.Context, userID uuid.UUID, limit int) ([]models.DeviceAccessHistory, error) {
+	var history []models.DeviceAccessHistory
+	result := gr.GormClient.WithContext(ctx).
+		Joins("JOIN access_tokens ON device_access_histories.token_id = access_tokens.token_id").
+		Where("access_tokens.user_id = ?", userID).
+		Order("device_access_histories.event_time DESC").
+		Limit(limit).
+		Find(&history)
 
+	if result.Error != nil {
+		return nil, fmt.Errorf("failed to get user device access history: %w", result.Error)
+	}
+
+	return history, nil
+}
 
 // Utility functions
 

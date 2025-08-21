@@ -108,7 +108,82 @@
         </div>
       </div>
 
+      <!-- Access Token History Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center bg-info text-white">
+          <h5 class="mb-0"><i class="fas fa-history me-2"></i>Access Token History</h5>
+        </div>
+        <div class="card-body p-0">
+          <div *ngIf="deviceSyncHistory.length === 0" class="text-muted text-center py-4">
+            <i class="fas fa-history fa-3x text-muted mb-3"></i>
+            <p class="text-muted">No access token history found.</p>
+          </div>
+          <div class="table-responsive" *ngIf="deviceSyncHistory.length > 0">
+            <table class="table table-sm align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Event</th>
+                  <th>Token</th>
+                  <th>Time</th>
+                  <th>IP</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let event of deviceSyncHistory">
+                  <td>{{ event.eventType }}</td>
+                  <td>{{ event.tokenId?.substring(0, 8) }}...</td>
+                  <td>{{ formatDate(event.eventTime) }}</td>
+                  <td>{{ event.ipAddress || '-' }}</td>
+                  <td>
+                    <span class="badge" [class.bg-success]="event.success" [class.bg-danger]="!event.success">
+                      {{ event.success ? 'Success' : 'Failed' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
+      <!-- Device Access History Card -->
+      <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center bg-warning text-dark">
+          <h5 class="mb-0"><i class="fas fa-tablet-alt me-2"></i>Device Access History</h5>
+        </div>
+        <div class="card-body p-0">
+          <div *ngIf="deviceSyncHistory.length === 0" class="text-muted text-center py-4">
+            No device access history available
+          </div>
+          <div class="table-responsive" *ngIf="deviceSyncHistory.length > 0">
+            <table class="table table-sm align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Device</th>
+                  <th>Token</th>
+                  <th>Time</th>
+                  <th>IP</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let event of deviceSyncHistory">
+                  <td>{{ event.deviceId }}</td>
+                  <td>{{ event.tokenId?.substring(0, 8) }}...</td>
+                  <td>{{ formatDate(event.eventTime) }}</td>
+                  <td>{{ event.ipAddress || '-' }}</td>
+                  <td>
+                    <span class="badge" [class.bg-success]="event.success" [class.bg-danger]="!event.success">
+                      {{ event.success ? 'Success' : 'Failed' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

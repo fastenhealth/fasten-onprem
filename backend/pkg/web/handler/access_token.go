@@ -135,7 +135,86 @@ func GetAccessTokens(c *gin.Context) {
 	})
 }
 
+// GetAccessHistory returns access token history for current user
+func GetAccessHistory(c *gin.Context) {
+	log := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
+	currentUser, err := databaseRepo.GetCurrentUser(c)
+	if err != nil {
+		log.Errorf("Failed to get current user: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to get current user"})
+		return
+	}
+
+	limit := 100 // Default limit
+	history, err := databaseRepo.GetUserAccessHistory(c, currentUser.ID, limit)
+	if err != nil {
+		log.Errorf("Failed to get access history: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to get access history"})
+		return
+	}
+
+	var responseHistory []gin.H
+	for _, entry := range history {
+		responseHistory = append(responseHistory, gin.H{
+			"token_id":   entry.TokenID,
+			"event_type": entry.EventType,
+			"event_time": entry.EventTime.Format(time.RFC3339),
+			"success":    entry.Success,
+			"error_msg":  entry.ErrorMsg,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data": gin.H{
+			"history": responseHistory,
+		},
+	})
+}
+
+// GetDeviceAccessHistory returns device access history for current user
+func GetDeviceAccessHistory(c *gin.Context) {
+	log := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	currentUser, err := databaseRepo.GetCurrentUser(c)
+	if err != nil {
+		log.Errorf("Failed to get current user: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to get current user"})
+		return
+	}
+
+	limit := 100 // Default limit
+	history, err := databaseRepo.GetUserDeviceAccessHistory(c, currentUser.ID, limit)
+	if err != nil {
+		log.Errorf("Failed to get device access history: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to get device access history"})
+		return
+	}
+
+	var responseHistory []gin.H
+	for _, entry := range history {
+		responseHistory = append(responseHistory, gin.H{
+			"device_id":      entry.DeviceID,
+			"client_name":    entry.ClientName,
+			"client_version": entry.ClientVersion,
+			"platform":       entry.Platform,
+			"connected_at":   entry.ConnectedAt.Format(time.RFC3339),
+			"last_seen":      entry.LastSeen.Format(time.RFC3339),
+			"sync_count":     entry.SyncCount,
+			"data_synced":    entry.DataSynced,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data": gin.H{
+			"history": responseHistory,
+		},
+	})
+}
 
 // RevokeAccess revokes access tokens
 func RevokeAccess(c *gin.Context) {
@@ -310,6 +389,8 @@ func GetAccessStatus(c *gin.Context) {
 			"status": "active",
 			"endpoints": gin.H{
 				"tokens":     "/api/secure/access/tokens",
+				"history":    "/api/secure/access/history",
+				"devices":    "/api/secure/access/device-history",
 				"revoke":     "/api/secure/access/revoke",
 				"revoke_all": "/api/secure/access/revoke-all",
 				"delete":     "/api/secure/access/delete",
@@ -319,6 +400,7 @@ func GetAccessStatus(c *gin.Context) {
 				"Mobile app access",
 				"QR code authentication",
 				"Device management",
+				"Access history tracking",
 			},
 		},
 	})

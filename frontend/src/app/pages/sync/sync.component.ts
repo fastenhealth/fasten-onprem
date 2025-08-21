@@ -11,6 +11,7 @@ import { fetchEventSource } from '@microsoft/fetch-event-source';
 })
 export class SyncComponent implements OnInit, OnDestroy {
   tokens: any[] = [];
+  deviceSyncHistory: any[] = [];
   qrCodeUrl: SafeUrl | null = null;
   qrCodeRaw: string = '';
   qrCodeData: string = '';
@@ -28,6 +29,7 @@ export class SyncComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadTokens();
+    this.loadDeviceSyncHistory();
     this.connectToEventStream();
   }
 
@@ -54,6 +56,7 @@ export class SyncComponent implements OnInit, OnDestroy {
           // Check for different event types and update data accordingly
           if (eventData.event_type === 'source:sync:complete' || eventData.event_type === 'token:revoked' || eventData.event_type === 'token:deleted') {
             this.loadTokens();
+            this.loadDeviceSyncHistory();
           }
         },
         onerror: (error) => {
@@ -208,7 +211,20 @@ export class SyncComponent implements OnInit, OnDestroy {
     });
   }
 
-
+  loadDeviceSyncHistory(): void {
+    const token = localStorage.getItem('token');
+    this.http.get<any>('/api/secure/access/device-history', {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe({
+      next: (response) => {
+        this.deviceSyncHistory = response && response.success ? (response.data?.history || []) : [];
+      },
+      error: (error) => {
+        console.error('Error loading device sync history:', error);
+        this.deviceSyncHistory = [];
+      }
+    });
+  }
 
   revokeToken(tokenId: string): void {
     const token = localStorage.getItem('token');
@@ -219,6 +235,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: () => {
         this.loadTokens();
+        this.loadDeviceSyncHistory();
         // Clear QR code and raw data when a token is revoked
         this.qrCodeUrl = '' as any;
         this.qrCodeData = '';
@@ -243,6 +260,7 @@ export class SyncComponent implements OnInit, OnDestroy {
         this.qrCodeUrl = '' as any;
         this.qrCodeData = '';
         this.accessToken = '';
+        this.loadDeviceSyncHistory();
       },
       error: (error) => {
         this.setError('Error revoking tokens');
@@ -258,6 +276,7 @@ export class SyncComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: () => {
         this.loadTokens();
+        this.loadDeviceSyncHistory();
         // Clear QR code and raw data when a token is deleted
         this.qrCodeUrl = '' as any;
         this.qrCodeData = '';
@@ -281,6 +300,7 @@ export class SyncComponent implements OnInit, OnDestroy {
         this.qrCodeUrl = '' as any;
         this.qrCodeData = '';
         this.accessToken = '';
+        this.loadDeviceSyncHistory();
       },
       error: (error) => {
         this.setError('Error deleting all tokens');
