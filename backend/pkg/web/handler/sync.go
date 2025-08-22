@@ -52,20 +52,7 @@ func authenticateAndLogUsage(c *gin.Context, log *logrus.Entry, databaseRepo dat
 		// Don't fail the request, just log the error
 	}
 
-	// Create device sync history
-	history := &models.DeviceAccessHistory{
-		UserID:    currentUser.ID,
-		TokenID:   tokenID,
-		DeviceID:  c.GetHeader("User-Agent"),
-		EventTime: time.Now(),
-		Success:   true,
-		UserAgent: c.GetHeader("User-Agent"),
-	}
-	err = databaseRepo.CreateDeviceAccessHistory(c, history)
-	if err != nil {
-		log.Errorf("Failed to create device sync history: %v", err)
-		// Don't fail the request, just log the error
-	}
+
 
 	return currentUser, tokenID, nil
 }
@@ -272,8 +259,9 @@ func SyncDataUpdates(c *gin.Context) {
 		limit = 2000 // Cap limit for updates
 	}
 
-	// collect upserts and deletions across FHIR tables
-	upserts := make([]models.ResourceBase, 0)
+	// collect created, updated and deletions across FHIR tables
+	created := make([]models.ResourceBase, 0)
+	updated := make([]models.ResourceBase, 0)
 	deletions := make([]gin.H, 0)
 
 	// use underlying Gorm client
@@ -304,19 +292,19 @@ func SyncDataUpdates(c *gin.Context) {
 	}
 
 	for _, rt := range resourceTypesToQuery {
-		if len(upserts) >= limit && len(deletions) >= limit {
+		if len(created) >= limit && len(updated) >= limit && len(deletions) >= limit {
 			break
 		}
 		tableName := strcase.ToSnake("Fhir" + rt)
 
-		// created/updated
-		remaining := limit - len(upserts)
+		// Created resources (new since timestamp)
+		remaining := limit - len(created)
 		if remaining > 0 {
 			var rows []models.ResourceBase
 			query := gr.GormClient.WithContext(c).
 				Table(tableName).
-				Where("user_id = ? AND deleted_at IS NULL AND updated_at > ?", currentUser.ID, sinceTime).
-				Order("updated_at ASC").
+				Where("user_id = ? AND created_at > ? AND deleted_at IS NULL", currentUser.ID, sinceTime).
+				Order("created_at ASC").
 				Limit(remaining)
 			
 			if offset > 0 {
@@ -325,12 +313,38 @@ func SyncDataUpdates(c *gin.Context) {
 			
 			res := query.Find(&rows)
 			if res.Error != nil {
-				log.Errorf("Failed to query %s: %v", tableName, res.Error)
+				log.Errorf("Failed to query created %s: %v", tableName, res.Error)
 				c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to get resources"})
 				return
 			}
 			if len(rows) > 0 {
-				upserts = append(upserts, rows...)
+				created = append(created, rows...)
+			}
+		}
+
+		// Updated resources (modified since timestamp, but created before)
+		remaining = limit - len(updated)
+		if remaining > 0 {
+			var updatedRows []models.ResourceBase
+			query := gr.GormClient.WithContext(c).
+				Table(tableName).
+				Where("user_id = ? AND updated_at > ? AND created_at <= ? AND deleted_at IS NULL", 
+					  currentUser.ID, sinceTime, sinceTime).
+				Order("updated_at ASC").
+				Limit(remaining)
+			
+			if offset > 0 {
+				query = query.Offset(offset)
+			}
+			
+			res := query.Find(&updatedRows)
+			if res.Error != nil {
+				log.Errorf("Failed to query updated %s: %v", tableName, res.Error)
+				c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to get resources"})
+				return
+			}
+			if len(updatedRows) > 0 {
+				updated = append(updated, updatedRows...)
 			}
 		}
 
@@ -370,15 +384,15 @@ func SyncDataUpdates(c *gin.Context) {
 		}
 	}
 
-	hasMore := len(upserts) == limit || len(deletions) == limit
-	nextOffset := offset + len(upserts) + len(deletions)
+	hasMore := len(created) == limit || len(updated) == limit || len(deletions) == limit
+	nextOffset := offset + len(created) + len(updated) + len(deletions)
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data": gin.H{
-			"created": upserts,
-			"updated": []interface{}{},
-			"deleted": deletions,
+			"created": created,      // ✅ New resources since timestamp
+			"updated": updated,      // ✅ Modified resources since timestamp
+			"deleted": deletions,    // ✅ Deleted resources since timestamp
 			"hasMore": hasMore,
 			"pagination": gin.H{
 				"nextOffset": nextOffset,
@@ -429,10 +443,10 @@ func getServerAddresses(c *gin.Context, appConfig config.Interface) []Connection
 	// 	connections = append(connections, Connection{Host: upnpHost, Port: port, Protocol: "https"})
 	// }
 
-	// Priority 2: Environment variable override (deprecated, but kept for compatibility)
-	// if envHost := os.Getenv("FASTEN_EXTERNAL_HOST"); envHost != "" {
-	// 	connections = append(connections, Connection{Host: envHost, Port: port, Protocol: "https"})
-	// }
+	// Priority 2: Environment variable override
+	if envHost := os.Getenv("HOST_IP"); envHost != "" {
+		connections = append(connections, Connection{Host: envHost, Port: port, Protocol: "https"})
+	}
 
 	// Priority 3: Headers from reverse proxies
 	// X-Forwarded-Host can contain a host:port pair or just a host.
@@ -449,19 +463,6 @@ func getServerAddresses(c *gin.Context, appConfig config.Interface) []Connection
 		connections = append(connections, Connection{Host: realIP, Port: port, Protocol: "https"})
 	}
 
-	// Priority 3: All private, non-loopback IP addresses
-	if addrs, err := net.InterfaceAddrs(); err == nil {
-		for _, addr := range addrs {
-			if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-				if ip := ipnet.IP.To4(); ip != nil && ip.IsPrivate() {
-					connections = append(connections, Connection{Host: ip.String(), Port: port, Protocol: "https"})
-				}
-			}
-		}
-	}
-
-	// Final fallback to localhost
-	connections = append(connections, Connection{Host: "localhost", Port: port, Protocol: "https"})
 
 	return uniqueConnections(connections)
 }

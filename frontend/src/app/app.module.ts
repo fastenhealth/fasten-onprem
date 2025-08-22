@@ -41,12 +41,12 @@ import { AuthSignupWizardComponent } from './pages/auth-signup-wizard/auth-signu
 import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard';
 import { IconsModule } from './icon-module';
 import { UserListComponent } from './pages/user-list/user-list.component';
-import { SyncComponent } from './pages/sync/sync.component';
+import { SettingsComponent } from './pages/settings/settings.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SyncComponent,
+    SettingsComponent,
     HeaderComponent,
     FooterComponent,
     DashboardComponent,

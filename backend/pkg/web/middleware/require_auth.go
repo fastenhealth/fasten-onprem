@@ -50,8 +50,8 @@ func RequireAuth() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-			if !token.IsActive || token.IsRevoked || token.IsExpired() {
-				c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Access token is revoked, inactive, or expired"})
+			if !token.IsActive || token.IsExpired() {
+				c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Access token is inactive or expired"})
 				c.Abort()
 				return
 			}

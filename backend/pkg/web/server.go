@@ -144,10 +144,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 				// Access token management
 				secure.GET("/access/tokens", handler.GetAccessTokens)
-				secure.GET("/access/history", handler.GetAccessHistory)
-				secure.GET("/access/device-history", handler.GetDeviceAccessHistory)
-				secure.POST("/access/revoke", handler.RevokeAccess)
-				secure.POST("/access/revoke-all", handler.RevokeAllAccessTokens)
+				
 				secure.POST("/access/delete", handler.DeleteAccessToken)
 				secure.POST("/access/delete-all", handler.DeleteAllAccessTokens)
 
