@@ -14,10 +14,10 @@
         <h6 class="text-muted mb-2">Page {{ currentPageIndex + 1 }} of {{ pageImages.length }}</h6>
         <div class="d-flex flex-column align-items-center">
             <img [src]="pageImages[currentPageIndex]" class="img-thumbnail mb-3"
-                style="max-width: 100%; height: auto; max-height: 300px; object-fit: contain" />
+                style="max-width: 100%; height: auto; max-height: 400px; object-fit: contain" />
             <div class="d-flex w-100">
                 <!-- 🧭 Navigation + Action Buttons -->
-                <div class="d-flex align-items-center mt-3">
+                <div class="d-flex flex-column align-items-center mt-3">
                     <div>
                         <button class="btn btn-outline-secondary mr-1" (click)="goToPreviousPage()"
                             [disabled]="currentPageIndex === 0">
@@ -32,6 +32,10 @@
                             [disabled]="currentPageIndex === pageImages.length - 1">
                             Next →
                         </button>
+                    </div>
+
+                    <div *ngIf="foundKeys.length" class="mt-2 text-center p-2 border rounded bg-light w-100">
+                        <strong>Extracted:</strong> {{ foundKeys.join(', ') }}
                     </div>
                 </div>
             </div>

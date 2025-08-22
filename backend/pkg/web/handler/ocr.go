@@ -14,11 +14,11 @@ import (
 )
 
 type MedicalReport struct {
-	PatientName   string `json:"patientName,omitempty"`
-	DoctorName    string `json:"doctorName,omitempty"`
-	Hospital      string `json:"hospital,omitempty"`
-	Date          string `json:"date,omitempty"`
-	EncounterType string `json:"encounterType,omitempty"`
+	PatientName   string            `json:"patientName,omitempty"`
+	DoctorName    string            `json:"doctorName,omitempty"`
+	Hospital      string            `json:"hospital,omitempty"`
+	Date          string            `json:"date,omitempty"`
+	EncounterType *NHSEncounterType `json:"encounterType,omitempty"`
 }
 
 // OcrFileUploadHandler accepts a multipart/form-data upload and forwards it to the OCR service.
@@ -137,22 +137,24 @@ func fallbackAfterKeyword(text string, keywordPattern string) string {
 
 type NHSValueSetResponse struct {
 	Expansion struct {
-		Contains []struct {
-			System      string `json:"system"`
-			Code        string `json:"code"`
-			Display     string `json:"display"`
-			Designation []struct {
-				Use struct {
-					System string `json:"system"`
-					Code   string `json:"code"`
-				} `json:"use"`
-				Value string `json:"value"`
-			} `json:"designation"`
-		} `json:"contains"`
+		Contains []NHSEncounterType `json:"contains"`
 	} `json:"expansion"`
 }
 
-func FetchEncounterTypes() ([]string, error) {
+type NHSEncounterType struct {
+	System      string `json:"system"`
+	Code        string `json:"code"`
+	Display     string `json:"display"`
+	Designation []struct {
+		Use struct {
+			System string `json:"system"`
+			Code   string `json:"code"`
+		} `json:"use"`
+		Value string `json:"value"`
+	} `json:"designation"`
+}
+
+func FetchEncounterTypes() ([]NHSEncounterType, error) {
 	url := "https://ontology.nhs.uk/production1/fhir/ValueSet/$expand?_format=json&filter=&url=http://hl7.org/fhir/ValueSet/service-type&incomplete-ok=true"
 	resp, err := http.Get(url)
 	if err != nil {
@@ -167,32 +169,56 @@ func FetchEncounterTypes() ([]string, error) {
 		return nil, err
 	}
 
-	var types []string
-	for _, item := range data.Expansion.Contains {
-		// prefer designation.value if available, else fallback to display
-		if len(item.Designation) > 0 && item.Designation[0].Value != "" {
-			types = append(types, item.Designation[0].Value)
-		} else {
-			types = append(types, item.Display)
-		}
-	}
-
-	return types, nil
+	return data.Expansion.Contains, nil
 }
 
-func extractEncounterTypeFromNHS(ocrText string) string {
+func extractEncounterTypeFromNHS(ocrText string) *NHSEncounterType {
 	types, err := FetchEncounterTypes()
 	if err != nil {
-		return ""
+		return nil
 	}
 
-	lowerText := strings.ToLower(ocrText)
+	normalizedOCR := strings.ToUpper(strings.Join(strings.Fields(ocrText), " "))
+
+	shorthandMap := map[string]string{
+		"CT":   "COMPUTED TOMOGRAPHY",
+		"XRAY": "X-RAY",
+		"MRI":  "MAGNETIC RESONANCE IMAGING",
+	}
+
+	var bestMatch *NHSEncounterType
+	bestLen := 0
+
 	for _, eType := range types {
-		if strings.Contains(lowerText, strings.ToLower(eType)) {
-			return eType
+		// Prefer designation.value if available, else fallback to display
+		label := eType.Display
+		if len(eType.Designation) > 0 && eType.Designation[0].Value != "" {
+			label = eType.Designation[0].Value
+		}
+
+		parts := strings.Split(label, "/")
+		for _, part := range parts {
+			p := strings.ToUpper(strings.TrimSpace(part))
+			if p == "" {
+				continue
+			}
+
+			match := false
+			if strings.Contains(normalizedOCR, p) {
+				match = true
+			} else if fullName, ok := shorthandMap[p]; ok && strings.Contains(normalizedOCR, fullName) {
+				match = true
+			}
+
+			if match && len(p) > bestLen {
+				tmp := eType // copy to avoid referencing loop variable
+				bestMatch = &tmp
+				bestLen = len(p)
+			}
 		}
 	}
-	return ""
+
+	return bestMatch
 }
 
 func extractMedicalReportData(ocrText string) ([]byte, error) {

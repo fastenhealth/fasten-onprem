@@ -1,5 +1,5 @@
 # ---------- Build Stage ----------
-FROM golang:1.22-bullseye AS builder
+FROM golang:1.22-bookworm AS builder
 
 # Install tesseract and development headers for Go to compile against
 RUN apt-get update && apt-get install -y -qq \
@@ -21,7 +21,7 @@ RUN go mod download
 RUN go build -o ocr-service .
 
 # ---------- Runtime Stage ----------
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 # Install only runtime dependencies
 RUN apt-get update && apt-get install -y -qq \

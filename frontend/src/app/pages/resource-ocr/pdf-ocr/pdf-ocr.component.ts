@@ -3,6 +3,7 @@ import { PDFDocumentProxy, getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
 import { RenderParameters } from 'pdfjs-dist/types/src/display/api';
+import { OcrDataService } from 'src/app/services/ocr-data.service';
 
 GlobalWorkerOptions.workerSrc = '/assets/pdfjs/pdf.worker.min.js';
 
@@ -22,13 +23,15 @@ export class PdfOcrComponent implements OnInit {
   pageBlobs: Blob[] = [];
   maxPages = 30; // Default max pages
   scannedPages: number[] = [];
+  foundKeys: string[] = [];
 
   isProcessing = false;
   scanningStarted = false;
 
   constructor(
     private sanitizer: DomSanitizer,
-    private fastenApiService: FastenApiService
+    private fastenApiService: FastenApiService,
+    private ocrDataService: OcrDataService
   ) {}
 
   ngOnInit(): void {
@@ -97,17 +100,32 @@ export class PdfOcrComponent implements OnInit {
     );
 
     this.fastenApiService.uploadOcrDocument(file).subscribe({
-      next: (resultText) => {
-        this.ocrResults[this.currentPageIndex] = resultText;
+      next: (result) => {
+        let parsedResult: any;
+
+        try {
+          // if backend returns stringified JSON
+          parsedResult = JSON.parse(result);
+        } catch {
+          // if it’s already JSON
+          parsedResult = result;
+        }
+
+        this.ocrDataService.updateOcrData(parsedResult);
+        this.foundKeys = this.ocrDataService.extractFoundKeys(parsedResult);
         this.isProcessing = false;
       },
-      error: (err) => {
-        this.ocrResults[this.currentPageIndex] = '[Error during OCR]';
+      error: () => {
+        this.ocrDataService.updateOcrData({ error: '[Error during OCR]' });
         this.isProcessing = false;
       },
     });
 
     this.scannedPages.push(this.currentPageIndex);
+    //TODO: Remove this after testing
+    this.ocrDataService.ocrData$.subscribe((data) => {
+      console.log('OCR updated:', data);
+    });
   }
 
   startScanning() {

@@ -253,10 +253,9 @@ export class EncounterFormComponent implements OnInit {
       }
     );
     modalRef.componentInstance.debugMode = this.debugMode;
+    modalRef.componentInstance.disableFindEncounter = true;
     modalRef.result.then(
       (result) => {
-        // add this to the list of organization
-        //TODO
         this.addEncounter(result);
       },
       (err) => {}

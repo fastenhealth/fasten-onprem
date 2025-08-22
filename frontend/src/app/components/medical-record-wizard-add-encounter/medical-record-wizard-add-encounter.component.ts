@@ -34,6 +34,7 @@ import {uuidV4} from '../../../lib/utils/uuid';
 export class MedicalRecordWizardAddEncounterComponent implements OnInit {
 
   @Input() debugMode: boolean = false;
+  @Input() disableFindEncounter: boolean = false;
   loading: boolean = false
   activeId: string = 'find'
 
@@ -49,6 +50,7 @@ export class MedicalRecordWizardAddEncounterComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.activeId = this.disableFindEncounter ? 'create' : 'find' // Switch to create tab if find is disabled
     this.resetEncounterForm()
 
     //get a count of all the known organizations
