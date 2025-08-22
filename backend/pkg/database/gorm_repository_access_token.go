@@ -105,63 +105,7 @@ func (gr *GormRepository) UpdateAccessToken(ctx context.Context, accessToken *mo
 	return nil
 }
 
-func (gr *GormRepository) RevokeAccessToken(ctx context.Context, tokenID string, revokedBy string) error {
-	// First get the token to check if it exists
-	token, err := gr.GetAccessToken(ctx, tokenID)
-	if err != nil {
-		return fmt.Errorf("failed to get access token: %w", err)
-	}
 
-	if token == nil {
-		return fmt.Errorf("access token not found")
-	}
-
-	// Update the token status
-	result := gr.GormClient.WithContext(ctx).
-		Model(&models.AccessToken{}).
-		Where("token_id = ?", tokenID).
-		Updates(map[string]interface{}{
-			"is_revoked":  true,
-			"is_active":   false,
-			"revoked_at":  time.Now(),
-			"revoked_by":  revokedBy,
-		})
-
-	if result.Error != nil {
-		return fmt.Errorf("failed to revoke access token: %w", result.Error)
-	}
-
-	// Create history entry for revocation
-	history := &models.AccessTokenHistory{
-		TokenID:   tokenID,
-		UserID:    token.UserID,
-		EventType: "revoked",
-		EventTime: time.Now(),
-		Metadata:  fmt.Sprintf("revoked_by:%s", revokedBy),
-	}
-
-	return gr.CreateAccessTokenHistory(ctx, history)
-}
-
-func (gr *GormRepository) RevokeAllAccessTokens(ctx context.Context, userID uuid.UUID, revokedBy string) error {
-	// Get all active tokens for the user
-	tokens, err := gr.GetUserAccessTokens(ctx, userID)
-	if err != nil {
-		return fmt.Errorf("failed to get user access tokens: %w", err)
-	}
-
-	// Revoke each token individually to create history entries
-	for _, token := range tokens {
-		if !token.IsRevoked {
-			if err := gr.RevokeAccessToken(ctx, token.TokenID, revokedBy); err != nil {
-				// Log error but continue with other tokens
-				fmt.Printf("Failed to revoke access token %s: %v", token.TokenID, err)
-			}
-		}
-	}
-
-	return nil
-}
 
 func (gr *GormRepository) CleanupExpiredAccessTokens(ctx context.Context) (int64, error) {
 	result := gr.GormClient.WithContext(ctx).
@@ -267,19 +211,7 @@ func (gr *GormRepository) DisconnectAccessConnection(ctx context.Context, tokenI
 	return nil
 }
 
-// Device Access History
 
-func (gr *GormRepository) CreateDeviceAccessHistory(ctx context.Context, history *models.DeviceAccessHistory) error {
-	if history.EventTime.IsZero() {
-		history.EventTime = time.Now()
-	}
-
-	if err := gr.GormClient.WithContext(ctx).Create(history).Error; err != nil {
-		return fmt.Errorf("failed to create device access history: %w", err)
-	}
-
-	return nil
-}
 
 
 

@@ -52,20 +52,7 @@ func authenticateAndLogUsage(c *gin.Context, log *logrus.Entry, databaseRepo dat
 		// Don't fail the request, just log the error
 	}
 
-	// Create device sync history
-	history := &models.DeviceAccessHistory{
-		UserID:    currentUser.ID,
-		TokenID:   tokenID,
-		DeviceID:  c.GetHeader("User-Agent"),
-		EventTime: time.Now(),
-		Success:   true,
-		UserAgent: c.GetHeader("User-Agent"),
-	}
-	err = databaseRepo.CreateDeviceAccessHistory(c, history)
-	if err != nil {
-		log.Errorf("Failed to create device sync history: %v", err)
-		// Don't fail the request, just log the error
-	}
+
 
 	return currentUser, tokenID, nil
 }

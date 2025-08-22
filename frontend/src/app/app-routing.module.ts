@@ -22,10 +22,10 @@ import { ResourceDetailComponent } from './pages/resource-detail/resource-detail
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
 import { UserCreateComponent } from './pages/user-create/user-create.component';
 import { UserListComponent } from './pages/user-list/user-list.component';
-import { SyncComponent } from './pages/sync/sync.component';
+import { SettingsComponent } from './pages/settings/settings.component';
 
 const routes: Routes = [
-  { path: 'sync', component: SyncComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+  { path: 'settings', component: SettingsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
   { path: 'auth/signup/wizard', component: AuthSignupWizardComponent },
 

@@ -59,7 +59,7 @@ func InitiateAccess(c *gin.Context) {
 		IssuedAt:    now,
 		ExpiresAt:   expiresAt,
 		IsActive:    true,
-		IsRevoked:   false,
+
 		Scopes:      "access:read,access:write",
 	}
 
@@ -121,7 +121,7 @@ func GetAccessTokens(c *gin.Context) {
 			"expires_at":   token.ExpiresAt.Format(time.RFC3339),
 			"last_used_at": token.LastUsedAt,
 			"is_active":    token.IsActive,
-			"is_revoked":   token.IsRevoked,
+	
 			"use_count":    token.UseCount,
 			"status":       token.GetStatus(),
 		})
@@ -137,96 +137,7 @@ func GetAccessTokens(c *gin.Context) {
 
 
 
-// RevokeAccess revokes access tokens
-func RevokeAccess(c *gin.Context) {
-	log := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
-	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
-	currentUser, err := databaseRepo.GetCurrentUser(c)
-	if err != nil {
-		log.Errorf("Failed to get current user: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to get current user"})
-		return
-	}
-
-	var revokeRequest struct {
-		TokenID *string `json:"token_id"`
-		All     bool    `json:"all"`
-	}
-
-	if err := c.ShouldBindJSON(&revokeRequest); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Invalid request format"})
-		return
-	}
-
-	revokedBy := currentUser.Username
-
-	if revokeRequest.All {
-		// Revoke all tokens for the user
-		tokens, err := databaseRepo.GetUserAccessTokens(c, currentUser.ID)
-		if err != nil {
-			log.Errorf("Failed to get access tokens: %v", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to get access tokens"})
-			return
-		}
-
-		revokedCount := 0
-		for _, token := range tokens {
-			if err := databaseRepo.RevokeAccessToken(c, token.TokenID, revokedBy); err == nil {
-				revokedCount++
-			}
-		}
-
-		c.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"message": fmt.Sprintf("Revoked %d access tokens", revokedCount),
-		})
-		return
-	}
-
-	// Revoke specific token
-	if revokeRequest.TokenID == nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "Token ID is required"})
-		return
-	}
-
-	err = databaseRepo.RevokeAccessToken(c, *revokeRequest.TokenID, revokedBy)
-	if err != nil {
-		log.Errorf("Failed to revoke access token: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to revoke access token"})
-		return
-	}
-
-	log.Debugf("Access token revoked: tokenId=%s by %s", *revokeRequest.TokenID, revokedBy)
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"message": "Access token revoked successfully",
-	})
-}
-
-// RevokeAllAccessTokens revokes all access tokens for the current user
-func RevokeAllAccessTokens(c *gin.Context) {
-	log := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
-	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
-
-	currentUser, err := databaseRepo.GetCurrentUser(c)
-	if err != nil {
-		log.Errorf("Failed to get current user: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to get current user"})
-		return
-	}
-
-	revokedBy := currentUser.Username
-	err = databaseRepo.RevokeAllAccessTokens(c, currentUser.ID, revokedBy)
-	if err != nil {
-		log.Errorf("Failed to revoke all access tokens: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to revoke all access tokens"})
-		return
-	}
-
-	log.Infof("All access tokens revoked for user %s", currentUser.Username)
-	c.JSON(http.StatusOK, gin.H{"success": true, "message": "All access tokens revoked successfully"})
-}
 
 // DeleteAccessToken deletes a single access token by tokenId
 func DeleteAccessToken(c *gin.Context) {
@@ -310,8 +221,6 @@ func GetAccessStatus(c *gin.Context) {
 			"status": "active",
 			"endpoints": gin.H{
 				"tokens":     "/api/secure/access/tokens",
-				"revoke":     "/api/secure/access/revoke",
-				"revoke_all": "/api/secure/access/revoke-all",
 				"delete":     "/api/secure/access/delete",
 				"delete_all": "/api/secure/access/delete-all",
 			},

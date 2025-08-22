@@ -26,12 +26,11 @@ type AccessToken struct {
 	IssuedAt     time.Time  `json:"issued_at"`
 	ExpiresAt    time.Time  `json:"expires_at"`
 	LastUsedAt   *time.Time `json:"last_used_at,omitempty"`
-	RevokedAt    *time.Time `json:"revoked_at,omitempty"`
-	RevokedBy    string     `json:"revoked_by,omitempty"`                   // How it was revoked (user, system, expired)
+
 	
 	// Status tracking
 	IsActive     bool   `json:"is_active" gorm:"default:true"`
-	IsRevoked    bool   `json:"is_revoked" gorm:"default:false"`
+
 	
 	// Usage statistics
 	UseCount     int64     `json:"use_count" gorm:"default:0"`
@@ -67,7 +66,7 @@ type AccessTokenStatus string
 const (
 	AccessTokenStatusActive     AccessTokenStatus = "active"
 	AccessTokenStatusExpired    AccessTokenStatus = "expired"
-	AccessTokenStatusRevoked    AccessTokenStatus = "revoked"
+
 	AccessTokenStatusSuspended  AccessTokenStatus = "suspended"
 )
 
@@ -110,14 +109,12 @@ func (at *AccessToken) IsExpired() bool {
 
 // IsValid checks if the token is valid and usable
 func (at *AccessToken) IsValid() bool {
-	return at.IsActive && !at.IsRevoked && !at.IsExpired()
+	return at.IsActive && !at.IsExpired()
 }
 
 // GetStatus returns the current status of the token
 func (at *AccessToken) GetStatus() AccessTokenStatus {
-	if at.IsRevoked {
-		return AccessTokenStatusRevoked
-	}
+
 	if at.IsExpired() {
 		return AccessTokenStatusExpired
 	}
@@ -150,11 +147,4 @@ func (at *AccessToken) MarkAsUsed() {
 	at.UseCount++
 }
 
-// Revoke marks the token as revoked
-func (at *AccessToken) Revoke(revokedBy string) {
-	now := time.Now()
-	at.RevokedAt = &now
-	at.RevokedBy = revokedBy
-	at.IsRevoked = true
-	at.IsActive = false
-}
+

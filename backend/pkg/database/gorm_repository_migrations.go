@@ -232,7 +232,7 @@ func (gr *GormRepository) Migrate() error {
 					&models.AccessToken{},
 					&models.AccessTokenHistory{},
 					&models.AccessConnection{},
-					&models.DeviceAccessHistory{},
+			
 				)
 			},
 		},

@@ -1,0 +1,128 @@
+<!-- Settings Page -->
+<div class="az-content">
+  <div class="container">
+    <div class="az-content-body">
+      <h2 class="az-content-title">Settings</h2>
+
+      <!-- User Profile Section -->
+      <div class="mb-4">
+        <h4 class="mb-3"><i class="fas fa-user me-3"></i>User Profile</h4>
+        <div *ngIf="!currentUser" class="text-center">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+        <div *ngIf="currentUser" class="user-profile-info">
+          <div class="profile-row">
+            <span class="profile-label">User Name:</span>
+            <span class="profile-value">{{ currentUser.full_name || currentUser.username || 'N/A' }}</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-label">User Email:</span>
+            <span class="profile-value">{{ currentUser.email || 'N/A' }}</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-label">User Role:</span>
+            <span class="profile-value">{{ currentUser.role || 'N/A' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sync / Access Tokens Section -->
+      <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4><i class="fas fa-key me-3"></i>Sync / Access Tokens</h4>
+          <div>
+            <button *ngIf="tokens.length > 0" class="btn btn-outline-danger btn-sm me-4" (click)="deleteAllTokens()" [disabled]="isLoading">
+              <i class="fas fa-trash-alt me-2"></i>Delete All
+            </button>
+            <button class="btn btn-az-primary btn-sm" (click)="generateAndShowQR(qrModal)" [disabled]="isLoading">
+              <i class="fas fa-qrcode me-2"></i>{{ tokens.length === 0 ? 'Generate QR Code' : 'Generate New QR Code' }}
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="isLoading" class="text-center">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+
+        <div *ngIf="tokens.length === 0 && !isLoading" class="text-muted text-center py-4">
+          <i class="fas fa-qrcode fa-3x text-muted mb-3"></i>
+          <p class="text-muted">No access tokens generated yet.</p>
+        </div>
+
+        <div *ngIf="tokens.length > 0" class="table-container">
+          <table class="table table-hover">
+            <thead class="table-header">
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Last Used</th>
+                <th>Used</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let token of tokens">
+                <td>{{ token.name || 'Access Token' }}</td>
+                <td>
+                  <span class="badge"
+                        [ngClass]="{
+                          'badge-primary': getTokenStatus(token) === 'Active',
+                          'badge-danger': getTokenStatus(token) === 'Revoked',
+                          'badge-warning': getTokenStatus(token) === 'Expired',
+                          'badge-secondary': getTokenStatus(token) === 'Suspended'
+                        }">
+                    {{ getTokenStatus(token) }}
+                  </span>
+                </td>
+                <td>{{ formatDate(token.issuedAt) }}</td>
+                <td>{{ token.lastUsedAt ? formatDate(token.lastUsedAt) : 'Never' }}</td>
+                <td>{{ token.useCount }}</td>
+                <td class="text-end">
+                  <button class="btn btn-outline-danger btn-sm" (click)="deleteToken(token.tokenId)">
+                    <i class="fas fa-trash me-1"></i>Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QR Code Modal -->
+<ng-template #qrModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title"><i class="fas fa-qrcode me-2"></i>QR Code for Mobile Sync</h4>
+    <button type="button" class="btn close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body text-center">
+    <div *ngIf="qrCodeUrl" class="qr-code-container mb-4">
+      <img [src]="qrCodeUrl" alt="QR Code" class="qr-code-image">
+    </div>
+    <p class="text-muted">Scan this QR code with your Fasten Health mobile app to sync your medical records.</p>
+    
+    <!-- Development: Raw QR Code Data -->
+    <div class="mt-4">
+      <h6>Development: Raw QR Code Data</h6>
+      <div class="input-group">
+        <textarea class="form-control font-monospace" rows="8" readonly [value]="qrCodeData"></textarea>
+        <button class="btn btn-outline-secondary" type="button" (click)="copyRawQR()">
+          <i class="fas fa-copy"></i>
+        </button>
+      </div>
+      <small class="text-muted">You can copy and paste this data manually if needed.</small>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.close()">Close</button>
+  </div>
+</ng-template>

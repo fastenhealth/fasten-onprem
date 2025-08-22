@@ -144,8 +144,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 				// Access token management
 				secure.GET("/access/tokens", handler.GetAccessTokens)
-				secure.POST("/access/revoke", handler.RevokeAccess)
-				secure.POST("/access/revoke-all", handler.RevokeAllAccessTokens)
+				
 				secure.POST("/access/delete", handler.DeleteAccessToken)
 				secure.POST("/access/delete-all", handler.DeleteAllAccessTokens)
 
