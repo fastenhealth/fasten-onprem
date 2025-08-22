@@ -201,6 +201,20 @@ export class SettingsComponent implements OnInit {
     return date.toLocaleDateString();
   }
 
+  formatExpiryDate(dateString: string | Date): string {
+    if (!dateString) {
+      return 'N/A';
+    }
+    const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'short',
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+    };
+    return `on ${date.toLocaleDateString('en-US', options)}`;
+  }
+
   copyRawQR(): void {
     if (this.qrCodeData) {
       navigator.clipboard.writeText(this.qrCodeData);

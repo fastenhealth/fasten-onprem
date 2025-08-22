@@ -16,17 +16,17 @@
   max-height: 400px;
   overflow-y: auto;
   border-radius: 0.375rem;
-  
+
   // Remove exterior outline
   border: none;
-  
+
   // Fixed header styling
   .table-header {
     position: sticky;
     top: 0;
     background: white;
     z-index: 10;
-    
+
     th {
       background: #f8f9fa;
       border-bottom: 2px solid #dee2e6;
@@ -35,7 +35,7 @@
       padding: 0.75rem;
     }
   }
-  
+
   // Table body styling
   tbody {
     tr {
@@ -43,7 +43,7 @@
         background-color: #f8f9fa;
       }
     }
-    
+
     td {
       border-bottom: 1px solid #e9ecef;
       padding: 0.75rem;
@@ -69,18 +69,18 @@
     display: flex;
     align-items: center;
     padding: 0.75rem 0;
-    
+
     &:not(:last-child) {
       border-bottom: none; // No dividers
     }
-    
+
     .profile-label {
       width: 120px;
       font-weight: 600;
       color: #495057;
       font-size: 0.95rem;
     }
-    
+
     .profile-value {
       flex: 1;
       color: #212529;
@@ -107,30 +107,30 @@ h4 {
   justify-content: center;
   align-items: center;
   padding: 1rem;
-  
+
   .qr-code-image {
     max-width: 100%;
     height: auto;
     border: 2px solid #dee2e6;
     border-radius: 0.5rem;
     box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
-    
+
     // Responsive sizing based on screen size
     @media (min-width: 576px) { // Small devices and up
       width: 300px;
       height: 300px;
     }
-    
+
     @media (min-width: 768px) { // Medium devices and up
       width: 400px;
       height: 400px;
     }
-    
+
     @media (min-width: 992px) { // Large devices and up
       width: 450px;
       height: 450px;
     }
-    
+
     @media (min-width: 1200px) { // Extra large devices and up
       width: 500px;
       height: 500px;
@@ -141,8 +141,60 @@ h4 {
 // Modal size improvements
 .modal-lg {
   max-width: 90vw; // Use more screen width on smaller devices
-  
+
   @media (min-width: 992px) {
     max-width: 800px; // Cap at 800px on larger screens
+  }
+}
+
+/* New styles for token cards */
+.token-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Space between cards */
+}
+
+.token-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.375rem;
+  background-color: #fff;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+
+  .token-info {
+    display: flex;
+    flex-direction: column;
+
+    .token-name {
+      font-weight: 600;
+      color: #007bff; /* Primary color for token name */
+      font-size: 1.1rem;
+    }
+
+    .token-access-type {
+      font-size: 0.9rem;
+      color: #6c757d; /* Muted color for access type */
+      margin-left: 0.5rem;
+    }
+
+    .token-expiry {
+      font-size: 0.95rem;
+      color: #343a40; /* Darker text for expiry */
+      margin-top: 0.25rem;
+    }
+  }
+
+  .token-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Space between last used and delete button */
+
+    .token-use-count {
+      font-size: 0.9rem;
+      color: #6c757d; /* Muted color for use count */
+    }
   }
 }

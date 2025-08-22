@@ -50,42 +50,19 @@
           <p class="text-muted">No access tokens generated yet.</p>
         </div>
 
-        <div *ngIf="tokens.length > 0" class="table-container">
-          <table class="table table-hover">
-            <thead class="table-header">
-              <tr>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th>Last Used</th>
-                <th>Used</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let token of tokens">
-                <td>{{ token.name || 'Access Token' }}</td>
-                <td>
-                  <span class="badge" [ngClass]="{
-                          'badge-primary': getTokenStatus(token) === 'Active',
-                          'badge-danger': getTokenStatus(token) === 'Revoked',
-                          'badge-warning': getTokenStatus(token) === 'Expired',
-                          'badge-secondary': getTokenStatus(token) === 'Suspended'
-                        }">
-                    {{ getTokenStatus(token) }}
-                  </span>
-                </td>
-                <td>{{ formatDate(token.issuedAt) }}</td>
-                <td>{{ token.lastUsedAt ? formatDate(token.lastUsedAt) : 'Never' }}</td>
-                <td>{{ token.useCount }}</td>
-                <td class="text-end">
-                  <button class="btn btn-outline-danger btn-sm" (click)="deleteToken(token.tokenId)">
-                    <i class="fas fa-trash me-1"></i>Delete
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div *ngIf="tokens.length > 0" class="token-cards-container">
+          <div class="token-card" *ngFor="let token of tokens">
+            <div class="token-info">
+              <span class="token-name">{{ token.name || 'Access Token' }}</span>
+              <div class="token-expiry">Expires {{ formatExpiryDate(token.expiresAt) }}</div>
+            </div>
+            <div class="token-actions">
+              <span class="token-use-count">{{ token.useCount === 0 ? 'Never used' : token.useCount + ' uses' }}</span>
+              <button class="btn btn-outline-danger btn-sm" (click)="deleteToken(token.tokenId)">
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
