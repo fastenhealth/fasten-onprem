@@ -15,6 +15,7 @@ export class SettingsComponent implements OnInit {
   qrCodeData: string = '';
   isLoading: boolean = false;
   hasError: boolean = false;
+  isRawQrCodeCollapsed: boolean = true;
   errorMessage: string = '';
   accessToken: string = '';
   serverInfo: any = null;
