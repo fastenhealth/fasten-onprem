@@ -40,8 +40,6 @@ func (c *configuration) Init() error {
 	c.SetDefault("log.level", "INFO")
 	c.SetDefault("log.file", "")
 
-	c.SetDefault("upnp.enabled", true)
-
 	//set the default system config file search path.
 	//if you want to load a non-standard location system config file (~/capsule.yml), use ReadConfig
 	//if you want to load a repo specific config file, use ReadConfig
