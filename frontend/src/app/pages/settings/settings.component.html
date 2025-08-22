@@ -1,97 +1,72 @@
-<!-- Settings Page -->
 <div class="az-content">
   <div class="container">
     <div class="az-content-body">
       <h2 class="az-content-title">Settings</h2>
 
       <!-- User Profile Section -->
-      <div class="mb-4">
-        <h4 class="mb-3"><i class="fas fa-user me-3"></i>User Profile</h4>
-        <div *ngIf="!currentUser" class="text-center">
-          <div class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
+      <section class="card card-dashboard-table mg-b-20">
+        <div class="card-header">
+          <h4 class="card-title mb-0"><i class="fas fa-user mr-3"></i>User Profile</h4>
         </div>
-        <div *ngIf="currentUser" class="user-profile-info">
-          <div class="profile-row">
-            <span class="profile-label">User Name:</span>
-            <span class="profile-value">{{ currentUser.full_name || currentUser.username || 'N/A' }}</span>
+        <div class="card-body">
+          <div *ngIf="!currentUser" class="text-center py-4">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <p class="mg-t-10">Loading user profile...</p>
           </div>
-          <div class="profile-row">
-            <span class="profile-label">User Email:</span>
-            <span class="profile-value">{{ currentUser.email || 'N/A' }}</span>
-          </div>
-          <div class="profile-row">
-            <span class="profile-label">User Role:</span>
-            <span class="profile-value">{{ currentUser.role || 'N/A' }}</span>
-          </div>
-        </div>
-      </div>
+          <dl *ngIf="currentUser" class="row profile-dl">
+            <dt class="col-sm-3 profile-label">User Name:</dt>
+            <dd class="col-sm-9 profile-value">{{ currentUser.full_name || currentUser.username || 'N/A' }}</dd>
 
-      <!-- Sync / Access Tokens Section -->
-      <div class="mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h4><i class="fas fa-key me-3"></i>Sync / Access Tokens</h4>
+            <dt class="col-sm-3 profile-label">User Email:</dt>
+            <dd class="col-sm-9 profile-value">{{ currentUser.email || 'N/A' }}</dd>
+
+            <dt class="col-sm-3 profile-label">User Role:</dt>
+            <dd class="col-sm-9 profile-value">{{ currentUser.role || 'N/A' }}</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- Connected Devices Section -->
+      <section class="card card-dashboard-table">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="card-title mb-0"><i class="fas fa-key mr-3"></i>Connected Devices</h4>
           <div>
-            <button *ngIf="tokens.length > 0" class="btn btn-outline-danger btn-sm me-4" (click)="deleteAllTokens()" [disabled]="isLoading">
-              <i class="fas fa-trash-alt me-2"></i>Delete All
-            </button>
             <button class="btn btn-az-primary btn-sm" (click)="generateAndShowQR(qrModal)" [disabled]="isLoading">
-              <i class="fas fa-qrcode me-2"></i>{{ tokens.length === 0 ? 'Generate QR Code' : 'Generate New QR Code' }}
+              <i class="fas fa-qrcode mr-2"></i>Connect New Device
             </button>
           </div>
         </div>
+        <div class="card-body">
+          <div *ngIf="isLoading" class="text-center py-4">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <p class="mg-t-10">Loading connected devices...</p>
+          </div>
 
-        <div *ngIf="isLoading" class="text-center">
-          <div class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
+          <div *ngIf="tokens.length === 0 && !isLoading" class="text-muted text-center py-4">
+            <i class="fas fa-qrcode fa-3x text-muted mb-3"></i>
+            <p class="text-muted mb-0">No devices connected yet. Click "Connect New Device" to get started.</p>
+          </div>
+
+          <div *ngIf="tokens.length > 0" class="list-group list-group-flush">
+            <div class="list-group-item d-flex align-items-center justify-content-between" *ngFor="let token of tokens">
+              <div class="d-flex flex-column">
+                <h6 class="mb-0">{{ token.name || 'Unnamed Device' }}</h6>
+                <small class="text-muted">Expires {{ formatExpiryDate(token.expiresAt) }}</small>
+              </div>
+              <div class="d-flex align-items-center">
+                <span class="badge bg-light text-dark mr-2">{{ token.useCount === 0 ? 'Never used' : token.useCount + ' uses' }}</span>
+                <button class="btn btn-outline-danger btn-sm ms-2" ngbTooltip="Delete Device" (click)="deleteToken(token.tokenId)">
+                    <i class="fas fa-trash-alt mr-0"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div *ngIf="tokens.length === 0 && !isLoading" class="text-muted text-center py-4">
-          <i class="fas fa-qrcode fa-3x text-muted mb-3"></i>
-          <p class="text-muted">No access tokens generated yet.</p>
-        </div>
-
-        <div *ngIf="tokens.length > 0" class="table-container">
-          <table class="table table-hover">
-            <thead class="table-header">
-              <tr>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th>Last Used</th>
-                <th>Used</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let token of tokens">
-                <td>{{ token.name || 'Access Token' }}</td>
-                <td>
-                  <span class="badge"
-                        [ngClass]="{
-                          'badge-primary': getTokenStatus(token) === 'Active',
-                          'badge-danger': getTokenStatus(token) === 'Revoked',
-                          'badge-warning': getTokenStatus(token) === 'Expired',
-                          'badge-secondary': getTokenStatus(token) === 'Suspended'
-                        }">
-                    {{ getTokenStatus(token) }}
-                  </span>
-                </td>
-                <td>{{ formatDate(token.issuedAt) }}</td>
-                <td>{{ token.lastUsedAt ? formatDate(token.lastUsedAt) : 'Never' }}</td>
-                <td>{{ token.useCount }}</td>
-                <td class="text-end">
-                  <button class="btn btn-outline-danger btn-sm" (click)="deleteToken(token.tokenId)">
-                    <i class="fas fa-trash me-1"></i>Delete
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      </section>
     </div>
   </div>
 </div>
@@ -99,30 +74,62 @@
 <!-- QR Code Modal -->
 <ng-template #qrModal let-modal>
   <div class="modal-header">
-    <h4 class="modal-title"><i class="fas fa-qrcode me-2"></i>QR Code for Mobile Sync</h4>
-    <button type="button" class="btn close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">×</span>
+    <h5 class="modal-title">
+      <i class="fas fa-qrcode mr-2"></i>
+      <span *ngIf="step === 'askDetails'">Connect a New Device</span>
+      <span *ngIf="step === 'showQR'">Scan to Connect</span>
+    </h5>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <div class="modal-body text-center">
-    <div *ngIf="qrCodeUrl" class="qr-code-container mb-4">
-      <img [src]="qrCodeUrl" alt="QR Code" class="qr-code-image">
-    </div>
-    <p class="text-muted">Scan this QR code with your Fasten Health mobile app to sync your medical records.</p>
-    
-    <!-- Development: Raw QR Code Data -->
-    <div class="mt-4">
-      <h6>Development: Raw QR Code Data</h6>
-      <div class="input-group">
-        <textarea class="form-control font-monospace" rows="8" readonly [value]="qrCodeData"></textarea>
-        <button class="btn btn-outline-secondary" type="button" (click)="copyRawQR()">
-          <i class="fas fa-copy"></i>
-        </button>
+  <div class="modal-body">
+    <div *ngIf="step === 'askDetails'" class="text-start">
+      <p class="text-muted">Give your new device a name so you can recognize it in the list of connected devices.</p>
+      <div class="form-group mt-3">
+        <label for="deviceNameInput" class="form-label">Device Name (optional):</label>
+        <input type="text" class="form-control" id="deviceNameInput" [(ngModel)]="newDeviceName" placeholder="e.g., My iPhone, Work Tablet">
       </div>
-      <small class="text-muted">You can copy and paste this data manually if needed.</small>
+      <div class="form-group mt-3">
+        <label for="expirationSelect" class="form-label">Expiration:</label>
+        <select class="form-control" id="expirationSelect" [(ngModel)]="newDeviceExpiration">
+          <option *ngFor="let option of expirationOptions" [ngValue]="option.value">{{ option.label }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div *ngIf="step === 'showQR'" class="text-center">
+      <p class="text-muted">Scan this QR code with your companion mobile app to connect your device and sync your medical records.</p>
+      <div *ngIf="qrCodeUrl" class="qr-code-container mb-4 p-3 border rounded d-inline-block">
+        <img [src]="qrCodeUrl" alt="QR Code" class="img-fluid qr-code-image">
+      </div>
+
+      <!-- Development: Raw QR Code Data -->
+      <div class="mt-4 text-start">
+        <h6 class="mb-0">
+          <a href="javascript:void(0);" (click)="isRawQrCodeCollapsed = !isRawQrCodeCollapsed"
+            [attr.aria-expanded]="!isRawQrCodeCollapsed" aria-controls="rawQrCodeDataCollapse"
+            class="d-flex align-items-center text-dark text-decoration-none">
+            Development: Raw QR Code Data
+            <i class="fas ms-2" [class.fa-chevron-down]="isRawQrCodeCollapsed"
+              [class.fa-chevron-up]="!isRawQrCodeCollapsed"></i>
+          </a>
+        </h6>
+        <div id="rawQrCodeDataCollapse" [ngbCollapse]="isRawQrCodeCollapsed">
+          <div class="input-group mt-3">
+            <textarea class="form-control font-monospace" rows="5" readonly [value]="qrCodeData"></textarea>
+            <button class="btn btn-outline-secondary" type="button" (click)="copyRawQR()">
+              <i class="fas fa-copy"></i> Copy
+            </button>
+          </div>
+          <small class="text-muted">You can copy and paste this data manually if needed.</small>
+        </div>
+      </div>
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.close()">Close</button>
+    <button *ngIf="step === 'askDetails'" type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancel</button>
+    <button *ngIf="step === 'askDetails'" type="button" class="btn btn-az-primary" (click)="connectDevice()" [disabled]="isLoading">Connect</button>
+    <button *ngIf="step === 'showQR'" type="button" class="btn btn-secondary" (click)="modal.close()">Close</button>
   </div>
 </ng-template>

@@ -15,10 +15,21 @@ export class SettingsComponent implements OnInit {
   qrCodeData: string = '';
   isLoading: boolean = false;
   hasError: boolean = false;
+  isRawQrCodeCollapsed: boolean = true;
   errorMessage: string = '';
   accessToken: string = '';
   serverInfo: any = null;
   currentUser: any = null;
+  newDeviceName: string = '';
+  newDeviceExpiration: number = 0; // 0 for no expiration, otherwise days
+  expirationOptions = [
+    { value: 0, label: 'No Expiration' },
+    { value: 7, label: '7 Days' },
+    { value: 30, label: '30 Days' },
+    { value: 60, label: '60 Days' },
+    { value: 90, label: '90 Days' },
+  ];
+  step: 'askDetails' | 'showQR' = 'askDetails';
 
   constructor(
     private http: HttpClient,
@@ -33,7 +44,7 @@ export class SettingsComponent implements OnInit {
 
   loadCurrentUser(): void {
     const token = localStorage.getItem('token');
-    
+
     this.http.get<any>('/api/secure/account/me', {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe({
@@ -50,11 +61,19 @@ export class SettingsComponent implements OnInit {
 
   generateAccessToken(): void {
     const token = localStorage.getItem('token');
-    
+
     console.log('Generating access token...');
     this.isLoading = true;
-    
-    this.http.post<any>('/api/secure/sync/initiate', {}, {
+
+    const body: { name?: string; expiration?: number } = {};
+    if (this.newDeviceName) {
+      body.name = this.newDeviceName;
+    }
+    if (this.newDeviceExpiration !== undefined) {
+      body.expiration = this.newDeviceExpiration;
+    }
+
+    this.http.post<any>('/api/secure/sync/initiate', body, {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe({
       next: (response) => {
@@ -63,6 +82,8 @@ export class SettingsComponent implements OnInit {
           this.accessToken = response.data.token;
           this.loadTokens();
           this.getServerDiscovery();
+          this.newDeviceName = ''; // Clear the input after successful generation
+          this.step = 'showQR'; // Move to the QR code display step
         } else {
           console.error('Failed to generate access token');
         }
@@ -76,20 +97,34 @@ export class SettingsComponent implements OnInit {
   }
 
   generateAndShowQR(content: any): void {
-    // Open modal immediately for better UX
+    this.step = 'askDetails';
+    this.newDeviceName = '';
+    this.newDeviceExpiration = 0; // Reset to default
+    this.qrCodeUrl = null;
+    this.qrCodeData = '';
+
     this.modalService.open(content, {
       size: 'lg',
       centered: true,
       backdrop: 'static'
-    });
-    
-    // Generate token in background
+    }).result.then(
+      (result) => {
+        this.step = 'askDetails';
+      },
+      (reason) => {
+        this.step = 'askDetails';
+      }
+    );
+  }
+
+  connectDevice(): void {
+    this.isLoading = true;
     this.generateAccessToken();
   }
 
   getServerDiscovery(): void {
     const token = localStorage.getItem('token');
-    
+
     this.http.get<any>('/api/secure/sync/discovery', {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe({
@@ -117,7 +152,7 @@ export class SettingsComponent implements OnInit {
     };
 
     this.qrCodeData = JSON.stringify(qrData, null, 2);
-    
+
     try {
       QRCode.toDataURL(this.qrCodeData, {
         errorCorrectionLevel: 'M',
@@ -144,7 +179,7 @@ export class SettingsComponent implements OnInit {
 
   loadTokens(): void {
     const token = localStorage.getItem('token');
-    
+
     this.http.get<any>('/api/secure/access/tokens', {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe({
@@ -170,31 +205,10 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  deleteAllTokens(): void {
-    const token = localStorage.getItem('token');
-    
-    if (confirm('Are you sure you want to delete all access tokens? This action cannot be undone.')) {
-      this.http.post<any>('/api/secure/access/delete-all',
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      ).subscribe({
-        next: () => {
-          this.loadTokens();
-          // Clear QR code data when all tokens are deleted
-          this.qrCodeUrl = null;
-          this.qrCodeData = '';
-          this.accessToken = '';
-        },
-        error: (error) => {
-          this.setError('Error deleting all tokens');
-        }
-      });
-    }
-  }
 
   deleteToken(tokenId: string): void {
     const token = localStorage.getItem('token');
-    
+
     if (confirm('Are you sure you want to delete this access token?')) {
       this.http.post<any>('/api/secure/access/delete',
         { token_id: tokenId },
@@ -222,6 +236,20 @@ export class SettingsComponent implements OnInit {
     return date.toLocaleDateString();
   }
 
+  formatExpiryDate(dateString: string | Date): string {
+    if (!dateString) {
+      return 'N/A';
+    }
+    const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'short',
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+    };
+    return `on ${date.toLocaleDateString('en-US', options)}`;
+  }
+
   copyRawQR(): void {
     if (this.qrCodeData) {
       navigator.clipboard.writeText(this.qrCodeData);
@@ -243,9 +271,9 @@ export class SettingsComponent implements OnInit {
   }
 
   openQRModal(content: any): void {
-    this.modalService.open(content, { 
+    this.modalService.open(content, {
       size: 'lg',
-      centered: true 
+      centered: true
     });
   }
 
