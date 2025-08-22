@@ -19,6 +19,16 @@ export class SettingsComponent implements OnInit {
   accessToken: string = '';
   serverInfo: any = null;
   currentUser: any = null;
+  newDeviceName: string = '';
+  newDeviceExpiration: number = 0; // 0 for no expiration, otherwise days
+  expirationOptions = [
+    { value: 0, label: 'No Expiration' },
+    { value: 7, label: '7 Days' },
+    { value: 30, label: '30 Days' },
+    { value: 60, label: '60 Days' },
+    { value: 90, label: '90 Days' },
+  ];
+  step: 'askDetails' | 'showQR' = 'askDetails';
 
   constructor(
     private http: HttpClient,
@@ -54,7 +64,15 @@ export class SettingsComponent implements OnInit {
     console.log('Generating access token...');
     this.isLoading = true;
 
-    this.http.post<any>('/api/secure/sync/initiate', {}, {
+    const body: { name?: string; expiration?: number } = {};
+    if (this.newDeviceName) {
+      body.name = this.newDeviceName;
+    }
+    if (this.newDeviceExpiration !== undefined) {
+      body.expiration = this.newDeviceExpiration;
+    }
+
+    this.http.post<any>('/api/secure/sync/initiate', body, {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe({
       next: (response) => {
@@ -63,6 +81,8 @@ export class SettingsComponent implements OnInit {
           this.accessToken = response.data.token;
           this.loadTokens();
           this.getServerDiscovery();
+          this.newDeviceName = ''; // Clear the input after successful generation
+          this.step = 'showQR'; // Move to the QR code display step
         } else {
           console.error('Failed to generate access token');
         }
@@ -76,14 +96,28 @@ export class SettingsComponent implements OnInit {
   }
 
   generateAndShowQR(content: any): void {
-    // Open modal immediately for better UX
+    this.step = 'askDetails';
+    this.newDeviceName = '';
+    this.newDeviceExpiration = 0; // Reset to default
+    this.qrCodeUrl = null;
+    this.qrCodeData = '';
+
     this.modalService.open(content, {
       size: 'lg',
       centered: true,
       backdrop: 'static'
-    });
+    }).result.then(
+      (result) => {
+        this.step = 'askDetails';
+      },
+      (reason) => {
+        this.step = 'askDetails';
+      }
+    );
+  }
 
-    // Generate token in background
+  connectDevice(): void {
+    this.isLoading = true;
     this.generateAccessToken();
   }
 

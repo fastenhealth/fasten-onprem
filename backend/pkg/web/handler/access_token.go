@@ -18,10 +18,22 @@ import (
 )
 
 // InitiateAccess generates a new access token for mobile app authentication
+type InitiateAccessRequest struct {
+	Name       string `json:"name"`
+	Expiration int    `json:"expiration"` // Expiration in days. 0 for no expiration.
+}
+
+// InitiateAccess generates a new access token for mobile app authentication
 func InitiateAccess(c *gin.Context) {
 	log := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 	appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
+
+	var req InitiateAccessRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		// If there's an error binding, or no name is provided, proceed without a specific name
+		log.Debugf("No device name provided or invalid request format: %v", err)
+	}
 
 	log.Debug("Attempting to get current user for access initiation")
 	currentUser, err := databaseRepo.GetCurrentUser(c)
@@ -37,15 +49,27 @@ func InitiateAccess(c *gin.Context) {
 	rand.Read(tokenIDBytes)
 	tokenID := hex.EncodeToString(tokenIDBytes)
 
-	// Generate access token with 24-hour expiration
+	// Generate access token with expiration based on request
 	now := time.Now()
-	expiresAt := now.Add(24 * time.Hour)
+	var expiresAt time.Time
+	if req.Expiration > 0 {
+		expiresAt = now.Add(time.Duration(req.Expiration) * 24 * time.Hour)
+	} else {
+		// If expiration is 0, set a very far future date for "no expiration"
+		expiresAt = time.Date(2099, time.December, 31, 23, 59, 59, 0, time.UTC)
+	}
 	
 	accessToken, err := auth.JwtGenerateAccessToken(*currentUser, appConfig.GetString("jwt.issuer.key"), expiresAt, tokenID)
 	if err != nil {
 		log.Errorf("Failed to generate access token: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
 		return
+	}
+
+	// Determine the token name
+	tokenName := req.Name
+	if tokenName == "" {
+		tokenName = fmt.Sprintf("Access Token - %s", time.Now().Format("Jan 2, 2006"))
 	}
 
 	// Store token metadata in database  
@@ -55,7 +79,7 @@ func InitiateAccess(c *gin.Context) {
 		UserID:      currentUser.ID,
 		TokenID:     tokenID,
 		TokenHash:   tokenHash,
-		Name:        fmt.Sprintf("Access Token - %s", time.Now().Format("Jan 2, 2006")),
+		Name:        tokenName,
 		IssuedAt:    now,
 		ExpiresAt:   expiresAt,
 		IsActive:    true,
