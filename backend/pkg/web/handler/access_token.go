@@ -191,27 +191,6 @@ func DeleteAccessToken(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Access token deleted successfully"})
 }
 
-// DeleteAllAccessTokens deletes all access tokens for the current user
-func DeleteAllAccessTokens(c *gin.Context) {
-	log := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
-	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
-
-	currentUser, err := databaseRepo.GetCurrentUser(c)
-	if err != nil {
-		log.Errorf("Failed to get current user: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to get current user"})
-		return
-	}
-
-	count, err := databaseRepo.DeleteAllAccessTokens(c, currentUser.ID)
-	if err != nil {
-		log.Errorf("Failed to delete all access tokens: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "Failed to delete all access tokens"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"success": true, "message": "All access tokens deleted successfully", "count": count})
-}
 
 // GetAccessStatus returns the current access status and available endpoints
 func GetAccessStatus(c *gin.Context) {

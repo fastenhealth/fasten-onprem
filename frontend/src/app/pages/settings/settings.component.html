@@ -33,9 +33,6 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h4><i class="fas fa-key me-3"></i>Sync / Access Tokens</h4>
           <div>
-            <button *ngIf="tokens.length > 0" class="btn btn-outline-danger btn-sm me-4" (click)="deleteAllTokens()" [disabled]="isLoading">
-              <i class="fas fa-trash-alt me-2"></i>Delete All
-            </button>
             <button class="btn btn-az-primary btn-sm" (click)="generateAndShowQR(qrModal)" [disabled]="isLoading">
               <i class="fas fa-qrcode me-2"></i>{{ tokens.length === 0 ? 'Generate QR Code' : 'Generate New QR Code' }}
             </button>
@@ -69,8 +66,7 @@
               <tr *ngFor="let token of tokens">
                 <td>{{ token.name || 'Access Token' }}</td>
                 <td>
-                  <span class="badge"
-                        [ngClass]="{
+                  <span class="badge" [ngClass]="{
                           'badge-primary': getTokenStatus(token) === 'Active',
                           'badge-danger': getTokenStatus(token) === 'Revoked',
                           'badge-warning': getTokenStatus(token) === 'Expired',
@@ -109,7 +105,7 @@
       <img [src]="qrCodeUrl" alt="QR Code" class="qr-code-image">
     </div>
     <p class="text-muted">Scan this QR code with your Fasten Health mobile app to sync your medical records.</p>
-    
+
     <!-- Development: Raw QR Code Data -->
     <div class="mt-4">
       <h6>Development: Raw QR Code Data</h6>

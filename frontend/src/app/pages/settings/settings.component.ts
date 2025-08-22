@@ -33,7 +33,7 @@ export class SettingsComponent implements OnInit {
 
   loadCurrentUser(): void {
     const token = localStorage.getItem('token');
-    
+
     this.http.get<any>('/api/secure/account/me', {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe({
@@ -50,10 +50,10 @@ export class SettingsComponent implements OnInit {
 
   generateAccessToken(): void {
     const token = localStorage.getItem('token');
-    
+
     console.log('Generating access token...');
     this.isLoading = true;
-    
+
     this.http.post<any>('/api/secure/sync/initiate', {}, {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe({
@@ -82,14 +82,14 @@ export class SettingsComponent implements OnInit {
       centered: true,
       backdrop: 'static'
     });
-    
+
     // Generate token in background
     this.generateAccessToken();
   }
 
   getServerDiscovery(): void {
     const token = localStorage.getItem('token');
-    
+
     this.http.get<any>('/api/secure/sync/discovery', {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe({
@@ -117,7 +117,7 @@ export class SettingsComponent implements OnInit {
     };
 
     this.qrCodeData = JSON.stringify(qrData, null, 2);
-    
+
     try {
       QRCode.toDataURL(this.qrCodeData, {
         errorCorrectionLevel: 'M',
@@ -144,7 +144,7 @@ export class SettingsComponent implements OnInit {
 
   loadTokens(): void {
     const token = localStorage.getItem('token');
-    
+
     this.http.get<any>('/api/secure/access/tokens', {
       headers: { Authorization: `Bearer ${token}` }
     }).subscribe({
@@ -170,31 +170,10 @@ export class SettingsComponent implements OnInit {
     });
   }
 
-  deleteAllTokens(): void {
-    const token = localStorage.getItem('token');
-    
-    if (confirm('Are you sure you want to delete all access tokens? This action cannot be undone.')) {
-      this.http.post<any>('/api/secure/access/delete-all',
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      ).subscribe({
-        next: () => {
-          this.loadTokens();
-          // Clear QR code data when all tokens are deleted
-          this.qrCodeUrl = null;
-          this.qrCodeData = '';
-          this.accessToken = '';
-        },
-        error: (error) => {
-          this.setError('Error deleting all tokens');
-        }
-      });
-    }
-  }
 
   deleteToken(tokenId: string): void {
     const token = localStorage.getItem('token');
-    
+
     if (confirm('Are you sure you want to delete this access token?')) {
       this.http.post<any>('/api/secure/access/delete',
         { token_id: tokenId },
@@ -243,9 +222,9 @@ export class SettingsComponent implements OnInit {
   }
 
   openQRModal(content: any): void {
-    this.modalService.open(content, { 
+    this.modalService.open(content, {
       size: 'lg',
-      centered: true 
+      centered: true
     });
   }
 

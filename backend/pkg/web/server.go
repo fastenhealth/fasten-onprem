@@ -146,7 +146,6 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.GET("/access/tokens", handler.GetAccessTokens)
 				
 				secure.POST("/access/delete", handler.DeleteAccessToken)
-				secure.POST("/access/delete-all", handler.DeleteAllAccessTokens)
 
 				//server-side-events handler (only supported on mac/linux)
 				// TODO: causes deadlock on Windows
