@@ -15,34 +15,33 @@
         <div class="d-flex flex-column align-items-center">
             <img [src]="pageImages[currentPageIndex]" class="img-thumbnail mb-3"
                 style="max-width: 100%; height: auto; max-height: 300px; object-fit: contain" />
-            <button class="btn btn-success mt-2" (click)="sendCurrentPageToOcr()"
-                [disabled]="isProcessing || scannedPages.includes(currentPageIndex)">
-                <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
-                Send to OCR
-            </button>
+            <div class="d-flex w-100">
+                <!-- 🧭 Navigation + Action Buttons -->
+                <div class="d-flex align-items-center mt-3">
+                    <div>
+                        <button class="btn btn-outline-secondary mr-1" (click)="goToPreviousPage()"
+                            [disabled]="currentPageIndex === 0">
+                            ← Previous
+                        </button>
+                        <button class="btn btn-success mr-1" (click)="sendCurrentPageToOcr()"
+                            [disabled]="isProcessing || scannedPages.includes(currentPageIndex)">
+                            <span *ngIf="isProcessing" class="spinner-border spinner-border-sm"></span>
+                            Send to OCR
+                        </button>
+                        <button class="btn btn-outline-secondary" (click)="goToNextPage()"
+                            [disabled]="currentPageIndex === pageImages.length - 1">
+                            Next →
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="col-md-8 d-flex flex-column">
-        <!-- ✍️ Editable OCR Preview -->
+        <!-- ✍️ Editable Form -->
         <div class="form-group flex-grow-1">
-            <label class="form-label">OCR Result</label>
-            <textarea class="form-control" rows="10" [(ngModel)]="ocrResults[currentPageIndex]"
-                style="resize: vertical"></textarea>
-        </div>
-
-        <!-- 🧭 Navigation + Action Buttons -->
-        <div class="d-flex justify-content-between align-items-center mt-3">
-            <div>
-                <button class="btn btn-outline-secondary me-2" (click)="goToPreviousPage()"
-                    [disabled]="currentPageIndex === 0">
-                    ← Previous
-                </button>
-                <button class="btn btn-outline-secondary" (click)="goToNextPage()"
-                    [disabled]="currentPageIndex === pageImages.length - 1">
-                    Next →
-                </button>
-            </div>
+            <app-encounter-form></app-encounter-form>
         </div>
     </div>
 </div>

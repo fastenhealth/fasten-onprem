@@ -13,6 +13,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type MedicalReport struct {
+	PatientName   string `json:"patientName,omitempty"`
+	DoctorName    string `json:"doctorName,omitempty"`
+	Hospital      string `json:"hospital,omitempty"`
+	Date          string `json:"date,omitempty"`
+	EncounterType string `json:"encounterType,omitempty"`
+}
+
 // OcrFileUploadHandler accepts a multipart/form-data upload and forwards it to the OCR service.
 func OcrFileUploadHandler(c *gin.Context) {
 	logger := logrus.New() // Standalone logger for this example
@@ -100,13 +108,6 @@ func OcrFileUploadHandler(c *gin.Context) {
 	c.Data(http.StatusOK, "application/json", jsonData)
 }
 
-type MedicalReport struct {
-	PatientName string `json:"patientName,omitempty"`
-	DoctorName  string `json:"doctorName,omitempty"`
-	Hospital    string `json:"hospital,omitempty"`
-	Date        string `json:"date,omitempty"`
-}
-
 // --- Helpers ---
 func cleanText(text string) string {
 	t := strings.TrimSpace(text)
@@ -129,6 +130,66 @@ func fallbackAfterKeyword(text string, keywordPattern string) string {
 			if i+1 < len(lines) && len(strings.TrimSpace(lines[i+1])) > 2 {
 				return strings.TrimSpace(lines[i+1])
 			}
+		}
+	}
+	return ""
+}
+
+type NHSValueSetResponse struct {
+	Expansion struct {
+		Contains []struct {
+			System      string `json:"system"`
+			Code        string `json:"code"`
+			Display     string `json:"display"`
+			Designation []struct {
+				Use struct {
+					System string `json:"system"`
+					Code   string `json:"code"`
+				} `json:"use"`
+				Value string `json:"value"`
+			} `json:"designation"`
+		} `json:"contains"`
+	} `json:"expansion"`
+}
+
+func FetchEncounterTypes() ([]string, error) {
+	url := "https://ontology.nhs.uk/production1/fhir/ValueSet/$expand?_format=json&filter=&url=http://hl7.org/fhir/ValueSet/service-type&incomplete-ok=true"
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+
+	var data NHSValueSetResponse
+	if err := json.Unmarshal(body, &data); err != nil {
+		return nil, err
+	}
+
+	var types []string
+	for _, item := range data.Expansion.Contains {
+		// prefer designation.value if available, else fallback to display
+		if len(item.Designation) > 0 && item.Designation[0].Value != "" {
+			types = append(types, item.Designation[0].Value)
+		} else {
+			types = append(types, item.Display)
+		}
+	}
+
+	return types, nil
+}
+
+func extractEncounterTypeFromNHS(ocrText string) string {
+	types, err := FetchEncounterTypes()
+	if err != nil {
+		return ""
+	}
+
+	lowerText := strings.ToLower(ocrText)
+	for _, eType := range types {
+		if strings.Contains(lowerText, strings.ToLower(eType)) {
+			return eType
 		}
 	}
 	return ""
@@ -157,6 +218,9 @@ func extractMedicalReportData(ocrText string) ([]byte, error) {
 	if match := dateRe.FindStringSubmatch(ocrText); len(match) > 1 {
 		result.Date = strings.TrimSpace(match[1])
 	}
+
+	// --- Encounter type detection ---
+	result.EncounterType = extractEncounterTypeFromNHS(ocrText)
 
 	// --- Fallback heuristics ---
 	if result.PatientName == "" {
