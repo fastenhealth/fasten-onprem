@@ -1,57 +1,63 @@
-@media (prefers-color-scheme: dark) {
-    body:not(.light-theme) {
-
-        .input-group {
-            .input-group-prepend {
-                .input-group-text {
-                    background-color: var(--card);
-                    color: var(--dark-text-color);
-                    border-color: var(--border);
-                }
-            }
-
-            .form-control {
+@mixin dark-forms-styles {
+    .input-group {
+        .input-group-prepend {
+            .input-group-text {
                 background-color: var(--card);
                 color: var(--dark-text-color);
                 border-color: var(--border);
             }
-
-            .input-group-append {
-                .input-group-text {
-                    background-color: var(--card);
-                    color: var(--dark-text-color);
-                    border-color: var(--border);
-                }
-            }
         }
 
-
-        // Form control (Users)
         .form-control {
             background-color: var(--card);
             color: var(--dark-text-color);
             border-color: var(--border);
         }
 
-        // Manual upload dropzone (Sources)
-        ngx-dropzone {
-            background-color: var(--background);
-            border: 1px dashed var(--border);
-            color: var(--dark-text-color);
-        }
-
-        ngx-dropzone-label {
-            color: var(--dark-text-color);
-        }
-
-        ngx-dropzone-preview {
-            background-color: var(--background);
-            color: var(--dark-text-color);
-        }
-
-        //Label
-        label {
-            color: var(--dark-text-color);
+        .input-group-append {
+            .input-group-text {
+                background-color: var(--card);
+                color: var(--dark-text-color);
+                border-color: var(--border);
+            }
         }
     }
+
+    // Form control (Users)
+    .form-control {
+        background-color: var(--card);
+        color: var(--dark-text-color);
+        border-color: var(--border);
+    }
+
+    // Manual upload dropzone (Sources)
+    ngx-dropzone {
+        background-color: var(--background);
+        border: 1px dashed var(--border);
+        color: var(--dark-text-color);
+    }
+
+    ngx-dropzone-label {
+        color: var(--dark-text-color);
+    }
+
+    ngx-dropzone-preview {
+        background-color: var(--background);
+        color: var(--dark-text-color);
+    }
+
+    //Label
+    label {
+        color: var(--dark-text-color);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    body:not(.light-theme) {
+        @include dark-forms-styles;
+    }
+}
+
+body.dark-theme {
+    @include dark-forms-styles;
 }
