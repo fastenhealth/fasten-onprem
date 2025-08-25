@@ -1686,7 +1686,7 @@ func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsBase() {
 	require.Equal(suite.T(), "Condition", foundAssociations[0].RelatedResourceSourceResourceType)
 	require.Equal(suite.T(), "cond789", foundAssociations[0].RelatedResourceSourceResourceID)
 
-	// Association 2 (from Observation to Encounter)
+	// Association 2 (to Observation)
 	require.Equal(suite.T(), testUser.ID, foundAssociations[1].ResourceBaseUserID)
 	require.Equal(suite.T(), sc1.ID, foundAssociations[1].ResourceBaseSourceID)
 	require.Equal(suite.T(), "Encounter", foundAssociations[1].ResourceBaseSourceResourceType)
@@ -1787,7 +1787,7 @@ func (suite *RepositoryTestSuite) TestFindAllResourceAssociations_AsRelated() {
 	require.Equal(suite.T(), "Encounter", foundAssociations[0].RelatedResourceSourceResourceType)
 	require.Equal(suite.T(), "enc123", foundAssociations[0].RelatedResourceSourceResourceID)
 
-	// Association 2 (to Observation)
+	// Association 2 (from Observation to Encounter)
 	require.Equal(suite.T(), testUser.ID, foundAssociations[1].ResourceBaseUserID)
 	require.Equal(suite.T(), sc1.ID, foundAssociations[1].ResourceBaseSourceID)
 	require.Equal(suite.T(), "Observation", foundAssociations[1].ResourceBaseSourceResourceType)
