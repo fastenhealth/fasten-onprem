@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { APP_INITIALIZER, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { SettingsService } from './services/settings.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {HttpClientModule, HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
@@ -41,6 +42,10 @@ import { AuthSignupWizardComponent } from './pages/auth-signup-wizard/auth-signu
 import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard';
 import { IconsModule } from './icon-module';
 import { UserListComponent } from './pages/user-list/user-list.component';
+import { ViewRawResourceDetailsComponent } from './pages/view-raw-resource-details/view-raw-resource-details.component';
+import { ResourceSearchTableComponent } from './pages/resource-search-table/resource-search-table.component';
+import { ResourceSearchDatatableModule } from './components/resource-search-datatable/resource-search-datatable.module';
+import { ChatComponent } from './pages/chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +67,9 @@ import { UserListComponent } from './pages/user-list/user-list.component';
     BackgroundJobsComponent,
     AuthSignupWizardComponent,
     UserListComponent,
+    ViewRawResourceDetailsComponent,
+    ResourceSearchTableComponent,
+    ChatComponent,
   ],
   imports: [
     FormsModule,
@@ -70,6 +78,7 @@ import { UserListComponent } from './pages/user-list/user-list.component';
     SharedModule,
     FhirCardModule,
     FhirDatatableModule,
+    ResourceSearchDatatableModule,
     AppRoutingModule,
     HttpClientModule,
     NgbModule,
@@ -94,6 +103,12 @@ import { UserListComponent } from './pages/user-list/user-list.component';
       useClass: AuthInterceptorService,
       multi: true,
       deps: [AuthService, Router]
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (settingsService: SettingsService) => () => settingsService.load(),
+      deps: [SettingsService],
+      multi: true
     },
     IsAuthenticatedAuthGuard,
     ShowFirstRunWizardGuard,

@@ -2,16 +2,17 @@ package database
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
+	"os"
+	"testing"
+
 	mock_config "github.com/fastenhealth/fasten-onprem/backend/pkg/config/mock"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/golang/mock/gomock"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"io/ioutil"
-	"log"
-	"os"
-	"testing"
 )
 
 // Define the suite, and absorb the built-in basic suite
@@ -57,6 +58,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_DefaultPragmaSet
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 
 	repo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
@@ -90,6 +92,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
+	fakeConfig.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetString("database.encryption.key").Return("012345678901234567890").AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 
@@ -134,6 +137,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig1.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig1.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig1.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
+	fakeConfig1.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig1.EXPECT().GetString("database.encryption.key").Return("012345678901234567890").AnyTimes()
 	fakeConfig1.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 
@@ -145,6 +149,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig2.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig2.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig2.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
+	fakeConfig2.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig2.EXPECT().GetString("database.encryption.key").Return("incorrect_key_here").AnyTimes()
 	fakeConfig2.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 
@@ -162,6 +167,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig1.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig1.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig1.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
+	fakeConfig1.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig1.EXPECT().GetString("database.encryption.key").Return("012345678901234567890").AnyTimes()
 	fakeConfig1.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 
@@ -173,6 +179,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig2.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig2.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig2.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
+	fakeConfig2.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig2.EXPECT().GetString("database.encryption.key").Return("012345678901234567890").AnyTimes()
 	fakeConfig2.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 
@@ -190,6 +197,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig1.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig1.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig1.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
+	fakeConfig1.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig1.EXPECT().GetString("database.encryption.key").Return("012345678901234567890").AnyTimes()
 	fakeConfig1.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 
@@ -201,6 +209,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig2.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig2.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig2.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig2.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig2.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 
 	//test
@@ -217,6 +226,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithoutEncryptio
 	fakeConfig1.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig1.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig1.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig1.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig1.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 
 	//intialize the database with a key
@@ -227,6 +237,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithoutEncryptio
 	fakeConfig2.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig2.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig2.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
+	fakeConfig2.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig2.EXPECT().GetString("database.encryption.key").Return("012345678901234567890").AnyTimes()
 	fakeConfig2.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 
@@ -244,6 +255,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithoutEncryptio
 	fakeConfig1.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig1.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig1.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig1.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig1.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 
 	//intialize the database with a key
@@ -254,6 +266,7 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithoutEncryptio
 	fakeConfig2.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig2.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig2.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig2.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig2.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 
 	//test
@@ -261,4 +274,39 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithoutEncryptio
 
 	//assert
 	require.NoError(suite.T(), err2)
+}
+
+// Scenario 7: repository creation with default settings (no encryption) and Typsense search enabled
+func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithSearchEnabled() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().IsSet("search").Return(true).AnyTimes()
+	fakeConfig.EXPECT().GetString("search.uri").Return("http://localhost:8108").AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+
+	repo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+	sqliteRepo, sqliteRepoOk := repo.(*GormRepository)
+	require.True(suite.T(), sqliteRepoOk)
+
+	//test
+	var journalMode string
+	resp := sqliteRepo.GormClient.Raw("PRAGMA journal_mode;").Scan(&journalMode)
+	require.NoError(suite.T(), resp.Error)
+
+	var busyTimeout int
+	resp = sqliteRepo.GormClient.Raw("PRAGMA busy_timeout;").Scan(&busyTimeout)
+	require.NoError(suite.T(), resp.Error)
+
+	var foreignKeys bool
+	resp = sqliteRepo.GormClient.Raw("PRAGMA foreign_keys;").Scan(&foreignKeys)
+	require.NoError(suite.T(), resp.Error)
+
+	//assert
+	require.Equal(suite.T(), "wal", journalMode)
+	require.Equal(suite.T(), 5000, busyTimeout)
+	require.Equal(suite.T(), true, foreignKeys)
 }

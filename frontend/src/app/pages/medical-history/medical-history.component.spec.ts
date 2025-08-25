@@ -6,6 +6,7 @@ import {NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
 import {of} from 'rxjs';
 import { ReportHeaderComponent } from 'src/app/components/report-header/report-header.component';
 import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('MedicalHistoryComponent', () => {
   let component: MedicalHistoryComponent;
@@ -17,7 +18,7 @@ describe('MedicalHistoryComponent', () => {
     mockedFastenApiService = jasmine.createSpyObj('FastenApiService', ['getResources', 'getResourceGraph', 'getSummary'])
     await TestBed.configureTestingModule({
       declarations: [ MedicalHistoryComponent, ReportHeaderComponent ],
-      imports: [ RouterTestingModule ],
+      imports: [ RouterTestingModule, HttpClientTestingModule ],
       providers: [{
         provide: FastenApiService,
         useValue: mockedFastenApiService

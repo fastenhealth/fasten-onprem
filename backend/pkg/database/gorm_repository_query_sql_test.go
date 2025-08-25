@@ -45,6 +45,7 @@ func (suite *RepositorySqlTestSuite) BeforeTest(suiteName, testName string) {
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
