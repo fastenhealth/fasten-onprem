@@ -2,7 +2,6 @@ package handler
 
 import (
 	"crypto/rand"
-	// "os"
 	"encoding/hex"
 	"fmt"
 	"net/http"
@@ -99,18 +98,6 @@ func InitiateAccess(c *gin.Context) {
 		"success": true,
 		"data": gin.H{
 			"token": accessToken,
-			// "token_details": gin.H{
-			// 	"token_id":     dbAccessToken.TokenID,
-			// 	"name":         dbAccessToken.Name,
-			// 	"description":  dbAccessToken.Description,
-			// 	"issued_at":    dbAccessToken.IssuedAt.Format(time.RFC3339),
-			// 	"expires_at":   dbAccessToken.ExpiresAt.Format(time.RFC3339),
-			// 	"last_used_at": dbAccessToken.LastUsedAt,
-			// 	"is_active":    dbAccessToken.IsActive,
-			// 	"is_revoked":   dbAccessToken.IsRevoked,
-			// 	"use_count":    dbAccessToken.UseCount,
-			// 	"status":       dbAccessToken.GetStatus(),
-			// },
 		},
 	})
 }
@@ -158,10 +145,6 @@ func GetAccessTokens(c *gin.Context) {
 		},
 	})
 }
-
-
-
-
 
 // DeleteAccessToken deletes a single access token by tokenId
 func DeleteAccessToken(c *gin.Context) {
