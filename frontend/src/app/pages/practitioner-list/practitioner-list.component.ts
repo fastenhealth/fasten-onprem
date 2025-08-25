@@ -9,9 +9,9 @@ export interface Favorite {
   id: string; // From ModelBase
   created_at: string; // ISO date string
   updated_at: string; // ISO date string (optional if not used)
-  UserID: string;
-  ResourceType: string;
-  ResourceID: string;
+  user_id: string;
+  resource_type: string;
+  resource_id: string;
   CreatedAt: string; // duplicate of created_at, possibly for legacy reasons
 }
 
@@ -80,7 +80,7 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
   loadFavorites(): void {
     this.fastenApi.getUserFavorites('Practitioner').subscribe(
       (favorites: Favorite[]) => {
-        this.favoriteIds = new Set(favorites.map(fav => fav.ResourceID));
+        this.favoriteIds = new Set(favorites.map(fav => fav?.resource_id || ''));
         this.updatePractitionersFavoriteStatus();
       },
       error => {
@@ -105,6 +105,7 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
     event.stopPropagation(); // Prevent row selection
     
     const resourceId = practitioner.source_resource_id;
+    const sourceId = practitioner.source_id;
     if (!resourceId) return;
 
     const wasFavorite = practitioner.isFavorite;
@@ -120,8 +121,8 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
     
     // Update backend
     const request = wasFavorite 
-      ? this.fastenApi.removeFavorite('Practitioner', resourceId)
-      : this.fastenApi.addFavorite('Practitioner', resourceId);
+      ? this.fastenApi.removeFavorite('Practitioner', resourceId, sourceId)
+      : this.fastenApi.addFavorite('Practitioner', resourceId, sourceId);
     
     request.subscribe(
       () => {
@@ -217,7 +218,7 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
     // Batch update to backend
     const requests = unfavorited
       .filter(p => p.source_resource_id)
-      .map(p => this.fastenApi.addFavorite('Practitioner', p.source_resource_id!));
+      .map(p => this.fastenApi.addFavorite('Practitioner', p.source_resource_id!, p.source_id!));
     
     if (requests.length > 0) {
       forkJoin(requests).subscribe(
@@ -254,7 +255,7 @@ export class PractitionerListComponent implements OnInit, OnDestroy {
     // Batch update to backend
     const requests = favorited
       .filter(p => p.source_resource_id)
-      .map(p => this.fastenApi.removeFavorite('Practitioner', p.source_resource_id!));
+      .map(p => this.fastenApi.removeFavorite('Practitioner', p.source_resource_id!, p.source_id!));
     
     if (requests.length > 0) {
       forkJoin(requests).subscribe(

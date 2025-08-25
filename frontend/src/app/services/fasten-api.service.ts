@@ -623,11 +623,12 @@ export class FastenApiService {
       );
   }
 
-  addFavorite(resourceType: string, resourceId: string): Observable<any> {
+  addFavorite(resourceType: string, resourceId: string, sourceId: string): Observable<any> {
     const endpointUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/user/favorites`;
     return this._httpClient.post<any>(endpointUrl, {
       resource_type: resourceType,
-      resource_id: resourceId
+      resource_id: resourceId,
+      source_id: sourceId
     })
     .pipe(
       map((response: ResponseWrapper) => {
@@ -636,12 +637,13 @@ export class FastenApiService {
     );
   }
 
-  removeFavorite(resourceType: string, resourceId: string): Observable<any> {
+  removeFavorite(resourceType: string, resourceId: string, sourceId: string): Observable<any> {
     const endpointUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/user/favorites`;
     return this._httpClient.delete<any>(endpointUrl, {
       body: {
         resource_type: resourceType,
-        resource_id: resourceId
+        resource_id: resourceId,
+        source_id: sourceId
       }
     })
     .pipe(
@@ -662,7 +664,7 @@ export class FastenApiService {
     return this._httpClient.get<any>(endpointUrl, { params: queryParams })
       .pipe(
         map((response: ResponseWrapper) => {
-          return response.data.map((item: any) => item.resource_id);
+          return response.data;
         })
       );
     
