@@ -425,7 +425,12 @@ func GetSecureServerDiscovery(c *gin.Context) {
 // getServerAddresses returns multiple possible server addresses for network change resilience
 func getServerAddresses(c *gin.Context, appConfig config.Interface) []Connection {
 	log := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
-	port := appConfig.GetString("web.listen.port")
+	
+	// Determine the port to use
+	port := appConfig.GetString("web.listen.port") // Default to internal port
+	if hostPort := os.Getenv("HOST_PORT"); hostPort != "" {
+		port = hostPort
+	}
 
 	var connections []Connection
 
