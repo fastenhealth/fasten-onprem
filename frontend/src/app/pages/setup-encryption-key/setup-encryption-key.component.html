@@ -1,17 +1,16 @@
 <div class="az-signin-wrapper">
   <div class="az-card-signin">
-    <h1 class="az-logo">FastenHealth</h1>
+    <h1 class="az-logo">Fasten</h1>
 
     <div class="az-signin-header">
 
       <div>
         <h2 class="mb-3">
-          <span>🔒 Access Restricted</span>
+          <span>Access Restricted</span>
         </h2>
         <p class="text-muted">
           <span>
-            It looks like your encryption key is missing.<br />
-            Please restore it to regain access to the application.
+            Please provide the encryption key to regain access to the application.
           </span>
         </p>
 
@@ -25,13 +24,13 @@
             </div>
           </div>
 
-          <div class="d-grid mt-3">
+          <div class="mt-3">
             <button type="button" class="btn btn-az-primary btn-block"
               [disabled]="isProcessing"
               (click)="handleButtonClick()">
               <span class="button-content-wrapper">
-                <span *ngIf="isProcessing && !isValidated" class="spinner-border spinner-border-sm me-2"></span>
-                <fa-icon *ngIf="isValidated" [icon]="['fas', 'check-circle']" class="me-2"></fa-icon>
+                <span *ngIf="isProcessing && !isValidated" class="spinner-border spinner-border-sm mr-2"></span>
+                <fa-icon *ngIf="isValidated" [icon]="['fas', 'check-circle']" class="mr-2"></fa-icon>
                 <span>
                   <ng-container *ngIf="!isProcessing && !isValidated && !error">Validate Key</ng-container>
                   <ng-container *ngIf="isProcessing && !isValidated">{{ statusMessage }}</ng-container>

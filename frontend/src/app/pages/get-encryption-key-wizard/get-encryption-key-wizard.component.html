@@ -3,7 +3,7 @@
     <div *ngFor="let img of gridImages" class="col-1 nopadding">
       <div class="d-flex h-100">
         <div class="mx-auto my-auto">
-          <img src="assets/sources/{{img}}" class="rounded img-fluid opacity-20">
+          <img src="assets/sources/{{img}}" class="rounded img-fluid" style="opacity: 0.2;">
         </div>
       </div>
     </div>
@@ -12,11 +12,11 @@
   <div class="d-flex justify-content-center align-items-center position-absolute w-100 h-100" style="z-index: 13;">
     <div class="az-card-signin">
       <div>
-        <h4>👋 Welcome to FastenHealth</h4>
+        <h4>Welcome to Fasten</h4>
 
         <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-        <div *ngIf="loading" class="d-flex align-items-center gap-2 text-muted">
+        <div *ngIf="loading" class="d-flex align-items-center text-muted">
             <span class="spinner-border spinner-border-sm"></span>
             Fetching your secure encryption key...
         </div>
@@ -27,7 +27,7 @@
                 Please save it securely by downloading it before continuing.
             </p>
 
-            <label for="encryptionKey" class="form-label fw-bold">Your Encryption Key</label>
+            <label for="encryptionKey" class="form-label font-weight-bold">Your Encryption Key</label>
             <div class="d-flex align-items-center mb-3">
                 <input [type]="showEncryptionKey ? 'text' : 'password'" class="form-control font-monospace" id="encryptionKey"
                     [value]="encryptionKey" readonly />
@@ -44,12 +44,12 @@
                 </label>
             </div>
 
-            <div class="mt-3 d-flex gap-2">
-                <button class="btn btn-outline-secondary" (click)="copyToClipboard()">
-                    📋 Copy
+            <div class="mt-3 d-flex">
+                <button class="btn btn-outline-secondary mr-2" (click)="copyToClipboard()">
+                    <fa-icon [icon]="['fas', 'copy']"></fa-icon> Copy
                 </button>
                 <button class="btn btn-outline-success" (click)="downloadEncryptionKey()" [disabled]="encryptionKeyDownloaded">
-                    💾 Download as .txt
+                    <fa-icon [icon]="['fas', 'download']"></fa-icon> Download as .txt
                 </button>
             </div>
 
@@ -57,7 +57,7 @@
                 <strong>Important:</strong> You must download this encryption key before continuing. It will not be shown again.
             </div>
 
-            <div class="mt-4 text-end">
+            <div class="mt-4 text-right">
                 <button class="btn btn-primary" [disabled]="!acknowledged || !encryptionKeyDownloaded" (click)="proceedToSignup()">
                     Continue to Sign Up →
                 </button>
