@@ -13,8 +13,9 @@ services:
     hostname: ${HOST_HOSTNAME}
     environment:
       - HOST_IP=${HOST_IP}
+      - HOST_PORT=${FASTEN_EXTERNAL_PORT}
     ports:
-      - "9090:8080"
+      - "${FASTEN_EXTERNAL_PORT}:8080"
     volumes:
       - ./db:/opt/fasten/db
 #      - ./config.example.yaml:/opt/fasten/config/config.yaml
