@@ -8,8 +8,9 @@ import (
 
 type Favorite struct {
 	models.ModelBase
-	UserID       string `gorm:"index"`
-	ResourceType string `gorm:"index"`
-	ResourceID   string `gorm:"index"`
+	UserID       string `gorm:"index;uniqueIndex:idx_fav_user_source_res"`
+	SourceID     string `gorm:"index;uniqueIndex:idx_fav_user_source_res"`
+	ResourceType string `gorm:"index;uniqueIndex:idx_fav_user_source_res"`
+	ResourceID   string `gorm:"index;uniqueIndex:idx_fav_user_source_res"`
 	CreatedAt    time.Time
 }

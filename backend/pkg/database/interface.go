@@ -62,9 +62,9 @@ type DatabaseRepository interface {
 	ListBackgroundJobs(ctx context.Context, queryOptions models.BackgroundJobQueryOptions) ([]models.BackgroundJob, error)
 
 	//favorites (Address book)
-	AddFavorite(ctx context.Context, userId string, resourceType string, resourceId string) error
-	RemoveFavorite(ctx context.Context, userId string, resourceType string, resourceId string) error
-	CheckFavoriteExists(ctx context.Context, userId string, resourceType string, resourceId string) (bool, error)
+	AddFavorite(ctx context.Context, userId string, sourceId string, resourceType string, resourceId string) error
+	RemoveFavorite(ctx context.Context, userId string, sourceId string, resourceType string, resourceId string) error
+	CheckFavoriteExists(ctx context.Context, userId string, sourceId string, resourceType string, resourceId string) (bool, error)
 	GetUserFavorites(ctx context.Context, userId string, resourceType string) ([]models.Favorite, error)
 
 	//settings

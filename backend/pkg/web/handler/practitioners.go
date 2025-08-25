@@ -218,6 +218,7 @@ func AddPractitionerToFavorites(c *gin.Context) {
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	type AddFavoriteRequest struct {
+		SourceID     string `json:"source_id" binding:"required"`
 		ResourceType string `json:"resource_type" binding:"required"`
 		ResourceID   string `json:"resource_id" binding:"required"`
 	}
@@ -244,7 +245,13 @@ func AddPractitionerToFavorites(c *gin.Context) {
 	}
 
 	// Check if already favorited
-	exists, err := databaseRepo.CheckFavoriteExists(c, currentUser.ID.String(), request.ResourceType, request.ResourceID)
+	exists, err := databaseRepo.CheckFavoriteExists(
+		c,
+		currentUser.ID.String(),
+		request.SourceID,
+		request.ResourceType,
+		request.ResourceID,
+	)
 	if err != nil {
 		logger.Errorln("Error checking if favorite exists:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to check favorite status"})
@@ -257,14 +264,20 @@ func AddPractitionerToFavorites(c *gin.Context) {
 	}
 
 	// Add to favorites
-	err = databaseRepo.AddFavorite(c, currentUser.ID.String(), request.ResourceType, request.ResourceID)
+	err = databaseRepo.AddFavorite(
+		c,
+		currentUser.ID.String(),
+		request.SourceID,
+		request.ResourceType,
+		request.ResourceID,
+	)
 	if err != nil {
 		logger.Errorln("Error adding favorite:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to add to favorites"})
 		return
 	}
 
-	logger.Infof("Successfully added practitioner %s to favorites for user %s", request.ResourceID, currentUser.ID)
+	logger.Infof("Successfully added practitioner %s (source %s) to favorites for user %s", request.ResourceID, request.SourceID, currentUser.ID)
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "practitioner added to favorites"})
 }
 
@@ -274,6 +287,7 @@ func RemovePractitionerFromFavorites(c *gin.Context) {
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
 	type RemoveFavoriteRequest struct {
+		SourceID     string `json:"source_id" binding:"required"`
 		ResourceType string `json:"resource_type" binding:"required"`
 		ResourceID   string `json:"resource_id" binding:"required"`
 	}
@@ -300,14 +314,20 @@ func RemovePractitionerFromFavorites(c *gin.Context) {
 	}
 
 	// Remove from favorites
-	err = databaseRepo.RemoveFavorite(c, currentUser.ID.String(), request.ResourceType, request.ResourceID)
+	err = databaseRepo.RemoveFavorite(
+		c,
+		currentUser.ID.String(),
+		request.SourceID,
+		request.ResourceType,
+		request.ResourceID,
+	)
 	if err != nil {
 		logger.Errorln("Error removing favorite:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to remove from favorites"})
 		return
 	}
 
-	logger.Infof("Successfully removed practitioner %s from favorites for user %s", request.ResourceID, currentUser.ID)
+	logger.Infof("Successfully removed practitioner %s (source %s) from favorites for user %s", request.ResourceID, request.SourceID, currentUser.ID)
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "practitioner removed from favorites"})
 }
 
@@ -346,10 +366,11 @@ func GetUserFavoritePractitioners(c *gin.Context) {
 
 	// Transform to the expected format (array of objects with resource_id)
 	favoriteObjects := make([]map[string]interface{}, len(favorites))
-	for i, resourceID := range favorites {
+	for i, fav := range favorites {
 		favoriteObjects[i] = map[string]interface{}{
-			"resource_id":   resourceID,
-			"resource_type": resourceType,
+			"source_id":     fav.SourceID,
+			"resource_id":   fav.ResourceID,
+			"resource_type": fav.ResourceType,
 		}
 	}
 
