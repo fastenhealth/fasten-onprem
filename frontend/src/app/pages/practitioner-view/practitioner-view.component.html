@@ -1,0 +1,256 @@
+<div class="az-content">
+  <div class="container-fluid">
+    <div class="az-content-body">
+      
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="d-flex justify-content-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading practitioner details...</span>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="loadError" class="alert alert-danger">
+        <h6 class="alert-heading">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          Error Loading Practitioner
+        </h6>
+        <p class="mb-0">{{ loadError }}</p>
+        <hr>
+        <button class="btn btn-outline-danger btn-sm" (click)="loadPractitioner()">
+          <i class="fas fa-redo me-1"></i>
+          Try Again
+        </button>
+      </div>
+
+      <!-- Main Content - Google Contacts Style -->
+      <div *ngIf="!isLoading && !loadError && practitioner" class="google-contacts-layout">
+        
+        <!-- Header with Actions -->
+        <div class="contacts-header">
+          <div class="d-flex align-items-center justify-content-between">
+            <!-- Back Button -->
+            <button 
+              type="button" 
+              class="btn btn-link text-dark p-2 me-3"
+              (click)="navigateBack()"
+            >
+              <i class="fas fa-arrow-left fa-lg"></i>
+            </button>
+
+            <!-- Action Buttons (Right Side) -->
+            <div class="header-actions d-flex align-items-center">
+
+              <!-- History button-->
+              <button 
+                type="button"
+                class="btn btn-primary btn-edit me-2"
+                (click)="viewPractitionerHistory()"
+              >
+                <i class="fas fa-history me-2"></i>
+                Encounters
+              </button>
+
+              <!-- Edit Button -->
+              <button 
+                type="button"
+                class="btn btn-primary btn-edit"
+                (click)="editPractitioner()"
+              >
+                <i class="fas fa-edit me-2"></i>
+                Edit
+              </button>
+
+              <!-- Delete Button -->
+              <button 
+                type="button"
+                class="btn btn-icon"
+                (click)="confirmDeletion()"
+                [disabled]="deleteLoading"
+              >
+                <i [class]="deleteLoading ? 'fas fa-spinner fa-spin' : 'fas fa-trash'"></i>
+              </button>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="profile-section">
+          <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+              
+              <!-- Avatar and Name -->
+              <div class="profile-header">
+                <div class="avatar-container">
+                  <div class="avatar-circle">
+                    <span class="avatar-initials">{{ getInitials() }}</span>
+                    
+                  </div>
+                </div>
+                
+                <div class="name-section">
+                  <h1 class="practitioner-name">{{ practitioner.full_name }}</h1>
+                </div>
+              </div>
+
+              <!-- Quick Actions -->
+              <div class="quick-actions">
+                <div class="action-buttons">
+                  <!-- Email -->
+                  <button 
+                    class="action-btn"
+                    *ngIf="getEmailAddress()"
+                    (click)="openEmail()"
+                  >
+                    <div class="action-icon">
+                      <i class="fas fa-envelope"></i>
+                    </div>
+                    <span>Email</span>
+                  </button>
+
+                  <!-- Schedule
+                  <button class="action-btn">
+                    <div class="action-icon">
+                      <i class="fas fa-calendar"></i>
+                    </div>
+                    <span>Schedule</span>
+                  </button> -->
+
+                  <!-- Chat -->
+                  <!-- <button class="action-btn">
+                    <div class="action-icon">
+                      <i class="fas fa-comment"></i>
+                    </div>
+                    <span>Chat</span>
+                  </button> -->
+
+                  <!-- Call -->
+                  <button 
+                    class="action-btn"
+                    *ngIf="getPhoneNumber()"
+                    (click)="makeCall()"
+                  >
+                    <div class="action-icon">
+                      <i class="fas fa-phone"></i>
+                    </div>
+                    <span>Call</span>
+                  </button>
+                </div>
+
+                <!-- Labels Section -->
+                <!-- <div class="labels-section">
+                  <button class="add-label-btn">
+                    <i class="fas fa-plus"></i>
+                    <span>Label</span>
+                  </button>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Section -->
+        <div class="content-section">
+          <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+              <div class="row">
+                
+                <!-- Contact Details -->
+                <div class="col-12 col-lg-6">
+                  <div class="details-card">
+                    <h3 class="section-title">Contact details</h3>
+                    
+                    <div class="contact-list">
+                      <!-- Email -->
+                      <div class="contact-item" *ngIf="getEmailAddress()">
+                        <i class="fas fa-envelope contact-icon"></i>
+                        <div class="contact-content contact-with-copy">
+                          <a [href]="'mailto:' + getEmailAddress()" class="contact-link">
+                            {{ getEmailAddress() }}
+                          </a>
+                          <button 
+                            class="copy-btn" 
+                            (click)="copyToClipboard(practitioner.email, 'email', $event)"
+                            title="Copy email to clipboard"
+                          >
+                            <i class="fas fa-copy"></i>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Phone -->
+                      <div class="contact-item" *ngIf="getPhoneNumber()">
+                        <i class="fas fa-phone contact-icon"></i>
+                        <div class="contact-content contact-with-copy">
+                          <a [href]="'tel:' + getPhoneNumber()" class="contact-link">
+                            {{ getPhoneNumber() }}
+                          </a>
+                          <button 
+                            class="copy-btn" 
+                            (click)="copyToClipboard(practitioner.phone, 'phone', $event)"
+                            title="Copy phone to clipboard"
+                          >
+                            <i class="fas fa-copy"></i>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Address -->
+                      <div class="contact-item" *ngIf="getFormattedAddress()">
+                        <i class="fas fa-map-marker-alt contact-icon"></i>
+                        <div class="contact-content">
+                          <span class="contact-text">{{ getFormattedAddress() }}</span>
+                        </div>
+                      </div>
+
+                      <!-- Resource ID (for admin) -->
+                      <div class="contact-item" *ngIf="practitioner.source_resource_id">
+                        <i class="fas fa-id-card contact-icon"></i>
+                        <div class="contact-content">
+                          <span class="contact-text text-muted">{{ practitioner.source_resource_id }}</span>
+                          <small class="contact-label">Resource ID</small>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Empty state -->
+                    <div *ngIf="!hasAnyContactInfo()" class="empty-state">
+                      <p class="text-muted">No contact details available</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- History/Additional Info -->
+                <div class="col-12 col-lg-6">
+                  <div class="details-card">
+                    <h3 class="section-title">
+                      History
+                   
+                    </h3>
+                    
+                    <div class="history-list">
+                      <div class="history-item">
+                        <div class="history-content">
+                          <span class="history-text">Added to contacts</span>
+                          <small class="history-date">{{ getFormattedDate() }}</small>
+                        </div>
+                      </div>
+                      
+                      <div class="history-item" *ngIf="practitioner.telecom?.use">
+                        <div class="history-content">
+                          <span class="history-text">Contact type: {{ practitioner.telecom.use }}</span>
+                          <small class="history-date">{{ getFormattedDate() }}</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

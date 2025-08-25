@@ -30,17 +30,10 @@ func CreateRelatedResources(c *gin.Context) {
 		return
 	}
 
-	//step 2: find a reference to the Fasten source for this user
-	sourceCredentials, err := databaseRepo.GetSources(c)
-	var fastenSourceCredential *models.SourceCredential
-	for _, sourceCredential := range sourceCredentials {
-		if sourceCredential.PlatformType == sourcePkg.PlatformTypeFasten {
-			fastenSourceCredential = &sourceCredential
-			break
-		}
-	}
-	if fastenSourceCredential == nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not find Fasten source for this user"})
+	//step 2: ensure Fasten source exists for this user
+	fastenSourceCredential, err := ensureFastenSource(c, databaseRepo)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": fmt.Sprintf("could not ensure Fasten source: %v", err)})
 		return
 	}
 
@@ -94,6 +87,37 @@ func CreateRelatedResources(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": summary, "source": fastenSourceCredential})
 
+}
+
+func ensureFastenSource(c *gin.Context, databaseRepo database.DatabaseRepository) (*models.SourceCredential, error) {
+	currentUser, err := databaseRepo.GetCurrentUser(c)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceCredentials, err := databaseRepo.GetSources(c)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, sourceCredential := range sourceCredentials {
+		if sourceCredential.PlatformType == sourcePkg.PlatformTypeFasten {
+			return &sourceCredential, nil
+		}
+	}
+
+	fastenSource := &models.SourceCredential{
+		UserID:       currentUser.ID,
+		PlatformType: sourcePkg.PlatformTypeFasten,
+		Patient:      "",
+	}
+
+	err = databaseRepo.CreateSource(c, fastenSource)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create Fasten source: %w", err)
+	}
+
+	return fastenSource, nil
 }
 
 func EncounterUnlinkResource(c *gin.Context) {

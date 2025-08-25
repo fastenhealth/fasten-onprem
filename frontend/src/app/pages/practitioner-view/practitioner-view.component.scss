@@ -1,0 +1,399 @@
+// Fasten App Style SCSS
+.google-contacts-layout {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    min-height: 100vh;
+  }
+  
+  // Header with actions
+  .contacts-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  
+    .btn-link {
+      border: none;
+      background: none;
+      color: #6c757d;
+      
+      &:hover {
+        background-color: rgba(108, 117, 125, 0.08);
+        border-radius: 50%;
+      }
+    }
+  
+    .header-actions {
+      .btn-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none;
+        background: none;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+  
+        &:hover {
+          background-color: rgba(108, 117, 125, 0.08);
+        }
+  
+        &.starred {
+          color: #ffc107;
+        }
+      }
+  
+      .btn-edit {
+        background-color: #6f42c1;
+        border: none;
+        border-radius: 20px;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        margin-right: 8px !important;
+  
+        &:hover {
+          background-color: #5a359a;
+        }
+      }
+    }
+  }
+  
+  // Profile section
+  .profile-section {
+    padding: 32px 24px;
+    text-align: center;
+  
+    .profile-header {
+      margin-bottom: 32px;
+    }
+  
+    .avatar-container {
+      margin-bottom: 24px;
+      
+      .avatar-circle {
+        position: relative;
+        display: inline-block;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+  
+        .avatar-initials {
+          font-size: 48px;
+          font-weight: 400;
+          color: white;
+          text-transform: uppercase;
+        }
+  
+        .avatar-add-btn {
+          position: absolute;
+          bottom: 8px;
+          right: 8px;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background-color: #20c997;
+          border: 2px solid white;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+  
+          &:hover {
+            background-color: #1aa085;
+          }
+        }
+      }
+    }
+  
+    .practitioner-name {
+      font-size: 32px;
+      font-weight: 400;
+      color: #212529;
+      margin: 0;
+      line-height: 1.25;
+    }
+  }
+  
+  // Quick actions
+  .quick-actions {
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+  
+      .action-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: none;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        transition: background-color 0.2s;
+        color: #6c757d;
+        min-width: 72px;
+  
+        &:hover {
+          background-color: rgba(108, 117, 125, 0.08);
+        }
+  
+        .action-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background-color: rgba(108, 117, 125, 0.12);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 8px;
+          font-size: 18px;
+        }
+  
+        span {
+          font-size: 14px;
+          font-weight: 500;
+        }
+  
+        // Specific colors for different actions using Fasten theme
+        &:nth-child(1) .action-icon { 
+          background-color: rgba(111, 66, 193, 0.12); 
+          color: #6f42c1; 
+        }
+        &:nth-child(2) .action-icon { 
+          background-color: rgba(32, 201, 151, 0.12); 
+          color: #20c997; 
+        }
+        &:nth-child(3) .action-icon { 
+          background-color: rgba(253, 126, 20, 0.12); 
+          color: #fd7e14; 
+        }
+        &:nth-child(4) .action-icon { 
+          background-color: rgba(13, 202, 240, 0.12); 
+          color: #0dcaf0; 
+        }
+      }
+    }
+  
+    .labels-section {
+      display: flex;
+      justify-content: center;
+  
+      .add-label-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: none;
+        border: 1px solid #dee2e6;
+        border-radius: 20px;
+        padding: 8px 16px;
+        color: #6c757d;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s;
+  
+        &:hover {
+          background-color: rgba(108, 117, 125, 0.04);
+          border-color: #6f42c1;
+          color: #6f42c1;
+        }
+  
+        i {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+  
+  // Content section
+  .content-section {
+    padding: 0 24px 32px;
+  
+    .details-card {
+      background: #fff;
+      padding: 24px 0;
+  
+      .section-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: #212529;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+      }
+    }
+  
+    .contact-list {
+      .contact-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 12px 0;
+        border-bottom: 1px solid #f8f9fa;
+  
+        &:last-child {
+          border-bottom: none;
+        }
+  
+        .contact-icon {
+          width: 24px;
+          color: #6f42c1;
+          margin-right: 16px;
+          margin-top: 2px;
+          flex-shrink: 0;
+        }
+  
+        .contact-content {
+          flex: 1;
+          
+          .contact-link {
+            color: #6f42c1;
+            text-decoration: none;
+            font-size: 14px;
+            line-height: 1.4;
+  
+            &:hover {
+              text-decoration: underline;
+              color: #5a359a;
+            }
+          }
+  
+          .contact-text {
+            color: #212529;
+            font-size: 14px;
+            line-height: 1.4;
+          }
+  
+          .contact-label {
+            display: block;
+            color: #6c757d;
+            font-size: 12px;
+            margin-top: 2px;
+          }
+        }
+      }
+    }
+  
+    .history-list {
+      .history-item {
+        padding: 8px 0;
+  
+        .history-content {
+          .history-text {
+            color: #212529;
+            font-size: 14px;
+            line-height: 1.4;
+          }
+  
+          .history-date {
+            display: block;
+            color: #6c757d;
+            font-size: 12px;
+            margin-top: 2px;
+          }
+        }
+      }
+    }
+  
+    .empty-state {
+      text-align: center;
+      padding: 24px 0;
+      color: #6c757d;
+    }
+  }
+  
+  // Responsive design
+  @media (max-width: 768px) {
+    .contacts-header {
+      padding: 12px 16px;
+    }
+  
+    .profile-section {
+      padding: 24px 16px;
+  
+      .avatar-container .avatar-circle {
+        width: 96px;
+        height: 96px;
+  
+        .avatar-initials {
+          font-size: 36px;
+        }
+      }
+  
+      .practitioner-name {
+        font-size: 24px;
+      }
+    }
+  
+    .quick-actions .action-buttons {
+      gap: 16px;
+    }
+  
+    .content-section {
+      padding: 0 16px 24px;
+  
+      .details-card {
+        padding: 16px 0;
+      }
+    }
+  }
+
+  .contact-with-copy {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px; // Reduced gap to place icon closer to text
+  
+    .copy-btn {
+      opacity: 0;
+      visibility: hidden;
+      background: none;
+      border: none;
+      color: #6c757d;
+      font-size: 12px;
+      padding: 2px 4px; // Smaller padding for tighter spacing
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      margin-left: 2px; // Small margin to keep it close to text
+  
+      &:hover {
+        background-color: #f8f9fa;
+        color: #495057;
+        transform: scale(1.1);
+      }
+  
+      &:active {
+        transform: scale(0.95);
+        background-color: #e9ecef;
+      }
+  
+      i {
+        font-size: 9px;
+      }
+    }
+  
+    &:hover .copy-btn {
+      opacity: 1;
+      visibility: visible;
+    }
+  }

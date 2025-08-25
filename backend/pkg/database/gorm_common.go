@@ -456,7 +456,7 @@ func (gr *GormRepository) UpsertResource(ctx context.Context, wrappedResourceMod
 		gr.Logger.Warnf("ignoring: an error occurred while publishing event to eventBus (%s/%s): %v", wrappedResourceModel.SourceResourceType, wrappedResourceModel.SourceResourceID, err)
 	}
 
-	// This is to avoid GORM from trying to create wrong related resources for the RelatedResource field. 
+	// This is to avoid GORM from trying to create wrong related resources for the RelatedResource field.
 	// Omit() does not seem to work when we use Assign with a resource that has the things we want to omit
 	assignModel := *wrappedResourceModel
 	assignModel.RelatedResource = nil
@@ -470,7 +470,6 @@ func (gr *GormRepository) UpsertResource(ctx context.Context, wrappedResourceMod
 	if createResult.Error != nil {
 		return false, createResult.Error
 	}
-	//resource was upserted
 	return createResult.RowsAffected > 0, createResult.Error
 }
 
@@ -742,6 +741,45 @@ func (gr *GormRepository) FindAllResourceAssociations(ctx context.Context, sourc
 		Find(&relatedResources)
 
 	return relatedResources, result.Error
+}
+
+// FindPractitionerEncounters finds all Encounter records associated with a specific practitioner.
+// It scopes the search to the current user to ensure data privacy and access control.
+func (gr *GormRepository) FindPractitionerEncounters(ctx context.Context, practitionerId string) ([]models.ResourceBase, error) {
+	// First, retrieve the current user from the context. This is a crucial security step.
+	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return nil, currentUserErr
+	}
+
+	var relatedResources []models.RelatedResource
+	result := gr.GormClient.WithContext(ctx).
+		Where(models.RelatedResource{
+			ResourceBaseUserID:                currentUser.ID,
+			ResourceBaseSourceResourceType:    "Encounter",
+			RelatedResourceSourceResourceType: "Practitioner",
+			RelatedResourceSourceResourceID:   practitionerId,
+		}).
+		Find(&relatedResources)
+
+	var relatedEncounters []models.ResourceBase
+	// Parse through the related resources to filter encounters that are related
+	for _, relatedResource := range relatedResources {
+		queryOptions := models.ListResourceQueryOptions{
+			SourceResourceType: "Encounter",
+			SourceResourceID:   relatedResource.ResourceBaseSourceResourceID,
+		}
+
+		resources, err := gr.ListResources(ctx, queryOptions)
+		relatedEncounters = append(relatedEncounters, resources...)
+
+		if err != nil {
+			gr.Logger.Errorf("Error listing resources for Encounter %s/%s: %v", relatedResource.ResourceBaseSourceResourceType, relatedResource.ResourceBaseSourceResourceID, err)
+			continue // Skip this resource if there's an error
+		}
+	}
+
+	return relatedEncounters, result.Error
 }
 
 // remove multiple resource associations in a transaction
@@ -1357,6 +1395,81 @@ func (gr *GormRepository) CancelAllLockedBackgroundJobsAndFail() error {
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Address book
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (gr *GormRepository) AddFavorite(
+	ctx context.Context,
+	userID string,
+	sourceID string,
+	resourceType string,
+	resourceID string,
+) error {
+	favorite := models.Favorite{
+		UserID:       userID,
+		SourceID:     sourceID,
+		ResourceType: resourceType,
+		ResourceID:   resourceID,
+	}
+
+	err := gr.GormClient.Create(&favorite).Error
+	return err
+}
+
+func (gr *GormRepository) CheckFavoriteExists(
+	ctx context.Context,
+	userID string,
+	sourceID string,
+	resourceType string,
+	resourceID string,
+) (bool, error) {
+	var favorite models.Favorite
+
+	err := gr.GormClient.
+		Where("user_id = ? AND source_id = ? AND resource_type = ? AND resource_id = ?",
+			userID, sourceID, resourceType, resourceID).
+		First(&favorite).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (gr *GormRepository) RemoveFavorite(
+	ctx context.Context,
+	userID string,
+	sourceID string,
+	resourceType string,
+	resourceID string,
+) error {
+	err := gr.GormClient.
+		Where("user_id = ? AND source_id = ? AND resource_type = ? AND resource_id = ?",
+			userID, sourceID, resourceType, resourceID).
+		Delete(&models.Favorite{}).Error
+
+	return err
+}
+
+func (gr *GormRepository) GetUserFavorites(
+	ctx context.Context,
+	userID string,
+	resourceType string,
+) ([]models.Favorite, error) {
+	var favorites []models.Favorite
+
+	err := gr.GormClient.
+		Where("user_id = ? AND resource_type = ?", userID, resourceType).
+		Find(&favorites).Error
+
+	return favorites, err
+}
+
 //</editor-fold>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1387,4 +1500,77 @@ func (gr *GormRepository) getResourcesFromAllTables(queryBuilder *gorm.DB, query
 		wrappedResourceModels = append(wrappedResourceModels, tempWrappedResourceModels...)
 	}
 	return wrappedResourceModels, nil
+}
+
+func (gr *GormRepository) DeleteResourceByTypeAndId(ctx context.Context, sourceResourceType string, sourceResourceId string) error {
+	fmt.Printf("DeleteResourceByTypeAndId called with type: %s, id: %s\n", sourceResourceType, sourceResourceId)
+
+	queryOptions := models.ListResourceQueryOptions{
+		SourceResourceType: sourceResourceType,
+		SourceResourceID:   sourceResourceId,
+		Limit:              1,
+	}
+
+	resources, err := gr.ListResources(ctx, queryOptions)
+	if err != nil {
+		fmt.Printf("ListResources failed: %v\n", err)
+		return fmt.Errorf("failed to find resource: %w", err)
+	}
+
+	if len(resources) == 0 {
+		fmt.Printf("No resources found with type: %s, id: %s\n", sourceResourceType, sourceResourceId)
+		return fmt.Errorf("resource not found")
+	}
+
+	if len(resources) > 1 {
+		fmt.Printf("Warning: found %d resources, expected 1\n", len(resources))
+	}
+
+	resource := resources[0]
+	fmt.Printf("Found resource: ID=%s, Type=%s, SourceID=%s\n",
+		resource.ID.String(), resource.SourceResourceType, resource.SourceResourceID)
+
+	tableName, err := databaseModel.GetTableNameByResourceType(sourceResourceType)
+	if err != nil {
+		fmt.Printf("Failed to get table name for resource type %s: %v\n", sourceResourceType, err)
+		return fmt.Errorf("failed to get table name: %w", err)
+	}
+
+	fmt.Printf("Using table: %s\n", tableName)
+
+	tx := gr.GormClient.WithContext(ctx).Begin()
+	if tx.Error != nil {
+		fmt.Printf("Failed to begin transaction: %v\n", tx.Error)
+		return fmt.Errorf("failed to begin transaction: %w", tx.Error)
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Panic during delete, rolling back: %v\n", r)
+			tx.Rollback()
+		}
+	}()
+
+	deleteResult := tx.Table(tableName).Where("id = ?", resource.ID).Delete(&models.ResourceBase{})
+	if deleteResult.Error != nil {
+		fmt.Printf("Failed to delete resource from table %s: %v\n", tableName, deleteResult.Error)
+		tx.Rollback()
+		return fmt.Errorf("failed to delete resource: %w", deleteResult.Error)
+	}
+
+	fmt.Printf("Deleted %d resource(s) from table %s\n", deleteResult.RowsAffected, tableName)
+
+	if deleteResult.RowsAffected == 0 {
+		fmt.Printf("No rows affected during delete\n")
+		tx.Rollback()
+		return fmt.Errorf("resource not found or already deleted")
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		fmt.Printf("Failed to commit transaction: %v\n", err)
+		return fmt.Errorf("failed to commit delete transaction: %w", err)
+	}
+
+	fmt.Printf("Successfully deleted resource: %s from table: %s\n", sourceResourceId, tableName)
+	return nil
 }

@@ -1,0 +1,343 @@
+<div class="az-content">
+  <div class="container-fluid">
+    <div class="az-content-body">
+      <!-- Header with Title, Search, and Create Button -->
+      <div class="row align-items-center mb-4">
+        <!-- Title Column -->
+        <div class="col-md-2">
+          <h2 class="az-content-title mb-0">Address book</h2>
+        </div>
+
+        <!-- Search Column -->
+        <div class="col-md-8">
+          <div class="search-container">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search practitioners..." [value]="searchTerm"
+                (input)="onSearchInput($event)">
+              <button *ngIf="searchTerm" class="btn btn-outline-secondary" type="button" (click)="clearSearch()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Create Button Column -->
+        <div class="col-md-2 d-flex justify-content-end">
+          <button class="btn btn-purple" (click)="navigateToAddPractitioner()">
+            <i class="fas fa-plus me-2"></i>
+            <span class="d-none d-lg-inline"> New Practitioner</span>
+            <span class="d-lg-none">New Practitioner</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Table Container with Alphabetical Scrollbar -->
+      <div class="table-wrapper" *ngIf="!loading">
+        <!-- Fixed Header -->
+        <div class="table-header-fixed">
+          <table class="table modern-table">
+            <thead>
+              <!-- Normal Header Row (when nothing is selected) -->
+              <tr *ngIf="selectedPractitioners.length === 0" class="normal-header">
+                <th style="width: 50px;" class="selection-header">
+                  <div class="checkbox-container">
+                    <input class="form-check-input" type="checkbox" [checked]="isAllSelected()"
+                      [indeterminate]="isIndeterminate()" (change)="toggleSelectAll()">
+                  </div>
+                </th>
+                <th class="text-start name-column">Name</th>
+                <th class="text-start email-column">Email</th>
+                <th class="text-start phone-column">Phone</th>
+                <th class="text-start job-title-column">Job Title</th>
+                <th class="text-start organization-column">Organization</th>
+                <th class="hover-actions text-center actions-column" style="width: 150px;">&nbsp;</th>
+              </tr>
+
+              <!-- Selection Header Row (when items are selected) -->
+              <tr *ngIf="selectedPractitioners.length > 0" class="selection-mode-header">
+                <!-- Checkbox Column - Same exact structure -->
+                <th style="width: 50px;" class="selection-header position-relative">
+                  <div class="checkbox-container">
+                    <input class="form-check-input" type="checkbox" [checked]="isAllSelected()"
+                      [indeterminate]="isIndeterminate()" (change)="toggleSelectAll()">
+                  </div>
+                  <!-- Dropdown positioned absolutely next to checkbox -->
+                  <div class="dropdown position-absolute" style="top: 50%; right: 8px; transform: translateY(-50%);">
+                    <button class="btn btn-sm p-1 border-0 dropdown-toggle-custom" type="button"
+                      (click)="toggleSelectionDropdown()" [attr.aria-expanded]="showSelectionDropdown"
+                      title="Selection options">
+                      <i class="fas fa-chevron-down text-muted"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-sm" [class.show]="showSelectionDropdown">
+                      <li>
+                        <button class="dropdown-item" (click)="selectAll(); hideSelectionDropdown()">
+                          <i class="fas fa-check-square me-2"></i>
+                          Select All
+                        </button>
+                      </li>
+                      <li>
+                        <button class="dropdown-item" (click)="selectNone(); hideSelectionDropdown()">
+                          <i class="far fa-square me-2"></i>
+                          Select None
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </th>
+
+                <!-- Name Column with Selection Controls -->
+                <th class="text-start name-column selection-controls-column">
+                  <div class="selection-controls-container">
+                    <!-- Selected Count -->
+                    <span class="selected-count">
+                      {{ selectedPractitioners.length }} selected
+                    </span>
+                  </div>
+                </th>
+
+                <!-- Empty columns to maintain structure -->
+                <th class="text-start email-column"></th>
+                <th class="text-start phone-column"></th>
+                <th class="text-start job-title-column"></th>
+                <th class="text-start organization-column"></th>
+
+                <!-- Actions Column with Three Dots -->
+                <th class="hover-actions text-center actions-column" style="width: 150px;">
+                  <div class="actions-container">
+                    <div class="dropdown">
+                      <button class="btn btn-sm p-1 border-0" type="button" (click)="toggleActionsDropdown()"
+                        [attr.aria-expanded]="showActionsDropdown" title="More actions">
+                        <i class="fas fa-ellipsis-v text-muted"></i>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-sm" [class.show]="showActionsDropdown">
+                        <li>
+                          <button class="dropdown-item" (click)="exportToCSV(); hideActionsDropdown()">
+                            <i class="fas fa-download me-2"></i>
+                            Export CSV
+                          </button>
+                        </li>
+                        <li>
+                          <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                          <button class="dropdown-item text-danger"
+                            (click)="deleteSelectedPractitioners(); hideActionsDropdown()">
+                            <i class="fas fa-trash me-2"></i>
+                            Delete Selected
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+
+        <!-- Scrollable Table Body -->
+        <div class="table-body-scrollable" (scroll)="onTableScroll($event)">
+          <table class="table table-hover modern-table">
+            <colgroup>
+              <col style="width: 50px;">
+              <col style="width: 25%;">
+              <col style="width: 20%;">
+              <col style="width: 15%;">
+              <col style="width: 15%;">
+              <col style="width: 15%;">
+              <col style="width: 150px;">
+            </colgroup>
+            <tbody>
+
+              <!-- FAVORITES HEADER -->
+              <tr *ngIf="filteredPractitioners.length > 0 && filteredPractitioners[0].isFavorite"
+                class="table-group-header">
+                <td class="bg-light fw-bold text-muted py-2 ps-3"></td>
+                <td class="bg-light fw-bold text-muted py-2 ps-3">
+                  <i class="fas fa-star text-warning me-2"></i>Favorites
+                </td>
+                <td class="bg-light fw-bold text-muted py-2 ps-3">
+                </td>
+                <td class="bg-light fw-bold text-muted py-2 ps-3">
+                </td>
+                <td class="bg-light fw-bold text-muted py-2 ps-3">
+                </td>
+                <td class="bg-light fw-bold text-muted py-2 ps-3">
+                </td>
+                <td class="bg-light fw-bold text-muted py-2 ps-3">
+                </td>
+              </tr>
+
+              <!-- PRACTITIONER ROWS -->
+              <ng-container
+                *ngFor="let practitioner of filteredPractitioners; let i = index; trackBy: trackByPractitioner">
+
+                <!-- "ALL CONTACTS" HEADER -->
+                <tr *ngIf="i > 0 && !practitioner.isFavorite && filteredPractitioners[i - 1].isFavorite"
+                  class="table-group-header">
+                  <td class="bg-light fw-bold text-muted py-2 ps-3">
+                  </td>
+                  <td class="bg-light fw-bold text-muted py-2 ps-3">
+                    All Contacts
+                  </td>
+                  <td class="bg-light fw-bold text-muted py-2 ps-3">
+                  </td>
+                  <td class="bg-light fw-bold text-muted py-2 ps-3">
+                  </td>
+                  <td class="bg-light fw-bold text-muted py-2 ps-3">
+                  </td>
+                  <td class="bg-light fw-bold text-muted py-2 ps-3">
+                  </td>
+                  <td class="bg-light fw-bold text-muted py-2 ps-3">
+                  </td>
+                </tr>
+
+                <!-- PRACTITIONER ROW -->
+                <tr class="table-row" [class.selected]="isSelected(practitioner)"
+                  [class.favorite-row]="practitioner.isFavorite" (click)="onRowClick(practitioner)"
+                  (mouseenter)="onMouseEnter($event)" (mouseleave)="onMouseLeave($event)">
+
+                  <!-- Checkbox/Selection Column -->
+                  <td class="checkbox-cell">
+                    <div class="d-flex justify-content-center align-items-center">
+                      <input class="form-check-input" type="checkbox" [checked]="isSelected(practitioner)"
+                        (change)="toggleSelection(practitioner)" (click)="$event.stopPropagation()">
+                    </div>
+                  </td>
+
+                  <!-- Name Column with Star Icon -->
+                  <td class="name-cell">
+                    <div class="practitioner-name-container">
+                      <div class="practitioner-name">
+                        {{ practitioner.full_name }}
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- Email Column -->
+                  <td class="contact-cell">
+                    <div *ngIf="practitioner.email" class="contact-info contact-with-copy">
+                      <a [href]="'mailto:' + practitioner.email" class="email-link">
+                        {{ practitioner.email }}
+                      </a>
+                      <button class="copy-btn" (click)="copyToClipboard(practitioner.email, 'email', $event)"
+                        title="Copy email to clipboard">
+                        <i class="fas fa-copy"></i>
+                      </button>
+                    </div>
+                  </td>
+
+                  <!-- Phone Column -->
+                  <td class="phone-cell">
+                    <div *ngIf="practitioner.phone" class="contact-info contact-with-copy">
+                      <a [href]="'tel:' + practitioner.phone" class="phone-link">
+                        {{ practitioner.phone }}
+                      </a>
+                      <button class="copy-btn" (click)="copyToClipboard(practitioner.phone, 'phone', $event)"
+                        title="Copy phone to clipboard">
+                        <i class="fas fa-copy"></i>
+                      </button>
+                    </div>
+                  </td>
+
+                  <!-- Job Title Column -->
+                  <td class="job-title-cell">
+                    <div *ngIf="practitioner.jobTitle" class="job-title">
+                      {{ practitioner.jobTitle }}
+                    </div>
+                    <div *ngIf="!practitioner.jobTitle && practitioner.qualification" class="job-title text-muted">
+                      {{ getJobTitleFromQualification(practitioner) }}
+                    </div>
+                  </td>
+
+                  <!-- Organization Column -->
+                  <td class="organization-cell">
+                    <div *ngIf="practitioner.organization" class="organization">
+                      {{ practitioner.organization }}
+                    </div>
+                  </td>
+
+                  <!-- Actions Column -->
+                  <td class="actions-cell" style="width: 150px;">
+                    <div class="action-buttons" [class.hidden]="selectedPractitioners.length > 0">
+                      <!-- Star Icon for Favorites -->
+                      <button class="favorite-star actions-star" [class.active]="practitioner.isFavorite"
+                        (click)="toggleFavorite(practitioner, $event)"
+                        title="{{ practitioner.isFavorite ? 'Remove from favorites' : 'Add to favorites' }}">
+                        <i class="fas fa-star" *ngIf="practitioner.isFavorite"></i>
+                        <i class="far fa-star" *ngIf="!practitioner.isFavorite"></i>
+                      </button>
+                      <div class="dropdown">
+                        <button class="btn btn-sm btn-link text-secondary p-1"
+                          (click)="showPractitionerActions($event, practitioner)" title="More actions">
+                          <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-start dropdown-menu-sm"
+                          [class.show]="showPractitionerDropdown === practitioner.source_resource_id">
+                          <li>
+                            <button class="dropdown-item"
+                              (click)="exportSinglePractitioner(practitioner); hidePractitionerDropdown()">
+                              <i class="fas fa-download me-2"></i>
+                              Export CSV
+                            </button>
+                          </li>
+                          <li>
+                            <hr class="dropdown-divider">
+                          </li>
+                          <li>
+                            <button class="dropdown-item text-danger"
+                              (click)="deleteSinglePractitioner(practitioner); hidePractitionerDropdown()">
+                              <i class="fas fa-trash me-2"></i>
+                              Delete
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+
+            </tbody>
+          </table>
+        </div>
+
+
+        <!-- Alphabetical Indicator (Google Contacts Style) -->
+        <div class="alphabetical-indicator" [class.visible]="isScrolling">
+          <div class="current-letter">
+            {{ currentLetter }}
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="filteredPractitioners.length === 0 && !loading" class="text-center py-5 empty-state-overlay">
+          <div class="empty-state">
+            <i class="fas fa-user-md fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">
+              {{ searchTerm ? 'No practitioners found' : 'No Practitioners Found' }}
+            </h5>
+            <p class="text-muted">
+              {{ searchTerm ? 'Try adjusting your search terms.' : 'Get started by adding your first practitioner.' }}
+            </p>
+            <button *ngIf="searchTerm" class="btn btn-outline-dark" (click)="clearSearch()">
+              <i class="fas fa-times me-2"></i>
+              Clear Search
+            </button>
+            <button class="btn btn-purple ms-2" (click)="navigateToAddPractitioner()">
+              <i class="fas fa-plus me-2"></i>
+              Add Practitioner
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
