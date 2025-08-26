@@ -19,13 +19,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Connection represents server connection information for mobile apps.
-type Connection struct {
-	Host     string `json:"host"`
-	Port     string `json:"port"`
-	Protocol string `json:"protocol"`
-}
-
 // authenticateAndLogUsage handles common authentication and usage logging for sync endpoints
 func authenticateAndLogUsage(c *gin.Context, log *logrus.Entry, databaseRepo database.DatabaseRepository) (*models.User, string, error) {
 	// Get current user
@@ -403,16 +396,16 @@ func SyncDataUpdates(c *gin.Context) {
 	})
 }
 
-// GetSecureServerDiscovery returns minimal server connection information for mobile apps
-func GetSecureServerDiscovery(c *gin.Context) {
+// GetServerDiscovery returns minimal server connection information for mobile apps
+func GetServerDiscovery(c *gin.Context) {
 	appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
 
-	serverAddresses := getServerAddresses(c, appConfig)
+	serverBaseURLs := GetServerBaseURLs(c, appConfig)
 	
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data": gin.H{
-			"connections": serverAddresses,
+			"server_base_urls": serverBaseURLs,
 			"endpoints": gin.H{
 				"sync_data": "/api/secure/sync/data",
 				"sync_updates": "/api/secure/sync/updates",
@@ -422,8 +415,8 @@ func GetSecureServerDiscovery(c *gin.Context) {
 	})
 }
 
-// getServerAddresses returns multiple possible server addresses for network change resilience
-func getServerAddresses(c *gin.Context, appConfig config.Interface) []Connection {
+// GetServerBaseURLs returns multiple possible server base URLs for network change resilience
+func GetServerBaseURLs(c *gin.Context, appConfig config.Interface) []string {
 	log := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	
 	// Determine the port to use
@@ -432,11 +425,16 @@ func getServerAddresses(c *gin.Context, appConfig config.Interface) []Connection
 		port = hostPort
 	}
 
-	var connections []Connection
+	var serverBaseURLs []string
 
 	protocol := "http"
 	if appConfig.GetBool("web.listen.https.enabled") {
 		protocol = "https"
+	}
+
+	// Helper to add a connection string
+	addBaseURL := func(host, p string) {
+		serverBaseURLs = append(serverBaseURLs, protocol+"://"+net.JoinHostPort(host, p))
 	}
 
 	// Priority 0: use mDNS hostname
@@ -445,17 +443,43 @@ func getServerAddresses(c *gin.Context, appConfig config.Interface) []Connection
 		log.Errorf("Failed to get hostname: %v", err)
 		// Continue without hostname if there's an error, or handle as appropriate
 	} else {
-		connections = append(connections, Connection{Host: hostname, Port: port, Protocol: protocol})
+		addBaseURL(hostname, port)
 	}
 
-	// Priority 1: UPnP discovered IP
-	// if upnpHost := appConfig.GetString("upnp.local_ip"); upnpHost != "" {
-	// 	connections = append(connections, Connection{Host: upnpHost, Port: port, Protocol: protocol})
-	// }
-
-	// Priority 2: Environment variable override
+	// Priority 1: Environment variable override
 	if envHost := os.Getenv("HOST_IP"); envHost != "" {
-		connections = append(connections, Connection{Host: envHost, Port: port, Protocol: protocol})
+		addBaseURL(envHost, port)
+	}
+
+	// Priority 2: All local network interface IPs
+	ifaces, err := net.Interfaces()
+	if err != nil {
+		log.Errorf("Failed to get network interfaces: %v", err)
+	} else {
+		for _, i := range ifaces {
+			addrs, err := i.Addrs()
+			if err != nil {
+				log.Errorf("Failed to get addresses for interface %s: %v", i.Name, err)
+				continue
+			}
+			for _, addr := range addrs {
+				var ip net.IP
+				switch v := addr.(type) {
+				case *net.IPNet:
+					ip = v.IP
+				case *net.IPAddr:
+					ip = v.IP
+				}
+				if ip == nil || ip.IsLoopback() {
+					continue
+				}
+				ip = ip.To4()
+				if ip == nil {
+					continue // not an ipv4 address
+				}
+				addBaseURL(ip.String(), port)
+			}
+		}
 	}
 
 	// Priority 3: Headers from reverse proxies
@@ -467,24 +491,22 @@ func getServerAddresses(c *gin.Context, appConfig config.Interface) []Connection
 			host = forwardedHost // If splitting fails, use the whole string as host
 			p = port // Use default port if not specified in header
 		}
-		connections = append(connections, Connection{Host: host, Port: p, Protocol: protocol})
+		addBaseURL(host, p)
 	}
 	if realIP := c.GetHeader("X-Real-IP"); realIP != "" {
-		connections = append(connections, Connection{Host: realIP, Port: port, Protocol: protocol})
+		addBaseURL(realIP, port)
 	}
 
-
-	return uniqueConnections(connections)
+	return uniqueServerBaseURLs(serverBaseURLs)
 }
 
-// uniqueConnections removes duplicate Connection entries while preserving order.
-func uniqueConnections(conns []Connection) []Connection {
+// uniqueServerBaseURLs removes duplicate connection strings while preserving order.
+func uniqueServerBaseURLs(conns []string) []string {
 	seen := make(map[string]bool)
-	var unique []Connection
+	var unique []string
 	for _, conn := range conns {
-		key := net.JoinHostPort(conn.Host, conn.Port) // Use host:port as the unique key
-		if !seen[key] {
-			seen[key] = true
+		if !seen[conn] {
+			seen[conn] = true
 			unique = append(unique, conn)
 		}
 	}

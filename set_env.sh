@@ -35,35 +35,35 @@ detect_ip() {
     echo "$IP_ADDR"
 }
 
-export FASTEN_EXTERNAL_IP=$(detect_ip)
-export FASTEN_EXTERNAL_HOSTNAME=$(hostname)
-export FASTEN_EXTERNAL_PORT=9090
+export IP=$(detect_ip)
+export HOSTNAME=$(hostname)
+export PORT=9090
 
-echo "Updating .env with HOST_HOSTNAME=$FASTEN_EXTERNAL_HOSTNAME, HOST_IP=$FASTEN_EXTERNAL_IP, and FASTEN_EXTERNAL_PORT=$FASTEN_EXTERNAL_PORT"
+echo "Updating .env with HOSTNAME=$HOSTNAME, IP=$IP, and PORT=$PORT"
 
 if [ ! -f .env ]; then
     echo "Creating new .env file..."
-    echo "HOST_HOSTNAME=$FASTEN_EXTERNAL_HOSTNAME" > .env
-    echo "HOST_IP=$FASTEN_EXTERNAL_IP" >> .env
-    echo "FASTEN_EXTERNAL_PORT=$FASTEN_EXTERNAL_PORT" >> .env
+    echo "HOSTNAME=$HOSTNAME" > .env
+    echo "IP=$IP" >> .env
+    echo "PORT=$PORT" >> .env
 else
-    # Update or add HOST_HOSTNAME
-    if grep -q "^HOST_HOSTNAME=" .env; then
-        sed -i.bak -e "s/^HOST_HOSTNAME=.*/HOST_HOSTNAME=$FASTEN_EXTERNAL_HOSTNAME/" .env
+    # Update or add HOSTNAME
+    if grep -q "^HOSTNAME=" .env; then
+        sed -i.bak -e "s/^HOSTNAME=.*/HOSTNAME=$HOSTNAME/" .env
     else
-        echo "HOST_HOSTNAME=$FASTEN_EXTERNAL_HOSTNAME" >> .env
+        echo "HOSTNAME=$HOSTNAME" >> .env
     fi
-    # Update or add HOST_IP
-    if grep -q "^HOST_IP=" .env; then
-        sed -i.bak -e "s/^HOST_IP=.*/HOST_IP=$FASTEN_EXTERNAL_IP/" .env
+    # Update or add IP
+    if grep -q "^IP=" .env; then
+        sed -i.bak -e "s/^IP=.*/IP=$IP/" .env
     else
-        echo "HOST_IP=$FASTEN_EXTERNAL_IP" >> .env
+        echo "IP=$IP" >> .env
     fi
-    # Update or add FASTEN_EXTERNAL_PORT
-    if grep -q "^FASTEN_EXTERNAL_PORT=" .env; then
-        sed -i.bak -e "s/^FASTEN_EXTERNAL_PORT=.*/FASTEN_EXTERNAL_PORT=$FASTEN_EXTERNAL_PORT/" .env
+    # Update or add PORT
+    if grep -q "^PORT=" .env; then
+        sed -i.bak -e "s/^PORT=.*/PORT=$PORT/" .env
     else
-        echo "FASTEN_EXTERNAL_PORT=$FASTEN_EXTERNAL_PORT" >> .env
+        echo "PORT=$PORT" >> .env
     fi
     rm .env.bak
 fi

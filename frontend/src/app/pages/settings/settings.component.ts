@@ -147,7 +147,7 @@ export class SettingsComponent implements OnInit {
 
     const qrData = {
       token: this.accessToken,
-      connections: this.serverInfo.connections,
+      server_base_urls: this.serverInfo.server_base_urls,
       endpoints: this.serverInfo.endpoints,
     };
 
