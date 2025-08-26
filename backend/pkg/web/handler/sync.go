@@ -434,23 +434,28 @@ func getServerAddresses(c *gin.Context, appConfig config.Interface) []Connection
 
 	var connections []Connection
 
+	protocol := "http"
+	if appConfig.GetBool("web.listen.https.enabled") {
+		protocol = "https"
+	}
+
 	// Priority 0: use mDNS hostname
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Errorf("Failed to get hostname: %v", err)
 		// Continue without hostname if there's an error, or handle as appropriate
 	} else {
-		connections = append(connections, Connection{Host: hostname, Port: port, Protocol: "https"})
+		connections = append(connections, Connection{Host: hostname, Port: port, Protocol: protocol})
 	}
 
 	// Priority 1: UPnP discovered IP
 	// if upnpHost := appConfig.GetString("upnp.local_ip"); upnpHost != "" {
-	// 	connections = append(connections, Connection{Host: upnpHost, Port: port, Protocol: "https"})
+	// 	connections = append(connections, Connection{Host: upnpHost, Port: port, Protocol: protocol})
 	// }
 
 	// Priority 2: Environment variable override
 	if envHost := os.Getenv("HOST_IP"); envHost != "" {
-		connections = append(connections, Connection{Host: envHost, Port: port, Protocol: "https"})
+		connections = append(connections, Connection{Host: envHost, Port: port, Protocol: protocol})
 	}
 
 	// Priority 3: Headers from reverse proxies
@@ -462,10 +467,10 @@ func getServerAddresses(c *gin.Context, appConfig config.Interface) []Connection
 			host = forwardedHost // If splitting fails, use the whole string as host
 			p = port // Use default port if not specified in header
 		}
-		connections = append(connections, Connection{Host: host, Port: p, Protocol: "https"})
+		connections = append(connections, Connection{Host: host, Port: p, Protocol: protocol})
 	}
 	if realIP := c.GetHeader("X-Real-IP"); realIP != "" {
-		connections = append(connections, Connection{Host: realIP, Port: port, Protocol: "https"})
+		connections = append(connections, Connection{Host: realIP, Port: port, Protocol: protocol})
 	}
 
 
