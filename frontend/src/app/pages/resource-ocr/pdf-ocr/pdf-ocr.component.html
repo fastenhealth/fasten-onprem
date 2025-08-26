@@ -1,48 +1,39 @@
 <!-- 📉 Error -->
 <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-<!-- ✅ File Summary -->
-<div *ngIf="selectedFiles && totalPages !== null && !scanningStarted">
-    <p>Pages detected: {{ totalPages }}</p>
-    <button class="btn btn-primary" (click)="startScanning()">Start Scanning</button>
-</div>
-
 <!-- 🔍 Page-by-Page Review -->
-<div *ngIf="scanningStarted" class="row">
-    <div class="col-md-4">
-        <!-- 📷 Smaller Image Preview -->
-        <h6 class="text-muted mb-2">Page {{ currentPageIndex + 1 }} of {{ pageImages.length }}</h6>
-        <div class="d-flex flex-column align-items-center">
-            <img [src]="pageImages[currentPageIndex]" class="img-thumbnail mb-3"
-                style="max-width: 100%; height: auto; max-height: 400px; object-fit: contain" />
-            <div class="d-flex w-100">
-                <!-- 🧭 Navigation + Action Buttons -->
-                <div class="d-flex flex-column align-items-center mt-3">
-                    <div>
-                        <button class="btn btn-outline-secondary mr-1" (click)="goToPreviousPage()"
-                            [disabled]="currentPageIndex === 0">
-                            ← Previous
-                        </button>
-                        <button class="btn btn-success mr-1" (click)="sendCurrentPageToOcr()"
-                            [disabled]="isProcessing || scannedPages.includes(currentPageIndex)">
-                            <span *ngIf="isProcessing" class="spinner-border spinner-border-sm"></span>
-                            Send to OCR
-                        </button>
-                        <button class="btn btn-outline-secondary" (click)="goToNextPage()"
-                            [disabled]="currentPageIndex === pageImages.length - 1">
-                            Next →
-                        </button>
-                    </div>
+<div class="row">
+    <!-- LEFT SIDE -->
+    <div class="col-md-6 d-flex flex-column align-items-center border-right">
+        <!-- Page Counter -->
+        <h6 class="text-muted mb-2">
+            Page {{ currentPageIndex + 1 }} of {{ pageImages.length }}
+        </h6>
 
-                    <div *ngIf="foundKeys.length" class="mt-2 text-center p-2 border rounded bg-light w-100">
-                        <strong>Extracted:</strong> {{ foundKeys.join(', ') }}
-                    </div>
-                </div>
-            </div>
+        <!-- Image Preview -->
+        <img [src]="pageImages[currentPageIndex]" class="img-thumbnail mb-3"
+            style="max-width: 100%; height: auto; max-height: 500px; object-fit: contain;" />
+
+        <!-- Navigation Buttons (centered) -->
+        <div class="d-flex justify-content-center mb-3">
+            <button class="btn btn-outline-secondary mr-2" (click)="goToPreviousPage()"
+                [disabled]="currentPageIndex === 0">
+                ←
+            </button>
+            <button class="btn btn-outline-secondary" (click)="goToNextPage()"
+                [disabled]="currentPageIndex === pageImages.length - 1">
+                →
+            </button>
+        </div>
+
+        <!-- Extracted Keys -->
+        <div *ngIf="foundKeys.length" class="text-center p-2 border rounded bg-light w-100">
+            <strong>Extracted:</strong> {{ foundKeys.join(', ') }}
         </div>
     </div>
 
-    <div class="col-md-8 d-flex flex-column">
+    <!-- RIGHT SIDE -->
+    <div class="col-md-6 d-flex flex-column">
         <!-- ✍️ Editable Form -->
         <div class="form-group flex-grow-1">
             <app-encounter-form></app-encounter-form>

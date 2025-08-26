@@ -26,7 +26,6 @@ export class PdfOcrComponent implements OnInit {
   foundKeys: string[] = [];
 
   isProcessing = false;
-  scanningStarted = false;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -129,7 +128,6 @@ export class PdfOcrComponent implements OnInit {
   }
 
   startScanning() {
-    this.scanningStarted = true;
     this.currentPageIndex = 0;
     this.ocrResults = new Array(this.pageImages.length).fill('');
   }

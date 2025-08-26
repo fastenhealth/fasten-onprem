@@ -8,6 +8,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class ResourceOcrComponent implements OnInit {
   settingsForm: FormGroup;
+  startedScan = false;
 
   constructor(private fb: FormBuilder) {}
 
@@ -49,11 +50,13 @@ export class ResourceOcrComponent implements OnInit {
   // 🔍 Detect PDF vs Image
   private detectFileType(file: File) {
     if (file.type === 'application/pdf') {
+      this.startedScan = true;
       this.settingsForm.patchValue({
         mode: 'pdf',
         file: file,
       });
     } else if (file.type.startsWith('image/')) {
+      this.startedScan = true;
       this.settingsForm.patchValue({
         mode: 'image',
         file: file,
