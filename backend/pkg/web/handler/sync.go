@@ -22,9 +22,8 @@ func GetServerDiscovery(c *gin.Context) {
 		"data": gin.H{
 			"server_base_urls": serverBaseURLs,
 			"endpoints": gin.H{
-				"sync_data": "/api/secure/sync/data",
-				"sync_updates": "/api/secure/sync/updates",
-				"access_tokens": "/api/secure/access/tokens",
+				"sync_data": "api/secure/resource/fhir",
+				"access_tokens": "/api/secure/access/token",
 			},
 		},
 	})

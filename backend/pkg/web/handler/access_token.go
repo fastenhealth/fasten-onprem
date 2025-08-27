@@ -24,8 +24,8 @@ type InitiateAccessRequest struct {
 	Expiration int    `json:"expiration"` // Expiration in days. 0 for no expiration.
 }
 
-// InitiateAccess generates a new access token for mobile app authentication
-func InitiateAccess(c *gin.Context) {
+// CreateAccessToken generates a new access token for mobile app authentication
+func CreateAccessToken(c *gin.Context) {
 	log := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 	appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)

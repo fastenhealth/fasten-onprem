@@ -136,13 +136,12 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.GET("/users", handler.GetUsers)
 				secure.POST("/users", handler.CreateUser)
 
-				secure.POST("/sync/initiate", handler.InitiateAccess)
-				secure.GET("/sync/discovery", handler.GetServerDiscovery)
-
 				// Access token management
-				secure.GET("/access/tokens", handler.GetAccessTokens)
-				
-				secure.POST("/access/delete", handler.DeleteAccessToken)
+				secure.GET("/access/token", handler.GetAccessTokens)
+				secure.POST("/access/token", handler.CreateAccessToken)
+				secure.DELETE("/access/token", handler.DeleteAccessToken)
+
+				secure.GET("/sync/discovery", handler.GetServerDiscovery)
 
 				//server-side-events handler (only supported on mac/linux)
 				// TODO: causes deadlock on Windows
