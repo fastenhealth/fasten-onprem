@@ -2,8 +2,6 @@ package database
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -11,12 +9,6 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
-
-// HashToken creates a secure hash of a token for storage
-func HashToken(token string) string {
-	hash := sha256.Sum256([]byte(token))
-	return hex.EncodeToString(hash[:])
-}
 
 // Access Token Management
 
