@@ -135,8 +135,9 @@ If you prefer not to run the `set_env.sh` script, you can configure the `.env` f
 3.  **Create and edit the `.env` file:**
     Create a file named `.env` in the same directory as your `docker-compose.yml` and add the following lines, replacing `<your_hostname>` and `<your_ip_address>` with the values you found:
     ```
-    HOST_HOSTNAME=<your_hostname>
-    HOST_IP=<your_ip_address>
+    HOSTNAME=<your_hostname>
+    IP=<your_ip_address>
+    PORT=<your_port>
     ```
 
 ### 🧪 Develop

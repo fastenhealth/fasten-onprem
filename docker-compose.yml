@@ -10,12 +10,12 @@ services:
       args:
         - FASTEN_ENV=prod
 #        - FASTEN_ENV=sandbox
-    hostname: ${HOST_HOSTNAME}
+    hostname: ${HOSTNAME}
     environment:
-      - HOST_IP=${HOST_IP}
-      - HOST_PORT=${FASTEN_EXTERNAL_PORT}
+      - HOST_IP=${IP}
+      - HOST_PORT=${PORT}
     ports:
-      - "${FASTEN_EXTERNAL_PORT}:8080"
+      - "${PORT}:8080"
     volumes:
       - ./db:/opt/fasten/db
 #      - ./config.example.yaml:/opt/fasten/config/config.yaml

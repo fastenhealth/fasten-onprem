@@ -138,7 +138,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 				secure.POST("/sync/initiate", handler.InitiateAccess)
 				secure.GET("/sync/status", handler.GetAccessStatus)
-				secure.GET("/sync/discovery", handler.GetSecureServerDiscovery)
+				secure.GET("/sync/discovery", handler.GetServerDiscovery)
 				secure.GET("/sync/data", handler.SyncData)
 				secure.GET("/sync/updates", handler.SyncDataUpdates)
 
