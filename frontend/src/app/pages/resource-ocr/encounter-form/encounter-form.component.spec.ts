@@ -25,7 +25,7 @@ describe('EncounterFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [EncounterFormComponent, NlmTypeaheadComponent],
+      declarations: [EncounterFormComponent],
       imports: [
         NgbCollapseModule,
         NgbNavModule,
@@ -40,6 +40,7 @@ describe('EncounterFormComponent', () => {
         FhirCardModule,
         PipesModule,
         HttpClientModule,
+        NlmTypeaheadComponent
       ],
       providers: [NgbActiveModal, NgbModal],
     }).compileComponents();

@@ -8,9 +8,17 @@
         <div class="card p-4 w-100">
             <!-- Encounter Section -->
             <div class="mb-4">
-                <h6 class="section-title mb-3">
-                    <i class="fas fa-user-md me-2"></i>Encounter
-                </h6>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="section-title mb-3">
+                        <i class="fas fa-user-md me-2"></i>Encounter
+                    </h6>
+
+                    <button type="button" (click)="editMode = !editMode" class="btn btn-primary btn-indigo">
+                        <i class="fas" [ngClass]="editMode ? 'fa-save' : 'fa-pen'"></i>
+                        {{ editMode ? 'Save' : 'Edit' }}
+                    </button>
+                </div>
+
 
                 <div *ngIf="existingEncounter; else addEncounter">
                     <fhir-card [showDetails]="false" [displayModel]="existingEncounter" [isCollapsed]="true"
@@ -18,11 +26,27 @@
                         (editRequested)="openEditEncounterModal(existingEncounter)"></fhir-card>
                 </div>
                 <ng-template #addEncounter>
-                    <div class="row pt-2">
-                        <div class="col-lg-4 col-md-4">
-                            <button type="button" (click)="openEncounterModal()" class="btn btn-outline-indigo">Create
-                                Encounter</button>
-                        </div>
+                    <div class="row row-sm pd-t-15">
+                        <ng-container [formGroup]="form.get('encounter.data')">
+                            <div class="col-12">
+                                <p class="mg-b-10">Encounter Type<span ngbTooltip="required"
+                                        class="text-danger">*</span></p>
+                                <app-nlm-typeahead formControlName="code" searchType="EncounterServiceType"
+                                    [debugMode]="debugMode" disabled="!editMode"></app-nlm-typeahead>
+                            </div><!-- col -->
+                            <div class="col-6 mg-t-10 mg-lg-t-0">
+                                <p class="mg-b-10">Start<span ngbTooltip="required" class="text-danger">*</span></p>
+                                <input formControlName="period_start" class="form-control" placeholder="yyyy-mm-dd"
+                                    name="dp" ngbDatepicker #cds="ngbDatepicker" (click)="cds.toggle()"
+                                    disabled="!editMode">
+                            </div><!-- col -->
+                            <div class="col-6 mg-t-10 mg-lg-t-0">
+                                <p class="mg-b-10">End</p>
+                                <input formControlName="period_end" [minDate]="form.get('period_start')?.value"
+                                    class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker
+                                    #cde="ngbDatepicker" (click)="cde.toggle()" disabled="!editMode">
+                            </div><!-- col -->
+                        </ng-container>
                     </div>
                 </ng-template>
             </div>

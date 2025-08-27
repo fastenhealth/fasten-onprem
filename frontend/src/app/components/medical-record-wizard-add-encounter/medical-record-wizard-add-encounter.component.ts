@@ -13,8 +13,6 @@ import {fhirModelFactory} from '../../../lib/models/factory';
 import {RecResourceRelatedDisplayModel} from '../../../lib/utils/resource_related_display_model';
 import {EncounterModel} from '../../../lib/models/resources/encounter-model';
 import {uuidV4} from '../../../lib/utils/uuid';
-import { OcrDataService } from 'src/app/services/ocr-data.service';
-
 @Component({
   standalone: true,
   imports: [
@@ -35,7 +33,6 @@ import { OcrDataService } from 'src/app/services/ocr-data.service';
 export class MedicalRecordWizardAddEncounterComponent implements OnInit {
 
   @Input() debugMode: boolean = false;
-  @Input() disableFindEncounter: boolean = false;
   loading: boolean = false
   activeId: string = 'find'
 
@@ -48,38 +45,10 @@ export class MedicalRecordWizardAddEncounterComponent implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     private fastenApi: FastenApiService,
-    private ocrService: OcrDataService
   ) { }
 
   ngOnInit(): void {
-    this.activeId = this.disableFindEncounter ? 'create' : 'find' // Switch to create tab if find is disabled
     this.resetEncounterForm()
-
-    //TODO: Less hardcoded way of pre-filling the form with OCR results
-    // Prefill form with OCR results if available
-    const ocrData = this.ocrService.getOcrData();
-    if (ocrData) {
-      if (ocrData.encounterType) {
-        this.newEncounterForm
-          .get('code')
-          ?.setValue({
-            id: ocrData?.encounterType?.code,
-            identifier: [ocrData?.encounterType],
-            text: ocrData?.encounterType?.display,
-          });
-      }
-      if (ocrData.date) {
-        // Convert OCR date string to NgbDateStruct if using ngbDatepicker
-        const dateParts = ocrData.date.split('/').map((p) => parseInt(p, 10));
-        if (dateParts.length === 3) {
-          this.newEncounterForm.get('period_start')?.setValue({
-            year: dateParts[2],
-            month: dateParts[0],
-            day: dateParts[1],
-          });
-        }
-      }
-    }
 
     //get a count of all the known organizations
     this.fastenApi.queryResources({

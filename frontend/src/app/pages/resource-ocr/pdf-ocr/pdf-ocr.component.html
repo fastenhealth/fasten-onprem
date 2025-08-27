@@ -26,6 +26,14 @@
             </button>
         </div>
 
+        <!-- Loading state if isProcessing is true -->
+        <div *ngIf="isProcessing" class="text-center mb-3">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Processing...</span>
+            </div>
+            <div class="mt-2 text-muted">Processing...</div>
+        </div>
+
         <!-- Extracted Keys -->
         <div *ngIf="foundKeys.length" class="text-center p-2 border rounded bg-light w-100">
             <strong>Extracted:</strong> {{ foundKeys.join(', ') }}

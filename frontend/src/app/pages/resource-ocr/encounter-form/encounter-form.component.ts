@@ -47,6 +47,8 @@ import { generateReferenceUriFromResourceOrReference } from 'src/lib/utils/bundl
 import { RecResourceRelatedDisplayModel } from 'src/lib/utils/resource_related_display_model';
 import { uuidV4 } from 'src/lib/utils/uuid';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { OcrDataService } from 'src/app/services/ocr-data.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-encounter-form',
@@ -54,28 +56,32 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./encounter-form.component.scss'],
 })
 export class EncounterFormComponent implements OnInit {
+  private sub = new Subscription();
+
   form!: FormGroup;
 
   submitWizardLoading = false;
   debugMode = false;
   existingEncounter: EncounterModel = null;
   fastenSourceId = '';
+  editMode = false;
 
   constructor(
     private modalService: NgbModal,
-    private fastenApi: FastenApiService
+    private fastenApi: FastenApiService,
+    private ocrService: OcrDataService
   ) {}
 
   ngOnInit(): void {
     this.form = new FormGroup({
-      encounter: new FormGroup(
-        {
-          data: new FormControl({}, Validators.required),
-          action: new FormControl(null),
-        },
-        Validators.required
-      ),
-
+      encounter: new FormGroup({
+        data: new FormGroup({
+          code: new FormControl('', Validators.required),
+          period_start: new FormControl(''),
+          period_end: new FormControl(''),
+        }),
+        action: new FormControl(null),
+      }),
       medications: new FormArray([]),
       procedures: new FormArray([]),
       practitioners: new FormArray([]),
@@ -88,13 +94,47 @@ export class EncounterFormComponent implements OnInit {
       this.addEncounter({ data: this.existingEncounter, action: 'find' });
     }
 
+    // 🔥 Subscribe to OCR changes
+    this.sub.add(
+      this.ocrService.ocrData$.subscribe((ocrData) => {
+        if (ocrData) {
+          const encounterGroup = this.form.get('encounter.data') as FormGroup;
+
+          if (ocrData.encounterType) {
+            encounterGroup.get('code')?.setValue({
+              id: ocrData.encounterType.code,
+              identifier: [ocrData.encounterType],
+              text: ocrData.encounterType.display,
+            });
+          }
+
+          if (ocrData.date) {
+            const dateParts = ocrData.date
+              .split('/')
+              .map((p) => parseInt(p, 10));
+            if (dateParts.length === 3) {
+              encounterGroup.get('period_start')?.setValue({
+                year: dateParts[2],
+                month: dateParts[0],
+                day: dateParts[1],
+              });
+            }
+          }
+        }
+      })
+    );
+
     this.fastenApi.getSources().subscribe((sources) => {
       let fastenSource = sources.find(
         (source) => source.platform_type === 'fasten'
       );
 
-      this.fastenSourceId = fastenSource.id;
+      this.fastenSourceId = fastenSource?.id ?? '';
     });
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 
   //<editor-fold desc="Getters">
