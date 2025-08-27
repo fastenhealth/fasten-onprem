@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"time"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
@@ -81,7 +80,6 @@ type DatabaseRepository interface {
 	) error
 
 	UnlinkResourceWithSharedNeighbors(ctx context.Context, resourceType string, resourceId string, relatedResourceType string, relatedResourceId string) (int64, error)
-	GetLastUpdatedTimestamp(ctx context.Context) (*time.Time, error)
 
 	// Access Token Management
 	CreateAccessToken(ctx context.Context, accessToken *models.AccessToken) error
