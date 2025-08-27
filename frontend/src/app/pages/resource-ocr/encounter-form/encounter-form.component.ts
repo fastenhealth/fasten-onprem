@@ -90,6 +90,9 @@ export class EncounterFormComponent implements OnInit {
       attachments: new FormArray([]),
     });
 
+    // By default, disable the entire form. It will be enabled when user clicks "Edit"
+    this.form.disable();
+
     if (this.existingEncounter) {
       this.addEncounter({ data: this.existingEncounter, action: 'find' });
     }
@@ -135,6 +138,15 @@ export class EncounterFormComponent implements OnInit {
 
   ngOnDestroy() {
     this.sub.unsubscribe();
+  }
+
+  handleEditModeToggle() {
+    this.editMode = !this.editMode;
+    if (this.editMode) {
+      this.form.enable();
+    } else {
+      this.form.disable();
+    }
   }
 
   //<editor-fold desc="Getters">

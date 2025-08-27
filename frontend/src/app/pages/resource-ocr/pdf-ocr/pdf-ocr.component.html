@@ -17,11 +17,11 @@
         <!-- Navigation Buttons (centered) -->
         <div class="d-flex justify-content-center mb-3">
             <button class="btn btn-outline-secondary mr-2" (click)="goToPreviousPage()"
-                [disabled]="currentPageIndex === 0">
+                [disabled]="currentPageIndex === 0 || isProcessing">
                 ←
             </button>
             <button class="btn btn-outline-secondary" (click)="goToNextPage()"
-                [disabled]="currentPageIndex === pageImages.length - 1">
+                [disabled]="currentPageIndex === pageImages.length - 1 || isProcessing">
                 →
             </button>
         </div>

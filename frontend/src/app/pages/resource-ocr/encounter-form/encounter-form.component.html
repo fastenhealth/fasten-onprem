@@ -13,7 +13,7 @@
                         <i class="fas fa-user-md me-2"></i>Encounter
                     </h6>
 
-                    <button type="button" (click)="editMode = !editMode" class="btn btn-primary btn-indigo">
+                    <button type="button" (click)="handleEditModeToggle()" class="btn btn-primary btn-indigo">
                         <i class="fas" [ngClass]="editMode ? 'fa-save' : 'fa-pen'"></i>
                         {{ editMode ? 'Save' : 'Edit' }}
                     </button>
@@ -32,19 +32,18 @@
                                 <p class="mg-b-10">Encounter Type<span ngbTooltip="required"
                                         class="text-danger">*</span></p>
                                 <app-nlm-typeahead formControlName="code" searchType="EncounterServiceType"
-                                    [debugMode]="debugMode" disabled="!editMode"></app-nlm-typeahead>
+                                    [debugMode]="debugMode"></app-nlm-typeahead>
                             </div><!-- col -->
                             <div class="col-6 mg-t-10 mg-lg-t-0">
                                 <p class="mg-b-10">Start<span ngbTooltip="required" class="text-danger">*</span></p>
                                 <input formControlName="period_start" class="form-control" placeholder="yyyy-mm-dd"
-                                    name="dp" ngbDatepicker #cds="ngbDatepicker" (click)="cds.toggle()"
-                                    disabled="!editMode">
+                                    name="dp" ngbDatepicker #cds="ngbDatepicker" (click)="cds.toggle()">
                             </div><!-- col -->
                             <div class="col-6 mg-t-10 mg-lg-t-0">
                                 <p class="mg-b-10">End</p>
                                 <input formControlName="period_end" [minDate]="form.get('period_start')?.value"
                                     class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker
-                                    #cde="ngbDatepicker" (click)="cde.toggle()" disabled="!editMode">
+                                    #cde="ngbDatepicker" (click)="cde.toggle()">
                             </div><!-- col -->
                         </ng-container>
                     </div>

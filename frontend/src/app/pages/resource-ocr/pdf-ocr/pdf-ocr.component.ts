@@ -81,6 +81,7 @@ export class PdfOcrComponent implements OnInit {
         // Also keep a previewable URL
         const url = URL.createObjectURL(blob);
         this.pageImages.push(this.sanitizer.bypassSecurityTrustUrl(url));
+        this.sendCurrentPageToOcr();
       }
     };
     reader.readAsArrayBuffer(incomingFile);
