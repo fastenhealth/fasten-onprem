@@ -5,525 +5,437 @@
             <strong>Form Status: {{ form.status }}</strong>
         </div>
 
-        <!-- Encounter Section -->
-        <div class="card mb-2 w-100">
-            <div class="card-header section-header cursor-pointer" data-bs-toggle="collapse"
-                data-bs-target="#encounterSection" aria-expanded="false"
-                (click)="isEncounterCollapsed = !isEncounterCollapsed">
-                Encounter
-            </div>
-            <div id="encounterSection" #collapse="ngbCollapse" [(ngbCollapse)]="isEncounterCollapsed" class="card-body">
-                <div id="encounterSection" class="collapse show">
-                    <div class="card-body">
-                        <p class="card-text mg-b-10">
-                            An Encounter refers to a meeting or interaction with a healthcare provider, such as a
-                            doctor's
-                            appointment, surgery or a visit to discuss and address your health concerns
-                        </p>
+        <div class="card p-4 w-100">
+            <!-- Encounter Section -->
+            <div class="mb-4">
+                <h6 class="section-title mb-3">
+                    <i class="fas fa-user-md me-2"></i>Encounter
+                </h6>
 
-                        <div *ngIf="existingEncounter; else addEncounter">
-                            <fhir-card [showDetails]="false" [displayModel]="existingEncounter" [isCollapsed]="true"
-                                [isEditable]="fastenSourceId == existingEncounter.source_id"
-                                (editRequested)="openEditEncounterModal(existingEncounter)"></fhir-card>
-                        </div>
-                        <ng-template #addEncounter>
-                            <div class="row pt-2">
-                                <div class="col-lg-4 col-md-4">
-                                    <button type="button" (click)="openEncounterModal()"
-                                        class="btn btn-outline-indigo btn-block">Create Encounter</button>
-                                </div>
-                            </div>
-                        </ng-template>
-                    </div>
+                <div *ngIf="existingEncounter; else addEncounter">
+                    <fhir-card [showDetails]="false" [displayModel]="existingEncounter" [isCollapsed]="true"
+                        [isEditable]="fastenSourceId == existingEncounter.source_id"
+                        (editRequested)="openEditEncounterModal(existingEncounter)"></fhir-card>
                 </div>
+                <ng-template #addEncounter>
+                    <div class="row pt-2">
+                        <div class="col-lg-4 col-md-4">
+                            <button type="button" (click)="openEncounterModal()" class="btn btn-outline-indigo">Create
+                                Encounter</button>
+                        </div>
+                    </div>
+                </ng-template>
             </div>
-        </div>
 
-        <!-- Medications Section -->
-        <div class="card mb-2 w-100">
-            <div class="card-header cursor-pointer" data-bs-toggle="collapse" data-bs-target="#medicationsSection"
-                aria-expanded="false" aria-controls="medicationsSection" [class.disabled]="!existingEncounter"
-                (click)="existingEncounter ? isMedicationsCollapsed = !isMedicationsCollapsed : null">
-                <h6 class="mb-0">
+            <!-- Medications Section -->
+            <div class="mb-4">
+                <h6 class="section-title mb-3">
                     <i class="fas fa-pills me-2"></i>
                     Medications
-                    <span class="badge badge-pill badge-warning align-middle ms-2"
+                    <span class="badge bg-warning ms-2"
                         *ngIf="medications.controls.length">{{medications.controls.length}}</span>
                     <span class="text-muted ms-2" *ngIf="!existingEncounter">(Requires Encounter)</span>
                 </h6>
-            </div>
-            <div #collapse="ngbCollapse" [(ngbCollapse)]="isMedicationsCollapsed" class="card-body">
-                <div class="card-body">
-                    <p class="card-text mg-b-10">
-                        Medications are a type of treatment, usually in the form of pills, liquids, or injections,
-                        prescribed by doctors to help your body fight off illnesses, manage symptoms, or improve overall
-                        health.
-                    </p>
 
-                    <fhir-card *ngFor="let medication of existingEncounter?.related_resources?.['Medication']"
-                        [showDetails]="false" [displayModel]="medication" [isCollapsed]="true"
-                        [isEditable]="fastenSourceId == medication.source_id"
-                        (unlinkRequested)="handleUnlinkRequested(medication)"
-                        (editRequested)="openEditMedicationModal(medication)"></fhir-card>
+                <fhir-card *ngFor="let medication of existingEncounter?.related_resources?.['Medication']"
+                    [showDetails]="false" [displayModel]="medication" [isCollapsed]="true"
+                    [isEditable]="fastenSourceId == medication.source_id"
+                    (unlinkRequested)="handleUnlinkRequested(medication)"
+                    (editRequested)="openEditMedicationModal(medication)"></fhir-card>
 
-                    <ng-container formArrayName="medications">
-                        <div class="card pd-20 mb-3" [formGroup]="medicationGroup"
-                            *ngFor="let medicationGroup of medications.controls; let i = index">
-                            <div *ngIf="debugMode" class="alert alert-warning">
-                                <strong>Medication Status: {{medicationGroup.status}}</strong>
+                <ng-container formArrayName="medications">
+                    <div class="border rounded p-3 mb-3" [formGroup]="medicationGroup"
+                        *ngFor="let medicationGroup of medications.controls; let i = index">
+                        <div *ngIf="debugMode" class="alert alert-warning">
+                            <strong>Medication Status: {{medicationGroup.status}}</strong>
+                        </div>
+                        <div class="text-end">
+                            <span class="cursor-pointer" (click)="deleteMedication(i)" aria-hidden="true">
+                                <i class="fas fa-trash text-danger"></i>
+                            </span>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <label class="form-label">Medication name<span class="text-danger">*</span></label>
+                                <app-nlm-typeahead formControlName="data" searchType="Medication"
+                                    [debugMode]="debugMode"></app-nlm-typeahead>
                             </div>
-                            <div class="tx-right">
-                                <span class="cursor-pointer" (click)="deleteMedication(i)" aria-hidden="true"><i
-                                        class="fas fa-trash"></i></span>
+                            <div class="col-lg-3 mt-2 mt-lg-0">
+                                <label class="form-label">Status<span class="text-danger">*</span></label>
+                                <select formControlName="status" class="form-control">
+                                    <option value="" hidden selected>Select Status</option>
+                                    <option value="active">Active</option>
+                                    <option value="stopped">Stopped</option>
+                                </select>
                             </div>
-                            <div class="row row-sm">
-                                <div class="col-lg-6">
-                                    <p class="mg-b-10">Medication name<span ngbTooltip="required"
-                                            class="text-danger">*</span></p>
-                                    <app-nlm-typeahead formControlName="data" searchType="Medication"
-                                        [debugMode]="debugMode"></app-nlm-typeahead>
-                                </div>
-                                <div class="col-lg-3 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Status<span ngbTooltip="required" class="text-danger">*</span>
-                                    </p>
-                                    <select formControlName="status" class="form-control">
-                                        <option value="" hidden selected>Select Status</option>
-                                        <option value="active">Active</option>
-                                        <option value="stopped">Stopped</option>
-                                    </select>
-                                </div>
-                                <div class="col-lg-3 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Dosage</p>
-                                    <input formControlName="dosage" class="form-control" placeholder="Input box"
-                                        type="text">
-                                </div>
-                                <div class="col-lg-3 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Started<span ngbTooltip="required" class="text-danger">*</span>
-                                    </p>
-                                    <input formControlName="started" class="form-control" placeholder="yyyy-mm-dd"
-                                        ngbDatepicker #ds="ngbDatepicker" (click)="ds.toggle()">
-                                </div>
-                                <div class="col-lg-3 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Stopped</p>
-                                    <input [minDate]="medicationGroup.get('started').value" formControlName="stopped"
-                                        class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker
-                                        #dstop="ngbDatepicker" (click)="dstop.toggle()">
-                                </div>
-                                <div class="col-lg-3 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Why Stopped</p>
-                                    <app-nlm-typeahead formControlName="whystopped" searchType="MedicationWhyStopped"
-                                        [debugMode]="debugMode"></app-nlm-typeahead>
-                                </div>
-                                <div class="col-lg-3 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Prescribing Practitioner<span ngbTooltip="required"
-                                            class="text-danger">*</span></p>
-                                    <select class="form-control" formControlName="requester">
-                                        <option value="" hidden selected>Select Practitioner</option>
-                                        <option value="" (click)="openPractitionerModal(medicationGroup, 'requester')">
-                                            New Practitioner</option>
-                                        <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner']?.length"
-                                            class="divider">---</optgroup>
-                                        <option
-                                            *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']; let i = index"
-                                            [value]="practitioner | referenceUri">
-                                            {{practitioner?.name | humanName }} ({{practitioner?.profession?.text}})
-                                        </option>
-                                        <optgroup *ngIf="practitioners.controls.length" class="divider">---</optgroup>
-                                        <option *ngFor="let practitioner of practitioners.controls; let i = index"
-                                            [value]="practitioner.controls.data.value | referenceUri">
-                                            {{practitioner.controls.data.value.name | humanName }}
-                                            ({{practitioner.controls.data.value?.profession?.text}})
-                                        </option>
-                                    </select>
-                                </div>
+                            <div class="col-lg-3 mt-2 mt-lg-0">
+                                <label class="form-label">Dosage</label>
+                                <input formControlName="dosage" class="form-control" placeholder="Input box"
+                                    type="text">
                             </div>
-                            <div class="row row-sm mg-t-20">
-                                <div class="col-lg">
-                                    <p class="mg-b-10">Instructions</p>
-                                    <textarea formControlName="instructions" rows="3" class="form-control"
-                                        placeholder="Textarea"></textarea>
-                                </div>
+                            <div class="col-lg-3 mt-2">
+                                <label class="form-label">Started<span class="text-danger">*</span></label>
+                                <input formControlName="started" class="form-control" placeholder="yyyy-mm-dd"
+                                    ngbDatepicker #ds="ngbDatepicker" (click)="ds.toggle()">
                             </div>
-                            <div class="row row-sm mg-t-20">
-                                <div class="col-12 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Attachments</p>
-                                </div>
-                                <div class="col-1">
-                                    <button type="button" (click)="openAttachmentModal(medicationGroup, 'attachments')"
-                                        class="btn btn-indigo btn-with-icon">
-                                        <i class="fas fa-paperclip"></i> Add
-                                    </button>
-                                </div>
-                                <div class="col-11">
-                                    <ng-select class="ng-select-form-control" [readonly]="!attachments.controls.length"
-                                        appendTo="body" formControlName="attachments" placeholder="Select Attachment"
-                                        [multiple]="true" [hideSelected]="true">
-                                        <ng-option *ngFor="let attachment of attachments.controls; let i = index"
-                                            [value]="attachment.value.id">{{attachment.value.name}}
-                                            ({{attachment.value.file_name}})</ng-option>
-                                    </ng-select>
-                                </div>
+                            <div class="col-lg-3 mt-2">
+                                <label class="form-label">Stopped</label>
+                                <input [minDate]="medicationGroup.get('started').value" formControlName="stopped"
+                                    class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #dstop="ngbDatepicker"
+                                    (click)="dstop.toggle()">
+                            </div>
+                            <div class="col-lg-3 mt-2">
+                                <label class="form-label">Why Stopped</label>
+                                <app-nlm-typeahead formControlName="whystopped" searchType="MedicationWhyStopped"
+                                    [debugMode]="debugMode"></app-nlm-typeahead>
+                            </div>
+                            <div class="col-lg-3 mt-2">
+                                <label class="form-label">Prescribing Practitioner<span
+                                        class="text-danger">*</span></label>
+                                <select class="form-control" formControlName="requester">
+                                    <option value="" hidden selected>Select Practitioner</option>
+                                    <option value="" (click)="openPractitionerModal(medicationGroup, 'requester')">
+                                        New Practitioner</option>
+                                    <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner']?.length"
+                                        class="divider">---</optgroup>
+                                    <option
+                                        *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']; let i = index"
+                                        [value]="practitioner | referenceUri">
+                                        {{practitioner?.name | humanName }} ({{practitioner?.profession?.text}})
+                                    </option>
+                                    <optgroup *ngIf="practitioners.controls.length" class="divider">---</optgroup>
+                                    <option *ngFor="let practitioner of practitioners.controls; let i = index"
+                                        [value]="practitioner.controls.data.value | referenceUri">
+                                        {{practitioner.controls.data.value.name | humanName }}
+                                        ({{practitioner.controls.data.value?.profession?.text}})
+                                    </option>
+                                </select>
                             </div>
                         </div>
-                    </ng-container>
-
-                    <div class="row pt-2">
-                        <div class="col-lg-4 col-md-3">
-                            <button type="button" (click)="addMedication()" class="btn btn-outline-indigo btn-block">Add
-                                Medication</button>
+                        <div class="row mt-3">
+                            <div class="col-lg-12">
+                                <label class="form-label">Instructions</label>
+                                <textarea formControlName="instructions" rows="3" class="form-control"
+                                    placeholder="Textarea"></textarea>
+                            </div>
                         </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label class="form-label">Attachments</label>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" (click)="openAttachmentModal(medicationGroup, 'attachments')"
+                                    class="btn btn-primary btn-indigo">
+                                    <i class="fas fa-paperclip"></i> Add
+                                </button>
+                            </div>
+                            <div class="col">
+                                <ng-select class="ng-select-form-control" [readonly]="!attachments.controls.length"
+                                    appendTo="body" formControlName="attachments" placeholder="Select Attachment"
+                                    [multiple]="true" [hideSelected]="true">
+                                    <ng-option *ngFor="let attachment of attachments.controls; let i = index"
+                                        [value]="attachment.value.id">{{attachment.value.name}}
+                                        ({{attachment.value.file_name}})</ng-option>
+                                </ng-select>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <div class="row">
+                    <div class="col-auto">
+                        <button type="button" (click)="addMedication()" class="btn btn-outline-indigo">Add
+                            Medication</button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Procedures Section -->
-        <div class="card mb-2 w-100">
-            <div class="card-header cursor-pointer" data-bs-toggle="collapse" data-bs-target="#proceduresSection"
-                aria-expanded="false" aria-controls="proceduresSection" [class.disabled]="!existingEncounter"
-                (click)="existingEncounter ? isProceduresCollapsed = !isProceduresCollapsed : null">
-                <h6 class="mb-0">
+            <!-- Procedures Section -->
+            <div class="mb-4">
+                <h6 class="section-title mb-3">
                     <i class="fas fa-user-md me-2"></i>
                     Procedures
-                    <span class="badge badge-pill badge-warning align-middle ms-2"
+                    <span class="badge bg-warning ms-2"
                         *ngIf="procedures.controls.length">{{procedures.controls.length}}</span>
                     <span class="text-muted ms-2" *ngIf="!existingEncounter">(Requires Encounter)</span>
                 </h6>
-            </div>
-            <div #collapse="ngbCollapse" [(ngbCollapse)]="isProceduresCollapsed" class="card-body">
-                <div class="card-body">
-                    <h6 class="card-title">Major Surgeries and Implants</h6>
-                    <p class="card-text mg-b-10">
-                        Surgery is a medical procedure where doctors use special tools to fix, remove, or improve
-                        something inside your body to help you feel better or get healthier.
-                    </p>
 
-                    <fhir-card *ngFor="let procedure of existingEncounter?.related_resources?.['Procedure']"
-                        [showDetails]="false" [displayModel]="procedure" [isCollapsed]="true"
-                        [isEditable]="fastenSourceId == procedure.source_id"
-                        (unlinkRequested)="handleUnlinkRequested(procedure)"
-                        (editRequested)="openEditProcedureModal(procedure)"></fhir-card>
+                <fhir-card *ngFor="let procedure of existingEncounter?.related_resources?.['Procedure']"
+                    [showDetails]="false" [displayModel]="procedure" [isCollapsed]="true"
+                    [isEditable]="fastenSourceId == procedure.source_id"
+                    (unlinkRequested)="handleUnlinkRequested(procedure)"
+                    (editRequested)="openEditProcedureModal(procedure)"></fhir-card>
 
-                    <ng-container formArrayName="procedures">
-                        <div class="card pd-20 mb-3" [formGroup]="procedureGroup"
-                            *ngFor="let procedureGroup of procedures.controls; let i = index">
-                            <div *ngIf="debugMode" class="alert alert-warning">
-                                <strong>Procedure Status: {{procedureGroup.status}}</strong>
+                <ng-container formArrayName="procedures">
+                    <div class="border rounded p-3 mb-3" [formGroup]="procedureGroup"
+                        *ngFor="let procedureGroup of procedures.controls; let i = index">
+                        <div *ngIf="debugMode" class="alert alert-warning">
+                            <strong>Procedure Status: {{procedureGroup.status}}</strong>
+                        </div>
+                        <div class="text-end">
+                            <span class="cursor-pointer" (click)="deleteProcedure(i)" aria-hidden="true">
+                                <i class="fas fa-trash text-danger"></i>
+                            </span>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <label class="form-label">Surgery or Implant<span class="text-danger">*</span></label>
+                                <app-nlm-typeahead formControlName="data" searchType="Procedure"
+                                    [debugMode]="debugMode"></app-nlm-typeahead>
                             </div>
-                            <div class="tx-right">
-                                <span class="cursor-pointer" (click)="deleteProcedure(i)" aria-hidden="true"><i
-                                        class="fas fa-trash"></i></span>
+                            <div class="col-lg-4 mt-2 mt-lg-0">
+                                <label class="form-label">When done<span class="text-danger">*</span></label>
+                                <input formControlName="whendone" class="form-control" placeholder="yyyy-mm-dd"
+                                    ngbDatepicker #dwd="ngbDatepicker" (click)="dwd.toggle()">
                             </div>
-                            <div class="row row-sm">
-                                <div class="col-lg-8">
-                                    <p class="mg-b-10">Surgery or Implant<span ngbTooltip="required"
-                                            class="text-danger">*</span></p>
-                                    <app-nlm-typeahead formControlName="data" searchType="Procedure"
-                                        [debugMode]="debugMode"></app-nlm-typeahead>
-                                </div>
-                                <div class="col-lg-4 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">When done<span ngbTooltip="required" class="text-danger">*</span>
-                                    </p>
-                                    <input formControlName="whendone" class="form-control" placeholder="yyyy-mm-dd"
-                                        ngbDatepicker #dwd="ngbDatepicker" (click)="dwd.toggle()">
-                                </div>
-                                <div class="col-lg-6 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Performed By</p>
-                                    <select class="form-control" formControlName="performer">
-                                        <option value="" hidden selected>Select Practitioner</option>
-                                        <option value="" (click)="openPractitionerModal(procedureGroup, 'performer')">
-                                            New Practitioner</option>
-                                        <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner']?.length"
-                                            class="divider">---</optgroup>
-                                        <option
-                                            *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']; let i = index"
-                                            [value]="practitioner | referenceUri">
-                                            {{practitioner?.name | humanName }} ({{practitioner?.profession?.text}})
-                                        </option>
-                                        <optgroup *ngIf="practitioners.controls.length" class="divider">---</optgroup>
-                                        <option *ngFor="let practitioner of practitioners.controls; let i = index"
-                                            [value]="practitioner.controls.data.value | referenceUri">
-                                            {{practitioner.controls.data.value.name | humanName }}
-                                            ({{practitioner.controls.data.value?.profession?.text}})
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-lg-6 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Location</p>
-                                    <select class="form-control" formControlName="location">
-                                        <option value="" hidden selected>Select Location</option>
-                                        <option value="" (click)="openOrganizationModal(procedureGroup, 'location')">New
-                                            Organization</option>
-                                        <optgroup *ngIf="existingEncounter?.related_resources?.['Organization']?.length"
-                                            class="divider">---</optgroup>
-                                        <option
-                                            *ngFor="let organization of existingEncounter?.related_resources?.['Organization']; let i = index"
-                                            [value]="organization | referenceUri">
-                                            {{organization?.name }}
-                                        </option>
-                                        <optgroup *ngIf="organizations.controls.length" class="divider"></optgroup>
-                                        <option *ngFor="let organization of organizations.controls; let i = index"
-                                            [value]="organization.controls.data.value | referenceUri">
-                                            {{organization.controls.data.value.name}}
-                                            ({{organization.controls.data.value?.address}})
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-lg-12 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Comments</p>
-                                    <textarea formControlName="comment" class="form-control" placeholder="Input box"
-                                        rows="3"></textarea>
-                                </div>
+                            <div class="col-lg-6 mt-2">
+                                <label class="form-label">Performed By</label>
+                                <select class="form-control" formControlName="performer">
+                                    <option value="" hidden selected>Select Practitioner</option>
+                                    <option value="" (click)="openPractitionerModal(procedureGroup, 'performer')">
+                                        New Practitioner</option>
+                                    <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner']?.length"
+                                        class="divider">---</optgroup>
+                                    <option
+                                        *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']; let i = index"
+                                        [value]="practitioner | referenceUri">
+                                        {{practitioner?.name | humanName }} ({{practitioner?.profession?.text}})
+                                    </option>
+                                    <optgroup *ngIf="practitioners.controls.length" class="divider">---</optgroup>
+                                    <option *ngFor="let practitioner of practitioners.controls; let i = index"
+                                        [value]="practitioner.controls.data.value | referenceUri">
+                                        {{practitioner.controls.data.value.name | humanName }}
+                                        ({{practitioner.controls.data.value?.profession?.text}})
+                                    </option>
+                                </select>
                             </div>
-                            <div class="row row-sm mg-t-20">
-                                <div class="col-12 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Attachments</p>
-                                </div>
-                                <div class="col-1">
-                                    <button type="button" (click)="openAttachmentModal(procedureGroup, 'attachments')"
-                                        class="btn btn-indigo btn-with-icon">
-                                        <i class="fas fa-paperclip"></i> Add
-                                    </button>
-                                </div>
-                                <div class="col-11">
-                                    <ng-select class="ng-select-form-control" [readonly]="!attachments.controls.length"
-                                        formControlName="attachments" placeholder="Select Attachment" [multiple]="true"
-                                        [hideSelected]="true">
-                                        <ng-option *ngFor="let attachment of attachments.controls; let i = index"
-                                            [value]="attachment.value.id">{{attachment.value.name}}
-                                            ({{attachment.value.file_name}})</ng-option>
-                                    </ng-select>
-                                </div>
+                            <div class="col-lg-6 mt-2">
+                                <label class="form-label">Location</label>
+                                <select class="form-control" formControlName="location">
+                                    <option value="" hidden selected>Select Location</option>
+                                    <option value="" (click)="openOrganizationModal(procedureGroup, 'location')">New
+                                        Organization</option>
+                                    <optgroup *ngIf="existingEncounter?.related_resources?.['Organization']?.length"
+                                        class="divider">---</optgroup>
+                                    <option
+                                        *ngFor="let organization of existingEncounter?.related_resources?.['Organization']; let i = index"
+                                        [value]="organization | referenceUri">
+                                        {{organization?.name }}
+                                    </option>
+                                    <optgroup *ngIf="organizations.controls.length" class="divider"></optgroup>
+                                    <option *ngFor="let organization of organizations.controls; let i = index"
+                                        [value]="organization.controls.data.value | referenceUri">
+                                        {{organization.controls.data.value.name}}
+                                        ({{organization.controls.data.value?.address}})
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-lg-12 mt-2">
+                                <label class="form-label">Comments</label>
+                                <textarea formControlName="comment" class="form-control" placeholder="Input box"
+                                    rows="3"></textarea>
                             </div>
                         </div>
-                    </ng-container>
-
-                    <div class="row pt-2">
-                        <div class="col-lg-4 col-md-3">
-                            <button type="button" (click)="addProcedure()" class="btn btn-outline-indigo btn-block">Add
-                                Surgery or Implant</button>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label class="form-label">Attachments</label>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" (click)="openAttachmentModal(procedureGroup, 'attachments')"
+                                    class="btn btn-primary btn-indigo">
+                                    <i class="fas fa-paperclip"></i> Add
+                                </button>
+                            </div>
+                            <div class="col">
+                                <ng-select class="ng-select-form-control" [readonly]="!attachments.controls.length"
+                                    formControlName="attachments" placeholder="Select Attachment" [multiple]="true"
+                                    [hideSelected]="true">
+                                    <ng-option *ngFor="let attachment of attachments.controls; let i = index"
+                                        [value]="attachment.value.id">{{attachment.value.name}}
+                                        ({{attachment.value.file_name}})</ng-option>
+                                </ng-select>
+                            </div>
                         </div>
+                    </div>
+                </ng-container>
+
+                <div class="row">
+                    <div class="col-auto">
+                        <button type="button" (click)="addProcedure()" class="btn btn-outline-indigo">Add
+                            Surgery or Implant</button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Practitioners Section -->
-        <div class="card mb-2 w-100">
-            <div class="card-header cursor-pointer" data-bs-toggle="collapse" data-bs-target="#practitionersSection"
-                aria-expanded="false" aria-controls="practitionersSection" [class.disabled]="!existingEncounter"
-                (click)="existingEncounter ? isPractitionersCollapsed = !isPractitionersCollapsed : null">
-                <h6 class="mb-0">
+            <!-- Practitioners Section -->
+            <div class="mb-4">
+                <h6 class="section-title mb-3">
                     <i class="fas fa-stethoscope me-2"></i>
                     Practitioners
-                    <span class="badge badge-pill badge-warning align-middle ms-2"
+                    <span class="badge bg-warning ms-2"
                         *ngIf="practitioners.controls.length">{{practitioners.controls.length}}</span>
                     <span class="text-muted ms-2" *ngIf="!existingEncounter">(Requires Encounter)</span>
                 </h6>
-            </div>
-            <div #collapse="ngbCollapse" [(ngbCollapse)]="isPractitionersCollapsed" class="card-body">
-                <div class="card-body">
-                    <h6 class="card-title">Medical Practitioners</h6>
-                    <p class="card-text mg-b-10">A practitioner is a healthcare professional, such as a doctor or nurse,
-                        who is trained and qualified to provide medical care and support to help you stay healthy or
-                        manage any health concerns you may have.</p>
 
-                    <fhir-card *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']"
-                        [showDetails]="false" [displayModel]="practitioner" [isCollapsed]="true"
-                        [isEditable]="fastenSourceId == practitioner.source_id"
-                        (unlinkRequested)="handleUnlinkRequested(practitioner)"
-                        (editRequested)="openEditPractitionerModal(practitioner)"></fhir-card>
+                <fhir-card *ngFor="let practitioner of existingEncounter?.related_resources?.['Practitioner']"
+                    [showDetails]="false" [displayModel]="practitioner" [isCollapsed]="true"
+                    [isEditable]="fastenSourceId == practitioner.source_id"
+                    (unlinkRequested)="handleUnlinkRequested(practitioner)"
+                    (editRequested)="openEditPractitionerModal(practitioner)"></fhir-card>
 
-                    <ng-container formArrayName="practitioners">
-                        <ng-container *ngFor="let practitionerGroup of practitioners.controls; let i = index">
-                            <div *ngIf="debugMode" class="alert alert-warning">
-                                <strong>Practitioner Status: {{practitionerGroup.status}}</strong>
-                            </div>
-                            <fhir-practitioner class="fhir-card-callout-warning mb-3" [formGroup]="practitionerGroup"
-                                [showDetails]="false" [displayModel]="practitionerGroup.controls.data.value"
-                                [isCollapsed]="true">
-                                <div header>
-                                    <span class="cursor-pointer float-right" (click)="deletePractitioner(i)"
-                                        aria-hidden="true"><i class="fas fa-trash"></i></span>
-                                </div>
-                            </fhir-practitioner>
-                        </ng-container>
-                    </ng-container>
-
-                    <div class="row pt-2">
-                        <div class="col-lg-4 col-md-4">
-                            <button type="button" (click)="openPractitionerModal()"
-                                class="btn btn-outline-indigo btn-block">Add Practitioner</button>
+                <ng-container formArrayName="practitioners">
+                    <ng-container *ngFor="let practitionerGroup of practitioners.controls; let i = index">
+                        <div *ngIf="debugMode" class="alert alert-warning">
+                            <strong>Practitioner Status: {{practitionerGroup.status}}</strong>
                         </div>
+                        <fhir-practitioner class="fhir-card-callout-warning mb-3" [formGroup]="practitionerGroup"
+                            [showDetails]="false" [displayModel]="practitionerGroup.controls.data.value"
+                            [isCollapsed]="true">
+                            <div header>
+                                <span class="cursor-pointer float-end" (click)="deletePractitioner(i)"
+                                    aria-hidden="true"><i class="fas fa-trash text-danger"></i></span>
+                            </div>
+                        </fhir-practitioner>
+                    </ng-container>
+                </ng-container>
+
+                <div class="row">
+                    <div class="col-auto">
+                        <button type="button" (click)="openPractitionerModal()" class="btn btn-outline-indigo">Add
+                            Practitioner</button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Organizations Section -->
-        <div class="card mb-2 w-100">
-            <div class="card-header cursor-pointer" data-bs-toggle="collapse" data-bs-target="#organizationsSection"
-                aria-expanded="false" aria-controls="organizationsSection" [class.disabled]="!existingEncounter"
-                (click)="existingEncounter ? isOrganizationsCollapsed = !isOrganizationsCollapsed : null">
-                <h6 class="mb-0">
+            <!-- Organizations Section -->
+            <div class="mb-4">
+                <h6 class="section-title mb-3">
                     <i class="fas fa-hospital me-2"></i>
                     Organizations
-                    <span class="badge badge-pill badge-warning align-middle ms-2"
+                    <span class="badge bg-warning ms-2"
                         *ngIf="organizations.controls.length">{{organizations.controls.length}}</span>
                     <span class="text-muted ms-2" *ngIf="!existingEncounter">(Requires Encounter)</span>
                 </h6>
-            </div>
-            <div #collapse="ngbCollapse" [(ngbCollapse)]="isOrganizationsCollapsed" class="card-body">
-                <div class="card-body">
-                    <h6 class="card-title">Medical Location/Organizations</h6>
-                    <p class="card-text mg-b-10">A group of healthcare professionals and staff working together, like a
-                        hospital or clinic, to provide coordinated and effective care for patients</p>
 
-                    <fhir-card *ngFor="let organization of existingEncounter?.related_resources?.['Organization']"
-                        [showDetails]="false" [displayModel]="organization" [isCollapsed]="true"
-                        [isEditable]="fastenSourceId == organization.source_id"
-                        (unlinkRequested)="handleUnlinkRequested(organization)"
-                        (editRequested)="openEditOrganizationModal(organization)"></fhir-card>
+                <fhir-card *ngFor="let organization of existingEncounter?.related_resources?.['Organization']"
+                    [showDetails]="false" [displayModel]="organization" [isCollapsed]="true"
+                    [isEditable]="fastenSourceId == organization.source_id"
+                    (unlinkRequested)="handleUnlinkRequested(organization)"
+                    (editRequested)="openEditOrganizationModal(organization)"></fhir-card>
 
-                    <ng-container formArrayName="organizations">
-                        <ng-container *ngFor="let organizationGroup of organizations.controls; let i = index">
-                            <div *ngIf="debugMode" class="alert alert-warning">
-                                <strong>Organization Status: {{organizationGroup.status}}</strong>
-                            </div>
-                            <fhir-organization class="fhir-card-callout-warning mb-3" [formGroup]="organizationGroup"
-                                [showDetails]="false" [displayModel]="organizationGroup.controls.data.value"
-                                [isCollapsed]="true">
-                                <div header>
-                                    <span class="cursor-pointer float-right" (click)="deleteOrganization(i)"
-                                        aria-hidden="true"><i class="fas fa-trash"></i></span>
-                                </div>
-                            </fhir-organization>
-                        </ng-container>
-                    </ng-container>
-
-                    <div class="row pt-2">
-                        <div class="col-lg-4 col-md-4">
-                            <button type="button" (click)="openOrganizationModal()"
-                                class="btn btn-outline-indigo btn-block">Add Organization</button>
+                <ng-container formArrayName="organizations">
+                    <ng-container *ngFor="let organizationGroup of organizations.controls; let i = index">
+                        <div *ngIf="debugMode" class="alert alert-warning">
+                            <strong>Organization Status: {{organizationGroup.status}}</strong>
                         </div>
+                        <fhir-organization class="fhir-card-callout-warning mb-3" [formGroup]="organizationGroup"
+                            [showDetails]="false" [displayModel]="organizationGroup.controls.data.value"
+                            [isCollapsed]="true">
+                            <div header>
+                                <span class="cursor-pointer float-end" (click)="deleteOrganization(i)"
+                                    aria-hidden="true"><i class="fas fa-trash text-danger"></i></span>
+                            </div>
+                        </fhir-organization>
+                    </ng-container>
+                </ng-container>
+
+                <div class="row">
+                    <div class="col-auto">
+                        <button type="button" (click)="openOrganizationModal()" class="btn btn-outline-indigo">Add
+                            Organization</button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Lab Results Section -->
-        <div class="card mb-2 w-100">
-            <div class="card-header cursor-pointer" data-bs-toggle="collapse" data-bs-target="#labresultsSection"
-                aria-expanded="false" aria-controls="labresultsSection" [class.disabled]="!existingEncounter"
-                (click)="existingEncounter ? isLabResultsCollapsed = !isLabResultsCollapsed : null">
-                <h6 class="mb-0">
+            <!-- Lab Results Section -->
+            <div class="mb-4">
+                <h6 class="section-title mb-3">
                     <i class="fas fa-vial me-2"></i>
                     Lab Results
                     <span class="text-muted ms-2" *ngIf="!existingEncounter">(Requires Encounter)</span>
                 </h6>
-            </div>
-            <div #collapse="ngbCollapse" [(ngbCollapse)]="isLabResultsCollapsed" class="card-body">
-                <div class="card-body">
-                    <h6 class="card-title">Lab Results & Observations</h6>
-                    <p class="card-text">
-                        Lab results are detailed reports of tests conducted on samples like blood or urine, providing
-                        important information
-                        to your doctor about your health and helping guide the best course of action for your care.
-                    </p>
 
-                    <fhir-card
-                        *ngFor="let diagnosticReport of existingEncounter?.related_resources?.['DiagnosticReport']"
-                        [showDetails]="false" [displayModel]="diagnosticReport" [isCollapsed]="true"
-                        [isEditable]="fastenSourceId == diagnosticReport.source_id"
-                        (unlinkRequested)="handleUnlinkRequested(diagnosticReport)"
-                        (editRequested)="openEditLabResultsModal(diagnosticReport)"></fhir-card>
+                <fhir-card *ngFor="let diagnosticReport of existingEncounter?.related_resources?.['DiagnosticReport']"
+                    [showDetails]="false" [displayModel]="diagnosticReport" [isCollapsed]="true"
+                    [isEditable]="fastenSourceId == diagnosticReport.source_id"
+                    (unlinkRequested)="handleUnlinkRequested(diagnosticReport)"
+                    (editRequested)="openEditLabResultsModal(diagnosticReport)"></fhir-card>
 
-                    <ng-container formArrayName="labresults">
-                        <ng-container *ngFor="let labresultsGroup of labresults.controls; let i = index">
-                            <div *ngIf="debugMode" class="alert alert-warning">
-                                <strong>Lab Results Status: {{labresultsGroup.status}}</strong>
-                            </div>
-                            <fhir-diagnostic-report class="fhir-card-callout-warning mb-3" [formGroup]="labresultsGroup"
-                                [showDetails]="false"
-                                [displayModel]="labresultsGroup.controls.data.value?.entry?.[0]?.resource | fastenDisplayModel"
-                                [isCollapsed]="true">
-                                <div header>
-                                    <span class="cursor-pointer float-right" (click)="deleteLabResults(i)"
-                                        aria-hidden="true"><i class="fas fa-trash"></i></span>
-                                </div>
-                            </fhir-diagnostic-report>
-                        </ng-container>
-                    </ng-container>
-
-                    <div class="row pt-2">
-                        <div class="col-lg-4 col-md-3">
-                            <button type="button" (click)="openLabResultsModal()"
-                                class="btn btn-outline-indigo btn-block">Create Lab Result</button>
+                <ng-container formArrayName="labresults">
+                    <ng-container *ngFor="let labresultsGroup of labresults.controls; let i = index">
+                        <div *ngIf="debugMode" class="alert alert-warning">
+                            <strong>Lab Results Status: {{labresultsGroup.status}}</strong>
                         </div>
+                        <fhir-diagnostic-report class="fhir-card-callout-warning mb-3" [formGroup]="labresultsGroup"
+                            [showDetails]="false"
+                            [displayModel]="labresultsGroup.controls.data.value?.entry?.[0]?.resource | fastenDisplayModel"
+                            [isCollapsed]="true">
+                            <div header>
+                                <span class="cursor-pointer float-end" (click)="deleteLabResults(i)"
+                                    aria-hidden="true"><i class="fas fa-trash text-danger"></i></span>
+                            </div>
+                        </fhir-diagnostic-report>
+                    </ng-container>
+                </ng-container>
+
+                <div class="row">
+                    <div class="col-auto">
+                        <button type="button" (click)="openLabResultsModal()" class="btn btn-outline-indigo">Create Lab
+                            Result</button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Attachments Section -->
-        <div class="card mb-2 w-100">
-            <div class="card-header cursor-pointer" data-bs-toggle="collapse" data-bs-target="#attachmentsSection"
-                aria-expanded="false" aria-controls="attachmentsSection" [class.disabled]="!existingEncounter"
-                (click)="existingEncounter ? isAttachmentsCollapsed = !isAttachmentsCollapsed : null">
-                <h6 class="mb-0">
+            <!-- Attachments Section -->
+            <div class="mb-4">
+                <h6 class="section-title mb-3">
                     <i class="fas fa-paperclip me-2"></i>
                     Attachments
-                    <span class="badge badge-pill badge-warning align-middle ms-2"
+                    <span class="badge bg-warning ms-2"
                         *ngIf="attachments.controls.length">{{attachments.controls.length}}</span>
                     <span class="text-muted ms-2" *ngIf="!existingEncounter">(Requires Encounter)</span>
                 </h6>
-            </div>
-            <div #collapse="ngbCollapse" [(ngbCollapse)]="isAttachmentsCollapsed" class="card-body">
-                <div class="card-body">
-                    <h6 class="card-title">Notes & Attachments</h6>
-                    <p class="card-text">
-                        Files and notes related to medications, procedures, or the current condition.
-                    </p>
 
-                    <ng-container formArrayName="attachments">
-                        <div class="card pd-20 mb-3" [formGroup]="attachmentGroup"
-                            *ngFor="let attachmentGroup of attachments.controls; let i = index">
-                            <div *ngIf="debugMode" class="alert alert-warning">
-                                <strong>Attachment Status: {{attachmentGroup.status}}</strong>
-                            </div>
-                            <div class="tx-right">
-                                <span class="cursor-pointer" (click)="deleteAttachment(i)" aria-hidden="true"><i
-                                        class="fas fa-trash"></i></span>
-                            </div>
+                <ng-container formArrayName="attachments">
+                    <div class="border rounded p-3 mb-3" [formGroup]="attachmentGroup"
+                        *ngFor="let attachmentGroup of attachments.controls; let i = index">
+                        <div *ngIf="debugMode" class="alert alert-warning">
+                            <strong>Attachment Status: {{attachmentGroup.status}}</strong>
+                        </div>
+                        <div class="text-end">
+                            <span class="cursor-pointer" (click)="deleteAttachment(i)" aria-hidden="true">
+                                <i class="fas fa-trash text-danger"></i>
+                            </span>
+                        </div>
 
-                            <div class="row row-sm">
-                                <input formControlName="id" class="form-control" type="hidden">
-                                <div class="col-lg mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Name<span ngbTooltip="required" class="text-danger">*</span></p>
-                                    <input formControlName="name" readonly class="form-control" placeholder="Input box"
-                                        type="text">
-                                </div>
-                                <div class="col-lg mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Category</p>
-                                    <app-nlm-typeahead formControlName="category" searchType="AttachmentCategory"
-                                        [debugMode]="debugMode"></app-nlm-typeahead>
-                                </div>
-                                <div class="col-lg mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">File Type</p>
-                                    <input readonly class="form-control" formControlName="file_type" />
-                                </div>
+                        <div class="row">
+                            <input formControlName="id" class="form-control" type="hidden">
+                            <div class="col-lg-4">
+                                <label class="form-label">Name<span class="text-danger">*</span></label>
+                                <input formControlName="name" readonly class="form-control" placeholder="Input box"
+                                    type="text">
+                            </div>
+                            <div class="col-lg-4 mt-2 mt-lg-0">
+                                <label class="form-label">Category</label>
+                                <app-nlm-typeahead formControlName="category" searchType="AttachmentCategory"
+                                    [debugMode]="debugMode"></app-nlm-typeahead>
+                            </div>
+                            <div class="col-lg-4 mt-2 mt-lg-0">
+                                <label class="form-label">File Type</label>
+                                <input readonly class="form-control" formControlName="file_type" />
                             </div>
                         </div>
-                    </ng-container>
+                    </div>
+                </ng-container>
 
-                    <div class="row pt-2">
-                        <div class="col-lg-4 col-md-3">
-                            <button type="button" (click)="openAttachmentModal()"
-                                class="btn btn-outline-indigo btn-block">Create Attachment/Document</button>
-                        </div>
+                <div class="row">
+                    <div class="col-auto">
+                        <button type="button" (click)="openAttachmentModal()" class="btn btn-outline-indigo">Create
+                            Attachment/Document</button>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 

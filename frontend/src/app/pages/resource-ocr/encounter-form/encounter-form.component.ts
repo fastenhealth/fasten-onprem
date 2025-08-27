@@ -56,16 +56,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class EncounterFormComponent implements OnInit {
   form!: FormGroup;
 
-  // collapse state
-  isEncounterCollapsed = false;
-  isMedicationsCollapsed = true;
-  isProceduresCollapsed = true;
-  isPractitionersCollapsed = true;
-  isOrganizationsCollapsed = true;
-  isLabResultsCollapsed = true;
-  isAttachmentsCollapsed = true;
-
-  active = 'encounter';
   submitWizardLoading = false;
   debugMode = false;
   existingEncounter: EncounterModel = null;
