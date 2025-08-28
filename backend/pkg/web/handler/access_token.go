@@ -2,7 +2,6 @@ package handler
 
 import (
 	"crypto/rand"
-	"crypto/sha256"
 	// "os"
 	"encoding/hex"
 	"fmt"
@@ -71,7 +70,7 @@ func CreateAccessToken(c *gin.Context) {
 		tokenName = fmt.Sprintf("Access Token - %s", time.Now().Format("Jan 2, 2006"))
 	}
 
-	tokenHash := hashToken(accessToken)
+	tokenHash := models.HashToken(accessToken)
 
 	dbAccessToken := &models.AccessToken{
 		UserID:    currentUser.ID,
@@ -80,8 +79,6 @@ func CreateAccessToken(c *gin.Context) {
 		Name:      tokenName,
 		IssuedAt:  now,
 		ExpiresAt: expiresAt,
-		IsActive:  true,
-		Scopes:    "access:read,access:write",
 	}
 
 	err = databaseRepo.CreateAccessToken(c, dbAccessToken)
@@ -170,9 +167,4 @@ func DeleteAccessToken(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Access token deleted successfully"})
-}
-
-func hashToken(token string) string {
-	hash := sha256.Sum256([]byte(token))
-	return hex.EncodeToString(hash[:])
 }

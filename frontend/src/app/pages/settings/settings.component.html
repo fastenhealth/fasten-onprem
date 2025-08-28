@@ -58,7 +58,6 @@
                 <small class="text-muted">Expires {{ formatExpiryDate(token.expiresAt) }}</small>
               </div>
               <div class="d-flex align-items-center">
-                <span class="badge bg-light text-dark mr-2">{{ token.useCount === 0 ? 'Never used' : token.useCount + ' uses' }}</span>
                 <button class="btn btn-outline-danger btn-sm ms-2" ngbTooltip="Delete Device" (click)="deleteToken(token.tokenId)">
                     <i class="fas fa-trash-alt mr-0"></i>
                 </button>

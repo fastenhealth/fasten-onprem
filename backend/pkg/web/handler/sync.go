@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"net/http"
 	"net"
+	"net/http"
 	"os"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
@@ -16,15 +16,12 @@ func GetServerDiscovery(c *gin.Context) {
 	appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
 
 	serverBaseURLs := GetServerBaseURLs(c, appConfig)
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data": gin.H{
 			"server_base_urls": serverBaseURLs,
-			"endpoints": gin.H{
-				"sync_data": "api/secure/resource/fhir",
-				"access_tokens": "/api/secure/access/token",
-			},
+			"sync_endpoint":    "api/secure/resource/fhir",
 		},
 	})
 }
@@ -32,7 +29,7 @@ func GetServerDiscovery(c *gin.Context) {
 // GetServerBaseURLs returns multiple possible server base URLs for network change resilience
 func GetServerBaseURLs(c *gin.Context, appConfig config.Interface) []string {
 	log := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
-	
+
 	// Determine the port to use
 	port := appConfig.GetString("web.listen.port") // Default to internal port
 	if hostPort := os.Getenv("HOST_PORT"); hostPort != "" {
@@ -103,7 +100,7 @@ func GetServerBaseURLs(c *gin.Context, appConfig config.Interface) []string {
 		host, p, err := net.SplitHostPort(forwardedHost)
 		if err != nil {
 			host = forwardedHost // If splitting fails, use the whole string as host
-			p = port // Use default port if not specified in header
+			p = port             // Use default port if not specified in header
 		}
 		addBaseURL(host, p)
 	}

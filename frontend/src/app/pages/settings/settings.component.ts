@@ -148,7 +148,7 @@ export class SettingsComponent implements OnInit {
     const qrData = {
       token: this.accessToken,
       server_base_urls: this.serverInfo.server_base_urls,
-      endpoints: this.serverInfo.endpoints,
+      sync_endpoint: this.serverInfo.sync_endpoint,
     };
 
     this.qrCodeData = JSON.stringify(qrData, null, 2);
@@ -189,13 +189,9 @@ export class SettingsComponent implements OnInit {
           ...t,
           name: t.name,
           status: t.status,
-          isActive: t.is_active,
-          isRevoked: t.is_revoked,
           issuedAt: t.issued_at,
           expiresAt: t.expires_at,
-          lastUsedAt: t.last_used_at ? new Date(t.last_used_at) : null,
           tokenId: t.token_id,
-          useCount: t.use_count,
         }));
       },
       error: (error) => {
@@ -254,20 +250,6 @@ export class SettingsComponent implements OnInit {
     if (this.qrCodeData) {
       navigator.clipboard.writeText(this.qrCodeData);
     }
-  }
-
-  getTokenStatus(token: any): string {
-    const now = new Date();
-    if (token.isRevoked) {
-      return 'Revoked';
-    }
-    if (token.expiresAt && new Date(token.expiresAt) < now) {
-      return 'Expired';
-    }
-    if (!token.isActive) {
-      return 'Suspended';
-    }
-    return 'Active';
   }
 
   openQRModal(content: any): void {
