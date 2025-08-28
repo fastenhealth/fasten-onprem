@@ -230,9 +230,6 @@ func (gr *GormRepository) Migrate() error {
 			Migrate: func(tx *gorm.DB) error {
 				return tx.AutoMigrate(
 					&models.AccessToken{},
-					&models.AccessTokenHistory{},
-					&models.AccessConnection{},
-			
 				)
 			},
 		},

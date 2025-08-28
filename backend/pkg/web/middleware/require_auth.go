@@ -1,14 +1,16 @@
 package middleware
 
 import (
+	"log"
+	"net/http"
+	"strings"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/auth"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/gin-gonic/gin"
-	"log"
-	"net/http"
-	"strings"
 )
 
 func RequireAuth() gin.HandlerFunc {
@@ -50,8 +52,14 @@ func RequireAuth() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-			if !token.IsActive || token.IsExpired() {
-				c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Access token is inactive or expired"})
+			hashedToken := models.HashToken(tokenString)
+			if hashedToken != token.TokenHash {
+				c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Invalid access token"})
+				c.Abort()
+				return
+			}
+			if token.IsExpired() {
+				c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Access token is expired"})
 				c.Abort()
 				return
 			}

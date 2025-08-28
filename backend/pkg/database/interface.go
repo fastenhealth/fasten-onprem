@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"time"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
@@ -81,15 +80,10 @@ type DatabaseRepository interface {
 	) error
 
 	UnlinkResourceWithSharedNeighbors(ctx context.Context, resourceType string, resourceId string, relatedResourceType string, relatedResourceId string) (int64, error)
-	GetLastUpdatedTimestamp(ctx context.Context) (*time.Time, error)
 
 	// Access Token Management
 	CreateAccessToken(ctx context.Context, accessToken *models.AccessToken) error
 	GetUserAccessTokens(ctx context.Context, userID uuid.UUID) ([]models.AccessToken, error)
-
 	DeleteAccessToken(ctx context.Context, tokenID string) error
-	DeleteAllAccessTokens(ctx context.Context, userID uuid.UUID) (int64, error)
 	GetAccessToken(ctx context.Context, tokenID string) (*models.AccessToken, error)
-	UpdateTokenUsage(ctx context.Context, userID uuid.UUID, tokenID string) error
-
 }

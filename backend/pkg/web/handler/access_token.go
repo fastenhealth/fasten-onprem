@@ -22,8 +22,8 @@ type InitiateAccessRequest struct {
 	Expiration int    `json:"expiration"` // Expiration in days. 0 for no expiration.
 }
 
-// InitiateAccess generates a new access token for mobile app authentication
-func InitiateAccess(c *gin.Context) {
+// CreateAccessToken generates a new access token for mobile app authentication
+func CreateAccessToken(c *gin.Context) {
 	log := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 	appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
@@ -43,7 +43,6 @@ func InitiateAccess(c *gin.Context) {
 	}
 	log.Debugf("Successfully retrieved user: %s", currentUser.Username)
 
-	// Generate unique token ID  
 	tokenIDBytes := make([]byte, 16)
 	rand.Read(tokenIDBytes)
 	tokenID := hex.EncodeToString(tokenIDBytes)
@@ -57,7 +56,7 @@ func InitiateAccess(c *gin.Context) {
 		// If expiration is 0, set a very far future date for "no expiration"
 		expiresAt = time.Date(2099, time.December, 31, 23, 59, 59, 0, time.UTC)
 	}
-	
+
 	accessToken, err := auth.JwtGenerateAccessToken(*currentUser, appConfig.GetString("jwt.issuer.key"), expiresAt, tokenID)
 	if err != nil {
 		log.Errorf("Failed to generate access token: %v", err)
@@ -65,25 +64,20 @@ func InitiateAccess(c *gin.Context) {
 		return
 	}
 
-	// Determine the token name
 	tokenName := req.Name
 	if tokenName == "" {
 		tokenName = fmt.Sprintf("Access Token - %s", time.Now().Format("Jan 2, 2006"))
 	}
 
-	// Store token metadata in database  
-	tokenHash := database.HashToken(accessToken)
-	
-	dbAccessToken := &models.AccessToken{
-		UserID:      currentUser.ID,
-		TokenID:     tokenID,
-		TokenHash:   tokenHash,
-		Name:        tokenName,
-		IssuedAt:    now,
-		ExpiresAt:   expiresAt,
-		IsActive:    true,
+	tokenHash := models.HashToken(accessToken)
 
-		Scopes:      "access:read,access:write",
+	dbAccessToken := &models.AccessToken{
+		UserID:    currentUser.ID,
+		TokenID:   tokenID,
+		TokenHash: tokenHash,
+		Name:      tokenName,
+		IssuedAt:  now,
+		ExpiresAt: expiresAt,
 	}
 
 	err = databaseRepo.CreateAccessToken(c, dbAccessToken)
@@ -96,9 +90,7 @@ func InitiateAccess(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data": gin.H{
-			"token": accessToken,
-		},
+		"data":    accessToken,
 	})
 }
 
@@ -121,29 +113,7 @@ func GetAccessTokens(c *gin.Context) {
 		return
 	}
 
-	// Convert to response format
-	var responseTokens []gin.H
-	for _, token := range tokens {
-		responseTokens = append(responseTokens, gin.H{
-			"token_id":     token.TokenID,
-			"name":         token.Name,
-			"description":  token.Description,
-			"issued_at":    token.IssuedAt.Format(time.RFC3339),
-			"expires_at":   token.ExpiresAt.Format(time.RFC3339),
-			"last_used_at": token.LastUsedAt,
-			"is_active":    token.IsActive,
-	
-			"use_count":    token.UseCount,
-			"status":       token.GetStatus(),
-		})
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"data": gin.H{
-			"tokens": responseTokens,
-		},
-	})
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": tokens})
 }
 
 // DeleteAccessToken deletes a single access token by tokenId
@@ -196,25 +166,4 @@ func DeleteAccessToken(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Access token deleted successfully"})
-}
-
-
-// GetAccessStatus returns the current access status and available endpoints
-func GetAccessStatus(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"data": gin.H{
-			"status": "active",
-			"endpoints": gin.H{
-				"tokens":     "/api/secure/access/tokens",
-				"delete":     "/api/secure/access/delete",
-				"delete_all": "/api/secure/access/delete-all",
-			},
-			"features": []string{
-				"Mobile app access",
-				"QR code authentication",
-				"Device management",
-			},
-		},
-	})
 }
