@@ -104,9 +104,6 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 				secure.GET("/summary", handler.GetSummary)
 				secure.GET("/summary/ips", handler.GetIPSSummary)
-				secure.GET("/health", func(c *gin.Context) {
-					c.JSON(http.StatusOK, gin.H{"success": true, "message": "Connection valid"})
-				})
 
 				secure.POST("/source", handler.CreateReconnectSource)
 				secure.POST("/source/manual", handler.CreateManualSource)

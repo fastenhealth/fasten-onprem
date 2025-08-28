@@ -97,7 +97,7 @@ Next, run the following commands from the Windows command line or Mac/Linux term
 
 Launch the application. Please choose a location where `docker-compose.yml` and `set_env.sh` will be downloaded.
 
-To make your Fasten instance discoverable by companion mobile apps and other devices on your local network, you need to run the `set_env.sh` script before starting Docker Compose. This script sets the necessary `HOST_HOSTNAME` and `HOST_IP` values in a `.env` file, which is required for syncing.
+To make your Fasten instance discoverable by companion mobile apps and other devices on your local network, you need to run the `set_env.sh` script before starting Docker Compose. This script sets the necessary `HOSTNAME` and `IP` values in a `.env` file, which is required for syncing.
 
 Here are the step-by-step instructions:
 
@@ -137,7 +137,7 @@ If you prefer not to run the `set_env.sh` script, you can configure the `.env` f
     ```
     HOSTNAME=<your_hostname>
     IP=<your_ip_address>
-    PORT=<your_port>
+    PORT=9090
     ```
 
 ### 🧪 Develop
