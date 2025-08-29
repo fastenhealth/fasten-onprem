@@ -58,6 +58,8 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_DefaultPragmaSet
 	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
 	repo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
@@ -92,6 +94,8 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
 	fakeConfig.EXPECT().GetString("database.encryption.key").Return("012345678901234567890").AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
 	repo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
@@ -136,6 +140,8 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig1.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
 	fakeConfig1.EXPECT().GetString("database.encryption.key").Return("012345678901234567890").AnyTimes()
 	fakeConfig1.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig1.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig1.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
 	//intialize the database with a key
 	_, err := NewRepository(fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
@@ -147,6 +153,8 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig2.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
 	fakeConfig2.EXPECT().GetString("database.encryption.key").Return("incorrect_key_here").AnyTimes()
 	fakeConfig2.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig2.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig2.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
 	//test
 	_, err2 := NewRepository(fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
@@ -164,6 +172,8 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig1.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
 	fakeConfig1.EXPECT().GetString("database.encryption.key").Return("012345678901234567890").AnyTimes()
 	fakeConfig1.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig1.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig1.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
 	//intialize the database with a key
 	_, err := NewRepository(fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
@@ -175,6 +185,8 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig2.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
 	fakeConfig2.EXPECT().GetString("database.encryption.key").Return("012345678901234567890").AnyTimes()
 	fakeConfig2.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig2.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig2.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
 	//test
 	_, err2 := NewRepository(fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
@@ -192,6 +204,8 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig1.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
 	fakeConfig1.EXPECT().GetString("database.encryption.key").Return("012345678901234567890").AnyTimes()
 	fakeConfig1.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig1.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig1.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
 	//intialize the database with a key
 	_, err := NewRepository(fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
@@ -202,6 +216,8 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithEncryptionKe
 	fakeConfig2.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig2.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
 	fakeConfig2.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig2.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig2.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
 	//test
 	_, err2 := NewRepository(fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
@@ -218,6 +234,8 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithoutEncryptio
 	fakeConfig1.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig1.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
 	fakeConfig1.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig1.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig1.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
 	//intialize the database with a key
 	_, err := NewRepository(fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
@@ -229,6 +247,8 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithoutEncryptio
 	fakeConfig2.EXPECT().IsSet("database.encryption.key").Return(true).AnyTimes()
 	fakeConfig2.EXPECT().GetString("database.encryption.key").Return("012345678901234567890").AnyTimes()
 	fakeConfig2.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig2.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig2.EXPECT().GetBool("database.encryption.enabled").Return(true).AnyTimes()
 
 	//test
 	_, err2 := NewRepository(fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
@@ -245,6 +265,8 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithoutEncryptio
 	fakeConfig1.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig1.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
 	fakeConfig1.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig1.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig1.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
 	//intialize the database with a key
 	_, err := NewRepository(fakeConfig1, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
@@ -255,6 +277,8 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithoutEncryptio
 	fakeConfig2.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig2.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
 	fakeConfig2.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig2.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig2.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
 	//test
 	_, err2 := NewRepository(fakeConfig2, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())

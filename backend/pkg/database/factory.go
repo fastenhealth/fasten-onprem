@@ -11,7 +11,7 @@ import (
 func NewRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, eventBus event_bus.Interface) (DatabaseRepository, error) {
 	switch pkg.DatabaseRepositoryType(appConfig.GetString("database.type")) {
 	case pkg.DatabaseRepositoryTypeSqlite:
-		return newSqliteRepository(appConfig, globalLogger, eventBus)
+		return newSqliteRepository(appConfig, globalLogger, eventBus, appConfig.GetBool("database.validation_mode"))
 	case pkg.DatabaseRepositoryTypePostgres:
 		return newPostgresRepository(appConfig, globalLogger, eventBus)
 	default:
