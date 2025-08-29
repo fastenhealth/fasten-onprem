@@ -41,6 +41,7 @@ import { AuthSignupWizardComponent } from './pages/auth-signup-wizard/auth-signu
 import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard';
 import { IconsModule } from './icon-module';
 import { UserListComponent } from './pages/user-list/user-list.component';
+import { PractitionerHistoryComponent } from './pages/practitioner-history/practitioner-history.component';
 import { SetupEncryptionKeyComponent } from './pages/setup-encryption-key/setup-encryption-key.component';
 import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wizard/get-encryption-key-wizard.component';
 
@@ -64,6 +65,7 @@ import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wiza
     BackgroundJobsComponent,
     AuthSignupWizardComponent,
     UserListComponent,
+    PractitionerHistoryComponent,
     SetupEncryptionKeyComponent,
     GetEncryptionKeyWizardComponent,
   ],

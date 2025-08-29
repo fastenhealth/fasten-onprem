@@ -159,6 +159,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					secure.POST("/resource/graph/:graphType", handler.GetResourceFhirGraph)
 					secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
 					secure.PATCH("/resource/fhir/:resourceType/:resourceId", handler.UpdateResourceFhir)
+					secure.DELETE("/resource/fhir/:resourceType/:resourceId", handler.DeleteResourceFhir)
 
 					secure.POST("/resource/composition", handler.CreateResourceComposition)
 					secure.POST("/resource/related", handler.CreateRelatedResources)
@@ -175,6 +176,15 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 					secure.GET("/users", handler.GetUsers)
 					secure.POST("/users", handler.CreateUser)
+
+					secure.POST("/practitioners", handler.CreatePractitioner)
+					secure.PUT("/practitioners/:practitionerId", handler.UpdatePractitioner)
+					secure.GET("/practitioners/:practitionerId/history", handler.GetPractitionerEncounterHistory)
+
+					// Address book favorite actions
+					secure.POST("/user/favorites", handler.AddPractitionerToFavorites)
+					secure.DELETE("/user/favorites", handler.RemovePractitionerFromFavorites)
+					secure.GET("/user/favorites", handler.GetUserFavoritePractitioners)
 
 					//server-side-events handler (only supported on mac/linux)
 					// TODO: causes deadlock on Windows

@@ -1,6 +1,11 @@
-@media (prefers-color-scheme: dark) {
+/* =====================================
+ * Table and Dark Mode Styling
+ * ===================================== */
+
+ @media (prefers-color-scheme: dark) {
     body:not(.light-theme) {
 
+        /* General table styles */
         table {
             background-color: var(--card);
             color: var(--dark-text-color);
@@ -15,6 +20,200 @@
             background-color: var(--card);
             color: var(--dark-text-color);
             border-color: var(--border);
+        }
+
+        /* --- New/Updated Dark Mode Rules for Consistency --- */
+
+        /* Table Wrapper and Borders */
+        .table-wrapper {
+            border-color: var(--border) !important;
+            background: var(--background) !important;
+        }
+
+        /* Fixed Header */
+        .table-header-fixed {
+            background: var(--header);
+            border-bottom: 2px solid var(--border);
+            
+            table {
+                background: var(--header);
+            }
+
+            th {
+                background: var(--header);
+                color: var(--dark-text-color);
+                border-color: var(--border);
+            }
+            
+            .normal-header th {
+                background-color: var(--header);
+            }
+            
+            .selection-mode-header th {
+                background-color: var(--card);
+            }
+        }
+        
+        /* Table Body Scrollable */
+        .table-body-scrollable {
+            background-color: var(--card) !important;
+        }
+
+        /* Table row borders */
+        .modern-table {
+            td {
+                /* Fix for row border color */
+                border-bottom: 1px solid var(--border) !important;
+            }
+        }
+
+        /* Favorite row styling */
+        .favorite-row {
+            background-color: hsl(45 50% 10%) !important;
+            border-left: 3px solid #ffc107 !important;
+        }
+
+        .favorite-row:hover {
+            background-color: hsl(45 50% 15%) !important;
+        }
+
+        /* Fix for 'Favorites' and 'All Contacts' rows */
+        .table-group-header td {
+            background-color: var(--header) !important; /* Override bg-light */
+            color: var(--dark-text-color) !important;
+            border-bottom: 1px solid var(--border) !important;
+        }
+
+        /* Scrollbar Styling */
+        .table-body-scrollable {
+            &::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: #25202a; /* A darker shade of the background */
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: var(--border);
+                border-radius: 4px;
+                &:hover {
+                    background: var(--dark-secondary-text-color);
+                }
+            }
+        }
+        
+        /* Text and Link Colors */
+        a {
+            color: var(--dark-link-color);
+            &:hover {
+                color: var(--dark-link-hover-color);
+            }
+        }
+        
+        /* Button and Icon Colors */
+        .btn-purple {
+            background-color: var(--dark-button-color);
+            color: var(--dark-text-white-color);
+            &:hover {
+                background-color: var(--dark-button-pressed-color);
+            }
+        }
+        
+        .btn-outline-secondary {
+            border-color: var(--border);
+            color: var(--dark-secondary-text-color);
+            &:hover {
+                background-color: var(--border);
+                color: var(--dark-text-color);
+            }
+        }
+
+        .btn-link {
+            color: var(--dark-secondary-text-color);
+            &:hover {
+                color: var(--dark-text-color);
+            }
+        }
+        
+        /* Form Inputs */
+        .form-control {
+            background-color: var(--background);
+            color: var(--dark-text-color);
+            border-color: var(--border);
+            
+            &::placeholder {
+                color: var(--dark-secondary-text-color);
+                opacity: 0.7;
+            }
+        }
+
+        /* Dropdown menus */
+        .dropdown-menu {
+            background-color: var(--card);
+            border-color: var(--border);
+        }
+        
+        .dropdown-item {
+            color: var(--dark-text-color);
+            /* Fix for dropdown hover color */
+            &:hover {
+                background-color: var(--background) !important;
+            }
+        }
+
+        .dropdown-divider {
+            border-top: 1px solid var(--border);
+        }
+
+        .dropdown-item.text-danger {
+            color: #dc3545;
+            &:hover {
+                background-color: #58151c;
+                color: #ffb8c5;
+            }
+        }
+
+        /* Icons */
+        .text-muted,
+        .fa-times,
+        .fa-ellipsis-v,
+        .fa-chevron-down {
+            color: var(--dark-secondary-text-color) !important;
+        }
+
+        .favorite-star {
+            color: var(--dark-secondary-text-color);
+            &:hover {
+                color: #ffc107;
+            }
+            &.active {
+                color: #ffc107;
+            }
+        }
+
+        /* Table Group Headers */
+        .table-group-header td {
+            background-color: var(--header);
+            color: var(--dark-text-color);
+        }
+
+        /* Table Rows */
+        .table-row:hover {
+            background-color: var(--border) !important;
+        }
+
+        .table-row.selected {
+            background-color: #2b1f45 !important;
+        }
+
+        .alphabetical-indicator {
+            .current-letter {
+                color: var(--dark-text-white-color) !important; 
+                background-color: var(--primary) !important;
+                border: 1px solid var(--border) !important;
+                box-shadow: 0 0 10px rgba(155, 135, 245, 0.2);
+            }
         }
     }
 }
