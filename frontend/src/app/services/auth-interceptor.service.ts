@@ -33,7 +33,7 @@ export class AuthInterceptorService implements HttpInterceptor {
     console.log("Intercepting Request", req)
 
     //only intercept requests to the fasten API & lighthouse, all other requests should be sent as-is
-    let reqUrl = new URL(req.url)
+    let reqUrl = req.url.startsWith('http') ? new URL(req.url) : new URL(req.url, window.location.origin)
     let lighthouseUrl = new URL(GetEndpointAbsolutePath(globalThis.location, environment.lighthouse_api_endpoint_base))
     let apiUrl = new URL(GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base))
 

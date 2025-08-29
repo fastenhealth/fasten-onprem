@@ -1,13 +1,16 @@
 package middleware
 
 import (
-	"github.com/fastenhealth/fasten-onprem/backend/pkg"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/auth"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/auth"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/gin-gonic/gin"
 )
 
 func RequireAuth() gin.HandlerFunc {
@@ -31,17 +34,40 @@ func RequireAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		claim, err := auth.JwtValidateFastenToken(appConfig.GetString("jwt.issuer.key"), tokenString)
+		
+		// Parse token using existing JWT function
+		claims, err := auth.JwtValidateFastenToken(appConfig.GetString("jwt.issuer.key"), tokenString)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": err.Error()})
 			c.Abort()
 			return
 		}
-
-		//todo, is this shared between all sessions??
+		
+		// Check if it's an access token
+		if claims.TokenType == "access" {
+			databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+			token, err := databaseRepo.GetAccessToken(c, claims.TokenID)
+			if err != nil || token == nil {
+				c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Invalid access token"})
+				c.Abort()
+				return
+			}
+			hashedToken := models.HashToken(tokenString)
+			if hashedToken != token.TokenHash {
+				c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Invalid access token"})
+				c.Abort()
+				return
+			}
+			if token.IsExpired() {
+				c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Access token is expired"})
+				c.Abort()
+				return
+			}
+		}
+		
+		// Set context for both regular and access tokens
 		c.Set(pkg.ContextKeyTypeAuthToken, tokenString)
-		c.Set(pkg.ContextKeyTypeAuthUsername, claim.Subject)
-
+		c.Set(pkg.ContextKeyTypeAuthUsername, claims.Subject)
 		c.Next()
 	}
 }

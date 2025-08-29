@@ -99,6 +99,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 			secure := api.Group("/secure").Use(middleware.RequireAuth())
 			{
+				secure.GET("/account/me", handler.GetCurrentUser)
 				secure.DELETE("/account/me", handler.DeleteAccount)
 
 				secure.GET("/summary", handler.GetSummary)
@@ -141,6 +142,13 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.POST("/user/favorites", handler.AddPractitionerToFavorites)
 				secure.DELETE("/user/favorites", handler.RemovePractitionerFromFavorites)
 				secure.GET("/user/favorites", handler.GetUserFavoritePractitioners)
+
+				// Access token management
+				secure.GET("/access/token", handler.GetAccessTokens)
+				secure.POST("/access/token", handler.CreateAccessToken)
+				secure.DELETE("/access/token", handler.DeleteAccessToken)
+
+				secure.GET("/sync/discovery", handler.GetServerDiscovery)
 
 				//server-side-events handler (only supported on mac/linux)
 				// TODO: causes deadlock on Windows

@@ -716,3 +716,4 @@ func ProcessAggregationParameter(aggregationFieldWithFn models.QueryResourceAggr
 	}
 	return aggregationParameter, nil
 }
+
