@@ -1,4 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
+import { Practitioner } from 'src/app/models/fasten/practitioner';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {Observable, of} from 'rxjs';
 import { Router } from '@angular/router';
@@ -29,6 +30,8 @@ import {
 } from 'fhir/r4';
 import {FormRequestHealthSystem} from '../models/fasten/form-request-health-system';
 import { UpdateResourcePayload } from '../models/fasten/resource_update';
+import { Favorite } from '../pages/practitioner-list/practitioner-list.component';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -221,6 +224,26 @@ export class FastenApiService {
           return response.data as ResourceFhir[]
         })
       );
+  }
+
+  /**
+   * Retrieves the history for a specific practitioner.
+   * @param practitionerId The ID of the practitioner (e.g., '1043089352').
+   * @returns An Observable array of FHIR Resources representing the practitioner's history.
+   */
+  getPractitionerHistory(practitionerId: string): Observable<ResourceFhir[]> {
+    // Construct the full URL by embedding the practitionerId directly into the path
+    const endpointUrl = `${GetEndpointAbsolutePath(
+      globalThis.location,
+      environment.fasten_api_endpoint_base
+    )}/secure/practitioners/${practitionerId}/history`;
+
+    return this._httpClient.get<ResponseWrapper>(endpointUrl).pipe(
+      map((response: any) => {
+        // Extract the data array from the response, just like in your example
+        return response.relatedResources as ResourceFhir[];
+      })
+    );
   }
 
   //TODO: add caching here, we dont want the same query to be run multiple times whne loading the dashboard.
@@ -423,4 +446,227 @@ export class FastenApiService {
     });
   }
 
+  getAllPractitioners(): Observable<Practitioner[]> {
+    const endpointUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/fhir?sourceResourceType=Practitioner`;
+    return this._httpClient.get<any>(endpointUrl)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          const practitioners = response.data.map(item => {
+            let email: string | undefined;
+            let emailUse: string | undefined;
+            let phone: string | undefined;
+            let phoneUse: string | undefined;
+            let fax: string | undefined;
+            let faxUse: string | undefined;
+            let primaryTelecom: any;
+  
+            if (item.resource_raw.telecom && Array.isArray(item.resource_raw.telecom)) {
+              item.resource_raw.telecom.forEach((telecom: any) => {
+                switch (telecom.system) {
+                  case 'email':
+                    if (!email) { 
+                      email = telecom.value?.toLowerCase();
+                      emailUse = telecom.use || 'work';
+                    }
+                    break;
+                  case 'phone':
+                    if (!phone) {
+                      phone = telecom.value;
+                      phoneUse = telecom.use || 'work';
+                    }
+                    break;
+                  case 'fax':
+                    if (!fax) { 
+                      fax = telecom.value;
+                      faxUse = telecom.use || 'work'; 
+                    }
+                    break;
+                }
+              });
+              primaryTelecom = item.resource_raw.telecom[0];
+            } else if (item.resource_raw.telecom) {
+              primaryTelecom = item.resource_raw.telecom;
+              switch (primaryTelecom.system) {
+                case 'email':
+                  email = primaryTelecom.value?.toLowerCase();
+                  emailUse = primaryTelecom.use || 'work';
+                  break;
+                case 'phone':
+                  phone = primaryTelecom.value;
+                  phoneUse = primaryTelecom.use || 'work';
+                  break;
+                case 'fax':
+                  fax = primaryTelecom.value;
+                  faxUse = primaryTelecom.use || 'work';
+                  break;
+              }
+            }
+  
+            let jobTitle: string | undefined;
+            let organization: string | undefined;
+  
+            if (item.resource_raw.qualification && Array.isArray(item.resource_raw.qualification)) {
+              const firstQualification = item.resource_raw.qualification[0];
+              if (firstQualification?.code?.coding) {
+                const coding = firstQualification.code.coding[0];
+                jobTitle = coding?.display || coding?.code;
+              } else if (firstQualification?.code?.text) {
+                jobTitle = firstQualification.code.text;
+              }
+
+              if (firstQualification?.issuer?.display) {
+                organization = firstQualification.issuer.display;
+              } else if (firstQualification?.issuer?.reference) {
+                organization = firstQualification.issuer.reference.replace('Organization/', '');
+              }
+            }
+  
+            if (!jobTitle && item.resource_raw.practitionerRole) {
+              if (Array.isArray(item.resource_raw.practitionerRole)) {
+                const role = item.resource_raw.practitionerRole[0];
+                if (role?.code) {
+                  jobTitle = role.code.coding?.[0]?.display || role.code.text;
+                }
+                if (role?.organization?.display) {
+                  organization = role.organization.display;
+                }
+              }
+            }
+  
+            if (!jobTitle && item.resource_raw.extension) {
+              const specialtyExtension = item.resource_raw.extension.find((ext: any) => 
+                ext.url?.includes('specialty') || ext.url?.includes('job') || ext.url?.includes('title')
+              );
+              if (specialtyExtension?.valueString) {
+                jobTitle = specialtyExtension.valueString;
+              } else if (specialtyExtension?.valueCoding?.display) {
+                jobTitle = specialtyExtension.valueCoding.display;
+              }
+            }
+  
+            const practitioner: Practitioner = {
+              source_resource_id: item.source_resource_id,
+              source_id: item.source_id,
+              source_resource_type: item.source_resource_type,
+              full_name: item.resource_raw.name?.[0]?.text || item?.sort_title || 'N/A',
+              address: item.resource_raw.address?.[0] || {
+                line: [], 
+                city: '', 
+                state: '', 
+                postalCode: '', 
+                country: ''
+              },
+              email: email,
+              emailUse: emailUse,
+              phone: phone,
+              phoneUse: phoneUse,
+              fax: fax,
+              faxUse: faxUse,
+              
+              jobTitle: jobTitle,
+              organization: organization,
+              qualification: item.resource_raw.qualification,
+              
+              telecom: primaryTelecom || {
+                system: '', 
+                value: '', 
+                use: ''
+              },
+              
+              formattedAddress: '',
+              formattedTelecom: '',
+
+              resource_raw: item.resource_raw
+            };
+  
+            return practitioner;
+          });
+          
+          console.log('Fetched practitioners with job title, organization, and contact use properties:', practitioners);
+          return practitioners as Practitioner[];
+        })
+      );
+  }
+
+  deleteResourceFhir(resourceType: string, resourceId: string): Observable<any> {
+    return this._httpClient.delete<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/fhir/${resourceType}/${resourceId}`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response
+        })
+      );
+  }
+  
+  deletePractitioner(practitionerId: string): Observable<any> {
+    return this.deleteResourceFhir('Practitioner', practitionerId);
+  }
+
+  createPractitioner(practitionerResource: any): Observable<any> {
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/practitioners`, {
+      resource: practitionerResource
+    })
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response
+        })
+      );
+  }
+
+  updatePractitioner(practitionerId: string, practitionerResource: any): Observable<any> {
+    return this._httpClient.put<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/practitioners/${practitionerId}`, {
+      resource: practitionerResource
+    })
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response
+        })
+      );
+  }
+
+  addFavorite(resourceType: string, resourceId: string, sourceId: string): Observable<any> {
+    const endpointUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/user/favorites`;
+    return this._httpClient.post<any>(endpointUrl, {
+      resource_type: resourceType,
+      resource_id: resourceId,
+      source_id: sourceId
+    })
+    .pipe(
+      map((response: ResponseWrapper) => {
+        return response
+      })
+    );
+  }
+
+  removeFavorite(resourceType: string, resourceId: string, sourceId: string): Observable<any> {
+    const endpointUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/user/favorites`;
+    return this._httpClient.delete<any>(endpointUrl, {
+      body: {
+        resource_type: resourceType,
+        resource_id: resourceId,
+        source_id: sourceId
+      }
+    })
+    .pipe(
+      map((response: ResponseWrapper) => {
+        return response
+      })
+    );
+  }
+
+  getUserFavorites(resourceType?: string): Observable<Favorite[]> {
+    let endpointUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/user/favorites`;
+    let queryParams = {};
+    
+    if (resourceType) {
+      queryParams['resource_type'] = resourceType;
+    }
+    
+    return this._httpClient.get<any>(endpointUrl, { params: queryParams })
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data;
+        })
+      );
+    
+  }
 }
