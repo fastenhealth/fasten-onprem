@@ -1,6 +1,7 @@
 @media (prefers-color-scheme: dark) {
     body:not(.light-theme) {
 
+        /* --- User-provided rules --- */
         .input-group {
             .input-group-prepend {
                 .input-group-text {
@@ -24,7 +25,6 @@
                 }
             }
         }
-
 
         // Form control (Users)
         .form-control {
@@ -52,6 +52,109 @@
         //Label
         label {
             color: var(--dark-text-color);
+        }
+
+        /* --- Dark Mode Rules for the Create Page --- */
+        .az-content-body {
+            /* Main content body */
+            .az-content-title, p.text-muted {
+                color: var(--dark-text-color);
+            }
+            
+            /* Back button */
+            .btn-outline-secondary {
+                color: var(--dark-secondary-text-color);
+                border-color: var(--border);
+                &:hover {
+                    background-color: var(--border);
+                    color: var(--dark-text-color);
+                }
+            }
+
+            /* Debug alert */
+            .alert-warning {
+                background-color: hsl(45 50% 10%);
+                color: #ffc107;
+                border-color: #d39e00;
+            }
+
+            /* Main card and its elements */
+            .card {
+                background-color: var(--card);
+                border: 1px solid var(--border);
+                
+                .card-header {
+                    background-color: var(--header);
+                    border-bottom: 1px solid var(--border);
+                }
+                
+                .card-title {
+                    color: var(--dark-text-color);
+                }
+                
+                .card-body {
+                    color: var(--dark-text-color);
+                }
+            }
+            
+            /* Form sections */
+            .form-section-title {
+                color: var(--dark-text-color);
+            }
+            
+            .form-section-divider {
+                border-top: 1px solid var(--border);
+            }
+
+            /* Form elements */
+            .form-label, .form-text {
+                color: var(--dark-secondary-text-color);
+            }
+            
+            .form-control, .app-nlm-typeahead .form-control {
+                background-color: var(--background);
+                color: var(--dark-text-color);
+                border-color: var(--border);
+                
+                &::placeholder {
+                    color: var(--dark-secondary-text-color);
+                    opacity: 0.7;
+                }
+            }
+            
+            .invalid-feedback {
+                color: #dc3545;
+            }
+            
+            /* Form actions */
+            .btn-outline-dark {
+                color: var(--dark-text-color);
+                border-color: var(--border);
+                &:hover {
+                    background-color: var(--border);
+                    color: var(--dark-text-white-color);
+                }
+            }
+            
+            .btn-dark {
+                background-color: var(--card);
+                color: var(--dark-text-white-color);
+                border-color: var(--border);
+            }
+            
+            .btn-primary {
+                background-color: var(--primary);
+                border-color: var(--primary);
+                color: var(--dark-text-white-color);
+                
+                &:hover {
+                    background-color: hsl(260 80% 55%);
+                }
+            }
+            
+            .spinner-border {
+                color: var(--dark-text-white-color);
+            }
         }
     }
 }
