@@ -27,6 +27,7 @@ func (s *IndexerService) IndexResource(resource *models.ResourceBase) error {
 		"source_resource_id":   resource.SourceResourceID,
 		"sort_date":            0, // Default to 0 if SortDate is nil
 		"resource_raw":         resource.ResourceRaw,
+		"resource_id":          resource.ID.String(),
 	}
 
 	if resource.SortDate != nil {
@@ -45,7 +46,7 @@ func (s *IndexerService) IndexResource(resource *models.ResourceBase) error {
 func (s *IndexerService) SearchResources(query string, resourceTypeFilter *string, userID *string, page int, perPage int) ([]map[string]interface{}, int, error) {
 	searchParams := &api.SearchCollectionParams{
 		Q:       ptr(query),
-		QueryBy: ptr("sort_title,source_resource_type,source_resource_id,source_uri"),
+		QueryBy: ptr("sort_title,source_resource_type,source_resource_id,source_uri,resource_id"),
 		SortBy:  ptr("sort_date:desc"),
 		Page:    intPtr(page),
 		PerPage: intPtr(perPage),
