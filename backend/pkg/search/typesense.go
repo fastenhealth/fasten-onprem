@@ -114,7 +114,6 @@ func Init(cfg config.Interface, logger *logrus.Entry) error {
 			Name: cfg.GetString("search.collection_name"),
 			Fields: []api.Field{
 				{Name: "id", Type: "string"},
-				{Name: "resource_id", Type: "string"},
 				{Name: "user_id", Type: "string"},
 				{Name: "source_id", Type: "string"},
 				{Name: "source_resource_type", Type: "string"},
