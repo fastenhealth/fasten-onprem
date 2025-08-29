@@ -37,6 +37,8 @@ type DatabaseRepository interface {
 	FindResourceAssociationsByTypeAndId(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string) ([]models.RelatedResource, error)
 	FindAllResourceAssociations(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string) ([]models.RelatedResource, error)
 	GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, error)
+	DeleteResourceByTypeAndId(ctx context.Context, sourceResourceType string, sourceResourceId string) error
+	FindPractitionerEncounters(ctx context.Context, practitionerId string) ([]models.ResourceBase, error)
 
 	// Deprecated:This method has been deprecated. It has been replaced in favor of Fasten SourceCredential & associations
 	AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceBase) error
@@ -59,6 +61,12 @@ type DatabaseRepository interface {
 	UpdateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error
 	ListBackgroundJobs(ctx context.Context, queryOptions models.BackgroundJobQueryOptions) ([]models.BackgroundJob, error)
 
+	//favorites (Address book)
+	AddFavorite(ctx context.Context, userId string, sourceId string, resourceType string, resourceId string) error
+	RemoveFavorite(ctx context.Context, userId string, sourceId string, resourceType string, resourceId string) error
+	CheckFavoriteExists(ctx context.Context, userId string, sourceId string, resourceType string, resourceId string) (bool, error)
+	GetUserFavorites(ctx context.Context, userId string, resourceType string) ([]models.Favorite, error)
+
 	//settings
 	LoadSystemSettings(ctx context.Context) (*models.SystemSettings, error)
 	SaveSystemSettings(ctx context.Context, newSettings *models.SystemSettings) error
@@ -79,5 +87,5 @@ type DatabaseRepository interface {
 		targetResourceId string,
 	) error
 
-	UnlinkResourceWithSharedNeighbors(ctx context.Context, resourceType string, resourceId string, relatedResourceType string, relatedResourceId string) (int64, error) 
+	UnlinkResourceWithSharedNeighbors(ctx context.Context, resourceType string, resourceId string, relatedResourceType string, relatedResourceId string) (int64, error)
 }

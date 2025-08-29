@@ -72,5 +72,120 @@
         .row.row-sm.sticky-top.pt-2 {
             background-color: var(--card);
         }
+
+        .google-contacts-layout {
+            background-color: var(--background);
+        }
+        .az-content-body {
+            /* Error state alert styling */
+            .alert-danger {
+                background-color: #58151c;
+                color: #ffb8c5;
+                border-color: #801d2a;
+            }
+        }
+
+        /* Contacts Header */
+        .contacts-header {
+            background-color: var(--background);
+            border-bottom: 1px solid var(--border);
+            
+            .btn-link {
+                color: var(--dark-text-color) !important;
+                &:hover {
+                    color: var(--dark-text-white-color) !important;
+                    background-color: var(--border);
+                }
+            }
+            .btn-primary.btn-edit {
+                background-color: var(--primary);
+                border-color: var(--primary);
+                color: var(--dark-text-white-color);
+                &:hover {
+                    background-color: hsl(260 80% 55%);
+                }
+            }
+            .btn-icon {
+                color: var(--dark-text-color);
+                &:hover {
+                    background-color: var(--border);
+                    color: var(--dark-text-white-color);
+                }
+            }
+        }
+
+        /* Profile Section */
+        .profile-section {
+            background-color: var(--background);
+            
+            .avatar-container {
+                .avatar-circle {
+                    background-color: var(--primary);
+                    color: var(--dark-text-white-color);
+                }
+            }
+            .practitioner-name {
+                color: var(--dark-text-color);
+            }
+            .quick-actions {
+                .action-btn {
+                    color: var(--dark-text-color);
+                    background-color: var(--card);
+                    &:hover {
+                        background-color: var(--border);
+                    }
+                    .action-icon {
+                        color: var(--dark-secondary-text-color);
+                    }
+                }
+            }
+        }
+
+        /* Content Section */
+        .content-section {
+            background-color: var(--background);
+            
+            .details-card {
+                background-color: var(--background) !important;
+                box-shadow: none;
+            }
+            .section-title {
+                color: var(--dark-secondary-text-color);
+            }
+            .contact-list {
+                .contact-icon {
+                    color: var(--dark-secondary-text-color);
+                }
+                .contact-link {
+                    color: var(--dark-link-color);
+                    &:hover {
+                        color: var(--dark-link-hover-color);
+                    }
+                }
+                .contact-text {
+                    color: var(--dark-text-color);
+                }
+                .contact-label {
+                    color: var(--dark-secondary-text-color);
+                }
+                .copy-btn {
+                    color: var(--dark-secondary-text-color);
+                    &:hover {
+                        color: var(--dark-text-color);
+                    }
+                }
+            }
+            .history-list {
+                .history-text {
+                    color: var(--dark-text-color);
+                }
+                .history-date {
+                    color: var(--dark-secondary-text-color);
+                }
+            }
+            .empty-state p {
+                color: var(--dark-secondary-text-color) !important;
+            }
+        }
     }
 }

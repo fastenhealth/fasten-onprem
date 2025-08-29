@@ -1,0 +1,82 @@
+<div class="az-content">
+    <div class="container">
+        <div class="az-content-body">
+            <!-- Header Row -->
+            <report-header
+                [reportHeaderTitle]="practitioner?.full_name ? practitioner.full_name + ' History' : 'Practitioner History'"
+                [reportHeaderSubTitle]="'Organized by conditions, describes the scope and breadth of medical care involving ' + (practitioner?.full_name || 'selected practitioner')">
+            </report-header>
+
+            <ng-container
+                [ngTemplateOutlet]="loading ? isLoadingTemplate : (encounters.length == 0) ? emptyReport : report"></ng-container>
+
+            <ng-template #report>
+                <!-- Editor Button -->
+                <div class="row mt-5 mb-3">
+                    <div class="col-12">
+                        <div [hidden]="true" class="alert alert-warning" role="alert">
+                            <strong>Warning!</strong> Fasten has detected medical Encounters that are not associated
+                            with a Condition.
+                            They are grouped under the "Unassigned" section below.
+                            <br />
+                            You can re-organize your conditions & encounters by using the <a
+                                class="alert-link cursor-pointer">report editor</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conditions Title -->
+                <div class="row mt-5 mb-3">
+                    <div class="col-6">
+                        <h1 class="az-dashboard-title">Condition</h1>
+                    </div>
+                </div>
+
+                <!-- Condition List -->
+                <ul class="timeline">
+                    <li *ngFor="let encounter of encounters">
+                        <app-report-medical-history-timeline-panel
+                            [resourceFhir]="encounter"></app-report-medical-history-timeline-panel>
+                    </li>
+                </ul>
+
+                <!-- Pagination -->
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center flex-nowrap">
+                        <ngb-pagination [collectionSize]="allEncountersIds.length" [(page)]="currentPage"
+                            [pageSize]="pageSize" [maxSize]="15" (pageChange)="pageChange()">
+                        </ngb-pagination>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template #emptyReport>
+                <div class="d-flex align-items-center" style="height:100%">
+                    <div class="modal-body tx-center pd-y-20 pd-x-20">
+                        <h4 class="tx-purple mg-b-20">No Medical History Found!</h4>
+                        <p class="mg-b-20 mg-x-20">
+                            Fasten was unable determine your medical history involved with this practitioner.
+                        </p>
+                        <p class="mg-b-20 mg-x-20">
+                            Click below to add a new healthcare provider to Fasten.
+                        </p>
+                        <button [routerLink]="'/sources'" type="button" class="btn btn-purple pd-x-25">Add
+                            Source</button>
+                        <button [routerLink]="'/resource/create'" type="button"
+                            class="btn btn-purple mg-l-10 pd-x-25">Add Condition</button>
+
+                    </div><!-- modal-body -->
+                </div>
+            </ng-template>
+
+            <ng-template #isLoadingTemplate>
+                <div class="row">
+                    <div class="col-12">
+                        <app-loading-spinner [loadingTitle]="'Please wait, loading report...'"></app-loading-spinner>
+                    </div>
+                </div>
+            </ng-template>
+
+        </div>
+    </div>
+</div>
