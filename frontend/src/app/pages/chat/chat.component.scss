@@ -1,0 +1,250 @@
+@import 'src/assets/scss/bootstrap/variables';
+@import 'src/assets/scss/custom/variables';
+
+// Chat layout dimensions
+$sidebar-width: 200px;
+$chat-padding: 20px;
+$message-area-padding: 10px;
+$input-area-padding-top: 10px;
+$textarea-min-height: 50px;
+$textarea-max-height: 150px;
+$send-button-size: 30px;
+$send-button-icon-size: 20px;
+$conversation-item-padding: 10px;
+$conversation-item-gap: 8px;
+$new-chat-button-padding: 10px;
+$delete-button-padding: 5px;
+$delete-button-margin-left: 10px;
+$delete-icon-size: 16px;
+
+// Colors
+$chat-bg-color: white;
+$chat-border-color: $az-border-color;
+$chat-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+$user-message-bg: $az-color-primary;
+$user-message-color: white;
+$bot-message-bg: $gray-200;
+$bot-message-color: $az-color-text;
+$welcome-message-color: $az-color-text;
+$new-chat-button-hover-bg: darken($az-color-primary, 10%); // Darker shade for hover
+$delete-icon-filter: invert(20%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%); // Dark gray
+$delete-icon-hover-filter: invert(10%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%); // Slightly darker
+$send-icon-filter: invert(39%) sepia(68%) saturate(577%) hue-rotate(173deg) brightness(94%) contrast(90%); // Primary blue
+
+::ng-deep app-chat {
+  height: 90vh;
+  display: flex;
+}
+
+.main-chat-layout {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+.conversations-sidebar {
+  width: $sidebar-width;
+  flex-shrink: 0;
+  background-color: $gray-100;
+  padding: $chat-padding;
+  border-right: 1px solid $chat-border-color;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  overflow-y: auto;
+}
+
+.new-chat-button {
+  width: 100%;
+  padding: $new-chat-button-padding;
+  background-color: $az-color-primary;
+  color: white;
+  border: none;
+  border-radius: $border-radius;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: $new-chat-button-hover-bg;
+  }
+}
+
+.conversation-list {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $conversation-item-gap;
+}
+
+.conversation-item {
+  padding: $conversation-item-padding;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: $az-color-text;
+  transition: background-color 0.2s ease-in-out, border-left 0.2s ease-in-out;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: $border-radius;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .conversation-text {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .delete-conversation-item-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: $delete-button-padding;
+    margin-left: $delete-button-margin-left;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+
+    img {
+      width: $delete-icon-size;
+      height: $delete-icon-size;
+      filter: $delete-icon-filter;
+    }
+
+    &:hover {
+      img {
+        filter: $delete-icon-hover-filter;
+      }
+    }
+  }
+
+  &:hover {
+    background-color: $gray-200;
+    .delete-conversation-item-button {
+      opacity: 1;
+    }
+  }
+
+  &.active {
+    background-color: transparent;
+    color: $az-color-primary;
+    font-weight: bold;
+    border-left: 3px solid $az-color-primary;
+    padding-left: $conversation-item-padding - 3px; // Adjust padding for border
+  }
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: $chat-padding;
+  background-color: $chat-bg-color;
+  border-radius: $border-radius;
+  box-shadow: $chat-shadow;
+}
+
+.messages-area {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: $message-area-padding;
+  background-color: $chat-bg-color;
+  border: 1px solid $chat-border-color;
+  border-radius: $border-radius;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-chat-messages-area {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.welcome-message {
+  color: $welcome-message-color;
+  font-style: italic;
+  padding: $message-area-padding;
+  font-size: 1.2rem;
+}
+
+.message-bubble {
+  max-width: 80%;
+  padding: 10px 15px;
+  border-radius: 18px;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+.user-message {
+  background-color: $user-message-bg;
+  color: $user-message-color;
+  align-self: flex-end;
+  margin-left: auto;
+  border-bottom-right-radius: 2px;
+}
+
+.bot-message {
+  background-color: $bot-message-bg;
+  color: $bot-message-color;
+  align-self: flex-start;
+  margin-right: auto;
+  border-bottom-left-radius: 2px;
+}
+
+.input-area {
+  display: flex;
+  align-items: flex-end;
+  padding-top: $input-area-padding-top;
+}
+
+.textarea-wrapper {
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+}
+
+textarea {
+  flex-grow: 1;
+  padding: 10px ($send-button-size + 10px) 10px 10px; // Adjust padding for button
+  border: 1px solid $chat-border-color;
+  border-radius: $border-radius;
+  font-size: 1rem;
+  resize: none;
+  min-height: $textarea-min-height;
+  max-height: $textarea-max-height;
+  overflow-y: auto;
+}
+
+.send-button {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $send-button-size;
+  height: $send-button-size;
+  border-radius: 50%;
+  transition: background-color 0.2s ease-in-out;
+
+  img {
+    width: $send-button-icon-size;
+    height: $send-button-icon-size;
+    filter: $send-icon-filter;
+  }
+
+  &:hover {
+    background-color: $gray-200;
+  }
+}
