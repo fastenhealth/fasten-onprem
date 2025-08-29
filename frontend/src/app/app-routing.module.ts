@@ -24,6 +24,13 @@ import { ResourceDetailComponent } from './pages/resource-detail/resource-detail
 import { SourceDetailComponent } from './pages/source-detail/source-detail.component';
 import { UserCreateComponent } from './pages/user-create/user-create.component';
 import { UserListComponent } from './pages/user-list/user-list.component';
+import { PractitionerListComponent } from './pages/practitioner-list/practitioner-list.component';
+import { PractitionerCreateComponent } from './pages/practitioner-create/practitioner-create.component';
+import { PractitionerViewComponent } from './pages/practitioner-view/practitioner-view.component';
+import { PractitionerEditPageComponent } from './pages/practitioner-edit/practitioner-edit.component';
+import { PractitionerHistoryComponent } from "./pages/practitioner-history/practitioner-history.component";
+
+
 import { ViewRawResourceDetailsComponent } from "./pages/view-raw-resource-details/view-raw-resource-details.component";
 import { ResourceSearchTableComponent } from "./pages/resource-search-table/resource-search-table.component";
 import { ChatComponent } from './pages/chat/chat.component';
@@ -62,6 +69,13 @@ const routes: Routes = [
 
   { path: 'users', component: UserListComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
   { path: 'users/new', component: UserCreateComponent, canActivate: [ IsAuthenticatedAuthGuard, IsAdminAuthGuard ] },
+
+  { path: 'practitioners', component: PractitionerListComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
+  { path: 'practitioners/new', component: PractitionerCreateComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
+  { path: 'practitioners/view/:id', component: PractitionerViewComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
+  { path: 'practitioners/edit/:id', component: PractitionerEditPageComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
+  { path: 'practitioner-history/:id', component: PractitionerHistoryComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
+
 
   { path: 'chat', component: ChatComponent, canActivate: [ IsAuthenticatedAuthGuard, ChatFeatureGuard ] },
 

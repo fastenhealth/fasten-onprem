@@ -1,0 +1,23 @@
+.timeline {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  position: relative
+}
+
+.timeline:before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  width: 5px;
+  background: #2d353c;
+  left: 20%;
+  margin-left: -2.5px
+}
+
+.timeline>li {
+  position: relative;
+  min-height: 50px;
+  padding: 20px 0
+}
