@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
-	"github.com/google/uuid"
 	"github.com/typesense/typesense-go/v3/typesense"
 	"github.com/typesense/typesense-go/v3/typesense/api"
 )
@@ -16,9 +15,12 @@ type IndexerService struct {
 }
 
 func (s *IndexerService) IndexResource(resource *models.ResourceBase) error {
+	// Create a composite ID formed with
+	compositeID := fmt.Sprintf("%s-%s-%s", resource.SourceID.String(), resource.SourceResourceType, resource.SourceResourceID)
+
 	print("Indexing resource in Typesense: ", resource)
 	doc := map[string]interface{}{
-		"id":                   uuid.New().String(), // Generate a new UUID for the document ID in order to avoid overlaps
+		"id":                   compositeID,
 		"sort_title":           derefStr(resource.SortTitle),
 		"source_uri":           derefStr(resource.SourceUri),
 		"user_id":              resource.UserID.String(),
@@ -27,7 +29,6 @@ func (s *IndexerService) IndexResource(resource *models.ResourceBase) error {
 		"source_resource_id":   resource.SourceResourceID,
 		"sort_date":            0, // Default to 0 if SortDate is nil
 		"resource_raw":         resource.ResourceRaw,
-		"resource_id":          resource.ID.String(),
 	}
 
 	if resource.SortDate != nil {
@@ -46,7 +47,7 @@ func (s *IndexerService) IndexResource(resource *models.ResourceBase) error {
 func (s *IndexerService) SearchResources(query string, resourceTypeFilter *string, userID *string, page int, perPage int) ([]map[string]interface{}, int, error) {
 	searchParams := &api.SearchCollectionParams{
 		Q:       ptr(query),
-		QueryBy: ptr("sort_title,source_resource_type,source_resource_id,source_uri,resource_id"),
+		QueryBy: ptr("sort_title,source_resource_type,source_resource_id,source_uri"),
 		SortBy:  ptr("sort_date:desc"),
 		Page:    intPtr(page),
 		PerPage: intPtr(perPage),
