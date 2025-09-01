@@ -12,14 +12,12 @@ import { MedicalRecordWizardAddAttachmentComponent } from 'src/app/components/me
 import { MedicalRecordWizardAddLabResultsComponent } from 'src/app/components/medical-record-wizard-add-lab-results/medical-record-wizard-add-lab-results.component';
 import { MedicalRecordWizardAddOrganizationComponent } from 'src/app/components/medical-record-wizard-add-organization/medical-record-wizard-add-organization.component';
 import { MedicalRecordWizardAddPractitionerComponent } from 'src/app/components/medical-record-wizard-add-practitioner/medical-record-wizard-add-practitioner.component';
-import { MedicalRecordWizardEditEncounterComponent } from 'src/app/components/medical-record-wizard-edit-encounter/medical-record-wizard-edit-encounter.component';
 import { MedicalRecordWizardEditLabResultsComponent } from 'src/app/components/medical-record-wizard-edit-lab-results/medical-record-wizard-edit-lab-results.component';
 import { MedicalRecordWizardEditMedicationComponent } from 'src/app/components/medical-record-wizard-edit-medication/medical-record-wizard-edit-medication.component';
 import { MedicalRecordWizardEditOrganizationComponent } from 'src/app/components/medical-record-wizard-edit-organization/medical-record-wizard-edit-organization.component';
 import { MedicalRecordWizardEditPractitionerComponent } from 'src/app/components/medical-record-wizard-edit-practitioner/medical-record-wizard-edit-practitioner.component';
 import { MedicalRecordWizardEditProcedureComponent } from 'src/app/components/medical-record-wizard-edit-procedure/medical-record-wizard-edit-procedure.component';
 import {
-  EncounterToR4Encounter,
   GenerateR4ResourceLookup,
   OrganizationToR4Organization,
   PractitionerToR4Practitioner,
@@ -48,6 +46,25 @@ import { uuidV4 } from 'src/lib/utils/uuid';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OcrDataService } from 'src/app/services/ocr-data.service';
 import { Subscription } from 'rxjs';
+
+interface NlmMedicationIdentifier {
+  system: string;
+  code: string;
+  display: string;
+}
+
+interface NlmMedication {
+  id: string;
+  text: string;
+  identifier: NlmMedicationIdentifier[];
+}
+
+interface EnrichedMedication {
+  extracted_name: string;
+  dosage: string;
+  nlm_data?: NlmMedication;
+  search_term: string;
+}
 
 @Component({
   selector: 'app-encounter-form',
@@ -81,7 +98,22 @@ export class EncounterFormComponent implements OnInit {
         }),
         action: new FormControl(null),
       }),
-      medications: new FormArray([]),
+      medications: new FormArray([
+        new FormGroup({
+          data: new FormControl<NlmSearchResults>(null, Validators.required),
+          status: new FormControl(null, Validators.required),
+          dosage: new FormControl({
+            value: '',
+            disabled: true,
+          }),
+          started: new FormControl(null, Validators.required),
+          stopped: new FormControl(null),
+          whystopped: new FormControl(null),
+          requester: new FormControl(null, Validators.required),
+          instructions: new FormControl(null),
+          attachments: new FormControl([]),
+        }),
+      ]), // Initialize with one medication entry
       procedures: new FormArray([]),
       practitioners: new FormArray([]),
       organizations: new FormArray([]),
@@ -96,7 +128,7 @@ export class EncounterFormComponent implements OnInit {
       this.addEncounter({ data: this.existingEncounter, action: 'find' });
     }
 
-    // 🔥 Subscribe to OCR changes
+    // Subscribe to OCR changes
     this.sub.add(
       this.ocrService.ocrData$.subscribe((ocrData) => {
         if (ocrData) {
@@ -123,13 +155,18 @@ export class EncounterFormComponent implements OnInit {
             }
           }
 
+          // NEW: Process medications from OCR if available
+          if (ocrData.medications && ocrData.medications.length > 0) {
+            this.processOCRMedications(ocrData.medications);
+          }
+
           // If we have enough data from OCR to create an encounter, add it
           if (ocrData.encounterType && ocrData.date) {
             const resultedEncounterModel =
               this.encounterFormToDisplayModel(encounterGroup);
-              this.addEncounter({
-                action: 'create',
-                data: resultedEncounterModel,
+            this.addEncounter({
+              action: 'create',
+              data: resultedEncounterModel,
             });
           }
         }
@@ -156,6 +193,143 @@ export class EncounterFormComponent implements OnInit {
     } else {
       this.form.disable();
     }
+  }
+
+  // Method to process OCR text for medications
+  private async processOCRMedications(extractedMedications: EnrichedMedication[]): Promise<void> {
+    try {
+      if (extractedMedications && extractedMedications.length > 0) {
+        const result = this.processExtractedMedications(extractedMedications, {
+          clearExistingMedications: true, // Replace the default empty medication
+          defaultStatus: 'active',
+          showSuccessMessage: true,
+          showWarningsForMissing: true,
+        });
+
+        console.log(
+          `OCR Medication Processing: ${result.successCount} added, ${result.warningCount} warnings`
+        );
+      }
+    } catch (error) {
+      console.error('Error processing OCR medications:', error);
+    }
+  }
+
+  // Process extracted medications and add them to the form
+  private processExtractedMedications(
+    extractedMedications: EnrichedMedication[],
+    options: {
+      defaultStatus?: string;
+      clearExistingMedications?: boolean;
+      showSuccessMessage?: boolean;
+      showWarningsForMissing?: boolean;
+    } = {}
+  ) {
+    const {
+      defaultStatus = 'active',
+      clearExistingMedications = false,
+      showSuccessMessage = true,
+      showWarningsForMissing = true,
+    } = options;
+
+    const medicationsArray = this.form.get('medications') as FormArray;
+
+    // Optionally clear existing medications
+    if (clearExistingMedications) {
+      while (medicationsArray.length !== 0) {
+        medicationsArray.removeAt(0);
+      }
+    }
+
+    let successCount = 0;
+    let warningCount = 0;
+    const warnings: string[] = [];
+
+    // Process each extracted medication
+    extractedMedications.forEach((enrichedMed, index) => {
+      try {
+        const medicationGroup = this.createMedicationFormGroup(
+          enrichedMed,
+          defaultStatus
+        );
+        medicationsArray.push(medicationGroup);
+        successCount++;
+
+        // Log warning if NLM data is missing
+        if (!enrichedMed.nlm_data && showWarningsForMissing) {
+          const warning = `Medication "${enrichedMed.extracted_name}" could not be found in NLM database. You may need to search manually.`;
+          warnings.push(warning);
+          warningCount++;
+          console.warn(warning);
+        }
+      } catch (error) {
+        console.error(
+          `Error processing medication "${enrichedMed.extracted_name}":`,
+          error
+        );
+        const errorMsg = `Failed to add medication "${enrichedMed.extracted_name}" to form`;
+        warnings.push(errorMsg);
+      }
+    });
+
+    // Show summary message
+    if (showSuccessMessage && successCount > 0) {
+      console.log(
+        `Successfully added ${successCount} medications to the form.`
+      );
+    }
+
+    if (warnings.length > 0 && showWarningsForMissing) {
+      console.warn(`${warningCount} medications had issues:`, warnings);
+    }
+
+    return {
+      successCount,
+      warningCount,
+      warnings,
+      totalProcessed: extractedMedications.length,
+    };
+  }
+
+  // Create a medication form group from extracted data
+  private createMedicationFormGroup(
+    enrichedMed: EnrichedMedication,
+    defaultStatus: string = 'active'
+  ): FormGroup {
+    const medicationGroup = new FormGroup({
+      data: new FormControl<NlmSearchResults>(null, Validators.required),
+      status: new FormControl(defaultStatus, Validators.required),
+      dosage: new FormControl({
+        value: enrichedMed.dosage || '',
+        disabled: false, // Enable since we have data
+      }),
+      started: new FormControl(null, Validators.required),
+      stopped: new FormControl(null),
+      whystopped: new FormControl(null),
+      requester: new FormControl(null, Validators.required),
+      instructions: new FormControl(null),
+      attachments: new FormControl([]),
+    });
+
+    // If we have NLM data, populate the data field
+    if (enrichedMed.nlm_data) {
+      const nlmSearchResult: NlmSearchResults = {
+        id: enrichedMed.nlm_data.id,
+        text: enrichedMed.nlm_data.text,
+        identifier: enrichedMed.nlm_data.identifier,
+      };
+
+      medicationGroup.get('data')?.setValue(nlmSearchResult);
+    }
+
+    // Set up the value change subscription for dosage enabling
+    medicationGroup.get('data')?.valueChanges.subscribe((val) => {
+      if (val) {
+        medicationGroup.get('dosage')?.enable();
+      }
+    });
+
+    return medicationGroup;
   }
 
   //<editor-fold desc="Getters">
@@ -233,6 +407,8 @@ export class EncounterFormComponent implements OnInit {
   }
 
   addMedication() {
+    console.log(this.medications);
+
     const medicationGroup = new FormGroup({
       data: new FormControl<NlmSearchResults>(null, Validators.required),
       status: new FormControl(null, Validators.required),
@@ -250,11 +426,11 @@ export class EncounterFormComponent implements OnInit {
 
     medicationGroup.get('data').valueChanges.subscribe((val) => {
       medicationGroup.get('dosage').enable();
-      //TODO: find a way to create dependant dosage information based on medication data.
     });
 
     this.medications.push(medicationGroup);
   }
+
   addProcedure() {
     const procedureGroup = new FormGroup({
       data: new FormControl<NlmSearchResults>(null, Validators.required),
@@ -429,32 +605,6 @@ export class EncounterFormComponent implements OnInit {
   }
 
   //</editor-fold>
-  openEditEncounterModal(encounter: EncounterModel) {
-    let modalRef = this.modalService.open(
-      MedicalRecordWizardEditEncounterComponent,
-      {
-        ariaLabelledBy: 'modal-encounter',
-        size: 'lg',
-      }
-    );
-    modalRef.componentInstance.debugMode = this.debugMode;
-    modalRef.componentInstance.encounter = encounter;
-    modalRef.result.then((result) => {
-      let encounter = EncounterToR4Encounter(result);
-
-      this.fastenApi
-        .updateResource(
-          result.source_resource_type,
-          result.source_resource_id,
-          {
-            resource_raw: encounter,
-            sort_title: result.sort_title,
-            sort_date: result.period_start,
-          }
-        )
-        .subscribe();
-    });
-  }
   openEditMedicationModal(medication: MedicationModel) {
     let modalRef = this.modalService.open(
       MedicalRecordWizardEditMedicationComponent,
