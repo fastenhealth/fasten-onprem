@@ -9,7 +9,6 @@ import {
 import { Bundle, FhirResource, List, Reference } from 'fhir/r4';
 import { ConfirmationModalComponent } from 'src/app/components/confirmation-modal/confirmation-modal.component';
 import { MedicalRecordWizardAddAttachmentComponent } from 'src/app/components/medical-record-wizard-add-attachment/medical-record-wizard-add-attachment.component';
-import { MedicalRecordWizardAddEncounterComponent } from 'src/app/components/medical-record-wizard-add-encounter/medical-record-wizard-add-encounter.component';
 import { MedicalRecordWizardAddLabResultsComponent } from 'src/app/components/medical-record-wizard-add-lab-results/medical-record-wizard-add-lab-results.component';
 import { MedicalRecordWizardAddOrganizationComponent } from 'src/app/components/medical-record-wizard-add-organization/medical-record-wizard-add-organization.component';
 import { MedicalRecordWizardAddPractitionerComponent } from 'src/app/components/medical-record-wizard-add-practitioner/medical-record-wizard-add-practitioner.component';
@@ -123,6 +122,16 @@ export class EncounterFormComponent implements OnInit {
               });
             }
           }
+
+          // If we have enough data from OCR to create an encounter, add it
+          if (ocrData.encounterType && ocrData.date) {
+            const resultedEncounterModel =
+              this.encounterFormToDisplayModel(encounterGroup);
+              this.addEncounter({
+                action: 'create',
+                data: resultedEncounterModel,
+            });
+          }
         }
       })
     );
@@ -195,16 +204,34 @@ export class EncounterFormComponent implements OnInit {
   addEncounter(openEncounterResult: WizardFhirResourceWrapper<EncounterModel>) {
     let encounter = openEncounterResult.data;
     this.existingEncounter = encounter;
-
-    let clonedEncounter = this.deepClone(encounter) as EncounterModel;
-    clonedEncounter.related_resources = {};
-
-    this.form.get('encounter').get('data').setValue(clonedEncounter);
-    this.form
-      .get('encounter')
-      .get('action')
-      .setValue(openEncounterResult.action);
   }
+
+  private encounterFormToDisplayModel(form: FormGroup): EncounterModel {
+    let encounter = new EncounterModel({});
+    encounter.code = form.get('code').value;
+
+    if (form.get('period_start').value) {
+      let period_start = form.get('period_start').value;
+      encounter.period_start = new Date(
+        period_start.year,
+        period_start.month - 1,
+        period_start.day
+      ).toISOString();
+    }
+    if (form.get('period_end').value) {
+      let period_end = form.get('period_end').value;
+      encounter.period_end = new Date(
+        period_end.year,
+        period_end.month - 1,
+        period_end.day
+      ).toISOString();
+    }
+    if (!encounter.source_resource_id) {
+      encounter.source_resource_id = uuidV4();
+    }
+    return encounter;
+  }
+
   addMedication() {
     const medicationGroup = new FormGroup({
       data: new FormControl<NlmSearchResults>(null, Validators.required),
@@ -285,24 +312,6 @@ export class EncounterFormComponent implements OnInit {
   }
   //</editor-fold>
 
-  //<editor-fold desc="Open Modals">
-  openEncounterModal() {
-    let modalRef = this.modalService.open(
-      MedicalRecordWizardAddEncounterComponent,
-      {
-        ariaLabelledBy: 'modal-edit-encounter',
-        size: 'lg',
-      }
-    );
-    modalRef.componentInstance.debugMode = this.debugMode;
-    modalRef.componentInstance.disableFindEncounter = true;
-    modalRef.result.then(
-      (result) => {
-        this.addEncounter(result);
-      },
-      (err) => {}
-    );
-  }
   openPractitionerModal(formGroup?: AbstractControl, controlName?: string) {
     let disabledResourceIds = [];
     disabledResourceIds.push(
