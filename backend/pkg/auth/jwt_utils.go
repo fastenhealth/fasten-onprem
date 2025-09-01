@@ -21,13 +21,13 @@ func generateToken(user models.User, issuerSigningKey string, expiresAt time.Tim
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			Issuer:    "docker-fastenhealth",
 			Subject:   user.Username,
+			ID:        tokenID,
 		},
 		UserMetadata: UserMetadata{
 			FullName: user.FullName,
 			Email:    user.Email,
 			Role:     user.Role,
 		},
-		TokenID:   tokenID,
 		TokenType: tokenType,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -68,20 +68,4 @@ func JwtValidateFastenToken(encryptionKey string, signedToken string) (*UserRegi
 // JwtGenerateAccessToken generates an access token with custom expiration and metadata
 func JwtGenerateAccessToken(user models.User, issuerSigningKey string, expiresAt time.Time, tokenID string) (string, error) {
 	return generateToken(user, issuerSigningKey, expiresAt, tokenID, "access")
-}
-
-// GetTokenIDFromToken extracts the token ID from a token
-func GetTokenIDFromToken(tokenString string) (string, error) {
-	// Parse without validation first to get the claims
-	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, &UserRegisteredClaims{})
-	if err != nil {
-		return "", fmt.Errorf("failed to parse token: %w", err)
-	}
-	
-	claims, ok := token.Claims.(*UserRegisteredClaims)
-	if !ok {
-		return "", errors.New("token is not a valid token")
-	}
-	
-	return claims.TokenID, nil
 }

@@ -91,7 +91,8 @@ type DatabaseRepository interface {
 
 	// Access Token Management
 	CreateAccessToken(ctx context.Context, accessToken *models.AccessToken) error
-	GetUserAccessTokens(ctx context.Context, userID uuid.UUID) ([]models.AccessToken, error)
+	GetUserAccessTokens(ctx context.Context) ([]models.AccessToken, error)
 	DeleteAccessToken(ctx context.Context, tokenID string) error
 	GetAccessToken(ctx context.Context, tokenID string) (*models.AccessToken, error)
+	GetAccessTokenByTokenIDAndUsername(ctx context.Context, tokenID string, username string) (*models.AccessToken, error)
 }
