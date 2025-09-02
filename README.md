@@ -240,7 +240,7 @@ We use SemVer for versioning. For the versions available, see the tags on this r
 # Authors
 
 - Jason Kulatunga - Initial Development - @AnalogJ
-- Alex Szilagyi - Co-Author - @beniamin-szilagyi
+- Alex Szilagyi - Co-Author - @alexszilagyi
 
 # Licenses
 
