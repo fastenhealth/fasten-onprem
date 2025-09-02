@@ -239,7 +239,8 @@ We use SemVer for versioning. For the versions available, see the tags on this r
 
 # Authors
 
-Jason Kulatunga - Initial Development - @AnalogJ
+- Jason Kulatunga - Initial Development - @AnalogJ
+- Alex Szilagyi - Co-Author - @beniamin-szilagyi
 
 # Licenses
 
