@@ -46,6 +46,7 @@ import { uuidV4 } from 'src/lib/utils/uuid';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OcrDataService } from 'src/app/services/ocr-data.service';
 import { Subscription } from 'rxjs';
+import { ResponseWrapper } from 'src/app/models/response-wrapper';
 
 interface NlmMedicationIdentifier {
   system: string;
@@ -81,6 +82,7 @@ export class EncounterFormComponent implements OnInit {
   existingEncounter: EncounterModel = null;
   fastenSourceId = '';
   editMode = false;
+  foundPractitioners = [];
 
   constructor(
     private modalService: NgbModal,
@@ -89,6 +91,20 @@ export class EncounterFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Get all practitioners for the dropdowns
+    this.fastenApi
+      .queryResources({
+        select: [],
+        from: 'Practitioner',
+        where: {},
+      })
+      .subscribe((resp: ResponseWrapper) => {
+        console.log(resp.data.map((item) => new PractitionerModel(item)));
+        this.foundPractitioners = resp.data.map(
+          (item) => new PractitionerModel(item)
+        );
+      });
+
     this.form = new FormGroup({
       encounter: new FormGroup({
         data: new FormGroup({
@@ -114,9 +130,52 @@ export class EncounterFormComponent implements OnInit {
           attachments: new FormControl([]),
         }),
       ]), // Initialize with one medication entry
-      procedures: new FormArray([]),
-      practitioners: new FormArray([]),
-      organizations: new FormArray([]),
+      procedures: new FormArray([
+        new FormGroup({
+          data: new FormControl<NlmSearchResults>(null, Validators.required),
+          whendone: new FormControl(null, Validators.required),
+          performer: new FormControl(null),
+          location: new FormControl(null),
+          comment: new FormControl(''),
+        }),
+      ]), // Initialize with one procedure entry
+      practitioners: new FormArray([
+        new FormGroup({
+          id: new FormControl(null),
+          identifier: new FormControl([]),
+          name: new FormControl(null, Validators.required),
+          profession: new FormControl(null, Validators.required),
+          phone: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+          fax: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+          email: new FormControl(null, Validators.email),
+          address: new FormGroup({
+            line1: new FormControl(null),
+            line2: new FormControl(null),
+            city: new FormControl(null),
+            state: new FormControl(null),
+            zip: new FormControl(null),
+            country: new FormControl(null),
+          }),
+        }),
+      ]), // Initialize with one practitioner entry
+      organizations: new FormArray([
+        new FormGroup({
+          identifier: new FormControl([]),
+          name: new FormControl(null, Validators.required),
+          type: new FormControl(null, Validators.required),
+          phone: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+          fax: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+          email: new FormControl(null, Validators.email),
+          address: new FormGroup({
+            line1: new FormControl(null),
+            line2: new FormControl(null),
+            city: new FormControl(null),
+            state: new FormControl(null),
+            zip: new FormControl(null),
+            country: new FormControl(null),
+          }),
+        }),
+      ]), // Initialize with one organization entry
       labresults: new FormArray([]),
       attachments: new FormArray([]),
     });
@@ -160,6 +219,75 @@ export class EncounterFormComponent implements OnInit {
               ocrData?.date,
               ocrData?.doctorName
             );
+          }
+
+          // Process practitioner (doctor) from OCR if available
+          if (ocrData.doctorName) {
+            // Remove first empty entry if it exists
+            if (
+              this.practitioners.length === 1 &&
+              !this.practitioners.at(0).get('name')?.value
+            ) {
+              this.practitioners.removeAt(0);
+            }
+
+            // Check if practitioner already exists in the list
+            const existing = this.foundPractitioners.find(
+              (pract) =>
+                pract.name &&
+                pract.name.toLowerCase() === ocrData.doctorName.toLowerCase()
+            );
+            if (existing) {
+              // If found, add existing practitioner
+              this.addPractitioner({ data: existing, action: 'find' });
+            } else {
+              // If not found, create a new practitioner entry
+              const newPractitioner = new PractitionerModel({
+                resourceType: 'Practitioner',
+                id: uuidV4(),
+                name: [
+                  {
+                    text: ocrData.doctorName,
+                  },
+                ],
+              });
+              this.addPractitioner({ data: newPractitioner, action: 'create' });
+            }
+          }
+
+          // If we have hospital name, add it as organization
+          if (ocrData.hospital) {
+            // Remove first empty entry if it exists
+            if (
+              this.organizations.length === 1 &&
+              !this.organizations.at(0).get('name')?.value
+            ) {
+              this.organizations.removeAt(0);
+            }
+
+            // Check if organization already exists in the list
+            const existing = (this.organizations?.value || []).find(
+              (org) =>
+                org.data &&
+                org.data.name &&
+                org.data.name.toLowerCase() ===
+                  ocrData.hospital.toLowerCase()
+            );
+            if (existing) {
+              // If found, add existing organization
+              this.addOrganization({ data: existing.data, action: 'find' });
+            } else {
+              // If not found, create a new organization entry
+              const newOrganization = new OrganizationModel({
+                resourceType: 'Organization',
+                id: uuidV4(),
+                name: ocrData.hospital,
+              });
+              this.addOrganization({
+                data: newOrganization,
+                action: 'create',
+              });
+            }
           }
 
           // If we have enough data from OCR to create an encounter, add it

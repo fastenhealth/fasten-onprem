@@ -41,13 +41,45 @@ type EnrichedMedication struct {
 	NlmData       *NlmMedication `json:"nlm_data,omitempty"`
 	SearchTerm    string         `json:"search_term"`
 }
+
+// Procedure represents a parsed procedure/surgery/implant
+type Procedure struct {
+	Name        string `json:"name"`
+	Type        string `json:"type"`        // "surgery", "procedure", "implant", etc.
+	Description string `json:"description"` // Additional context found
+}
+
+// NlmProcedureIdentifier represents the identifier structure from NLM procedures API
+type NlmProcedureIdentifier struct {
+	System  string `json:"system"`
+	Code    string `json:"code"`
+	Display string `json:"display"`
+}
+
+// NlmProcedure represents the structured procedure data from NLM API
+type NlmProcedure struct {
+	ID         string                   `json:"id"`
+	Text       string                   `json:"text"`
+	Link       string                   `json:"link"`
+	Identifier []NlmProcedureIdentifier `json:"identifier"`
+}
+
+// EnrichedProcedure combines the extracted procedure with NLM data
+type EnrichedProcedure struct {
+	ExtractedName string        `json:"extracted_name"`
+	Type          string        `json:"type"`
+	Description   string        `json:"description"`
+	NlmData       *NlmProcedure `json:"nlm_data,omitempty"`
+	SearchTerm    string        `json:"search_term"`
+}
 type MedicalReport struct {
 	PatientName   string               `json:"patientName,omitempty"`
 	DoctorName    string               `json:"doctorName,omitempty"`
 	Hospital      string               `json:"hospital,omitempty"`
 	Date          string               `json:"date,omitempty"`
 	EncounterType *NHSEncounterType    `json:"encounterType,omitempty"`
-	Medications   []EnrichedMedication `json:"medications,omitempty"` // New field for medications
+	Medications   []EnrichedMedication `json:"medications,omitempty"`
+	Procedures    []EnrichedProcedure  `json:"procedures,omitempty"`
 }
 
 // OcrFileUploadHandler accepts a multipart/form-data upload and forwards it to the OCR service.
@@ -558,6 +590,450 @@ func cleanMedicationName(name string) string {
 	return strings.Join(words, " ")
 }
 
+// ExtractAndEnrichProcedures is the main function that extracts procedures from OCR text
+// and enriches them with NLM API data
+func ExtractAndEnrichProcedures(ocrText string) ([]EnrichedProcedure, error) {
+	// Step 1: Extract procedures from OCR text
+	extractedProcs := ExtractProcedures(ocrText)
+
+	// Step 2: Enrich each procedure with NLM data
+	var enrichedProcs []EnrichedProcedure
+
+	for _, proc := range extractedProcs {
+		enriched := EnrichedProcedure{
+			ExtractedName: proc.Name,
+			Type:          proc.Type,
+			Description:   proc.Description,
+			SearchTerm:    prepareProcedureSearchTerm(proc.Name),
+		}
+
+		// Search NLM API for this procedure
+		nlmData, err := searchAndStructureProcedure(enriched.SearchTerm)
+		if err != nil {
+			// Log error but continue processing other procedures
+			fmt.Printf("Error searching NLM for procedure '%s': %v\n", enriched.SearchTerm, err)
+		} else {
+			enriched.NlmData = nlmData
+		}
+
+		enrichedProcs = append(enrichedProcs, enriched)
+	}
+
+	return enrichedProcs, nil
+}
+
+// ExtractProcedures parses OCR text and extracts procedure names and details
+func ExtractProcedures(ocrText string) []Procedure {
+	var procedures []Procedure
+
+	// Normalize the text by removing extra whitespace and converting to lowercase for matching
+	normalizedText := strings.ToLower(strings.TrimSpace(ocrText))
+
+	// Find procedure-related sections
+	procedureSections := findProcedureSections(ocrText, normalizedText)
+
+	for _, section := range procedureSections {
+		// Split into lines and process each potential procedure line
+		lines := strings.Split(section.Text, "\n")
+
+		for _, line := range lines {
+			line = strings.TrimSpace(line)
+			if line == "" {
+				continue
+			}
+
+			// Look for procedure patterns
+			if proc := parseProcedureLine(line, section.Type); proc.Name != "" {
+				procedures = append(procedures, proc)
+			}
+		}
+	}
+
+	return procedures
+}
+
+// ProcedureSection represents a section containing procedures
+type ProcedureSection struct {
+	Text string
+	Type string // "surgery", "procedure", "implant", etc.
+}
+
+// findProcedureSections locates sections containing procedures, surgeries, or implants
+func findProcedureSections(originalText, normalizedText string) []ProcedureSection {
+	var sections []ProcedureSection
+
+	// Define section patterns with their types
+	sectionPatterns := map[string][]string{
+		"surgery": {
+			"surgery", "surgeries", "surgical procedure", "operation", "operative",
+			"post-operative", "post-op", "pre-operative", "pre-op",
+		},
+		"procedure": {
+			"procedure", "procedures", "treatment", "intervention",
+			"diagnostic procedure", "therapeutic procedure",
+		},
+		"implant": {
+			"implant", "implants", "implantation", "prosthetic", "prosthesis",
+			"device implantation", "medical device",
+		},
+	}
+
+	// Look for each type of section
+	for sectionType, patterns := range sectionPatterns {
+		for _, pattern := range patterns {
+			if idx := strings.Index(normalizedText, pattern); idx != -1 {
+				// Extract text from this section
+				sectionText := extractProcedureSectionText(originalText, idx)
+				if sectionText != "" {
+					sections = append(sections, ProcedureSection{
+						Text: sectionText,
+						Type: sectionType,
+					})
+				}
+			}
+		}
+	}
+
+	// If no specific sections found, look for procedure keywords throughout the text
+	if len(sections) == 0 {
+		sections = append(sections, ProcedureSection{
+			Text: originalText,
+			Type: "procedure",
+		})
+	}
+
+	return sections
+}
+
+// extractProcedureSectionText extracts text from a procedure section until next major section
+func extractProcedureSectionText(text string, start int) string {
+	// Common section headers that would indicate end of procedure section
+	endPatterns := []string{
+		"medications", "prescriptions", "diagnosis", "assessment",
+		"doctor", "clinic", "hospital", "follow-up", "notes",
+		"allergies", "vital signs", "laboratory", "radiology",
+	}
+
+	textFromStart := text[start:]
+
+	// Find the earliest occurrence of any end pattern
+	minEnd := len(textFromStart)
+	for _, pattern := range endPatterns {
+		if idx := strings.Index(strings.ToLower(textFromStart), pattern); idx != -1 && idx < minEnd {
+			minEnd = idx
+		}
+	}
+
+	// Limit section size to avoid processing too much irrelevant text
+	if minEnd > 1000 {
+		minEnd = 1000
+	}
+
+	return textFromStart[:minEnd]
+}
+
+// parseProcedureLine extracts procedure information from a single line
+func parseProcedureLine(line, sectionType string) Procedure {
+	// Skip lines that are clearly not procedures
+	if isNonProcedureLine(line) {
+		return Procedure{}
+	}
+
+	originalLine := line
+	line = strings.TrimSpace(line)
+
+	// Remove common prefixes and formatting
+	line = regexp.MustCompile(`^(procedure:?\s*|\*\*procedure:\*\*\s*|surgery:?\s*|\*\*surgery:\*\*\s*|implant:?\s*|\*\*implant:\*\*\s*)`).ReplaceAllString(strings.ToLower(line), "")
+	line = strings.TrimSpace(line)
+
+	if line == "" {
+		return Procedure{}
+	}
+
+	// Look for specific procedure patterns
+	procedurePatterns := []*regexp.Regexp{
+		// Pattern 1: "Procedure: Name - Description" or "Surgery: Name - Description"
+		regexp.MustCompile(`^([a-zA-Z][a-zA-Z\s\-\/]+?)\s*-\s*(.+)$`),
+
+		// Pattern 2: "Name (additional info)"
+		regexp.MustCompile(`^([a-zA-Z][a-zA-Z\s\-\/]+?)\s*\((.+)\)$`),
+
+		// Pattern 3: Just procedure name
+		regexp.MustCompile(`^([a-zA-Z][a-zA-Z\s\-\/]{3,})(.*)$`),
+	}
+
+	for _, pattern := range procedurePatterns {
+		if matches := pattern.FindStringSubmatch(line); len(matches) >= 2 {
+			name := strings.TrimSpace(matches[1])
+			description := ""
+			if len(matches) > 2 {
+				description = strings.TrimSpace(matches[2])
+			}
+
+			// Clean up the name
+			name = cleanProcedureName(name)
+
+			// Filter out very generic terms that are likely not procedures
+			if isProcedureName(name) && len(name) > 2 {
+				return Procedure{
+					Name:        name,
+					Type:        sectionType,
+					Description: description,
+				}
+			}
+		}
+	}
+
+	// Look for medical procedure keywords in the line
+	procedureKeywords := []string{
+		"surgery", "operation", "procedure", "implantation", "insertion",
+		"removal", "repair", "replacement", "reconstruction", "biopsy",
+		"endoscopy", "laparoscopy", "arthroscopy", "catheterization",
+		"angioplasty", "bypass", "transplant", "resection", "fusion",
+	}
+
+	lowerLine := strings.ToLower(originalLine)
+	for _, keyword := range procedureKeywords {
+		if strings.Contains(lowerLine, keyword) {
+			// Try to extract procedure name around the keyword
+			if proc := extractProcedureFromKeyword(originalLine, keyword, sectionType); proc.Name != "" {
+				return proc
+			}
+		}
+	}
+
+	return Procedure{}
+}
+
+// extractProcedureFromKeyword extracts procedure name when a keyword is found
+func extractProcedureFromKeyword(line, keyword, sectionType string) Procedure {
+	// Find the keyword position and extract surrounding context
+	lowerLine := strings.ToLower(line)
+	keywordIndex := strings.Index(lowerLine, keyword)
+
+	if keywordIndex == -1 {
+		return Procedure{}
+	}
+
+	// Extract a reasonable amount of text around the keyword
+	start := keywordIndex - 20
+	if start < 0 {
+		start = 0
+	}
+
+	end := keywordIndex + len(keyword) + 30
+	if end > len(line) {
+		end = len(line)
+	}
+
+	context := strings.TrimSpace(line[start:end])
+
+	// Clean up the context to get procedure name
+	context = regexp.MustCompile(`[^\w\s\-\/]`).ReplaceAllString(context, " ")
+	context = regexp.MustCompile(`\s+`).ReplaceAllString(context, " ")
+	context = strings.TrimSpace(context)
+
+	if len(context) > 3 && len(context) < 100 {
+		return Procedure{
+			Name:        cleanProcedureName(context),
+			Type:        sectionType,
+			Description: "",
+		}
+	}
+
+	return Procedure{}
+}
+
+// isProcedureName checks if a name looks like a valid procedure name
+func isProcedureName(name string) bool {
+	name = strings.ToLower(strings.TrimSpace(name))
+
+	// Skip very generic terms
+	genericTerms := []string{
+		"patient", "doctor", "hospital", "clinic", "date", "time",
+		"notes", "report", "follow up", "appointment", "visit",
+		"history", "examination", "assessment", "plan", "treatment",
+	}
+
+	for _, term := range genericTerms {
+		if strings.Contains(name, term) {
+			return false
+		}
+	}
+
+	// Must be reasonable length
+	if len(name) < 3 || len(name) > 80 {
+		return false
+	}
+
+	// Should contain mostly letters and spaces
+	letterCount := 0
+	for _, char := range name {
+		if (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') {
+			letterCount++
+		}
+	}
+
+	return float64(letterCount)/float64(len(name)) > 0.5
+}
+
+// isNonProcedureLine checks if a line is clearly not a procedure
+func isNonProcedureLine(line string) bool {
+	lowerLine := strings.ToLower(strings.TrimSpace(line))
+
+	// Skip empty lines or lines that are clearly headers/sections
+	nonProcedurePatterns := []string{
+		"procedures", "surgeries", "implants", "operations",
+		"doctor", "clinic", "hospital", "contact", "phone",
+		"address", "this section", "patient", "date",
+		"medications", "prescriptions", "allergies",
+	}
+
+	for _, pattern := range nonProcedurePatterns {
+		if strings.Contains(lowerLine, pattern) {
+			return true
+		}
+	}
+
+	// Skip lines that are too short
+	if len(lowerLine) < 3 {
+		return true
+	}
+
+	// Skip lines that are just formatting
+	if regexp.MustCompile(`^[\*\-=\s\d\/]+$`).MatchString(lowerLine) {
+		return true
+	}
+
+	return false
+}
+
+// cleanProcedureName cleans and properly formats procedure names
+func cleanProcedureName(name string) string {
+	// Remove extra whitespace
+	name = regexp.MustCompile(`\s+`).ReplaceAllString(strings.TrimSpace(name), " ")
+
+	// Capitalize first letter of each major word
+	words := strings.Fields(name)
+	for i, word := range words {
+		if len(word) > 2 { // Only capitalize longer words
+			words[i] = strings.ToUpper(word[:1]) + strings.ToLower(word[1:])
+		}
+	}
+
+	return strings.Join(words, " ")
+}
+
+// prepareProcedureSearchTerm cleans the procedure name for optimal NLM API searching
+func prepareProcedureSearchTerm(procedureName string) string {
+	searchTerm := procedureName
+
+	// Remove common prefixes/suffixes that might interfere with search
+	prefixSuffixPatterns := []string{
+		`^(post|pre)\s+`,
+		`\s+(procedure|surgery|operation|implant)$`,
+	}
+
+	for _, pattern := range prefixSuffixPatterns {
+		re := regexp.MustCompile(`(?i)` + pattern)
+		searchTerm = re.ReplaceAllString(searchTerm, "")
+	}
+
+	// Clean up extra spaces
+	searchTerm = regexp.MustCompile(`\s+`).ReplaceAllString(strings.TrimSpace(searchTerm), " ")
+
+	return searchTerm
+}
+
+// searchAndStructureProcedure queries the NLM procedures API for a given procedure name.
+// It returns the first match as a structured NlmProcedure object.
+func searchAndStructureProcedure(searchTerm string) (*NlmProcedure, error) {
+	baseURL := "https://clinicaltables.nlm.nih.gov/api/procedures/v3/search"
+	req, err := http.NewRequest("GET", baseURL, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	q := req.URL.Query()
+	q.Add("df", "key_id,consumer_name,info_link_data,term_icd9_code")
+	q.Add("terms", searchTerm)
+	req.URL.RawQuery = q.Encode()
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("NLM procedures API returned status code %d", resp.StatusCode)
+	}
+
+	var nlmResponse []interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&nlmResponse); err != nil {
+		return nil, err
+	}
+
+	if len(nlmResponse) < 4 {
+		return nil, nil // No valid result found
+	}
+
+	// The response structure is [count, terms, data_fields, data_rows]
+	dataRows, ok := nlmResponse[3].([]interface{})
+	if !ok || len(dataRows) == 0 {
+		return nil, nil
+	}
+
+	// Get the first result
+	firstRow, ok := dataRows[0].([]interface{})
+	if !ok || len(firstRow) < 4 {
+		return nil, nil
+	}
+
+	// Extract data: [key_id, consumer_name, info_link_data, term_icd9_code]
+	keyId, keyIdOk := firstRow[0].(string)
+	consumerName, nameOk := firstRow[1].(string)
+	infoLinkData, linkOk := firstRow[2].(string)
+	termIcd9Code, codeOk := firstRow[3].(string)
+
+	if keyIdOk && nameOk {
+		// Process link data (remove description if present)
+		link := ""
+		if linkOk {
+			linkParts := strings.Split(infoLinkData, ",")
+			if len(linkParts) > 0 {
+				link = linkParts[0]
+			}
+		}
+
+		// Process ICD-9 code (take first code if multiple)
+		code := ""
+		if codeOk {
+			codeParts := strings.Split(termIcd9Code, ",")
+			if len(codeParts) > 0 {
+				code = codeParts[0]
+			}
+		}
+
+		procedure := &NlmProcedure{
+			ID:   keyId,
+			Text: consumerName,
+			Link: link,
+			Identifier: []NlmProcedureIdentifier{
+				{
+					System:  "http://hl7.org/fhir/sid/icd-9-cm",
+					Code:    code,
+					Display: consumerName,
+				},
+			},
+		}
+		return procedure, nil
+	}
+
+	return nil, nil // Return nil to indicate "not found"
+}
+
 func extractMedicalReportData(ocrText string) ([]byte, error) {
 	result := MedicalReport{}
 
@@ -590,6 +1066,12 @@ func extractMedicalReportData(ocrText string) ([]byte, error) {
 		if match := generalDateRe.FindStringSubmatch(filteredText); len(match) > 1 {
 			result.Date = strings.TrimSpace(match[1])
 		}
+	}
+
+	enrichedProcs, err := ExtractAndEnrichProcedures(ocrText)
+	result.Procedures = enrichedProcs
+	if err != nil {
+		return nil, err
 	}
 
 	// --- Encounter type detection ---
