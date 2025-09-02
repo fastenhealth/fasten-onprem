@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"name": "root",
+			"path": "."
+		},
+		{
+			"name": "backend",
+			"path": "backend"
+		},
+		{
+			"name": "frontend",
+			"path": "frontend"
+		},
+	],
+		"settings": {
+		"makefile.configureOnOpen": false,
+		"nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix"
+	}
+}

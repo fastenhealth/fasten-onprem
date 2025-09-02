@@ -29,8 +29,10 @@ import { PractitionerEditPageComponent } from './pages/practitioner-edit/practit
 import { PractitionerHistoryComponent } from "./pages/practitioner-history/practitioner-history.component";
 
 
+import { SettingsComponent } from './pages/settings/settings.component';
 
 const routes: Routes = [
+  { path: 'settings', component: SettingsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
   { path: 'auth/signup/wizard', component: AuthSignupWizardComponent },
 
