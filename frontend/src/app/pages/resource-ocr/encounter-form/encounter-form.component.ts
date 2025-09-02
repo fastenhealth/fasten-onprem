@@ -143,21 +143,23 @@ export class EncounterFormComponent implements OnInit {
           }
 
           if (ocrData.date) {
-            const dateParts = ocrData.date
-              .split('/')
-              .map((p) => parseInt(p, 10));
-            if (dateParts.length === 3) {
-              encounterGroup.get('period_start')?.setValue({
-                year: dateParts[2],
-                month: dateParts[0],
-                day: dateParts[1],
-              });
-            }
+            this.processOcrDate(ocrData, encounterGroup);
           }
 
-          // NEW: Process medications from OCR if available
+          // Process medications from OCR if available
           if (ocrData.medications && ocrData.medications.length > 0) {
-            this.processOCRMedications(ocrData.medications);
+            // Remove the initial empty medication entry if it exists
+            if (
+              this.medications.length === 1 &&
+              !this.medications.at(0).get('data')?.value
+            ) {
+              this.medications.removeAt(0);
+            }
+            this.processOCRMedications(
+              ocrData.medications,
+              ocrData?.date,
+              ocrData?.doctorName
+            );
           }
 
           // If we have enough data from OCR to create an encounter, add it
@@ -195,16 +197,36 @@ export class EncounterFormComponent implements OnInit {
     }
   }
 
+  processOcrDate(ocrData, encounterGroup: FormGroup) {
+    if (ocrData.date) {
+      // Split the date string by forward slashes, dashes, or spaces
+      const dateParts = ocrData.date
+        .split(/[/\- ]/)
+        .map((p) => parseInt(p, 10));
+      if (dateParts.length === 3) {
+        // Assuming MM/DD/YYYY, MM-DD-YYYY, or MM DD YYYY format
+        encounterGroup.get('period_start')?.setValue({
+          year: dateParts[2],
+          month: dateParts[1],
+          day: dateParts[0],
+        });
+      }
+    }
+  }
+
   // Method to process OCR text for medications
-  private async processOCRMedications(extractedMedications: EnrichedMedication[]): Promise<void> {
+  private async processOCRMedications(
+    extractedMedications: EnrichedMedication[],
+    date?: string,
+    doctorName?: string
+  ): Promise<void> {
     try {
       if (extractedMedications && extractedMedications.length > 0) {
-        const result = this.processExtractedMedications(extractedMedications, {
-          clearExistingMedications: true, // Replace the default empty medication
-          defaultStatus: 'active',
-          showSuccessMessage: true,
-          showWarningsForMissing: true,
-        });
+        const result = this.processExtractedMedications(
+          extractedMedications,
+          date,
+          doctorName
+        );
 
         console.log(
           `OCR Medication Processing: ${result.successCount} added, ${result.warningCount} warnings`
@@ -218,45 +240,28 @@ export class EncounterFormComponent implements OnInit {
   // Process extracted medications and add them to the form
   private processExtractedMedications(
     extractedMedications: EnrichedMedication[],
-    options: {
-      defaultStatus?: string;
-      clearExistingMedications?: boolean;
-      showSuccessMessage?: boolean;
-      showWarningsForMissing?: boolean;
-    } = {}
+    date?: string,
+    doctorName?: string
   ) {
-    const {
-      defaultStatus = 'active',
-      clearExistingMedications = false,
-      showSuccessMessage = true,
-      showWarningsForMissing = true,
-    } = options;
-
     const medicationsArray = this.form.get('medications') as FormArray;
-
-    // Optionally clear existing medications
-    if (clearExistingMedications) {
-      while (medicationsArray.length !== 0) {
-        medicationsArray.removeAt(0);
-      }
-    }
 
     let successCount = 0;
     let warningCount = 0;
     const warnings: string[] = [];
 
     // Process each extracted medication
-    extractedMedications.forEach((enrichedMed, index) => {
+    extractedMedications.forEach((enrichedMed) => {
       try {
         const medicationGroup = this.createMedicationFormGroup(
           enrichedMed,
-          defaultStatus
+          date,
+          doctorName
         );
         medicationsArray.push(medicationGroup);
         successCount++;
 
         // Log warning if NLM data is missing
-        if (!enrichedMed.nlm_data && showWarningsForMissing) {
+        if (!enrichedMed.nlm_data) {
           const warning = `Medication "${enrichedMed.extracted_name}" could not be found in NLM database. You may need to search manually.`;
           warnings.push(warning);
           warningCount++;
@@ -272,14 +277,7 @@ export class EncounterFormComponent implements OnInit {
       }
     });
 
-    // Show summary message
-    if (showSuccessMessage && successCount > 0) {
-      console.log(
-        `Successfully added ${successCount} medications to the form.`
-      );
-    }
-
-    if (warnings.length > 0 && showWarningsForMissing) {
+    if (warnings.length > 0) {
       console.warn(`${warningCount} medications had issues:`, warnings);
     }
 
@@ -294,19 +292,20 @@ export class EncounterFormComponent implements OnInit {
   // Create a medication form group from extracted data
   private createMedicationFormGroup(
     enrichedMed: EnrichedMedication,
-    defaultStatus: string = 'active'
+    date?: string,
+    doctorName?: string
   ): FormGroup {
     const medicationGroup = new FormGroup({
       data: new FormControl<NlmSearchResults>(null, Validators.required),
-      status: new FormControl(defaultStatus, Validators.required),
+      status: new FormControl('active', Validators.required),
       dosage: new FormControl({
         value: enrichedMed.dosage || '',
         disabled: false, // Enable since we have data
       }),
-      started: new FormControl(null, Validators.required),
+      started: new FormControl(date ?? null, Validators.required),
       stopped: new FormControl(null),
       whystopped: new FormControl(null),
-      requester: new FormControl(null, Validators.required),
+      requester: new FormControl(doctorName ?? null, Validators.required),
       instructions: new FormControl(null),
       attachments: new FormControl([]),
     });

@@ -577,9 +577,19 @@ func extractMedicalReportData(ocrText string) ([]byte, error) {
 		result.Hospital = cleanText(match[1])
 	}
 
-	dateRe := regexp.MustCompile(`(?i)(\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b)`)
+	// 1. Try labeled encounter date
+	dateRe := regexp.MustCompile(`(?i)(?:Encounter\s+Date|Visit\s+Date|Date)\s*[:\-]?\s*(\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b)`)
 	if match := dateRe.FindStringSubmatch(ocrText); len(match) > 1 {
 		result.Date = strings.TrimSpace(match[1])
+	} else {
+		// 2. Remove DOBs
+		dobRe := regexp.MustCompile(`(?i)\b(DOB|Date\s*of\s*Birth)\b\s*[:\-]?\s*\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}`)
+		filteredText := dobRe.ReplaceAllString(ocrText, "")
+		// 3. Take first remaining date
+		generalDateRe := regexp.MustCompile(`(\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b)`)
+		if match := generalDateRe.FindStringSubmatch(filteredText); len(match) > 1 {
+			result.Date = strings.TrimSpace(match[1])
+		}
 	}
 
 	// --- Encounter type detection ---
