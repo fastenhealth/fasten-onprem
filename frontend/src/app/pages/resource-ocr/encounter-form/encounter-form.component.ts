@@ -99,9 +99,8 @@ export class EncounterFormComponent implements OnInit {
         where: {},
       })
       .subscribe((resp: ResponseWrapper) => {
-        console.log(resp.data.map((item) => new PractitionerModel(item)));
         this.foundPractitioners = resp.data.map(
-          (item) => new PractitionerModel(item)
+          (item) => new PractitionerModel(item?.resource_raw)
         );
       });
 
@@ -114,68 +113,10 @@ export class EncounterFormComponent implements OnInit {
         }),
         action: new FormControl(null),
       }),
-      medications: new FormArray([
-        new FormGroup({
-          data: new FormControl<NlmSearchResults>(null, Validators.required),
-          status: new FormControl(null, Validators.required),
-          dosage: new FormControl({
-            value: '',
-            disabled: true,
-          }),
-          started: new FormControl(null, Validators.required),
-          stopped: new FormControl(null),
-          whystopped: new FormControl(null),
-          requester: new FormControl(null, Validators.required),
-          instructions: new FormControl(null),
-          attachments: new FormControl([]),
-        }),
-      ]), // Initialize with one medication entry
-      procedures: new FormArray([
-        new FormGroup({
-          data: new FormControl<NlmSearchResults>(null, Validators.required),
-          whendone: new FormControl(null, Validators.required),
-          performer: new FormControl(null),
-          location: new FormControl(null),
-          comment: new FormControl(''),
-        }),
-      ]), // Initialize with one procedure entry
-      practitioners: new FormArray([
-        new FormGroup({
-          id: new FormControl(null),
-          identifier: new FormControl([]),
-          name: new FormControl(null, Validators.required),
-          profession: new FormControl(null, Validators.required),
-          phone: new FormControl(null, Validators.pattern('[- +()0-9]+')),
-          fax: new FormControl(null, Validators.pattern('[- +()0-9]+')),
-          email: new FormControl(null, Validators.email),
-          address: new FormGroup({
-            line1: new FormControl(null),
-            line2: new FormControl(null),
-            city: new FormControl(null),
-            state: new FormControl(null),
-            zip: new FormControl(null),
-            country: new FormControl(null),
-          }),
-        }),
-      ]), // Initialize with one practitioner entry
-      organizations: new FormArray([
-        new FormGroup({
-          identifier: new FormControl([]),
-          name: new FormControl(null, Validators.required),
-          type: new FormControl(null, Validators.required),
-          phone: new FormControl(null, Validators.pattern('[- +()0-9]+')),
-          fax: new FormControl(null, Validators.pattern('[- +()0-9]+')),
-          email: new FormControl(null, Validators.email),
-          address: new FormGroup({
-            line1: new FormControl(null),
-            line2: new FormControl(null),
-            city: new FormControl(null),
-            state: new FormControl(null),
-            zip: new FormControl(null),
-            country: new FormControl(null),
-          }),
-        }),
-      ]), // Initialize with one organization entry
+      medications: new FormArray([]),
+      procedures: new FormArray([]), 
+      practitioners: new FormArray([]), 
+      organizations: new FormArray([]),
       labresults: new FormArray([]),
       attachments: new FormArray([]),
     });
@@ -235,7 +176,8 @@ export class EncounterFormComponent implements OnInit {
             const existing = this.foundPractitioners.find(
               (pract) =>
                 pract.name &&
-                pract.name.toLowerCase() === ocrData.doctorName.toLowerCase()
+                pract.name?.[0]?.displayName?.toLowerCase() ===
+                  ocrData.doctorName.toLowerCase()
             );
             if (existing) {
               // If found, add existing practitioner
@@ -247,7 +189,8 @@ export class EncounterFormComponent implements OnInit {
                 id: uuidV4(),
                 name: [
                   {
-                    text: ocrData.doctorName,
+                    displayName: ocrData.doctorName,
+                    name: ocrData.doctorName,
                   },
                 ],
               });
@@ -270,8 +213,7 @@ export class EncounterFormComponent implements OnInit {
               (org) =>
                 org.data &&
                 org.data.name &&
-                org.data.name.toLowerCase() ===
-                  ocrData.hospital.toLowerCase()
+                org.data.name.toLowerCase() === ocrData.hospital.toLowerCase()
             );
             if (existing) {
               // If found, add existing organization
@@ -570,6 +512,7 @@ export class EncounterFormComponent implements OnInit {
 
     this.procedures.push(procedureGroup);
   }
+
   addPractitioner(
     openPractitionerResult: WizardFhirResourceWrapper<PractitionerModel>
   ) {
@@ -577,8 +520,11 @@ export class EncounterFormComponent implements OnInit {
       data: new FormControl(openPractitionerResult.data),
       action: new FormControl(openPractitionerResult.action),
     });
+
+    this.foundPractitioners.push(openPractitionerResult.data); // Add to foundPractitioners list
     this.practitioners.push(practitionerGroup);
   }
+
   addOrganization(
     openOrganizationResult: WizardFhirResourceWrapper<OrganizationModel>
   ) {

@@ -118,16 +118,9 @@
                                     <option value="" hidden selected>Select Practitioner</option>
                                     <option value="" (click)="openPractitionerModal(medicationGroup, 'requester')">
                                         New Practitioner</option>
-                                    <optgroup *ngIf="foundPractitioners.length" class="divider">---</optgroup>
                                     <option *ngFor="let practitioner of foundPractitioners; let i = index"
-                                        [value]="practitioner">
-                                        {{practitioner?.name}} ({{practitioner?.profession?.text}})
-                                    </option>
-                                    <optgroup *ngIf="practitioners.controls.length" class="divider">---</optgroup>
-                                    <option *ngFor="let practitioner of practitioners.controls; let i = index"
-                                        [value]="practitioner.controls?.data?.value">
-                                        {{practitioner.controls?.data?.value?.name}}
-                                        ({{practitioner.controls?.data?.value?.profession?.text}})
+                                        [ngValue]="practitioner">
+                                        {{practitioner?.name?.[0].displayName}}
                                     </option>
                                 </select>
                             </div>
@@ -213,18 +206,9 @@
                                     <option value="" hidden selected>Select Practitioner</option>
                                     <option value="" (click)="openPractitionerModal(procedureGroup, 'performer')">
                                         New Practitioner</option>
-                                    <optgroup *ngIf="existingEncounter?.related_resources?.['Practitioner']?.length"
-                                        class="divider">---</optgroup>
-                                    <optgroup *ngIf="foundPractitioners.length" class="divider">---</optgroup>
                                     <option *ngFor="let practitioner of foundPractitioners; let i = index"
-                                        [value]="practitioner">
-                                        {{practitioner?.name }} ({{practitioner?.profession?.text}})
-                                    </option>
-                                    <optgroup *ngIf="practitioners.controls.length" class="divider">---</optgroup>
-                                    <option *ngFor="let practitioner of practitioners.controls; let i = index"
-                                        [value]="practitioner.controls?.data?.value">
-                                        {{practitioner.controls?.data?.value?.name }}
-                                        ({{practitioner.controls?.data?.value?.profession?.text}})
+                                        [ngValue]="practitioner">
+                                        {{practitioner?.name?.[0].displayName}}
                                     </option>
                                 </select>
                             </div>
