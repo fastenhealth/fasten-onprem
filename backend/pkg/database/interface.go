@@ -89,4 +89,11 @@ type DatabaseRepository interface {
 	) error
 
 	UnlinkResourceWithSharedNeighbors(ctx context.Context, resourceType string, resourceId string, relatedResourceType string, relatedResourceId string) (int64, error)
+
+	// Access Token Management
+	CreateAccessToken(ctx context.Context, accessToken *models.AccessToken) error
+	GetUserAccessTokens(ctx context.Context) ([]models.AccessToken, error)
+	DeleteAccessToken(ctx context.Context, tokenID string) error
+	GetAccessToken(ctx context.Context, tokenID string) (*models.AccessToken, error)
+	GetAccessTokenByTokenIDAndUsername(ctx context.Context, tokenID string, username string) (*models.AccessToken, error)
 }

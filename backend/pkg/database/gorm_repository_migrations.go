@@ -233,6 +233,14 @@ func (gr *GormRepository) Migrate() error {
 				return tx.AutoMigrate(&_20250730100000.Favorite{})
 			},
 		},
+		{
+			ID: "20250117131051", // add access token models for health wallet
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(
+					&models.AccessToken{},
+				)
+			},
+		},
 	})
 
 	// run when database is empty

@@ -31,11 +31,13 @@ import { PractitionerEditPageComponent } from './pages/practitioner-edit/practit
 import { PractitionerHistoryComponent } from "./pages/practitioner-history/practitioner-history.component";
 
 
+import { SettingsComponent } from './pages/settings/settings.component';
 import { ViewRawResourceDetailsComponent } from "./pages/view-raw-resource-details/view-raw-resource-details.component";
 import { ResourceSearchTableComponent } from "./pages/resource-search-table/resource-search-table.component";
 import { ChatComponent } from './pages/chat/chat.component';
 
 const routes: Routes = [
+  { path: 'settings', component: SettingsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
   { path: 'auth/signup/wizard', component: AuthSignupWizardComponent },
 

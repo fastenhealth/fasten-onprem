@@ -1,0 +1,134 @@
+<div class="az-content">
+  <div class="container">
+    <div class="az-content-body">
+      <h2 class="az-content-title">Settings</h2>
+
+      <!-- User Profile Section -->
+      <section class="card card-dashboard-table mg-b-20">
+        <div class="card-header">
+          <h4 class="card-title mb-0"><i class="fas fa-user mr-3"></i>User Profile</h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="!currentUser" class="text-center py-4">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <p class="mg-t-10">Loading user profile...</p>
+          </div>
+          <dl *ngIf="currentUser" class="row profile-dl">
+            <dt class="col-sm-3 profile-label">User Name:</dt>
+            <dd class="col-sm-9 profile-value">{{ currentUser.full_name || currentUser.username || 'N/A' }}</dd>
+
+            <dt class="col-sm-3 profile-label">User Email:</dt>
+            <dd class="col-sm-9 profile-value">{{ currentUser.email || 'N/A' }}</dd>
+
+            <dt class="col-sm-3 profile-label">User Role:</dt>
+            <dd class="col-sm-9 profile-value">{{ currentUser.role || 'N/A' }}</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- Connected Devices Section -->
+      <section class="card card-dashboard-table">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="card-title mb-0"><i class="fas fa-key mr-3"></i>Connected Devices</h4>
+          <div>
+            <button class="btn btn-az-primary btn-sm" (click)="generateAndShowQR(qrModal)" [disabled]="isLoading">
+              <i class="fas fa-qrcode mr-2"></i>Connect New Device
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div *ngIf="isLoading" class="text-center py-4">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <p class="mg-t-10">Loading connected devices...</p>
+          </div>
+
+          <div *ngIf="tokens.length === 0 && !isLoading" class="text-muted text-center py-4">
+            <i class="fas fa-qrcode fa-3x text-muted mb-3"></i>
+            <p class="text-muted mb-0">No devices connected yet. Click "Connect New Device" to get started.</p>
+          </div>
+
+          <div *ngIf="tokens.length > 0" class="list-group list-group-flush">
+            <div class="list-group-item d-flex align-items-center justify-content-between" *ngFor="let token of tokens">
+              <div class="d-flex flex-column">
+                <h6 class="mb-0">{{ token.name || 'Unnamed Device' }}</h6>
+                <small class="text-muted">Expires {{ formatExpiryDate(token.expiresAt) }}</small>
+              </div>
+              <div class="d-flex align-items-center">
+                <button class="btn btn-outline-danger btn-sm ms-2" ngbTooltip="Delete Device" (click)="deleteToken(token.tokenId)">
+                    <i class="fas fa-trash-alt mr-0"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- QR Code Modal -->
+<ng-template #qrModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <i class="fas fa-qrcode mr-2"></i>
+      <span *ngIf="step === 'askDetails'">Connect a New Device</span>
+      <span *ngIf="step === 'showQR'">Scan to Connect</span>
+    </h5>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="step === 'askDetails'" class="text-start">
+      <p class="text-muted">Give your new device a name so you can recognize it in the list of connected devices.</p>
+      <div class="form-group mt-3">
+        <label for="deviceNameInput" class="form-label">Device Name (optional):</label>
+        <input type="text" class="form-control" id="deviceNameInput" [(ngModel)]="newDeviceName" placeholder="e.g., My iPhone, Work Tablet">
+      </div>
+      <div class="form-group mt-3">
+        <label for="expirationSelect" class="form-label">Expiration:</label>
+        <select class="form-control" id="expirationSelect" [(ngModel)]="newDeviceExpiration">
+          <option *ngFor="let option of expirationOptions" [ngValue]="option.value">{{ option.label }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div *ngIf="step === 'showQR'" class="text-center">
+      <p class="text-muted">Scan this QR code with your companion mobile app to connect your device and sync your medical records.</p>
+      <div *ngIf="qrCodeUrl" class="qr-code-container mb-4 p-3 border rounded d-inline-block">
+        <img [src]="qrCodeUrl" alt="QR Code" class="img-fluid qr-code-image">
+      </div>
+
+      <!-- Development: Raw QR Code Data -->
+      <div class="mt-4 text-start">
+        <h6 class="mb-0">
+          <a href="javascript:void(0);" (click)="isRawQrCodeCollapsed = !isRawQrCodeCollapsed"
+            [attr.aria-expanded]="!isRawQrCodeCollapsed" aria-controls="rawQrCodeDataCollapse"
+            class="d-flex align-items-center text-dark text-decoration-none">
+            Development: Raw QR Code Data
+            <i class="fas ms-2" [class.fa-chevron-down]="isRawQrCodeCollapsed"
+              [class.fa-chevron-up]="!isRawQrCodeCollapsed"></i>
+          </a>
+        </h6>
+        <div id="rawQrCodeDataCollapse" [ngbCollapse]="isRawQrCodeCollapsed">
+          <div class="input-group mt-3">
+            <textarea class="form-control font-monospace" rows="5" readonly [value]="qrCodeData"></textarea>
+            <button class="btn btn-outline-secondary" type="button" (click)="copyRawQR()">
+              <i class="fas fa-copy"></i> Copy
+            </button>
+          </div>
+          <small class="text-muted">You can copy and paste this data manually if needed.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button *ngIf="step === 'askDetails'" type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancel</button>
+    <button *ngIf="step === 'askDetails'" type="button" class="btn btn-az-primary" (click)="connectDevice()" [disabled]="isLoading">Connect</button>
+    <button *ngIf="step === 'showQR'" type="button" class="btn btn-secondary" (click)="modal.close()">Close</button>
+  </div>
+</ng-template>
