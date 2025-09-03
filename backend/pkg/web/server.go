@@ -138,12 +138,14 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				api.POST("/cors/:endpointId/*proxyPath", handler.CORSProxy)
 				api.OPTIONS("/cors/:endpointId/*proxyPath", handler.CORSProxy)
 
-				api.GET("/glossary/code", handler.GlossarySearchByCode)
-				api.POST("/support/request", handler.SupportRequest)
-				api.POST("/support/healthsystem", handler.HealthSystemRequest)
-				secure := api.Group("/secure").Use(middleware.RequireAuth())
-				{
-					secure.DELETE("/account/me", handler.DeleteAccount)
+			api.GET("/glossary/code", handler.GlossarySearchByCode)
+			api.POST("/support/request", handler.SupportRequest)
+			api.POST("/support/healthsystem", handler.HealthSystemRequest)
+
+			secure := api.Group("/secure").Use(middleware.RequireAuth())
+			{
+				secure.GET("/account/me", handler.GetCurrentUser)
+				secure.DELETE("/account/me", handler.DeleteAccount)
 
 					secure.GET("/summary", handler.GetSummary)
 					secure.GET("/summary/ips", handler.GetIPSSummary)
@@ -181,10 +183,17 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					secure.PUT("/practitioners/:practitionerId", handler.UpdatePractitioner)
 					secure.GET("/practitioners/:practitionerId/history", handler.GetPractitionerEncounterHistory)
 
-					// Address book favorite actions
-					secure.POST("/user/favorites", handler.AddPractitionerToFavorites)
-					secure.DELETE("/user/favorites", handler.RemovePractitionerFromFavorites)
-					secure.GET("/user/favorites", handler.GetUserFavoritePractitioners)
+				// Address book favorite actions
+				secure.POST("/user/favorites", handler.AddPractitionerToFavorites)
+				secure.DELETE("/user/favorites", handler.RemovePractitionerFromFavorites)
+				secure.GET("/user/favorites", handler.GetUserFavoritePractitioners)
+
+				// Access token management
+				secure.GET("/access/token", handler.GetAccessTokens)
+				secure.POST("/access/token", handler.CreateAccessToken)
+				secure.DELETE("/access/token", handler.DeleteAccessToken)
+
+				secure.GET("/sync/discovery", handler.GetServerDiscovery)
 
 					//server-side-events handler (only supported on mac/linux)
 					// TODO: causes deadlock on Windows
