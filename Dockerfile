@@ -54,8 +54,3 @@ COPY LICENSE.md /opt/fasten/LICENSE.md
 COPY config.yaml /opt/fasten/config/config.yaml
 RUN ["/opt/fasten/fasten", "--help"]
 CMD ["/opt/fasten/fasten", "start", "--config", "/opt/fasten/config/config.yaml"]
-
-
-
-
-
