@@ -88,6 +88,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 			api.POST("/auth/signup", handler.AuthSignup)
 			api.POST("/auth/signin", handler.AuthSignin)
 
+			api.GET("/settings", handler.GetSettings)
+
 			//whitelisted CORS PROXY
 			api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
 			api.POST("/cors/:endpointId/*proxyPath", handler.CORSProxy)
@@ -121,6 +123,9 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.POST("/resource/composition", handler.CreateResourceComposition)
 				secure.POST("/resource/related", handler.CreateRelatedResources)
 				secure.DELETE("/encounter/:encounterId/related/:resourceType/:resourceId", handler.EncounterUnlinkResource)
+				secure.GET("/resource/search", handler.SearchResourcesHandler)
+				secure.GET("/resource/search/:id", handler.GetResourceByIDHandler)
+				secure.GET("/resource/summary", handler.GetResourceSummaryHandler)
 
 				secure.GET("/dashboards", handler.GetDashboard)
 				secure.POST("/dashboards", handler.AddDashboardLocation)

@@ -34,3 +34,15 @@ jwt:
     # you should ABSOLUTELY change this value before deploying Fasten.
     # TODO: in future versions, this will be generated on first run with a random value, and stored as a System Setting.
     key: "thisismysupersecuressessionsecretlength"
+search:
+  # typesense related parameters
+  uri: http://typesense:8108
+  api_key: xyz123
+  collection_name: resources
+  chat:
+    conversation_collection_name: conversation_store
+    model:
+      id: conv-model-1
+      name: vllm/llama3.1:8b
+      vllm_url: http://host.docker.internal:11434
+      max_bytes: 28672 #may vary depending on the model used
