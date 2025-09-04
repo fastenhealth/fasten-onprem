@@ -114,8 +114,8 @@ export class EncounterFormComponent implements OnInit {
         action: new FormControl(null),
       }),
       medications: new FormArray([]),
-      procedures: new FormArray([]), 
-      practitioners: new FormArray([]), 
+      procedures: new FormArray([]),
+      practitioners: new FormArray([]),
       organizations: new FormArray([]),
       labresults: new FormArray([]),
       attachments: new FormArray([]),
@@ -146,15 +146,18 @@ export class EncounterFormComponent implements OnInit {
             this.processOcrDate(ocrData, encounterGroup);
           }
 
+          // If we have enough data from OCR to create an encounter, add it
+          if (ocrData.encounterType && ocrData.date) {
+            const resultedEncounterModel =
+              this.encounterFormToDisplayModel(encounterGroup);
+            this.addEncounter({
+              action: 'create',
+              data: resultedEncounterModel,
+            });
+          }
+
           // Process medications from OCR if available
           if (ocrData.medications && ocrData.medications.length > 0) {
-            // Remove the initial empty medication entry if it exists
-            if (
-              this.medications.length === 1 &&
-              !this.medications.at(0).get('data')?.value
-            ) {
-              this.medications.removeAt(0);
-            }
             this.processOCRMedications(
               ocrData.medications,
               ocrData?.date,
@@ -164,14 +167,6 @@ export class EncounterFormComponent implements OnInit {
 
           // Process practitioner (doctor) from OCR if available
           if (ocrData.doctorName) {
-            // Remove first empty entry if it exists
-            if (
-              this.practitioners.length === 1 &&
-              !this.practitioners.at(0).get('name')?.value
-            ) {
-              this.practitioners.removeAt(0);
-            }
-
             // Check if practitioner already exists in the list
             const existing = this.foundPractitioners.find(
               (pract) =>
@@ -183,62 +178,38 @@ export class EncounterFormComponent implements OnInit {
               // If found, add existing practitioner
               this.addPractitioner({ data: existing, action: 'find' });
             } else {
-              // If not found, create a new practitioner entry
               const newPractitioner = new PractitionerModel({
                 resourceType: 'Practitioner',
-                id: uuidV4(),
-                name: [
-                  {
-                    displayName: ocrData.doctorName,
-                    name: ocrData.doctorName,
-                  },
-                ],
+                name: [],
               });
+
+              newPractitioner.name.push({
+                textName: ocrData.doctorName,
+                use: 'official',
+                givenName: ocrData.doctorName, // Simplification: put full name in givenName
+                familyName: '',
+                suffix: '',
+                displayName: ocrData.doctorName,
+              });
+
+              // Generate a new UUID for source_resource_id
+              newPractitioner.source_resource_id = uuidV4();
+
               this.addPractitioner({ data: newPractitioner, action: 'create' });
             }
           }
 
           // If we have hospital name, add it as organization
           if (ocrData.hospital) {
-            // Remove first empty entry if it exists
-            if (
-              this.organizations.length === 1 &&
-              !this.organizations.at(0).get('name')?.value
-            ) {
-              this.organizations.removeAt(0);
-            }
-
-            // Check if organization already exists in the list
-            const existing = (this.organizations?.value || []).find(
-              (org) =>
-                org.data &&
-                org.data.name &&
-                org.data.name.toLowerCase() === ocrData.hospital.toLowerCase()
-            );
-            if (existing) {
-              // If found, add existing organization
-              this.addOrganization({ data: existing.data, action: 'find' });
-            } else {
-              // If not found, create a new organization entry
-              const newOrganization = new OrganizationModel({
-                resourceType: 'Organization',
-                id: uuidV4(),
-                name: ocrData.hospital,
-              });
-              this.addOrganization({
-                data: newOrganization,
-                action: 'create',
-              });
-            }
-          }
-
-          // If we have enough data from OCR to create an encounter, add it
-          if (ocrData.encounterType && ocrData.date) {
-            const resultedEncounterModel =
-              this.encounterFormToDisplayModel(encounterGroup);
-            this.addEncounter({
+            // If not found, create a new organization entry
+            const newOrganization = new OrganizationModel({
+              resourceType: 'Organization',
+              id: uuidV4(),
+              name: ocrData.hospital,
+            });
+            this.addOrganization({
+              data: newOrganization,
               action: 'create',
-              data: resultedEncounterModel,
             });
           }
         }
@@ -476,8 +447,6 @@ export class EncounterFormComponent implements OnInit {
   }
 
   addMedication() {
-    console.log(this.medications);
-
     const medicationGroup = new FormGroup({
       data: new FormControl<NlmSearchResults>(null, Validators.required),
       status: new FormControl(null, Validators.required),

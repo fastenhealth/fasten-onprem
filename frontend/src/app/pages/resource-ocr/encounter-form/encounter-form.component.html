@@ -285,10 +285,10 @@
                     (unlinkRequested)="handleUnlinkRequested(practitioner)"
                     (editRequested)="openEditPractitionerModal(practitioner)"></fhir-card>
 
-                <ng-container formArrayName="practitioners">
+                <ng-container formArrayName="practitioners" >
                     <ng-container *ngFor="let practitionerGroup of practitioners.controls; let i = index"
                         [formGroupName]="i">
-                        <div class="row row-sm">
+                        <div class="row row-sm border rounded p-3 mb-3">
                             <div class="col-12">
                                 <p class="mg-b-10">
                                     Name<span ngbTooltip="required" class="text-danger">*</span>
