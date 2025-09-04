@@ -196,22 +196,23 @@ export class EncounterFormComponent implements OnInit {
               newPractitioner.source_resource_id = uuidV4();
 
               this.addPractitioner({ data: newPractitioner, action: 'create' });
+              this.addPractitionerFormGroupFromOCR(ocrData.doctorName);
             }
           }
 
           // If we have hospital name, add it as organization
-          if (ocrData.hospital) {
-            // If not found, create a new organization entry
-            const newOrganization = new OrganizationModel({
-              resourceType: 'Organization',
-              id: uuidV4(),
-              name: ocrData.hospital,
-            });
-            this.addOrganization({
-              data: newOrganization,
-              action: 'create',
-            });
-          }
+          // if (ocrData.hospital) {
+          //   // If not found, create a new organization entry
+          //   const newOrganization = new OrganizationModel({
+          //     resourceType: 'Organization',
+          //     id: uuidV4(),
+          //     name: ocrData.hospital,
+          //   });
+          //   this.addOrganization({
+          //     data: newOrganization,
+          //     action: 'create',
+          //   });
+          // }
         }
       })
     );
@@ -482,6 +483,27 @@ export class EncounterFormComponent implements OnInit {
     this.procedures.push(procedureGroup);
   }
 
+  addPractitionerFormGroupFromOCR(doctorName: string) {
+    const practitionerGroup = new FormGroup({
+      identifier: new FormControl([]),
+      name: new FormControl({ text: doctorName }, Validators.required),
+      profession: new FormControl(null, Validators.required),
+      phone: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+      fax: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+      email: new FormControl(null, Validators.email),
+      address: new FormGroup({
+        line1: new FormControl(null),
+        line2: new FormControl(null),
+        city: new FormControl(null),
+        state: new FormControl(null),
+        zip: new FormControl(null),
+        country: new FormControl(null),
+      }),
+    });
+
+    this.practitioners.push(practitionerGroup);
+  }
+
   addPractitioner(
     openPractitionerResult: WizardFhirResourceWrapper<PractitionerModel>
   ) {
@@ -491,7 +513,6 @@ export class EncounterFormComponent implements OnInit {
     });
 
     this.foundPractitioners.push(openPractitionerResult.data); // Add to foundPractitioners list
-    this.practitioners.push(practitionerGroup);
   }
 
   addOrganization(

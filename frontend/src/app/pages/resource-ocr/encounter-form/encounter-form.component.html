@@ -285,79 +285,75 @@
                     (unlinkRequested)="handleUnlinkRequested(practitioner)"
                     (editRequested)="openEditPractitionerModal(practitioner)"></fhir-card>
 
-                <ng-container formArrayName="practitioners" >
-                    <ng-container *ngFor="let practitionerGroup of practitioners.controls; let i = index"
+                <ng-container formArrayName="practitioners">
+                    <div class="row row-sm border rounded p-3 mb-3"
+                        *ngFor="let practitionerGroup of practitioners.controls; let i = index"
                         [formGroupName]="i">
-                        <div class="row row-sm border rounded p-3 mb-3">
-                            <div class="col-12">
-                                <p class="mg-b-10">
-                                    Name<span ngbTooltip="required" class="text-danger">*</span>
-                                </p>
-                                <app-nlm-typeahead formControlName="name" searchType="MedicalContactIndividual"
-                                    [debugMode]="debugMode"></app-nlm-typeahead>
+                        <div class="col-12">
+                            <p class="mg-b-10">
+                                Name<span ngbTooltip="required" class="text-danger">*</span>
+                            </p>
+                            <app-nlm-typeahead formControlName="name" searchType="MedicalContactIndividual"
+                                [debugMode]="debugMode"></app-nlm-typeahead>
 
-                                <span *ngFor="let extId of practitionerGroup.get('identifier')?.value"
-                                    class="badge badge-pill badge-primary">
-                                    {{ extId.type?.coding[0].code }}: {{ extId.value }}
-                                </span>
-                            </div>
-
-                            <div class="col-6 mg-t-10 mg-lg-t-0">
-                                <p class="mg-b-10">Type<span ngbTooltip="required" class="text-danger">*</span></p>
-                                <app-nlm-typeahead formControlName="profession"
-                                    searchType="MedicalContactIndividualProfession"
-                                    [debugMode]="debugMode"></app-nlm-typeahead>
-                            </div>
-
-                            <div class="col-6 mg-t-10 mg-lg-t-0">
-                                <p class="mg-b-10">Telephone</p>
-                                <input formControlName="phone" class="form-control" placeholder="(123) 456-7890"
-                                    type="text" />
-                            </div>
-
-                            <div class="col-6 mg-t-10 mg-lg-t-0">
-                                <p class="mg-b-10">Fax</p>
-                                <input formControlName="fax" class="form-control" placeholder="(123) 456-7890"
-                                    type="text" />
-                            </div>
-
-                            <div class="col-6 mg-t-10 mg-lg-t-0">
-                                <p class="mg-b-10">Email</p>
-                                <input formControlName="email" class="form-control" placeholder="email@example.com"
-                                    type="text" />
-                            </div>
-
-                            <ng-container formGroupName="address">
-                                <div class="col-12 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Address</p>
-                                    <input formControlName="line1" class="form-control" placeholder="Line 1"
-                                        type="text" />
-                                </div>
-                                <div class="col-12 pd-t-10 mg-t-10 mg-lg-t-0">
-                                    <input formControlName="line2" class="form-control" placeholder="Line 2"
-                                        type="text" />
-                                </div>
-                                <div class="col-6 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">City</p>
-                                    <input formControlName="city" class="form-control" placeholder="City" type="text" />
-                                </div>
-                                <div class="col-6 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">State</p>
-                                    <input formControlName="state" class="form-control" placeholder="State"
-                                        type="text" />
-                                </div>
-                                <div class="col-6 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Zip/Postal</p>
-                                    <input formControlName="zip" class="form-control" placeholder="Zip" type="text" />
-                                </div>
-                                <div class="col-6 mg-t-10 mg-lg-t-0">
-                                    <p class="mg-b-10">Country</p>
-                                    <app-nlm-typeahead formControlName="country" searchType="Countries"
-                                        [debugMode]="debugMode"></app-nlm-typeahead>
-                                </div>
-                            </ng-container>
+                            <span *ngFor="let extId of practitionerGroup.get('identifier')?.value"
+                                class="badge badge-pill badge-primary">
+                                {{ extId.type?.coding[0].code }}: {{ extId.value }}
+                            </span>
                         </div>
-                    </ng-container>
+
+                        <div class="col-6 mg-t-10 mg-lg-t-0">
+                            <p class="mg-b-10">Type<span ngbTooltip="required" class="text-danger">*</span></p>
+                            <app-nlm-typeahead formControlName="profession"
+                                searchType="MedicalContactIndividualProfession"
+                                [debugMode]="debugMode"></app-nlm-typeahead>
+                        </div>
+
+                        <div class="col-6 mg-t-10 mg-lg-t-0">
+                            <p class="mg-b-10">Telephone</p>
+                            <input formControlName="phone" class="form-control" placeholder="(123) 456-7890"
+                                type="text" />
+                        </div>
+
+                        <div class="col-6 mg-t-10 mg-lg-t-0">
+                            <p class="mg-b-10">Fax</p>
+                            <input formControlName="fax" class="form-control" placeholder="(123) 456-7890"
+                                type="text" />
+                        </div>
+
+                        <div class="col-6 mg-t-10 mg-lg-t-0">
+                            <p class="mg-b-10">Email</p>
+                            <input formControlName="email" class="form-control" placeholder="email@example.com"
+                                type="text" />
+                        </div>
+
+                        <ng-container formGroupName="address">
+                            <div class="col-12 mg-t-10 mg-lg-t-0">
+                                <p class="mg-b-10">Address</p>
+                                <input formControlName="line1" class="form-control" placeholder="Line 1" type="text" />
+                            </div>
+                            <div class="col-12 pd-t-10 mg-t-10 mg-lg-t-0">
+                                <input formControlName="line2" class="form-control" placeholder="Line 2" type="text" />
+                            </div>
+                            <div class="col-6 mg-t-10 mg-lg-t-0">
+                                <p class="mg-b-10">City</p>
+                                <input formControlName="city" class="form-control" placeholder="City" type="text" />
+                            </div>
+                            <div class="col-6 mg-t-10 mg-lg-t-0">
+                                <p class="mg-b-10">State</p>
+                                <input formControlName="state" class="form-control" placeholder="State" type="text" />
+                            </div>
+                            <div class="col-6 mg-t-10 mg-lg-t-0">
+                                <p class="mg-b-10">Zip/Postal</p>
+                                <input formControlName="zip" class="form-control" placeholder="Zip" type="text" />
+                            </div>
+                            <div class="col-6 mg-t-10 mg-lg-t-0">
+                                <p class="mg-b-10">Country</p>
+                                <app-nlm-typeahead formControlName="country" searchType="Countries"
+                                    [debugMode]="debugMode"></app-nlm-typeahead>
+                            </div>
+                        </ng-container>
+                    </div>
                 </ng-container>
 
                 <div class="row mt-2">
