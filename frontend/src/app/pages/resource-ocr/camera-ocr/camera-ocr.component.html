@@ -1,27 +1,27 @@
-<!-- 📸 Camera View -->
+<!-- Camera View -->
 <div *ngIf="!capturedImages.length" class="mb-3">
     <label class="form-label">Live Camera</label>
     <video #video class="w-100 border rounded" autoplay playsinline></video>
 </div>
 
-<!-- 📸 Canvas for internal use (hidden) -->
+<!-- Canvas for internal use (hidden) -->
 <canvas #canvas hidden></canvas>
 
-<!-- ❌ Error -->
+<!-- Error -->
 <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-<!-- 📷 Capture & Review Controls -->
+<!-- Capture & Review Controls -->
 <div *ngIf="isCapturingNew && isCameraReady" class="d-flex flex-column align-items-center mt-4">
     <video #video class="w-100 border rounded mb-3" autoplay playsinline></video>
 
     <button class="btn btn-primary w-100" (click)="captureImage()" [disabled]="capturedImages.length >= 30">
-        📸 Capture Image ({{ capturedImages.length }}/30)
+        Capture Image ({{ capturedImages.length }}/30)
     </button>
 </div>
 
-<!-- 🔁 REVIEW MODE -->
+<!-- REVIEW MODE -->
 <div *ngIf="!isCapturingNew && capturedImages.length" class="d-flex mt-4">
-    <!-- 🖼 Image Preview -->
+    <!-- Image Preview -->
     <div class="col-6 pe-3">
         <img [src]="capturedImages[currentIndex]" class="img-fluid border rounded mb-3" />
 
@@ -37,7 +37,7 @@
         </div>
     </div>
 
-    <!-- 🧠 OCR Result + Controls -->
+    <!-- OCR Result + Controls -->
     <div class="col-6 ps-3 d-flex flex-column">
         <div class="form-group flex-grow-1">
             <label>OCR Result</label>

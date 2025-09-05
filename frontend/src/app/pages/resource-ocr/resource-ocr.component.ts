@@ -19,7 +19,7 @@ export class ResourceOcrComponent implements OnInit {
     });
   }
 
-  // 📂 Drag & drop file
+  // Drag & drop file
   onFileDrop(event: DragEvent) {
     event.preventDefault();
     const file = event.dataTransfer?.files?.[0];
@@ -33,7 +33,7 @@ export class ResourceOcrComponent implements OnInit {
     event.preventDefault();
   }
 
-  // 📂 Manual file select
+  // Manual file select
   onFileSelect(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -42,12 +42,12 @@ export class ResourceOcrComponent implements OnInit {
     }
   }
 
-  // 📸 Camera button
+  // Camera button
   onCameraClick() {
     this.settingsForm.value.mode = 'capture';
   }
 
-  // 🔍 Detect PDF vs Image
+  // Detect PDF vs Image
   private detectFileType(file: File) {
     if (file.type === 'application/pdf') {
       this.startedScan = true;

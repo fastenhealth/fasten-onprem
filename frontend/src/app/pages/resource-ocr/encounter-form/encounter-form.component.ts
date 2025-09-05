@@ -81,7 +81,7 @@ export class EncounterFormComponent implements OnInit {
   debugMode = false;
   existingEncounter: EncounterModel = null;
   fastenSourceId = '';
-  editMode = false;
+  editMode = true; // Initially, the user starts in edit mode in order to adjust the form
   foundPractitioners = [];
 
   constructor(
@@ -120,9 +120,6 @@ export class EncounterFormComponent implements OnInit {
       labresults: new FormArray([]),
       attachments: new FormArray([]),
     });
-
-    // By default, disable the entire form. It will be enabled when user clicks "Edit"
-    this.form.disable();
 
     if (this.existingEncounter) {
       this.addEncounter({ data: this.existingEncounter, action: 'find' });
@@ -341,6 +338,7 @@ export class EncounterFormComponent implements OnInit {
       requester: new FormControl(doctorName ?? null, Validators.required),
       instructions: new FormControl(null),
       attachments: new FormControl([]),
+      source_resource_id: new FormControl(uuidV4()), // Generate a new UUID for source_resource_id
     });
 
     // If we have NLM data, populate the data field
@@ -496,6 +494,7 @@ export class EncounterFormComponent implements OnInit {
         zip: new FormControl(null),
         country: new FormControl(null),
       }),
+      source_resource_id: new FormControl(uuidV4()), // Generate a new UUID for source_resource_id
     });
 
     this.practitioners.push(practitionerGroup);
@@ -517,6 +516,7 @@ export class EncounterFormComponent implements OnInit {
         zip: new FormControl(null),
         country: new FormControl(null),
       }),
+      source_resource_id: new FormControl(uuidV4()), // Generate a new UUID for source_resource_id
     });
 
     this.organizations.push(organizationGroup);
@@ -568,7 +568,7 @@ export class EncounterFormComponent implements OnInit {
     let disabledResourceIds = [];
     disabledResourceIds.push(
       ...(this.practitioners?.value || []).map(
-        (practitioner) => practitioner.data.source_resource_id
+        (practitioner) => practitioner.source_resource_id
       )
     );
     disabledResourceIds.push(
@@ -577,7 +577,8 @@ export class EncounterFormComponent implements OnInit {
       ).map((practitioner) => practitioner.source_resource_id)
     );
 
-    // this.resetPractitionerForm()
+    console.log(disabledResourceIds);
+
     let modalRef = this.modalService.open(
       MedicalRecordWizardAddPractitionerComponent,
       {
@@ -598,15 +599,13 @@ export class EncounterFormComponent implements OnInit {
             .setValue(generateReferenceUriFromResourceOrReference(result.data));
         }
       },
-      (err) => {}
+      () => {}
     );
   }
   openOrganizationModal(formGroup?: AbstractControl, controlName?: string) {
     let disabledResourceIds = [];
     disabledResourceIds.push(
-      ...(this.organizations?.value || []).map(
-        (org) => org.data.source_resource_id
-      )
+      ...(this.organizations?.value || []).map((org) => org.source_resource_id)
     );
     disabledResourceIds.push(
       ...(
@@ -634,7 +633,7 @@ export class EncounterFormComponent implements OnInit {
             .setValue(generateReferenceUriFromResourceOrReference(result.data));
         }
       },
-      (err) => {}
+      () => {}
     );
   }
   openLabResultsModal() {
@@ -651,7 +650,7 @@ export class EncounterFormComponent implements OnInit {
         //add this to the list of organization
         this.addLabResultsBundle(result);
       },
-      (err) => {}
+      () => {}
     );
   }
   openAttachmentModal(formGroup?: AbstractControl, controlName?: string) {
@@ -676,7 +675,7 @@ export class EncounterFormComponent implements OnInit {
           formGroup.get(controlName).setValue(controlArrayVal);
         }
       },
-      (err) => {}
+      () => {}
     );
   }
 
