@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { PDFDocumentProxy, getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
-import { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 import { OcrDataService } from 'src/app/services/ocr-data.service';
 
 GlobalWorkerOptions.workerSrc = '/assets/pdfjs/pdf.worker.min.js';
@@ -28,8 +27,8 @@ export class PdfOcrComponent implements OnInit {
   isProcessing = false;
 
   constructor(
-    private sanitizer: DomSanitizer,
     private fastenApiService: FastenApiService,
+    private sanitizer: DomSanitizer,
     private ocrDataService: OcrDataService
   ) {}
 
@@ -42,23 +41,24 @@ export class PdfOcrComponent implements OnInit {
   }
 
   async loadPdf(incomingFile: File) {
-    this.pageImages = [];
-    this.pageBlobs = [];
+    this.isProcessing = true;
     this.error = null;
+    this.pageBlobs = [];
 
     const reader = new FileReader();
     reader.onload = async () => {
       const typedArray = new Uint8Array(reader.result as ArrayBuffer);
       const pdf: PDFDocumentProxy = await getDocument(typedArray).promise;
+      const totalPages = pdf.numPages;
 
-      this.totalPages = pdf.numPages;
-
-      if (this.totalPages > this.maxPages) {
-        this.error = `PDF has ${this.totalPages} pages. Maximum allowed is ${this.maxPages}.`;
-        return;
+      // Limit to maxPages
+      this.totalPages = totalPages;
+      if (totalPages > this.maxPages) {
+        this.error = `PDF has ${totalPages} pages. Only the first ${this.maxPages} will be processed.`;
       }
+      const pagesToProcess = Math.min(totalPages, this.maxPages);
 
-      for (let i = 1; i <= this.totalPages; i++) {
+      for (let i = 1; i <= pagesToProcess; i++) {
         const page = await pdf.getPage(i);
         const viewport = page.getViewport({ scale: 1.5 });
 
@@ -67,70 +67,43 @@ export class PdfOcrComponent implements OnInit {
         canvas.width = viewport.width;
         canvas.height = viewport.height;
 
-        await page.render({
-          canvasContext: context,
-          viewport,
-        } as RenderParameters).promise;
+        await page.render({ canvasContext: context, viewport }).promise;
 
-        // Convert to Blob and store
         const blob = await new Promise<Blob>((resolve) =>
           canvas.toBlob((b) => resolve(b!), 'image/png')
         );
         this.pageBlobs.push(blob);
 
-        // Also keep a previewable URL
+        // Create preview URL for the UI
         const url = URL.createObjectURL(blob);
         this.pageImages.push(this.sanitizer.bypassSecurityTrustUrl(url));
-        this.sendCurrentPageToOcr();
       }
+
+      // Send all pages at once to the backend
+      const files = this.pageBlobs.map(
+        (b, i) => new File([b], `page-${i + 1}.png`, { type: 'image/png' })
+      );
+      this.fastenApiService.uploadOcrDocuments(files).subscribe({
+        next: (result) => {
+          let parsedResult: any;
+          try {
+            parsedResult = JSON.parse(result);
+          } catch {
+            parsedResult = result;
+          }
+
+          this.ocrDataService.updateOcrData(parsedResult);
+          this.foundKeys = this.ocrDataService.extractFoundKeys(parsedResult);
+          this.isProcessing = false;
+        },
+        error: () => {
+          this.ocrDataService.updateOcrData({ error: '[Error during OCR]' });
+          this.isProcessing = false;
+        },
+      });
     };
+
     reader.readAsArrayBuffer(incomingFile);
-  }
-
-  async sendCurrentPageToOcr() {
-    this.isProcessing = true;
-
-    const currentBlob = this.pageBlobs[this.currentPageIndex];
-    const file = new File(
-      [currentBlob],
-      `page-${this.currentPageIndex + 1}.png`,
-      {
-        type: 'image/png',
-      }
-    );
-
-    this.fastenApiService.uploadOcrDocument(file).subscribe({
-      next: (result) => {
-        let parsedResult: any;
-
-        try {
-          // if backend returns stringified JSON
-          parsedResult = JSON.parse(result);
-        } catch {
-          // if it’s already JSON
-          parsedResult = result;
-        }
-
-        this.ocrDataService.updateOcrData(parsedResult);
-        this.foundKeys = this.ocrDataService.extractFoundKeys(parsedResult);
-        this.isProcessing = false;
-      },
-      error: () => {
-        this.ocrDataService.updateOcrData({ error: '[Error during OCR]' });
-        this.isProcessing = false;
-      },
-    });
-
-    this.scannedPages.push(this.currentPageIndex);
-    //TODO: Remove this after testing
-    this.ocrDataService.ocrData$.subscribe((data) => {
-      console.log('OCR updated:', data);
-    });
-  }
-
-  startScanning() {
-    this.currentPageIndex = 0;
-    this.ocrResults = new Array(this.pageImages.length).fill('');
   }
 
   goToNextPage() {

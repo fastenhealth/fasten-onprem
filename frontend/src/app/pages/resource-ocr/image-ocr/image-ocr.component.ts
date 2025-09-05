@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
+import { OcrDataService } from 'src/app/services/ocr-data.service';
 
 @Component({
   selector: 'app-image-ocr',
@@ -16,10 +17,12 @@ export class ImageOcrComponent {
   ocrResults: string[] = [];
   error = '';
   isProcessing = false;
+  foundKeys: string[] = [];
 
   constructor(
     private sanitizer: DomSanitizer,
-    private fastenApiService: FastenApiService
+    private fastenApiService: FastenApiService,
+    private ocrDataService: OcrDataService
   ) {}
 
   ngOnInit(): void {
@@ -31,13 +34,18 @@ export class ImageOcrComponent {
   }
 
   loadFiles(): void {
-    const files = Array.from(this.selectedFiles).filter((file) =>
+    const files = Array.from(this.selectedFiles || []).filter((file) =>
       file.type.startsWith('image/')
     );
 
     // Validate
     if (files.length > 30) {
       this.error = 'You can only upload up to 30 images.';
+      return;
+    }
+
+    if (!files.length) {
+      this.error = 'No valid image files selected.';
       return;
     }
 
@@ -48,18 +56,24 @@ export class ImageOcrComponent {
     this.ocrResults = Array(files.length).fill('');
     this.currentPageIndex = 0;
     this.error = '';
-  }
-
-  sendCurrentImageToOcr(): void {
     this.isProcessing = true;
-    const currentFile = this.imageFiles[this.currentPageIndex];
-    this.fastenApiService.uploadOcrDocument(currentFile).subscribe({
-      next: (text: string) => {
-        this.ocrResults[this.currentPageIndex] = text;
+
+    // Send all images to the backend
+    this.fastenApiService.uploadOcrDocuments(this.imageFiles).subscribe({
+      next: (result) => {
+        let parsedResult: any;
+        try {
+          parsedResult = JSON.parse(result);
+        } catch {
+          parsedResult = result;
+        }
+
+        this.ocrDataService.updateOcrData(parsedResult);
+        this.foundKeys = this.ocrDataService.extractFoundKeys(parsedResult);
         this.isProcessing = false;
       },
       error: () => {
-        this.error = 'Failed to send image to OCR.';
+        this.ocrDataService.updateOcrData({ error: '[Error during OCR]' });
         this.isProcessing = false;
       },
     });

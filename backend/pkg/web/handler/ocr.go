@@ -84,45 +84,50 @@ type MedicalReport struct {
 
 // OcrFileUploadHandler accepts a multipart/form-data upload and forwards it to the OCR service.
 func OcrFileUploadHandler(c *gin.Context) {
-	logger := logrus.New() // Standalone logger for this example
+	logger := logrus.New()
 
-	// 1. Get the file from the incoming request.
-	fileHeader, err := c.FormFile("image")
+	form, err := c.MultipartForm()
 	if err != nil {
-		logger.Errorln("Error retrieving file from form:", err)
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "file 'image' is required"})
+		logger.Errorln("Error reading multipart form:", err)
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "invalid multipart form"})
 		return
 	}
 
-	// 2. Open the file to access its content.
-	file, err := fileHeader.Open()
-	if err != nil {
-		logger.Errorln("Error opening uploaded file:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not process file"})
+	files := form.File["images"] // Expecting multiple files under key "images"
+	if len(files) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "file 'images' is required"})
 		return
 	}
-	defer file.Close()
 
-	// 3. Create a new multipart request body in memory.
 	var requestBody bytes.Buffer
 	multipartWriter := multipart.NewWriter(&requestBody)
 
-	// 4. Create a new form-file field in the new request and copy the file content into it.
-	fileWriter, err := multipartWriter.CreateFormFile("image", fileHeader.Filename)
-	if err != nil {
-		logger.Errorln("Error creating form file for proxy request:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "internal server error"})
-		return
-	}
-	if _, err := io.Copy(fileWriter, file); err != nil {
-		logger.Errorln("Error copying file content for proxy request:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "internal server error"})
-		return
+	// Loop over all uploaded files
+	for _, fileHeader := range files {
+		file, err := fileHeader.Open()
+		if err != nil {
+			logger.Errorln("Error opening file:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not process file"})
+			return
+		}
+		defer file.Close()
+
+		fileWriter, err := multipartWriter.CreateFormFile("image", fileHeader.Filename)
+		if err != nil {
+			logger.Errorln("Error creating form file:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "internal server error"})
+			return
+		}
+
+		if _, err := io.Copy(fileWriter, file); err != nil {
+			logger.Errorln("Error copying file content:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "internal server error"})
+			return
+		}
 	}
 
 	multipartWriter.Close()
 
-	// 5. Create and send the request to the OCR service.
 	ocrServiceURL := "http://ocr-service:8080/ocr"
 	req, err := http.NewRequest("POST", ocrServiceURL, &requestBody)
 	if err != nil {
@@ -132,7 +137,6 @@ func OcrFileUploadHandler(c *gin.Context) {
 	}
 	req.Header.Set("Content-Type", multipartWriter.FormDataContentType())
 
-	// 6. Execute the request.
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -142,18 +146,15 @@ func OcrFileUploadHandler(c *gin.Context) {
 	}
 	defer resp.Body.Close()
 
-	// 7. Read the response from the OCR service.
-	ocrResponseBody, err := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		logger.Errorln("Error reading response from OCR service:", err)
+		logger.Errorln("Error reading OCR response:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to read OCR response"})
 		return
 	}
 
-	// 8. Convert OCR response to string
-	ocrText := string(ocrResponseBody)
+	ocrText := string(body)
 
-	// 9. Extract structured medical report data
 	jsonData, err := extractMedicalReportData(ocrText)
 	if err != nil {
 		logger.Errorln("Error extracting medical report data:", err)
@@ -161,7 +162,6 @@ func OcrFileUploadHandler(c *gin.Context) {
 		return
 	}
 
-	// 10. Return structured JSON to the client
 	c.Data(http.StatusOK, "application/json", jsonData)
 }
 

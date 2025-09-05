@@ -1,41 +1,43 @@
-<!-- Error -->
 <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-<!-- Page-by-Page Review -->
-<div *ngIf="imageFiles.length" class="mt-4">
-    <h5>Reviewing image {{ currentPageIndex + 1 }} of {{ imageFiles.length }}</h5>
+<div *ngIf="imagePreviews && imagePreviews.length" class="row">
 
-    <div class="row">
-        <!-- Image Preview (Left) -->
-        <div class="col-md-6 mb-3 d-flex flex-column align-items-center">
-            <div class="col-md-6 mb-3">
-                <img [src]="imagePreviews[currentPageIndex]" class="img-fluid border rounded"
-                    style="max-height: 400px; object-fit: contain;" />
-            </div>
-            <button class="btn btn-success" (click)="sendCurrentImageToOcr()" [disabled]="isProcessing">
-                <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
-                Send to OCR
+    <div class="col-md-6 d-flex flex-column align-items-center border-right">
+        <h6 class="text-muted mb-2">
+            Page {{ currentPageIndex + 1 }} of {{ imagePreviews.length }}
+        </h6>
+
+        <img [src]="imagePreviews[currentPageIndex]" class="img-thumbnail mb-3"
+            style="max-width: 100%; height: auto; max-height: 500px; object-fit: contain;" alt="Page preview" />
+
+        <div class="d-flex justify-content-center mb-3">
+            <button class="btn btn-outline-secondary mr-2" (click)="goToPreviousPage()"
+                [disabled]="currentPageIndex === 0 || isProcessing">
+                ←
+            </button>
+            <button class="btn btn-outline-secondary" (click)="goToNextPage()"
+                [disabled]="currentPageIndex === imagePreviews.length - 1 || isProcessing">
+                →
             </button>
         </div>
 
+        <div *ngIf="isProcessing" class="text-center mb-3">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Processing...</span>
+            </div>
+            <div class="mt-2 text-muted">Processing...</div>
+        </div>
 
-        <!-- OCR Textarea (Right) -->
-        <div class="col-md-6 mb-3">
-            <label for="ocrTextarea" class="form-label">OCR Result</label>
-            <textarea id="ocrTextarea" class="form-control" rows="12"
-                [(ngModel)]="ocrResults[currentPageIndex]"></textarea>
+        <div *ngIf="foundKeys && foundKeys.length" class="text-center p-2 border rounded bg-light w-100">
+            <strong>Extracted:</strong> {{ foundKeys.join(', ') }}
         </div>
     </div>
 
-    <!-- Navigation + Action Buttons -->
-    <div class="d-flex justify-content-end gap-2">
-        <button class="btn btn-outline-secondary" (click)="goToPreviousImage()" [disabled]="currentPageIndex === 0">
-            ← Previous
-        </button>
-
-        <button class="btn btn-outline-secondary" (click)="goToNextImage()"
-            [disabled]="currentPageIndex === imageFiles.length - 1">
-            Next →
-        </button>
+    <!-- RIGHT SIDE -->
+    <div class="col-md-6 d-flex flex-column">
+        <!-- Editable Form -->
+        <div class="form-group flex-grow-1">
+            <app-encounter-form></app-encounter-form>
+        </div>
     </div>
 </div>

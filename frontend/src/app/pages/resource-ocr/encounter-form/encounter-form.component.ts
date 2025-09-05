@@ -47,6 +47,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OcrDataService } from 'src/app/services/ocr-data.service';
 import { Subscription } from 'rxjs';
 import { ResponseWrapper } from 'src/app/models/response-wrapper';
+import { Router } from '@angular/router';
 
 interface NlmMedicationIdentifier {
   system: string;
@@ -87,7 +88,8 @@ export class EncounterFormComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private fastenApi: FastenApiService,
-    private ocrService: OcrDataService
+    private ocrService: OcrDataService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -927,6 +929,9 @@ export class EncounterFormComponent implements OnInit {
           }
         );
     }
+
+    // Redirect user to /medical-history after successful submission
+    this.router.navigate(['/medical-history']);
   }
 
   //<editor-fold desc="Helpers">
