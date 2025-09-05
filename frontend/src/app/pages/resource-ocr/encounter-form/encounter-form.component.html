@@ -215,22 +215,18 @@
                             <div class="col-lg-6 mt-2">
                                 <label class="form-label">Location</label>
                                 <select class="form-control" formControlName="location">
-                                    <option value="" hidden selected>Select Location</option>
-                                    <option value="" (click)="openOrganizationModal(procedureGroup, 'location')">New
-                                        Organization</option>
-                                    <optgroup *ngIf="existingEncounter?.related_resources?.['Organization']?.length"
-                                        class="divider">---</optgroup>
-                                    <option
-                                        *ngFor="let organization of existingEncounter?.related_resources?.['Organization']; let i = index"
-                                        [value]="organization">
-                                        {{organization?.name }}
+                                    <option [ngValue]="null" hidden>Select Location</option>
+                                    <option [ngValue]="'new'"
+                                        (click)="openOrganizationModal(procedureGroup, 'location')">
+                                        New Organization
                                     </option>
-                                    <optgroup *ngIf="organizations.controls.length" class="divider"></optgroup>
-                                    <option *ngFor="let organization of organizations.controls; let i = index"
-                                        [value]="organization.controls?.data?.value">
-                                        {{organization.controls?.data?.value?.name}}
-                                        ({{organization.controls?.data?.value?.address}})
-                                    </option>
+                                    <optgroup *ngIf="organizations.controls.length" label="Existing Organizations">
+                                        <option *ngFor="let organization of organizations.controls; let i = index"
+                                            [ngValue]="organization.value">
+                                            {{ organization.value.name?.text || organization.value.name }}
+                                            ({{ organization.value.address?.city || '-' }})
+                                        </option>
+                                    </optgroup>
                                 </select>
                             </div>
                             <div class="col-lg-12 mt-2">
@@ -288,6 +284,11 @@
                 <ng-container formArrayName="practitioners">
                     <div class="row row-sm border rounded p-3 mb-3"
                         *ngFor="let practitionerGroup of practitioners.controls; let i = index" [formGroupName]="i">
+                        <div class="text-end">
+                            <span class="cursor-pointer" (click)="deletePractitioner(i)" aria-hidden="true">
+                                <i class="fas fa-trash text-danger"></i>
+                            </span>
+                        </div>
                         <div class="col-12">
                             <p class="mg-b-10">
                                 Name<span ngbTooltip="required" class="text-danger">*</span>
@@ -381,6 +382,11 @@
                 <ng-container formArrayName="organizations">
                     <div class="row row-sm border rounded p-3 mb-3"
                         *ngFor="let organizationGroup of organizations.controls; let i = index" [formGroupName]="i">
+                        <div class="text-end">
+                            <span class="cursor-pointer" (click)="deleteOrganization(i)" aria-hidden="true">
+                                <i class="fas fa-trash text-danger"></i>
+                            </span>
+                        </div>
                         <div class="col-12">
                             <p class="mg-b-10">
                                 Name <span ngbTooltip="required" class="text-danger">*</span>
