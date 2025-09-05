@@ -201,18 +201,9 @@ export class EncounterFormComponent implements OnInit {
           }
 
           // If we have hospital name, add it as organization
-          // if (ocrData.hospital) {
-          //   // If not found, create a new organization entry
-          //   const newOrganization = new OrganizationModel({
-          //     resourceType: 'Organization',
-          //     id: uuidV4(),
-          //     name: ocrData.hospital,
-          //   });
-          //   this.addOrganization({
-          //     data: newOrganization,
-          //     action: 'create',
-          //   });
-          // }
+          if (ocrData.hospital) {
+            this.addOrganizationFormGroupFromOCR(ocrData.hospital);
+          }
         }
       })
     );
@@ -361,6 +352,12 @@ export class EncounterFormComponent implements OnInit {
       };
 
       medicationGroup.get('data')?.setValue(nlmSearchResult);
+    } else {
+      medicationGroup.get('data')?.setValue({
+        id: uuidV4(),
+        text: enrichedMed.extracted_name,
+        identifier: [uuidV4()],
+      });
     }
 
     // Set up the value change subscription for dosage enabling
@@ -504,14 +501,30 @@ export class EncounterFormComponent implements OnInit {
     this.practitioners.push(practitionerGroup);
   }
 
+  addOrganizationFormGroupFromOCR(hospitalName: string) {
+    const organizationGroup = new FormGroup({
+      name: new FormControl({ text: hospitalName }, Validators.required),
+      identifier: new FormControl([]),
+      type: new FormControl({ text: 'Hospital' }, Validators.required), // Add default type
+      phone: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+      fax: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+      email: new FormControl(null, Validators.email),
+      address: new FormGroup({
+        line1: new FormControl(null),
+        line2: new FormControl(null),
+        city: new FormControl(null),
+        state: new FormControl(null),
+        zip: new FormControl(null),
+        country: new FormControl(null),
+      }),
+    });
+
+    this.organizations.push(organizationGroup);
+  }
+
   addPractitioner(
     openPractitionerResult: WizardFhirResourceWrapper<PractitionerModel>
   ) {
-    const practitionerGroup = new FormGroup({
-      data: new FormControl(openPractitionerResult.data),
-      action: new FormControl(openPractitionerResult.action),
-    });
-
     this.foundPractitioners.push(openPractitionerResult.data); // Add to foundPractitioners list
   }
 
