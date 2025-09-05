@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
@@ -18,6 +19,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/handler"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/tls"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -29,20 +31,46 @@ type AppEngine struct {
 	deviceRepo database.DatabaseRepository
 
 	RelatedVersions map[string]string //related versions metadata provided & embedded by the build process
+	Srv             *http.Server      // Added to manage the HTTP server lifecycle
+}
+
+// Reinitialize re-initializes the AppEngine's components, specifically the database and routes.
+func (ae *AppEngine) Reinitialize() error {
+	ae.Logger.Info("Reinitializing AppEngine...")
+
+	// Shutdown existing server if it's running
+	if ae.Srv != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := ae.Srv.Shutdown(ctx); err != nil {
+			ae.Logger.Errorf("Error shutting down existing server: %v", err)
+			return err
+		}
+		ae.Logger.Info("Existing server shut down.")
+	}
+
+	if err := ae.initializeDatabase(); err != nil {
+		return err
+	}
+
+	// Re-setup routes
+	baseRouterGroup, ginRouter := ae.Setup()
+	ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
+
+	ae.startServer(ginRouter)
+
+	ae.Logger.Info("AppEngine reinitialized and server restarted.")
+	return nil
 }
 
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	r := gin.New()
 
-	//setup database
-	deviceRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
-	if err != nil {
-		panic(err)
+	// Only apply RepositoryMiddleware if deviceRepo is initialized
+	if ae.deviceRepo != nil {
+		r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
 	}
-	ae.deviceRepo = deviceRepo
-
 	r.Use(middleware.LoggerMiddleware(ae.Logger))
-	r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
 	r.Use(middleware.ConfigMiddleware(ae.Config))
 	r.Use(middleware.EventBusMiddleware(ae.EventBus))
 	r.Use(gin.Recovery())
@@ -54,13 +82,17 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	{
 		api := base.Group("/api")
 		{
-			api.Use(middleware.CacheMiddleware())
 			api.GET("/health", func(c *gin.Context) {
 				// This function does a quick check to see if the server is up and running
 				// it will also determine if we should show the first run wizard
 
-				//TODO:
-				// check if the /web folder is populated.
+				if ae.deviceRepo == nil { // Check ae.deviceRepo for standby mode
+					c.JSON(http.StatusBadRequest, gin.H{
+						"success": false,
+						"error":   "server_standby",
+					})
+					return
+				}
 
 				//get the count of users in the DB
 				databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
@@ -80,18 +112,31 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				c.JSON(http.StatusOK, gin.H{
 					"success": true,
 					"data": gin.H{
-						"first_run_wizard": userCount == 0,
+						"first_run_wizard":  userCount == 0,
+						"encryption_enabled": ae.Config.GetBool("database.encryption.enabled"),
 					},
 				})
 			})
 
-			api.POST("/auth/signup", handler.AuthSignup)
-			api.POST("/auth/signin", handler.AuthSignin)
+			if ae.Config.GetBool("database.encryption.enabled") {
+				encryptionKeyHandler := handler.NewEncryptionKeyHandler(ae.Config, ae.Logger, ae)
+				api.GET("/encryption-key", encryptionKeyHandler.GetEncryptionKey)
+				api.POST("/encryption-key", encryptionKeyHandler.SetupEncryptionKey)
+				api.POST("/encryption-key/validate", encryptionKeyHandler.ValidateEncryptionKey)
+			} else {
+				ae.Logger.Info("Database encryption is disabled, skipping encryption key endpoints.")
+			}
 
-			//whitelisted CORS PROXY
-			api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
-			api.POST("/cors/:endpointId/*proxyPath", handler.CORSProxy)
-			api.OPTIONS("/cors/:endpointId/*proxyPath", handler.CORSProxy)
+			//in standby mode, we only want to expose the minimum required endpoints
+			if ae.deviceRepo != nil { // Check ae.deviceRepo for standby mode
+				api.Use(middleware.CacheMiddleware())
+				api.POST("/auth/signup", handler.AuthSignup)
+				api.POST("/auth/signin", handler.AuthSignin)
+
+				//whitelisted CORS PROXY
+				api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
+				api.POST("/cors/:endpointId/*proxyPath", handler.CORSProxy)
+				api.OPTIONS("/cors/:endpointId/*proxyPath", handler.CORSProxy)
 
 			api.GET("/glossary/code", handler.GlossarySearchByCode)
 			api.POST("/support/request", handler.SupportRequest)
@@ -102,41 +147,41 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.GET("/account/me", handler.GetCurrentUser)
 				secure.DELETE("/account/me", handler.DeleteAccount)
 
-				secure.GET("/summary", handler.GetSummary)
-				secure.GET("/summary/ips", handler.GetIPSSummary)
+					secure.GET("/summary", handler.GetSummary)
+					secure.GET("/summary/ips", handler.GetIPSSummary)
 
-				secure.POST("/source", handler.CreateReconnectSource)
-				secure.POST("/source/manual", handler.CreateManualSource)
-				secure.GET("/source", handler.ListSource)
-				secure.GET("/source/:sourceId", handler.GetSource)
-				secure.DELETE("/source/:sourceId", handler.DeleteSource)
-				secure.POST("/source/:sourceId/sync", handler.SourceSync)
-				secure.GET("/source/:sourceId/summary", handler.GetSourceSummary)
-				secure.GET("/resource/fhir", handler.ListResourceFhir)
-				secure.POST("/resource/graph/:graphType", handler.GetResourceFhirGraph)
-				secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
-				secure.PATCH("/resource/fhir/:resourceType/:resourceId", handler.UpdateResourceFhir)
-				secure.DELETE("/resource/fhir/:resourceType/:resourceId", handler.DeleteResourceFhir)
+					secure.POST("/source", handler.CreateReconnectSource)
+					secure.POST("/source/manual", handler.CreateManualSource)
+					secure.GET("/source", handler.ListSource)
+					secure.GET("/source/:sourceId", handler.GetSource)
+					secure.DELETE("/source/:sourceId", handler.DeleteSource)
+					secure.POST("/source/:sourceId/sync", handler.SourceSync)
+					secure.GET("/source/:sourceId/summary", handler.GetSourceSummary)
+					secure.GET("/resource/fhir", handler.ListResourceFhir)
+					secure.POST("/resource/graph/:graphType", handler.GetResourceFhirGraph)
+					secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
+					secure.PATCH("/resource/fhir/:resourceType/:resourceId", handler.UpdateResourceFhir)
+					secure.DELETE("/resource/fhir/:resourceType/:resourceId", handler.DeleteResourceFhir)
 
-				secure.POST("/resource/composition", handler.CreateResourceComposition)
-				secure.POST("/resource/related", handler.CreateRelatedResources)
-				secure.DELETE("/encounter/:encounterId/related/:resourceType/:resourceId", handler.EncounterUnlinkResource)
+					secure.POST("/resource/composition", handler.CreateResourceComposition)
+					secure.POST("/resource/related", handler.CreateRelatedResources)
+					secure.DELETE("/encounter/:encounterId/related/:resourceType/:resourceId", handler.EncounterUnlinkResource)
 
-				secure.GET("/dashboards", handler.GetDashboard)
-				secure.POST("/dashboards", handler.AddDashboardLocation)
-				//secure.GET("/dashboard/:dashboardId", handler.GetDashboard)
+					secure.GET("/dashboards", handler.GetDashboard)
+					secure.POST("/dashboards", handler.AddDashboardLocation)
+					//secure.GET("/dashboard/:dashboardId", handler.GetDashboard)
 
-				secure.GET("/jobs", handler.ListBackgroundJobs)
-				secure.POST("/jobs/error", handler.CreateBackgroundJobError)
+					secure.GET("/jobs", handler.ListBackgroundJobs)
+					secure.POST("/jobs/error", handler.CreateBackgroundJobError)
 
-				secure.POST("/query", handler.QueryResourceFhir)
+					secure.POST("/query", handler.QueryResourceFhir)
 
-				secure.GET("/users", handler.GetUsers)
-				secure.POST("/users", handler.CreateUser)
+					secure.GET("/users", handler.GetUsers)
+					secure.POST("/users", handler.CreateUser)
 
-				secure.POST("/practitioners", handler.CreatePractitioner)
-				secure.PUT("/practitioners/:practitionerId", handler.UpdatePractitioner)
-				secure.GET("/practitioners/:practitionerId/history", handler.GetPractitionerEncounterHistory)
+					secure.POST("/practitioners", handler.CreatePractitioner)
+					secure.PUT("/practitioners/:practitionerId", handler.UpdatePractitioner)
+					secure.GET("/practitioners/:practitionerId/history", handler.GetPractitionerEncounterHistory)
 
 				// Address book favorite actions
 				secure.POST("/user/favorites", handler.AddPractitionerToFavorites)
@@ -150,13 +195,14 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 				secure.GET("/sync/discovery", handler.GetServerDiscovery)
 
-				//server-side-events handler (only supported on mac/linux)
-				// TODO: causes deadlock on Windows
-				if runtime.GOOS != "windows" {
-					secure.GET("/events/stream",
-						middleware.SSEHeaderMiddleware(),
-						handler.SSEEventBusServerHandler(ae.EventBus),
-					)
+					//server-side-events handler (only supported on mac/linux)
+					// TODO: causes deadlock on Windows
+					if runtime.GOOS != "windows" {
+						secure.GET("/events/stream",
+							middleware.SSEHeaderMiddleware(),
+							handler.SSEEventBusServerHandler(ae.EventBus),
+						)
+					}
 				}
 			}
 
@@ -313,12 +359,110 @@ func (ae *AppEngine) Start() error {
 		gin.SetMode(gin.DebugMode)
 	}
 
-	baseRouterGroup, ginRouter := ae.Setup()
-	err := ae.SetupInstallationRegistration()
-	if err != nil {
+	if err := ae.initializeDatabase(); err != nil {
 		return err
 	}
+
+	baseRouterGroup, ginRouter := ae.Setup()
+
+	// Only setup installation registration if deviceRepo is initialized
+	if ae.deviceRepo != nil {
+		err := ae.SetupInstallationRegistration()
+		if err != nil {
+			ae.Logger.Panicf("panic occurred:%v", err)
+		}
+	} else {
+		ae.Logger.Warn("Skipping SetupInstallationRegistration because deviceRepo is nil (in StandbyMode)")
+	}
+
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
 
-	return r.Run(fmt.Sprintf("%s:%s", ae.Config.GetString("web.listen.host"), ae.Config.GetString("web.listen.port")))
+	if ae.Config.GetBool("web.listen.https.enabled") {
+		certFile, keyFile, err := ae.setupTLS()
+		if err != nil {
+			return err
+		}
+		ae.Config.Set("web.listen.https.certFile", certFile)
+		ae.Config.Set("web.listen.https.keyFile", keyFile)
+	}
+
+	ae.startServer(r)
+
+	// Block indefinitely to keep the server running until process termination
+	select {}
+}
+
+func (ae *AppEngine) startServer(r *gin.Engine) {
+	host := ae.Config.GetString("web.listen.host")
+	port := ae.Config.GetString("web.listen.port")
+	listenAddr := fmt.Sprintf("%s:%s", host, port)
+
+	ae.Srv = &http.Server{
+		Addr:    listenAddr,
+		Handler: r,
+	}
+
+	go func() {
+		if ae.Config.GetBool("web.listen.https.enabled") {
+			certFile := ae.Config.GetString("web.listen.https.certFile")
+			keyFile := ae.Config.GetString("web.listen.https.keyFile")
+
+			ae.Logger.Infof("Using HTTPS cert: %s", certFile)
+			ae.Logger.Infof("Using HTTPS key:  %s", keyFile)
+
+			if err := ae.Srv.ListenAndServeTLS(certFile, keyFile); err != nil && err != http.ErrServerClosed {
+				ae.Logger.Fatalf("listen TLS: %s\n", err)
+			}
+		} else {
+			if err := ae.Srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+				ae.Logger.Fatalf("listen: %s\n", err)
+			}
+		}
+	}()
+}
+
+func (ae *AppEngine) initializeDatabase() error {
+	encryptionEnabled := ae.Config.GetBool("database.encryption.enabled")
+	encryptionKey := ae.Config.GetString("database.encryption.key")
+
+	if encryptionEnabled {
+		if encryptionKey == "" {
+			ae.Logger.Warningf("Database exists but encryption key is missing. Starting in STANDBY mode.")
+			// In standby mode, deviceRepo remains nil
+		} else {
+			ae.Logger.Info("Database and encryption key found. Initializing database.")
+			dbRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
+			if err != nil {
+				return fmt.Errorf("failed to initialize database repository: %w", err)
+			}
+			ae.deviceRepo = dbRepo
+		}
+	} else {
+		ae.Logger.Info("Database encryption is disabled. Initializing database without encryption.")
+		dbRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
+		if err != nil {
+			return fmt.Errorf("failed to initialize database repository: %w", err)
+		}
+		ae.deviceRepo = dbRepo
+	}
+	return nil
+}
+
+func (ae *AppEngine) setupTLS() (string, string, error) {
+	certDir := ae.Config.GetString("web.listen.https.certDir")
+	if certDir == "" {
+		certDir = "certs" // Default certificate directory for server certs and all keys
+	}
+	sharedDir := ae.Config.GetString("web.listen.https.sharedDir")
+	if sharedDir == "" {
+		sharedDir = "certs/shared" // Default shared directory for root CA public cert
+	}
+
+	ae.Logger.Infof("Ensuring TLS certificates in: %s", certDir)
+	ae.Logger.Infof("Ensuring TLS shared certificates in: %s", sharedDir)
+	certFile, keyFile, err := tls.GenerateCertificates(certDir, sharedDir, ae.Logger)
+	if err != nil {
+		return "", "", fmt.Errorf("failed to setup TLS certificates: %w", err)
+	}
+	return certFile, keyFile, nil
 }

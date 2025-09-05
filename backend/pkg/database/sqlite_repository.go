@@ -15,7 +15,7 @@ import (
 )
 
 // uses github.com/mattn/go-sqlite3 driver (warning, uses CGO)
-func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, eventBus event_bus.Interface) (DatabaseRepository, error) {
+func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLogger, eventBus event_bus.Interface, validationMode bool) (DatabaseRepository, error) {
 	//backgroundContext := context.Background()
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,14 +52,23 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 		"_journal_mode": "WAL",
 	}
 
-	//validation of encryption key happens in ValidateConfig method
-	if appConfig.IsSet("database.encryption.key") {
+	if validationMode {
+		pragmaOpts["mode"] = "ro"
+	}
+
+	if appConfig.GetBool("database.encryption.enabled") {
+		encryptionKey := appConfig.GetString("database.encryption.key")
+		if encryptionKey == "" {
+			return nil, fmt.Errorf("database encryption key is not set")
+		}
+
+		// Configure sqlcipher
 		pragmaOpts["_cipher"] = "sqlcipher"
 		pragmaOpts["_legacy"] = "3"
 		pragmaOpts["_hmac_use"] = "off"
 		pragmaOpts["_kdf_iter"] = "4000"
 		pragmaOpts["_legacy_page_size"] = "1024"
-		pragmaOpts["_key"] = appConfig.GetString("database.encryption.key")
+		pragmaOpts["_key"] = encryptionKey
 	}
 
 	pragmaStr := sqlitePragmaString(pragmaOpts)
@@ -99,15 +108,17 @@ func newSqliteRepository(appConfig config.Interface, globalLogger logrus.FieldLo
 		EventBus:   eventBus,
 	}
 
-	err = fastenRepo.Migrate()
-	if err != nil {
-		return nil, err
-	}
+	if !validationMode {
+		err = fastenRepo.Migrate()
+		if err != nil {
+			return nil, err
+		}
 
-	//fail any Locked jobs. This is necessary because the job may have been locked by a process that was killed.
-	err = fastenRepo.CancelAllLockedBackgroundJobsAndFail()
-	if err != nil {
-		return nil, err
+		//fail any Locked jobs. This is necessary because the job may have been locked by a process that was killed.
+		err = fastenRepo.CancelAllLockedBackgroundJobsAndFail()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &fastenRepo, nil

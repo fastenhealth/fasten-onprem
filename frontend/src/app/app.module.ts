@@ -43,6 +43,8 @@ import { IconsModule } from './icon-module';
 import { UserListComponent } from './pages/user-list/user-list.component';
 import { PractitionerHistoryComponent } from './pages/practitioner-history/practitioner-history.component';
 import { SettingsComponent } from './pages/settings/settings.component';
+import { SetupEncryptionKeyComponent } from './pages/setup-encryption-key/setup-encryption-key.component';
+import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wizard/get-encryption-key-wizard.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +68,8 @@ import { SettingsComponent } from './pages/settings/settings.component';
     AuthSignupWizardComponent,
     UserListComponent,
     PractitionerHistoryComponent,
+    SetupEncryptionKeyComponent,
+    GetEncryptionKeyWizardComponent,
   ],
   imports: [
     FormsModule,

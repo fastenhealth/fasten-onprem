@@ -1,0 +1,30 @@
+.opacity-20 {
+  opacity: 0.2;
+}
+
+.nopadding {
+  padding: 1px !important;
+  margin: 0px !important;
+}
+
+.outer-div {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 13;
+}
+
+.inner-div {
+  margin: 0 auto;
+}
+
+.az-card-signin {
+  background-color: white;
+  width: 450px;
+  box-shadow: 0 0 50px 0 rgba(207, 207, 207, 0.5);
+}
+
+textarea {
+  font-size: 0.9rem;
+}
