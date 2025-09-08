@@ -1,0 +1,908 @@
+.favorite-row {
+  background-color: #ffffff !important;
+}
+
+.favorite-row:hover {
+  background-color: rgba(0, 123, 255, 0.05) !important;
+}
+
+.favorite-row.selected {
+  background-color: #e3f2fd !important;
+  border-left: 3px solid #1976d2 !important;
+}
+
+/* Name cell container with star */
+.practitioner-name-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.practitioner-name {
+  flex: 1;
+  min-width: 0; /* Allow text to truncate if needed */
+}
+
+/* Favorite star button */
+.favorite-star {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0;
+  visibility: hidden;
+  margin-left: auto;
+  
+  &:hover {
+    color: #ffc107;
+    background-color: rgba(255, 193, 7, 0.1);
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &.active {
+    color: #ffc107;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.3);
+  }
+  
+  /* Star in actions column styling */
+  &.actions-star {
+    margin-left: 0;
+    margin-right: 8px;
+    font-size: 14px;
+    padding: 6px;
+    min-width: 28px;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Show star on row hover or when favorite */
+.table-row:hover .favorite-star {
+  opacity: 1;
+  visibility: visible;
+}
+
+.table-row .favorite-star.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Ensure name cell has enough space */
+.name-cell {
+  position: relative;
+  min-width: 200px;
+}
+
+/* CHECKBOX AND HEADER FIXES */
+
+/* Fix checkbox positioning issues */
+.checkbox-cell {
+  .form-check-input {
+    position: static !important; /* Ensure checkboxes are not absolutely positioned */
+    transform: none !important; /* Remove any transforms that might cause positioning issues */
+  }
+}
+
+/* Remove any problematic positioning from checkbox containers */
+.checkbox-container {
+  position: static !important;
+  transform: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.selection-header {
+  .dropdown {
+    .btn {
+      background: none;
+      color: #6c757d;
+      
+      &:hover {
+        color: #495057;
+        background-color: rgba(108, 117, 125, 0.1);
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+/* Ensure both header rows have identical heights and styling */
+.sticky-header {
+  th {
+    padding: 8px 16px;
+    vertical-align: middle;
+    height: 48px; /* Fixed height for consistency */
+    border-bottom: 1px solid #dee2e6;
+    
+    /* Ensure normal headers align text to start */
+    &:not(.selection-header):not(.actions-column) {
+      text-align: left !important;
+    }
+    
+    /* Keep checkbox centered */
+    &.selection-header {
+      text-align: center;
+      width: 50px !important;
+      min-width: 50px;
+      max-width: 50px;
+    }
+    
+    /* Actions column */
+    &.actions-column {
+      text-align: center;
+      width: 150px !important;
+      min-width: 150px;
+      max-width: 150px;
+      position: relative; /* Add positioning context */
+      overflow: visible; /* Allow dropdown to overflow */
+    }
+  }
+
+  /* Normal header styling */
+  .normal-header {
+    background-color: #f8f9fa;
+    
+    th {
+      background-color: #f8f9fa;
+    }
+  }
+
+  /* Selection mode header styling - same background as normal */
+  .selection-mode-header {
+    background-color: #e3f2fd;
+    
+    th {
+      background-color: #e3f2fd;
+      
+      /* Empty columns during selection should be invisible */
+      &:not(.selection-header):not(.selection-controls-column):not(.actions-column) {
+        background-color: #e3f2fd;
+        border-left: none;
+        border-right: none;
+      }
+    }
+    
+    .selection-controls-column {
+      .selection-controls-container {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        
+        .dropdown {
+          position: relative;
+
+          .btn {
+            background: none;
+            color: #6c757d;
+            font-size: 14px;
+            min-width: 20px; /* Smaller width */
+            min-height: 20px; /* Smaller height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            &:hover {
+              color: #495057;
+              background-color: rgba(108, 117, 125, 0.1);
+              border-radius: 4px;
+            }
+
+            &:focus {
+              outline: none;
+              box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.25);
+              border-radius: 4px;
+            }
+
+            i {
+              font-size: 12px; /* Smaller icon */
+            }
+          }
+
+          .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            z-index: 1000;
+            display: none;
+            
+            &.show {
+              display: block;
+            }
+          }
+        }
+        
+        .selected-count {
+          font-weight: 600;
+          color: #1976d2;
+          font-size: 14px;
+        }
+      }
+    }
+    
+    .actions-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      position: relative; /* Add positioning context */
+      
+      .dropdown {
+        position: relative; /* Ensure dropdown has positioning context */
+        
+        .btn {
+          background: none;
+          color: #6c757d;
+          font-size: 14px;
+          min-width: 24px;
+          min-height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          &:hover {
+            color: #495057;
+            background-color: rgba(108, 117, 125, 0.1);
+            border-radius: 4px;
+          }
+        }
+
+        /* Fix the dropdown menu positioning */
+        .dropdown-menu {
+          position: absolute !important;
+          top: 100% !important;
+          right: 0 !important; /* Align to right edge of button */
+          left: auto !important; /* Override any left positioning */
+          z-index: 1050 !important; /* Higher z-index to ensure it's on top */
+          transform: translateX(10px) !important; /* Pull slightly left to stay in bounds */
+          margin-top: 2px; /* Small gap from button */
+          
+          /* Ensure it's fully visible */
+          &.dropdown-menu-end {
+            right: 0 !important;
+            left: auto !important;
+            transform: translateX(10px) !important; /* Adjust to keep in view */
+          }
+          
+          &.show {
+            display: block !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Regular actions container (not in selection mode) */
+.actions-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative; /* Add positioning context */
+  
+  .dropdown {
+    position: relative; /* Ensure dropdown has positioning context */
+    
+    .btn {
+      background: none;
+      color: #6c757d;
+      font-size: 14px;
+      min-width: 24px;
+      min-height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      &:hover {
+        color: #495057;
+        background-color: rgba(108, 117, 125, 0.1);
+        border-radius: 4px;
+      }
+    }
+
+    /* Fix the dropdown menu positioning */
+    .dropdown-menu {
+      position: absolute !important;
+      top: 100% !important;
+      right: 0 !important; /* Align to right edge of button */
+      left: auto !important; /* Override any left positioning */
+      z-index: 1050 !important; /* Higher z-index to ensure it's on top */
+      transform: translateX(10px) !important; /* Pull slightly left to stay in bounds */
+      margin-top: 2px; /* Small gap from button */
+      
+      /* Ensure it's fully visible */
+      &.dropdown-menu-end {
+        right: 0 !important;
+        left: auto !important;
+        transform: translateX(10px) !important; /* Adjust to keep in view */
+      }
+      
+      &.show {
+        display: block !important;
+      }
+    }
+  }
+}
+
+/* DROPDOWN STYLES */
+
+.dropdown-menu-sm {
+  min-width: 150px;
+  font-size: 14px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  background-color: #fff;
+  padding: 4px 0;
+  z-index: 1050 !important; /* Ensure it's above everything */
+  
+  /* Positioning fixes */
+  position: absolute !important;
+  will-change: transform; /* Optimize for position changes */
+
+  .dropdown-item {
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    color: #212529;
+    white-space: nowrap; /* Prevent text wrapping */
+    display: flex;
+    align-items: center;
+    
+    &:hover {
+      background-color: #f8f9fa;
+    }
+
+    &.text-danger {
+      color: #dc3545;
+      
+      &:hover {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+    }
+
+    i {
+      width: 16px;
+      text-align: center;
+      margin-right: 8px;
+    }
+  }
+
+  .dropdown-divider {
+    margin: 4px 0;
+    border-top: 1px solid #dee2e6;
+  }
+}
+
+/* Custom dropdown toggle to remove Bootstrap styles */
+.dropdown-toggle-custom::after {
+  display: none !important;
+}
+
+/* Ensure containers don't clip dropdowns */
+.az-content,
+.container-fluid,
+.az-content-body {
+  overflow: visible !important; /* Allow dropdowns to overflow */
+}
+
+/* Ensure table doesn't clip dropdowns */
+.table-responsive,
+.table-container {
+  overflow: visible !important; /* Allow dropdowns to overflow */
+}
+
+/* TABLE STYLING */
+
+/* Ensure table body cells align with headers */
+.table {
+  thead th {
+    vertical-align: middle;
+  }
+
+  /* Column width consistency */
+  .checkbox-cell {
+    width: 50px;
+    text-align: center;
+  }
+
+  .actions-cell {
+    width: 150px;
+    text-align: center;
+    position: relative; /* Add positioning context */
+    overflow: visible; /* Allow dropdown to overflow */
+  }
+
+  /* Ensure text doesn't shift in table body */
+  tbody td {
+    vertical-align: middle;
+    padding: 8px 16px;
+  }
+
+  /* Table row hover actions */
+  .table-row {
+    cursor: pointer;
+
+    .action-buttons {
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    &:hover .action-buttons {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    /* Show actions star on hover or when active */
+    &:hover .actions-star {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .actions-star.active {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
+/* Remove any transitions that might cause jumping */
+.sticky-header tr {
+  transition: none; /* Remove transitions that cause jumping */
+}
+
+/* Ensure consistent column widths */
+.name-column { min-width: 200px; }
+.email-column { min-width: 180px; }
+.phone-column { min-width: 140px; }
+.job-title-column { min-width: 150px; }
+.organization-column { min-width: 150px; }
+
+/* CONTACT COPY FUNCTIONALITY */
+
+/* Contact copy functionality styles */
+.contact-with-copy {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px; /* Reduced gap to place icon closer to text */
+
+  .copy-btn {
+    opacity: 0;
+    visibility: hidden;
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-size: 12px;
+    padding: 2px 4px; /* Smaller padding for tighter spacing */
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    margin-left: 2px; /* Small margin to keep it close to text */
+
+    &:hover {
+      background-color: #f8f9fa;
+      color: #495057;
+      transform: scale(1.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+      background-color: #e9ecef;
+    }
+
+    i {
+      font-size: 9px;
+    }
+  }
+
+  &:hover .copy-btn {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Ensure the contact cells have enough space */
+.contact-cell, .phone-cell {
+  .contact-info {
+    min-height: 24px;
+    display: flex;
+    align-items: center;
+  }
+
+  .email-link, .phone-link {
+    color: #6f42c1;
+    text-decoration: none;
+    white-space: nowrap; /* Prevent text wrapping */
+    
+    &:hover {
+      text-decoration: underline;
+      color: #5a359a;
+    }
+  }
+}
+
+/* Optional: Add a subtle animation when copying */
+.copy-btn.copied {
+  color: #28a745;
+  
+  i::before {
+    content: "\f00c"; /* FontAwesome check icon */
+  }
+}
+
+/* FIXED HEADER AND SCROLLABLE TABLE LAYOUT */
+
+/* Table wrapper with fixed header - UPDATED TO ALLOW DROPDOWN OVERFLOW */
+.table-wrapper {
+  position: relative;
+  height: 70vh;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  overflow: visible; /* CHANGED: Allow dropdowns to overflow */
+  background: white;
+}
+
+/* Fixed header */
+.table-header-fixed {
+  position: sticky;
+  top: 0;
+  z-index: 10; /* Lower than dropdowns */
+  background: white;
+  border-bottom: 2px solid #dee2e6;
+
+  table {
+    margin-bottom: 0;
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  th {
+    background: white;
+    border-bottom: none;
+    padding: 1rem 0.75rem;
+    font-weight: 600;
+    height: 60px;
+    vertical-align: middle;
+    
+    /* Ensure column widths match body */
+    &:nth-child(1) {
+      width: 50px;
+      min-width: 50px;
+      max-width: 50px;
+    }
+    
+    &:nth-child(2) {
+      width: 25%;
+      min-width: 200px;
+    }
+    
+    &:nth-child(3) {
+      width: 20%;
+      min-width: 180px;
+    }
+    
+    &:nth-child(4) {
+      width: 15%;
+      min-width: 140px;
+    }
+    
+    &:nth-child(5) {
+      width: 15%;
+      min-width: 150px;
+    }
+    
+    &:nth-child(6) {
+      width: 15%;
+      min-width: 150px;
+    }
+    
+    &:nth-child(7) {
+      width: 150px;
+      min-width: 150px;
+      max-width: 150px;
+    }
+  }
+}
+
+/* Scrollable body - UPDATED TO ALLOW DROPDOWN OVERFLOW */
+.table-body-scrollable {
+  height: calc(100% - 60px);
+  overflow-y: auto;
+  overflow-x: visible; /* CHANGED: Allow horizontal overflow for dropdowns */
+  
+  /* Custom scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+    
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+
+  table {
+    margin-bottom: 0;
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  /* FIXED: Individual row actions cell */
+  .actions-cell {
+    position: relative;
+    overflow: visible; /* Allow dropdown overflow */
+    
+    .action-buttons {
+      position: relative;
+      
+      .dropdown {
+        position: relative;
+        
+        .btn {
+          background: none;
+          color: #6c757d;
+          font-size: 14px;
+          min-width: 24px;
+          min-height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: none;
+          
+          &:hover {
+            color: #495057;
+            background-color: rgba(24, 108, 182, 0.1);
+            border-radius: 4px;
+          }
+          
+          &:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.25);
+          }
+        }
+
+        /* FIXED: Individual row dropdown positioning */
+        .dropdown-menu {
+          position: absolute !important;
+          top: 100% !important;
+          right: 0 !important;
+          left: auto !important;
+          z-index: 1050 !important;
+          transform: translateX(0) !important; /* Remove problematic transform */
+          margin-top: 2px;
+          min-width: 150px;
+          
+          /* Ensure proper positioning for right-aligned dropdown */
+          &.dropdown-menu-start {
+            right: 0 !important;
+            left: auto !important;
+          }
+          
+          &.show {
+            display: block !important;
+          }
+        }
+      }
+    }
+  }
+
+  td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: middle;
+    
+    /* Match header column widths exactly */
+    &:nth-child(1) {
+      width: 50px;
+      min-width: 50px;
+      max-width: 50px;
+    }
+    
+    &:nth-child(2) {
+      width: 25%;
+      min-width: 200px;
+    }
+    
+    &:nth-child(3) {
+      width: 20%;
+      min-width: 180px;
+    }
+    
+    &:nth-child(4) {
+      width: 15%;
+      min-width: 140px;
+    }
+    
+    &:nth-child(5) {
+      width: 15%;
+      min-width: 150px;
+    }
+    
+    &:nth-child(6) {
+      width: 15%;
+      min-width: 150px;
+    }
+    
+    &:nth-child(7) {
+      width: 150px;
+      min-width: 150px;
+      max-width: 150px;
+      position: relative; /* Ensure positioning context */
+      overflow: visible; /* Allow dropdown overflow */
+    }
+  }
+}
+
+/* ALPHABETICAL INDICATOR AND EMPTY STATE */
+
+/* Alphabetical indicator (Google Contacts style) */
+.alphabetical-indicator {
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 15; /* Below dropdowns */
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .current-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 4px 12px var(--primary);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Hide actions when items are selected */
+.action-buttons.hidden {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Empty state overlay */
+.empty-state-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 100%;
+  
+  .empty-state {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+  }
+}
+
+/* MODERN TABLE STYLING */
+
+/* Ensure proper table styling */
+.modern-table {
+  margin-bottom: 0;
+  width: 100%;
+  table-layout: fixed;
+  
+  .table-row {
+    transition: background-color 0.15s ease;
+    
+    &:hover {
+      background-color: rgba(0, 123, 255, 0.05);
+      
+      .action-buttons {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+    
+    &.selected {
+      background-color: rgba(0, 123, 255, 0.1);
+    }
+    
+    .action-buttons {
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+      
+      &.hidden {
+        visibility: hidden !important;
+        opacity: 0 !important;
+      }
+    }
+  }
+}
+
+/* RESPONSIVE ADJUSTMENTS */
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .table-wrapper {
+    height: 60vh;
+  }
+  
+  .alphabetical-indicator {
+    right: 20px; /* Closer to edge on mobile */
+    
+    .current-letter {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+    }
+  }
+  
+  .table-header-fixed th,
+  .table-body-scrollable td {
+    padding: 0.5rem;
+    font-size: 14px;
+    
+    &:nth-child(5),
+    &:nth-child(6) {
+      display: none; /* Hide job title and organization on mobile */
+    }
+  }
+  
+  /* Hide star on mobile for space */
+  .favorite-star {
+    display: none;
+  }
+}

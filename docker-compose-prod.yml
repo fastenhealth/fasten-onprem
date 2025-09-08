@@ -2,8 +2,12 @@ version: "3.9"
 services:
   fasten-prod:
     image: ghcr.io/fastenhealth/fasten-onprem:main
+    hostname: ${HOSTNAME:-fasten}
+    environment:
+      - HOST_IP=${IP}
+      - HOST_PORT=${PORT}
+    ports:
+      - "${PORT:-9090}:8080"
     volumes:
       - ./db:/opt/fasten/db
       - ./cache:/opt/fasten/cache
-    ports:
-      - "9090:8080"

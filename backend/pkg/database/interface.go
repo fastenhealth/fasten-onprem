@@ -5,6 +5,7 @@ import (
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips"
 	sourcePkg "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/google/uuid"
 )
@@ -21,7 +22,9 @@ type DatabaseRepository interface {
 	DeleteCurrentUser(ctx context.Context) error
 	GetUsers(ctx context.Context) ([]models.User, error)
 
+	//get a count of every resource type
 	GetSummary(ctx context.Context) (*models.Summary, error)
+	GetInternationalPatientSummaryExport(ctx context.Context) (*ips.InternationalPatientSummaryExportData, error)
 
 	GetResourceByResourceTypeAndId(context.Context, string, string) (*models.ResourceBase, error)
 	GetResourceBySourceId(context.Context, string, string) (*models.ResourceBase, error)
@@ -34,6 +37,8 @@ type DatabaseRepository interface {
 	FindResourceAssociationsByTypeAndId(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string) ([]models.RelatedResource, error)
 	FindAllResourceAssociations(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string) ([]models.RelatedResource, error)
 	GetFlattenedResourceGraph(ctx context.Context, graphType pkg.ResourceGraphType, options models.ResourceGraphOptions) (map[string][]*models.ResourceBase, error)
+	DeleteResourceByTypeAndId(ctx context.Context, sourceResourceType string, sourceResourceId string) error
+	FindPractitionerEncounters(ctx context.Context, practitionerId string) ([]models.ResourceBase, error)
 
 	// Deprecated:This method has been deprecated. It has been replaced in favor of Fasten SourceCredential & associations
 	AddResourceComposition(ctx context.Context, compositionTitle string, resources []*models.ResourceBase) error
@@ -56,6 +61,12 @@ type DatabaseRepository interface {
 	UpdateBackgroundJob(ctx context.Context, backgroundJob *models.BackgroundJob) error
 	ListBackgroundJobs(ctx context.Context, queryOptions models.BackgroundJobQueryOptions) ([]models.BackgroundJob, error)
 
+	//favorites (Address book)
+	AddFavorite(ctx context.Context, userId string, sourceId string, resourceType string, resourceId string) error
+	RemoveFavorite(ctx context.Context, userId string, sourceId string, resourceType string, resourceId string) error
+	CheckFavoriteExists(ctx context.Context, userId string, sourceId string, resourceType string, resourceId string) (bool, error)
+	GetUserFavorites(ctx context.Context, userId string, resourceType string) ([]models.Favorite, error)
+
 	//settings
 	LoadSystemSettings(ctx context.Context) (*models.SystemSettings, error)
 	SaveSystemSettings(ctx context.Context, newSettings *models.SystemSettings) error
@@ -76,5 +87,12 @@ type DatabaseRepository interface {
 		targetResourceId string,
 	) error
 
-	UnlinkResourceWithSharedNeighbors(ctx context.Context, resourceType string, resourceId string, relatedResourceType string, relatedResourceId string) (int64, error) 
+	UnlinkResourceWithSharedNeighbors(ctx context.Context, resourceType string, resourceId string, relatedResourceType string, relatedResourceId string) (int64, error)
+
+	// Access Token Management
+	CreateAccessToken(ctx context.Context, accessToken *models.AccessToken) error
+	GetUserAccessTokens(ctx context.Context) ([]models.AccessToken, error)
+	DeleteAccessToken(ctx context.Context, tokenID string) error
+	GetAccessToken(ctx context.Context, tokenID string) (*models.AccessToken, error)
+	GetAccessTokenByTokenIDAndUsername(ctx context.Context, tokenID string, username string) (*models.AccessToken, error)
 }

@@ -29,6 +29,10 @@
         <li class="nav-item" *ngIf="isAdmin" ngbDropdown [ngClass]="{ 'active': users?.isActive }">
           <a routerLink="/users" routerLinkActive="active" #users="routerLinkActive" class="nav-link"><fa-icon [icon]="['fas', 'users']"></fa-icon>&nbsp; Users</a>
         </li>
+        <li class="nav-item" ngbDropdown [ngClass]="{ 'active': practitioners?.isActive }">
+          <a routerLink="/practitioners" routerLinkActive="active" #practitioners="routerLinkActive" class="nav-link"><fa-icon [icon]="['fas', 'id-card']"></fa-icon>&nbsp; Address book</a>
+        </li>
+
       </ul>
     </div><!-- az-header-menu -->
     <div class="az-header-right">
@@ -78,6 +82,7 @@
 
           <a (click)="openSupportForm(content)" class="dropdown-item  cursor-pointer"><i style="font-size: medium;" class="fas fa-question-circle"></i> Get Support</a>
           <a *ngIf="!is_environment_desktop" class="dropdown-item cursor-pointer" href="https://docs.fastenhealth.com/FUNDRAISING.html" externalLink><i style="font-size: medium;" class="fas fa-hand-holding-medical"></i> Donate</a>
+          <a routerLink="/settings" class="dropdown-item cursor-pointer"><i style="font-size: medium;" class="fas fa-cog"></i> Settings</a>
           <a (click)="signOut($event)" class="dropdown-item  cursor-pointer"><i style="font-size: medium;" class="fas fa-power-off"></i> Sign Out</a>
         </div><!-- dropdown-menu -->
       </div>

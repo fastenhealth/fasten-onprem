@@ -11,6 +11,7 @@ import (
 	_20240114103850 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240114103850"
 	_20240208112210 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240208112210"
 	_20240813222836 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20240813222836"
+	_20250730100000 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20250730100000"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
 	sourceCatalog "github.com/fastenhealth/fasten-sources/catalog"
@@ -223,6 +224,20 @@ func (gr *GormRepository) Migrate() error {
 					tx.Save(&user)
 				}
 				return nil
+			},
+		},
+		{
+			ID: "20250730100000",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&_20250730100000.Favorite{})
+			},
+		},
+		{
+			ID: "20250117131051", // add access token models for health wallet
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(
+					&models.AccessToken{},
+				)
 			},
 		},
 	})

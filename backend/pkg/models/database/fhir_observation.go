@@ -156,6 +156,9 @@ type FhirObservation struct {
 	*/
 	// https://hl7.org/fhir/r4/search.html#token
 	Identifier datatypes.JSON `gorm:"column:identifier;type:text;serializer:json" json:"identifier,omitempty"`
+	// Returns observation interpretation
+	// https://hl7.org/fhir/r4/search.html#token
+	Interpretation datatypes.JSON `gorm:"column:interpretation;type:text;serializer:json" json:"interpretation,omitempty"`
 	// Language of the resource content
 	// https://hl7.org/fhir/r4/search.html#token
 	Language datatypes.JSON `gorm:"column:language;type:text;serializer:json" json:"language,omitempty"`
@@ -174,12 +177,18 @@ type FhirObservation struct {
 	// The method used for the observation
 	// https://hl7.org/fhir/r4/search.html#token
 	Method datatypes.JSON `gorm:"column:method;type:text;serializer:json" json:"method,omitempty"`
+	// Notes/comments
+	// https://hl7.org/fhir/r4/search.html#string
+	Note datatypes.JSON `gorm:"column:note;type:text;serializer:json" json:"note,omitempty"`
 	// Part of referenced event
 	// https://hl7.org/fhir/r4/search.html#reference
 	PartOf datatypes.JSON `gorm:"column:partOf;type:text;serializer:json" json:"partOf,omitempty"`
 	// Who performed the observation
 	// https://hl7.org/fhir/r4/search.html#reference
 	Performer datatypes.JSON `gorm:"column:performer;type:text;serializer:json" json:"performer,omitempty"`
+	// Returns observation referenceRange
+	// https://hl7.org/fhir/r4/search.html#string
+	ReferenceRange datatypes.JSON `gorm:"column:referenceRange;type:text;serializer:json" json:"referenceRange,omitempty"`
 	// Specimen used for this observation
 	// https://hl7.org/fhir/r4/search.html#reference
 	Specimen datatypes.JSON `gorm:"column:specimen;type:text;serializer:json" json:"specimen,omitempty"`
@@ -190,11 +199,8 @@ type FhirObservation struct {
 	// https://hl7.org/fhir/r4/search.html#reference
 	Subject datatypes.JSON `gorm:"column:subject;type:text;serializer:json" json:"subject,omitempty"`
 	// Text search against the narrative
-	// This is a primitive string literal (`keyword` type). It is not a recognized SearchParameter type from https://hl7.org/fhir/r4/search.html, it's Fasten Health-specific
-	Text string `gorm:"column:text;type:text" json:"text,omitempty"`
-	// A resource type filter
-	// https://hl7.org/fhir/r4/search.html#special
-	Type datatypes.JSON `gorm:"column:type;type:text;serializer:json" json:"type,omitempty"`
+	// https://hl7.org/fhir/r4/search.html#string
+	Text datatypes.JSON `gorm:"column:text;type:text;serializer:json" json:"text,omitempty"`
 	// The value of the observation, if the value is a CodeableConcept
 	// https://hl7.org/fhir/r4/search.html#token
 	ValueConcept datatypes.JSON `gorm:"column:valueConcept;type:text;serializer:json" json:"valueConcept,omitempty"`
@@ -231,14 +237,17 @@ func (s *FhirObservation) GetSearchParameters() map[string]string {
 		"hasMember":                 "reference",
 		"id":                        "keyword",
 		"identifier":                "token",
+		"interpretation":            "token",
 		"language":                  "token",
 		"metaLastUpdated":           "date",
 		"metaProfile":               "reference",
 		"metaTag":                   "token",
 		"metaVersionId":             "keyword",
 		"method":                    "token",
+		"note":                      "string",
 		"partOf":                    "reference",
 		"performer":                 "reference",
+		"referenceRange":            "string",
 		"sort_date":                 "date",
 		"source_id":                 "keyword",
 		"source_resource_id":        "keyword",
@@ -247,8 +256,7 @@ func (s *FhirObservation) GetSearchParameters() map[string]string {
 		"specimen":                  "reference",
 		"status":                    "token",
 		"subject":                   "reference",
-		"text":                      "keyword",
-		"type":                      "special",
+		"text":                      "string",
 		"valueConcept":              "token",
 		"valueDate":                 "date",
 		"valueQuantity":             "quantity",
@@ -356,14 +364,14 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	// extracting Date
 	dateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'AllergyIntolerance.recordedDate | CarePlan.period | CareTeam.period | ClinicalImpression.date | Composition.date | Consent.dateTime | DiagnosticReport.effectiveDateTime | DiagnosticReport.effectivePeriod | Encounter.period | EpisodeOfCare.period | FamilyMemberHistory.date | Flag.period | (Immunization.occurrenceDateTime) | List.date | Observation.effectiveDateTime | Observation.effectivePeriod | Observation.effectiveTiming | Observation.effectiveInstant | Procedure.performedDateTime | Procedure.performedPeriod | Procedure.performedString | Procedure.performedAge | Procedure.performedRange | (RiskAssessment.occurrenceDateTime) | SupplyRequest.authoredOn')")
 	if err == nil && dateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, dateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, dateResult.String()); err == nil {
 			s.Date = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", dateResult.String())
-			if err == nil {
-				s.Date = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006-01", dateResult.String()); err == nil {
+			s.Date = &t
+		} else if t, err = time.Parse("2006", dateResult.String()); err == nil {
+			s.Date = &t
 		}
 	}
 	// extracting DerivedFrom
@@ -396,6 +404,11 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	if err == nil && identifierResult.String() != "undefined" {
 		s.Identifier = []byte(identifierResult.String())
 	}
+	// extracting Interpretation
+	interpretationResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'Observation.interpretation')")
+	if err == nil && interpretationResult.String() != "undefined" {
+		s.Interpretation = []byte(interpretationResult.String())
+	}
 	// extracting Language
 	languageResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, 'language')")
 	if err == nil && languageResult.String() != "undefined" {
@@ -404,14 +417,14 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	// extracting MetaLastUpdated
 	metaLastUpdatedResult, err := vm.RunString("extractDateSearchParameters(fhirResource, 'meta.lastUpdated')")
 	if err == nil && metaLastUpdatedResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, metaLastUpdatedResult.String()); err == nil {
 			s.MetaLastUpdated = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", metaLastUpdatedResult.String())
-			if err == nil {
-				s.MetaLastUpdated = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006-01", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
+		} else if t, err = time.Parse("2006", metaLastUpdatedResult.String()); err == nil {
+			s.MetaLastUpdated = &t
 		}
 	}
 	// extracting MetaProfile
@@ -434,6 +447,11 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	if err == nil && methodResult.String() != "undefined" {
 		s.Method = []byte(methodResult.String())
 	}
+	// extracting Note
+	noteResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'note')")
+	if err == nil && noteResult.String() != "undefined" {
+		s.Note = []byte(noteResult.String())
+	}
 	// extracting PartOf
 	partOfResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Observation.partOf')")
 	if err == nil && partOfResult.String() != "undefined" {
@@ -443,6 +461,11 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	performerResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Observation.performer')")
 	if err == nil && performerResult.String() != "undefined" {
 		s.Performer = []byte(performerResult.String())
+	}
+	// extracting ReferenceRange
+	referenceRangeResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'Observation.referenceRange')")
+	if err == nil && referenceRangeResult.String() != "undefined" {
+		s.ReferenceRange = []byte(referenceRangeResult.String())
 	}
 	// extracting Specimen
 	specimenResult, err := vm.RunString("extractReferenceSearchParameters(fhirResource, 'Observation.specimen')")
@@ -460,9 +483,9 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 		s.Subject = []byte(subjectResult.String())
 	}
 	// extracting Text
-	textResult, err := vm.RunString("extractSimpleSearchParameters(fhirResource, 'text')")
+	textResult, err := vm.RunString("extractStringSearchParameters(fhirResource, 'text')")
 	if err == nil && textResult.String() != "undefined" {
-		s.Text = textResult.String()
+		s.Text = []byte(textResult.String())
 	}
 	// extracting ValueConcept
 	valueConceptResult, err := vm.RunString("extractTokenSearchParameters(fhirResource, '(Observation.valueCodeableConcept)')")
@@ -472,14 +495,14 @@ func (s *FhirObservation) PopulateAndExtractSearchParameters(resourceRaw json.Ra
 	// extracting ValueDate
 	valueDateResult, err := vm.RunString("extractDateSearchParameters(fhirResource, '(Observation.valueDateTime) | (Observation.valuePeriod)')")
 	if err == nil && valueDateResult.String() != "undefined" {
-		t, err := time.Parse(time.RFC3339, valueDateResult.String())
-		if err == nil {
+		if t, err := time.Parse(time.RFC3339, valueDateResult.String()); err == nil {
 			s.ValueDate = &t
-		} else if err != nil {
-			d, err := time.Parse("2006-01-02", valueDateResult.String())
-			if err == nil {
-				s.ValueDate = &d
-			}
+		} else if t, err = time.Parse("2006-01-02", valueDateResult.String()); err == nil {
+			s.ValueDate = &t
+		} else if t, err = time.Parse("2006-01", valueDateResult.String()); err == nil {
+			s.ValueDate = &t
+		} else if t, err = time.Parse("2006", valueDateResult.String()); err == nil {
+			s.ValueDate = &t
 		}
 	}
 	// extracting ValueQuantity

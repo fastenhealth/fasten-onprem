@@ -1,0 +1,38 @@
+<!--/* VitalSigns -->
+<!--
+Code: Observation.code.text || Observation.code.coding[x].display (separated by <br />)
+Result: Observation.valueQuantity || Observation.valueDateTime || Observation.valueCodeableConcept.text || Observation.valueCodeableConcept.coding[x].display (separated by <br />) || Observation.valueString
+Unit: Observation.valueQuantity.unit
+Interpretation: Observation.interpretation[0].text || Observation.interpretation[0].coding[x].display (separated by <br />)
+Comments: Observation.note[x].text (separated by <br />)
+Date: Observation.effectiveDateTime || Observation.effectivePeriod.start
+*/-->
+<div xmlns:th="http://www.thymeleaf.org">
+   <h5>Vital Signs</h5>
+   <table class="hapiPropertyTable">
+      <thead>
+      <tr>
+         <th>Code</th>
+         <th>Result</th>
+         <th>Unit</th>
+         <th>Interpretation</th>
+         <th>Comments</th>
+         <th>Date</th>
+      </tr>
+      </thead>
+      <tbody>
+
+      {{- /*gotype: github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips.NarrativeTemplateData*/ -}}
+      {{range $index, $entry := .Observation }}
+         <tr id="{{$entry.SourceResourceID}}">
+            <td>{{pluckList "text" ($entry.Code | parseMapList) | uniq | join "," }}</td> {{/* Code */}}
+            <td>{{template "observation-value.gohtml" (dict "entry" $entry "include_unit" false)}}</td> {{/* Result */}}
+            <td>{{template "observation-unit.gohtml" $entry}}</td>
+            <td>{{pluckList "text" ($entry.Interpretation | parseMapList) | uniq | join "," }}</td> {{/* Interpretation */}}
+            <td>{{pluckList "text" ($entry.Note | parseMapList) | uniq | join "," }}</td> {{/* Comments */}}
+            <td>{{$entry.Date | date "2006-01-02"}}</td> {{/* Date */}}
+         </tr>
+      {{end}}  
+      </tbody>
+   </table>
+</div>

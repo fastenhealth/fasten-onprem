@@ -41,10 +41,13 @@ import { AuthSignupWizardComponent } from './pages/auth-signup-wizard/auth-signu
 import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard';
 import { IconsModule } from './icon-module';
 import { UserListComponent } from './pages/user-list/user-list.component';
+import { PractitionerHistoryComponent } from './pages/practitioner-history/practitioner-history.component';
+import { SettingsComponent } from './pages/settings/settings.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    SettingsComponent,
     HeaderComponent,
     FooterComponent,
     DashboardComponent,
@@ -62,6 +65,7 @@ import { UserListComponent } from './pages/user-list/user-list.component';
     BackgroundJobsComponent,
     AuthSignupWizardComponent,
     UserListComponent,
+    PractitionerHistoryComponent,
   ],
   imports: [
     FormsModule,
