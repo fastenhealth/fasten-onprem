@@ -48,6 +48,7 @@ import { OcrDataService } from 'src/app/services/ocr-data.service';
 import { Subscription } from 'rxjs';
 import { ResponseWrapper } from 'src/app/models/response-wrapper';
 import { Router } from '@angular/router';
+import { flattenTextFields, normalizeDates } from 'src/lib/utils/format_functions';
 
 interface NlmMedicationIdentifier {
   system: string;
@@ -109,9 +110,11 @@ export class EncounterFormComponent implements OnInit {
     this.form = new FormGroup({
       encounter: new FormGroup({
         data: new FormGroup({
-          code: new FormControl('', Validators.required),
-          period_start: new FormControl(''),
-          period_end: new FormControl(''),
+          code: new FormControl(null, Validators.required),
+          period_start: new FormControl(null, Validators.required),
+          period_end: new FormControl(null),
+          source_resource_type: new FormControl('Encounter'),
+          source_resource_id: new FormControl(null),
         }),
         action: new FormControl(null),
       }),
@@ -122,10 +125,6 @@ export class EncounterFormComponent implements OnInit {
       labresults: new FormArray([]),
       attachments: new FormArray([]),
     });
-
-    if (this.existingEncounter) {
-      this.addEncounter({ data: this.existingEncounter, action: 'find' });
-    }
 
     // Subscribe to OCR changes
     this.sub.add(
@@ -139,20 +138,24 @@ export class EncounterFormComponent implements OnInit {
               identifier: [ocrData.encounterType],
               text: ocrData.encounterType.display,
             });
-          }
 
-          if (ocrData.date) {
-            this.processOcrDate(ocrData, encounterGroup);
-          }
-
-          // If we have enough data from OCR to create an encounter, add it
-          if (ocrData.encounterType && ocrData.date) {
             const resultedEncounterModel =
               this.encounterFormToDisplayModel(encounterGroup);
+
+            // Set the source_resource_id and action in form
+            this.form
+              .get('encounter.data.source_resource_id')
+              ?.setValue(resultedEncounterModel.source_resource_id);
+            this.form.get('encounter.action')?.setValue('create');
+
             this.addEncounter({
               action: 'create',
               data: resultedEncounterModel,
             });
+          }
+
+          if (ocrData.date) {
+            this.processOcrDate(ocrData, encounterGroup);
           }
 
           // Process medications from OCR if available
@@ -194,7 +197,7 @@ export class EncounterFormComponent implements OnInit {
               // Generate a new UUID for source_resource_id
               newPractitioner.source_resource_id = uuidV4();
 
-              this.addPractitioner({ data: newPractitioner, action: 'create' });
+              this.foundPractitioners.push(newPractitioner); // Add to foundPractitioners list
               this.addPractitionerFormGroupFromOCR(ocrData.doctorName);
             }
           }
@@ -438,9 +441,9 @@ export class EncounterFormComponent implements OnInit {
         period_end.day
       ).toISOString();
     }
-    if (!encounter.source_resource_id) {
-      encounter.source_resource_id = uuidV4();
-    }
+
+    encounter.source_resource_id = uuidV4(); // Ensure source_resource_id is set
+
     return encounter;
   }
 
@@ -482,21 +485,24 @@ export class EncounterFormComponent implements OnInit {
 
   addPractitionerFormGroupFromOCR(doctorName: string) {
     const practitionerGroup = new FormGroup({
-      identifier: new FormControl([]),
-      name: new FormControl({ text: doctorName }, Validators.required),
-      profession: new FormControl(null, Validators.required),
-      phone: new FormControl(null, Validators.pattern('[- +()0-9]+')),
-      fax: new FormControl(null, Validators.pattern('[- +()0-9]+')),
-      email: new FormControl(null, Validators.email),
-      address: new FormGroup({
-        line1: new FormControl(null),
-        line2: new FormControl(null),
-        city: new FormControl(null),
-        state: new FormControl(null),
-        zip: new FormControl(null),
-        country: new FormControl(null),
+      data: new FormGroup({
+        identifier: new FormControl([]),
+        name: new FormControl({ text: doctorName }, Validators.required),
+        profession: new FormControl(null, Validators.required),
+        phone: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+        fax: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+        email: new FormControl(null, Validators.email),
+        address: new FormGroup({
+          line1: new FormControl(null),
+          line2: new FormControl(null),
+          city: new FormControl(null),
+          state: new FormControl(null),
+          zip: new FormControl(null),
+          country: new FormControl(null),
+        }),
+        source_resource_id: new FormControl(uuidV4()), // Generate a new UUID for source_resource_id
       }),
-      source_resource_id: new FormControl(uuidV4()), // Generate a new UUID for source_resource_id
+      action: new FormControl('create'),
     });
 
     this.practitioners.push(practitionerGroup);
@@ -504,21 +510,24 @@ export class EncounterFormComponent implements OnInit {
 
   addOrganizationFormGroupFromOCR(hospitalName: string) {
     const organizationGroup = new FormGroup({
-      name: new FormControl({ text: hospitalName }, Validators.required),
-      identifier: new FormControl([]),
-      type: new FormControl({ text: 'Hospital' }, Validators.required), // Add default type
-      phone: new FormControl(null, Validators.pattern('[- +()0-9]+')),
-      fax: new FormControl(null, Validators.pattern('[- +()0-9]+')),
-      email: new FormControl(null, Validators.email),
-      address: new FormGroup({
-        line1: new FormControl(null),
-        line2: new FormControl(null),
-        city: new FormControl(null),
-        state: new FormControl(null),
-        zip: new FormControl(null),
-        country: new FormControl(null),
+      data: new FormGroup({
+        name: new FormControl({ text: hospitalName }, Validators.required),
+        identifier: new FormControl([]),
+        type: new FormControl({ text: 'Hospital' }, Validators.required), // Add default type
+        phone: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+        fax: new FormControl(null, Validators.pattern('[- +()0-9]+')),
+        email: new FormControl(null, Validators.email),
+        address: new FormGroup({
+          line1: new FormControl(null),
+          line2: new FormControl(null),
+          city: new FormControl(null),
+          state: new FormControl(null),
+          zip: new FormControl(null),
+          country: new FormControl(null),
+        }),
+        source_resource_id: new FormControl(uuidV4()), // Generate a new UUID for source_resource_id
       }),
-      source_resource_id: new FormControl(uuidV4()), // Generate a new UUID for source_resource_id
+      action: new FormControl('create'),
     });
 
     this.organizations.push(organizationGroup);
@@ -863,7 +872,23 @@ export class EncounterFormComponent implements OnInit {
     if (this.form.valid) {
       this.submitWizardLoading = true;
 
-      let resourceStorage = GenerateR4ResourceLookup(this.form.getRawValue());
+      let formValue = this.form.getRawValue();
+
+      // Normalize only organizations and practitioners
+      formValue.organizations = formValue.organizations.map((org: any) => ({
+        ...org,
+        data: flattenTextFields(org.data),
+      }));
+
+      formValue.practitioners = formValue.practitioners.map((prac: any) => ({
+        ...prac,
+        data: flattenTextFields(prac.data),
+      }));
+
+      // Normalize dates in the entire form
+      formValue = normalizeDates(formValue);
+
+      let resourceStorage = GenerateR4ResourceLookup(formValue);
 
       //generate a ndjson file from the resourceList
       //make sure we extract the encounter resource
@@ -923,15 +948,15 @@ export class EncounterFormComponent implements OnInit {
         .subscribe(
           (resp) => {
             this.submitWizardLoading = false;
+            // Redirect user to /medical-history after successful submission
+            this.router.navigate(['/medical-history']);
           },
           (err) => {
+            console.error('Error submitting encounter form:', err);
             this.submitWizardLoading = false;
           }
         );
     }
-
-    // Redirect user to /medical-history after successful submission
-    this.router.navigate(['/medical-history']);
   }
 
   //<editor-fold desc="Helpers">
