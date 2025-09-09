@@ -13,6 +13,7 @@ import {fhirModelFactory} from '../../../lib/models/factory';
 import {RecResourceRelatedDisplayModel} from '../../../lib/utils/resource_related_display_model';
 import {EncounterModel} from '../../../lib/models/resources/encounter-model';
 import {uuidV4} from '../../../lib/utils/uuid';
+
 @Component({
   standalone: true,
   imports: [
