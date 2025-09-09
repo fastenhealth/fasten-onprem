@@ -45,6 +45,7 @@ export class ResourceOcrComponent implements OnInit {
   // Camera button
   onCameraClick() {
     this.settingsForm.value.mode = 'capture';
+    this.startedScan = true;
   }
 
   // Detect PDF vs Image

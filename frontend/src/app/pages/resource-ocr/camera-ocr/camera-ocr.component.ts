@@ -1,5 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
+import { OcrDataService } from 'src/app/services/ocr-data.service';
 @Component({
   selector: 'app-camera-ocr',
   templateUrl: './camera-ocr.component.html',
@@ -9,15 +10,20 @@ export class CameraOcrComponent {
   @ViewChild('video') videoRef!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  isCameraReady = false;
   capturedImages: string[] = [];
   ocrResults: string[] = [];
   currentIndex = 0;
   isProcessing = false;
   error: string | null = null;
   isCapturingNew = true;
+  ocrFiles: File[] = [];
+  foundKeys: string[] = [];
+  private stream: MediaStream | null = null;
 
-  constructor(private fastenApiService: FastenApiService) {}
+  constructor(
+    private fastenApiService: FastenApiService,
+    private ocrDataService: OcrDataService
+  ) {}
 
   ngAfterViewInit() {
     this.initCamera();
@@ -25,12 +31,18 @@ export class CameraOcrComponent {
 
   async initCamera() {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      this.videoRef.nativeElement.srcObject = stream;
+      this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      this.videoRef.nativeElement.srcObject = this.stream;
       this.videoRef.nativeElement.play();
-      this.isCameraReady = true;
     } catch (err) {
       this.error = 'Failed to access camera.';
+    }
+  }
+
+  stopCamera() {
+    if (this.stream) {
+      this.stream.getTracks().forEach((track) => track.stop());
+      this.stream = null;
     }
   }
 
@@ -48,34 +60,60 @@ export class CameraOcrComponent {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       const imageData = canvas.toDataURL('image/png');
       this.capturedImages.push(imageData);
-      this.ocrResults.push('');
       this.currentIndex = this.capturedImages.length - 1;
-      this.isCapturingNew = false; // Go back to preview mode
+      this.isCapturingNew = false;
     }
   }
 
-  sendToOcr() {
+  async sendAllToOcr() {
+    if (!this.capturedImages.length) return;
+
     this.isProcessing = true;
     this.error = null;
+    this.stopCamera();
 
-    // Convert base64 to Blob
-    fetch(this.capturedImages[this.currentIndex])
-      .then((res) => res.blob())
-      .then((blob) => {
-        const file = new File([blob], `capture-${this.currentIndex + 1}.png`, {
-          type: 'image/png',
-        });
-        this.fastenApiService.uploadOcrDocument(file).subscribe({
-          next: (result) => {
-            this.ocrResults[this.currentIndex] = result;
-            this.isProcessing = false;
-          },
-          error: () => {
-            this.error = 'OCR failed.';
-            this.isProcessing = false;
-          },
-        });
+    try {
+      // Convert all captured images to File objects
+      const files: File[] = await Promise.all(
+        this.capturedImages.map((img, i) =>
+          fetch(img)
+            .then((res) => res.blob())
+            .then(
+              (blob) =>
+                new File([blob], `capture-${i + 1}.png`, { type: 'image/png' })
+            )
+        )
+      );
+
+      // Send all images to the backend
+      this.fastenApiService.uploadOcrDocuments(files).subscribe({
+        next: (result) => {
+          let parsedResult: any;
+          try {
+            parsedResult = JSON.parse(result);
+          } catch {
+            parsedResult = result;
+          }
+
+          // Store files for the encounter form
+          this.ocrFiles = files;
+          this.ocrDataService.updateOcrData(parsedResult);
+          this.foundKeys = this.ocrDataService.extractFoundKeys(parsedResult);
+          this.isProcessing = false;
+          this.isCapturingNew = false;
+          this.currentIndex = 0;
+          this.isProcessing = false;
+        },
+        error: () => {
+          this.ocrDataService.updateOcrData({ error: '[Error during OCR]' });
+          this.isProcessing = false;
+        },
       });
+    } catch (err) {
+      console.error(err);
+      this.error = 'Failed to prepare images for OCR.';
+      this.isProcessing = false;
+    }
   }
 
   goToPrevious() {
@@ -89,6 +127,8 @@ export class CameraOcrComponent {
   prepareNewCapture() {
     if (this.capturedImages.length < 30) {
       this.isCapturingNew = true;
+      this.initCamera();
+      this.error = null;
     }
   }
 }
