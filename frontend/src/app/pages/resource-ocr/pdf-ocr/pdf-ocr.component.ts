@@ -23,6 +23,7 @@ export class PdfOcrComponent implements OnInit {
   maxPages = 30; // Default max pages
   scannedPages: number[] = [];
   foundKeys: string[] = [];
+  files: File[] = [];
 
   isProcessing = false;
 
@@ -49,6 +50,10 @@ export class PdfOcrComponent implements OnInit {
     reader.onload = async () => {
       const typedArray = new Uint8Array(reader.result as ArrayBuffer);
       const pdf: PDFDocumentProxy = await getDocument(typedArray).promise;
+
+      // Store the file reference
+      this.files = [incomingFile];
+
       const totalPages = pdf.numPages;
 
       // Limit to maxPages

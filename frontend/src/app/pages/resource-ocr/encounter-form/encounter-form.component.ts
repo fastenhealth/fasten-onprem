@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -48,7 +48,10 @@ import { OcrDataService } from 'src/app/services/ocr-data.service';
 import { Subscription } from 'rxjs';
 import { ResponseWrapper } from 'src/app/models/response-wrapper';
 import { Router } from '@angular/router';
-import { flattenTextFields, normalizeDates } from 'src/lib/utils/format_functions';
+import {
+  flattenTextFields,
+  normalizeDates,
+} from 'src/lib/utils/format_functions';
 
 interface NlmMedicationIdentifier {
   system: string;
@@ -75,6 +78,7 @@ interface EnrichedMedication {
   styleUrls: ['./encounter-form.component.scss'],
 })
 export class EncounterFormComponent implements OnInit {
+  @Input() uploadedFiles: File[] = [];
   private sub = new Subscription();
 
   form!: FormGroup;
@@ -217,6 +221,20 @@ export class EncounterFormComponent implements OnInit {
 
       this.fastenSourceId = fastenSource?.id ?? '';
     });
+  }
+
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
+    if (changes['uploadedFiles'] && this.uploadedFiles.length) {
+      // Save uploaded files to attachments for reference
+      for (const file of this.uploadedFiles) {
+        try {
+          const attachment = await this.processFileToAttachment(file);
+          this.addAttachment(attachment);
+        } catch (err) {
+          console.error('Error processing file', file.name, err);
+        }
+      }
+    }
   }
 
   ngOnDestroy() {
@@ -377,18 +395,23 @@ export class EncounterFormComponent implements OnInit {
   get medications(): FormArray<FormGroup> {
     return this.form.controls['medications'] as FormArray;
   }
+
   get procedures(): FormArray<FormGroup> {
     return this.form.controls['procedures'] as FormArray;
   }
+
   get practitioners(): FormArray<FormGroup> {
     return this.form.controls['practitioners'] as FormArray;
   }
+
   get organizations(): FormArray<FormGroup> {
     return this.form.controls['organizations'] as FormArray;
   }
+
   get labresults(): FormArray<FormGroup> {
     return this.form.controls['labresults'] as FormArray;
   }
+
   get attachments(): FormArray<FormGroup> {
     return this.form.controls['attachments'] as FormArray;
   }
@@ -398,18 +421,23 @@ export class EncounterFormComponent implements OnInit {
   deleteMedication(index: number) {
     this.medications.removeAt(index);
   }
+
   deleteProcedure(index: number) {
     this.procedures.removeAt(index);
   }
+
   deletePractitioner(index: number) {
     this.practitioners.removeAt(index);
   }
+
   deleteOrganization(index: number) {
     this.organizations.removeAt(index);
   }
+
   deleteLabResults(index: number) {
     this.labresults.removeAt(index);
   }
+
   deleteAttachment(index: number) {
     this.attachments.removeAt(index);
   }
@@ -548,6 +576,7 @@ export class EncounterFormComponent implements OnInit {
     });
     this.organizations.push(organizationGroup);
   }
+
   addAttachment(attachment: ResourceCreateAttachment) {
     const attachmentGroup = new FormGroup({
       id: new FormControl(attachment.id, Validators.required),
@@ -564,6 +593,7 @@ export class EncounterFormComponent implements OnInit {
 
     this.attachments.push(attachmentGroup);
   }
+
   addLabResultsBundle(
     diagnosticReportBundle: WizardFhirResourceWrapper<Bundle>
   ) {
@@ -613,6 +643,7 @@ export class EncounterFormComponent implements OnInit {
       () => {}
     );
   }
+
   openOrganizationModal(formGroup?: AbstractControl, controlName?: string) {
     let disabledResourceIds = [];
     disabledResourceIds.push(
@@ -647,6 +678,7 @@ export class EncounterFormComponent implements OnInit {
       () => {}
     );
   }
+
   openLabResultsModal() {
     let modalRef = this.modalService.open(
       MedicalRecordWizardAddLabResultsComponent,
@@ -664,6 +696,7 @@ export class EncounterFormComponent implements OnInit {
       () => {}
     );
   }
+
   openAttachmentModal(formGroup?: AbstractControl, controlName?: string) {
     let modalRef = this.modalService.open(
       MedicalRecordWizardAddAttachmentComponent,
@@ -677,6 +710,7 @@ export class EncounterFormComponent implements OnInit {
       (result) => {
         //add this to the list of organization
         result.id = uuidV4();
+        console.log(result);
         this.addAttachment(result);
 
         if (formGroup && controlName) {
@@ -744,6 +778,7 @@ export class EncounterFormComponent implements OnInit {
         .subscribe();
     });
   }
+
   openEditPractitionerModal(practitioner: PractitionerModel) {
     let modalRef = this.modalService.open(
       MedicalRecordWizardEditPractitionerComponent,
@@ -769,6 +804,7 @@ export class EncounterFormComponent implements OnInit {
         .subscribe();
     });
   }
+
   openEditProcedureModal(procedure: ProcedureModel) {
     let modalRef = this.modalService.open(
       MedicalRecordWizardEditProcedureComponent,
@@ -799,6 +835,7 @@ export class EncounterFormComponent implements OnInit {
         .subscribe();
     });
   }
+
   openEditOrganizationModal(organization: OrganizationModel) {
     let modalRef = this.modalService.open(
       MedicalRecordWizardEditOrganizationComponent,
@@ -824,6 +861,7 @@ export class EncounterFormComponent implements OnInit {
         .subscribe();
     });
   }
+
   openEditLabResultsModal(diagnosticReport: DiagnosticReportModel) {
     this.fastenApi
       .getResourceGraph(null, [
@@ -867,6 +905,7 @@ export class EncounterFormComponent implements OnInit {
         }
       });
   }
+
   onSubmit() {
     this.form.markAllAsTouched();
     if (this.form.valid) {
@@ -959,12 +998,57 @@ export class EncounterFormComponent implements OnInit {
     }
   }
 
-  //<editor-fold desc="Helpers">
-  private deepClone(obj: any): any {
-    if (!obj) return obj;
-    return JSON.parse(JSON.stringify(obj));
+  private processFileToAttachment(
+    file: File
+  ): Promise<ResourceCreateAttachment> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        try {
+          const base64String = (reader.result as string)
+            .replace('data:', '')
+            .replace(/^.+,/, ''); // strip "data:application/pdf;base64," etc.
+
+          const now = new Date();
+          // Format day to cleaner output
+          const formattedDate = `${now.getFullYear()}_${String(
+            now.getMonth() + 1
+          ).padStart(2, '0')}_${String(now.getDate()).padStart(2, '0')}`;
+
+          const name = `${file.name}_${formattedDate}`;
+
+          const attachment: ResourceCreateAttachment = {
+            id: crypto.randomUUID(),
+            category: {
+              id: '34109-9',
+              identifier: [
+                {
+                  system: 'http://loinc.org',
+                  code: '34109-9',
+                  display: 'Note',
+                },
+              ],
+              text: 'Note',
+            },
+            file_type: file.type,
+            file_name: file.name,
+            file_content: base64String,
+            file_size: file.size,
+            identifier: [],
+            name,
+          };
+
+          resolve(attachment);
+        } catch (e) {
+          reject(e);
+        }
+      };
+
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
+    });
   }
-  //</editor-fold>
 
   handleUnlinkRequested(model: FastenDisplayModel) {
     const modalRef = this.modalService.open(ConfirmationModalComponent, {
