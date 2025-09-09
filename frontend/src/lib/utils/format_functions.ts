@@ -36,23 +36,50 @@ export function flattenTextFields(obj: any): any {
   return newObj;
 }
 
-export function normalizeDates(obj: any): any {
+export function normalizeFormValues(
+  obj: any,
+  parentKey: string | null = null
+): any {
+  // Return primitives and null values as is
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
+  // If it's an array, recursively process each item
   if (Array.isArray(obj)) {
-    return obj.map(normalizeDates);
-  } else if (obj !== null && typeof obj === 'object') {
-    // Handle Angular datepicker object {year, month, day}
-    if ('year' in obj && 'month' in obj && 'day' in obj) {
+    return obj.map((item) => normalizeFormValues(item, parentKey));
+  }
+
+  // --- Logic from normalizeDates --- //
+
+  // Skip processing children of 'medications'
+  if (parentKey === 'medications') {
+    return obj;
+  }
+
+  // Handle Angular datepicker object: {year, month, day}
+  if ('year' in obj && 'month' in obj && 'day' in obj) {
+    // A simple check to avoid matching objects that coincidentally have these keys
+    if (Object.keys(obj).length === 3) {
       const date = new Date(obj.year, obj.month - 1, obj.day);
       return date.toISOString();
     }
-
-    const newObj: any = {};
-    for (const key of Object.keys(obj)) {
-      newObj[key] = normalizeDates(obj[key]);
-    }
-    return newObj;
   }
-  return obj;
+
+  // --- Combined Recursive Logic --- //
+  const newObj: any = {};
+  for (const key of Object.keys(obj)) {
+    // Logic from normalizeAddresses: if the key is 'address' and the value
+    // is a single object, wrap it in an array after processing its contents.
+    if (key === 'address' && obj[key] && !Array.isArray(obj[key])) {
+      newObj[key] = [normalizeFormValues(obj[key], key)];
+    } else {
+      // Recursively process all other key-value pairs
+      newObj[key] = normalizeFormValues(obj[key], key);
+    }
+  }
+
+  return newObj;
 }
 
 export function parsePractitionerName(fullName: string) {

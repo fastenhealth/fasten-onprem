@@ -50,7 +50,7 @@ import { ResponseWrapper } from 'src/app/models/response-wrapper';
 import { Router } from '@angular/router';
 import {
   flattenTextFields,
-  normalizeDates,
+  normalizeFormValues,
   parsePractitionerName,
 } from 'src/lib/utils/format_functions';
 
@@ -375,12 +375,6 @@ export class EncounterFormComponent implements OnInit {
       };
 
       medicationGroup.get('data')?.setValue(nlmSearchResult);
-    } else {
-      medicationGroup.get('data')?.setValue({
-        id: uuidV4(),
-        text: enrichedMed.extracted_name,
-        identifier: [uuidV4()],
-      });
     }
 
     // Set up the value change subscription for dosage enabling
@@ -910,12 +904,19 @@ export class EncounterFormComponent implements OnInit {
 
   onSubmit() {
     this.form.markAllAsTouched();
-    if (this.form.valid) {
-      this.submitWizardLoading = true;
+    if (!this.form.valid) {
+      // Exit early if the form is invalid
+      return;
+    }
 
+    this.submitWizardLoading = true;
+    this.error = null; // Clear previous errors
+
+    try {
+      // --- Synchronous Data Processing ---
       let formValue = this.form.getRawValue();
 
-      // Normalize only organizations and practitioners
+      // Normalize organizations and practitioners
       formValue.organizations = formValue.organizations.map((org: any) => ({
         ...org,
         data: flattenTextFields(org.data),
@@ -923,9 +924,7 @@ export class EncounterFormComponent implements OnInit {
 
       formValue.practitioners = formValue.practitioners.map((prac: any) => {
         const flattenedData = flattenTextFields(prac.data);
-
         const parsedName = parsePractitionerName(flattenedData.name);
-
         return {
           ...prac,
           data: {
@@ -935,15 +934,12 @@ export class EncounterFormComponent implements OnInit {
         };
       });
 
-      // Normalize dates in the entire form
-      formValue = normalizeDates(formValue);
+      // Normalize dates and addresses and generate resource lookup
+      formValue = normalizeFormValues(formValue);
+      const resourceStorage = GenerateR4ResourceLookup(formValue);
 
-      let resourceStorage = GenerateR4ResourceLookup(formValue);
-
-      //generate a ndjson file from the resourceList
-      //make sure we extract the encounter resource
-
-      let fhirListResource = {
+      // --- FHIR Resource Construction ---
+      const fhirListResource = {
         resourceType: 'List',
         entry: [],
         encounter: null,
@@ -951,26 +947,22 @@ export class EncounterFormComponent implements OnInit {
       } as List;
 
       let encounter = null;
-      for (let resourceType in resourceStorage) {
+      for (const resourceType in resourceStorage) {
         if (resourceType === 'Encounter') {
-          //set the encounter to the first encounter
-          let [encounterId] = Object.keys(resourceStorage[resourceType]);
+          const [encounterId] = Object.keys(resourceStorage[resourceType]);
           encounter = resourceStorage[resourceType][encounterId];
-
           if (!(encounter.type && encounter.reference)) {
-            //this is not a reference
             fhirListResource.contained.push(encounter);
           }
           continue;
         }
 
-        for (let resourceId in resourceStorage[resourceType]) {
-          let resourceFromStorage = resourceStorage[resourceType][resourceId];
+        for (const resourceId in resourceStorage[resourceType]) {
+          const resourceFromStorage = resourceStorage[resourceType][resourceId];
           if (
             (resourceFromStorage as Reference).type &&
             (resourceFromStorage as Reference).reference
           ) {
-            //this is a reference
             fhirListResource.entry.push({
               item: {
                 reference:
@@ -980,7 +972,6 @@ export class EncounterFormComponent implements OnInit {
               },
             });
           } else {
-            //this is not a reference
             fhirListResource.contained.push(
               resourceFromStorage as FhirResource
             );
@@ -988,27 +979,35 @@ export class EncounterFormComponent implements OnInit {
         }
       }
 
-      //set the encounter reference
+      // Set the encounter reference
       fhirListResource.encounter = {
         reference: generateReferenceUriFromResourceOrReference(encounter),
       };
 
       this.fastenApi
         .createRelatedResourcesFastenSource(fhirListResource)
-        .subscribe(
-          (resp) => {
+        .subscribe({
+          next: (resp) => {
             this.submitWizardLoading = false;
-            // Redirect user to /medical-history after successful submission
+
+            // On success, redirect the user
             this.router.navigate(['/medical-history']);
           },
-          (err) => {
+          error: (err) => {
+            // Handle HTTP errors from the API call
             this.error =
               err?.error?.message ||
               'An error occurred while submitting the form. Please try again.';
-            console.error(err);
+            console.error('API Error:', err);
             this.submitWizardLoading = false;
-          }
-        );
+          },
+        });
+    } catch (err) {
+      // Catches errors from the data processing steps above.
+      this.error =
+        'An unexpected error occurred while preparing your data. Please check the form and try again.';
+      console.error('Data Processing Error:', err);
+      this.submitWizardLoading = false; // Ensure loading is stopped
     }
   }
 
