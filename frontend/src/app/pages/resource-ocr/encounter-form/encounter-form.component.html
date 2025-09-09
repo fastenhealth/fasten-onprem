@@ -564,17 +564,31 @@
         </div>
     </div>
 
-    <div>
+    <div class="d-flex align-items-center mb-3">
+        <!-- Debug button -->
         <button [ngClass]="{
-    'btn-outline-dark': !debugMode,
-    'text-dark': !debugMode,
-    'btn-dark':debugMode,
-    'text-white':debugMode
-     }" type="button" class="btn mr-2" (click)="debugMode = !debugMode">
+      'btn-outline-dark': !debugMode,
+      'text-dark': !debugMode,
+      'btn-dark': debugMode,
+      'text-white': debugMode
+    }" type="button" class="btn mr-2" (click)="debugMode = !debugMode">
             <i class="fas fa-bug"></i>
         </button>
-        <button type="submit" class="btn btn-indigo" [disabled]="submitWizardLoading">
+
+        <!-- Save button -->
+        <button type="submit" class="btn btn-indigo mr-3" [disabled]="submitWizardLoading">
             Save
         </button>
+
+        <!-- Spinner -->
+        <div *ngIf="submitWizardLoading" class="spinner-border text-primary mr-2" role="status">
+            <span class="sr-only">Processing...</span>
+        </div>
+
+        <!-- Processing text -->
+        <div *ngIf="submitWizardLoading" class="text-muted">Processing...</div>
     </div>
+
+    <!-- Error shown below row -->
+    <div *ngIf="error" class="alert alert-danger mt-2 w-100">{{ error }}</div>
 </form>

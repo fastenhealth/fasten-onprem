@@ -51,6 +51,7 @@ import { Router } from '@angular/router';
 import {
   flattenTextFields,
   normalizeDates,
+  parsePractitionerName,
 } from 'src/lib/utils/format_functions';
 
 interface NlmMedicationIdentifier {
@@ -89,6 +90,7 @@ export class EncounterFormComponent implements OnInit {
   fastenSourceId = '';
   editMode = true; // Initially, the user starts in edit mode in order to adjust the form
   foundPractitioners = [];
+  error = '';
 
   constructor(
     private modalService: NgbModal,
@@ -919,10 +921,19 @@ export class EncounterFormComponent implements OnInit {
         data: flattenTextFields(org.data),
       }));
 
-      formValue.practitioners = formValue.practitioners.map((prac: any) => ({
-        ...prac,
-        data: flattenTextFields(prac.data),
-      }));
+      formValue.practitioners = formValue.practitioners.map((prac: any) => {
+        const flattenedData = flattenTextFields(prac.data);
+
+        const parsedName = parsePractitionerName(flattenedData.name);
+
+        return {
+          ...prac,
+          data: {
+            ...flattenedData,
+            name: [parsedName], // always array of structured names
+          },
+        };
+      });
 
       // Normalize dates in the entire form
       formValue = normalizeDates(formValue);
@@ -991,7 +1002,10 @@ export class EncounterFormComponent implements OnInit {
             this.router.navigate(['/medical-history']);
           },
           (err) => {
-            console.error('Error submitting encounter form:', err);
+            this.error =
+              err?.error?.message ||
+              'An error occurred while submitting the form. Please try again.';
+            console.error(err);
             this.submitWizardLoading = false;
           }
         );

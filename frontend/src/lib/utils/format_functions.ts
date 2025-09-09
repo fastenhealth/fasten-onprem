@@ -54,3 +54,38 @@ export function normalizeDates(obj: any): any {
   }
   return obj;
 }
+
+export function parsePractitionerName(fullName: string) {
+  if (!fullName) {
+    return {
+      familyName: '',
+      givenName: '',
+      suffix: '',
+      displayName: '',
+    };
+  }
+
+  // Keep the original
+  const displayName = fullName.trim();
+
+  // Split into parts by space
+  const parts = fullName
+    .replace(/^Dr\.?\s*/i, '')
+    .split(',')
+    .map((p) => p.trim());
+
+  let baseName = parts[0] || ''; // e.g. "Sarah Chen"
+  let suffix = parts[1] || ''; // e.g. "MD"
+
+  // Assume last word = familyName, rest = givenName
+  const nameParts = baseName.split(/\s+/);
+  const familyName = nameParts.pop() || '';
+  const givenName = nameParts.join(' ');
+
+  return {
+    familyName,
+    givenName,
+    suffix,
+    displayName,
+  };
+}
