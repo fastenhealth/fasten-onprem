@@ -1,0 +1,48 @@
+<div class="az-signin-wrapper">
+  <div class="az-card-signin">
+    <h1 class="az-logo">Fasten</h1>
+
+    <div class="az-signin-header">
+
+      <div>
+        <h2 class="mb-3">
+          <span>Access Restricted</span>
+        </h2>
+        <p class="text-muted">
+          <span>
+            Please provide the encryption key to regain access to the application.
+          </span>
+        </p>
+
+        <form [formGroup]="encryptionKeyForm" class="mt-4" (ngSubmit)="validateAndSetKey()">
+          <div class="form-group">
+            <label for="encryptionKey">Encryption Key</label>
+            <input type="text" id="encryptionKey" formControlName="encryptionKey" class="form-control"
+              [ngClass]="{ 'is-invalid': error }" placeholder="Paste your encryption key here" required [disabled]="isProcessing" />
+            <div *ngIf="error" class="invalid-feedback">
+              {{ statusMessage }}
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <button type="button" class="btn btn-az-primary btn-block"
+              [disabled]="isProcessing"
+              (click)="handleButtonClick()">
+              <span class="button-content-wrapper">
+                <span *ngIf="isProcessing && !isValidated" class="spinner-border spinner-border-sm mr-2"></span>
+                <fa-icon *ngIf="isValidated" [icon]="['fas', 'check-circle']" class="mr-2"></fa-icon>
+                <span>
+                  <ng-container *ngIf="!isProcessing && !isValidated && !error">Validate Key</ng-container>
+                  <ng-container *ngIf="isProcessing && !isValidated">{{ statusMessage }}</ng-container>
+                  <ng-container *ngIf="isValidated">{{ statusMessage }} ({{ countdown }}s)</ng-container>
+                  <ng-container *ngIf="error"><span>Try Again</span></ng-container>
+                </span>
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

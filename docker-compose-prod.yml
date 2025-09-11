@@ -11,3 +11,4 @@ services:
     volumes:
       - ./db:/opt/fasten/db
       - ./cache:/opt/fasten/cache
+      - ./certs:/opt/fasten/certs/shared

@@ -40,6 +40,7 @@ func (suite *RepositorySettingsTestSuite) BeforeTest(suiteName, testName string)
 	testConfig, err := config.Create()
 	require.NoError(suite.T(), err)
 	testConfig.SetDefault("database.location", suite.TestDatabase.Name())
+	testConfig.SetDefault("database.encryption.enabled", false)
 	testConfig.SetDefault("log.level", "INFO")
 	suite.TestConfig = testConfig
 
