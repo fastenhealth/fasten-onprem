@@ -1,19 +1,14 @@
-/* =====================================
- * Table and Dark Mode Styling
- * ===================================== */
-
- @media (prefers-color-scheme: dark) {
-    body:not(.light-theme) {
+@mixin dark-tables-styles {
 
         /* General table styles */
         table {
             background-color: var(--card);
             color: var(--dark-text-color);
 
-            >tbody {
-                background-color: var(--card) !important;
-            }
+        >tbody {
+            background-color: var(--card) !important;
         }
+    }
 
         td,
         th {
@@ -22,9 +17,6 @@
             border-color: var(--border);
         }
 
-        /* --- New/Updated Dark Mode Rules for Consistency --- */
-
-        /* Table Wrapper and Borders */
         .table-wrapper {
             border-color: var(--border) !important;
             background: var(--background) !important;
@@ -216,4 +208,13 @@
             }
         }
     }
-}
+    
+    @media (prefers-color-scheme: dark) {
+        body:not(.light-theme) {
+            @include dark-tables-styles;
+        }
+    }
+    
+    body.dark-theme {
+        @include dark-tables-styles;
+    }
