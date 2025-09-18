@@ -144,7 +144,7 @@ Next, open a browser to `https://localhost:9090`
 
 ### <a name="using-https"></a>🔒 Using HTTPS and Trusting the Self-Signed Certificate
 
-By default, Fasten On-Prem runs with HTTPS enabled to ensure your data is secure. It uses a self-signed **TLS** certificate, which offers the same level of encryption as a commercially issued certificate. However, since it's not issued by a trusted Certificate Authority (CA), your browser will display a security warning.
+By default, Fasten On-Prem runs with HTTPS enabled to ensure your data is secure. It uses a self-signed **TLS** certificate, which offers the same level of encryption as a commercially issued certificate. The first time you connect, your browser will display a security warning because it doesn't yet trust the certificate's issuer. The steps below will guide you through the simple, one-time process of telling your browser to trust the certificate, ensuring a secure connection without future warnings. Please note that the generated certificates can be replaced at any time with your own valid TLS certificates.
 
 #### How it Works: The Chain of Trust
 
