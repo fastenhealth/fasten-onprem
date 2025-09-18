@@ -141,7 +141,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				api.POST("/encryption-key", encryptionKeyHandler.SetEncryptionKey)
 				api.POST("/encryption-key/validate", encryptionKeyHandler.ValidateEncryptionKey)
 			} else {
-				ae.Logger.Info("Database encryption is enabled and key is set, skipping encryption key setup endpoints.")
+				ae.Logger.Info("Database StandbyMode is off, skipping encryption key setup endpoints.")
 			}
 
 			if !ae.StandbyMode { // Check ae.StandbyMode for non-standby mode
@@ -442,7 +442,7 @@ func (ae *AppEngine) initializeDatabase() error {
 	encryptionKey := ae.Config.GetString("database.encryption.key")
 
 	if encryptionEnabled && encryptionKey == "" {
-		ae.Logger.Warningf("Database exists but encryption key is missing. Starting in STANDBY mode.")
+		ae.Logger.Warningf("Encryption key is missing. Starting in STANDBY mode.")
 		ae.StandbyMode = true
 		// In standby mode, deviceRepo remains nil
 		return nil
@@ -452,7 +452,7 @@ func (ae *AppEngine) initializeDatabase() error {
 
 	// Initialize database if not in standby mode or encryption is disabled
 	if encryptionEnabled {
-		ae.Logger.Info("Database and encryption key found. Initializing database.")
+		ae.Logger.Info("Encryption key found. Initializing database.")
 	} else {
 		ae.Logger.Info("Database encryption is disabled. Initializing database without encryption.")
 	}
