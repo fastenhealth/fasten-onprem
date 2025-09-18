@@ -102,6 +102,9 @@ export class GetEncryptionKeyWizardComponent implements OnInit {
   encryptionKeyDownloaded = false;
   acknowledged = false;
   showEncryptionKey = false;
+  settingUpKey = false;
+  countdown: number = 5;
+  private countdownInterval: any;
 
   constructor(
     private fastenApiService: FastenApiService,
@@ -111,6 +114,12 @@ export class GetEncryptionKeyWizardComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchEncryptionKey();
+  }
+
+  ngOnDestroy() {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
   }
 
   fetchEncryptionKey(): void {
@@ -132,6 +141,19 @@ export class GetEncryptionKeyWizardComponent implements OnInit {
 
   toggleEncryptionKeyVisibility(): void {
     this.showEncryptionKey = !this.showEncryptionKey;
+  }
+
+  startCountdown(): void {
+    this.countdown = 5;
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+    this.countdownInterval = setInterval(() => {
+      this.countdown--;
+      if (this.countdown <= 0) {
+        this.redirectToSignup();
+      }
+    }, 1000);
   }
 
   private showToast(type: ToastType, message: string): void {
@@ -164,7 +186,31 @@ export class GetEncryptionKeyWizardComponent implements OnInit {
     }
   }
 
-  proceedToSignup(): void {
+  async proceedToSignup(): Promise<void> {
+    if (!this.encryptionKey) {
+      this.showToast(ToastType.Error, 'Encryption key is not available.');
+      return;
+    }
+
+    this.settingUpKey = true;
+    this.error = null;
+
+    try {
+      await this.fastenApiService.setupEncryptionKey(this.encryptionKey).toPromise();
+      this.showToast(ToastType.Success, 'Encryption key set up successfully! Redirecting...');
+      this.startCountdown();
+    } catch (err) {
+      this.error = 'Failed to set up encryption key. Please try again.';
+      this.showToast(ToastType.Error, this.error);
+      console.error(err);
+      this.settingUpKey = false; // Ensure settingUpKey is reset on error
+    }
+  }
+
+  redirectToSignup(): void {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
     this.router.navigate(['/auth/signup/wizard']);
   }
 }

@@ -1,38 +1,49 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import {
+  CanActivate,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+  Router,
+} from '@angular/router';
 import { FastenApiService } from '../services/fasten-api.service';
 
 interface Health {
   first_run_wizard: boolean;
-  encryption_enabled: boolean;
+  standby_mode: boolean;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EncryptionStatusGuard implements CanActivate {
-  constructor(private fastenService: FastenApiService, private router: Router) { }
+  constructor(
+    private fastenService: FastenApiService,
+    private router: Router
+  ) {}
 
   async canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Promise<boolean> {
     try {
-      const healthData: Health = await this.fastenService.getHealth().toPromise();
+      const healthData: Health = await this.fastenService
+        .getHealth()
+        .toPromise();
 
-      if (!healthData.encryption_enabled) {
+      if (!healthData.standby_mode) {
         return true;
       }
-    } catch (e: any) {
-      if (e?.error?.error === 'server_standby') {
-        // If server is on standby, encryption key needs to be restored
-        console.warn('Server is on standby, encryption key needs to be restored.');
-        return await this.router.navigate(['/encryption-key/wizard-restore']);
+
+      if (healthData.first_run_wizard) {
+        return await this.router.navigate(['encryption-key/wizard']);
       }
 
-      console.error("ignoring error:", e);
+      return await this.router.navigate(['encryption-key/wizard-restore']);
+    } catch (e: any) {
+      // if there is an error, just ignore it, and continue to the page.
+      console.error('ignoring error:', e);
     }
-    // Continue as normal if no encryption issues
+    // continue as normal
     return true;
   }
 }

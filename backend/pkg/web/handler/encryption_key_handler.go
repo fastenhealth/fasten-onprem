@@ -6,6 +6,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils" // Import the utils package
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -38,9 +39,10 @@ func NewEncryptionKeyHandler(appConfig config.Interface, logger *logrus.Entry, a
 
 // GetEncryptionKey handles the GET /api/encryption-key endpoint
 func (h *EncryptionKeyHandler) GetEncryptionKey(c *gin.Context) {
-	encryptionKey := h.AppConfig.GetString("database.encryption.key")
-	if encryptionKey == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "encryption key is missing"})
+	encryptionKey, err := utils.GenerateRandomKey(32)
+	if err != nil {
+		h.Logger.Errorf("failed to generate random key: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "internal server error"})
 		return
 	}
 
@@ -48,7 +50,7 @@ func (h *EncryptionKeyHandler) GetEncryptionKey(c *gin.Context) {
 }
 
 // SetupEncryptionKey handles the POST /api/encryption-key endpoint
-func (h *EncryptionKeyHandler) SetupEncryptionKey(c *gin.Context) {
+func (h *EncryptionKeyHandler) SetEncryptionKey(c *gin.Context) {
 	var payload EncryptionKeyPayload
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})

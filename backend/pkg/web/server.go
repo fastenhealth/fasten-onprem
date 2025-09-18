@@ -17,11 +17,12 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/tls"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/handler"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/tls"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"os"
 )
 
 type AppEngine struct {
@@ -29,6 +30,7 @@ type AppEngine struct {
 	Logger     *logrus.Entry
 	EventBus   event_bus.Interface
 	deviceRepo database.DatabaseRepository
+	StandbyMode bool
 
 	RelatedVersions map[string]string //related versions metadata provided & embedded by the build process
 	Srv             *http.Server      // Added to manage the HTTP server lifecycle
@@ -66,8 +68,7 @@ func (ae *AppEngine) Reinitialize() error {
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	r := gin.New()
 
-	// Only apply RepositoryMiddleware if deviceRepo is initialized
-	if ae.deviceRepo != nil {
+	if !ae.StandbyMode {
 		r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
 	}
 	r.Use(middleware.LoggerMiddleware(ae.Logger))
@@ -86,10 +87,21 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				// This function does a quick check to see if the server is up and running
 				// it will also determine if we should show the first run wizard
 
-				if ae.deviceRepo == nil { // Check ae.deviceRepo for standby mode
-					c.JSON(http.StatusBadRequest, gin.H{
-						"success": false,
-						"error":   "server_standby",
+				firstRunWizard := false
+
+				if ae.StandbyMode {
+					dbPath := ae.Config.GetString("database.location")
+					_, err := os.Stat(dbPath)
+					if os.IsNotExist(err) {
+						firstRunWizard = true
+					}
+
+					c.JSON(http.StatusOK, gin.H{
+						"success": true,
+						"data": gin.H{
+							"first_run_wizard":   firstRunWizard,
+							"standby_mode":       true,
+						},
 					})
 					return
 				}
@@ -108,27 +120,31 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					c.JSON(http.StatusInternalServerError, gin.H{"success": false})
 					return
 				}
+				firstRunWizard = userCount == 0
 
 				c.JSON(http.StatusOK, gin.H{
 					"success": true,
 					"data": gin.H{
-						"first_run_wizard":  userCount == 0,
-						"encryption_enabled": ae.Config.GetBool("database.encryption.enabled"),
+						"first_run_wizard":   firstRunWizard,
+						"standby_mode":       false,
 					},
 				})
 			})
 
-			if ae.Config.GetBool("database.encryption.enabled") {
+			// In standby mode, we only want to expose the encryption key setup endpoints
+			if ae.StandbyMode {
 				encryptionKeyHandler := handler.NewEncryptionKeyHandler(ae.Config, ae.Logger, ae)
+				// initial encryption key setup
 				api.GET("/encryption-key", encryptionKeyHandler.GetEncryptionKey)
-				api.POST("/encryption-key", encryptionKeyHandler.SetupEncryptionKey)
+
+				// encryption key restore
+				api.POST("/encryption-key", encryptionKeyHandler.SetEncryptionKey)
 				api.POST("/encryption-key/validate", encryptionKeyHandler.ValidateEncryptionKey)
 			} else {
-				ae.Logger.Info("Database encryption is disabled, skipping encryption key endpoints.")
+				ae.Logger.Info("Database encryption is enabled and key is set, skipping encryption key setup endpoints.")
 			}
 
-			//in standby mode, we only want to expose the minimum required endpoints
-			if ae.deviceRepo != nil { // Check ae.deviceRepo for standby mode
+			if !ae.StandbyMode { // Check ae.StandbyMode for non-standby mode
 				api.Use(middleware.CacheMiddleware())
 				api.POST("/auth/signup", handler.AuthSignup)
 				api.POST("/auth/signin", handler.AuthSignin)
@@ -138,14 +154,14 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				api.POST("/cors/:endpointId/*proxyPath", handler.CORSProxy)
 				api.OPTIONS("/cors/:endpointId/*proxyPath", handler.CORSProxy)
 
-			api.GET("/glossary/code", handler.GlossarySearchByCode)
-			api.POST("/support/request", handler.SupportRequest)
-			api.POST("/support/healthsystem", handler.HealthSystemRequest)
+				api.GET("/glossary/code", handler.GlossarySearchByCode)
+				api.POST("/support/request", handler.SupportRequest)
+				api.POST("/support/healthsystem", handler.HealthSystemRequest)
 
-			secure := api.Group("/secure").Use(middleware.RequireAuth())
-			{
-				secure.GET("/account/me", handler.GetCurrentUser)
-				secure.DELETE("/account/me", handler.DeleteAccount)
+				secure := api.Group("/secure").Use(middleware.RequireAuth())
+				{
+					secure.GET("/account/me", handler.GetCurrentUser)
+					secure.DELETE("/account/me", handler.DeleteAccount)
 
 					secure.GET("/summary", handler.GetSummary)
 					secure.GET("/summary/ips", handler.GetIPSSummary)
@@ -183,17 +199,17 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					secure.PUT("/practitioners/:practitionerId", handler.UpdatePractitioner)
 					secure.GET("/practitioners/:practitionerId/history", handler.GetPractitionerEncounterHistory)
 
-				// Address book favorite actions
-				secure.POST("/user/favorites", handler.AddPractitionerToFavorites)
-				secure.DELETE("/user/favorites", handler.RemovePractitionerFromFavorites)
-				secure.GET("/user/favorites", handler.GetUserFavoritePractitioners)
+					// Address book favorite actions
+					secure.POST("/user/favorites", handler.AddPractitionerToFavorites)
+					secure.DELETE("/user/favorites", handler.RemovePractitionerFromFavorites)
+					secure.GET("/user/favorites", handler.GetUserFavoritePractitioners)
 
-				// Access token management
-				secure.GET("/access/token", handler.GetAccessTokens)
-				secure.POST("/access/token", handler.CreateAccessToken)
-				secure.DELETE("/access/token", handler.DeleteAccessToken)
+					// Access token management
+					secure.GET("/access/token", handler.GetAccessTokens)
+					secure.POST("/access/token", handler.CreateAccessToken)
+					secure.DELETE("/access/token", handler.DeleteAccessToken)
 
-				secure.GET("/sync/discovery", handler.GetServerDiscovery)
+					secure.GET("/sync/discovery", handler.GetServerDiscovery)
 
 					//server-side-events handler (only supported on mac/linux)
 					// TODO: causes deadlock on Windows
@@ -365,14 +381,14 @@ func (ae *AppEngine) Start() error {
 
 	baseRouterGroup, ginRouter := ae.Setup()
 
-	// Only setup installation registration if deviceRepo is initialized
-	if ae.deviceRepo != nil {
+	// Only setup installation registration if not in StandbyMode
+	if !ae.StandbyMode {
 		err := ae.SetupInstallationRegistration()
 		if err != nil {
 			ae.Logger.Panicf("panic occurred:%v", err)
 		}
 	} else {
-		ae.Logger.Warn("Skipping SetupInstallationRegistration because deviceRepo is nil (in StandbyMode)")
+		ae.Logger.Warn("Skipping SetupInstallationRegistration because in StandbyMode")
 	}
 
 	r := ae.SetupFrontendRouting(baseRouterGroup, ginRouter)
@@ -425,26 +441,28 @@ func (ae *AppEngine) initializeDatabase() error {
 	encryptionEnabled := ae.Config.GetBool("database.encryption.enabled")
 	encryptionKey := ae.Config.GetString("database.encryption.key")
 
+	if encryptionEnabled && encryptionKey == "" {
+		ae.Logger.Warningf("Database exists but encryption key is missing. Starting in STANDBY mode.")
+		ae.StandbyMode = true
+		// In standby mode, deviceRepo remains nil
+		return nil
+	}
+
+	ae.StandbyMode = false
+
+	// Initialize database if not in standby mode or encryption is disabled
 	if encryptionEnabled {
-		if encryptionKey == "" {
-			ae.Logger.Warningf("Database exists but encryption key is missing. Starting in STANDBY mode.")
-			// In standby mode, deviceRepo remains nil
-		} else {
-			ae.Logger.Info("Database and encryption key found. Initializing database.")
-			dbRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
-			if err != nil {
-				return fmt.Errorf("failed to initialize database repository: %w", err)
-			}
-			ae.deviceRepo = dbRepo
-		}
+		ae.Logger.Info("Database and encryption key found. Initializing database.")
 	} else {
 		ae.Logger.Info("Database encryption is disabled. Initializing database without encryption.")
-		dbRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
-		if err != nil {
-			return fmt.Errorf("failed to initialize database repository: %w", err)
-		}
-		ae.deviceRepo = dbRepo
 	}
+
+	dbRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
+	if err != nil {
+		return fmt.Errorf("failed to initialize database repository: %w", err)
+	}
+	ae.deviceRepo = dbRepo
+
 	return nil
 }
 

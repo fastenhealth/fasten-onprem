@@ -58,8 +58,10 @@
             </div>
 
             <div class="mt-4 text-right">
-                <button class="btn btn-primary" [disabled]="!acknowledged || !encryptionKeyDownloaded" (click)="proceedToSignup()">
-                    Continue to Sign Up →
+                <button class="btn btn-primary" [disabled]="!acknowledged || !encryptionKeyDownloaded || settingUpKey" (click)="proceedToSignup()">
+                    <span *ngIf="settingUpKey" class="spinner-border spinner-border-sm mr-2"></span>
+                    <ng-container *ngIf="!settingUpKey">Continue to Sign Up →</ng-container>
+                    <ng-container *ngIf="settingUpKey">Setting up key... ({{ countdown }}s)</ng-container>
                 </button>
             </div>
         </div>
