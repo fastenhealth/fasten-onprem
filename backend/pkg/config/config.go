@@ -91,5 +91,46 @@ func (c *configuration) ValidateConfig() error {
 			return errors.ConfigValidationError("database.encryption.key must be at least 10 characters")
 		}
 	}
+
+	if c.IsSet("search") {
+		key := c.GetString("search.uri")
+		if key == "" {
+			return errors.ConfigValidationError("search.uri cannot be empty")
+		}
+		key = c.GetString("search.api_key")
+		if key == "" {
+			return errors.ConfigValidationError("search.api_key cannot be empty")
+		}
+		key = c.GetString("search.collection_name")
+		if key == "" {
+			return errors.ConfigValidationError("search.collection_name cannot be empty")
+		}
+	}
+
+	if c.IsSet("search.chat") {
+		key := c.GetString("search.chat.conversation_collection_name")
+		if key == "" {
+			return errors.ConfigValidationError("search.chat.conversation_collection_name cannot be empty")
+		}
+
+		key = c.GetString("search.chat.model.id")
+		if key == "" {
+			return errors.ConfigValidationError("search.chat.model.id cannot be empty")
+		}
+		key = c.GetString("search.chat.model.name")
+		if key == "" {
+			return errors.ConfigValidationError("search.chat.model.name cannot be empty")
+		}
+		key = c.GetString("search.chat.model.vllm_url")
+		if key == "" {
+			return errors.ConfigValidationError("search.chat.model.vllm_url cannot be empty")
+		}
+		key = c.GetString("search.chat.model.max_bytes")
+		if key == "" {
+			return errors.ConfigValidationError("search.chat.model.max_bytes cannot be empty")
+		}
+	}
+
+
 	return nil
 }

@@ -17,30 +17,30 @@
               <div class="patient-row row">
                 <div class="col-7 patient-name"><h3 class="pull-left text-primary">{{getPatientName()}}</h3></div>
                 <div class="col-5">
-                  <a [routerLink]="['/explore', selectedSource?.id, 'resource', selectedPatient?.source_resource_id]" class="btn btn-indigo btn-icon float-right">
+                  <a [routerLink]="['/explore', selectedSource?.id, 'resource', selectedPatient?.source_resource_id]" class="btn btn-indigo btn-icon float-end">
                     <i class="fas fa-info-circle"></i>
                   </a>
                 </div>
               </div>
               <div class="row">
-                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">Gender:</div>
-                <div class="col-xs-8 col-sm-3 col-lg-3 text-left p-0">{{getPatientGender()}}</div>
-                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">DOB:</div>
-                <div class="col-xs-8 col-sm-5 col-lg-3 text-left p-0">{{getPatientDOB()}}</div>
-                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">Age:</div>
-                <div class="col-xs-8 col-sm-3 col-lg-3 text-left p-0">{{getPatientAge()}} Years Old</div>
-                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">Email:</div>
-                <div class="col-xs-8 col-sm-5 col-lg-3 text-left p-0">{{getPatientEmail()}}</div>
-                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">Phone:</div>
-                <div class="col-xs-8 col-sm-3 col-lg-3 text-left p-0">{{getPatientPhone()}}</div>
-                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">Address:</div>
-                <div class="col-xs-8 col-sm-5 col-lg-3 text-left p-0">
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-end text-muted">Gender:</div>
+                <div class="col-xs-8 col-sm-3 col-lg-3 text-start p-0">{{getPatientGender()}}</div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-end text-muted">DOB:</div>
+                <div class="col-xs-8 col-sm-5 col-lg-3 text-start p-0">{{getPatientDOB()}}</div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-end text-muted">Age:</div>
+                <div class="col-xs-8 col-sm-3 col-lg-3 text-start p-0">{{getPatientAge()}} Years Old</div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-end text-muted">Email:</div>
+                <div class="col-xs-8 col-sm-5 col-lg-3 text-start p-0">{{getPatientEmail()}}</div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-end text-muted">Phone:</div>
+                <div class="col-xs-8 col-sm-3 col-lg-3 text-start p-0">{{getPatientPhone()}}</div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-end text-muted">Address:</div>
+                <div class="col-xs-8 col-sm-5 col-lg-3 text-start p-0">
                   <div *ngFor="let line of getPatientAddress()">{{line}}</div>
                 </div>
-                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">ID:</div>
-                <div class="col-xs-8 col-sm-3 col-lg-3 text-left p-0 text-overflow-ellipsis ">{{selectedPatient?.source_resource_id}}</div>
-                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">MRN:</div>
-                <div class="col-xs-8 col-sm-5 col-lg-3 text-left p-0 text-overflow-ellipsis">{{getPatientMRN()}}</div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-end text-muted">ID:</div>
+                <div class="col-xs-8 col-sm-3 col-lg-3 text-start p-0 text-overflow-ellipsis ">{{selectedPatient?.source_resource_id}}</div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-end text-muted">MRN:</div>
+                <div class="col-xs-8 col-sm-5 col-lg-3 text-start p-0 text-overflow-ellipsis">{{getPatientMRN()}}</div>
               </div>
             </div>
           </div>

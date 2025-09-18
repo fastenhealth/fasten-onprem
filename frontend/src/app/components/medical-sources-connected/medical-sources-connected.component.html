@@ -40,7 +40,7 @@
 
   <div class="modal-footer">
 
-    <a [routerLink]="['/explore', modalSelectedSourceListItem?.source?.id]" (click)="modal.close()" class="btn btn-indigo mr-auto">Explore</a>
+    <a [routerLink]="['/explore', modalSelectedSourceListItem?.source?.id]" (click)="modal.close()" class="btn btn-indigo me-auto">Explore</a>
 
 
     <div *ngIf="modalSelectedSourceListItem?.source?.platform_type != 'fasten'" class="d-inline-block" ngbDropdown>

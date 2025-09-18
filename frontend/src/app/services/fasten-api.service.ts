@@ -32,6 +32,7 @@ import {FormRequestHealthSystem} from '../models/fasten/form-request-health-syst
 import { UpdateResourcePayload } from '../models/fasten/resource_update';
 import { Favorite } from '../pages/practitioner-list/practitioner-list.component';
 
+import { TypesenseDocument, TypesenseSearchResponse, TypesenseSearchSummaryResponse } from '../models/typesense/typesense-result-model';
 @Injectable({
   providedIn: 'root'
 })
@@ -97,6 +98,54 @@ export class FastenApiService {
           return response.data as DashboardConfig[]
         })
       );
+  }
+
+  searchResources(params: {
+    query?: string;
+    type?: string;
+    page?: number;
+    per_page?: number;
+  }): Observable<TypesenseSearchResponse> {
+       let queryParams = {};
+       if (params.query) {
+         queryParams['q'] = params.query;
+       }
+       if (params.page !== undefined) {
+         queryParams['page'] = params.page;
+       }
+       if (params.per_page !== undefined) {
+         queryParams['per_page'] = params.per_page;
+       }
+       if (params.type) {
+         queryParams['type'] = params.type;
+       }
+
+       return this._httpClient.get<
+         TypesenseSearchResponse
+       >(
+         `${GetEndpointAbsolutePath(
+           globalThis.location,
+           environment.fasten_api_endpoint_base
+         )}/secure/resource/search`,
+         { params: queryParams }
+       );
+  }
+
+  searchSingleResource(params: {
+    id?: string;
+  }): Observable<{response: {resource: TypesenseDocument}}> {
+       if (!params?.id) {
+         return of({response: null});
+       }
+
+       return this._httpClient.get<
+         {response: {resource: TypesenseDocument}}
+       >(
+         `${GetEndpointAbsolutePath(
+           globalThis.location,
+           environment.fasten_api_endpoint_base
+         )}/secure/resource/search/${params.id}`,
+       );
   }
 
   getSummary(): Observable<Summary> {
@@ -180,6 +229,15 @@ export class FastenApiService {
       .pipe(
         map((response: ResponseWrapper) => {
           return response.data as SourceSummary
+        })
+      );
+  }
+
+  getResourceSummary(): Observable<TypesenseSearchSummaryResponse> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/summary`)
+      .pipe(
+        map((response: TypesenseSearchSummaryResponse) => {
+          return response
         })
       );
   }
@@ -459,12 +517,12 @@ export class FastenApiService {
             let fax: string | undefined;
             let faxUse: string | undefined;
             let primaryTelecom: any;
-  
+
             if (item.resource_raw.telecom && Array.isArray(item.resource_raw.telecom)) {
               item.resource_raw.telecom.forEach((telecom: any) => {
                 switch (telecom.system) {
                   case 'email':
-                    if (!email) { 
+                    if (!email) {
                       email = telecom.value?.toLowerCase();
                       emailUse = telecom.use || 'work';
                     }
@@ -476,9 +534,9 @@ export class FastenApiService {
                     }
                     break;
                   case 'fax':
-                    if (!fax) { 
+                    if (!fax) {
                       fax = telecom.value;
-                      faxUse = telecom.use || 'work'; 
+                      faxUse = telecom.use || 'work';
                     }
                     break;
                 }
@@ -501,10 +559,10 @@ export class FastenApiService {
                   break;
               }
             }
-  
+
             let jobTitle: string | undefined;
             let organization: string | undefined;
-  
+
             if (item.resource_raw.qualification && Array.isArray(item.resource_raw.qualification)) {
               const firstQualification = item.resource_raw.qualification[0];
               if (firstQualification?.code?.coding) {
@@ -520,7 +578,7 @@ export class FastenApiService {
                 organization = firstQualification.issuer.reference.replace('Organization/', '');
               }
             }
-  
+
             if (!jobTitle && item.resource_raw.practitionerRole) {
               if (Array.isArray(item.resource_raw.practitionerRole)) {
                 const role = item.resource_raw.practitionerRole[0];
@@ -532,9 +590,9 @@ export class FastenApiService {
                 }
               }
             }
-  
+
             if (!jobTitle && item.resource_raw.extension) {
-              const specialtyExtension = item.resource_raw.extension.find((ext: any) => 
+              const specialtyExtension = item.resource_raw.extension.find((ext: any) =>
                 ext.url?.includes('specialty') || ext.url?.includes('job') || ext.url?.includes('title')
               );
               if (specialtyExtension?.valueString) {
@@ -543,17 +601,17 @@ export class FastenApiService {
                 jobTitle = specialtyExtension.valueCoding.display;
               }
             }
-  
+
             const practitioner: Practitioner = {
               source_resource_id: item.source_resource_id,
               source_id: item.source_id,
               source_resource_type: item.source_resource_type,
               full_name: item.resource_raw.name?.[0]?.text || item?.sort_title || 'N/A',
               address: item.resource_raw.address?.[0] || {
-                line: [], 
-                city: '', 
-                state: '', 
-                postalCode: '', 
+                line: [],
+                city: '',
+                state: '',
+                postalCode: '',
                 country: ''
               },
               email: email,
@@ -562,26 +620,26 @@ export class FastenApiService {
               phoneUse: phoneUse,
               fax: fax,
               faxUse: faxUse,
-              
+
               jobTitle: jobTitle,
               organization: organization,
               qualification: item.resource_raw.qualification,
-              
+
               telecom: primaryTelecom || {
-                system: '', 
-                value: '', 
+                system: '',
+                value: '',
                 use: ''
               },
-              
+
               formattedAddress: '',
               formattedTelecom: '',
 
               resource_raw: item.resource_raw
             };
-  
+
             return practitioner;
           });
-          
+
           console.log('Fetched practitioners with job title, organization, and contact use properties:', practitioners);
           return practitioners as Practitioner[];
         })
@@ -596,7 +654,7 @@ export class FastenApiService {
         })
       );
   }
-  
+
   deletePractitioner(practitionerId: string): Observable<any> {
     return this.deleteResourceFhir('Practitioner', practitionerId);
   }
@@ -656,17 +714,17 @@ export class FastenApiService {
   getUserFavorites(resourceType?: string): Observable<Favorite[]> {
     let endpointUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/user/favorites`;
     let queryParams = {};
-    
+
     if (resourceType) {
       queryParams['resource_type'] = resourceType;
     }
-    
+
     return this._httpClient.get<any>(endpointUrl, { params: queryParams })
       .pipe(
         map((response: ResponseWrapper) => {
           return response.data;
         })
       );
-    
+
   }
 }
