@@ -111,7 +111,6 @@ func main() {
 						}
 					}()
 
-
 					settingsData, err := json.Marshal(appconfig.AllSettings())
 					appLogger.Debug(string(settingsData), err)
 
