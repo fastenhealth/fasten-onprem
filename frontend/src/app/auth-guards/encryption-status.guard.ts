@@ -30,18 +30,20 @@ export class EncryptionStatusGuard implements CanActivate {
         .getHealth()
         .toPromise();
 
-      if (!healthData.standby_mode) {
-        return true;
+      if (healthData.standby_mode) {
+        if (healthData.first_run_wizard) {
+          return await this.router.navigate(['encryption-key/wizard']);
+        } else {
+          return await this.router.navigate(['encryption-key/wizard-restore']);
+        }
       }
 
       if (healthData.first_run_wizard) {
-        return await this.router.navigate(['encryption-key/wizard']);
+        return await this.router.navigate(['/auth/signup/wizard']);
       }
-
-      return await this.router.navigate(['encryption-key/wizard-restore']);
     } catch (e: any) {
-      // if there is an error, just ignore it, and continue to the page.
-      console.error('ignoring error:', e);
+      // If there is an error, log it and allow navigation to continue.
+      console.error('Error in EncryptionStatusGuard, ignoring and continuing navigation:', e);
     }
     // continue as normal
     return true;
