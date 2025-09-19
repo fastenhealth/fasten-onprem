@@ -1,7 +1,4 @@
-@media (prefers-color-scheme: dark) {
-    body:not(.light-theme) {
-
-        /* --- User-provided rules --- */
+@mixin dark-forms-styles {
         .input-group {
             .input-group-prepend {
                 .input-group-text {
@@ -11,11 +8,11 @@
                 }
             }
 
-            .form-control {
-                background-color: var(--card);
-                color: var(--dark-text-color);
-                border-color: var(--border);
-            }
+        .form-control {
+            background-color: var(--card);
+            color: var(--dark-text-color);
+            border-color: var(--border);
+        }
 
             .input-group-append {
                 .input-group-text {
@@ -26,35 +23,34 @@
             }
         }
 
-        // Form control (Users)
-        .form-control {
-            background-color: var(--card);
-            color: var(--dark-text-color);
-            border-color: var(--border);
-        }
+    // Form control (Users)
+    .form-control {
+        background-color: var(--card);
+        color: var(--dark-text-color);
+        border-color: var(--border);
+    }
 
-        // Manual upload dropzone (Sources)
-        ngx-dropzone {
-            background-color: var(--background);
-            border: 1px dashed var(--border);
-            color: var(--dark-text-color);
-        }
+    // Manual upload dropzone (Sources)
+    ngx-dropzone {
+        background-color: var(--background);
+        border: 1px dashed var(--border);
+        color: var(--dark-text-color);
+    }
 
-        ngx-dropzone-label {
-            color: var(--dark-text-color);
-        }
+    ngx-dropzone-label {
+        color: var(--dark-text-color);
+    }
 
-        ngx-dropzone-preview {
-            background-color: var(--background);
-            color: var(--dark-text-color);
-        }
+    ngx-dropzone-preview {
+        background-color: var(--background);
+        color: var(--dark-text-color);
+    }
 
         //Label
         label {
             color: var(--dark-text-color);
         }
 
-        /* --- Dark Mode Rules for the Create Page --- */
         .az-content-body {
             /* Main content body */
             .az-content-title, p.text-muted {
@@ -84,8 +80,8 @@
                 border: 1px solid var(--border);
                 
                 .card-header {
-                    background-color: var(--header);
-                    border-bottom: 1px solid var(--border);
+                    background-color: var(--card);
+                    border-color: var(--border);
                 }
                 
                 .card-title {
@@ -156,5 +152,14 @@
                 color: var(--dark-text-white-color);
             }
         }
+}
+
+@media (prefers-color-scheme: dark) {
+    body:not(.light-theme) {
+        @include dark-forms-styles;
     }
+}
+
+body.dark-theme {
+    @include dark-forms-styles;
 }
