@@ -34,13 +34,8 @@
 </p>
 
 <p align="center">
-  <a href="https://imgur.com/a/vfgojBD">
-  <img alt="fasten_view" src="https://i.imgur.com/jfqv5Q5.png">
-  </a>
-  <br/>
-  <a href="https://imgur.com/a/vfgojBD">See more Fasten screenshots</a>
+  <img alt="Fasten Local Import" src="https://raw.githubusercontent.com/TechStackApps/HealthWallet.me/master/assets/readme/fasten_local_import.gif">
 </p>
-
 
 # Introduction
 
@@ -208,6 +203,20 @@ This allows for a more complex example:
 - both parents need to be able to access both children's records, and maybe each-others
 - the caregiver should have view-only access to 1 or both children, but not the parents.
 
+# Mobile application
+
+In partnership with [LifeValue](https://lifevalue.com), we develop a mobile application: **[HealthWallet.me](https://github.com/TechStackApps/HealthWallet.me)**, that syncs with your **self-hosted Fasten instance**, giving you access to your health records on the mobile.
+
+<a href="https://apps.apple.com/app/healthwallet-me/id6748325588">
+  <img src="https://raw.githubusercontent.com/TechStackApps/HealthWallet.me/refs/heads/master/assets/readme/apple_store.svg" height="60px" alt="Download on the App Store" />
+</a>
+<a href="https://play.google.com/store/apps/details?id=com.techstackapps.healthwallet">
+  <img src="https://raw.githubusercontent.com/TechStackApps/HealthWallet.me/refs/heads/master/assets/readme/playstore.svg" height="60px" alt="Get it on Google Play" />
+</a>
+
+![HealthWallet.me Mobile App](https://raw.githubusercontent.com/TechStackApps/HealthWallet.me/cb77164776cacddc621750394cbd091e90cb14ea/assets/readme/app.gif)
+
+
 
 # FAQ's
 
@@ -250,6 +259,8 @@ We use SemVer for versioning. For the versions available, see the tags on this r
 
 We'd like to thank the following Corporate Sponsors:
 
+
+<a style="padding-left:5px" href="https://lifevalue.com/"><img src="https://raw.githubusercontent.com/TechStackApps/HealthWallet.me/refs/heads/master/assets/readme/lifevalue.svg" height="100px" alt="LifeValue" /></a>
 <a href="https://depot.dev/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/depot.png" height="100px" /></a>
 <a style="padding-left:5px" href="https://www.macminivault.com/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/macminivault.png" height="100px" /></a>
 <a style="padding-left:5px" href="https://www.browserstack.com/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/browserstack.png" height="100px" /></a>
