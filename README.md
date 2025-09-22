@@ -87,34 +87,100 @@ First, if you don't have Docker installed on your computer, get Docker by follow
 Next, run the following commands from the Windows command line or Mac/Linux terminal in order to download and start the Fasten docker container.
 
 
+## 🚀 Launch
 
-### 🚀 Launch
+### Start Fasten
 
-Launch the application. Please choose a location where `docker-compose.yml` and `set_env.sh` will be downloaded.
-
-To make your Fasten instance discoverable by companion mobile apps and other devices on your local network, you need to run the `set_env.sh` script before starting Docker Compose. This script sets the necessary `HOSTNAME` and `IP` values in a `.env` file, which is required for syncing.
-
-Here are the step-by-step instructions:
-
-1.  **Download necessary files:**
+1.  **Download necessary file:**
     ```bash
     curl https://raw.githubusercontent.com/fastenhealth/fasten-onprem/refs/heads/main/docker-compose-prod.yml -o docker-compose.yml
-    curl https://raw.githubusercontent.com/fastenhealth/fasten-onprem/refs/heads/main/set_env.sh -o set_env.sh
     ```
 
-2.  **Prepare and run the environment setup script:**
-    Make the script executable and run it to generate your `.env` file. This will configure network variables required for Docker Compose.
-    ```bash
-    chmod +x ./set_env.sh
-    ./set_env.sh
-    ```
-
-3.  **Start the application:**
+2.  **Start the application:**
     ```bash
     docker compose up -d
     ```
 
-**Manual Configuration (Optional)**
+### 🧪 Develop
+
+Use local development settings for testing and iteration. 
+
+> ℹ️ **Observation:** Requires a local clone of the repository.
+
+```bash
+docker compose up -d
+```
+
+*Optional:*
+
+```bash
+make serve-docker
+```
+
+> ⚠️ **Warning:** Do not run both `docker compose up -d` / `(make serve-docker)` simultaneously. Choose one based on your deployment scenario.
+
+Next, open a browser to `http://localhost:9090`
+
+### (Optional) Direct start Fasten using docker run
+
+```
+docker pull ghcr.io/fastenhealth/fasten-onprem:main
+
+docker run --rm \
+-p 9090:8080 \
+-v ./db:/opt/fasten/db \
+-v ./cache:/opt/fasten/cache \
+ghcr.io/fastenhealth/fasten-onprem:main
+```
+
+
+### Companion Mobile App
+
+In partnership with [LifeValue](https://lifevalue.com), we develop an **open-source** mobile application: **[HealthWallet.me](https://healthwallet.me/)** / **[Github repository](https://github.com/TechStackApps/HealthWallet.me)** , that syncs with your **self-hosted Fasten instance**, giving you access to your health records on the mobile.
+
+
+<a href="https://apps.apple.com/app/healthwallet-me/id6748325588">
+  <img src="https://raw.githubusercontent.com/TechStackApps/HealthWallet.me/refs/heads/master/assets/readme/apple_store.svg" height="60px" alt="Download on the App Store" />
+</a>
+<a href="https://play.google.com/store/apps/details?id=com.techstackapps.healthwallet">
+  <img src="https://raw.githubusercontent.com/TechStackApps/HealthWallet.me/refs/heads/master/assets/readme/playstore.svg" height="60px" alt="Get it on Google Play" />
+</a>
+
+![HealthWallet.me Mobile App](https://raw.githubusercontent.com/TechStackApps/HealthWallet.me/cb77164776cacddc621750394cbd091e90cb14ea/assets/readme/app.gif)
+
+
+
+### Start Fasten (discovarable on your local network)
+
+For your **Fasten** instance to work together with **HealthWallet.me** (the companion mobile app), you need to run the `set_env.sh` script before starting Docker Compose. 
+
+This script configures the necessary `HOSTNAME` and `IP` values in a `.env` file, which allows Fasten to generate a QR code that HealthWallet can scan to establish the initial connection and begin syncing your health data.
+
+Launch the application. Please choose a location where `docker-compose.yml` and `set_env.sh` will be downloaded.
+
+
+#### **Quick Setup:**
+
+1. **Download necessary files**
+   ```bash
+   curl https://raw.githubusercontent.com/fastenhealth/fasten-onprem/refs/heads/main/docker-compose-prod.yml -o docker-compose.yml && \
+   curl https://raw.githubusercontent.com/fastenhealth/fasten-onprem/refs/heads/main/set_env.sh -o set_env.sh && \
+   chmod +x ./set_env.sh && \
+   ./set_env.sh
+   ```
+2.  **Start the application:**
+    ```bash
+    docker compose up -d
+    ```
+
+- **Commands Breakdown**
+   - Downloads necessary files (**docker-compose.yml** and **set_env.sh**)
+   - The environment script automatically assigns your local IP so **Fasten** can be available on **your local network**
+   - Starts the Fasten application (**docker-compose up -d**)
+
+
+<details>
+ <summary><strong>Manual Configuration (Optional)</strong></summary>
 
 If you prefer not to run the `set_env.sh` script, you can configure the `.env` file manually. You will need to create a `.env` file and add the following variables:
 
@@ -135,39 +201,7 @@ If you prefer not to run the `set_env.sh` script, you can configure the `.env` f
     PORT=9090
     ```
 
-### 🧪 Develop
-
-Use local development settings for testing and iteration. 
-
-```bash
-docker compose up -d
-```
-
-*Optional:*
-
-```bash
-make serve-docker
-```
-
-ℹ️ Requires a local clone of the repository.
-
-> ⚠️ **Warning:** Do not run both `docker compose up -d` / `(make serve-docker)` simultaneously. Choose one based on your deployment scenario.
-
-### Optional
-
-```
-docker pull ghcr.io/fastenhealth/fasten-onprem:main
-
-docker run --rm \
--p 9090:8080 \
--v ./db:/opt/fasten/db \
--v ./cache:/opt/fasten/cache \
-ghcr.io/fastenhealth/fasten-onprem:main
-```
-
-Next, open a browser to `http://localhost:9090`
-
-At this point you'll be redirected to the login page.
+</details>
 
 ### Logging In
 
@@ -203,21 +237,6 @@ This allows for a more complex example:
 - both parents need to be able to access both children's records, and maybe each-others
 - the caregiver should have view-only access to 1 or both children, but not the parents.
 
-# Mobile application
-
-In partnership with [LifeValue](https://lifevalue.com), we develop a mobile application: **[HealthWallet.me](https://github.com/TechStackApps/HealthWallet.me)**, that syncs with your **self-hosted Fasten instance**, giving you access to your health records on the mobile.
-
-<a href="https://apps.apple.com/app/healthwallet-me/id6748325588">
-  <img src="https://raw.githubusercontent.com/TechStackApps/HealthWallet.me/refs/heads/master/assets/readme/apple_store.svg" height="60px" alt="Download on the App Store" />
-</a>
-<a href="https://play.google.com/store/apps/details?id=com.techstackapps.healthwallet">
-  <img src="https://raw.githubusercontent.com/TechStackApps/HealthWallet.me/refs/heads/master/assets/readme/playstore.svg" height="60px" alt="Get it on Google Play" />
-</a>
-
-![HealthWallet.me Mobile App](https://raw.githubusercontent.com/TechStackApps/HealthWallet.me/cb77164776cacddc621750394cbd091e90cb14ea/assets/readme/app.gif)
-
-
-
 # FAQ's
 
 See [FAQs](https://docs.fastenhealth.com/faqs.html) for common questions (& answers) regarding Fasten
@@ -248,8 +267,8 @@ We use SemVer for versioning. For the versions available, see the tags on this r
 
 # Authors
 
-- Jason Kulatunga - Initial Development - @AnalogJ
-- Alex Szilagyi - Co-Author - @alexszilagyi
+- Jason Kulatunga - Initial Development - [@AnalogJ](https://github.com/AnalogJ)
+- Alex Szilagyi - Co-Author - [@alexszilagyi](https://github.com/alexszilagyi)
 
 # Licenses
 
