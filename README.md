@@ -136,7 +136,7 @@ ghcr.io/fastenhealth/fasten-onprem:main
 
 ### Companion Mobile App
 
-In partnership with [LifeValue](https://lifevalue.com), we develop an **open-source** mobile application: **[HealthWallet.me](https://healthwallet.me/)** / **[Github repository](https://github.com/TechStackApps/HealthWallet.me)** , that syncs with your **self-hosted Fasten instance**, giving you access to your health records on the mobile.
+In partnership with [Life Value](https://lifevalue.com), we develop an **open-source** mobile application: **[HealthWallet.me](https://healthwallet.me/)** / **[Github repository](https://github.com/TechStackApps/HealthWallet.me)** , that syncs with your **self-hosted Fasten instance**, giving you access to your health records on the mobile.
 
 
 <a href="https://apps.apple.com/app/healthwallet-me/id6748325588">
@@ -279,7 +279,7 @@ We use SemVer for versioning. For the versions available, see the tags on this r
 We'd like to thank the following Corporate Sponsors:
 
 
-<a style="padding-left:5px" href="https://lifevalue.com/"><img src="https://raw.githubusercontent.com/TechStackApps/HealthWallet.me/refs/heads/master/assets/readme/lifevalue.svg" height="100px" alt="LifeValue" /></a>
+<a style="padding-left:5px" href="https://lifevalue.com/"><img src="https://raw.githubusercontent.com/TechStackApps/HealthWallet.me/refs/heads/master/assets/readme/life_value_large.svg" height="100px" alt="LifeValue" /></a>
 <a href="https://depot.dev/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/depot.png" height="100px" /></a>
 <a style="padding-left:5px" href="https://www.macminivault.com/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/macminivault.png" height="100px" /></a>
 <a style="padding-left:5px" href="https://www.browserstack.com/"><img src="https://raw.githubusercontent.com/fastenhealth/docs/main/img/sponsors/browserstack.png" height="100px" /></a>
