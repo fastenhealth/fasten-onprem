@@ -8,10 +8,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"runtime"
 	"strings"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/auth"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
@@ -40,6 +42,21 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 		panic(err)
 	}
 	ae.deviceRepo = deviceRepo
+
+	configs := []auth.OIDCConfig{
+		{
+			Name:         "google",
+			Issuer:       "https://accounts.google.com",
+			ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+			ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+			RedirectURL:  "http://localhost:3000/auth/callback/google",
+		},
+	}
+
+	oidcManager, err := auth.NewOIDCManager(context.Background(), configs)
+	if err != nil {
+		ae.Logger.Fatalf("failed to init OIDC manager: %v", err)
+	}
 
 	r.Use(middleware.LoggerMiddleware(ae.Logger))
 	r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
@@ -147,6 +164,10 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.GET("/access/token", handler.GetAccessTokens)
 				secure.POST("/access/token", handler.CreateAccessToken)
 				secure.DELETE("/access/token", handler.DeleteAccessToken)
+
+				// OIDC Authentication
+				secure.GET("/auth/oidc/:provider", handler.LoginHandler(oidcManager))
+				secure.GET("/auth/oidc/:provider/callback", handler.CallbackHandler(oidcManager))
 
 				secure.GET("/sync/discovery", handler.GetServerDiscovery)
 

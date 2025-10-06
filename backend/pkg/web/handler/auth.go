@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
+	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/auth"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
@@ -105,4 +107,76 @@ func AuthSignin(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": userFastenToken})
+}
+
+// LoginHandler returns a gin.HandlerFunc bound to a given OIDCManager
+func LoginHandler(mgr *auth.OIDCManager) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		provider := c.Param("provider")
+		p, ok := mgr.Providers[provider]
+		if !ok {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "unknown provider"})
+			return
+		}
+
+		state := "random_state" // TODO: generate securely and persist in cookie/session
+		url := p.OAuth2.AuthCodeURL(state)
+		c.Redirect(http.StatusFound, url)
+	}
+}
+
+// CallbackHandler handles OIDC provider responses
+func CallbackHandler(mgr *auth.OIDCManager) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		provider := c.Param("provider")
+		p, ok := mgr.Providers[provider]
+		if !ok {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "unknown provider"})
+			return
+		}
+
+		ctx := context.Background()
+		code := c.Query("code")
+		if code == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "missing code"})
+			return
+		}
+
+		token, err := p.OAuth2.Exchange(ctx, code)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("token exchange failed: %v", err)})
+			return
+		}
+
+		rawIDToken, ok := token.Extra("id_token").(string)
+		if !ok {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "no id_token in response"})
+			return
+		}
+
+		verifier := p.Provider.Verifier(&oidc.Config{ClientID: p.Config.ClientID})
+		idToken, err := verifier.Verify(ctx, rawIDToken)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": fmt.Sprintf("failed to verify ID Token: %v", err)})
+			return
+		}
+
+		var claims struct {
+			Email string `json:"email"`
+		}
+		if err := idToken.Claims(&claims); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to parse claims: %v", err)})
+			return
+		}
+
+		// 🔑 At this point you have the user’s email, here is where you’d
+		// - check SQLite for existing user
+		// - create new user if not found
+		// - issue a session/JWT for your app
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "✅ Authenticated",
+			"email":   claims.Email,
+		})
+	}
 }
