@@ -8,11 +8,13 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"runtime"
 	"strings"
 	"time"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/auth"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
@@ -22,14 +24,13 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"os"
 )
 
 type AppEngine struct {
-	Config     config.Interface
-	Logger     *logrus.Entry
-	EventBus   event_bus.Interface
-	deviceRepo database.DatabaseRepository
+	Config      config.Interface
+	Logger      *logrus.Entry
+	EventBus    event_bus.Interface
+	deviceRepo  database.DatabaseRepository
 	StandbyMode bool
 
 	RelatedVersions map[string]string //related versions metadata provided & embedded by the build process
@@ -71,6 +72,22 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	if !ae.StandbyMode {
 		r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
 	}
+
+	configs := []auth.OIDCConfig{
+		{
+			Name:         "google",
+			Issuer:       "https://accounts.google.com",
+			ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+			ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+			RedirectURL:  "http://localhost:3000/auth/callback/google",
+		},
+	}
+
+	oidcManager, err := auth.NewOIDCManager(context.Background(), configs)
+	if err != nil {
+		ae.Logger.Fatalf("failed to init OIDC manager: %v", err)
+	}
+
 	r.Use(middleware.LoggerMiddleware(ae.Logger))
 	r.Use(middleware.ConfigMiddleware(ae.Config))
 	r.Use(middleware.EventBusMiddleware(ae.EventBus))
@@ -99,8 +116,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					c.JSON(http.StatusOK, gin.H{
 						"success": true,
 						"data": gin.H{
-							"first_run_wizard":   firstRunWizard,
-							"standby_mode":       true,
+							"first_run_wizard": firstRunWizard,
+							"standby_mode":     true,
 						},
 					})
 					return
@@ -125,8 +142,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				c.JSON(http.StatusOK, gin.H{
 					"success": true,
 					"data": gin.H{
-						"first_run_wizard":   firstRunWizard,
-						"standby_mode":       false,
+						"first_run_wizard": firstRunWizard,
+						"standby_mode":     false,
 					},
 				})
 			})
@@ -203,6 +220,11 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					secure.POST("/user/favorites", handler.AddPractitionerToFavorites)
 					secure.DELETE("/user/favorites", handler.RemovePractitionerFromFavorites)
 					secure.GET("/user/favorites", handler.GetUserFavoritePractitioners)
+					// OIDC Authentication
+					secure.GET("/auth/oidc/:provider", handler.LoginHandler(oidcManager))
+					secure.GET("/auth/oidc/:provider/callback", handler.CallbackHandler(oidcManager))
+
+					secure.GET("/sync/discovery", handler.GetServerDiscovery)
 
 					// Access token management
 					secure.GET("/access/token", handler.GetAccessTokens)
