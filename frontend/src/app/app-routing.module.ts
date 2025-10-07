@@ -27,9 +27,8 @@ import { PractitionerCreateComponent } from './pages/practitioner-create/practit
 import { PractitionerViewComponent } from './pages/practitioner-view/practitioner-view.component';
 import { PractitionerEditPageComponent } from './pages/practitioner-edit/practitioner-edit.component';
 import { PractitionerHistoryComponent } from "./pages/practitioner-history/practitioner-history.component";
-
-
 import { SettingsComponent } from './pages/settings/settings.component';
+import { OidcCallbackComponent } from "./pages/oidc-callback/oidc-callback.component";
 
 const routes: Routes = [
   { path: 'settings', component: SettingsComponent, canActivate: [ IsAuthenticatedAuthGuard] },
@@ -43,6 +42,8 @@ const routes: Routes = [
 
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+
+  { path: 'oidc/:provider/callback', component: OidcCallbackComponent},
 
   //explore page will replace source/* pages
   { path: 'explore', component: ExploreComponent, canActivate: [ IsAuthenticatedAuthGuard] },

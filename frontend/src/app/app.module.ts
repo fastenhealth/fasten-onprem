@@ -43,6 +43,7 @@ import { IconsModule } from './icon-module';
 import { UserListComponent } from './pages/user-list/user-list.component';
 import { PractitionerHistoryComponent } from './pages/practitioner-history/practitioner-history.component';
 import { SettingsComponent } from './pages/settings/settings.component';
+import { OidcCallbackComponent } from './pages/oidc-callback/oidc-callback.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { SettingsComponent } from './pages/settings/settings.component';
     AuthSignupWizardComponent,
     UserListComponent,
     PractitionerHistoryComponent,
+    OidcCallbackComponent,
   ],
   imports: [
     FormsModule,

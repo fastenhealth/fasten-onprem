@@ -31,6 +31,27 @@ export class AuthService {
   }
 
   /**
+   * Completes the OIDC login process by exchanging the authorization code for tokens.
+   */
+  public async completeOidcLogin(provider: string, code: string, state?: string): Promise<any> {
+    const fastenApiEndpointBase = GetEndpointAbsolutePath(
+      globalThis.location,
+      environment.fasten_api_endpoint_base
+    );
+    const url = `${fastenApiEndpointBase}/unsafe/auth/oidc/${provider}/callback?code=${encodeURIComponent(
+      code
+    )}`;
+
+    const resp = await this._httpClient.get<ResponseWrapper>(url).toPromise();
+    if (!resp || !resp.success) {
+      throw new Error(resp?.error || 'OIDC callback failed');
+    }
+
+    this.setAuthToken(resp.data);
+  }
+
+
+  /**
    * Fetches the list of available OIDC providers from the backend API.
    */
   public async getOidcProviders(): Promise<OidcProvider[]> {
@@ -50,7 +71,7 @@ export class AuthService {
     const fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base);
     // This constructs the URL and redirects the entire page.
     // No response is expected here as the browser navigates away.
-    window.location.href = `${fastenApiEndpointBase}/oidc/provider/${providerName}`;
+    window.location.href = `${fastenApiEndpointBase}/oidc/${providerName}`;
   }
 
   //Third-party JWT auth, used by Fasten Cloud
