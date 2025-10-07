@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 type UserWizard struct {
@@ -128,55 +130,87 @@ func LoginHandler(mgr *auth.OIDCManager) gin.HandlerFunc {
 // CallbackHandler handles OIDC provider responses
 func CallbackHandler(mgr *auth.OIDCManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		ctx := context.Background()
 		provider := c.Param("provider")
+
 		p, ok := mgr.Providers[provider]
 		if !ok {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "unknown provider"})
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "unknown provider"})
 			return
 		}
 
-		ctx := context.Background()
 		code := c.Query("code")
 		if code == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "missing code"})
+			c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "missing code"})
 			return
 		}
 
 		token, err := p.OAuth2.Exchange(ctx, code)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("token exchange failed: %v", err)})
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "token exchange failed"})
 			return
 		}
 
 		rawIDToken, ok := token.Extra("id_token").(string)
 		if !ok {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "no id_token in response"})
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "no id_token in token response"})
 			return
 		}
 
 		verifier := p.Provider.Verifier(&oidc.Config{ClientID: p.Config.ClientID})
 		idToken, err := verifier.Verify(ctx, rawIDToken)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": fmt.Sprintf("failed to verify ID Token: %v", err)})
+			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "invalid id_token"})
 			return
 		}
 
 		var claims struct {
 			Email string `json:"email"`
+			Name  string `json:"name"`
+			Sub   string `json:"sub"`
 		}
 		if err := idToken.Claims(&claims); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to parse claims: %v", err)})
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to parse claims"})
 			return
 		}
 
-		// 🔑 At this point you have the user’s email, here is where you’d
-		// - check SQLite for existing user
-		// - create new user if not found
-		// - issue a session/JWT for your app
+		// Extract our context values
+		databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+		appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
+
+		// Check if user already exists
+		foundUser, err := databaseRepo.GetUserByUsername(c, claims.Email)
+		if err != nil {
+			// If not found, create a new user
+			if errors.Is(err, gorm.ErrRecordNotFound) || foundUser == nil {
+				newUser := &models.User{
+					Username: claims.Email,
+					Email:    claims.Email,
+					FullName: claims.Name,
+					AuthType: "google",
+					Password: "", // No password for OIDC users
+				}
+				if err := databaseRepo.CreateUser(c, newUser); err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to create user"})
+					return
+				}
+				foundUser = newUser
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "error fetching user"})
+				return
+			}
+		}
+
+		// Generate the same JWT the normal signin flow uses
+		userFastenToken, err := auth.JwtGenerateFastenTokenFromUser(*foundUser, appConfig.GetString("jwt.issuer.key"))
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+			return
+		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"message": "✅ Authenticated",
-			"email":   claims.Email,
+			"success": true,
+			"data":    userFastenToken,
 		})
 	}
 }

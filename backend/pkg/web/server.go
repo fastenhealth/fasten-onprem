@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"runtime"
 	"strings"
 
@@ -36,27 +35,33 @@ type AppEngine struct {
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	r := gin.New()
 
+	var oidcManager *auth.OIDCManager
+	var configs []auth.OIDCConfig
+
+	err := ae.Config.UnmarshalKey("web.auth.oidc_providers", &configs)
+	if err != nil {
+		// This error is useful for debugging malformed YAML
+		ae.Logger.Warnf("Could not unmarshal 'web.auth.oidc_providers': %v. Skipping OIDC setup.", err)
+	}
+
+	// 3. Now, you can safely check the length of the populated slice.
+	if len(configs) > 0 {
+		ae.Logger.Infof("Found %d OIDC provider(s), initializing manager...", len(configs))
+
+		oidcManager, err = auth.NewOIDCManager(context.Background(), configs)
+		if err != nil {
+			ae.Logger.Fatalf("failed to init OIDC manager: %v", err)
+		}
+	} else {
+		ae.Logger.Info("No OIDC providers configured, skipping manager initialization.")
+	}
+
 	//setup database
 	deviceRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
 	if err != nil {
 		panic(err)
 	}
 	ae.deviceRepo = deviceRepo
-
-	configs := []auth.OIDCConfig{
-		{
-			Name:         "google",
-			Issuer:       "https://accounts.google.com",
-			ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
-			ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
-			RedirectURL:  "http://localhost:3000/auth/callback/google",
-		},
-	}
-
-	oidcManager, err := auth.NewOIDCManager(context.Background(), configs)
-	if err != nil {
-		ae.Logger.Fatalf("failed to init OIDC manager: %v", err)
-	}
 
 	r.Use(middleware.LoggerMiddleware(ae.Logger))
 	r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
@@ -104,6 +109,10 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 			api.POST("/auth/signup", handler.AuthSignup)
 			api.POST("/auth/signin", handler.AuthSignin)
+
+			// OIDC Authentication
+			api.GET("/oidc/:provider", handler.LoginHandler(oidcManager))
+			api.GET("/oidc/:provider/callback", handler.CallbackHandler(oidcManager))
 
 			//whitelisted CORS PROXY
 			api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
@@ -165,10 +174,6 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				secure.POST("/access/token", handler.CreateAccessToken)
 				secure.DELETE("/access/token", handler.DeleteAccessToken)
 
-				// OIDC Authentication
-				secure.GET("/auth/oidc/:provider", handler.LoginHandler(oidcManager))
-				secure.GET("/auth/oidc/:provider/callback", handler.CallbackHandler(oidcManager))
-
 				secure.GET("/sync/discovery", handler.GetServerDiscovery)
 
 				//server-side-events handler (only supported on mac/linux)
@@ -200,7 +205,6 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					unsafe.GET("/:username/:sourceId/*path", handler.UnsafeRequestSource)
 					unsafe.GET("/:username/graph/:graphType", handler.UnsafeResourceGraph)
 					unsafe.GET("/:username/sync/:sourceId", handler.UnsafeSyncResourceNames)
-
 				}
 			}
 		}
