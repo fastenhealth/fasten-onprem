@@ -9,11 +9,11 @@ import (
 )
 
 type OIDCConfig struct {
-	Name         string
-	Issuer       string
-	ClientID     string
-	ClientSecret string
-	RedirectURL  string
+	Name         string `mapstructure:"name"`
+	Issuer       string `mapstructure:"issuer"`
+	ClientID     string `mapstructure:"client_id"`
+	ClientSecret string `mapstructure:"client_secret"`
+	RedirectURL  string `mapstructure:"redirect_url"`
 }
 
 type OIDCProvider struct {

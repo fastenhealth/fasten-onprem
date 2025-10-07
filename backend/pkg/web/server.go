@@ -78,7 +78,6 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 		ae.Logger.Warnf("Could not unmarshal 'web.auth.oidc_providers': %v. Skipping OIDC setup.", err)
 	}
 
-	// 3. Now, you can safely check the length of the populated slice.
 	if len(configs) > 0 {
 		ae.Logger.Infof("Found %d OIDC provider(s), initializing manager...", len(configs))
 
