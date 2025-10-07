@@ -176,6 +176,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 			// OIDC Authentication
 			api.GET("/oidc/:provider", handler.LoginHandler(oidcManager))
 			api.GET("/oidc/:provider/callback", handler.CallbackHandler(oidcManager))
+			api.GET("/oidc/providers", handler.ListAuthMethodsHandler(oidcManager))
 
 			//whitelisted CORS PROXY
 			api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)

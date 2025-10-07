@@ -26,6 +26,11 @@ type OIDCManager struct {
 	Providers map[string]*OIDCProvider
 }
 
+// ProviderInfo contains public information about a configured OIDC provider.
+type ProviderInfo struct {
+	Name string `json:"name"`
+}
+
 func NewOIDCManager(ctx context.Context, configs []OIDCConfig) (*OIDCManager, error) {
 	mgr := &OIDCManager{Providers: make(map[string]*OIDCProvider)}
 
@@ -48,4 +53,15 @@ func NewOIDCManager(ctx context.Context, configs []OIDCConfig) (*OIDCManager, er
 		}
 	}
 	return mgr, nil
+}
+
+func (m *OIDCManager) GetProviders() []ProviderInfo {
+	// Pre-allocate a slice with the right capacity for efficiency
+	providerList := make([]ProviderInfo, 0, len(m.Providers))
+
+	for name := range m.Providers {
+		providerList = append(providerList, ProviderInfo{Name: name})
+	}
+
+	return providerList
 }

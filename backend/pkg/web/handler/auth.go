@@ -214,3 +214,15 @@ func CallbackHandler(mgr *auth.OIDCManager) gin.HandlerFunc {
 		})
 	}
 }
+
+// ListAuthMethodsHandler returns a handler that lists all configured OIDC providers.
+func ListAuthMethodsHandler(mgr *auth.OIDCManager) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Get the list of providers from the manager.
+		providers := mgr.GetProviders()
+
+		// Respond with a 200 OK and the JSON-encoded list of providers.
+		// The output will look like: [{"name":"google"},{"name":"another_provider"}]
+		c.JSON(http.StatusOK, providers)
+	}
+}
