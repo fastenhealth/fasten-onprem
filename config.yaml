@@ -23,6 +23,16 @@ web:
     # the location on the filesystem where webapp javascript + css is located
     frontend:
       path: /opt/fasten/web
+  auth:
+    # OIDC providers configuration
+    # you can add as many providers as you want, just make sure to configure them properly.
+    oidc_providers:
+      # example configuration for Google OIDC
+      # - name: google
+      #   issuer: https://accounts.google.com
+      #   client_id: 'to-be-completed'
+      #   client_secret: 'to-be-completed'
+      #   redirect_url: 'to-be-completed' # eg. http://localhost:9090/api/secure/auth/oidc/google/callback
 database:
   encryption:
     enabled: true

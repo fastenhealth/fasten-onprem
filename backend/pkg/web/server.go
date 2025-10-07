@@ -69,23 +69,35 @@ func (ae *AppEngine) Reinitialize() error {
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	r := gin.New()
 
+	var oidcManager *auth.OIDCManager
+	var configs []auth.OIDCConfig
+
+	err := ae.Config.UnmarshalKey("web.auth.oidc_providers", &configs)
+	if err != nil {
+		// This error is useful for debugging malformed YAML
+		ae.Logger.Warnf("Could not unmarshal 'web.auth.oidc_providers': %v. Skipping OIDC setup.", err)
+	}
+
+	// 3. Now, you can safely check the length of the populated slice.
+	if len(configs) > 0 {
+		ae.Logger.Infof("Found %d OIDC provider(s), initializing manager...", len(configs))
+
+		oidcManager, err = auth.NewOIDCManager(context.Background(), configs)
+		if err != nil {
+			ae.Logger.Fatalf("failed to init OIDC manager: %v", err)
+		}
+	} else {
+		ae.Logger.Info("No OIDC providers configured, skipping manager initialization.")
+	}
+
+	//setup database
+	deviceRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
+	if err != nil {
+		panic(err)
+	}
+
 	if !ae.StandbyMode {
 		r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
-	}
-
-	configs := []auth.OIDCConfig{
-		{
-			Name:         "google",
-			Issuer:       "https://accounts.google.com",
-			ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
-			ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
-			RedirectURL:  "http://localhost:3000/auth/callback/google",
-		},
-	}
-
-	oidcManager, err := auth.NewOIDCManager(context.Background(), configs)
-	if err != nil {
-		ae.Logger.Fatalf("failed to init OIDC manager: %v", err)
 	}
 
 	r.Use(middleware.LoggerMiddleware(ae.Logger))
@@ -160,6 +172,15 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 			} else {
 				ae.Logger.Info("Database StandbyMode is off, skipping encryption key setup endpoints.")
 			}
+
+			// OIDC Authentication
+			api.GET("/oidc/:provider", handler.LoginHandler(oidcManager))
+			api.GET("/oidc/:provider/callback", handler.CallbackHandler(oidcManager))
+
+			//whitelisted CORS PROXY
+			api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
+			api.POST("/cors/:endpointId/*proxyPath", handler.CORSProxy)
+			api.OPTIONS("/cors/:endpointId/*proxyPath", handler.CORSProxy)
 
 			if !ae.StandbyMode { // Check ae.StandbyMode for non-standby mode
 				api.Use(middleware.CacheMiddleware())
@@ -263,7 +284,6 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					unsafe.GET("/:username/:sourceId/*path", handler.UnsafeRequestSource)
 					unsafe.GET("/:username/graph/:graphType", handler.UnsafeResourceGraph)
 					unsafe.GET("/:username/sync/:sourceId", handler.UnsafeSyncResourceNames)
-
 				}
 			}
 		}
