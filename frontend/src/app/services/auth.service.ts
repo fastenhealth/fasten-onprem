@@ -38,7 +38,7 @@ export class AuthService {
       globalThis.location,
       environment.fasten_api_endpoint_base
     );
-    const url = `${fastenApiEndpointBase}/unsafe/auth/oidc/${provider}/callback?code=${encodeURIComponent(
+    const url = `${fastenApiEndpointBase}/oidc/${provider}/callback?code=${encodeURIComponent(
       code
     )}`;
 
