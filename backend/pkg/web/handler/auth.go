@@ -2,6 +2,8 @@ package handler
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"net/http"
@@ -127,6 +129,13 @@ func LoginHandler(mgr *auth.OIDCManager) gin.HandlerFunc {
 	}
 }
 
+// Helper function to generate a random password for OIDC-created users
+func generateRandomPassword() string {
+	bytes := make([]byte, 16)
+	_, _ = rand.Read(bytes)
+	return hex.EncodeToString(bytes)
+}
+
 // CallbackHandler handles OIDC provider responses
 func CallbackHandler(mgr *auth.OIDCManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -178,27 +187,31 @@ func CallbackHandler(mgr *auth.OIDCManager) gin.HandlerFunc {
 		databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 		appConfig := c.MustGet(pkg.ContextKeyTypeConfig).(config.Interface)
 
-		// Check if user already exists
 		foundUser, err := databaseRepo.GetUserByUsername(c, claims.Email)
-		if err != nil {
-			// If not found, create a new user
-			if errors.Is(err, gorm.ErrRecordNotFound) || foundUser == nil {
-				newUser := &models.User{
-					Username: claims.Email,
-					Email:    claims.Email,
-					FullName: claims.Name,
-					AuthType: "google",
-					Password: "", // No password for OIDC users
-				}
-				if err := databaseRepo.CreateUser(c, newUser); err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to create user"})
-					return
-				}
-				foundUser = newUser
-			} else {
-				c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "error fetching user"})
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "database error"})
+			return
+		}
+
+		if foundUser == nil || errors.Is(err, gorm.ErrRecordNotFound) {
+			newUser := &models.User{
+				Username: claims.Email,
+				Email:    claims.Email,
+				FullName: claims.Name,
+				AuthType: "google",
+				Password: generateRandomPassword(), // Random password, won't be used, but required by the model
+			}
+
+			if err := databaseRepo.CreateUser(c, newUser); err != nil {
+				// Log incoming error but return a generic message to the user
+				logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+				logger.Errorf("Error creating user from OIDC login: %v", err)
+
+				c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to create user"})
 				return
 			}
+
+			foundUser = newUser
 		}
 
 		// Generate the same JWT the normal signin flow uses
