@@ -31,23 +31,15 @@ export class AuthService {
   }
 
   /**
-   * Completes the OIDC login process by exchanging the authorization code for tokens.
+   * Completes the OIDC login process by setting the received token.
    */
-  public async completeOidcLogin(provider: string, code: string, state?: string): Promise<any> {
-    const fastenApiEndpointBase = GetEndpointAbsolutePath(
-      globalThis.location,
-      environment.fasten_api_endpoint_base
-    );
-    const url = `${fastenApiEndpointBase}/oidc/${provider}/callback?code=${encodeURIComponent(
-      code
-    )}`;
-
-    const resp = await this._httpClient.get<ResponseWrapper>(url).toPromise();
-    if (!resp || !resp.success) {
-      throw new Error(resp?.error || 'OIDC callback failed');
+  public async completeOidcLogin(token: string): Promise<any> {
+    if (!token) {
+      throw new Error('Missing token from OIDC callback.');
     }
-
-    this.setAuthToken(resp.data);
+    
+    this.setAuthToken(token);
+    return Promise.resolve();
   }
 
 

@@ -221,10 +221,14 @@ func CallbackHandler(mgr *auth.OIDCManager) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"data":    userFastenToken,
-		})
+		// Get base web URL from config (e.g. http://localhost:4200)
+		webBaseURL := appConfig.GetString("web.listen.basepath") + "/web"
+		if webBaseURL == "" {
+			webBaseURL = "http://localhost:4200" // fallback default
+		}
+
+		redirectURL := fmt.Sprintf("%s/oidc/%s/callback?token=%s", webBaseURL, provider, userFastenToken)
+		c.Redirect(http.StatusFound, redirectURL)
 	}
 }
 

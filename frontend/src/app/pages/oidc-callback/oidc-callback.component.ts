@@ -20,18 +20,17 @@ export class OidcCallbackComponent implements OnInit {
 
   async ngOnInit() {
     const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    const provider = this.route.snapshot.paramMap.get('provider') || 'google'; // fallback
+    const token = params.get('token');
 
-    if (!code) {
-      this.errorMsg = 'Missing authorization code.';
+    if (!token) {
+      this.errorMsg = 'Missing authorization token.';
       this.loading = false;
       this.router.navigate(['/auth/signin']);
       return;
     }
 
     try {
-      await this.auth.completeOidcLogin(provider, code);
+      await this.auth.completeOidcLogin(token);
       this.success = true;
       setTimeout(() => this.router.navigate(['/dashboard']), 1500);
     } catch (err: any) {
