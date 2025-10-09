@@ -113,6 +113,13 @@ func AuthSignin(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": userFastenToken})
 }
 
+// Helper function to generate a random password for OIDC-created users
+func generateRandomPassword() string {
+	bytes := make([]byte, 16)
+	_, _ = rand.Read(bytes)
+	return hex.EncodeToString(bytes)
+}
+
 // LoginHandler returns a gin.HandlerFunc bound to a given OIDCManager
 func LoginHandler(mgr *auth.OIDCManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -123,17 +130,10 @@ func LoginHandler(mgr *auth.OIDCManager) gin.HandlerFunc {
 			return
 		}
 
-		state := "random_state" // TODO: generate securely and persist in cookie/session
+		state := generateRandomPassword()
 		url := p.OAuth2.AuthCodeURL(state)
 		c.Redirect(http.StatusFound, url)
 	}
-}
-
-// Helper function to generate a random password for OIDC-created users
-func generateRandomPassword() string {
-	bytes := make([]byte, 16)
-	_, _ = rand.Read(bytes)
-	return hex.EncodeToString(bytes)
 }
 
 // CallbackHandler handles OIDC provider responses
@@ -198,7 +198,8 @@ func CallbackHandler(mgr *auth.OIDCManager) gin.HandlerFunc {
 				Username: claims.Email,
 				Email:    claims.Email,
 				FullName: claims.Name,
-				AuthType: "google",
+				AuthType: provider,
+				Role:     "admin",                  // First user is always admin
 				Password: generateRandomPassword(), // Random password, won't be used, but required by the model
 			}
 
