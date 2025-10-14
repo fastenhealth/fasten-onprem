@@ -43,6 +43,8 @@ func (suite *RepositoryRelatedTestSuite) SetupTest() {
 	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
 	fakeConfig.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("DEBUG").AnyTimes()
+	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
 	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err, "Failed to create repository")

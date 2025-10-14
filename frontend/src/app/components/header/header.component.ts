@@ -28,13 +28,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   submitSuccess: boolean = false
 
   routerSubscription: Subscription = null
+  isDarkModeSubscription: Subscription = null
 
   is_environment_desktop: boolean = environment.environment_desktop
   chatEnabled: boolean = false
 
   isAdmin: boolean = false;
-  isDarkMode: boolean;
-  private isDarkModeSubscription: Subscription;
+  isDarkMode: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -43,11 +43,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private themeService: ThemeService,
     private settingsService: SettingsService) {
-      this.themeService.isDarkMode$.subscribe(darkMode => {
-        this.isDarkMode = darkMode;
-      });
     }
-
 
   ngOnInit() {
     this.chatEnabled = !!this.settingsService.get('search')?.chat;
@@ -95,7 +91,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     event.preventDefault();
     document.querySelector('body').classList.toggle('az-header-menu-show');
   }
-  
+
   toggleTheme() {
     this.themeService.setDarkMode(!this.isDarkMode);
   }
@@ -127,7 +123,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.fastenApi.supportRequest(this.newSupportRequest).subscribe((resp: any) => {
         this.loading = false
         this.submitSuccess = true
-        //show success toast? close modal?
       },
       (err)=>{
         this.loading = false
@@ -135,6 +130,4 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.errorMsg = err || "An error occurred while submitting your support request. Please try again later."
       })
   }
-
-
 }

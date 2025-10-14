@@ -140,6 +140,66 @@ If you prefer not to run the `set_env.sh` script, you can configure the `.env` f
     PORT=9090
     ```
 
+Next, open a browser to `https://localhost:9090`
+
+### <a name="using-https"></a>🔒 Using HTTPS and Trusting the Self-Signed Certificate
+
+By default, Fasten On-Prem runs with HTTPS enabled to ensure your data is secure. It uses a self-signed **TLS** certificate, which offers the same level of encryption as a commercially issued certificate. The first time you connect, your browser will display a security warning because it doesn't yet trust the certificate's issuer. The steps below will guide you through the simple, one-time process of telling your browser to trust the certificate, ensuring a secure connection without future warnings. Please note that the generated certificates can be replaced at any time with your own valid TLS certificates.
+
+#### How it Works: The Chain of Trust
+
+To establish a secure connection, your browser needs to trust the server's TLS certificate. Here’s how the process works in Fasten On-Prem:
+
+1.  **Root Certificate Authority (CA):** When the application first starts, it generates its own self-contained Certificate Authority, called `"Fasten Health CA"`. Think of this as the highest level of trust. The public part of this CA is the `rootCA.pem` file.
+2.  **Server Certificate:** The application then uses the `"Fasten Health CA"` to issue and sign a specific certificate for the web server (e.g., for `localhost`).
+3.  **Browser Verification:** When you connect to the server, it presents the server certificate to your browser. Your browser checks who signed it and sees it was `"Fasten Health CA"`. The browser then asks, "Do I trust the 'Fasten Health CA'?"
+
+Initially, the answer is no, which is why you see a security warning. By following the steps below to import the `rootCA.pem` file, you are telling your browser or operating system to trust our self-generated CA. Once the CA is trusted, any certificates it signs—including the server certificate—will also be trusted, and the connection will be secure without any warnings.
+
+#### 1. Locate the Root CA Certificate
+
+When you run the application using the production Docker Compose file (`docker-compose-prod.yml`), it automatically generates a `rootCA.pem` file. This file is located in the `certs` directory on your host machine.
+
+-   **Certificate Path:** `certs/rootCA.pem`
+
+#### 2. Import the Certificate
+
+You will need to import this certificate into your operating system's or browser's trust store. Here are general instructions for different platforms:
+
+**macOS**
+
+1.  Open the **Keychain Access** application.
+2.  Select the **System** keychain.
+3.  Go to **File > Import Items** and select the `certs/rootCA.pem` file.
+4.  Find the "Fasten Health CA" certificate in the list, double-click it, and under the **Trust** section, set "When using this certificate" to **Always Trust**.
+
+**Windows**
+
+1.  Double-click the `certs/rootCA.pem` file.
+2.  Click **Install Certificate...** and choose **Local Machine**.
+3.  Select **Place all certificates in the following store**, click **Browse**, and choose **Trusted Root Certification Authorities**.
+4.  Complete the wizard to finish the import process.
+
+**Linux (Ubuntu/Debian)**
+
+1.  Copy the certificate to the trusted certificates directory:
+    ```bash
+    sudo cp certs/rootCA.pem /usr/local/share/ca-certificates/fasten-health-ca.crt
+    ```
+2.  Update the system's certificate store:
+    ```bash
+    sudo update-ca-certificates
+    ```
+
+**Firefox**
+
+Firefox has its own trust store. To import the certificate:
+
+1.  Go to **Settings > Privacy & Security**.
+2.  Scroll down to **Certificates** and click **View Certificates...**.
+3.  In the **Authorities** tab, click **Import...** and select the `certs/rootCA.pem` file.
+4.  Check the box for **Trust this CA to identify websites** and click **OK**.
+
 ### 🧪 Develop
 
 Use local development settings for testing and iteration. 
@@ -170,13 +230,11 @@ docker run --rm \
 ghcr.io/fastenhealth/fasten-onprem:main
 ```
 
-Next, open a browser to `http://localhost:9090`
-
 At this point you'll be redirected to the login page.
 
 ### Logging In
 
-Before you can use the Fasten BETA, you'll need to [Create an Account](http://localhost:9090/web/auth/signup).
+Before you can use the Fasten BETA, you'll need to [Create an Account](https://localhost:9090/web/auth/signup).
 
 It can be as simple as
 - **Username:** `testuser`
