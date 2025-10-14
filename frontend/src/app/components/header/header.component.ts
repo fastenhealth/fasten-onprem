@@ -27,12 +27,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   submitSuccess: boolean = false
 
   routerSubscription: Subscription = null
+  isDarkModeSubscription: Subscription = null
 
   is_environment_desktop: boolean = environment.environment_desktop
 
   isAdmin: boolean = false;
-  isDarkMode: boolean;
-  private isDarkModeSubscription: Subscription;
+  isDarkMode: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -40,11 +40,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private fastenApi: FastenApiService,
     private modalService: NgbModal,
     private themeService: ThemeService) {
-      this.themeService.isDarkMode$.subscribe(darkMode => {
-        this.isDarkMode = darkMode;
-      });
     }
-
 
   ngOnInit() {
     try {
@@ -123,7 +119,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.fastenApi.supportRequest(this.newSupportRequest).subscribe((resp: any) => {
         this.loading = false
         this.submitSuccess = true
-        //show success toast? close modal?
       },
       (err)=>{
         this.loading = false
@@ -131,6 +126,4 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.errorMsg = err || "An error occurred while submitting your support request. Please try again later."
       })
   }
-
-
 }

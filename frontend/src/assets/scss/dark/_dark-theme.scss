@@ -6,17 +6,25 @@
 @import 'typography';
 @import 'tables';
 
+@mixin dark-theme-styles {
+    background-color: var(--background);
+
+    .bg-fasten-purple {
+        background-color: var(--primary);
+    }
+
+    .nav-pills {
+        background-color: var(--dark-background-bg);
+    }
+
+}
+
 @media (prefers-color-scheme: dark) {
     body:not(.light-theme) {
-        // Main background color
-        background-color: var(--background);
-
-        .bg-fasten-purple {
-            background-color: var(--primary);
-        }
-
-        .nav-pills {
-            background-color: var(--dark-background-bg);
-        }
+        @include dark-theme-styles;
     }
+}
+
+body.dark-theme {
+    @include dark-theme-styles;
 }
