@@ -310,6 +310,8 @@ func (suite *SqliteRepositoryTestSuite) TestNewSqliteRepository_WithSearchEnable
 	fakeConfig.EXPECT().IsSet("search").Return(true).AnyTimes()
 	fakeConfig.EXPECT().GetString("search.uri").Return("http://localhost:8108").AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 
 	repo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
 	require.NoError(suite.T(), err)
