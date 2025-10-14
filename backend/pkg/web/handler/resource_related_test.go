@@ -60,6 +60,8 @@ func (suite *ResourceRelatedHandlerTestSuite) BeforeTest(suiteName, testName str
 	appConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
 	appConfig.EXPECT().IsSet("search").Return(false).AnyTimes()
 	appConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	appConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
+	appConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
 	suite.AppConfig = appConfig
 
 	appRepo, err := database.NewRepository(suite.AppConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())

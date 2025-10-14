@@ -39,11 +39,12 @@ import { BackgroundJobsComponent } from './pages/background-jobs/background-jobs
 import {FhirCardModule} from './components/fhir-card/fhir-card.module';
 import {FhirDatatableModule} from './components/fhir-datatable/fhir-datatable.module';
 import { AuthSignupWizardComponent } from './pages/auth-signup-wizard/auth-signup-wizard.component';
-import {ShowFirstRunWizardGuard} from './auth-guards/show-first-run-wizard-guard';
 import { IconsModule } from './icon-module';
 import { UserListComponent } from './pages/user-list/user-list.component';
 import { PractitionerHistoryComponent } from './pages/practitioner-history/practitioner-history.component';
 import { SettingsComponent } from './pages/settings/settings.component';
+import { SetupEncryptionKeyComponent } from './pages/setup-encryption-key/setup-encryption-key.component';
+import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wizard/get-encryption-key-wizard.component';
 import { ViewRawResourceDetailsComponent } from './pages/view-raw-resource-details/view-raw-resource-details.component';
 import { ResourceSearchTableComponent } from './pages/resource-search-table/resource-search-table.component';
 import { ResourceSearchDatatableModule } from './components/resource-search-datatable/resource-search-datatable.module';
@@ -71,6 +72,8 @@ import { ChatComponent } from './pages/chat/chat.component';
     AuthSignupWizardComponent,
     UserListComponent,
     PractitionerHistoryComponent,
+    SetupEncryptionKeyComponent,
+    GetEncryptionKeyWizardComponent,
     ViewRawResourceDetailsComponent,
     ResourceSearchTableComponent,
     ChatComponent,
@@ -115,7 +118,6 @@ import { ChatComponent } from './pages/chat/chat.component';
       multi: true
     },
     IsAuthenticatedAuthGuard,
-    ShowFirstRunWizardGuard,
     {
       provide: HIGHLIGHT_OPTIONS,
       useValue: {

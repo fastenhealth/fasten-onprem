@@ -1,232 +1,228 @@
-@media (prefers-color-scheme: dark) {
-    body:not(.light-theme) {
+@mixin dark-components-styles {
+    //Card components
+    .card,
+    .card-dashboard-sixteen {
+        background-color: var(--card);
+        color: var(--dark-text-color);
+        border-color: var(--border);
+    }
 
+    .result-card {
+        background-color: var(--card);
+        color: var(--dark-text-color);
+    }
 
-        //Card components
+    .card-footer {
+        border-color: var(--border);
+    }
 
-        .card,
-        .card-dashboard-sixteen {
+    .card-dashboard-seven {
+        background-color: var(--card);
+        color: var(--dark-text-color);
+        border-color: var(--border);
+
+        .card-header {
+            background-color: var(--card);
+            border-color: var(--border);
+        }
+    }
+
+    .card-body {
+        & .col-6 {
+            background-color: var(--card);
+            color: var(--dark-text-color);
+        }
+    }
+
+    .accordion {
+        .card {
             background-color: var(--card);
             color: var(--dark-text-color);
             border-color: var(--border);
         }
 
-        .result-card {
-            background-color: var(--card);
-            color: var(--dark-text-color);
-        }
-
-        .card-footer {
-            border-color: var(--border);
-        }
-
-        .card-dashboard-seven {
+        .card-header {
             background-color: var(--card);
             color: var(--dark-text-color);
             border-color: var(--border);
-
-            .card-header {
-                background-color: var(--card);
-                border-color: var(--border);
-            }
         }
 
-        .card-body {
-            & .col-6 {
-                background-color: var(--card);
-                color: var(--dark-text-color);
-            }
-        }
-
-
-        .accordion {
-            .card {
-                background-color: var(--card);
-                color: var(--dark-text-color);
-                border-color: var(--border);
-            }
-
-            .card-header {
-                background-color: var(--card);
-                color: var(--dark-text-color);
-                border-color: var(--border);
-            }
-
-            >.card-body {
-                background-color: var(--card);
-                color: var(--dark-text-color);
-            }
-        }
-
-        // Timeline components
-
-        .timeline-body {
+        >.card-body {
             background-color: var(--card);
+            color: var(--dark-text-color);
         }
+    }
 
-        .timeline-header,
-        .timeline-header .username a {
-            color: var(--dark-text-color) !important;
-            border-color: var(--dark-timeline-footer-border-color);
+    // Timeline components
+    .timeline-body {
+        background-color: var(--card);
+    }
+
+    .timeline-header,
+    .timeline-header .username a {
+        color: var(--dark-text-color) !important;
+        border-color: var(--dark-timeline-footer-border-color);
+    }
+
+    .timeline-footer {
+        background-color: var(--card);
+        border-top: 1px solid var(--dark-timeline-footer-border-color);
+    }
+
+    .timeline-comment-box {
+        background-color: var(--dark-timeline-comment-box-background);
+
+        .form-control {
+            background-color: var(--card) !important;
+            border-color: var(--border) !important;
         }
+    }
 
-        .timeline-footer {
+    .timeline-time .time {
+        color: var(--dark-text-color);
+    }
+
+    .timeline-icon a {
+        background: var(--dark-timeline-icon-bg);
+        border-color: var(--dark-timeline-icon-border-color);
+    }
+
+    // Notification components
+    .az-notification-list {
+        background-color: var(--card);
+        color: var(--dark-text-color);
+
+        &:hover {
             background-color: var(--card);
-            border-top: 1px solid var(--dark-timeline-footer-border-color);
+            color: var(--dark-text-color);
         }
+    }
 
-        .timeline-comment-box {
-            background-color: var(--dark-timeline-comment-box-background);
+    // Modal components
+    .modal-footer {
+        background-color: var(--card);
+        color: var(--dark-text-color);
+        border-color: var(--card);
+    }
+
+    .modal-header {
+        background-color: var(--card);
+        color: var(--dark-text-color);
+        border-bottom-color: var(--border);
+    }
+
+    .modal-body {
+        background-color: var(--card);
+        color: var(--dark-text-color);
+    }
+
+    //Primary badge
+    .badge-primary {
+        background-color: var(--dark-button-color);
+        color: var(--dark-text-white-color);
+    }
+
+    //Sign In components
+    .az-card-signin {
+        background-color: var(--card);
+        border-color: var(--border);
+
+        .az-signin-header {
+            label {
+                color: var(--dark-text-color);
+            }
 
             .form-control {
-                background-color: var(--card) !important;
-                border-color: var(--border) !important;
+                background-color: var(--card);
+
+                &:focus {
+                    border-color: $gray-600;
+                }
+
+                &::placeholder {
+                    color: var(--dark-text-color);
+                }
+            }
+        }
+
+        .az-signin-footer {
+            p {
+                color: var(--dark-text-color);
             }
 
+            a {
+                color: var(--dark-text-color);
+            }
         }
+    }
 
-        .timeline-time .time {
-            color: var(--dark-text-color);
-        }
-
-        .timeline-icon a {
-            background: var(--dark-timeline-icon-bg);
-            border-color: var(--dark-timeline-icon-border-color);
-        }
-
-        // Notification components
-        .az-notification-list {
-            background-color: var(--card);
+    // Left sidebar inside Sources Page
+    .component-item {
+        .nav-link {
             color: var(--dark-text-color);
 
             &:hover {
-                background-color: var(--card);
-                color: var(--dark-text-color);
-            }
-        }
-
-        // Modal components
-        .modal-footer {
-            background-color: var(--card);
-            color: var(--dark-text-color);
-            border-color: var(--card);
-        }
-
-        .modal-header {
-            background-color: var(--card);
-            color: var(--dark-text-color);
-            border-bottom-color: var(--border);
-        }
-
-        .modal-body {
-            background-color: var(--card);
-            color: var(--dark-text-color);
-        }
-
-        //Primary badge
-        .badge-primary {
-            background-color: var(--dark-button-color);
-            color: var(--dark-text-white-color);
-        }
-
-        //Sign In components
-        .az-card-signin {
-            background-color: var(--card);
-            border-color: var(--border);
-
-            .az-signin-header {
-
-                label {
-                    color: var(--dark-text-color);
-                }
-
-                .form-control {
-                    background-color: var(--card);
-
-                    &:focus {
-                        border-color: $gray-600;
-                    }
-
-                    &::placeholder {
-                        color: var(--dark-text-color);
-                    }
-                }
-            }
-
-            .az-signin-footer {
-                p {
-                    color: var(--dark-text-color);
-                }
-
-                a {
-                    color: var(--dark-text-color);
-                }
-            }
-        }
-
-        // Left sidebar inside Sources Page
-        .component-item {
-            .nav-link {
-                color: var(--dark-text-color);
-
-                &:hover {
-                    color: var(--dark-text-white-color);
-                }
-            }
-
-            label {
                 color: var(--dark-text-white-color);
             }
         }
 
-        // Add here too !!!!
-        .list-group-item,
-        .hljs {
-            background-color: var(--card);
-            color: var(--dark-text-color);
-            border-color: var(--border);
+        label {
+            color: var(--dark-text-white-color);
         }
+    }
 
-        //Dropdown menu
-        .dropdown-menu {
-            background-color: var(--card);
-            color: var(--dark-text-color);
-            border-color: var(--border);
+    .list-group-item,
+    .hljs {
+        background-color: var(--card);
+        color: var(--dark-text-color);
+        border-color: var(--border);
+    }
 
-            .dropdown-item {
-                color: var(--dark-text-color) !important;
+    //Dropdown menu
+    .dropdown-menu {
+        background-color: var(--card);
+        color: var(--dark-text-color);
+        border-color: var(--border);
 
-                &:hover {
-                    background-color: var(--border);
-                    color: var(--dark-text-color);
-                }
+        .dropdown-item {
+            color: var(--dark-text-color) !important;
 
-                &.active {
-                    background-color: var(--dark-button-color);
-                    color: var(--dark-text-color);
-                }
+            &:hover {
+                background-color: var(--border);
+                color: var(--dark-text-color);
+            }
+
+            &.active {
+                background-color: var(--dark-button-color);
+                color: var(--dark-text-color);
             }
         }
-
-        // Add here too !!!!
-        .popover-body {
-            background-color: var(--card);
-        }
-
-
-        // Alert card
-        .alert.alert-info {
-            background-color: var(--dark-alert-background-color);
-            color: var(--dark-alert-text-color);
-            border-color: var(--dark-alert-info-border-color);
-        }
-
-
-        .alert.alert-warning {
-            background-color: var(--dark-alert-background-color);
-            color: var(--dark-alert-text-color);
-            border-color: var(--dark-alert-info-border-color);
-        }
-
     }
+
+    .popover-body {
+        background-color: var(--card);
+    }
+
+    // Alert card
+    .alert.alert-info {
+        background-color: var(--dark-alert-background-color);
+        color: var(--dark-alert-text-color);
+        border-color: var(--dark-alert-info-border-color);
+    }
+
+    .alert.alert-warning {
+        background-color: var(--dark-alert-background-color);
+        color: var(--dark-alert-text-color);
+        border-color: var(--dark-alert-info-border-color);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    body:not(.light-theme) {
+        @include dark-components-styles;
+    }
+}
+
+body.dark-theme {
+    @include dark-components-styles;
 }

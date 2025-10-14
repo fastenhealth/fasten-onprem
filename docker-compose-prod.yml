@@ -11,6 +11,7 @@ services:
     volumes:
       - ./db:/opt/fasten/db
       - ./cache:/opt/fasten/cache
+      - ./certs:/opt/fasten/certs/shared
       - ./config.yaml:/opt/fasten/config/config.yaml
 
   # typesense is an optional service that is used for the "Search" and "Chat" features.

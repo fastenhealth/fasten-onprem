@@ -18,6 +18,7 @@ services:
       - "${PORT:-9090}:8080"
     volumes:
       - ./db:/opt/fasten/db
+      - ./certs:/opt/fasten/certs/shared
       - ./cache:/opt/fasten/cache
       - ./config.yaml:/opt/fasten/config/config.yaml
 
