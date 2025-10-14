@@ -1,0 +1,15 @@
+.az-card-signin {
+  min-height: unset !important;
+}
+
+.button-content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.button-content-wrapper .spinner-border,
+.button-content-wrapper fa-icon {
+  margin-right: 0.5rem; /* Explicitly add space between spinner/icon and text */
+}
