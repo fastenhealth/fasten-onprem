@@ -69,6 +69,31 @@ export class FastenApiService {
       );
   }
 
+  getEncryptionKey(): Observable<string> {
+    return this._httpClient.get<{ data: string }>(
+      `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/encryption-key`
+    ).pipe(
+      map(response => response?.data)
+    );
+  }
+
+  setupEncryptionKey(encryptionKey: string): Observable<any> {
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/encryption-key`, { encryption_key: encryptionKey })
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data
+        })
+      );
+  }
+
+  validateEncryptionKey(encryptionKey: string): Observable<any> {
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/encryption-key/validate`, { encryption_key: encryptionKey })
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data
+        })
+      );
+  }
 
   /*
   SECURE ENDPOINTS

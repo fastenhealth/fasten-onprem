@@ -9,20 +9,23 @@ web:
   listen:
     port: 8080
     host: 0.0.0.0
-
     # if you're using a reverse proxy like apache/nginx, you can override this value to serve fasten on a subpath.
     # eg. http://example.com/fasten/* vs http://example.com:8080
     # basepath: `/fasten`
     # leave empty unless behind a path prefixed proxy
     basepath: ''
+    
     https:
-      enabled: false
+      enabled: true
+      certDir: "certs"
+      sharedDir: "certs/shared"
   src:
     # the location on the filesystem where webapp javascript + css is located
     frontend:
       path: /opt/fasten/web
 database:
-  #  encryption:
+  encryption:
+    enabled: true
   #    key: ''
   type: 'sqlite' # postgres will be supported in the future, but is completely **BROKEN** at the moment.
   location: '/opt/fasten/db/fasten.db' # if postgres (**BROKEN**) use a DSN, eg. `host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=required TimeZone=Asia/Shanghai`

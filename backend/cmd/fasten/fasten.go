@@ -76,7 +76,6 @@ func main() {
 				Name:  "start",
 				Usage: "Start the fasten server",
 				Action: func(c *cli.Context) error {
-					//fmt.Fprintln(c.App.Writer, c.Command.Usage)
 					if c.IsSet("config") {
 						err = appconfig.ReadConfig(c.String("config")) // Find and read the config file
 						if err != nil {                                // Handle errors reading the config file
