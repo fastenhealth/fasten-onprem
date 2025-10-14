@@ -189,8 +189,6 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					secure.POST("/resource/related", handler.CreateRelatedResources)
 					secure.DELETE("/encounter/:encounterId/related/:resourceType/:resourceId", handler.EncounterUnlinkResource)
 
-					secure.GET("/dashboards", handler.GetDashboard)
-					secure.POST("/dashboards", handler.AddDashboardLocation)
 					//secure.GET("/dashboard/:dashboardId", handler.GetDashboard)
 
 					secure.GET("/jobs", handler.ListBackgroundJobs)
