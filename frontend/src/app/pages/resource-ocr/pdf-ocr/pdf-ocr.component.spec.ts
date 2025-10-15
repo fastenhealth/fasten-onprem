@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PdfOcrComponent } from './pdf-ocr.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('PdfOcrComponent', () => {
   let component: PdfOcrComponent;
@@ -7,7 +8,7 @@ describe('PdfOcrComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PdfOcrComponent],
+      declarations: [PdfOcrComponent, HttpClientTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PdfOcrComponent);

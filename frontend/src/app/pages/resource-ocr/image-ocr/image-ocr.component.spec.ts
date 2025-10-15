@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ImageOcrComponent } from './image-ocr.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ImageOcrComponent', () => {
   let component: ImageOcrComponent;
@@ -8,7 +9,7 @@ describe('ImageOcrComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ImageOcrComponent ]
+      declarations: [ ImageOcrComponent, HttpClientTestingModule ]
     })
     .compileComponents();
 

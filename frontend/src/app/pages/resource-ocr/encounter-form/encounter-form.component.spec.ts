@@ -18,6 +18,7 @@ import { HighlightModule } from 'ngx-highlightjs';
 import { FhirCardModule } from 'src/app/components/fhir-card/fhir-card.module';
 import { PipesModule } from 'src/app/pipes/pipes.module';
 import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('EncounterFormComponent', () => {
   let component: EncounterFormComponent;
@@ -40,6 +41,7 @@ describe('EncounterFormComponent', () => {
         FhirCardModule,
         PipesModule,
         HttpClientModule,
+        HttpClientTestingModule,
         NlmTypeaheadComponent
       ],
       providers: [NgbActiveModal, NgbModal],

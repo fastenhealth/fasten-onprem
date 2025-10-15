@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ResourceOcrComponent } from './resource-ocr.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ResourceOcrComponent', () => {
   let component: ResourceOcrComponent;
@@ -8,7 +9,7 @@ describe('ResourceOcrComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ResourceOcrComponent ]
+      declarations: [ ResourceOcrComponent, HttpClientTestingModule ]
     })
     .compileComponents();
 
