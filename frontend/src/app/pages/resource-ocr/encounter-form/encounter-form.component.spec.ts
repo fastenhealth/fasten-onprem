@@ -17,7 +17,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { HighlightModule } from 'ngx-highlightjs';
 import { FhirCardModule } from 'src/app/components/fhir-card/fhir-card.module';
 import { PipesModule } from 'src/app/pipes/pipes.module';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_CLIENT_TOKEN } from 'src/app/dependency-injection';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('EncounterFormComponent', () => {
@@ -42,10 +43,21 @@ describe('EncounterFormComponent', () => {
         PipesModule,
         HttpClientModule,
         HttpClientTestingModule,
-        NlmTypeaheadComponent
+        NlmTypeaheadComponent,
       ],
-      providers: [NgbActiveModal, NgbModal],
+      providers: [
+        NgbActiveModal,
+        NgbModal,
+        {
+          provide: HTTP_CLIENT_TOKEN,
+          useClass: HttpClient,
+        },
+      ],
     }).compileComponents();
+
+    fixture = TestBed.createComponent(EncounterFormComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create', () => {
