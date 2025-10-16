@@ -234,8 +234,6 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					secure.GET("/auth/oidc/:provider", handler.LoginHandler(oidcManager))
 					secure.GET("/auth/oidc/:provider/callback", handler.CallbackHandler(oidcManager))
 
-					secure.GET("/sync/discovery", handler.GetServerDiscovery)
-
 					// Access token management
 					secure.GET("/access/token", handler.GetAccessTokens)
 					secure.POST("/access/token", handler.CreateAccessToken)
