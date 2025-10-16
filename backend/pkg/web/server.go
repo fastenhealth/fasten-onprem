@@ -89,12 +89,6 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 		ae.Logger.Info("No OIDC providers configured, skipping manager initialization.")
 	}
 
-	//setup database
-	deviceRepo, err := database.NewRepository(ae.Config, ae.Logger, ae.EventBus)
-	if err != nil {
-		panic(err)
-	}
-
 	if !ae.StandbyMode {
 		r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
 	}
@@ -172,20 +166,15 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				ae.Logger.Info("Database StandbyMode is off, skipping encryption key setup endpoints.")
 			}
 
-			// OIDC Authentication
-			api.GET("/oidc/:provider", handler.LoginHandler(oidcManager))
-			api.GET("/oidc/:provider/callback", handler.CallbackHandler(oidcManager))
-			api.GET("/oidc/providers", handler.ListAuthMethodsHandler(oidcManager))
-
-			//whitelisted CORS PROXY
-			api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
-			api.POST("/cors/:endpointId/*proxyPath", handler.CORSProxy)
-			api.OPTIONS("/cors/:endpointId/*proxyPath", handler.CORSProxy)
-
 			if !ae.StandbyMode { // Check ae.StandbyMode for non-standby mode
 				api.Use(middleware.CacheMiddleware())
 				api.POST("/auth/signup", handler.AuthSignup)
 				api.POST("/auth/signin", handler.AuthSignin)
+
+				// OIDC Authentication
+				api.GET("/oidc/:provider", handler.LoginHandler(oidcManager))
+				api.GET("/oidc/:provider/callback", handler.CallbackHandler(oidcManager))
+				api.GET("/oidc/providers", handler.ListAuthMethodsHandler(oidcManager))
 
 				//whitelisted CORS PROXY
 				api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
