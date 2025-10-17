@@ -240,6 +240,14 @@ func (gr *GormRepository) Migrate() error {
 				)
 			},
 		},
+		{
+			ID: "20250401120000", // add delegated access models
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(
+					&models.DelegatedAccess{},
+				)
+			},
+		},
 	})
 
 	// run when database is empty
