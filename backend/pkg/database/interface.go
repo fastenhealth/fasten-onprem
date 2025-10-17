@@ -95,4 +95,11 @@ type DatabaseRepository interface {
 	DeleteAccessToken(ctx context.Context, tokenID string) error
 	GetAccessToken(ctx context.Context, tokenID string) (*models.AccessToken, error)
 	GetAccessTokenByTokenIDAndUsername(ctx context.Context, tokenID string, username string) (*models.AccessToken, error)
+
+	// Delegated Access Management
+	CreateDelegation(ctx context.Context, delegation *models.DelegatedAccess) error
+	GetDelegationsByOwner(ctx context.Context, ownerID uuid.UUID) ([]models.DelegatedAccess, error)
+	GetDelegationsByDelegate(ctx context.Context, delegateID uuid.UUID) ([]models.DelegatedAccess, error)
+	DeleteDelegation(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) error
+	HasAccess(ctx context.Context, delegateID uuid.UUID, resourceType string, resourceID uuid.UUID) (models.AccessLevel, bool, error)
 }

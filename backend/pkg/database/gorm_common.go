@@ -1574,3 +1574,60 @@ func (gr *GormRepository) DeleteResourceByTypeAndId(ctx context.Context, sourceR
 	fmt.Printf("Successfully deleted resource: %s from table: %s\n", sourceResourceId, tableName)
 	return nil
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Delegated Access
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Create a delegation record
+func (gr *GormRepository) CreateDelegation(ctx context.Context, d *models.DelegatedAccess) error {
+	d.ID = uuid.New()
+	d.CreatedAt = time.Now()
+	d.UpdatedAt = time.Now()
+	result := gr.GormClient.WithContext(ctx).Create(d)
+	return result.Error
+}
+
+// Get delegations by owner user id
+func (gr *GormRepository) GetDelegationsByOwner(ctx context.Context, ownerID uuid.UUID) ([]models.DelegatedAccess, error) {
+	var delegations []models.DelegatedAccess
+	result := gr.GormClient.WithContext(ctx).
+		Where("owner_user_id = ?", ownerID).
+		Find(&delegations)
+	return delegations, result.Error
+}
+
+// Get delegations by delegate user id
+func (gr *GormRepository) GetDelegationsByDelegate(ctx context.Context, delegateID uuid.UUID) ([]models.DelegatedAccess, error) {
+	var delegations []models.DelegatedAccess
+	result := gr.GormClient.WithContext(ctx).
+		Where("delegate_user_id = ?", delegateID).
+		Find(&delegations)
+	return delegations, result.Error
+}
+
+// Delete a delegation by id and owner user id
+func (gr *GormRepository) DeleteDelegation(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) error {
+	result := gr.GormClient.WithContext(ctx).
+		Where("id = ? AND owner_user_id = ?", id, ownerID).
+		Delete(&models.DelegatedAccess{})
+	if result.RowsAffected == 0 {
+		return errors.New("delegation not found or unauthorized")
+	}
+	return result.Error
+}
+
+// Check if a delegate has access to a specific resource
+func (gr *GormRepository) HasAccess(ctx context.Context, delegateID uuid.UUID, resourceType string, resourceID uuid.UUID) (models.AccessLevel, bool, error) {
+	var delegation models.DelegatedAccess
+	result := gr.GormClient.WithContext(ctx).
+		Where("delegate_user_id = ? AND resource_type = ? AND resource_id = ?", delegateID, resourceType, resourceID).
+		First(&delegation)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return "", false, nil
+		}
+		return "", false, result.Error
+	}
+	return delegation.AccessLevel, true, nil
+}
