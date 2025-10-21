@@ -195,6 +195,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 					secure.GET("/users", handler.GetUsers)
 					secure.POST("/users", handler.CreateUser)
+					secure.GET("/users/lightweight", handler.GetLightweightUsers)
 
 					secure.POST("/practitioners", handler.CreatePractitioner)
 					secure.PUT("/practitioners/:practitionerId", handler.UpdatePractitioner)

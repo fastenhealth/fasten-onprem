@@ -21,6 +21,12 @@ export class ResourceDetailComponent implements OnInit {
   resource: ResourceFhir = null
   displayModel: FastenDisplayModel = null
 
+  // Delegated access
+  showDelegateAccessModal = false;
+  users: any[] = [];
+  selectedUserId: string | null = null;
+  selectedAccessType: string | null = null;
+
   constructor(private fastenApi: FastenApiService, private router: Router, private route: ActivatedRoute) {
   }
 
@@ -43,4 +49,41 @@ export class ResourceDetailComponent implements OnInit {
     });
   }
 
+  openDelegateAccessModal() {
+    this.showDelegateAccessModal = true;
+    // Fetch user list if not already loaded
+    if (this.users.length === 0) {
+      this.loadUsers();
+    }
+  }
+
+  closeDelegateAccessModal() {
+    this.showDelegateAccessModal = false;
+    this.selectedUserId = null;
+    this.selectedAccessType = null;
+  }
+
+  loadUsers() {
+    this.fastenApi.getAllUserLightweight().subscribe((data: any[]) => {
+      this.users = data;
+    });
+  }
+
+  submitDelegation() {
+    const payload = {
+      delegateUserId: this.selectedUserId,
+      accessLevel: this.selectedAccessType,
+      resourceType: this.resource?.source_resource_type,
+      resourceId: this.resource?.source_resource_id,
+    };
+
+    this.fastenApi.createDelegation(payload).subscribe({
+      next: () => {
+        this.closeDelegateAccessModal();
+      },
+      error: (err) => {
+        console.error('Error creating delegation:', err);
+      },
+    });
+  }
 }

@@ -192,6 +192,13 @@ func (gr *GormRepository) GetUsers(ctx context.Context) ([]models.User, error) {
 	return sanitizedUsers, result.Error
 }
 
+func (gr *GormRepository) GetLightweightUsers(ctx context.Context) ([]models.User, error) {
+	var users []models.User
+	result := gr.GormClient.WithContext(ctx).Select("id", "full_name", "username").Find(&users)
+
+	return users, result.Error
+}
+
 //</editor-fold>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

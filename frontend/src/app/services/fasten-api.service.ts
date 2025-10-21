@@ -435,6 +435,15 @@ export class FastenApiService {
       );
   }
 
+  getAllUserLightweight(): Observable<User[]> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/users/lightweight`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as User[]
+        })
+      );
+  }
+
   getIPSExport(exportType?: string) {
     let format = exportType || "pdf"
     let contentType = "application/pdf"
@@ -694,4 +703,15 @@ export class FastenApiService {
       );
     
   }
+
+  createDelegation(payload: any): Observable<any> {
+    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/delegated-access`, {
+      payload
+    })
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response
+        })
+      );
+    }
 }

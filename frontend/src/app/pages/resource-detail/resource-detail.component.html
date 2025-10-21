@@ -16,8 +16,14 @@
           <p> An error occurred while parsing FHIR resource </p>
         </ng-template>
 
-        <div style="margin-bottom:50px" class="alert alert-warning" role="alert">
-          Enable Debug mode: <input type="checkbox" [(ngModel)]="debugMode"/>
+        <div style="margin-bottom: 50px" class="alert alert-warning" role="alert">
+          Enable Debug mode: <input type="checkbox" [(ngModel)]="debugMode" />
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <button type="button" class="btn btn-outline-secondary" (click)="openDelegateAccessModal()">
+            Delegate Access
+          </button>
         </div>
 
         <ng-container *ngIf="resource && debugMode">
@@ -32,5 +38,48 @@
         </div>
       </ng-template>
     </div><!-- az-content-body -->
+  </div>
+</div>
+
+<!-- Delegate Access Modal -->
+<div class="modal fade" tabindex="-1" role="dialog" [class.show]="showDelegateAccessModal"
+  [style.display]="showDelegateAccessModal ? 'block' : 'none'">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delegate Access</h5>
+        <button type="button" class="close" (click)="closeDelegateAccessModal()">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #delegateForm="ngForm">
+          <div class="form-group">
+            <label for="userSelect">Select User</label>
+            <select id="userSelect" class="form-control" [(ngModel)]="selectedUserId" name="selectedUserId" required>
+              <option *ngFor="let user of users" [value]="user.id">{{ user?.full_name + ' - ' + user?.username }}</option>
+            </select>
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="accessType">Access Type</label>
+            <select id="accessType" class="form-control" [(ngModel)]="selectedAccessType" name="selectedAccessType"
+              required>
+              <option value="VIEW">View</option>
+              <option value="EDIT">Edit</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDelegateAccessModal()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" [disabled]="!selectedUserId || !selectedAccessType"
+          (click)="submitDelegation()">
+          Save
+        </button>
+      </div>
+    </div>
   </div>
 </div>
