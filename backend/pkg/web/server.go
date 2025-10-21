@@ -214,10 +214,10 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					secure.GET("/sync/discovery", handler.GetServerDiscovery)
 
 					// Delegated access management
-					api.POST("/delegated-access", handler.CreateDelegation)
-					api.GET("/delegated-access", handler.ListOwnedDelegations)
-					api.GET("/delegated-access/shared-with-me", handler.ListSharedWithMe)
-					api.DELETE("/delegated-access/:id", handler.DeleteDelegation)
+					secure.POST("/delegated-access", handler.CreateDelegation)
+					secure.GET("/delegated-access", handler.ListOwnedDelegations)
+					secure.GET("/delegated-access/shared-with-me", handler.ListSharedWithMe)
+					secure.DELETE("/delegated-access/:id", handler.DeleteDelegation)
 
 					//server-side-events handler (only supported on mac/linux)
 					// TODO: causes deadlock on Windows

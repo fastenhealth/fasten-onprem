@@ -194,7 +194,19 @@ func (gr *GormRepository) GetUsers(ctx context.Context) ([]models.User, error) {
 
 func (gr *GormRepository) GetLightweightUsers(ctx context.Context) ([]models.User, error) {
 	var users []models.User
-	result := gr.GormClient.WithContext(ctx).Select("id", "full_name", "username").Find(&users)
+
+	// Get the currently logged-in user
+	currentUser, err := gr.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Query only lightweight fields and exclude the current user
+	result := gr.GormClient.
+		WithContext(ctx).
+		Select("id", "full_name", "username").
+		Where("id != ?", currentUser.ID).
+		Find(&users)
 
 	return users, result.Error
 }

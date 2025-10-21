@@ -14,10 +14,16 @@ import (
 func CreateDelegation(c *gin.Context) {
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
+	currentUser, err := databaseRepo.GetCurrentUser(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not get current user"})
+		return
+	}
+
 	var req struct {
-		DelegateUserID uuid.UUID          `json:"delegateUserId"`
+		DelegateUserID string             `json:"delegateUserId"`
 		ResourceType   string             `json:"resourceType"`
-		ResourceID     uuid.UUID          `json:"resourceId"`
+		ResourceID     string             `json:"resourceId"`
 		AccessLevel    models.AccessLevel `json:"accessLevel"`
 	}
 
@@ -26,11 +32,9 @@ func CreateDelegation(c *gin.Context) {
 		return
 	}
 
-	ownerID := c.MustGet("userID").(uuid.UUID)
-
 	da := models.DelegatedAccess{
 		ID:             uuid.New(),
-		OwnerUserID:    ownerID,
+		OwnerUserID:    currentUser.ID,
 		DelegateUserID: req.DelegateUserID,
 		ResourceType:   req.ResourceType,
 		ResourceID:     req.ResourceID,

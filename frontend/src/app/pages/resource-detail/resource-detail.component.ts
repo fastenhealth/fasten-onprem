@@ -5,6 +5,7 @@ import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {fhirModelFactory} from '../../../lib/models/factory';
 import {ResourceType} from '../../../lib/models/constants';
 import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-resource-detail',
@@ -22,12 +23,11 @@ export class ResourceDetailComponent implements OnInit {
   displayModel: FastenDisplayModel = null
 
   // Delegated access
-  showDelegateAccessModal = false;
   users: any[] = [];
   selectedUserId: string | null = null;
   selectedAccessType: string | null = null;
 
-  constructor(private fastenApi: FastenApiService, private router: Router, private route: ActivatedRoute) {
+  constructor(private fastenApi: FastenApiService, private router: Router, private route: ActivatedRoute, private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
@@ -49,8 +49,13 @@ export class ResourceDetailComponent implements OnInit {
     });
   }
 
-  openDelegateAccessModal() {
-    this.showDelegateAccessModal = true;
+  openDelegateAccessModal(content: any) {
+    this.modalService.open(content, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static'
+    });
+
     // Fetch user list if not already loaded
     if (this.users.length === 0) {
       this.loadUsers();
@@ -58,7 +63,7 @@ export class ResourceDetailComponent implements OnInit {
   }
 
   closeDelegateAccessModal() {
-    this.showDelegateAccessModal = false;
+    this.modalService.dismissAll();
     this.selectedUserId = null;
     this.selectedAccessType = null;
   }

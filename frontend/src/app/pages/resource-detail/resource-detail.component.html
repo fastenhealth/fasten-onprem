@@ -21,7 +21,7 @@
         </div>
 
         <div style="margin-bottom: 20px;">
-          <button type="button" class="btn btn-outline-secondary" (click)="openDelegateAccessModal()">
+          <button type="button" class="btn btn-outline-secondary" (click)="openDelegateAccessModal(delegateModal)">
             Delegate Access
           </button>
         </div>
@@ -42,44 +42,73 @@
 </div>
 
 <!-- Delegate Access Modal -->
-<div class="modal fade" tabindex="-1" role="dialog" [class.show]="showDelegateAccessModal"
-  [style.display]="showDelegateAccessModal ? 'block' : 'none'">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Delegate Access</h5>
-        <button type="button" class="close" (click)="closeDelegateAccessModal()">
-          <span>&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form #delegateForm="ngForm">
-          <div class="form-group">
-            <label for="userSelect">Select User</label>
-            <select id="userSelect" class="form-control" [(ngModel)]="selectedUserId" name="selectedUserId" required>
-              <option *ngFor="let user of users" [value]="user.id">{{ user?.full_name + ' - ' + user?.username }}</option>
-            </select>
-          </div>
+<ng-template #delegateModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <i class="fas fa-user-shield mr-2"></i>
+      <span>Delegate Access</span>
+    </h5>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
 
-          <div class="form-group mt-3">
-            <label for="accessType">Access Type</label>
-            <select id="accessType" class="form-control" [(ngModel)]="selectedAccessType" name="selectedAccessType"
-              required>
-              <option value="VIEW">View</option>
-              <option value="EDIT">Edit</option>
-            </select>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeDelegateAccessModal()">
-          Cancel
-        </button>
-        <button type="button" class="btn btn-primary" [disabled]="!selectedUserId || !selectedAccessType"
-          (click)="submitDelegation()">
-          Save
-        </button>
-      </div>
+  <div class="modal-body text-start">
+    <p class="text-muted">
+      Allow another user to view or edit this resource. You can revoke access at any time.
+    </p>
+
+    <!-- Select User -->
+    <div class="form-group mt-3">
+      <label for="delegateUserSelect" class="form-label">Select User:</label>
+      <select
+        id="delegateUserSelect"
+        class="form-control"
+        [(ngModel)]="selectedUserId"
+        required
+      >
+        <option value="" disabled selected>Select a user</option>
+        <option *ngFor="let user of users" [value]="user.id">
+          {{ user?.full_name + ' - ' + user?.username }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Select Permission Type -->
+    <div class="form-group mt-3">
+      <label for="permissionSelect" class="form-label">Permission Type:</label>
+      <select
+        id="permissionSelect"
+        class="form-control"
+        [(ngModel)]="selectedAccessType"
+        required
+      >
+        <option value="" disabled selected>Select permission</option>
+        <option value="VIEW">View</option>
+        <option value="EDIT">Edit</option>
+      </select>
+    </div>
+
+    <!-- Info or Feedback -->
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
+      {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
+      {{ successMessage }}
     </div>
   </div>
-</div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="btn btn-az-primary"
+      (click)="submitDelegation()"
+      [disabled]="!selectedUserId || !selectedAccessType || isLoading"
+    >
+      Save
+    </button>
+  </div>
+</ng-template>
