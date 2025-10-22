@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import QRCode from 'qrcode';
+import { FastenApiService } from 'src/app/services/fasten-api.service';
 
 @Component({
   selector: 'app-settings',
@@ -31,14 +32,23 @@ export class SettingsComponent implements OnInit {
   ];
   step: 'askDetails' | 'showQR' = 'askDetails';
 
+  // Delegated access
+  users: any[] = [];
+  selectedUserId: string | null = null;
+  selectedSourceId: string | null = null;
+  selectedAccessType: string | null = null;
+  sources: any[] = [];
+
   constructor(
     private http: HttpClient,
     private sanitizer: DomSanitizer,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private fastenApi: FastenApiService
   ) { }
 
   ngOnInit(): void {
     this.loadCurrentUser();
+    this.loadSources();
     this.loadTokens();
   }
 
@@ -56,6 +66,12 @@ export class SettingsComponent implements OnInit {
       error: (error) => {
         console.error('Error loading current user:', error);
       }
+    });
+  }
+
+  loadSources(): void {
+    this.fastenApi.getSources().subscribe((data: any[]) => {
+      this.sources = data;
     });
   }
 
@@ -262,5 +278,48 @@ export class SettingsComponent implements OnInit {
   private setError(message: string): void {
     this.hasError = true;
     this.errorMessage = message;
+  }
+
+  openDelegateAccessModal(content: any) {
+    this.modalService.open(content, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static'
+    });
+
+    // Fetch user list if not already loaded
+    if (this.users.length === 0) {
+      this.loadUsers();
+    }
+  }
+
+  closeDelegateAccessModal() {
+    this.modalService.dismissAll();
+    this.selectedUserId = null;
+    this.selectedAccessType = null;
+  }
+
+  loadUsers() {
+    this.fastenApi.getAllUserLightweight().subscribe((data: any[]) => {
+      this.users = data;
+    });
+  }
+
+  submitDelegation() {
+    const payload = {
+      delegateUserId: this.selectedUserId,
+      accessLevel: this.selectedAccessType,
+      resourceType: 'source',
+      resourceId: this.selectedSourceId,
+    };
+
+    this.fastenApi.createDelegation(payload).subscribe({
+      next: () => {
+        this.closeDelegateAccessModal();
+      },
+      error: (err) => {
+        console.error('Error creating delegation:', err);
+      },
+    });
   }
 }

@@ -29,7 +29,7 @@
       </section>
 
       <!-- Connected Devices Section -->
-      <section class="card card-dashboard-table">
+      <section class="card card-dashboard-table mg-b-20">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h4 class="card-title mb-0"><i class="fas fa-key mr-3"></i>Connected Devices</h4>
           <div>
@@ -66,6 +66,21 @@
           </div>
         </div>
       </section>
+
+      <!-- Delegate Access Section -->
+      <section class="card card-dashboard-table">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="card-title mb-0"><i class="fas fa-user-shield mr-3"></i>Delegate Access</h4>
+          <p class="mb-0 text-muted">Allow another user to view or edit your resources.</p>
+        </div>
+        <div class="card-body">
+          <div style="margin-bottom: 20px;">
+            <button type="button" class="btn btn-az-primary btn-sm" (click)="openDelegateAccessModal(delegateModal)">
+              Delegate Access
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </div>
@@ -87,7 +102,8 @@
       <p class="text-muted">Give your new device a name so you can recognize it in the list of connected devices.</p>
       <div class="form-group mt-3">
         <label for="deviceNameInput" class="form-label">Device Name (optional):</label>
-        <input type="text" class="form-control" id="deviceNameInput" [(ngModel)]="newDeviceName" placeholder="e.g., My iPhone, Work Tablet">
+        <input type="text" class="form-control" id="deviceNameInput" [(ngModel)]="newDeviceName"
+          placeholder="e.g., My iPhone, Work Tablet">
       </div>
       <div class="form-group mt-3">
         <label for="expirationSelect" class="form-label">Expiration:</label>
@@ -98,7 +114,8 @@
     </div>
 
     <div *ngIf="step === 'showQR'" class="text-center">
-      <p class="text-muted">Scan this QR code with your companion mobile app to connect your device and sync your medical records.</p>
+      <p class="text-muted">Scan this QR code with your companion mobile app to connect your device and sync your
+        medical records.</p>
       <div *ngIf="qrCodeUrl" class="qr-code-container mb-4 p-3 border rounded d-inline-block">
         <img [src]="qrCodeUrl" alt="QR Code" class="img-fluid qr-code-image">
       </div>
@@ -130,5 +147,74 @@
     <button *ngIf="step === 'askDetails'" type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancel</button>
     <button *ngIf="step === 'askDetails'" type="button" class="btn btn-az-primary" (click)="connectDevice()" [disabled]="isLoading">Connect</button>
     <button *ngIf="step === 'showQR'" type="button" class="btn btn-secondary" (click)="modal.close()">Close</button>
+  </div>
+</ng-template>
+
+<!-- Delegate Access Modal -->
+<ng-template #delegateModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <i class="fas fa-user-shield mr-2"></i>
+      <span>Delegate Access</span>
+    </h5>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body text-start">
+    <p class="text-muted">
+      Allow another user to view or edit this resource. You can revoke access at any time.
+    </p>
+
+    <!-- Select User -->
+    <div class="form-group mt-3">
+      <label for="delegateUserSelect" class="form-label">Select User:</label>
+      <select id="delegateUserSelect" class="form-control" [(ngModel)]="selectedUserId" required>
+        <option value="" disabled selected>Select a user</option>
+        <option *ngFor="let user of users" [value]="user.id">
+          {{ user?.full_name + ' - ' + user?.username }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Select Permission Type -->
+    <div class="form-group mt-3">
+      <label for="permissionSelect" class="form-label">Permission Type:</label>
+      <select id="permissionSelect" class="form-control" [(ngModel)]="selectedAccessType" required>
+        <option value="" disabled selected>Select permission</option>
+        <option value="VIEW">View</option>
+        <option value="EDIT">Edit</option>
+      </select>
+    </div>
+
+    <!-- Select Source -->
+    <div class="form-group mt-3">
+      <label for="sourcesSelect" class="form-label">Select Source:</label>
+      <select id="sourcesSelect" class="form-control" [(ngModel)]="selectedSourceId" required>
+        <option value="" disabled selected>Select source</option>
+       <option *ngFor="let source of sources" [value]="source.id">
+          {{ source?.display || (source?.platform_type + ' - ' + (source?.created_at | date:'yyyy-MM-dd')) }}
+       </option>
+      </select>
+    </div>
+
+    <!-- Info or Feedback -->
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
+      {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage" class="alert alert-success mt-3" role="alert">
+      {{ successMessage }}
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">
+      Cancel
+    </button>
+    <button type="button" class="btn btn-az-primary" (click)="submitDelegation()"
+      [disabled]="!selectedUserId || !selectedAccessType || isLoading">
+      Save
+    </button>
   </div>
 </ng-template>

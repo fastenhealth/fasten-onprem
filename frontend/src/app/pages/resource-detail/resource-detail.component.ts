@@ -22,11 +22,6 @@ export class ResourceDetailComponent implements OnInit {
   resource: ResourceFhir = null
   displayModel: FastenDisplayModel = null
 
-  // Delegated access
-  users: any[] = [];
-  selectedUserId: string | null = null;
-  selectedAccessType: string | null = null;
-
   constructor(private fastenApi: FastenApiService, private router: Router, private route: ActivatedRoute, private modalService: NgbModal) {
   }
 
@@ -46,49 +41,6 @@ export class ResourceDetailComponent implements OnInit {
       }
     }, error => {
       this.loading = false
-    });
-  }
-
-  openDelegateAccessModal(content: any) {
-    this.modalService.open(content, {
-      size: 'lg',
-      centered: true,
-      backdrop: 'static'
-    });
-
-    // Fetch user list if not already loaded
-    if (this.users.length === 0) {
-      this.loadUsers();
-    }
-  }
-
-  closeDelegateAccessModal() {
-    this.modalService.dismissAll();
-    this.selectedUserId = null;
-    this.selectedAccessType = null;
-  }
-
-  loadUsers() {
-    this.fastenApi.getAllUserLightweight().subscribe((data: any[]) => {
-      this.users = data;
-    });
-  }
-
-  submitDelegation() {
-    const payload = {
-      delegateUserId: this.selectedUserId,
-      accessLevel: this.selectedAccessType,
-      resourceType: this.resource?.source_resource_type,
-      resourceId: this.resource?.source_resource_id,
-    };
-
-    this.fastenApi.createDelegation(payload).subscribe({
-      next: () => {
-        this.closeDelegateAccessModal();
-      },
-      error: (err) => {
-        console.error('Error creating delegation:', err);
-      },
     });
   }
 }
