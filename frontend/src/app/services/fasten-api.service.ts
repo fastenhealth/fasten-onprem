@@ -734,4 +734,19 @@ export class FastenApiService {
           })
         );
     }
+
+    deleteDelegation(delegationId: string): Observable<any> {
+      return this._httpClient
+        .delete<any>(
+          `${GetEndpointAbsolutePath(
+            globalThis.location,
+            environment.fasten_api_endpoint_base
+          )}/secure/delegated-access/${delegationId}`
+        )
+        .pipe(
+          map((response: ResponseWrapper) => {
+            return response;
+          })
+        );
+    }
 }

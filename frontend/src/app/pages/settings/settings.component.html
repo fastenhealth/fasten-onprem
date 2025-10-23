@@ -81,6 +81,7 @@
             <ul class="list-group">
               <li *ngFor="let da of currentDelegations"
                 class="list-group-item d-flex justify-content-between align-items-center">
+                <!-- Left content -->
                 <div>
                   <strong class="mr-2">{{ da.source }}</strong>
                   <span class="text-muted mr-2">({{ da.resource_type }})</span>
@@ -89,8 +90,13 @@
                     Access: <span class="badge bg-info text-dark mr-1">{{ da.access_level }}</span>
                     <span class="ms-2 mr-1">Granted on: {{ da.created_at | date:'yyyy-MM-dd HH:mm' }}</span>
                   </small>
-                  <small class="text-muted">Shared with: {{ da.delegate_user }}</small>
+                  <small class="text-muted d-block">Shared with: {{ da.delegate_user }}</small>
                 </div>
+
+                <!-- Right content: Delete button -->
+                <button type="button" class="btn btn-outline-danger btn-sm" (click)="deleteDelegation(da.id)">
+                  <i class="bi bi-trash"></i> Remove
+                </button>
               </li>
             </ul>
           </div>
@@ -199,7 +205,8 @@
     <!-- Select User -->
     <div class="form-group mt-3">
       <label for="delegateUserSelect" class="form-label">Select User:</label>
-      <select id="delegateUserSelect" class="form-control" [(ngModel)]="selectedUserId" (ngModelChange)="checkIfDelegationExists()" required>
+      <select id="delegateUserSelect" class="form-control" [(ngModel)]="selectedUserId"
+        (ngModelChange)="checkIfDelegationExists()" required>
         <option value="" disabled selected>Select a user</option>
         <option *ngFor="let user of users" [value]="user.id">
           {{ user?.full_name + ' - ' + user?.username }}
@@ -210,7 +217,8 @@
     <!-- Select Permission Type -->
     <div class="form-group mt-3">
       <label for="permissionSelect" class="form-label">Permission Type:</label>
-      <select id="permissionSelect" class="form-control" [(ngModel)]="selectedAccessType" (ngModelChange)="checkIfDelegationExists()" required>
+      <select id="permissionSelect" class="form-control" [(ngModel)]="selectedAccessType"
+        (ngModelChange)="checkIfDelegationExists()" required>
         <option value="" disabled selected>Select permission</option>
         <option value="VIEW">View</option>
         <option value="EDIT">Edit</option>
@@ -220,7 +228,8 @@
     <!-- Select Source -->
     <div class="form-group mt-3">
       <label for="sourcesSelect" class="form-label">Select Source:</label>
-      <select id="sourcesSelect" class="form-control" [(ngModel)]="selectedSource" (ngModelChange)="checkIfDelegationExists()" required>
+      <select id="sourcesSelect" class="form-control" [(ngModel)]="selectedSource"
+        (ngModelChange)="checkIfDelegationExists()" required>
         <option [ngValue]="null" disabled selected>Select source</option>
         <option *ngFor="let source of sources" [ngValue]="source">
           {{ source?.display || (source?.platform_type + ' - ' + (source?.created_at | date:'yyyy-MM-dd')) }}
@@ -233,7 +242,7 @@
     <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
       {{ errorMessage }}
     </div>
-    
+
     <!-- Info Message -->
     <div *ngIf="selectedDelegationExists" class="alert alert-warning mt-3">
       This delegation already exists.

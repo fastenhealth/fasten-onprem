@@ -99,5 +99,9 @@ func DeleteDelegation(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.Status(http.StatusNoContent)
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Delegation deleted successfully",
+	})
 }

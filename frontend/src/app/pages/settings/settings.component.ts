@@ -390,4 +390,23 @@ export class SettingsComponent implements OnInit {
       },
     });
   }
+
+  deleteDelegation(delegationId: string) {
+    if (confirm('Are you sure you want to remove this delegation?')) {
+      this.fastenApi.deleteDelegation(delegationId).subscribe({
+        next: () => {
+          const toastNotification = new ToastNotification();
+          toastNotification.type = ToastType.Success;
+          toastNotification.message = `Delegation removed successfully!`;
+          this.toastService.show(toastNotification)
+
+          this.getCurrentDelegations();
+        },
+        error: (err) => {
+          console.error('Error removing delegation:', err);
+          this.errorMessage = 'Failed to remove delegation. Please try again.';
+        },
+      });
+    }
+  }
 }
