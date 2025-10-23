@@ -24,6 +24,7 @@ type DelegatedAccess struct {
 	CreatedAt      time.Time      `json:"created_at"`
 	UpdatedAt      time.Time      `json:"updated_at"`
 	DeletedAt      gorm.DeletedAt `json:"-" gorm:"index"`
+	Source         string         `json:"source" gorm:"type:text"`
 }
 
 func (d *DelegatedAccess) BeforeCreate(tx *gorm.DB) (err error) {

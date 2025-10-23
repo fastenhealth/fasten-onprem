@@ -4,6 +4,8 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import QRCode from 'qrcode';
 import { FastenApiService } from 'src/app/services/fasten-api.service';
+import { ToastService } from 'src/app/services/toast.service';
+import { ToastNotification, ToastType } from 'src/app/models/fasten/toast';
 
 @Component({
   selector: 'app-settings',
@@ -35,21 +37,51 @@ export class SettingsComponent implements OnInit {
   // Delegated access
   users: any[] = [];
   selectedUserId: string | null = null;
-  selectedSourceId: string | null = null;
+  selectedSource: any | null = null;
   selectedAccessType: string | null = null;
   sources: any[] = [];
+  currentDelegations: any[] = [];
+  selectedDelegationExists: boolean = false;
 
   constructor(
     private http: HttpClient,
     private sanitizer: DomSanitizer,
     private modalService: NgbModal,
-    private fastenApi: FastenApiService
+    private fastenApi: FastenApiService,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
     this.loadCurrentUser();
     this.loadSources();
     this.loadTokens();
+    this.loadUsers();
+    this.getCurrentDelegations();
+  }
+
+  ngOnChanges() {
+    this.checkIfDelegationExists();
+  }
+
+  // Re-run check whenever user changes form values
+  private checkIfDelegationExists(): void {
+    if (
+      !this.selectedUserId ||
+      !this.selectedAccessType ||
+      !this.selectedSource
+    ) {
+      this.selectedDelegationExists = false;
+      return;
+    }
+
+    const match = this.currentDelegations.some(
+      (d) =>
+        d.delegate_user_id === this.selectedUserId &&
+        d.access_level === this.selectedAccessType &&
+        d.resource_id === this.selectedSource.id
+    );
+
+    this.selectedDelegationExists = match;
   }
 
   loadCurrentUser(): void {
@@ -280,23 +312,34 @@ export class SettingsComponent implements OnInit {
     this.errorMessage = message;
   }
 
+  private extractSourceDisplay(source: any): string {
+    if (!source) return '';
+
+    const createdAt = new Date(source.created_at);
+    const formattedDate = createdAt.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+
+    return source.display || `${source.platform_type} - ${formattedDate}`;
+  }
+
+
   openDelegateAccessModal(content: any) {
     this.modalService.open(content, {
       size: 'lg',
       centered: true,
       backdrop: 'static'
     });
-
-    // Fetch user list if not already loaded
-    if (this.users.length === 0) {
-      this.loadUsers();
-    }
   }
 
   closeDelegateAccessModal() {
     this.modalService.dismissAll();
     this.selectedUserId = null;
     this.selectedAccessType = null;
+    this.selectedSource = null;
+    this.errorMessage = '';
   }
 
   loadUsers() {
@@ -310,12 +353,37 @@ export class SettingsComponent implements OnInit {
       delegateUserId: this.selectedUserId,
       accessLevel: this.selectedAccessType,
       resourceType: 'source',
-      resourceId: this.selectedSourceId,
+      resourceId: this.selectedSource.id,
+      source: this.extractSourceDisplay(this.selectedSource)
     };
 
     this.fastenApi.createDelegation(payload).subscribe({
       next: () => {
         this.closeDelegateAccessModal();
+
+        const toastNotification = new ToastNotification();
+        toastNotification.type = ToastType.Success;
+        toastNotification.message = `Delegation created successfully!`;
+        this.toastService.show(toastNotification)
+
+        this.getCurrentDelegations();
+      },
+      error: (err) => {
+        console.error('Error creating delegation:', err);
+        this.errorMessage = 'Failed to create delegation. Please try again.';
+      },
+    });
+  }
+
+  getCurrentDelegations() {
+    this.fastenApi.getDelegationsForCurrentUser().subscribe({
+      next: (data: any) => {
+        this.currentDelegations = data.map((incomingData) => ({
+          ...incomingData,
+          delegate_user:
+            this.users.find((u) => u.id === incomingData.delegate_user_id)?.full_name ||
+            'Unknown',
+        }));
       },
       error: (err) => {
         console.error('Error creating delegation:', err);

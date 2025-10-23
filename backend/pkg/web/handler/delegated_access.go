@@ -25,6 +25,7 @@ func CreateDelegation(c *gin.Context) {
 		ResourceType   string             `json:"resourceType"`
 		ResourceID     uuid.UUID          `json:"resourceId"`
 		AccessLevel    models.AccessLevel `json:"accessLevel"`
+		Source         string             `json:"source"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -39,6 +40,7 @@ func CreateDelegation(c *gin.Context) {
 		ResourceType:   req.ResourceType,
 		ResourceID:     req.ResourceID,
 		AccessLevel:    req.AccessLevel,
+		Source:         req.Source,
 	}
 
 	if err := databaseRepo.CreateDelegation(context.Background(), &da); err != nil {
@@ -51,9 +53,14 @@ func CreateDelegation(c *gin.Context) {
 
 func ListOwnedDelegations(c *gin.Context) {
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+	currentUser, err := databaseRepo.GetCurrentUser(c)
 
-	ownerID := c.MustGet("userID").(uuid.UUID)
-	list, err := databaseRepo.GetDelegationsByOwner(context.Background(), ownerID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	list, err := databaseRepo.GetDelegationsByOwner(context.Background(), currentUser.ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -63,8 +70,14 @@ func ListOwnedDelegations(c *gin.Context) {
 
 func ListSharedWithMe(c *gin.Context) {
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
-	delegateID := c.MustGet("userID").(uuid.UUID)
-	list, err := databaseRepo.GetDelegationsByDelegate(context.Background(), delegateID)
+	currentUser, err := databaseRepo.GetCurrentUser(c)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	list, err := databaseRepo.GetDelegationsByDelegate(context.Background(), currentUser.ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -74,9 +87,15 @@ func ListSharedWithMe(c *gin.Context) {
 
 func DeleteDelegation(c *gin.Context) {
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+	currentUser, err := databaseRepo.GetCurrentUser(c)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	id := uuid.MustParse(c.Param("id"))
-	ownerID := uuid.MustParse(c.Param("ownerID"))
-	if err := databaseRepo.DeleteDelegation(context.Background(), id, ownerID); err != nil {
+	if err := databaseRepo.DeleteDelegation(context.Background(), id, currentUser.ID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
