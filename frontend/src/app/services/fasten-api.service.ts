@@ -705,12 +705,17 @@ export class FastenApiService {
   }
 
   createDelegation(payload: any): Observable<any> {
-    return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/delegated-access`, {
-      payload
-    })
+    return this._httpClient
+      .post<any>(
+        `${GetEndpointAbsolutePath(
+          globalThis.location,
+          environment.fasten_api_endpoint_base
+        )}/secure/delegated-access`,
+        payload
+      )
       .pipe(
         map((response: ResponseWrapper) => {
-          return response
+          return response;
         })
       );
     }

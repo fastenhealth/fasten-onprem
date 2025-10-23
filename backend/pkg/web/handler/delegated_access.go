@@ -21,9 +21,9 @@ func CreateDelegation(c *gin.Context) {
 	}
 
 	var req struct {
-		DelegateUserID string             `json:"delegateUserId"`
+		DelegateUserID uuid.UUID          `json:"delegateUserId"`
 		ResourceType   string             `json:"resourceType"`
-		ResourceID     string             `json:"resourceId"`
+		ResourceID     uuid.UUID          `json:"resourceId"`
 		AccessLevel    models.AccessLevel `json:"accessLevel"`
 	}
 
