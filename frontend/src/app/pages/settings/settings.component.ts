@@ -42,6 +42,7 @@ export class SettingsComponent implements OnInit {
   sources: any[] = [];
   currentDelegations: any[] = [];
   selectedDelegationExists: boolean = false;
+  sharedDelegations: any[] = [];
 
   constructor(
     private http: HttpClient,
@@ -57,6 +58,7 @@ export class SettingsComponent implements OnInit {
     this.loadTokens();
     this.loadUsers();
     this.getCurrentDelegations();
+    this.getSharedDelegations();
   }
 
   ngOnChanges() {
@@ -387,6 +389,22 @@ export class SettingsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error creating delegation:', err);
+      },
+    });
+  }
+
+  getSharedDelegations() {
+    this.fastenApi.getDelegationsSharedWithCurrentUser().subscribe({
+      next: (data: any) => {
+        this.sharedDelegations = data.map((incomingData) => ({
+          ...incomingData,
+          owner_user:
+            this.users.find((u) => u.id === incomingData.owner_user_id)?.full_name ||
+            'Unknown',
+        }));  
+      },
+      error: (err) => {
+        console.error('Error fetching shared delegations:', err);
       },
     });
   }

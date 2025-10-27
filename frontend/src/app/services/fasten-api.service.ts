@@ -749,4 +749,19 @@ export class FastenApiService {
           })
         );
     }
+
+    getDelegationsSharedWithCurrentUser(): Observable<any> {
+      return this._httpClient
+        .get<any>(
+          `${GetEndpointAbsolutePath(
+            globalThis.location,
+            environment.fasten_api_endpoint_base
+          )}/secure/delegated-access/shared-with-me`
+        )
+        .pipe(
+          map((response: ResponseWrapper) => {
+            return response;
+          })
+        );
+    }
 }

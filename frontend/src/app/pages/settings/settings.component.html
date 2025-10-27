@@ -106,6 +106,33 @@
           </ng-template>
         </div>
 
+        <div class="mt-4 ml-4">
+          <h5>Shared with me</h5>
+
+          <div *ngIf="sharedDelegations?.length > 0; else sharedDelegationsNoData">
+            <ul class="list-group">
+              <li *ngFor="let da of sharedDelegations"
+                class="list-group-item d-flex justify-content-between align-items-center">
+                <!-- Left content -->
+                <div>
+                  <strong class="mr-2">{{ da.source }}</strong>
+                  <span class="text-muted mr-2">({{ da.resource_type }})</span>
+                  <br>
+                  <small class="text-muted mr-1">
+                    Access: <span class="badge bg-info text-dark mr-1">{{ da.access_level }}</span>
+                    <span class="ms-2 mr-1">Granted on: {{ da.created_at | date:'yyyy-MM-dd HH:mm' }}</span>
+                  </small>
+                  <small class="text-muted d-block">Shared by: {{ da.owner_user }}</small>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <ng-template #sharedDelegationsNoData>
+            <p class="text-muted mt-2">No shared access found.</p>
+          </ng-template>
+        </div>
+
         <div class="card-body">
           <div style="margin-bottom: 20px;">
             <button type="button" class="btn btn-az-primary btn-sm" (click)="openDelegateAccessModal(delegateModal)">
