@@ -18,6 +18,9 @@ export class DelegatedSourceDetailComponent implements OnInit {
   selectedResourceType: string = null;
   selectedTotalElements: number = 0;
 
+  ownerUserId: string = '';
+  sourceId: string = '';
+
   resourceTypeCounts: { [name: string]: number } = {};
 
   constructor(
@@ -26,17 +29,20 @@ export class DelegatedSourceDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.ownerUserId = this.route.snapshot.paramMap.get('owner_user_id');
+    this.sourceId = this.route.snapshot.paramMap.get('source_id');
+
     if (
-      this.route.snapshot.paramMap.get('owner_user_id') &&
-      this.route.snapshot.paramMap.get('source_id')
+      this.ownerUserId &&
+      this.sourceId
     ) {
       this.loading = true;
 
       //always request the source summary
       this.fastenApi
         .getDelegatedSourceSummary(
-          this.route.snapshot.paramMap.get('owner_user_id'),
-          this.route.snapshot.paramMap.get('source_id')
+          this.ownerUserId,
+          this.sourceId
         )
         .subscribe(
           (sourceSummary) => {

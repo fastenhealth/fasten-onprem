@@ -48,6 +48,7 @@ export class FhirDatatableComponent implements OnInit, OnChanges {
   @Input() selectedTotalElements: number;
   @Input() disabledResourceIds: string[] = [];
   @Input() isDelegatedResource: boolean = false;
+  @Input() ownerUserId: string = '';
 
   //location to dynamically load the resource list
   @ViewChild(FhirDatatableOutletDirective, {static: true}) resourceListOutlet!: FhirDatatableOutletDirective;
@@ -81,7 +82,9 @@ export class FhirDatatableComponent implements OnInit, OnChanges {
       }
 
       componentRef.instance.selectionChanged.subscribe((selected: FastenDisplayModel) => {
-        this.router.navigate(['/explore', selected?.source_id, 'resource', selected?.source_resource_id]);
+        this.router.navigate(['/explore', selected?.source_id, 'resource', selected?.source_resource_id], 
+        { queryParams: { isDelegatedResource: this.isDelegatedResource, ownerUserId: this.ownerUserId} }
+        );
       })
       this.knownResourceType = (componentType != DatatableFallbackComponent)
     }

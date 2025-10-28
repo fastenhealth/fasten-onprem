@@ -343,6 +343,15 @@ export class FastenApiService {
       );
   }
 
+  getDelegatedResourceBySourceId(ownerUserId:string, sourceId: string, resourceId: string): Observable<ResourceFhir> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/delegated-access/${ownerUserId}/source/${sourceId}/resource/${resourceId}`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as ResourceFhir
+        })
+      );
+  }
+
   updateResource(resourceType: string, resourceId: string, payload: UpdateResourcePayload) : Observable<ResponseWrapper> {
     return this._httpClient.patch<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/fhir/${resourceType}/${resourceId}`, payload)
       .pipe(

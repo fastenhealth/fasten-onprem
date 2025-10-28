@@ -653,6 +653,32 @@ func (gr *GormRepository) GetResourceBySourceId(ctx context.Context, sourceId st
 	}
 }
 
+func (gr *GormRepository) GetResourceByOwnerAndSourceId(ctx context.Context, ownerUserId string, sourceId string, sourceResourceId string) (*models.ResourceBase, error) {
+	userUUID, err := uuid.Parse(ownerUserId)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceIdUUID, err := uuid.Parse(sourceId)
+	if err != nil {
+		return nil, err
+	}
+
+	queryParam := models.OriginBase{
+		UserID:           userUUID,
+		SourceID:         sourceIdUUID,
+		SourceResourceID: sourceResourceId,
+	}
+
+	//there is no FHIR Resource name specified, so we're querying across all FHIR resources
+	wrappedResourceModels, err := gr.getResourcesFromAllTables(gr.GormClient.WithContext(ctx), queryParam)
+	if len(wrappedResourceModels) > 0 {
+		return &wrappedResourceModels[0], err
+	} else {
+		return nil, fmt.Errorf("no resource found with source id %s and source resource id %s", sourceId, sourceResourceId)
+	}
+}
+
 // Get the patient for each source (for the current user)
 func (gr *GormRepository) GetPatientForSources(ctx context.Context) ([]models.ResourceBase, error) {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)

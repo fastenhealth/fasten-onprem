@@ -19,19 +19,49 @@ export class ResourceDetailComponent implements OnInit {
 
   sourceId: string = ""
   sourceName: string = ""
+  ownerUserId: string = ""
   resource: ResourceFhir = null
   displayModel: FastenDisplayModel = null
+  isDelegatedResource: boolean = false;
 
   constructor(private fastenApi: FastenApiService, private router: Router, private route: ActivatedRoute, private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      this.isDelegatedResource = params['isDelegatedResource'] === 'true';
+      this.ownerUserId = params['ownerUserId'] || '';
+    });
     this.loading = true
+
+    if (this.isDelegatedResource && this.ownerUserId) {
+      this.fastenApi.getDelegatedResourceBySourceId(
+        this.ownerUserId,
+        this.route.snapshot.paramMap.get('source_id'),
+        this.route.snapshot.paramMap.get('resource_id')
+      ).subscribe((resourceFhir) => {
+        this.loading = false
+        this.resource = resourceFhir;
+        this.sourceId = this.route.snapshot.paramMap.get('source_id')
+        this.sourceName = "unknown" //TODO: populate this
+
+        try{
+          let parsed = fhirModelFactory(resourceFhir.source_resource_type as ResourceType, resourceFhir)
+          this.displayModel = parsed
+        } catch (e) {
+          console.error(e)
+        }
+      }, error => {
+        this.loading = false
+      });
+      return;
+    }
+
     this.fastenApi.getResourceBySourceId(this.route.snapshot.paramMap.get('source_id'), this.route.snapshot.paramMap.get('resource_id')).subscribe((resourceFhir) => {
       this.loading = false
       this.resource = resourceFhir;
       this.sourceId = this.route.snapshot.paramMap.get('source_id')
-      this.sourceName = "unknown" //TODO popualte this
+      this.sourceName = "unknown" //TODO: populate this
 
       try{
         let parsed = fhirModelFactory(resourceFhir.source_resource_type as ResourceType, resourceFhir)

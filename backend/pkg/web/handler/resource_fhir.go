@@ -147,6 +147,37 @@ func GetResourceFhir(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": wrappedResourceModel})
 }
 
+// This endpoint retrieves a resource by its resource Id, source Id and user Id (used for delegated resources)
+func GetDelegatedResourceFhir(c *gin.Context) {
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	ownerUserId := strings.Trim(c.Param("ownerUserId"), "/")
+	sourceId := strings.Trim(c.Param("sourceId"), "/")
+	resourceId := strings.Trim(c.Param("resourceId"), "/")
+
+	if ownerUserId == "" || sourceId == "" || resourceId == "" {
+		logger.Errorln("Missing one or more required path parameters: ownerUserId, sourceId, resourceId")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "ownerUserId, sourceId, and resourceId are required path parameters",
+		})
+		return
+	}
+
+	wrappedResourceModel, err := databaseRepo.GetResourceByOwnerAndSourceId(c, ownerUserId, sourceId, resourceId)
+	if err != nil {
+		logger.Errorln("An error occurred while retrieving resource", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    wrappedResourceModel,
+	})
+}
+
 // deprecated - using Manual Resource Wizard instead
 func CreateResourceComposition(c *gin.Context) {
 
