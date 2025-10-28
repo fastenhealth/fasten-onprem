@@ -217,6 +217,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					secure.POST("/delegated-access", handler.CreateDelegation)
 					secure.GET("/delegated-access", handler.ListOwnedDelegations)
 					secure.GET("/delegated-access/shared-with-me", handler.ListSharedWithMe)
+					secure.POST("/delegated-access/shared-with-me/summary", handler.GetDelegatedSourceSummary)
 					secure.DELETE("/delegated-access/:id", handler.DeleteDelegation)
 
 					//server-side-events handler (only supported on mac/linux)

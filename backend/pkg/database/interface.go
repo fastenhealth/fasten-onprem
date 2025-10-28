@@ -100,6 +100,7 @@ type DatabaseRepository interface {
 	// Delegated Access Management
 	CreateDelegation(ctx context.Context, delegation *models.DelegatedAccess) error
 	GetDelegationsByOwner(ctx context.Context, ownerID uuid.UUID) ([]models.DelegatedAccess, error)
+	GetDelegatedSourceSummary(ctx context.Context, sourceId string, ownerID string) (*models.SourceSummary, error)
 	GetDelegationsByDelegate(ctx context.Context, delegateID uuid.UUID) ([]models.DelegatedAccess, error)
 	DeleteDelegation(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) error
 	HasAccess(ctx context.Context, delegateID uuid.UUID, resourceType string, resourceID uuid.UUID) (models.AccessLevel, bool, error)

@@ -273,6 +273,30 @@ func GetSourceSummary(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceSummary})
 }
 
+func GetDelegatedSourceSummary(c *gin.Context) {
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	var req struct {
+		OwnerUserID string `json:"ownerUserId"`
+		SourceID    string `json:"sourceId"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		logger.Errorln("Invalid request payload", err)
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "invalid payload"})
+		return
+	}
+
+	sourceSummaries, err := databaseRepo.GetDelegatedSourceSummary(c, req.SourceID, req.OwnerUserID)
+	if err != nil {
+		logger.Errorln("An error occurred while retrieving delegated source summaries", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceSummaries})
+}
+
 func ListSource(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)

@@ -1072,6 +1072,21 @@ func (gr *GormRepository) GetSource(ctx context.Context, sourceId string) (*mode
 	return &sourceCred, results.Error
 }
 
+func (gr *GormRepository) GetSourceForUser(ctx context.Context, sourceId string, userId uuid.UUID) (*models.SourceCredential, error) {
+	sourceUUID, err := uuid.Parse(sourceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var sourceCred models.SourceCredential
+	results := gr.GormClient.WithContext(ctx).
+		Where(models.SourceCredential{UserID: userId, ModelBase: models.ModelBase{ID: sourceUUID}}).
+		Preload("LatestBackgroundJob").
+		First(&sourceCred)
+
+	return &sourceCred, results.Error
+}
+
 func (gr *GormRepository) GetSourceSummary(ctx context.Context, sourceId string) (*models.SourceSummary, error) {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
@@ -1134,6 +1149,80 @@ func (gr *GormRepository) GetSourceSummary(ctx context.Context, sourceId string)
 	patientResults := gr.GormClient.WithContext(ctx).
 		Where(models.OriginBase{
 			UserID:             currentUser.ID,
+			SourceResourceType: "Patient",
+			SourceID:           sourceUUID,
+		}).
+		Table(patientTableName).
+		First(&wrappedPatientResourceModel)
+
+	//some sources may not have a patient resource (including the Fasten source)
+	if patientResults.Error == nil {
+		sourceSummary.Patient = &wrappedPatientResourceModel
+	}
+
+	return sourceSummary, nil
+}
+
+func (gr *GormRepository) GetDelegatedSourceSummary(ctx context.Context, sourceId string, delegatedUserId string) (*models.SourceSummary, error) {
+	delegatedUserUUID, err := uuid.Parse(delegatedUserId)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceUUID, err := uuid.Parse(sourceId)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceSummary := &models.SourceSummary{}
+
+	source, err := gr.GetSourceForUser(ctx, sourceId, delegatedUserUUID)
+	if err != nil {
+		return nil, err
+	}
+	sourceSummary.Source = source
+
+	//group by resource type and return counts
+	var resourceTypeCounts []map[string]interface{}
+
+	resourceTypes := databaseModel.GetAllowedResourceTypes()
+	for _, resourceType := range resourceTypes {
+		tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
+		if err != nil {
+			return nil, err
+		}
+		var count int64
+		result := gr.GormClient.WithContext(ctx).
+			Table(tableName).
+			Where(models.OriginBase{
+				UserID:   delegatedUserUUID,
+				SourceID: sourceUUID,
+			}).
+			Count(&count)
+		if result.Error != nil {
+			return nil, result.Error
+		}
+		if count == 0 {
+			continue //don't add resource counts if the count is 0
+		}
+		resourceTypeCounts = append(resourceTypeCounts, map[string]interface{}{
+			"source_id":     sourceId,
+			"resource_type": resourceType,
+			"count":         count,
+		})
+	}
+
+	sourceSummary.ResourceTypeCounts = resourceTypeCounts
+
+	//set patient
+	patientTableName, err := databaseModel.GetTableNameByResourceType("Patient")
+	if err != nil {
+		return nil, err
+	}
+	var wrappedPatientResourceModel models.ResourceBase
+	patientResults := gr.GormClient.WithContext(ctx).
+		Where(models.OriginBase{
+			UserID:             delegatedUserUUID,
 			SourceResourceType: "Patient",
 			SourceID:           sourceUUID,
 		}).
