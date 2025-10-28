@@ -71,12 +71,14 @@
       <!-- Delegate Access Section -->
       <section class="card card-dashboard-table">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <h4 class="card-title mb-0"><i class="fas fa-user-shield mr-3"></i>Delegate Access</h4>
-          <p class="mb-0 text-muted">Allow another user to view or edit your resources.</p>
+          <h4 class="card-title mb-2"><i class="fas fa-user-shield mr-3"></i>Delegate Access</h4>
+          <button class="btn btn-az-primary btn-sm" (click)="refreshDelegationData()">
+            <i class="fas fa-refresh mr-2"></i>Refresh data
+          </button>
         </div>
         <div class="mt-4 ml-4">
           <h5>Current Delegated Access</h5>
-
+          <p class="text-muted mb-2 mt-2">Allow another user to view or edit your resources.</p>
           <div *ngIf="currentDelegations?.length > 0; else noDelegations">
             <ul class="list-group">
               <li *ngFor="let da of currentDelegations"
@@ -92,7 +94,7 @@
                   </small>
                   <small class="text-muted d-block">Shared with: {{ da.delegate_user }}</small>
                 </div>
-
+        
                 <!-- Right content: Delete button -->
                 <button type="button" class="btn btn-outline-danger btn-sm" (click)="deleteDelegation(da.id)">
                   <i class="bi bi-trash"></i> Remove
@@ -100,20 +102,26 @@
               </li>
             </ul>
           </div>
-
           <ng-template #noDelegations>
             <p class="text-muted mt-2">No delegated access found.</p>
           </ng-template>
         </div>
-
-       <div class="mt-4 ml-4">
-        <h5>Shared with me</h5>
+        
+        <div class="card-body">
+          <button type="button" class="btn btn-az-primary btn-sm mb-2 mt-2 w-25" (click)="openDelegateAccessModal(delegateModal)">
+            Delegate Access
+          </button>
+        </div>
+        
+        <div class="mt-4 ml-4">
+          <h5>Shared with me</h5>
+          <p class="text-muted mb-2 mt-2">Explore other sources that been delegated to you.</p>
           <div *ngIf="sharedDelegations?.length > 0; else sharedDelegationsNoData">
             <ul class="list-group">
               <li *ngFor="let da of sharedDelegations"
                 class="list-group-item d-flex justify-content-between align-items-center cursor-pointer"
                 [routerLink]="['/delegated', da.owner_user_id, 'source', da.resource_id]">
-            
+        
                 <!-- Left content -->
                 <div class="cursor-pointer">
                   <strong class="mr-2">{{ da.source }}</strong>
@@ -127,19 +135,10 @@
                 </div>
               </li>
             </ul>
-            </div>
-
+          </div>
           <ng-template #sharedDelegationsNoData>
             <p class="text-muted mt-2">No shared access found.</p>
           </ng-template>
-        </div>
-
-        <div class="card-body">
-          <div style="margin-bottom: 20px;">
-            <button type="button" class="btn btn-az-primary btn-sm" (click)="openDelegateAccessModal(delegateModal)">
-              Delegate Access
-            </button>
-          </div>
         </div>
       </section>
     </div>

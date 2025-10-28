@@ -65,6 +65,15 @@ export class SettingsComponent implements OnInit {
     this.checkIfDelegationExists();
   }
 
+  refreshDelegationData() {
+     this.getCurrentDelegations();
+     this.getSharedDelegations();
+     this.selectedUserId = null;
+     this.selectedAccessType = null;
+     this.selectedSource = null;
+     this.errorMessage = '';
+  }
+
   // Re-run check whenever user changes form values
   private checkIfDelegationExists(): void {
     if (
