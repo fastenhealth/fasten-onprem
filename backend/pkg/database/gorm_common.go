@@ -545,6 +545,60 @@ func (gr *GormRepository) ListResources(ctx context.Context, queryOptions models
 	}
 }
 
+func (gr *GormRepository) ListDelegatedResources(ctx context.Context, queryOptions models.ListResourceQueryOptions, ownerUserId string) ([]models.ResourceBase, error) {
+	userUUID, err := uuid.Parse(ownerUserId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	queryParam := models.OriginBase{
+		UserID: userUUID,
+	}
+
+	if len(queryOptions.SourceResourceType) > 0 {
+		queryParam.SourceResourceType = queryOptions.SourceResourceType
+	}
+
+	if len(queryOptions.SourceID) > 0 {
+		sourceUUID, err := uuid.Parse(queryOptions.SourceID)
+		if err != nil {
+			return nil, err
+		}
+
+		queryParam.SourceID = sourceUUID
+	}
+	if len(queryOptions.SourceResourceID) > 0 {
+		queryParam.SourceResourceID = queryOptions.SourceResourceID
+	}
+
+	manifestJson, _ := json.MarshalIndent(queryParam, "", "  ")
+	gr.Logger.Debugf("THE QUERY OBJECT===========> %v", string(manifestJson))
+
+	var wrappedResourceModels []models.ResourceBase
+	queryBuilder := gr.GormClient.WithContext(ctx)
+	if len(queryOptions.SourceResourceType) > 0 {
+		tableName, err := databaseModel.GetTableNameByResourceType(queryOptions.SourceResourceType)
+		if err != nil {
+			return nil, err
+		}
+		queryBuilder = queryBuilder.
+			Where(queryParam).
+			Table(tableName)
+
+		if queryOptions.Limit > 0 {
+			queryBuilder = queryBuilder.Limit(queryOptions.Limit).Offset(queryOptions.Offset)
+		}
+		return wrappedResourceModels, queryBuilder.Find(&wrappedResourceModels).Error
+	} else {
+		if queryOptions.Limit > 0 {
+			queryBuilder = queryBuilder.Limit(queryOptions.Limit).Offset(queryOptions.Offset)
+		}
+		//there is no FHIR Resource name specified, so we're querying across all FHIR resources
+		return gr.getResourcesFromAllTables(queryBuilder, queryParam)
+	}
+}
+
 // TODO: should this be deprecated? (replaced by ListResources)
 func (gr *GormRepository) GetResourceByResourceTypeAndId(ctx context.Context, sourceResourceType string, sourceResourceId string) (*models.ResourceBase, error) {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)

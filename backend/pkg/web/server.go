@@ -219,6 +219,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					secure.GET("/delegated-access/shared-with-me", handler.ListSharedWithMe)
 					secure.GET("/delegated-access/shared-with-me/summary/:ownerId/:sourceId", handler.GetDelegatedSourceSummary)
 					secure.DELETE("/delegated-access/:id", handler.DeleteDelegation)
+					secure.GET("/delegated-access/shared-with-me/resources", handler.ListDelegatedResourceFhir)
 
 					//server-side-events handler (only supported on mac/linux)
 					// TODO: causes deadlock on Windows

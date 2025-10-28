@@ -47,6 +47,7 @@ export class FhirDatatableComponent implements OnInit, OnChanges {
   @Input() resourceListType: string;
   @Input() selectedTotalElements: number;
   @Input() disabledResourceIds: string[] = [];
+  @Input() isDelegatedResource: boolean = false;
 
   //location to dynamically load the resource list
   @ViewChild(FhirDatatableOutletDirective, {static: true}) resourceListOutlet!: FhirDatatableOutletDirective;
@@ -73,6 +74,7 @@ export class FhirDatatableComponent implements OnInit, OnChanges {
       componentRef.instance.totalElements = this.selectedTotalElements;
       componentRef.instance.resourceListType = this.resourceListType;
       componentRef.instance.sourceId = this.source.id;
+      componentRef.instance.isDelegatedResource = this.isDelegatedResource;
       componentRef.instance.markForCheck()
       if(this.disabledResourceIds){
         componentRef.instance.disabledResourceIds = this.disabledResourceIds

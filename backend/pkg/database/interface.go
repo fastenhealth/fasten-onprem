@@ -104,4 +104,5 @@ type DatabaseRepository interface {
 	GetDelegationsByDelegate(ctx context.Context, delegateID uuid.UUID) ([]models.DelegatedAccess, error)
 	DeleteDelegation(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) error
 	HasAccess(ctx context.Context, delegateID uuid.UUID, resourceType string, resourceID uuid.UUID) (models.AccessLevel, bool, error)
+	ListDelegatedResources(ctx context.Context, queryOptions models.ListResourceQueryOptions, ownerUserId string) ([]models.ResourceBase, error)
 }

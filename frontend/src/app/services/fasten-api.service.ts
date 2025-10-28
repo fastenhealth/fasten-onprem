@@ -260,6 +260,33 @@ export class FastenApiService {
       );
   }
 
+  getDelegatedResources(ownerUserId: string, sourceResourceType?: string, sourceID?: string, sourceResourceID?: string, page?: number): Observable<ResourceFhir[]> {
+    let queryParams = {}
+
+    queryParams["ownerUserId"] = ownerUserId
+
+    if(sourceResourceType){
+      queryParams["sourceResourceType"] = sourceResourceType
+    }
+    if(sourceID){
+      queryParams["sourceID"] = sourceID
+    }
+
+    if(sourceResourceID){
+      queryParams["sourceResourceID"] = sourceResourceID
+    }
+    if(page !== undefined){
+      queryParams["page"] = page
+    }
+
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/delegated-access/shared-with-me/resources`, {params: queryParams})
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as ResourceFhir[]
+        })
+      );
+  }
+
   /**
    * Retrieves the history for a specific practitioner.
    * @param practitionerId The ID of the practitioner (e.g., '1043089352').
