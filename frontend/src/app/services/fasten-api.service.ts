@@ -209,6 +209,15 @@ export class FastenApiService {
       );
   }
 
+  getDelegatedSourceSummary(ownerUserId: string, sourceId: string): Observable<SourceSummary> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/delegated-access/shared-with-me/summary/${ownerUserId}/${sourceId}`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as SourceSummary
+        })
+      );
+  }
+
   deleteSource(sourceId: string): Observable<number> {
     return this._httpClient.delete<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/source/${sourceId}`)
       .pipe(

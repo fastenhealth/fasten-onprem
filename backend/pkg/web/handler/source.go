@@ -277,18 +277,23 @@ func GetDelegatedSourceSummary(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
 
-	var req struct {
-		OwnerUserID string `json:"ownerUserId"`
-		SourceID    string `json:"sourceId"`
-	}
+	// Extract from path params
+	ownerUserID := c.Param("ownerId")
+	sourceID := c.Param("sourceId")
 
-	if err := c.ShouldBindJSON(&req); err != nil {
-		logger.Errorln("Invalid request payload", err)
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "invalid payload"})
+	logger.Infof("GetDelegatedSourceSummary request: ownerUserID=%s, sourceID=%s", ownerUserID, sourceID)
+
+	// Validate UUIDs (optional but highly recommended)
+	if _, err := uuid.Parse(ownerUserID); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ownerId"})
+		return
+	}
+	if _, err := uuid.Parse(sourceID); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid sourceId"})
 		return
 	}
 
-	sourceSummaries, err := databaseRepo.GetDelegatedSourceSummary(c, req.SourceID, req.OwnerUserID)
+	sourceSummaries, err := databaseRepo.GetDelegatedSourceSummary(c, sourceID, ownerUserID)
 	if err != nil {
 		logger.Errorln("An error occurred while retrieving delegated source summaries", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false})

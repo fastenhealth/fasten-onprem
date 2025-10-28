@@ -1,0 +1,87 @@
+<div class="az-content">
+
+  <div *ngIf="selectedPatient" class="container bg-light mb-4 p-2">
+      <div class="az-content-body">
+        <div class="panel panel-default patient col-xs-12">
+          <div class="row">
+            <div *ngIf="isExternal()" class="col-xs-2 col-sm-2 col-md-1">
+              <div class="">
+                <div class="patient-image-wrap embed-responsive-item">
+                  <img [src]="'assets/sources/'+selectedSource?.brand_id+'.png'"
+                       alt="{{selectedSource?.endpoint_id}}"
+                       class="img-fluid">
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-10 col-md-11">
+              <div class="patient-row row">
+                <div class="col-7 patient-name"><h3 class="pull-left text-primary">{{getPatientName()}}</h3></div>
+                <div class="col-5">
+                  <a [routerLink]="['/explore', selectedSource?.id, 'resource', selectedPatient?.source_resource_id]" class="btn btn-indigo btn-icon float-right">
+                    <i class="fas fa-info-circle"></i>
+                  </a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">Gender:</div>
+                <div class="col-xs-8 col-sm-3 col-lg-3 text-left p-0">{{getPatientGender()}}</div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">DOB:</div>
+                <div class="col-xs-8 col-sm-5 col-lg-3 text-left p-0">{{getPatientDOB()}}</div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">Age:</div>
+                <div class="col-xs-8 col-sm-3 col-lg-3 text-left p-0">{{getPatientAge()}} Years Old</div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">Email:</div>
+                <div class="col-xs-8 col-sm-5 col-lg-3 text-left p-0">{{getPatientEmail()}}</div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">Phone:</div>
+                <div class="col-xs-8 col-sm-3 col-lg-3 text-left p-0">{{getPatientPhone()}}</div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">Address:</div>
+                <div class="col-xs-8 col-sm-5 col-lg-3 text-left p-0">
+                  <div *ngFor="let line of getPatientAddress()">{{line}}</div>
+                </div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">ID:</div>
+                <div class="col-xs-8 col-sm-3 col-lg-3 text-left p-0 text-overflow-ellipsis ">{{selectedPatient?.source_resource_id}}</div>
+                <div class="col-xs-4 col-sm-2 col-lg-1 text-right text-muted">MRN:</div>
+                <div class="col-xs-8 col-sm-5 col-lg-3 text-left p-0 text-overflow-ellipsis">{{getPatientMRN()}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <div class="container">
+    <div class="az-content-left">
+      <div class="az-content-breadcrumb">
+        <span>Sources</span>
+        <span class="text-nowrap">{{selectedSource?.id}}</span>
+        <span>Details</span>
+      </div>
+
+      <ul class="list-group">
+        <li *ngFor="let resourceGroup of resourceTypeCounts | keyvalue" (click)="selectResourceType(resourceGroup.key)" class="list-group-item d-flex justify-content-between align-items-center cursor-pointer">
+          {{resourceGroup.key}} <span class="badge badge-primary badge-pill">{{resourceGroup.value}}</span>
+        </li>
+      </ul>
+    </div>
+    <div class="az-content-body pd-lg-l-40 d-flex flex-column">
+
+      <fhir-datatable
+        [source]="selectedSource"
+        [resourceListType]="selectedResourceType"
+        [selectedTotalElements]="selectedTotalElements"
+      ></fhir-datatable>
+
+    </div><!-- az-content-body -->
+  </div><!-- container -->
+
+  <ng-template #empty >
+    <div class="container">
+      <div class="az-error-wrapper">
+        <h1>{{selectedSource?.endpoint_id}}</h1>
+        <h2>No resources found for this Healthcare provider</h2>
+        <h6>You may need to re-authenticate to this source, or wait for the resources to sync.</h6>
+        <a routerLink="/sources" class="btn btn-outline-indigo">Sources</a>
+      </div>
+    </div>
+  </ng-template>
+
+</div><!-- az-content -->
