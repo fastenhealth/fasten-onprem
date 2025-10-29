@@ -1,4 +1,4 @@
-<div class="az-content az-content-app pd-b-0">
+<div class="az-content az-content-app pd-b-0 overflow-scrollable">
   <div class="container">
     <div class="az-content-body">
       <div class="az-content-breadcrumb">
@@ -20,9 +20,25 @@
           Enable Debug mode: <input type="checkbox" [(ngModel)]="debugMode" />
         </div>
 
-        <ng-container *ngIf="resource && debugMode">
-          <pre><code  [highlight]="resource.resource_raw | json"></code></pre>
-        </ng-container>
+      <ng-container *ngIf="resource && debugMode; else noResource">
+      <!-- Editable section for delegated users -->
+      <ng-container *ngIf="isDelegatedResource; else readOnlySection">
+        <textarea [(ngModel)]="editableJson" (ngModelChange)="validateJson()" rows="20" class="form-control font-monospace"
+          style="width: 100%;" name="resource_raw_editor"></textarea>
+        <div class="mt-3 d-flex justify-content-end">
+          <ng-container *ngIf="!isJsonValid">
+            <div class="text-danger me-3">Invalid JSON format. Please correct before saving.</div>
+          </ng-container>
+          <button class="btn btn-success btn-sm" (click)="saveEditedResource()" [disabled]="!isJsonValid">
+            Save Changes
+          </button>
+        </div>
+      </ng-container>
+      <!-- Read-only section for non-delegated users -->
+      <ng-template #readOnlySection>
+        <pre><code [highlight]="resource.resource_raw | json"></code></pre>
+      </ng-template>
+      </ng-container>
       </ng-container>
       <ng-template #isLoadingTemplate>
         <div class="row">
