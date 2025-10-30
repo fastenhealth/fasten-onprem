@@ -14,6 +14,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
 	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -278,6 +279,36 @@ func UpdateResourceFhir(c *gin.Context) {
 	}
 
 	_, updateError := databaseRepo.UpsertRawResource(c, sourceCredential, resourceToUpsert)
+	if updateError != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to update resource"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true})
+}
+
+func UpdateDelegatedResourceFhir(c *gin.Context) {
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	resourceType := strings.Trim(c.Param("resourceType"), "/")
+	resourceId := strings.Trim(c.Param("resourceId"), "/")
+	sourceId := strings.Trim(c.Param("sourceId"), "/")
+
+	parsedSourceID := uuid.MustParse(sourceId)
+
+	type UpdatePayload struct {
+		ResourceRaw json.RawMessage `json:"resource_raw"`
+		SortTitle   string          `json:"sort_title"`
+		SortDate    string          `json:"sort_date"`
+	}
+	var payload UpdatePayload
+	err := c.ShouldBindJSON(&payload)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "invalid request payload"})
+		return
+	}
+
+	_, updateError := databaseRepo.UpdateResourceRaw(c, parsedSourceID, resourceType, resourceId, payload.ResourceRaw)
 	if updateError != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to update resource"})
 		return

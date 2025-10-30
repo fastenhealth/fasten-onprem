@@ -492,6 +492,41 @@ func (gr *GormRepository) UpsertResource(ctx context.Context, wrappedResourceMod
 	return createResult.RowsAffected > 0, createResult.Error
 }
 
+func (gr *GormRepository) UpdateResourceRaw(
+	ctx context.Context,
+	sourceID uuid.UUID,
+	resourceType string,
+	resourceID string,
+	resourceRaw json.RawMessage,
+) (bool, error) {
+	gr.Logger.Infof("Updating resource raw for %s/%s/%s", resourceType, resourceID, sourceID)
+
+	tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
+	if err != nil {
+		return false, err
+	}
+
+	result := gr.GormClient.WithContext(ctx).
+		Table(tableName).
+		Where("source_id = ? AND source_resource_id = ?", sourceID, resourceID).
+		Updates(map[string]interface{}{
+			"resource_raw": resourceRaw,
+			"updated_at":   time.Now(),
+		})
+
+	if result.Error != nil {
+		return false, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		gr.Logger.Warnf("No resource found to update for %s/%s", resourceType, resourceID)
+		return false, nil
+	}
+
+	gr.Logger.Infof("Successfully updated resource %s/%s (len=%d)", resourceType, resourceID, len(resourceRaw))
+	return true, nil
+}
+
 func (gr *GormRepository) ListResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceBase, error) {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {

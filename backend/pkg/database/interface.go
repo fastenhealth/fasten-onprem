@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
@@ -106,4 +107,5 @@ type DatabaseRepository interface {
 	HasAccess(ctx context.Context, delegateID uuid.UUID, resourceType string, resourceID uuid.UUID) (models.AccessLevel, bool, error)
 	ListDelegatedResources(ctx context.Context, queryOptions models.ListResourceQueryOptions, ownerUserId string) ([]models.ResourceBase, error)
 	GetResourceByOwnerAndSourceId(ctx context.Context, ownerUserId string, sourceId string, resourceId string) (*models.ResourceBase, error)
+	UpdateResourceRaw(ctx context.Context, source_id uuid.UUID, source_resource_type string, source_resource_id string, resource_raw json.RawMessage) (bool, error)
 }

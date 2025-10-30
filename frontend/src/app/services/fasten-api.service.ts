@@ -361,6 +361,10 @@ export class FastenApiService {
       );
   }
 
+  updateDelegatedResource(resourceType: string, resourceId: string, sourceId: string, payload: UpdateResourcePayload) : Observable<ResponseWrapper> {
+    return this._httpClient.patch<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/delegated-access/resource/${resourceType}/${resourceId}/${sourceId}`, payload)
+  }
+
   addDashboardLocation(location: string): Observable<ResponseWrapper> {
     return this._httpClient.post<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/dashboards`, {
       "location": location

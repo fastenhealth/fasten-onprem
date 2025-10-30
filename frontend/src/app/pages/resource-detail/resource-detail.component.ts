@@ -96,9 +96,10 @@ export class ResourceDetailComponent implements OnInit {
     const raw = this.editableJson;
     try {
       const parsed = JSON.parse(raw);
-      this.fastenApi.updateResource(
+      this.fastenApi.updateDelegatedResource(
         this.resource.source_resource_type,
         this.resource.source_resource_id,
+        this.resource.source_id,
         {
           resource_raw: parsed
         }
