@@ -5,6 +5,7 @@ import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
 import {HttpClient} from '@angular/common/http';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('MedicalRecordWizardAddPractitionerComponent', () => {
   let component: MedicalRecordWizardAddPractitionerComponent;
@@ -12,7 +13,7 @@ describe('MedicalRecordWizardAddPractitionerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ MedicalRecordWizardAddPractitionerComponent, HttpClientTestingModule ],
+      imports: [ MedicalRecordWizardAddPractitionerComponent, HttpClientTestingModule, RouterTestingModule ],
       providers: [ NgbActiveModal, NgbModal, {
         provide: HTTP_CLIENT_TOKEN,
         useClass: HttpClient,

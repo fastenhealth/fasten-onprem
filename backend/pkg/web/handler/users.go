@@ -28,6 +28,18 @@ func GetUsers(c *gin.Context) {
 	c.JSON(200, gin.H{"success": true, "data": users})
 }
 
+func GetLightweightUsers(c *gin.Context) {
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	users, err := databaseRepo.GetLightweightUsers(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+		return
+	}
+
+	c.JSON(200, gin.H{"success": true, "data": users})
+}
+
 func CreateUser(c *gin.Context) {
 	if !IsAdmin(c) {
 		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "Unauthorized"})

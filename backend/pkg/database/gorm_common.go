@@ -192,6 +192,25 @@ func (gr *GormRepository) GetUsers(ctx context.Context) ([]models.User, error) {
 	return sanitizedUsers, result.Error
 }
 
+func (gr *GormRepository) GetLightweightUsers(ctx context.Context) ([]models.User, error) {
+	var users []models.User
+
+	// Get the currently logged-in user
+	currentUser, err := gr.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Query only lightweight fields and exclude the current user
+	result := gr.GormClient.
+		WithContext(ctx).
+		Select("id", "full_name", "username").
+		Where("id != ?", currentUser.ID).
+		Find(&users)
+
+	return users, result.Error
+}
+
 //</editor-fold>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -473,6 +492,41 @@ func (gr *GormRepository) UpsertResource(ctx context.Context, wrappedResourceMod
 	return createResult.RowsAffected > 0, createResult.Error
 }
 
+func (gr *GormRepository) UpdateResourceRaw(
+	ctx context.Context,
+	sourceID uuid.UUID,
+	resourceType string,
+	resourceID string,
+	resourceRaw json.RawMessage,
+) (bool, error) {
+	gr.Logger.Infof("Updating resource raw for %s/%s/%s", resourceType, resourceID, sourceID)
+
+	tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
+	if err != nil {
+		return false, err
+	}
+
+	result := gr.GormClient.WithContext(ctx).
+		Table(tableName).
+		Where("source_id = ? AND source_resource_id = ?", sourceID, resourceID).
+		Updates(map[string]interface{}{
+			"resource_raw": resourceRaw,
+			"updated_at":   time.Now(),
+		})
+
+	if result.Error != nil {
+		return false, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		gr.Logger.Warnf("No resource found to update for %s/%s", resourceType, resourceID)
+		return false, nil
+	}
+
+	gr.Logger.Infof("Successfully updated resource %s/%s (len=%d)", resourceType, resourceID, len(resourceRaw))
+	return true, nil
+}
+
 func (gr *GormRepository) ListResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceBase, error) {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
@@ -481,6 +535,60 @@ func (gr *GormRepository) ListResources(ctx context.Context, queryOptions models
 
 	queryParam := models.OriginBase{
 		UserID: currentUser.ID,
+	}
+
+	if len(queryOptions.SourceResourceType) > 0 {
+		queryParam.SourceResourceType = queryOptions.SourceResourceType
+	}
+
+	if len(queryOptions.SourceID) > 0 {
+		sourceUUID, err := uuid.Parse(queryOptions.SourceID)
+		if err != nil {
+			return nil, err
+		}
+
+		queryParam.SourceID = sourceUUID
+	}
+	if len(queryOptions.SourceResourceID) > 0 {
+		queryParam.SourceResourceID = queryOptions.SourceResourceID
+	}
+
+	manifestJson, _ := json.MarshalIndent(queryParam, "", "  ")
+	gr.Logger.Debugf("THE QUERY OBJECT===========> %v", string(manifestJson))
+
+	var wrappedResourceModels []models.ResourceBase
+	queryBuilder := gr.GormClient.WithContext(ctx)
+	if len(queryOptions.SourceResourceType) > 0 {
+		tableName, err := databaseModel.GetTableNameByResourceType(queryOptions.SourceResourceType)
+		if err != nil {
+			return nil, err
+		}
+		queryBuilder = queryBuilder.
+			Where(queryParam).
+			Table(tableName)
+
+		if queryOptions.Limit > 0 {
+			queryBuilder = queryBuilder.Limit(queryOptions.Limit).Offset(queryOptions.Offset)
+		}
+		return wrappedResourceModels, queryBuilder.Find(&wrappedResourceModels).Error
+	} else {
+		if queryOptions.Limit > 0 {
+			queryBuilder = queryBuilder.Limit(queryOptions.Limit).Offset(queryOptions.Offset)
+		}
+		//there is no FHIR Resource name specified, so we're querying across all FHIR resources
+		return gr.getResourcesFromAllTables(queryBuilder, queryParam)
+	}
+}
+
+func (gr *GormRepository) ListDelegatedResources(ctx context.Context, queryOptions models.ListResourceQueryOptions, ownerUserId string) ([]models.ResourceBase, error) {
+	userUUID, err := uuid.Parse(ownerUserId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	queryParam := models.OriginBase{
+		UserID: userUUID,
 	}
 
 	if len(queryOptions.SourceResourceType) > 0 {
@@ -567,6 +675,32 @@ func (gr *GormRepository) GetResourceBySourceId(ctx context.Context, sourceId st
 
 	queryParam := models.OriginBase{
 		UserID:           currentUser.ID,
+		SourceID:         sourceIdUUID,
+		SourceResourceID: sourceResourceId,
+	}
+
+	//there is no FHIR Resource name specified, so we're querying across all FHIR resources
+	wrappedResourceModels, err := gr.getResourcesFromAllTables(gr.GormClient.WithContext(ctx), queryParam)
+	if len(wrappedResourceModels) > 0 {
+		return &wrappedResourceModels[0], err
+	} else {
+		return nil, fmt.Errorf("no resource found with source id %s and source resource id %s", sourceId, sourceResourceId)
+	}
+}
+
+func (gr *GormRepository) GetResourceByOwnerAndSourceId(ctx context.Context, ownerUserId string, sourceId string, sourceResourceId string) (*models.ResourceBase, error) {
+	userUUID, err := uuid.Parse(ownerUserId)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceIdUUID, err := uuid.Parse(sourceId)
+	if err != nil {
+		return nil, err
+	}
+
+	queryParam := models.OriginBase{
+		UserID:           userUUID,
 		SourceID:         sourceIdUUID,
 		SourceResourceID: sourceResourceId,
 	}
@@ -1053,6 +1187,21 @@ func (gr *GormRepository) GetSource(ctx context.Context, sourceId string) (*mode
 	return &sourceCred, results.Error
 }
 
+func (gr *GormRepository) GetSourceForUser(ctx context.Context, sourceId string, userId uuid.UUID) (*models.SourceCredential, error) {
+	sourceUUID, err := uuid.Parse(sourceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var sourceCred models.SourceCredential
+	results := gr.GormClient.WithContext(ctx).
+		Where(models.SourceCredential{UserID: userId, ModelBase: models.ModelBase{ID: sourceUUID}}).
+		Preload("LatestBackgroundJob").
+		First(&sourceCred)
+
+	return &sourceCred, results.Error
+}
+
 func (gr *GormRepository) GetSourceSummary(ctx context.Context, sourceId string) (*models.SourceSummary, error) {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
 	if currentUserErr != nil {
@@ -1115,6 +1264,80 @@ func (gr *GormRepository) GetSourceSummary(ctx context.Context, sourceId string)
 	patientResults := gr.GormClient.WithContext(ctx).
 		Where(models.OriginBase{
 			UserID:             currentUser.ID,
+			SourceResourceType: "Patient",
+			SourceID:           sourceUUID,
+		}).
+		Table(patientTableName).
+		First(&wrappedPatientResourceModel)
+
+	//some sources may not have a patient resource (including the Fasten source)
+	if patientResults.Error == nil {
+		sourceSummary.Patient = &wrappedPatientResourceModel
+	}
+
+	return sourceSummary, nil
+}
+
+func (gr *GormRepository) GetDelegatedSourceSummary(ctx context.Context, sourceId string, delegatedUserId string) (*models.SourceSummary, error) {
+	delegatedUserUUID, err := uuid.Parse(delegatedUserId)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceUUID, err := uuid.Parse(sourceId)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceSummary := &models.SourceSummary{}
+
+	source, err := gr.GetSourceForUser(ctx, sourceId, delegatedUserUUID)
+	if err != nil {
+		return nil, err
+	}
+	sourceSummary.Source = source
+
+	//group by resource type and return counts
+	var resourceTypeCounts []map[string]interface{}
+
+	resourceTypes := databaseModel.GetAllowedResourceTypes()
+	for _, resourceType := range resourceTypes {
+		tableName, err := databaseModel.GetTableNameByResourceType(resourceType)
+		if err != nil {
+			return nil, err
+		}
+		var count int64
+		result := gr.GormClient.WithContext(ctx).
+			Table(tableName).
+			Where(models.OriginBase{
+				UserID:   delegatedUserUUID,
+				SourceID: sourceUUID,
+			}).
+			Count(&count)
+		if result.Error != nil {
+			return nil, result.Error
+		}
+		if count == 0 {
+			continue //don't add resource counts if the count is 0
+		}
+		resourceTypeCounts = append(resourceTypeCounts, map[string]interface{}{
+			"source_id":     sourceId,
+			"resource_type": resourceType,
+			"count":         count,
+		})
+	}
+
+	sourceSummary.ResourceTypeCounts = resourceTypeCounts
+
+	//set patient
+	patientTableName, err := databaseModel.GetTableNameByResourceType("Patient")
+	if err != nil {
+		return nil, err
+	}
+	var wrappedPatientResourceModel models.ResourceBase
+	patientResults := gr.GormClient.WithContext(ctx).
+		Where(models.OriginBase{
+			UserID:             delegatedUserUUID,
 			SourceResourceType: "Patient",
 			SourceID:           sourceUUID,
 		}).
@@ -1573,4 +1796,61 @@ func (gr *GormRepository) DeleteResourceByTypeAndId(ctx context.Context, sourceR
 
 	fmt.Printf("Successfully deleted resource: %s from table: %s\n", sourceResourceId, tableName)
 	return nil
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Delegated Access
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Create a delegation record
+func (gr *GormRepository) CreateDelegation(ctx context.Context, d *models.DelegatedAccess) error {
+	d.ID = uuid.New()
+	d.CreatedAt = time.Now()
+	d.UpdatedAt = time.Now()
+	result := gr.GormClient.WithContext(ctx).Create(d)
+	return result.Error
+}
+
+// Get delegations by owner user id
+func (gr *GormRepository) GetDelegationsByOwner(ctx context.Context, ownerID uuid.UUID) ([]models.DelegatedAccess, error) {
+	var delegations []models.DelegatedAccess
+	result := gr.GormClient.WithContext(ctx).
+		Where("owner_user_id = ?", ownerID).
+		Find(&delegations)
+	return delegations, result.Error
+}
+
+// Get delegations by delegate user id
+func (gr *GormRepository) GetDelegationsByDelegate(ctx context.Context, delegateID uuid.UUID) ([]models.DelegatedAccess, error) {
+	var delegations []models.DelegatedAccess
+	result := gr.GormClient.WithContext(ctx).
+		Where("delegate_user_id = ?", delegateID).
+		Find(&delegations)
+	return delegations, result.Error
+}
+
+// Delete a delegation by id and owner user id
+func (gr *GormRepository) DeleteDelegation(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) error {
+	result := gr.GormClient.WithContext(ctx).
+		Where("id = ? AND owner_user_id = ?", id, ownerID).
+		Delete(&models.DelegatedAccess{})
+	if result.RowsAffected == 0 {
+		return errors.New("delegation not found or unauthorized")
+	}
+	return result.Error
+}
+
+// Check if a delegate has access to a specific resource
+func (gr *GormRepository) HasAccess(ctx context.Context, delegateID uuid.UUID, resourceType string, resourceID uuid.UUID) (models.AccessLevel, bool, error) {
+	var delegation models.DelegatedAccess
+	result := gr.GormClient.WithContext(ctx).
+		Where("delegate_user_id = ? AND resource_type = ? AND resource_id = ?", delegateID, resourceType, resourceID).
+		First(&delegation)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return "", false, nil
+		}
+		return "", false, result.Error
+	}
+	return delegation.AccessLevel, true, nil
 }

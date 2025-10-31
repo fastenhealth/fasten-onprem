@@ -4,6 +4,7 @@ import {ResourceFhir} from '../../../models/fasten/resource_fhir';
 import {FORMATTERS, getPath, obsValue, attributeXTime} from './utils';
 import {FastenApiService} from '../../../services/fasten-api.service';
 import {FastenDisplayModel} from '../../../../lib/models/fasten/fasten-display-model';
+import { ActivatedRoute } from '@angular/router';
 
 //all Resource list components must implement this Interface
 export interface ResourceListComponentInterface {
@@ -12,6 +13,7 @@ export interface ResourceListComponentInterface {
   totalElements: number;
   sourceId: string;
   disabledResourceIds: string[];
+  isDelegatedResource?: boolean;
 
   //outputs
   selectionChanged: EventEmitter<FastenDisplayModel>
@@ -44,6 +46,7 @@ export class DatatableGenericResourceComponent implements OnInit, ResourceListCo
   @Input() resourceListType: string;
   @Input() sourceId: string;
   @Input() disabledResourceIds: string[] = [];
+  @Input() isDelegatedResource: boolean = false;
   @Output() selectionChanged: EventEmitter<FastenDisplayModel> = new EventEmitter<FastenDisplayModel>();
 
   currentPage: PageInfo = {offset: 0}
@@ -60,8 +63,8 @@ export class DatatableGenericResourceComponent implements OnInit, ResourceListCo
   ColumnMode = ColumnMode;
   SelectionType = SelectionType;
 
-  constructor(public changeRef: ChangeDetectorRef, public fastenApi: FastenApiService) {
-
+  constructor(public changeRef: ChangeDetectorRef, public fastenApi: FastenApiService, private route: ActivatedRoute
+  ) {
   }
 
   ngOnInit(): void {
@@ -75,11 +78,33 @@ export class DatatableGenericResourceComponent implements OnInit, ResourceListCo
 
   changePage(page: PageInfo){
     this.currentPage = page;
-    this.fastenApi.getResources(this.resourceListType, this.sourceId, null, this.currentPage.offset)
-      .subscribe((resourceList: ResourceFhir[]) => {
-        this.renderList(resourceList)
-        this.markForCheck()
-      });
+
+    if (this.isDelegatedResource && this.route.snapshot.paramMap.get('owner_user_id')) {
+      this.fastenApi
+        .getDelegatedResources(
+          this.route.snapshot.paramMap.get('owner_user_id'),
+          this.resourceListType,
+          this.sourceId,
+          null,
+          this.currentPage.offset
+        )
+        .subscribe((resourceList: ResourceFhir[]) => {
+          this.renderList(resourceList);
+          this.markForCheck();
+        });
+    } else {
+      this.fastenApi
+        .getResources(
+          this.resourceListType,
+          this.sourceId,
+          null,
+          this.currentPage.offset
+        )
+        .subscribe((resourceList: ResourceFhir[]) => {
+          this.renderList(resourceList);
+          this.markForCheck();
+        });
+    }
   }
 
   // getResources(page?: number): Observable<ResourceFhir[]>{

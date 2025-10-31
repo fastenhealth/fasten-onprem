@@ -5,6 +5,7 @@ import {NgbActiveModal, NgbModal, NgbModalModule} from '@ng-bootstrap/ng-bootstr
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {HTTP_CLIENT_TOKEN} from '../../dependency-injection';
 import {HttpClient} from '@angular/common/http';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('MedicalRecordWizardAddOrganizationComponent', () => {
   let component: MedicalRecordWizardAddOrganizationComponent;
@@ -16,7 +17,7 @@ describe('MedicalRecordWizardAddOrganizationComponent', () => {
         provide: HTTP_CLIENT_TOKEN,
         useClass: HttpClient,
       }],
-      imports: [ MedicalRecordWizardAddOrganizationComponent, HttpClientTestingModule ]
+      imports: [ MedicalRecordWizardAddOrganizationComponent, HttpClientTestingModule, RouterTestingModule ]
     })
     .compileComponents();
 

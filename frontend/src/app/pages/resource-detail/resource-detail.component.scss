@@ -1,0 +1,6 @@
+.overflow-scrollable {
+  overflow: auto;       /* Adds scrollbars only when needed */
+  overflow: scroll;     /* Always shows scrollbars */
+  overflow-x: auto;     /* Horizontal scroll */
+  overflow-y: auto;     /* Vertical scroll */
+}

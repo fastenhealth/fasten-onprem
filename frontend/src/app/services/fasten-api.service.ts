@@ -209,6 +209,15 @@ export class FastenApiService {
       );
   }
 
+  getDelegatedSourceSummary(ownerUserId: string, sourceId: string): Observable<SourceSummary> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/delegated-access/shared-with-me/summary/${ownerUserId}/${sourceId}`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as SourceSummary
+        })
+      );
+  }
+
   deleteSource(sourceId: string): Observable<number> {
     return this._httpClient.delete<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/source/${sourceId}`)
       .pipe(
@@ -244,6 +253,33 @@ export class FastenApiService {
     }
 
     return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/fhir`, {params: queryParams})
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as ResourceFhir[]
+        })
+      );
+  }
+
+  getDelegatedResources(ownerUserId: string, sourceResourceType?: string, sourceID?: string, sourceResourceID?: string, page?: number): Observable<ResourceFhir[]> {
+    let queryParams = {}
+
+    queryParams["ownerUserId"] = ownerUserId
+
+    if(sourceResourceType){
+      queryParams["sourceResourceType"] = sourceResourceType
+    }
+    if(sourceID){
+      queryParams["sourceID"] = sourceID
+    }
+
+    if(sourceResourceID){
+      queryParams["sourceResourceID"] = sourceResourceID
+    }
+    if(page !== undefined){
+      queryParams["page"] = page
+    }
+
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/delegated-access/shared-with-me/resources`, {params: queryParams})
       .pipe(
         map((response: ResponseWrapper) => {
           return response.data as ResourceFhir[]
@@ -307,6 +343,15 @@ export class FastenApiService {
       );
   }
 
+  getDelegatedResourceBySourceId(ownerUserId:string, sourceId: string, resourceId: string): Observable<ResourceFhir> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/delegated-access/${ownerUserId}/source/${sourceId}/resource/${resourceId}`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as ResourceFhir
+        })
+      );
+  }
+
   updateResource(resourceType: string, resourceId: string, payload: UpdateResourcePayload) : Observable<ResponseWrapper> {
     return this._httpClient.patch<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/fhir/${resourceType}/${resourceId}`, payload)
       .pipe(
@@ -314,6 +359,10 @@ export class FastenApiService {
           return response
         })
       );
+  }
+
+  updateDelegatedResource(resourceType: string, resourceId: string, sourceId: string, payload: UpdateResourcePayload) : Observable<ResponseWrapper> {
+    return this._httpClient.patch<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/delegated-access/resource/${resourceType}/${resourceId}/${sourceId}`, payload)
   }
 
   addDashboardLocation(location: string): Observable<ResponseWrapper> {
@@ -428,6 +477,15 @@ export class FastenApiService {
 
   getAllUsers(): Observable<User[]> {
     return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/users`)
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.data as User[]
+        })
+      );
+  }
+
+  getAllUserLightweight(): Observable<User[]> {
+    return this._httpClient.get<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/users/lightweight`)
       .pipe(
         map((response: ResponseWrapper) => {
           return response.data as User[]
@@ -694,4 +752,65 @@ export class FastenApiService {
       );
     
   }
+
+  createDelegation(payload: any): Observable<any> {
+    return this._httpClient
+      .post<any>(
+        `${GetEndpointAbsolutePath(
+          globalThis.location,
+          environment.fasten_api_endpoint_base
+        )}/secure/delegated-access`,
+        payload
+      )
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response;
+        })
+      );
+    }
+
+    getDelegationsForCurrentUser(): Observable<any> {
+      return this._httpClient
+        .get<any>(
+          `${GetEndpointAbsolutePath(
+            globalThis.location,
+            environment.fasten_api_endpoint_base
+          )}/secure/delegated-access`
+        )
+        .pipe(
+          map((response: ResponseWrapper) => {
+            return response;
+          })
+        );
+    }
+
+    deleteDelegation(delegationId: string): Observable<any> {
+      return this._httpClient
+        .delete<any>(
+          `${GetEndpointAbsolutePath(
+            globalThis.location,
+            environment.fasten_api_endpoint_base
+          )}/secure/delegated-access/${delegationId}`
+        )
+        .pipe(
+          map((response: ResponseWrapper) => {
+            return response;
+          })
+        );
+    }
+
+    getDelegationsSharedWithCurrentUser(): Observable<any> {
+      return this._httpClient
+        .get<any>(
+          `${GetEndpointAbsolutePath(
+            globalThis.location,
+            environment.fasten_api_endpoint_base
+          )}/secure/delegated-access/shared-with-me`
+        )
+        .pipe(
+          map((response: ResponseWrapper) => {
+            return response;
+          })
+        );
+    }
 }

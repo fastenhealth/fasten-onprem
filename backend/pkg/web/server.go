@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"os"
+
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
@@ -22,14 +24,13 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"os"
 )
 
 type AppEngine struct {
-	Config     config.Interface
-	Logger     *logrus.Entry
-	EventBus   event_bus.Interface
-	deviceRepo database.DatabaseRepository
+	Config      config.Interface
+	Logger      *logrus.Entry
+	EventBus    event_bus.Interface
+	deviceRepo  database.DatabaseRepository
 	StandbyMode bool
 
 	RelatedVersions map[string]string //related versions metadata provided & embedded by the build process
@@ -99,8 +100,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					c.JSON(http.StatusOK, gin.H{
 						"success": true,
 						"data": gin.H{
-							"first_run_wizard":   firstRunWizard,
-							"standby_mode":       true,
+							"first_run_wizard": firstRunWizard,
+							"standby_mode":     true,
 						},
 					})
 					return
@@ -125,8 +126,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				c.JSON(http.StatusOK, gin.H{
 					"success": true,
 					"data": gin.H{
-						"first_run_wizard":   firstRunWizard,
-						"standby_mode":       false,
+						"first_run_wizard": firstRunWizard,
+						"standby_mode":     false,
 					},
 				})
 			})
@@ -194,6 +195,7 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 
 					secure.GET("/users", handler.GetUsers)
 					secure.POST("/users", handler.CreateUser)
+					secure.GET("/users/lightweight", handler.GetLightweightUsers)
 
 					secure.POST("/practitioners", handler.CreatePractitioner)
 					secure.PUT("/practitioners/:practitionerId", handler.UpdatePractitioner)
@@ -210,6 +212,16 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					secure.DELETE("/access/token", handler.DeleteAccessToken)
 
 					secure.GET("/sync/discovery", handler.GetServerDiscovery)
+
+					// Delegated access management
+					secure.POST("/delegated-access", handler.CreateDelegation)
+					secure.GET("/delegated-access", handler.ListOwnedDelegations)
+					secure.GET("/delegated-access/shared-with-me", handler.ListSharedWithMe)
+					secure.GET("/delegated-access/shared-with-me/summary/:ownerId/:sourceId", handler.GetDelegatedSourceSummary)
+					secure.DELETE("/delegated-access/:id", handler.DeleteDelegation)
+					secure.GET("/delegated-access/shared-with-me/resources", handler.ListDelegatedResourceFhir)
+					secure.GET("/delegated-access/:ownerUserId/source/:sourceId/resource/:resourceId", handler.GetDelegatedResourceFhir)
+					secure.PATCH("/delegated-access/resource/:resourceType/:resourceId/:sourceId", handler.UpdateDelegatedResourceFhir)
 
 					//server-side-events handler (only supported on mac/linux)
 					// TODO: causes deadlock on Windows

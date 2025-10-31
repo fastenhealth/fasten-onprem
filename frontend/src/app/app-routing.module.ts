@@ -30,6 +30,7 @@ import { PractitionerHistoryComponent } from "./pages/practitioner-history/pract
 import { SettingsComponent } from './pages/settings/settings.component';
 import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wizard/get-encryption-key-wizard.component';
 import { SetupEncryptionKeyComponent } from './pages/setup-encryption-key/setup-encryption-key.component';
+import { DelegatedSourceDetailComponent } from "./pages/delegated-source-detail/delegated-source-detail.component";
 
 const routes: Routes = [
   { path: 'auth/signup/wizard', component: AuthSignupWizardComponent },
@@ -50,6 +51,9 @@ const routes: Routes = [
   { path: 'explore/:source_id', component: SourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
   { path: 'explore/:source_id/resource/:resource_id', component: ResourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
   { path: 'explore/:source_id/resource/:resource_type/:resource_id', component: ResourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
+
+  // delegated source pages
+  {path: 'delegated/:owner_user_id/source/:source_id', component: DelegatedSourceDetailComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
 
   { path: 'sources', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
   { path: 'sources/callback/:state', component: MedicalSourcesComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
