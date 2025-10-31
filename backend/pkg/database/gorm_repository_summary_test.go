@@ -62,6 +62,7 @@ func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryBundl
 	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
 	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
 	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().IsSet("search").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.validation_mode").Return(false).AnyTimes()
 	fakeConfig.EXPECT().GetBool("database.encryption.enabled").Return(false).AnyTimes()
@@ -99,7 +100,7 @@ func (suite *RepositorySummaryTestSuite) TestGetInternationalPatientSummaryBundl
 
 	manualClient, err := sourceFactory.GetSourceClient(sourcePkg.FastenLighthouseEnvSandbox, authContext, testLogger, &testSourceCredential)
 	require.NoError(suite.T(), err)
-	
+
 	summary, err := manualClient.SyncAllBundle(dbRepo, bundleFile, sourcePkg.FhirVersion401)
 	require.NoError(suite.T(), err)
 	require.Equal(suite.T(), 72, summary.TotalResources)
