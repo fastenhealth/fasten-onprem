@@ -20,7 +20,7 @@
           <div class="alert alert-warning mb-5" role="alert">
             Enable Debug mode:
             <input type="checkbox" [(ngModel)]="debugMode" />
-            <p>*Can edit resource</p>
+            <p class="text-muted">You can edit this resource</p>
           </div>
 
           <div *ngIf="resource && debugMode">
@@ -32,14 +32,13 @@
               (ngModelChange)="validateJson()"
             ></textarea>
 
-            <div class="mt-3 d-flex justify-content-end">
-              <button
-                class="btn btn-success btn-sm"
-                (click)="saveEditedResource()"
-                [disabled]="!isJsonValid"
-              >
-                Save Changes
-              </button>
+            <div class="mt-3 d-flex align-items-center">
+            <button class="btn btn-success btn-sm mr-2" (click)="saveEditedResource()" [disabled]="!isJsonValid">
+              Save Changes
+            </button>
+             <div *ngIf="!isJsonValid" class="text-danger small">
+              Invalid JSON — please fix syntax before saving.
+            </div>
             </div>
           </div>
         </ng-container>

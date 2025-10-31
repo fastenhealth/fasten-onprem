@@ -120,7 +120,7 @@ export class ResourceDetailComponent implements OnInit {
   private getCurrentDelegationInfo() {
     this.fastenApi.getDelegationsSharedWithCurrentUser().subscribe((delegations) => {
      delegations.find(delegation => {
-        if (delegation.source_id === this.route.snapshot.paramMap.get('source_id')) {
+        if (delegation.resource_id === this.route.snapshot.paramMap.get('source_id')) {
           this.canEditResource = delegation.access_level === 'EDIT';
           return true;
         }
