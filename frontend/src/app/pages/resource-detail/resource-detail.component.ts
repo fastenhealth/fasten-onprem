@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {FastenApiService} from '../../services/fasten-api.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {ResourceFhir} from '../../models/fasten/resource_fhir';
 import {fhirModelFactory} from '../../../lib/models/factory';
 import {ResourceType} from '../../../lib/models/constants';
@@ -26,8 +26,9 @@ export class ResourceDetailComponent implements OnInit {
   // Delegated resource edit
   isJsonValid = true;
   editableJson = '';
+  canEditResource = false;
 
-  constructor(private fastenApi: FastenApiService, private router: Router, private route: ActivatedRoute) {
+  constructor(private fastenApi: FastenApiService, private route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
@@ -38,6 +39,7 @@ export class ResourceDetailComponent implements OnInit {
     this.loading = true
 
     if (this.isDelegatedResource && this.ownerUserId) {
+      this.getCurrentDelegationInfo();
       this.getDelegatedResource();
       return;
     }
@@ -59,7 +61,7 @@ export class ResourceDetailComponent implements OnInit {
     });
   }
 
-  getDelegatedResource() {
+  private getDelegatedResource() {
      this.fastenApi.getDelegatedResourceBySourceId(
         this.ownerUserId,
         this.route.snapshot.paramMap.get('source_id'),
@@ -105,6 +107,7 @@ export class ResourceDetailComponent implements OnInit {
         }
       ).subscribe(() => {
         alert('Resource updated successfully');
+        this.getCurrentDelegationInfo();
         this.getDelegatedResource();
       }, error => {
         alert('Failed to update resource');
@@ -112,5 +115,17 @@ export class ResourceDetailComponent implements OnInit {
     } catch {
       alert('Invalid JSON');
     }
+  }
+
+  private getCurrentDelegationInfo() {
+    this.fastenApi.getDelegationsSharedWithCurrentUser().subscribe((delegations) => {
+     delegations.find(delegation => {
+        if (delegation.source_id === this.route.snapshot.paramMap.get('source_id')) {
+          this.canEditResource = delegation.access_level === 'EDIT';
+          return true;
+        }
+        return false;
+      });
+    });
   }
 }

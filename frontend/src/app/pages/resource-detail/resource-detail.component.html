@@ -9,36 +9,52 @@
       </div>
 
       <ng-container *ngIf="!loading else isLoadingTemplate">
-
         <fhir-card *ngIf="displayModel else noDisplayModel" [displayModel]="displayModel" [showDetails]="false"></fhir-card>
 
         <ng-template #noDisplayModel>
           <p> An error occurred while parsing FHIR resource </p>
         </ng-template>
 
-        <div style="margin-bottom: 50px" class="alert alert-warning" role="alert">
-          Enable Debug mode: <input type="checkbox" [(ngModel)]="debugMode" />
-        </div>
+        <!-- Delegated resource section -->
+        <ng-container *ngIf="isDelegatedResource && canEditResource; else notDelegatedResource">
+          <div class="alert alert-warning mb-5" role="alert">
+            Enable Debug mode:
+            <input type="checkbox" [(ngModel)]="debugMode" />
+            <p>*Can edit resource</p>
+          </div>
 
-      <ng-container *ngIf="resource && debugMode; else noResource">
-      <!-- Editable section for delegated users -->
-      <ng-container *ngIf="isDelegatedResource; else readOnlySection">
-        <textarea [(ngModel)]="editableJson" (ngModelChange)="validateJson()" rows="20" class="form-control font-monospace"
-          style="width: 100%;" name="resource_raw_editor"></textarea>
-        <div class="mt-3 d-flex justify-content-end">
-          <ng-container *ngIf="!isJsonValid">
-            <div class="text-danger me-3">Invalid JSON format. Please correct before saving.</div>
-          </ng-container>
-          <button class="btn btn-success btn-sm" (click)="saveEditedResource()" [disabled]="!isJsonValid">
-            Save Changes
-          </button>
-        </div>
-      </ng-container>
-      <!-- Read-only section for non-delegated users -->
-      <ng-template #readOnlySection>
-        <pre><code [highlight]="resource.resource_raw | json"></code></pre>
-      </ng-template>
-      </ng-container>
+          <div *ngIf="resource && debugMode">
+            <textarea
+              [(ngModel)]="editableJson"
+              rows="20"
+              class="form-control font-monospace"
+              style="width: 100%; overflow: auto"
+              (ngModelChange)="validateJson()"
+            ></textarea>
+
+            <div class="mt-3 d-flex justify-content-end">
+              <button
+                class="btn btn-success btn-sm"
+                (click)="saveEditedResource()"
+                [disabled]="!isJsonValid"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Non-delegated or without EDIT privileges resource fallback -->
+        <ng-template #notDelegatedResource>
+          <div class="alert alert-warning mb-5" role="alert">
+            Enable Debug mode:
+            <input type="checkbox" [(ngModel)]="debugMode" />
+          </div>
+
+          <div *ngIf="resource && debugMode">
+            <pre><code [highlight]="resource.resource_raw | json"></code></pre>
+          </div>
+        </ng-template>
       </ng-container>
       <ng-template #isLoadingTemplate>
         <div class="row">
