@@ -44,6 +44,11 @@ import { PractitionerHistoryComponent } from './pages/practitioner-history/pract
 import { SettingsComponent } from './pages/settings/settings.component';
 import { SetupEncryptionKeyComponent } from './pages/setup-encryption-key/setup-encryption-key.component';
 import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wizard/get-encryption-key-wizard.component';
+import { ResourceOcrComponent } from './pages/resource-ocr/resource-ocr.component';
+import { PdfOcrComponent } from './pages/resource-ocr/pdf-ocr/pdf-ocr.component';
+import { ImageOcrComponent } from './pages/resource-ocr/image-ocr/image-ocr.component';
+import { CameraOcrComponent } from './pages/resource-ocr/camera-ocr/camera-ocr.component';
+import { EncounterFormComponent } from './pages/resource-ocr/encounter-form/encounter-form.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +74,11 @@ import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wiza
     PractitionerHistoryComponent,
     SetupEncryptionKeyComponent,
     GetEncryptionKeyWizardComponent,
+    ResourceOcrComponent,
+    PdfOcrComponent,
+    ImageOcrComponent,
+    CameraOcrComponent,
+    EncounterFormComponent
   ],
   imports: [
     FormsModule,

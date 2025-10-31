@@ -1,0 +1,88 @@
+<!-- LIVE CAMERA + CAPTURE -->
+<div *ngIf="isCapturingNew" class="mb-3">
+    <label class="form-label">Live Camera</label>
+    <video #video class="w-100 border rounded" autoplay playsinline></video>
+
+    <button class="btn btn-primary w-100" (click)="captureImage()" [disabled]="capturedImages.length >= 30">
+        Capture Image ({{ capturedImages.length }}/30)
+    </button>
+</div>
+
+<!-- Canvas for internal use (hidden) -->
+<canvas #canvas hidden></canvas>
+
+<!-- Error -->
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<!-- REVIEW + SEND TO OCR -->
+<div *ngIf="capturedImages.length && !isCapturingNew && !ocrFiles.length" class="row">
+    <!-- LEFT SIDE: Image Preview -->
+    <div class="col-md-12 d-flex flex-column align-items-center">
+        <h6 class="text-muted mb-2">
+            Image {{ currentIndex + 1 }} of {{ capturedImages.length }}
+        </h6>
+
+        <img [src]="capturedImages[currentIndex]" class="img-thumbnail mb-3"
+            style="max-width: 100%; height: auto; max-height: 500px; object-fit: contain;" />
+
+        <div class="d-flex justify-content-center mb-3">
+            <button class="btn btn-outline-secondary mr-2" (click)="goToPrevious()" [disabled]="currentIndex === 0">
+                ←
+            </button>
+            <button class="btn btn-outline-secondary" (click)="goToNext()"
+                [disabled]="currentIndex === capturedImages.length - 1">
+                →
+            </button>
+        </div>
+
+        <div class="d-flex justify-content-between w-100">
+            <button class="btn btn-secondary" (click)="prepareNewCapture()" [disabled]="capturedImages.length >= 30">
+                Capture Next Image
+            </button>
+
+            <button class="btn btn-success" (click)="sendAllToOcr()" [disabled]="isProcessing">
+                <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
+                Send All to OCR
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- OCR RESULT + ENCOUNTER FORM -->
+<div *ngIf="ocrFiles.length" class="row">
+    <div class="col-md-6 d-flex flex-column align-items-center border-right">
+        <h6 class="text-muted mb-2">
+            Image {{ currentIndex + 1 }} of {{ capturedImages.length }}
+        </h6>
+
+        <img [src]="capturedImages[currentIndex]" class="img-thumbnail mb-3"
+            style="max-width: 100%; height: auto; max-height: 500px; object-fit: contain;" />
+
+        <div class="d-flex justify-content-center mb-3">
+            <button class="btn btn-outline-secondary mr-2" (click)="goToPrevious()" [disabled]="currentIndex === 0">
+                ←
+            </button>
+            <button class="btn btn-outline-secondary" (click)="goToNext()"
+                [disabled]="currentIndex === capturedImages.length - 1">
+                →
+            </button>
+        </div>
+        <div *ngIf="isProcessing" class="text-center mb-3">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Processing...</span>
+            </div>
+            <div class="mt-2 text-muted">Processing...</div>
+        </div>
+
+        <div *ngIf="foundKeys && foundKeys.length" class="text-center p-2 border rounded bg-light w-100">
+            <strong>Extracted:</strong> {{ foundKeys.join(', ') }}
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE: Encounter form -->
+    <div class="col-md-6 d-flex flex-column">
+        <div class="form-group flex-grow-1">
+            <app-encounter-form [uploadedFiles]="ocrFiles"></app-encounter-form>
+        </div>
+    </div>
+</div>

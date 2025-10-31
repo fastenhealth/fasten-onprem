@@ -1,0 +1,50 @@
+<!-- Error -->
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<!-- Page-by-Page Review -->
+<div class="row">
+    <!-- LEFT SIDE -->
+    <div class="col-md-6 d-flex flex-column align-items-center border-right">
+        <!-- Page Counter -->
+        <h6 class="text-muted mb-2">
+            Page {{ currentPageIndex + 1 }} of {{ pageImages.length }}
+        </h6>
+
+        <!-- Image Preview -->
+        <img [src]="pageImages[currentPageIndex]" class="img-thumbnail mb-3"
+            style="max-width: 100%; height: auto; max-height: 500px; object-fit: contain;" />
+
+        <!-- Navigation Buttons (centered) -->
+        <div class="d-flex justify-content-center mb-3">
+            <button class="btn btn-outline-secondary mr-2" (click)="goToPreviousPage()"
+                [disabled]="currentPageIndex === 0 || isProcessing">
+                ←
+            </button>
+            <button class="btn btn-outline-secondary" (click)="goToNextPage()"
+                [disabled]="currentPageIndex === pageImages.length - 1 || isProcessing">
+                →
+            </button>
+        </div>
+
+        <!-- Loading state if isProcessing is true -->
+        <div *ngIf="isProcessing" class="text-center mb-3">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Processing...</span>
+            </div>
+            <div class="mt-2 text-muted">Processing...</div>
+        </div>
+
+        <!-- Extracted Keys -->
+        <div *ngIf="foundKeys.length" class="text-center p-2 border rounded bg-light w-100">
+            <strong>Extracted:</strong> {{ foundKeys.join(', ') }}
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="col-md-6 d-flex flex-column">
+        <!-- Editable Form -->
+        <div class="form-group flex-grow-1">
+            <app-encounter-form [uploadedFiles]="files"></app-encounter-form>
+        </div>
+    </div>
+</div>

@@ -470,6 +470,24 @@ export class FastenApiService {
       URL.revokeObjectURL(fileURL);
     });
   }
+  
+  /**
+   * @param file The images or PDF file to be scanned.
+   * @returns An observable with the OCR text response.
+   */
+  uploadOcrDocuments(files: File[]): Observable<string> {
+    const formData = new FormData();
+
+    files.forEach(file => {
+      formData.append('images', file, file.name);
+    });
+
+    return this._httpClient.post(
+      `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/ocr`,
+      formData,
+      { responseType: 'text' }
+    );
+  }
 
   getAllPractitioners(): Observable<Practitioner[]> {
     const endpointUrl = `${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/fhir?sourceResourceType=Practitioner`;
