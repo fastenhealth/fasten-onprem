@@ -42,6 +42,7 @@ export class SettingsComponent implements OnInit {
   sources: any[] = [];
   currentDelegations: any[] = [];
   selectedDelegationExists: boolean = false;
+  selectedDelegationIsExternal: boolean = false; // We do not allow EDIT of other sources that are not external (only Fasten source)
   sharedDelegations: any[] = [];
 
   constructor(
@@ -59,10 +60,6 @@ export class SettingsComponent implements OnInit {
     this.loadUsers();
     this.getCurrentDelegations();
     this.getSharedDelegations();
-  }
-
-  ngOnChanges() {
-    this.checkIfDelegationExists();
   }
 
   refreshDelegationData() {
@@ -93,6 +90,25 @@ export class SettingsComponent implements OnInit {
     );
 
     this.selectedDelegationExists = match;
+  }
+
+  private checkIfDelegationIsOwn(): void {
+    if (
+      !this.selectedAccessType ||
+      !this.selectedSource
+    ) {
+      this.selectedDelegationIsExternal = false;
+      return;
+    }
+
+    const match = this.selectedAccessType === 'EDIT' && this.selectedSource.platform_type !== 'fasten';
+
+    this.selectedDelegationIsExternal = match;
+  }
+
+  onDelegationChange() {
+    this.checkIfDelegationExists();
+    this.checkIfDelegationIsOwn();
   }
 
   loadCurrentUser(): void {
