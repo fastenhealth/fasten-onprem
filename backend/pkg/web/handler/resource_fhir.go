@@ -14,6 +14,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
 	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -81,6 +82,54 @@ func ListResourceFhir(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": wrappedResourceModels})
 }
 
+func ListDelegatedResourceFhir(c *gin.Context) {
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	ownerUserId := c.Query("ownerUserId")
+	if ownerUserId == "" {
+		logger.Errorln("ownerUserId query parameter is required")
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "ownerUserId query parameter is required"})
+		return
+	}
+
+	listResourceQueryOptions := models.ListResourceQueryOptions{}
+	if len(c.Query("sourceResourceType")) > 0 {
+		listResourceQueryOptions.SourceResourceType = c.Query("sourceResourceType")
+	}
+	if len(c.Query("sourceID")) > 0 {
+		listResourceQueryOptions.SourceID = c.Query("sourceID")
+	}
+	if len(c.Query("sourceResourceID")) > 0 {
+		listResourceQueryOptions.SourceResourceID = c.Query("sourceResourceID")
+	}
+	if len(c.Query("page")) > 0 {
+		listResourceQueryOptions.Limit = pkg.ResourceListPageSize //hardcoded number of resources per page
+		pageNumb, err := strconv.Atoi(c.Query("page"))
+		if err != nil {
+			logger.Errorln("An error occurred while calculating page number", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+			return
+		}
+		listResourceQueryOptions.Offset = pageNumb * listResourceQueryOptions.Limit
+	}
+	wrappedResourceModels, err := databaseRepo.ListDelegatedResources(c, listResourceQueryOptions, ownerUserId)
+
+	if c.Query("sortBy") == "title" {
+		wrappedResourceModels = utils.SortResourceListByTitle(wrappedResourceModels)
+	} else {
+		wrappedResourceModels = utils.SortResourceListByDate(wrappedResourceModels)
+	}
+
+	if err != nil {
+		logger.Errorln("An error occurred while retrieving resources", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": wrappedResourceModels})
+}
+
 // this endpoint retrieves a specific resource by its ID
 func GetResourceFhir(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
@@ -97,6 +146,37 @@ func GetResourceFhir(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": wrappedResourceModel})
+}
+
+// This endpoint retrieves a resource by its resource Id, source Id and user Id (used for delegated resources)
+func GetDelegatedResourceFhir(c *gin.Context) {
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	ownerUserId := strings.Trim(c.Param("ownerUserId"), "/")
+	sourceId := strings.Trim(c.Param("sourceId"), "/")
+	resourceId := strings.Trim(c.Param("resourceId"), "/")
+
+	if ownerUserId == "" || sourceId == "" || resourceId == "" {
+		logger.Errorln("Missing one or more required path parameters: ownerUserId, sourceId, resourceId")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "ownerUserId, sourceId, and resourceId are required path parameters",
+		})
+		return
+	}
+
+	wrappedResourceModel, err := databaseRepo.GetResourceByOwnerAndSourceId(c, ownerUserId, sourceId, resourceId)
+	if err != nil {
+		logger.Errorln("An error occurred while retrieving resource", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    wrappedResourceModel,
+	})
 }
 
 // deprecated - using Manual Resource Wizard instead
@@ -199,6 +279,36 @@ func UpdateResourceFhir(c *gin.Context) {
 	}
 
 	_, updateError := databaseRepo.UpsertRawResource(c, sourceCredential, resourceToUpsert)
+	if updateError != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to update resource"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true})
+}
+
+func UpdateDelegatedResourceFhir(c *gin.Context) {
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	resourceType := strings.Trim(c.Param("resourceType"), "/")
+	resourceId := strings.Trim(c.Param("resourceId"), "/")
+	sourceId := strings.Trim(c.Param("sourceId"), "/")
+
+	parsedSourceID := uuid.MustParse(sourceId)
+
+	type UpdatePayload struct {
+		ResourceRaw json.RawMessage `json:"resource_raw"`
+		SortTitle   string          `json:"sort_title"`
+		SortDate    string          `json:"sort_date"`
+	}
+	var payload UpdatePayload
+	err := c.ShouldBindJSON(&payload)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "invalid request payload"})
+		return
+	}
+
+	_, updateError := databaseRepo.UpdateResourceRaw(c, parsedSourceID, resourceType, resourceId, payload.ResourceRaw)
 	if updateError != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to update resource"})
 		return

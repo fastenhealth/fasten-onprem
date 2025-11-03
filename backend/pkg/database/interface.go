@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
@@ -21,6 +22,7 @@ type DatabaseRepository interface {
 	GetCurrentUser(ctx context.Context) (*models.User, error)
 	DeleteCurrentUser(ctx context.Context) error
 	GetUsers(ctx context.Context) ([]models.User, error)
+	GetLightweightUsers(ctx context.Context) ([]models.User, error)
 
 	//get a count of every resource type
 	GetSummary(ctx context.Context) (*models.Summary, error)
@@ -95,4 +97,15 @@ type DatabaseRepository interface {
 	DeleteAccessToken(ctx context.Context, tokenID string) error
 	GetAccessToken(ctx context.Context, tokenID string) (*models.AccessToken, error)
 	GetAccessTokenByTokenIDAndUsername(ctx context.Context, tokenID string, username string) (*models.AccessToken, error)
+
+	// Delegated Access Management
+	CreateDelegation(ctx context.Context, delegation *models.DelegatedAccess) error
+	GetDelegationsByOwner(ctx context.Context, ownerID uuid.UUID) ([]models.DelegatedAccess, error)
+	GetDelegatedSourceSummary(ctx context.Context, sourceId string, ownerID string) (*models.SourceSummary, error)
+	GetDelegationsByDelegate(ctx context.Context, delegateID uuid.UUID) ([]models.DelegatedAccess, error)
+	DeleteDelegation(ctx context.Context, id uuid.UUID, ownerID uuid.UUID) error
+	HasAccess(ctx context.Context, delegateID uuid.UUID, resourceType string, resourceID uuid.UUID) (models.AccessLevel, bool, error)
+	ListDelegatedResources(ctx context.Context, queryOptions models.ListResourceQueryOptions, ownerUserId string) ([]models.ResourceBase, error)
+	GetResourceByOwnerAndSourceId(ctx context.Context, ownerUserId string, sourceId string, resourceId string) (*models.ResourceBase, error)
+	UpdateResourceRaw(ctx context.Context, source_id uuid.UUID, source_resource_type string, source_resource_id string, resource_raw json.RawMessage) (bool, error)
 }

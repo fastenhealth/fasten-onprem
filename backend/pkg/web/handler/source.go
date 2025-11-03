@@ -273,6 +273,35 @@ func GetSourceSummary(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceSummary})
 }
 
+func GetDelegatedSourceSummary(c *gin.Context) {
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	// Extract from path params
+	ownerUserID := c.Param("ownerId")
+	sourceID := c.Param("sourceId")
+
+	logger.Infof("GetDelegatedSourceSummary request: ownerUserID=%s, sourceID=%s", ownerUserID, sourceID)
+
+	// Validate UUIDs (optional but highly recommended)
+	if _, err := uuid.Parse(ownerUserID); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ownerId"})
+		return
+	}
+	if _, err := uuid.Parse(sourceID); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid sourceId"})
+		return
+	}
+
+	sourceSummaries, err := databaseRepo.GetDelegatedSourceSummary(c, sourceID, ownerUserID)
+	if err != nil {
+		logger.Errorln("An error occurred while retrieving delegated source summaries", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": sourceSummaries})
+}
+
 func ListSource(c *gin.Context) {
 	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
 	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)

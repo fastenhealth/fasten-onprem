@@ -1,4 +1,4 @@
-<div class="az-content">
+<div class="az-content overflow-scrollable">
   <div class="container">
     <div class="az-content-body">
       <h2 class="az-content-title">Settings</h2>
@@ -29,7 +29,7 @@
       </section>
 
       <!-- Connected Devices Section -->
-      <section class="card card-dashboard-table">
+      <section class="card card-dashboard-table mg-b-20">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h4 class="card-title mb-0"><i class="fas fa-key mr-3"></i>Connected Devices</h4>
           <div>
@@ -58,12 +58,87 @@
                 <small class="text-muted">Expires {{ formatExpiryDate(token.expiresAt) }}</small>
               </div>
               <div class="d-flex align-items-center">
-                <button class="btn btn-outline-danger btn-sm ms-2" ngbTooltip="Delete Device" (click)="deleteToken(token.tokenId)">
-                    <i class="fas fa-trash-alt mr-0"></i>
+                <button class="btn btn-outline-danger btn-sm ms-2" ngbTooltip="Delete Device"
+                  (click)="deleteToken(token.tokenId)">
+                  <i class="fas fa-trash-alt mr-0"></i>
                 </button>
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <!-- Delegate Access Section -->
+      <section class="card card-dashboard-table">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="card-title mb-2"><i class="fas fa-user-shield mr-3"></i>Delegate Access</h4>
+          <button class="btn btn-az-primary btn-sm" (click)="refreshDelegationData()">
+            <i class="fas fa-refresh mr-2"></i>Refresh data
+          </button>
+        </div>
+        <div class="mt-4 ml-4">
+          <h5>Current Delegated Access</h5>
+          <p class="text-muted mb-2 mt-2">Allow another user to view or edit your resources.</p>
+          <div *ngIf="currentDelegations?.length > 0; else noDelegations">
+            <ul class="list-group">
+              <li *ngFor="let da of currentDelegations"
+                class="list-group-item d-flex justify-content-between align-items-center">
+                <!-- Left content -->
+                <div>
+                  <strong class="mr-2">{{ da.source }}</strong>
+                  <span class="text-muted mr-2">({{ da.resource_type }})</span>
+                  <br>
+                  <small class="text-muted mr-1">
+                    Access: <span class="badge bg-info text-dark mr-1">{{ da.access_level }}</span>
+                    <span class="ms-2 mr-1">Granted on: {{ da.created_at | date:'yyyy-MM-dd HH:mm' }}</span>
+                  </small>
+                  <small class="text-muted d-block">Shared with: {{ da.delegate_user }}</small>
+                </div>
+        
+                <!-- Right content: Delete button -->
+                <button type="button" class="btn btn-outline-danger btn-sm" (click)="deleteDelegation(da.id)">
+                  <i class="bi bi-trash"></i> Remove
+                </button>
+              </li>
+            </ul>
+          </div>
+          <ng-template #noDelegations>
+            <p class="text-muted mt-2">No delegated access found.</p>
+          </ng-template>
+        </div>
+        
+        <div class="card-body">
+          <button type="button" class="btn btn-az-primary btn-sm mb-2 mt-2 w-25" (click)="openDelegateAccessModal(delegateModal)">
+            Delegate Access
+          </button>
+        </div>
+        
+        <div class="mt-4 ml-4">
+          <h5>Shared with me</h5>
+          <p class="text-muted mb-2 mt-2">Explore other sources that been delegated to you.</p>
+          <div *ngIf="sharedDelegations?.length > 0; else sharedDelegationsNoData">
+            <ul class="list-group">
+              <li *ngFor="let da of sharedDelegations"
+                class="list-group-item d-flex justify-content-between align-items-center cursor-pointer"
+                [routerLink]="['/delegated', da.owner_user_id, 'source', da.resource_id]">
+        
+                <!-- Left content -->
+                <div class="cursor-pointer">
+                  <strong class="mr-2">{{ da.source }}</strong>
+                  <span class="text-muted mr-2">({{ da.resource_type }})</span>
+                  <br>
+                  <small class="text-muted mr-1">
+                    Access: <span class="badge bg-info text-dark mr-1">{{ da.access_level }}</span>
+                    <span class="ms-2 mr-1">Granted on: {{ da.created_at | date:'yyyy-MM-dd HH:mm' }}</span>
+                  </small>
+                  <small class="text-muted d-block">Shared by: {{ da.owner_user }}</small>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <ng-template #sharedDelegationsNoData>
+            <p class="text-muted mt-2">No shared access found.</p>
+          </ng-template>
         </div>
       </section>
     </div>
@@ -87,7 +162,8 @@
       <p class="text-muted">Give your new device a name so you can recognize it in the list of connected devices.</p>
       <div class="form-group mt-3">
         <label for="deviceNameInput" class="form-label">Device Name (optional):</label>
-        <input type="text" class="form-control" id="deviceNameInput" [(ngModel)]="newDeviceName" placeholder="e.g., My iPhone, Work Tablet">
+        <input type="text" class="form-control" id="deviceNameInput" [(ngModel)]="newDeviceName"
+          placeholder="e.g., My iPhone, Work Tablet">
       </div>
       <div class="form-group mt-3">
         <label for="expirationSelect" class="form-label">Expiration:</label>
@@ -98,7 +174,8 @@
     </div>
 
     <div *ngIf="step === 'showQR'" class="text-center">
-      <p class="text-muted">Scan this QR code with your companion mobile app to connect your device and sync your medical records.</p>
+      <p class="text-muted">Scan this QR code with your companion mobile app to connect your device and sync your
+        medical records.</p>
       <div *ngIf="qrCodeUrl" class="qr-code-container mb-4 p-3 border rounded d-inline-block">
         <img [src]="qrCodeUrl" alt="QR Code" class="img-fluid qr-code-image">
       </div>
@@ -127,8 +204,90 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button *ngIf="step === 'askDetails'" type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel')">Cancel</button>
-    <button *ngIf="step === 'askDetails'" type="button" class="btn btn-az-primary" (click)="connectDevice()" [disabled]="isLoading">Connect</button>
+    <button *ngIf="step === 'askDetails'" type="button" class="btn btn-secondary"
+      (click)="modal.dismiss('cancel')">Cancel</button>
+    <button *ngIf="step === 'askDetails'" type="button" class="btn btn-az-primary" (click)="connectDevice()"
+      [disabled]="isLoading">Connect</button>
     <button *ngIf="step === 'showQR'" type="button" class="btn btn-secondary" (click)="modal.close()">Close</button>
+  </div>
+</ng-template>
+
+<!-- Delegate Access Modal -->
+<ng-template #delegateModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <i class="fas fa-user-shield mr-2"></i>
+      <span>Delegate Access</span>
+    </h5>
+    <button type="button" class="close" aria-label="Close" (click)="closeDelegateAccessModal()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body text-start">
+    <p class="text-muted">
+      Allow another user to view or edit this resource. You can revoke access at any time.
+    </p>
+
+    <!-- Select User -->
+    <div class="form-group mt-3">
+      <label for="delegateUserSelect" class="form-label">Select User:</label>
+      <select id="delegateUserSelect" class="form-control" [(ngModel)]="selectedUserId"
+        (ngModelChange)="checkIfDelegationExists()" required>
+        <option value="" disabled selected>Select a user</option>
+        <option *ngFor="let user of users" [value]="user.id">
+          {{ user?.full_name + ' - ' + user?.username }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Select Permission Type -->
+    <div class="form-group mt-3">
+      <label for="permissionSelect" class="form-label">Permission Type:</label>
+      <select id="permissionSelect" class="form-control" [(ngModel)]="selectedAccessType"
+        (ngModelChange)="onDelegationChange()" required>
+        <option value="" disabled selected>Select permission</option>
+        <option value="VIEW">View</option>
+        <option value="EDIT">Edit</option>
+      </select>
+    </div>
+
+    <!-- Select Source -->
+    <div class="form-group mt-3">
+      <label for="sourcesSelect" class="form-label">Select Source:</label>
+      <select id="sourcesSelect" class="form-control" [(ngModel)]="selectedSource"
+        (ngModelChange)="onDelegationChange()" required>
+        <option [ngValue]="null" disabled selected>Select source</option>
+        <option *ngFor="let source of sources" [ngValue]="source">
+          {{ source?.display || (source?.platform_type + ' - ' + (source?.created_at | date:'yyyy-MM-dd')) }}
+        </option>
+      </select>
+    </div>
+
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Info Message -->
+    <div *ngIf="selectedDelegationExists" class="alert alert-warning mt-3">
+      This delegation already exists.
+    </div>
+
+    <!-- Info Message -->
+    <div *ngIf="selectedDelegationIsExternal" class="alert alert-warning mt-3">
+      We do not allow EDIT access delegation for external sources.
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="closeDelegateAccessModal()">
+      Cancel
+    </button>
+    <button type="button" class="btn btn-az-primary" (click)="submitDelegation()"
+      [disabled]="!selectedUserId || !selectedAccessType || !selectedSource || selectedDelegationExists || selectedDelegationIsExternal|| isLoading">
+      Save
+    </button>
   </div>
 </ng-template>
