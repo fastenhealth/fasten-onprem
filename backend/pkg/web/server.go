@@ -8,11 +8,13 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"runtime"
 	"strings"
 	"time"
 
 	"github.com/fastenhealth/fasten-onprem/backend/pkg"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/auth"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/event_bus"
@@ -22,14 +24,13 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/web/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"os"
 )
 
 type AppEngine struct {
-	Config     config.Interface
-	Logger     *logrus.Entry
-	EventBus   event_bus.Interface
-	deviceRepo database.DatabaseRepository
+	Config      config.Interface
+	Logger      *logrus.Entry
+	EventBus    event_bus.Interface
+	deviceRepo  database.DatabaseRepository
 	StandbyMode bool
 
 	RelatedVersions map[string]string //related versions metadata provided & embedded by the build process
@@ -68,9 +69,30 @@ func (ae *AppEngine) Reinitialize() error {
 func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 	r := gin.New()
 
+	var oidcManager *auth.OIDCManager
+	var configs []auth.OIDCConfig
+
+	err := ae.Config.UnmarshalKey("web.auth.oidc_providers", &configs)
+	if err != nil {
+		// This error is useful for debugging malformed YAML
+		ae.Logger.Warnf("Could not unmarshal 'web.auth.oidc_providers': %v. Skipping OIDC setup.", err)
+	}
+
+	if len(configs) > 0 {
+		ae.Logger.Infof("Found %d OIDC provider(s), initializing manager...", len(configs))
+
+		oidcManager, err = auth.NewOIDCManager(context.Background(), configs)
+		if err != nil {
+			ae.Logger.Fatalf("failed to init OIDC manager: %v", err)
+		}
+	} else {
+		ae.Logger.Info("No OIDC providers configured, skipping manager initialization.")
+	}
+
 	if !ae.StandbyMode {
 		r.Use(middleware.RepositoryMiddleware(ae.deviceRepo))
 	}
+
 	r.Use(middleware.LoggerMiddleware(ae.Logger))
 	r.Use(middleware.ConfigMiddleware(ae.Config))
 	r.Use(middleware.EventBusMiddleware(ae.EventBus))
@@ -99,8 +121,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					c.JSON(http.StatusOK, gin.H{
 						"success": true,
 						"data": gin.H{
-							"first_run_wizard":   firstRunWizard,
-							"standby_mode":       true,
+							"first_run_wizard": firstRunWizard,
+							"standby_mode":     true,
 						},
 					})
 					return
@@ -125,8 +147,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				c.JSON(http.StatusOK, gin.H{
 					"success": true,
 					"data": gin.H{
-						"first_run_wizard":   firstRunWizard,
-						"standby_mode":       false,
+						"first_run_wizard": firstRunWizard,
+						"standby_mode":     false,
 					},
 				})
 			})
@@ -148,6 +170,11 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 				api.Use(middleware.CacheMiddleware())
 				api.POST("/auth/signup", handler.AuthSignup)
 				api.POST("/auth/signin", handler.AuthSignin)
+
+				// OIDC Authentication
+				api.GET("/oidc/:provider", handler.LoginHandler(oidcManager))
+				api.GET("/oidc/:provider/callback", handler.CallbackHandler(oidcManager))
+				api.GET("/oidc/providers", handler.ListAuthMethodsHandler(oidcManager))
 
 				//whitelisted CORS PROXY
 				api.GET("/cors/:endpointId/*proxyPath", handler.CORSProxy)
@@ -203,6 +230,9 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					secure.POST("/user/favorites", handler.AddPractitionerToFavorites)
 					secure.DELETE("/user/favorites", handler.RemovePractitionerFromFavorites)
 					secure.GET("/user/favorites", handler.GetUserFavoritePractitioners)
+					// OIDC Authentication
+					secure.GET("/auth/oidc/:provider", handler.LoginHandler(oidcManager))
+					secure.GET("/auth/oidc/:provider/callback", handler.CallbackHandler(oidcManager))
 
 					// Access token management
 					secure.GET("/access/token", handler.GetAccessTokens)
@@ -241,7 +271,6 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					unsafe.GET("/:username/:sourceId/*path", handler.UnsafeRequestSource)
 					unsafe.GET("/:username/graph/:graphType", handler.UnsafeResourceGraph)
 					unsafe.GET("/:username/sync/:sourceId", handler.UnsafeSyncResourceNames)
-
 				}
 			}
 		}

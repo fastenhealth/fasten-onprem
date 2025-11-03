@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {environment} from '../../../environments/environment';
-import {AuthService} from '../../services/auth.service';
+import {AuthService, OidcProvider} from '../../services/auth.service';
 import {Location} from '@angular/common';
 
 @Component({
@@ -20,6 +20,8 @@ export class AuthSigninComponent implements OnInit {
   errorMsg: string = ""
   showExternalIdP: boolean = environment.environment_cloud
 
+  oidcProviders: OidcProvider[] = [];
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -29,6 +31,8 @@ export class AuthSigninComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // Fetch the list of available OIDC providers from the backend
+    this.loadOidcProviders();
 
     let idpType = this.route.snapshot.paramMap.get('idp_type')
     if(idpType){
@@ -55,7 +59,30 @@ export class AuthSigninComponent implements OnInit {
           this.toastService.show(toastNotification)
         })
     }
+  }
 
+  /**
+   * Fetches the list of configured OIDC providers from the AuthService.
+   */
+  loadOidcProviders(): void {
+    this.authService.getOidcProviders()
+      .then(providers => {
+        this.oidcProviders = providers;
+      })
+      .catch(err => {
+        console.error('Failed to load OIDC providers', err);
+        // Optionally show a non-intrusive error to the user
+      });
+  }
+
+  /**
+   * Initiates the login flow for a specific OIDC provider.
+   * This will redirect the user to the backend, which then redirects to the IdP.
+   * @param providerName The name of the provider (e.g., 'google')
+   */
+  oidcLogin(providerName: string): void {
+    this.loading = true;
+    this.authService.oidcLogin(providerName); // This will cause a page redirect
   }
 
   signinSubmit(){

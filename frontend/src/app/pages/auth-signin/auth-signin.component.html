@@ -55,8 +55,23 @@
         <div *ngIf="errorMsg" class="alert alert-danger mt-3" role="alert">
           <strong>Error</strong> {{errorMsg}}
         </div>
-      </form>
 
+        <div *ngIf="oidcProviders.length > 0" class="mt-4">
+          <!-- Visual separator -->
+          <div class="signin-separator">
+            <span>OR</span>
+          </div>
+
+          <!-- Loop through providers and create a button for each -->
+          <div *ngFor="let provider of oidcProviders" class="form-group mt-3">
+            <button type="button" (click)="oidcLogin(provider.name)" class="btn btn-outline-primary btn-block">
+              <!-- Simple icon logic could go here, for now just text -->
+              Sign in with {{ provider.name | titlecase }}
+            </button>
+          </div>
+        </div>
+
+      </form>
     </div><!-- az-signin-header -->
     <div *ngIf="!showExternalIdP" class="az-signin-footer">
       <p><a ngbTooltip="not yet implemented">Forgot password?</a></p>
