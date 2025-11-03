@@ -367,6 +367,8 @@ export class SettingsComponent implements OnInit {
     this.selectedAccessType = null;
     this.selectedSource = null;
     this.errorMessage = '';
+    this.selectedDelegationIsExternal = false;
+    this.selectedDelegationExists = false;
   }
 
   loadUsers() {
