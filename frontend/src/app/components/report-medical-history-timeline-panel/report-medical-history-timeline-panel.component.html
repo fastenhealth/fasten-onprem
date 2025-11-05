@@ -18,7 +18,7 @@
       </a>
       <small></small>
     </span>
-    <span class="float-right text-muted">
+    <span class="float-end text-muted">
       <span class="badge badge-primary"><i class="fas fa-folder-plus"></i> | Primary</span>
     </span>
     <br/>
@@ -103,7 +103,7 @@
     </div>
   </div>
   <div class="timeline-footer">
-    <div *ngIf="displayModel?.related_resources?.['DocumentReference']?.length > 0 || displayModel?.related_resources?.['DiagnosticReport']?.length > 0" ngbDropdown class="d-inline-block dropdown ml-3">
+    <div *ngIf="displayModel?.related_resources?.['DocumentReference']?.length > 0 || displayModel?.related_resources?.['DiagnosticReport']?.length > 0" ngbDropdown class="d-inline-block dropdown ms-3">
       <button type="button" class="btn btn-outline-indigo" id="dropdownReports" ngbDropdownToggle>
         Clinical Reports
       </button>
@@ -119,7 +119,7 @@
       </div>
     </div>
 
-    <div ngbDropdown class="d-inline-block dropdown ml-3 float-right">
+    <div ngbDropdown class="d-inline-block dropdown ms-3 float-end">
       <button type="button" class="btn text-muted" id="dropdownAll" ngbDropdownToggle>
         View Related
       </button>

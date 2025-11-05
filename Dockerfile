@@ -22,7 +22,7 @@ RUN --mount=type=cache,target=/tmp/lock,sharing=locked \
 #########################################################################################################
 # Backend Build
 #########################################################################################################
-FROM golang:1.21 as backend-build
+FROM golang:1.22 as backend-build
 
 WORKDIR /go/src/github.com/fastenhealth/fasten-onprem
 COPY . .

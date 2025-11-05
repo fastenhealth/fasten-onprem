@@ -1,0 +1,51 @@
+<div class="az-content az-content-app pd-b-0">
+  <div class="container">
+    <div class="az-content-body">
+
+      <!-- Breadcrumbs -->
+      <div class="az-content-breadcrumb">
+        <span class="cursor-pointer" [routerLink]="['/resource/view', resource?.id]">
+          {{ sourceName }}
+        </span>
+        <span>Resource</span>
+        <span>{{ resource?.source_resource_type }}</span>
+        <span>{{ resource?.source_resource_id }}</span>
+      </div>
+
+      <!-- FHIR Card -->
+      <fhir-card *ngIf="displayModel; else noDisplayModel" [displayModel]="displayModel" [showDetails]="false">
+      </fhir-card>
+
+      <!-- Fallback if parsing fails -->
+      <ng-template #noDisplayModel>
+        <div class="alert alert-danger mt-4">
+          An error occurred while parsing FHIR resource.
+        </div>
+      </ng-template>
+
+      <!-- Debug Toggle -->
+      <div class="alert alert-warning mt-4" role="alert">
+        <label class="d-flex align-items-center gap-2 mb-0">
+          <input type="checkbox" [(ngModel)]="debugMode" />
+          Enable Debug mode
+        </label>
+      </div>
+
+      <!-- Debug JSON Output -->
+      <ng-container *ngIf="resource && debugMode">
+        <div style="max-height: 600px; overflow: auto;">
+          <pre><code [highlight]="resource.resource_raw | json"></code></pre>
+        </div>
+      </ng-container>
+
+      <ng-template #isLoadingTemplate>
+        <div class="row">
+          <div class="col-12">
+            <app-loading-spinner [loadingTitle]="'Please wait, loading report...'"></app-loading-spinner>
+          </div>
+        </div>
+      </ng-template>
+
+    </div><!-- az-content-body -->
+  </div>
+</div>

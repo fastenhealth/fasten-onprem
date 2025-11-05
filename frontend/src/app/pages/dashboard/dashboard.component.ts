@@ -10,6 +10,7 @@ import {GridstackComponent, NgGridStackOptions} from '../../components/gridstack
 import {DashboardConfig} from '../../models/widget/dashboard-config';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Summary} from '../../models/fasten/summary';
+import { SettingsService } from 'src/app/services/settings.service';
 
 // unique ids sets for each item for correct ngFor updating
 //TODO: fix this
@@ -22,6 +23,8 @@ let ids = 1;
 })
 export class DashboardComponent implements OnInit {
   loading: boolean = false
+
+  searchEnabled: boolean = false
 
   lastUpdated: Date = null
 
@@ -47,9 +50,11 @@ export class DashboardComponent implements OnInit {
     private componentFactoryResolver: ComponentFactoryResolver,
     private vcRef: ViewContainerRef,
     private modalService: NgbModal,
+    private settingsService: SettingsService,
   ) { }
 
   ngOnInit() {
+    this.searchEnabled = !!this.settingsService.get('search');
     this.loading = true
 
     this.fastenApi.getSummary().subscribe((summary: Summary) => {

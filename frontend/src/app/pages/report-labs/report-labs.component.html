@@ -28,7 +28,7 @@
           </div>
           <div class="col-6">
 
-            <div ngbDropdown class="d-inline-block float-right dropdown ml-3">
+            <div ngbDropdown class="d-inline-block float-end dropdown ms-3">
               <button type="button" class="btn btn-outline-indigo" id="dropdownReports" ngbDropdownToggle>
                 Included Reports
               </button>
@@ -45,7 +45,7 @@
                 >{{diagnosticReport?.sort_title}} [{{diagnosticReport?.sort_date | amDateFormat: 'LL'}}]</button>
               </div>
             </div>
-            <div ngbDropdown class="d-inline-block float-right">
+            <div ngbDropdown class="d-inline-block float-end">
               <button ngbTooltip="not yet implemented" type="button" class="btn btn-outline-indigo" id="dropdownSort" ngbDropdownToggle>
                 Sort By
               </button>

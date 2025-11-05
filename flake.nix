@@ -22,10 +22,10 @@
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             # Frontend dependencies
-            nodejs-18_x
-            (yarn.override { nodejs = nodejs-18_x; })
+            nodejs_20
+            (yarn.override { nodejs = nodejs_20; })
             (pkgs.writeShellScriptBin "ng" ''
-              ${nodejs-18_x}/bin/npx @angular/cli@14.1.3 "$@"
+              ${nodejs_20}/bin/npx @angular/cli@17 "$@"
             '')
 
             # Backend dependencies
