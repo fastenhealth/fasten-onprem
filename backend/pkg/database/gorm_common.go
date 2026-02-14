@@ -580,6 +580,142 @@ func (gr *GormRepository) GetResourceBySourceId(ctx context.Context, sourceId st
 	}
 }
 
+func (gr *GormRepository) DeleteResourceBySourceId(ctx context.Context, sourceId string, sourceResourceId string) (int64, error) {
+	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return 0, currentUserErr
+	}
+
+	sourceUUID, err := uuid.Parse(sourceId)
+	if err != nil {
+		return 0, err
+	}
+
+	// check that the source is a manual or fasten source
+	sourceCred, err := gr.GetSource(ctx, sourceId)
+	if err != nil {
+		return 0, err
+	}
+	if sourceCred.PlatformType != sourcePkg.PlatformTypeFasten && sourceCred.PlatformType != sourcePkg.PlatformTypeManual {
+		return 0, fmt.Errorf("deleting individual resources is only allowed for manual/fasten sources")
+	}
+
+	// find the resource across all tables
+	queryParam := models.OriginBase{
+		UserID:           currentUser.ID,
+		SourceID:         sourceUUID,
+		SourceResourceID: sourceResourceId,
+	}
+	wrappedResourceModels, err := gr.getResourcesFromAllTables(gr.GormClient.WithContext(ctx), queryParam)
+	if err != nil {
+		return 0, err
+	}
+	if len(wrappedResourceModels) == 0 {
+		return 0, fmt.Errorf("resource not found")
+	}
+
+	resource := wrappedResourceModels[0]
+	tableName, err := databaseModel.GetTableNameByResourceType(resource.SourceResourceType)
+	if err != nil {
+		return 0, err
+	}
+
+	// delete related resource associations (both directions)
+	gr.GormClient.WithContext(ctx).
+		Where("resource_base_user_id = ? AND resource_base_source_id = ? AND resource_base_source_resource_id = ?",
+			currentUser.ID, sourceUUID, sourceResourceId).
+		Table("related_resources").
+		Delete(&models.RelatedResource{})
+	gr.GormClient.WithContext(ctx).
+		Where("related_resource_user_id = ? AND related_resource_source_id = ? AND related_resource_source_resource_id = ?",
+			currentUser.ID, sourceUUID, sourceResourceId).
+		Table("related_resources").
+		Delete(&models.RelatedResource{})
+
+	// soft-delete the resource
+	results := gr.GormClient.WithContext(ctx).
+		Where(models.OriginBase{
+			UserID:           currentUser.ID,
+			SourceID:         sourceUUID,
+			SourceResourceID: sourceResourceId,
+		}).
+		Table(tableName).
+		Delete(&models.ResourceBase{})
+
+	return results.RowsAffected, results.Error
+}
+
+func (gr *GormRepository) UpdateResourceBySourceId(ctx context.Context, sourceId string, sourceResourceId string, resourceRaw datatypes.JSON) error {
+	currentUser, currentUserErr := gr.GetCurrentUser(ctx)
+	if currentUserErr != nil {
+		return currentUserErr
+	}
+
+	sourceUUID, err := uuid.Parse(sourceId)
+	if err != nil {
+		return err
+	}
+
+	// check that the source is a manual or fasten source
+	sourceCred, err := gr.GetSource(ctx, sourceId)
+	if err != nil {
+		return err
+	}
+	if sourceCred.PlatformType != sourcePkg.PlatformTypeFasten && sourceCred.PlatformType != sourcePkg.PlatformTypeManual {
+		return fmt.Errorf("updating individual resources is only allowed for manual/fasten sources")
+	}
+
+	// find the existing resource
+	queryParam := models.OriginBase{
+		UserID:           currentUser.ID,
+		SourceID:         sourceUUID,
+		SourceResourceID: sourceResourceId,
+	}
+	wrappedResourceModels, err := gr.getResourcesFromAllTables(gr.GormClient.WithContext(ctx), queryParam)
+	if err != nil {
+		return err
+	}
+	if len(wrappedResourceModels) == 0 {
+		return fmt.Errorf("resource not found")
+	}
+
+	resource := wrappedResourceModels[0]
+
+	// create a typed FHIR model and re-index search parameters
+	wrappedFhirResourceModel, err := databaseModel.NewFhirResourceModelByType(resource.SourceResourceType)
+	if err != nil {
+		return err
+	}
+
+	wrappedFhirResourceModel.SetOriginBase(resource.OriginBase)
+	wrappedFhirResourceModel.SetSortTitle(resource.SortTitle)
+	wrappedFhirResourceModel.SetSortDate(resource.SortDate)
+	wrappedFhirResourceModel.SetSourceUri(resource.SourceUri)
+	wrappedFhirResourceModel.SetResourceRaw(resourceRaw)
+
+	err = wrappedFhirResourceModel.PopulateAndExtractSearchParameters(json.RawMessage(resourceRaw))
+	if err != nil {
+		gr.Logger.Warnf("ignoring: an error occurred while extracting SearchParameters using FHIRPath (%s/%s): %v", resource.SourceResourceType, resource.SourceResourceID, err)
+	}
+
+	tableName, err := databaseModel.GetTableNameByResourceType(resource.SourceResourceType)
+	if err != nil {
+		return err
+	}
+
+	// update the resource in the correct table
+	results := gr.GormClient.WithContext(ctx).
+		Table(tableName).
+		Where(models.OriginBase{
+			UserID:           currentUser.ID,
+			SourceID:         sourceUUID,
+			SourceResourceID: sourceResourceId,
+		}).
+		Updates(wrappedFhirResourceModel)
+
+	return results.Error
+}
+
 // Get the patient for each source (for the current user)
 func (gr *GormRepository) GetPatientForSources(ctx context.Context) ([]models.ResourceBase, error) {
 	currentUser, currentUserErr := gr.GetCurrentUser(ctx)

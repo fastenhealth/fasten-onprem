@@ -8,6 +8,7 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils/ips"
 	sourcePkg "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/google/uuid"
+	"gorm.io/datatypes"
 )
 
 //go:generate mockgen -source=interface.go -destination=mock/mock_database.go
@@ -28,6 +29,8 @@ type DatabaseRepository interface {
 
 	GetResourceByResourceTypeAndId(context.Context, string, string) (*models.ResourceBase, error)
 	GetResourceBySourceId(context.Context, string, string) (*models.ResourceBase, error)
+	DeleteResourceBySourceId(ctx context.Context, sourceId string, sourceResourceId string) (int64, error)
+	UpdateResourceBySourceId(ctx context.Context, sourceId string, sourceResourceId string, resourceRaw datatypes.JSON) error
 	QueryResources(ctx context.Context, query models.QueryResource) (interface{}, error)
 	ListResources(context.Context, models.ListResourceQueryOptions) ([]models.ResourceBase, error)
 	GetPatientForSources(ctx context.Context) ([]models.ResourceBase, error)

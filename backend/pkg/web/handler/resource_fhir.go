@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,7 +10,6 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/utils"
-	sourceModels "github.com/fastenhealth/fasten-sources/clients/models"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -99,6 +96,59 @@ func GetResourceFhir(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": wrappedResourceModel})
 }
 
+func DeleteResourceFhir(c *gin.Context) {
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	sourceId := strings.Trim(c.Param("sourceId"), "/")
+	resourceId := strings.Trim(c.Param("resourceId"), "/")
+
+	rowsAffected, err := databaseRepo.DeleteResourceBySourceId(c, sourceId, resourceId)
+	if err != nil {
+		if strings.Contains(err.Error(), "resource not found") {
+			c.JSON(http.StatusNotFound, gin.H{"success": false, "error": err.Error()})
+			return
+		} else if strings.Contains(err.Error(), "only allowed for manual") {
+			c.JSON(http.StatusForbidden, gin.H{"success": false, "error": err.Error()})
+			return
+		}
+		logger.Errorln("An error occurred while deleting resource", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": rowsAffected})
+}
+
+func UpdateResourceFhir(c *gin.Context) {
+	logger := c.MustGet(pkg.ContextKeyTypeLogger).(*logrus.Entry)
+	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
+
+	sourceId := strings.Trim(c.Param("sourceId"), "/")
+	resourceId := strings.Trim(c.Param("resourceId"), "/")
+
+	var requestBody models.ResourceBase
+	if err := c.ShouldBindJSON(&requestBody); err != nil {
+		logger.Errorln("An error occurred while parsing request body", err)
+		c.JSON(http.StatusBadRequest, gin.H{"success": false})
+		return
+	}
+
+	err := databaseRepo.UpdateResourceBySourceId(c, sourceId, resourceId, requestBody.ResourceRaw)
+	if err != nil {
+		if strings.Contains(err.Error(), "resource not found") {
+			c.JSON(http.StatusNotFound, gin.H{"success": false, "error": err.Error()})
+			return
+		} else if strings.Contains(err.Error(), "only allowed for manual") {
+			c.JSON(http.StatusForbidden, gin.H{"success": false, "error": err.Error()})
+			return
+		}
+		logger.Errorln("An error occurred while updating resource", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true})
+}
+
 // deprecated - using Manual Resource Wizard instead
 func CreateResourceComposition(c *gin.Context) {
 
@@ -158,75 +208,6 @@ func GetResourceFhirGraph(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": map[string]interface{}{
 		"results": resourceListDictionary,
 	}})
-}
-
-func UpdateResourceFhir(c *gin.Context) {
-	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
-
-	resourceType := strings.Trim(c.Param("resourceType"), "/")
-	resourceId := strings.Trim(c.Param("resourceId"), "/")
-
-	type UpdatePayload struct {
-		ResourceRaw json.RawMessage `json:"resource_raw"`
-		SortTitle   string          `json:"sort_title"`
-		SortDate    string          `json:"sort_date"`
-	}
-	var payload UpdatePayload
-	err := c.ShouldBindJSON(&payload)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "invalid request payload"})
-		return
-	}
-
-	resource, err := databaseRepo.GetResourceByResourceTypeAndId(c, resourceType, resourceId)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not find resource"})
-		return
-	}
-
-	sourceCredential, err := databaseRepo.GetSource(c, resource.SourceID.String())
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "could not find Fasten source for resource"})
-		return
-	}
-
-	resourceToUpsert := sourceModels.RawResourceFhir{
-		SourceResourceType: resourceType,
-		SourceResourceID:   resourceId,
-		ResourceRaw:        payload.ResourceRaw,
-		SortTitle:          &payload.SortTitle,
-		SortDate:           parseDateTimeWithFallback(&payload.SortDate),
-	}
-
-	_, updateError := databaseRepo.UpsertRawResource(c, sourceCredential, resourceToUpsert)
-	if updateError != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to update resource"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"success": true})
-}
-
-func DeleteResourceFhir(c *gin.Context) {
-	databaseRepo := c.MustGet(pkg.ContextKeyTypeDatabase).(database.DatabaseRepository)
-
-	resourceType := strings.Trim(c.Param("resourceType"), "/")
-	resourceId := strings.Trim(c.Param("resourceId"), "/")
-
-	deleteError := databaseRepo.DeleteResourceByTypeAndId(c, resourceType, resourceId)
-	if deleteError != nil {
-		fmt.Printf("Delete operation failed: %v\n", deleteError)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"success":       false,
-			"error":         "failed to delete resource",
-			"details":       deleteError.Error(),
-			"resource_type": resourceType,
-			"resource_id":   resourceId,
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"success": true, "message": "resource deleted successfully"})
 }
 
 func parseDateTimeWithFallback(dateTime *string) *time.Time {

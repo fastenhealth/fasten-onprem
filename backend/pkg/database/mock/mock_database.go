@@ -14,6 +14,7 @@ import (
 	models0 "github.com/fastenhealth/fasten-sources/clients/models"
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
+	datatypes "gorm.io/datatypes"
 )
 
 // MockDatabaseRepository is a mock of DatabaseRepository interface.
@@ -161,6 +162,21 @@ func (m *MockDatabaseRepository) DeleteCurrentUser(ctx context.Context) error {
 func (mr *MockDatabaseRepositoryMockRecorder) DeleteCurrentUser(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteCurrentUser", reflect.TypeOf((*MockDatabaseRepository)(nil).DeleteCurrentUser), ctx)
+}
+
+// DeleteResourceBySourceId mocks base method.
+func (m *MockDatabaseRepository) DeleteResourceBySourceId(ctx context.Context, sourceId, sourceResourceId string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteResourceBySourceId", ctx, sourceId, sourceResourceId)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteResourceBySourceId indicates an expected call of DeleteResourceBySourceId.
+func (mr *MockDatabaseRepositoryMockRecorder) DeleteResourceBySourceId(ctx, sourceId, sourceResourceId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteResourceBySourceId", reflect.TypeOf((*MockDatabaseRepository)(nil).DeleteResourceBySourceId), ctx, sourceId, sourceResourceId)
 }
 
 // DeleteSource mocks base method.
@@ -620,6 +636,20 @@ func (m *MockDatabaseRepository) UpdateBackgroundJob(ctx context.Context, backgr
 func (mr *MockDatabaseRepositoryMockRecorder) UpdateBackgroundJob(ctx, backgroundJob interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBackgroundJob", reflect.TypeOf((*MockDatabaseRepository)(nil).UpdateBackgroundJob), ctx, backgroundJob)
+}
+
+// UpdateResourceBySourceId mocks base method.
+func (m *MockDatabaseRepository) UpdateResourceBySourceId(ctx context.Context, sourceId, sourceResourceId string, resourceRaw datatypes.JSON) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateResourceBySourceId", ctx, sourceId, sourceResourceId, resourceRaw)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateResourceBySourceId indicates an expected call of UpdateResourceBySourceId.
+func (mr *MockDatabaseRepositoryMockRecorder) UpdateResourceBySourceId(ctx, sourceId, sourceResourceId, resourceRaw interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateResourceBySourceId", reflect.TypeOf((*MockDatabaseRepository)(nil).UpdateResourceBySourceId), ctx, sourceId, sourceResourceId, resourceRaw)
 }
 
 // UpdateSource mocks base method.
