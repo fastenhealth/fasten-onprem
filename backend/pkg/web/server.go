@@ -178,6 +178,8 @@ func (ae *AppEngine) Setup() (*gin.RouterGroup, *gin.Engine) {
 					secure.GET("/resource/fhir/:sourceId/:resourceId", handler.GetResourceFhir)
 					secure.DELETE("/resource/fhir/:sourceId/:resourceId", handler.DeleteResourceFhir)
 					secure.PUT("/resource/fhir/:sourceId/:resourceId", handler.UpdateResourceFhir)
+					secure.PATCH("/resource/fhir/:resourceType/:resourceId", handler.UpdateResourceFhirByType)
+					secure.DELETE("/resource/fhir-by-type/:resourceType/:resourceId", handler.DeleteResourceFhirByType)
 
 					secure.POST("/resource/composition", handler.CreateResourceComposition)
 					secure.POST("/resource/related", handler.CreateRelatedResources)
