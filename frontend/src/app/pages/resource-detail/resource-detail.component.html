@@ -9,6 +9,9 @@
       </div>
 
       <div *ngIf="isManualSource && resource" class="d-flex justify-content-end mb-3">
+        <button class="btn btn-outline-indigo btn-sm mr-2"
+                *ngIf="isEditableResourceType()"
+                (click)="editResource()">Edit Resource</button>
         <button class="btn btn-outline-danger btn-sm" (click)="confirmDelete(deleteConfirmationModal)">Delete Resource</button>
       </div>
 

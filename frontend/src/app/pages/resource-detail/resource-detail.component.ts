@@ -10,6 +10,9 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ToastService} from '../../services/toast.service';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
 import {extractErrorFromResponse} from '../../../lib/utils/error_extract';
+import {ResourceEditComponent} from '../../components/resource-edit/resource-edit.component';
+
+const EDITABLE_TYPES = ['Condition', 'Observation', 'MedicationRequest', 'Encounter', 'AllergyIntolerance', 'Procedure', 'Immunization'];
 
 @Component({
   selector: 'app-resource-detail',
@@ -85,5 +88,32 @@ export class ResourceDetailComponent implements OnInit {
       },
       () => { /* modal dismissed */ }
     )
+  }
+
+  isEditableResourceType(): boolean {
+    return EDITABLE_TYPES.includes(this.resource?.source_resource_type);
+  }
+
+  editResource(): void {
+    const modalRef = this.modalService.open(ResourceEditComponent, {
+      ariaLabelledBy: 'modal-edit-title',
+      size: 'lg',
+    });
+    modalRef.componentInstance.resourceRaw = JSON.parse(JSON.stringify(this.resource.resource_raw));
+    modalRef.componentInstance.resourceType = this.resource.source_resource_type;
+    modalRef.componentInstance.sourceId = this.sourceId;
+    modalRef.componentInstance.sourceResourceId = this.resource.source_resource_id;
+
+    modalRef.result.then(
+      (updatedRaw) => {
+        this.resource.resource_raw = updatedRaw;
+        try {
+          this.displayModel = fhirModelFactory(this.resource.source_resource_type as ResourceType, this.resource);
+        } catch (e) {
+          console.error(e);
+        }
+      },
+      () => { /* modal dismissed */ }
+    );
   }
 }
