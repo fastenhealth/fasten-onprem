@@ -29,7 +29,6 @@ import {
   List
 } from 'fhir/r4';
 import {FormRequestHealthSystem} from '../models/fasten/form-request-health-system';
-import { UpdateResourcePayload } from '../models/fasten/resource_update';
 import { Favorite } from '../pages/practitioner-list/practitioner-list.component';
 
 @Injectable({
@@ -307,11 +306,20 @@ export class FastenApiService {
       );
   }
 
-  updateResource(resourceType: string, resourceId: string, payload: UpdateResourcePayload) : Observable<ResponseWrapper> {
-    return this._httpClient.patch<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/fhir/${resourceType}/${resourceId}`, payload)
+  deleteResourceBySourceId(sourceId: string, resourceId: string): Observable<number> {
+    return this._httpClient.delete<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/fhir/${sourceId}/${resourceId}`)
       .pipe(
         map((response: ResponseWrapper) => {
-          return response
+          return response.data as number
+        })
+      );
+  }
+
+  updateResourceBySourceId(sourceId: string, resourceId: string, resourceRaw: any): Observable<boolean> {
+    return this._httpClient.put<any>(`${GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base)}/secure/resource/fhir/${sourceId}/${resourceId}`, {resource_raw: resourceRaw})
+      .pipe(
+        map((response: ResponseWrapper) => {
+          return response.success
         })
       );
   }
