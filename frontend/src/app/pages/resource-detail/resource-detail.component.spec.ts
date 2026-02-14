@@ -16,19 +16,29 @@ describe('ResourceDetailComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ResourceDetailComponent],
-      imports: [HttpClientTestingModule, RouterTestingModule, LoadingSpinnerComponent],
+      imports: [
+        HttpClientTestingModule,
+        RouterTestingModule,
+        LoadingSpinnerComponent,
+      ],
       providers: [
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: convertToParamMap({ 'resource_id': 'b64.cmVzb3VyY2VfZmhpcjpiNjQuYzI5MWNtTmxPbUZsZEc1aE9qRXlNelExTmpjNE9UQXhNak0wTlRZM01ETT06UGF0aWVudDoxMjM0NTY3ODkwMTIzNDU2NzAz' }) } }
+          useValue: {
+            snapshot: {
+              paramMap: convertToParamMap({
+                resource_id:
+                  'b64.cmVzb3VyY2VfZmhpcjpiNjQuYzI5MWNtTmxPbUZsZEc1aE9qRXlNelExTmpjNE9UQXhNak0wTlRZM01ETT06UGF0aWVudDoxMjM0NTY3ODkwMTIzNDU2NzAz',
+              }),
+            },
+          },
         },
         {
           provide: HTTP_CLIENT_TOKEN,
           useClass: HttpClient,
         },
-      ]
-    })
-      .compileComponents();
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ResourceDetailComponent);
     component = fixture.componentInstance;
@@ -40,17 +50,30 @@ describe('ResourceDetailComponent', () => {
   });
 
   describe('isEditableResourceType', () => {
-    const editableTypes = ['Condition', 'Observation', 'MedicationRequest', 'Encounter', 'AllergyIntolerance', 'Procedure', 'Immunization'];
-    const nonEditableTypes = ['Patient', 'CarePlan', 'DiagnosticReport', 'DocumentReference'];
+    const editableTypes = [
+      'Condition',
+      'Observation',
+      'MedicationRequest',
+      'Encounter',
+      'AllergyIntolerance',
+      'Procedure',
+      'Immunization',
+    ];
+    const nonEditableTypes = [
+      'Patient',
+      'CarePlan',
+      'DiagnosticReport',
+      'DocumentReference',
+    ];
 
-    editableTypes.forEach(type => {
+    editableTypes.forEach((type) => {
       it(`should return true for ${type}`, () => {
         component.resource = { source_resource_type: type } as any;
         expect(component.isEditableResourceType()).toBeTrue();
       });
     });
 
-    nonEditableTypes.forEach(type => {
+    nonEditableTypes.forEach((type) => {
       it(`should return false for ${type}`, () => {
         component.resource = { source_resource_type: type } as any;
         expect(component.isEditableResourceType()).toBeFalse();
@@ -84,10 +107,16 @@ describe('ResourceDetailComponent', () => {
       expect(modalService.open).toHaveBeenCalled();
       expect(mockModalRef.componentInstance['resourceType']).toBe('Condition');
       expect(mockModalRef.componentInstance['sourceId']).toBe('src-1');
-      expect(mockModalRef.componentInstance['sourceResourceId']).toBe('cond-123');
+      expect(mockModalRef.componentInstance['sourceResourceId']).toBe(
+        'cond-123',
+      );
       // Should be a deep clone, not the same reference
-      expect(mockModalRef.componentInstance['resourceRaw']).not.toBe(component.resource.resource_raw);
-      expect(mockModalRef.componentInstance['resourceRaw']).toEqual(component.resource.resource_raw);
+      expect(mockModalRef.componentInstance['resourceRaw']).not.toBe(
+        component.resource.resource_raw,
+      );
+      expect(mockModalRef.componentInstance['resourceRaw']).toEqual(
+        component.resource.resource_raw,
+      );
     });
   });
 });

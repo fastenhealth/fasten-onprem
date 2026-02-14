@@ -16,8 +16,13 @@ describe('ResourceEditComponent', () => {
   let mockToastService: jasmine.SpyObj<ToastService>;
 
   beforeEach(async () => {
-    mockActiveModal = jasmine.createSpyObj('NgbActiveModal', ['close', 'dismiss']);
-    mockFastenApi = jasmine.createSpyObj('FastenApiService', ['updateResourceBySourceId']);
+    mockActiveModal = jasmine.createSpyObj('NgbActiveModal', [
+      'close',
+      'dismiss',
+    ]);
+    mockFastenApi = jasmine.createSpyObj('FastenApiService', [
+      'updateResourceBySourceId',
+    ]);
     mockToastService = jasmine.createSpyObj('ToastService', ['show']);
 
     await TestBed.configureTestingModule({
@@ -44,7 +49,9 @@ describe('ResourceEditComponent', () => {
   // ── Creation / form building ──
 
   it('should create', () => {
-    createComponent('Condition', { clinicalStatus: { coding: [{ code: 'active' }] } });
+    createComponent('Condition', {
+      clinicalStatus: { coding: [{ code: 'active' }] },
+    });
     expect(component).toBeTruthy();
   });
 
@@ -55,7 +62,11 @@ describe('ResourceEditComponent', () => {
       note: [{ text: 'Test note' }],
     });
     expect(component.form.get('clinicalStatus').value).toBe('active');
-    expect(component.form.get('onsetDateTime').value).toEqual({ year: 2023, month: 6, day: 15 });
+    expect(component.form.get('onsetDateTime').value).toEqual({
+      year: 2023,
+      month: 6,
+      day: 15,
+    });
     expect(component.form.get('note').value).toBe('Test note');
   });
 
@@ -116,7 +127,11 @@ describe('ResourceEditComponent', () => {
       performedDateTime: '2025-09-03',
     });
     expect(component.form.get('status').value).toBe('completed');
-    expect(component.form.get('performedDateTime').value).toEqual({ year: 2025, month: 9, day: 3 });
+    expect(component.form.get('performedDateTime').value).toEqual({
+      year: 2025,
+      month: 9,
+      day: 3,
+    });
   });
 
   it('should build Immunization form with correct initial values', () => {
@@ -125,7 +140,11 @@ describe('ResourceEditComponent', () => {
       occurrenceDateTime: '2024-10-15',
     });
     expect(component.form.get('status').value).toBe('completed');
-    expect(component.form.get('occurrenceDateTime').value).toEqual({ year: 2024, month: 10, day: 15 });
+    expect(component.form.get('occurrenceDateTime').value).toEqual({
+      year: 2024,
+      month: 10,
+      day: 15,
+    });
   });
 
   it('should build empty form for unknown resource type', () => {
@@ -176,37 +195,54 @@ describe('ResourceEditComponent', () => {
   // ── Date helpers ──
 
   it('should parse ISO date string to NgbDateStruct', () => {
-    createComponent('Condition', { clinicalStatus: { coding: [{ code: 'active' }] } });
-    expect(component.parseDate('2023-06-15')).toEqual({ year: 2023, month: 6, day: 15 });
+    createComponent('Condition', {
+      clinicalStatus: { coding: [{ code: 'active' }] },
+    });
+    expect(component.parseDate('2023-06-15')).toEqual({
+      year: 2023,
+      month: 6,
+      day: 15,
+    });
   });
 
   it('should return null for null/undefined date', () => {
-    createComponent('Condition', { clinicalStatus: { coding: [{ code: 'active' }] } });
+    createComponent('Condition', {
+      clinicalStatus: { coding: [{ code: 'active' }] },
+    });
     expect(component.parseDate(null)).toBeNull();
     expect(component.parseDate(undefined)).toBeNull();
   });
 
   it('should return null for invalid date string', () => {
-    createComponent('Condition', { clinicalStatus: { coding: [{ code: 'active' }] } });
+    createComponent('Condition', {
+      clinicalStatus: { coding: [{ code: 'active' }] },
+    });
     expect(component.parseDate('not-a-date')).toBeNull();
   });
 
   it('should convert NgbDateStruct to ISO date string', () => {
-    createComponent('Condition', { clinicalStatus: { coding: [{ code: 'active' }] } });
+    createComponent('Condition', {
+      clinicalStatus: { coding: [{ code: 'active' }] },
+    });
     const result = component.toIsoDate({ year: 2023, month: 6, day: 15 });
     expect(result).toContain('2023');
     expect(new Date(result).getFullYear()).toBe(2023);
   });
 
   it('should return null when converting null date struct', () => {
-    createComponent('Condition', { clinicalStatus: { coding: [{ code: 'active' }] } });
+    createComponent('Condition', {
+      clinicalStatus: { coding: [{ code: 'active' }] },
+    });
     expect(component.toIsoDate(null)).toBeNull();
   });
 
   // ── Value type helpers ──
 
   it('should detect valueQuantity presence', () => {
-    createComponent('Observation', { status: 'final', valueQuantity: { value: 120 } });
+    createComponent('Observation', {
+      status: 'final',
+      valueQuantity: { value: 120 },
+    });
     expect(component.hasValueQuantity()).toBeTrue();
   });
 
@@ -216,7 +252,10 @@ describe('ResourceEditComponent', () => {
   });
 
   it('should detect valueString presence', () => {
-    createComponent('Observation', { status: 'final', valueString: 'Positive' });
+    createComponent('Observation', {
+      status: 'final',
+      valueString: 'Positive',
+    });
     expect(component.hasValueString()).toBeTrue();
   });
 
@@ -238,7 +277,9 @@ describe('ResourceEditComponent', () => {
     mockFastenApi.updateResourceBySourceId.and.returnValue(of(true));
     component.onSubmit();
 
-    expect(component.resourceRaw.clinicalStatus.coding[0].code).toBe('resolved');
+    expect(component.resourceRaw.clinicalStatus.coding[0].code).toBe(
+      'resolved',
+    );
     expect(component.resourceRaw.note[0].text).toBe('Now resolved');
   });
 
@@ -270,7 +311,9 @@ describe('ResourceEditComponent', () => {
     component.onSubmit();
 
     expect(component.resourceRaw.status).toBe('completed');
-    expect(component.resourceRaw.dosageInstruction[0].text).toBe('Take 2 daily');
+    expect(component.resourceRaw.dosageInstruction[0].text).toBe(
+      'Take 2 daily',
+    );
   });
 
   it('should merge Encounter period into resource_raw', () => {
@@ -330,7 +373,9 @@ describe('ResourceEditComponent', () => {
     component.onSubmit();
 
     expect(mockFastenApi.updateResourceBySourceId).toHaveBeenCalledWith(
-      'source-123', 'resource-456', component.resourceRaw
+      'source-123',
+      'resource-456',
+      component.resourceRaw,
     );
     expect(mockActiveModal.close).toHaveBeenCalledWith(component.resourceRaw);
     expect(mockToastService.show).toHaveBeenCalled();
@@ -341,7 +386,9 @@ describe('ResourceEditComponent', () => {
     createComponent('Condition', {
       clinicalStatus: { coding: [{ code: 'active' }] },
     });
-    mockFastenApi.updateResourceBySourceId.and.returnValue(throwError(() => ({ error: { message: 'fail' } })));
+    mockFastenApi.updateResourceBySourceId.and.returnValue(
+      throwError(() => ({ error: { message: 'fail' } })),
+    );
 
     component.onSubmit();
 

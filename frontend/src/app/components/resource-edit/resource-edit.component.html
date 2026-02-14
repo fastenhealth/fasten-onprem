@@ -1,21 +1,30 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="modal-header">
-    <h4 class="modal-title">Edit {{resourceType}}</h4>
-    <button type="button" class="btn close" aria-label="Close" (click)="activeModal.dismiss()">
+    <h4 class="modal-title">Edit {{ resourceType }}</h4>
+    <button
+      type="button"
+      class="btn close"
+      aria-label="Close"
+      (click)="activeModal.dismiss()"
+    >
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
 
   <div class="modal-body">
     <div class="mb-3 text-muted">
-      <strong>{{getResourceDisplayName()}}</strong>
+      <strong>{{ getResourceDisplayName() }}</strong>
     </div>
 
     <!-- Condition -->
     <ng-container *ngIf="resourceType === 'Condition'">
       <div class="form-group mb-3">
         <label for="clinicalStatus">Clinical Status</label>
-        <select class="form-control" id="clinicalStatus" formControlName="clinicalStatus">
+        <select
+          class="form-control"
+          id="clinicalStatus"
+          formControlName="clinicalStatus"
+        >
           <option value="active">active</option>
           <option value="inactive">inactive</option>
           <option value="resolved">resolved</option>
@@ -27,9 +36,19 @@
       <div class="form-group mb-3">
         <label for="onsetDateTime">Onset Date</label>
         <div class="input-group">
-          <input class="form-control" id="onsetDateTime" formControlName="onsetDateTime"
-                 ngbDatepicker #onsetDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
-          <button class="btn btn-outline-secondary" (click)="onsetDp.toggle()" type="button">
+          <input
+            class="form-control"
+            id="onsetDateTime"
+            formControlName="onsetDateTime"
+            ngbDatepicker
+            #onsetDp="ngbDatepicker"
+            placeholder="yyyy-mm-dd"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            (click)="onsetDp.toggle()"
+            type="button"
+          >
             <i class="fas fa-calendar"></i>
           </button>
         </div>
@@ -37,16 +56,31 @@
       <div class="form-group mb-3">
         <label for="abatementDateTime">Abatement Date</label>
         <div class="input-group">
-          <input class="form-control" id="abatementDateTime" formControlName="abatementDateTime"
-                 ngbDatepicker #abatementDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
-          <button class="btn btn-outline-secondary" (click)="abatementDp.toggle()" type="button">
+          <input
+            class="form-control"
+            id="abatementDateTime"
+            formControlName="abatementDateTime"
+            ngbDatepicker
+            #abatementDp="ngbDatepicker"
+            placeholder="yyyy-mm-dd"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            (click)="abatementDp.toggle()"
+            type="button"
+          >
             <i class="fas fa-calendar"></i>
           </button>
         </div>
       </div>
       <div class="form-group mb-3">
         <label for="conditionNote">Notes</label>
-        <textarea class="form-control" id="conditionNote" formControlName="note" rows="3"></textarea>
+        <textarea
+          class="form-control"
+          id="conditionNote"
+          formControlName="note"
+          rows="3"
+        ></textarea>
       </div>
     </ng-container>
 
@@ -67,9 +101,19 @@
       <div class="form-group mb-3">
         <label for="effectiveDateTime">Effective Date</label>
         <div class="input-group">
-          <input class="form-control" id="effectiveDateTime" formControlName="effectiveDateTime"
-                 ngbDatepicker #effectiveDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
-          <button class="btn btn-outline-secondary" (click)="effectiveDp.toggle()" type="button">
+          <input
+            class="form-control"
+            id="effectiveDateTime"
+            formControlName="effectiveDateTime"
+            ngbDatepicker
+            #effectiveDp="ngbDatepicker"
+            placeholder="yyyy-mm-dd"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            (click)="effectiveDp.toggle()"
+            type="button"
+          >
             <i class="fas fa-calendar"></i>
           </button>
         </div>
@@ -78,20 +122,40 @@
         <div class="form-group mb-3">
           <label for="valueQuantityValue">Value</label>
           <div class="input-group">
-            <input type="number" class="form-control" id="valueQuantityValue" formControlName="valueQuantityValue"/>
-            <input type="text" class="form-control" formControlName="valueQuantityUnit" placeholder="unit"/>
+            <input
+              type="number"
+              class="form-control"
+              id="valueQuantityValue"
+              formControlName="valueQuantityValue"
+            />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="valueQuantityUnit"
+              placeholder="unit"
+            />
           </div>
         </div>
       </ng-container>
       <ng-container *ngIf="hasValueString()">
         <div class="form-group mb-3">
           <label for="valueString">Value</label>
-          <input type="text" class="form-control" id="valueString" formControlName="valueString"/>
+          <input
+            type="text"
+            class="form-control"
+            id="valueString"
+            formControlName="valueString"
+          />
         </div>
       </ng-container>
       <div class="form-group mb-3">
         <label for="obsNote">Notes</label>
-        <textarea class="form-control" id="obsNote" formControlName="note" rows="3"></textarea>
+        <textarea
+          class="form-control"
+          id="obsNote"
+          formControlName="note"
+          rows="3"
+        ></textarea>
       </div>
     </ng-container>
 
@@ -125,20 +189,40 @@
       <div class="form-group mb-3">
         <label for="authoredOn">Authored On</label>
         <div class="input-group">
-          <input class="form-control" id="authoredOn" formControlName="authoredOn"
-                 ngbDatepicker #authoredOnDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
-          <button class="btn btn-outline-secondary" (click)="authoredOnDp.toggle()" type="button">
+          <input
+            class="form-control"
+            id="authoredOn"
+            formControlName="authoredOn"
+            ngbDatepicker
+            #authoredOnDp="ngbDatepicker"
+            placeholder="yyyy-mm-dd"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            (click)="authoredOnDp.toggle()"
+            type="button"
+          >
             <i class="fas fa-calendar"></i>
           </button>
         </div>
       </div>
       <div class="form-group mb-3">
         <label for="dosage">Dosage</label>
-        <input type="text" class="form-control" id="dosage" formControlName="dosage"/>
+        <input
+          type="text"
+          class="form-control"
+          id="dosage"
+          formControlName="dosage"
+        />
       </div>
       <div class="form-group mb-3">
         <label for="medNote">Notes</label>
-        <textarea class="form-control" id="medNote" formControlName="note" rows="3"></textarea>
+        <textarea
+          class="form-control"
+          id="medNote"
+          formControlName="note"
+          rows="3"
+        ></textarea>
       </div>
     </ng-container>
 
@@ -159,9 +243,19 @@
       <div class="form-group mb-3">
         <label for="periodStart">Period Start</label>
         <div class="input-group">
-          <input class="form-control" id="periodStart" formControlName="periodStart"
-                 ngbDatepicker #periodStartDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
-          <button class="btn btn-outline-secondary" (click)="periodStartDp.toggle()" type="button">
+          <input
+            class="form-control"
+            id="periodStart"
+            formControlName="periodStart"
+            ngbDatepicker
+            #periodStartDp="ngbDatepicker"
+            placeholder="yyyy-mm-dd"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            (click)="periodStartDp.toggle()"
+            type="button"
+          >
             <i class="fas fa-calendar"></i>
           </button>
         </div>
@@ -169,9 +263,19 @@
       <div class="form-group mb-3">
         <label for="periodEnd">Period End</label>
         <div class="input-group">
-          <input class="form-control" id="periodEnd" formControlName="periodEnd"
-                 ngbDatepicker #periodEndDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
-          <button class="btn btn-outline-secondary" (click)="periodEndDp.toggle()" type="button">
+          <input
+            class="form-control"
+            id="periodEnd"
+            formControlName="periodEnd"
+            ngbDatepicker
+            #periodEndDp="ngbDatepicker"
+            placeholder="yyyy-mm-dd"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            (click)="periodEndDp.toggle()"
+            type="button"
+          >
             <i class="fas fa-calendar"></i>
           </button>
         </div>
@@ -182,7 +286,11 @@
     <ng-container *ngIf="resourceType === 'AllergyIntolerance'">
       <div class="form-group mb-3">
         <label for="allergyStatus">Clinical Status</label>
-        <select class="form-control" id="allergyStatus" formControlName="clinicalStatus">
+        <select
+          class="form-control"
+          id="allergyStatus"
+          formControlName="clinicalStatus"
+        >
           <option value="active">active</option>
           <option value="inactive">inactive</option>
           <option value="resolved">resolved</option>
@@ -200,16 +308,31 @@
       <div class="form-group mb-3">
         <label for="recordedDate">Recorded Date</label>
         <div class="input-group">
-          <input class="form-control" id="recordedDate" formControlName="recordedDate"
-                 ngbDatepicker #recordedDateDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
-          <button class="btn btn-outline-secondary" (click)="recordedDateDp.toggle()" type="button">
+          <input
+            class="form-control"
+            id="recordedDate"
+            formControlName="recordedDate"
+            ngbDatepicker
+            #recordedDateDp="ngbDatepicker"
+            placeholder="yyyy-mm-dd"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            (click)="recordedDateDp.toggle()"
+            type="button"
+          >
             <i class="fas fa-calendar"></i>
           </button>
         </div>
       </div>
       <div class="form-group mb-3">
         <label for="allergyNote">Notes</label>
-        <textarea class="form-control" id="allergyNote" formControlName="note" rows="3"></textarea>
+        <textarea
+          class="form-control"
+          id="allergyNote"
+          formControlName="note"
+          rows="3"
+        ></textarea>
       </div>
     </ng-container>
 
@@ -230,16 +353,31 @@
       <div class="form-group mb-3">
         <label for="performedDateTime">Performed Date</label>
         <div class="input-group">
-          <input class="form-control" id="performedDateTime" formControlName="performedDateTime"
-                 ngbDatepicker #performedDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
-          <button class="btn btn-outline-secondary" (click)="performedDp.toggle()" type="button">
+          <input
+            class="form-control"
+            id="performedDateTime"
+            formControlName="performedDateTime"
+            ngbDatepicker
+            #performedDp="ngbDatepicker"
+            placeholder="yyyy-mm-dd"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            (click)="performedDp.toggle()"
+            type="button"
+          >
             <i class="fas fa-calendar"></i>
           </button>
         </div>
       </div>
       <div class="form-group mb-3">
         <label for="procNote">Notes</label>
-        <textarea class="form-control" id="procNote" formControlName="note" rows="3"></textarea>
+        <textarea
+          class="form-control"
+          id="procNote"
+          formControlName="note"
+          rows="3"
+        ></textarea>
       </div>
     </ng-container>
 
@@ -256,22 +394,43 @@
       <div class="form-group mb-3">
         <label for="occurrenceDateTime">Occurrence Date</label>
         <div class="input-group">
-          <input class="form-control" id="occurrenceDateTime" formControlName="occurrenceDateTime"
-                 ngbDatepicker #occurrenceDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
-          <button class="btn btn-outline-secondary" (click)="occurrenceDp.toggle()" type="button">
+          <input
+            class="form-control"
+            id="occurrenceDateTime"
+            formControlName="occurrenceDateTime"
+            ngbDatepicker
+            #occurrenceDp="ngbDatepicker"
+            placeholder="yyyy-mm-dd"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            (click)="occurrenceDp.toggle()"
+            type="button"
+          >
             <i class="fas fa-calendar"></i>
           </button>
         </div>
       </div>
       <div class="form-group mb-3">
         <label for="immunNote">Notes</label>
-        <textarea class="form-control" id="immunNote" formControlName="note" rows="3"></textarea>
+        <textarea
+          class="form-control"
+          id="immunNote"
+          formControlName="note"
+          rows="3"
+        ></textarea>
       </div>
     </ng-container>
   </div>
 
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-light" (click)="activeModal.dismiss()">Cancel</button>
+    <button
+      type="button"
+      class="btn btn-outline-light"
+      (click)="activeModal.dismiss()"
+    >
+      Cancel
+    </button>
     <button type="submit" class="btn btn-indigo" [disabled]="saving">
       <span *ngIf="saving" class="spinner-border spinner-border-sm mr-1"></span>
       Save Changes
