@@ -1,0 +1,280 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="modal-header">
+    <h4 class="modal-title">Edit {{resourceType}}</h4>
+    <button type="button" class="btn close" aria-label="Close" (click)="activeModal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="mb-3 text-muted">
+      <strong>{{getResourceDisplayName()}}</strong>
+    </div>
+
+    <!-- Condition -->
+    <ng-container *ngIf="resourceType === 'Condition'">
+      <div class="form-group mb-3">
+        <label for="clinicalStatus">Clinical Status</label>
+        <select class="form-control" id="clinicalStatus" formControlName="clinicalStatus">
+          <option value="active">active</option>
+          <option value="inactive">inactive</option>
+          <option value="resolved">resolved</option>
+          <option value="remission">remission</option>
+          <option value="recurrence">recurrence</option>
+          <option value="relapse">relapse</option>
+        </select>
+      </div>
+      <div class="form-group mb-3">
+        <label for="onsetDateTime">Onset Date</label>
+        <div class="input-group">
+          <input class="form-control" id="onsetDateTime" formControlName="onsetDateTime"
+                 ngbDatepicker #onsetDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
+          <button class="btn btn-outline-secondary" (click)="onsetDp.toggle()" type="button">
+            <i class="fas fa-calendar"></i>
+          </button>
+        </div>
+      </div>
+      <div class="form-group mb-3">
+        <label for="abatementDateTime">Abatement Date</label>
+        <div class="input-group">
+          <input class="form-control" id="abatementDateTime" formControlName="abatementDateTime"
+                 ngbDatepicker #abatementDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
+          <button class="btn btn-outline-secondary" (click)="abatementDp.toggle()" type="button">
+            <i class="fas fa-calendar"></i>
+          </button>
+        </div>
+      </div>
+      <div class="form-group mb-3">
+        <label for="conditionNote">Notes</label>
+        <textarea class="form-control" id="conditionNote" formControlName="note" rows="3"></textarea>
+      </div>
+    </ng-container>
+
+    <!-- Observation -->
+    <ng-container *ngIf="resourceType === 'Observation'">
+      <div class="form-group mb-3">
+        <label for="obsStatus">Status</label>
+        <select class="form-control" id="obsStatus" formControlName="status">
+          <option value="registered">registered</option>
+          <option value="preliminary">preliminary</option>
+          <option value="final">final</option>
+          <option value="amended">amended</option>
+          <option value="corrected">corrected</option>
+          <option value="cancelled">cancelled</option>
+          <option value="entered-in-error">entered-in-error</option>
+        </select>
+      </div>
+      <div class="form-group mb-3">
+        <label for="effectiveDateTime">Effective Date</label>
+        <div class="input-group">
+          <input class="form-control" id="effectiveDateTime" formControlName="effectiveDateTime"
+                 ngbDatepicker #effectiveDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
+          <button class="btn btn-outline-secondary" (click)="effectiveDp.toggle()" type="button">
+            <i class="fas fa-calendar"></i>
+          </button>
+        </div>
+      </div>
+      <ng-container *ngIf="hasValueQuantity()">
+        <div class="form-group mb-3">
+          <label for="valueQuantityValue">Value</label>
+          <div class="input-group">
+            <input type="number" class="form-control" id="valueQuantityValue" formControlName="valueQuantityValue"/>
+            <input type="text" class="form-control" formControlName="valueQuantityUnit" placeholder="unit"/>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="hasValueString()">
+        <div class="form-group mb-3">
+          <label for="valueString">Value</label>
+          <input type="text" class="form-control" id="valueString" formControlName="valueString"/>
+        </div>
+      </ng-container>
+      <div class="form-group mb-3">
+        <label for="obsNote">Notes</label>
+        <textarea class="form-control" id="obsNote" formControlName="note" rows="3"></textarea>
+      </div>
+    </ng-container>
+
+    <!-- MedicationRequest -->
+    <ng-container *ngIf="resourceType === 'MedicationRequest'">
+      <div class="form-group mb-3">
+        <label for="medStatus">Status</label>
+        <select class="form-control" id="medStatus" formControlName="status">
+          <option value="active">active</option>
+          <option value="on-hold">on-hold</option>
+          <option value="cancelled">cancelled</option>
+          <option value="completed">completed</option>
+          <option value="entered-in-error">entered-in-error</option>
+          <option value="stopped">stopped</option>
+          <option value="draft">draft</option>
+        </select>
+      </div>
+      <div class="form-group mb-3">
+        <label for="intent">Intent</label>
+        <select class="form-control" id="intent" formControlName="intent">
+          <option value="proposal">proposal</option>
+          <option value="plan">plan</option>
+          <option value="order">order</option>
+          <option value="original-order">original-order</option>
+          <option value="reflex-order">reflex-order</option>
+          <option value="filler-order">filler-order</option>
+          <option value="instance-order">instance-order</option>
+          <option value="option">option</option>
+        </select>
+      </div>
+      <div class="form-group mb-3">
+        <label for="authoredOn">Authored On</label>
+        <div class="input-group">
+          <input class="form-control" id="authoredOn" formControlName="authoredOn"
+                 ngbDatepicker #authoredOnDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
+          <button class="btn btn-outline-secondary" (click)="authoredOnDp.toggle()" type="button">
+            <i class="fas fa-calendar"></i>
+          </button>
+        </div>
+      </div>
+      <div class="form-group mb-3">
+        <label for="dosage">Dosage</label>
+        <input type="text" class="form-control" id="dosage" formControlName="dosage"/>
+      </div>
+      <div class="form-group mb-3">
+        <label for="medNote">Notes</label>
+        <textarea class="form-control" id="medNote" formControlName="note" rows="3"></textarea>
+      </div>
+    </ng-container>
+
+    <!-- Encounter -->
+    <ng-container *ngIf="resourceType === 'Encounter'">
+      <div class="form-group mb-3">
+        <label for="encStatus">Status</label>
+        <select class="form-control" id="encStatus" formControlName="status">
+          <option value="planned">planned</option>
+          <option value="arrived">arrived</option>
+          <option value="triaged">triaged</option>
+          <option value="in-progress">in-progress</option>
+          <option value="onleave">onleave</option>
+          <option value="finished">finished</option>
+          <option value="cancelled">cancelled</option>
+        </select>
+      </div>
+      <div class="form-group mb-3">
+        <label for="periodStart">Period Start</label>
+        <div class="input-group">
+          <input class="form-control" id="periodStart" formControlName="periodStart"
+                 ngbDatepicker #periodStartDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
+          <button class="btn btn-outline-secondary" (click)="periodStartDp.toggle()" type="button">
+            <i class="fas fa-calendar"></i>
+          </button>
+        </div>
+      </div>
+      <div class="form-group mb-3">
+        <label for="periodEnd">Period End</label>
+        <div class="input-group">
+          <input class="form-control" id="periodEnd" formControlName="periodEnd"
+                 ngbDatepicker #periodEndDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
+          <button class="btn btn-outline-secondary" (click)="periodEndDp.toggle()" type="button">
+            <i class="fas fa-calendar"></i>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- AllergyIntolerance -->
+    <ng-container *ngIf="resourceType === 'AllergyIntolerance'">
+      <div class="form-group mb-3">
+        <label for="allergyStatus">Clinical Status</label>
+        <select class="form-control" id="allergyStatus" formControlName="clinicalStatus">
+          <option value="active">active</option>
+          <option value="inactive">inactive</option>
+          <option value="resolved">resolved</option>
+        </select>
+      </div>
+      <div class="form-group mb-3">
+        <label for="category">Category</label>
+        <select class="form-control" id="category" formControlName="category">
+          <option value="food">food</option>
+          <option value="medication">medication</option>
+          <option value="environment">environment</option>
+          <option value="biologic">biologic</option>
+        </select>
+      </div>
+      <div class="form-group mb-3">
+        <label for="recordedDate">Recorded Date</label>
+        <div class="input-group">
+          <input class="form-control" id="recordedDate" formControlName="recordedDate"
+                 ngbDatepicker #recordedDateDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
+          <button class="btn btn-outline-secondary" (click)="recordedDateDp.toggle()" type="button">
+            <i class="fas fa-calendar"></i>
+          </button>
+        </div>
+      </div>
+      <div class="form-group mb-3">
+        <label for="allergyNote">Notes</label>
+        <textarea class="form-control" id="allergyNote" formControlName="note" rows="3"></textarea>
+      </div>
+    </ng-container>
+
+    <!-- Procedure -->
+    <ng-container *ngIf="resourceType === 'Procedure'">
+      <div class="form-group mb-3">
+        <label for="procStatus">Status</label>
+        <select class="form-control" id="procStatus" formControlName="status">
+          <option value="preparation">preparation</option>
+          <option value="in-progress">in-progress</option>
+          <option value="not-done">not-done</option>
+          <option value="on-hold">on-hold</option>
+          <option value="stopped">stopped</option>
+          <option value="completed">completed</option>
+          <option value="entered-in-error">entered-in-error</option>
+        </select>
+      </div>
+      <div class="form-group mb-3">
+        <label for="performedDateTime">Performed Date</label>
+        <div class="input-group">
+          <input class="form-control" id="performedDateTime" formControlName="performedDateTime"
+                 ngbDatepicker #performedDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
+          <button class="btn btn-outline-secondary" (click)="performedDp.toggle()" type="button">
+            <i class="fas fa-calendar"></i>
+          </button>
+        </div>
+      </div>
+      <div class="form-group mb-3">
+        <label for="procNote">Notes</label>
+        <textarea class="form-control" id="procNote" formControlName="note" rows="3"></textarea>
+      </div>
+    </ng-container>
+
+    <!-- Immunization -->
+    <ng-container *ngIf="resourceType === 'Immunization'">
+      <div class="form-group mb-3">
+        <label for="immunStatus">Status</label>
+        <select class="form-control" id="immunStatus" formControlName="status">
+          <option value="completed">completed</option>
+          <option value="entered-in-error">entered-in-error</option>
+          <option value="not-done">not-done</option>
+        </select>
+      </div>
+      <div class="form-group mb-3">
+        <label for="occurrenceDateTime">Occurrence Date</label>
+        <div class="input-group">
+          <input class="form-control" id="occurrenceDateTime" formControlName="occurrenceDateTime"
+                 ngbDatepicker #occurrenceDp="ngbDatepicker" placeholder="yyyy-mm-dd"/>
+          <button class="btn btn-outline-secondary" (click)="occurrenceDp.toggle()" type="button">
+            <i class="fas fa-calendar"></i>
+          </button>
+        </div>
+      </div>
+      <div class="form-group mb-3">
+        <label for="immunNote">Notes</label>
+        <textarea class="form-control" id="immunNote" formControlName="note" rows="3"></textarea>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-light" (click)="activeModal.dismiss()">Cancel</button>
+    <button type="submit" class="btn btn-indigo" [disabled]="saving">
+      <span *ngIf="saving" class="spinner-border spinner-border-sm mr-1"></span>
+      Save Changes
+    </button>
+  </div>
+</form>
