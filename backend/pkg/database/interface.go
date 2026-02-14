@@ -30,6 +30,7 @@ type DatabaseRepository interface {
 	GetResourceBySourceId(context.Context, string, string) (*models.ResourceBase, error)
 	QueryResources(ctx context.Context, query models.QueryResource) (interface{}, error)
 	ListResources(context.Context, models.ListResourceQueryOptions) ([]models.ResourceBase, error)
+	ListAllResources(ctx context.Context, queryOptions models.ListResourceQueryOptions) ([]models.ResourceBase, error)
 	GetPatientForSources(ctx context.Context) ([]models.ResourceBase, error)
 	AddResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error
 	RemoveResourceAssociation(ctx context.Context, source *models.SourceCredential, resourceType string, resourceId string, relatedSource *models.SourceCredential, relatedResourceType string, relatedResourceId string) error

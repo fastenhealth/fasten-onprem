@@ -1,0 +1,21 @@
+<div class="container">
+    <div class="az-content-body">
+        <!-- Top Section: Search + Filter -->
+        <div class="d-flex align-items-center mb-4">
+            <div class="input-group me-3 me-4" style="max-width: 400px;">
+                <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchQuery"
+                    (keyup.enter)="search()" />
+                <button class="btn btn-outline-secondary" type="button" *ngIf="searchQuery"
+                    (click)="searchQuery = ''; search()">
+                    ✕
+                </button>
+            </div>
+        </div>
+        <!-- Data table -->
+        <ngx-datatable #table class="bootstrap" [columns]="columns" [columnMode]="ColumnMode.force" [headerHeight]="50"
+            [footerHeight]="50" rowHeight="auto" [externalPaging]="true" [count]="totalElements"
+            [offset]="currentPage.offset" [limit]="20" [rows]="rows" [selectionType]="SelectionType.single"
+            (select)="onSelect($event)" (page)="changePage($event)">
+        </ngx-datatable>
+    </div><!-- az-content-body -->
+</div>

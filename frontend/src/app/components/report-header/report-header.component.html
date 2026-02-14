@@ -24,6 +24,7 @@
     </div><!-- media -->
     <a [routerLink]="'/sources'" class="btn btn-purple">Add Source</a>
     <a [routerLink]="'/resource/create'" class="btn btn-purple mg-l-10">Add Condition</a>
+    <a *ngIf="searchEnabled" [routerLink]="'/resource/summary'" class="btn btn-purple mg-l-10">Search Records</a>
   </div>
 </div><!-- az-dashboard-one-title -->
 

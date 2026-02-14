@@ -11,8 +11,8 @@ describe('ReportLabsObservationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PipesModule, RouterTestingModule, ObservationVisualizationComponent],
-      declarations: [ ReportLabsObservationComponent, NgbCollapse ],
+      imports: [PipesModule, RouterTestingModule, ObservationVisualizationComponent, NgbCollapse],
+      declarations: [ ReportLabsObservationComponent ],
     })
     .compileComponents();
 

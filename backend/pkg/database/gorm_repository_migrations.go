@@ -14,6 +14,7 @@ import (
 	_20250730100000 "github.com/fastenhealth/fasten-onprem/backend/pkg/database/migrations/20250730100000"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/models"
 	databaseModel "github.com/fastenhealth/fasten-onprem/backend/pkg/models/database"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/search"
 	sourceCatalog "github.com/fastenhealth/fasten-sources/catalog"
 	sourcePkg "github.com/fastenhealth/fasten-sources/pkg"
 	"github.com/go-gormigrate/gormigrate/v2"
@@ -267,6 +268,50 @@ func (gr *GormRepository) Migrate() error {
 		gr.Logger.Errorf("Final Database migration failed with error.\n Please open a github issue at https://github.com/fastenhealth/fasten-onprem. \n %v", err)
 	}
 
+	if gr.AppConfig.IsSet("search") && gr.AppConfig.GetString("search.uri") != "" {
+		indexer := &search.IndexerService{Client: search.Client}
+
+		// Index existing data if needed
+		ctx := context.Background()
+
+		systemSettings, err := gr.LoadSystemSettings(ctx)
+		if err != nil {
+			gr.Logger.Error("failed to load system settings: %w", err)
+		}
+
+		if systemSettings.TypesenseDataIndexed {
+			fmt.Print("Data already indexed, skipping...")
+		}
+
+		fmt.Print("Data not indexed. Indexing existing resources...")
+
+		if indexer.Client == nil {
+			gr.Logger.Error("Indexer client is nil!")
+		}
+
+		listResourceQueryOptions := models.ListResourceQueryOptions{}
+		resources, err := gr.ListAllResources(ctx, listResourceQueryOptions)
+		if err != nil {
+			gr.Logger.Error("failed to retrieve resources: %w", err)
+		}
+
+		for i := range resources {
+			if err := indexer.IndexResource(&resources[i]); err != nil {
+				gr.Logger.Error("Failed to index resource:", resources[i].ID, "-", err, "skipping...")
+				continue
+			}
+		}
+
+		systemSettings.TypesenseDataIndexed = true
+		if err := gr.SaveSystemSettings(ctx, systemSettings); err != nil {
+			gr.Logger.Error("failed to update system settings: %w", err)
+		}
+
+		gr.Logger.Print("Indexed %d resources", len(resources))
+		gr.Logger.Print("Indexing completed and flag updated.")
+	}
+
 	gr.Logger.Infoln("Database migration completed successfully")
+
 	return nil
 }

@@ -6,7 +6,6 @@ import {DiagnosticReportModel} from '../../../lib/models/resources/diagnostic-re
 import {FastenDisplayModel} from '../../../lib/models/fasten/fasten-display-model';
 import {MedicalRecordWizardComponent} from '../medical-record-wizard/medical-record-wizard.component';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {ReportMedicalHistoryEditorComponent} from '../report-medical-history-editor/report-medical-history-editor.component';
 
 @Component({
   selector: 'app-report-medical-history-timeline-panel',

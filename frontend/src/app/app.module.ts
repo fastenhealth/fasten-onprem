@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { APP_INITIALIZER, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { SettingsService } from './services/settings.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {HttpClientModule, HTTP_INTERCEPTORS, HttpClient} from '@angular/common/http';
@@ -44,6 +45,10 @@ import { PractitionerHistoryComponent } from './pages/practitioner-history/pract
 import { SettingsComponent } from './pages/settings/settings.component';
 import { SetupEncryptionKeyComponent } from './pages/setup-encryption-key/setup-encryption-key.component';
 import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wizard/get-encryption-key-wizard.component';
+import { ViewRawResourceDetailsComponent } from './pages/view-raw-resource-details/view-raw-resource-details.component';
+import { ResourceSearchTableComponent } from './pages/resource-search-table/resource-search-table.component';
+import { ResourceSearchDatatableModule } from './components/resource-search-datatable/resource-search-datatable.module';
+import { ChatComponent } from './pages/chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +74,9 @@ import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wiza
     PractitionerHistoryComponent,
     SetupEncryptionKeyComponent,
     GetEncryptionKeyWizardComponent,
+    ViewRawResourceDetailsComponent,
+    ResourceSearchTableComponent,
+    ChatComponent,
   ],
   imports: [
     FormsModule,
@@ -77,6 +85,7 @@ import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wiza
     SharedModule,
     FhirCardModule,
     FhirDatatableModule,
+    ResourceSearchDatatableModule,
     AppRoutingModule,
     HttpClientModule,
     NgbModule,
@@ -101,6 +110,12 @@ import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wiza
       useClass: AuthInterceptorService,
       multi: true,
       deps: [AuthService, Router]
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (settingsService: SettingsService) => () => settingsService.load(),
+      deps: [SettingsService],
+      multi: true
     },
     IsAuthenticatedAuthGuard,
     {

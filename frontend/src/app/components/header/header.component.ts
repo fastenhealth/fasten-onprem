@@ -7,6 +7,7 @@ import {BackgroundJob} from '../../models/fasten/background-job';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {SupportRequest} from '../../models/fasten/support-request';
 import {environment} from '../../../environments/environment';
+import { SettingsService } from 'src/app/services/settings.service';
 import {versionInfo} from '../../../environments/versions';
 import {Subscription} from 'rxjs';
 import {ToastNotification, ToastType} from '../../models/fasten/toast';
@@ -30,6 +31,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isDarkModeSubscription: Subscription = null
 
   is_environment_desktop: boolean = environment.environment_desktop
+  chatEnabled: boolean = false
 
   isAdmin: boolean = false;
   isDarkMode: boolean = false;
@@ -39,10 +41,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private router: Router,
     private fastenApi: FastenApiService,
     private modalService: NgbModal,
-    private themeService: ThemeService) {
+    private themeService: ThemeService,
+    private settingsService: SettingsService) {
     }
 
   ngOnInit() {
+    this.chatEnabled = !!this.settingsService.get('search')?.chat;
     try {
       this.current_user_claims = this.authService.GetCurrentUser()
     } catch(e){
@@ -87,7 +91,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     event.preventDefault();
     document.querySelector('body').classList.toggle('az-header-menu-show');
   }
-  
+
   toggleTheme() {
     this.themeService.setDarkMode(!this.isDarkMode);
   }

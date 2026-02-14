@@ -69,5 +69,5 @@ export class GroupedBarChartWidgetComponent extends DashboardWidgetComponent imp
         radius: 0
       }
     },
-  } as ChartConfiguration<'bar'>['options']
+  } as ChartConfiguration['options']
 }

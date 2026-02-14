@@ -5,7 +5,9 @@
     //TODO open an upstream issue: Cannot find module 'http' or its corresponding type declarations.
 
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": [
+      "@angular/localize"
+    ]
   },
   "files": [
     "src/main.ts",

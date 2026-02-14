@@ -11,8 +11,8 @@
       <div *ngFor="let category of filterService.filterForm.get('categories').value | keyvalue " class="switch-container">
         <label class="switch text-nowrap">
           <input type="checkbox" [formControlName]="category.key" [value]="category.value">
-          <span class="switch-button"></span><span class="category-label truncate  pl-1 pr-1">{{category.key | medicalSourcesCategoryLookup}}</span>
-          <span *ngIf="!filterService.filterForm.get('categories').get(category.key).value" class="badge badge-primary mr-1">{{bucketDocCount(categories, category.key)}}</span>
+          <span class="switch-button"></span><span class="category-label truncate  ps-1 pe-1">{{category.key | medicalSourcesCategoryLookup}}</span>
+          <span *ngIf="!filterService.filterForm.get('categories').get(category.key).value" class="badge badge-primary me-1">{{bucketDocCount(categories, category.key)}}</span>
         </label>
       </div>
     </nav>
@@ -22,8 +22,8 @@
       <div *ngFor="let platformType of filterService.filterForm.get('platformTypes').value | keyvalue " class="switch-container">
         <label class="switch text-nowrap">
           <input type="checkbox" [formControlName]="platformType.key" [value]="platformType.value">
-          <span class="switch-button"></span><span class="category-label truncate  pl-1 pr-1">{{platformType.key}}</span>
-          <span *ngIf="!filterService.filterForm.get('platformTypes').get(platformType.key).value" class="badge badge-primary mr-1">{{bucketDocCount(platformTypes, platformType.key)}}</span>
+          <span class="switch-button"></span><span class="category-label truncate  ps-1 pe-1">{{platformType.key}}</span>
+          <span *ngIf="!filterService.filterForm.get('platformTypes').get(platformType.key).value" class="badge badge-primary me-1">{{bucketDocCount(platformTypes, platformType.key)}}</span>
         </label>
       </div>
     </nav>
