@@ -2091,3 +2091,274 @@ func (suite *RepositoryTestSuite) TestRemoveBulkResourceAssociations_Success() {
 	require.Equal(suite.T(), "obs101", proc101Associations[0].ResourceBaseSourceResourceID)
 	require.Equal(suite.T(), sc1.ID, proc101Associations[0].ResourceBaseSourceID) // Check the base source ID
 }
+
+func (suite *RepositoryTestSuite) TestDeleteResourceBySourceId() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	// create a manual source
+	manualSourceCredential := models.SourceCredential{
+		ModelBase:    models.ModelBase{ID: uuid.New()},
+		UserID:       userModel.ID,
+		Patient:      "test-patient",
+		PlatformType: sourcePkg.PlatformTypeManual,
+	}
+	err = dbRepo.CreateSource(authContext, &manualSourceCredential)
+	require.NoError(suite.T(), err)
+
+	testPatientData, err := os.ReadFile("./testdata/Abraham100_Heller342_Patient.json")
+	require.NoError(suite.T(), err)
+
+	wasCreated, err := dbRepo.UpsertRawResource(
+		authContext,
+		&manualSourceCredential,
+		sourceModels.RawResourceFhir{
+			SourceResourceType: "Patient",
+			SourceResourceID:   "b426b062-8273-4b93-a907-de3176c0567d",
+			ResourceRaw:        testPatientData,
+		},
+	)
+	require.NoError(suite.T(), err)
+	require.True(suite.T(), wasCreated)
+
+	// verify resource exists before delete
+	foundResource, err := dbRepo.GetResourceBySourceId(authContext, manualSourceCredential.ID.String(), "b426b062-8273-4b93-a907-de3176c0567d")
+	require.NoError(suite.T(), err)
+	require.NotNil(suite.T(), foundResource)
+
+	//test
+	rowsAffected, err := dbRepo.DeleteResourceBySourceId(authContext, manualSourceCredential.ID.String(), "b426b062-8273-4b93-a907-de3176c0567d")
+
+	//assert
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), int64(1), rowsAffected)
+
+	// verify resource no longer exists
+	_, err = dbRepo.GetResourceBySourceId(authContext, manualSourceCredential.ID.String(), "b426b062-8273-4b93-a907-de3176c0567d")
+	require.Error(suite.T(), err)
+}
+
+func (suite *RepositoryTestSuite) TestDeleteResourceBySourceId_WithNonManualSource_ShouldFail() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	// create a non-manual source (e.g. bluebutton)
+	nonManualSourceCredential := models.SourceCredential{
+		ModelBase:    models.ModelBase{ID: uuid.New()},
+		UserID:       userModel.ID,
+		Patient:      "test-patient",
+		PlatformType: sourcePkg.PlatformType("bluebutton"),
+	}
+	err = dbRepo.CreateSource(authContext, &nonManualSourceCredential)
+	require.NoError(suite.T(), err)
+
+	testPatientData, err := os.ReadFile("./testdata/Abraham100_Heller342_Patient.json")
+	require.NoError(suite.T(), err)
+
+	wasCreated, err := dbRepo.UpsertRawResource(
+		authContext,
+		&nonManualSourceCredential,
+		sourceModels.RawResourceFhir{
+			SourceResourceType: "Patient",
+			SourceResourceID:   "b426b062-8273-4b93-a907-de3176c0567d",
+			ResourceRaw:        testPatientData,
+		},
+	)
+	require.NoError(suite.T(), err)
+	require.True(suite.T(), wasCreated)
+
+	//test - should fail because source is not manual/fasten
+	_, err = dbRepo.DeleteResourceBySourceId(authContext, nonManualSourceCredential.ID.String(), "b426b062-8273-4b93-a907-de3176c0567d")
+
+	//assert
+	require.Error(suite.T(), err)
+	require.Contains(suite.T(), err.Error(), "only allowed for manual")
+}
+
+func (suite *RepositoryTestSuite) TestDeleteResourceBySourceId_WithInvalidResourceId_ShouldFail() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	manualSourceCredential := models.SourceCredential{
+		ModelBase:    models.ModelBase{ID: uuid.New()},
+		UserID:       userModel.ID,
+		Patient:      "test-patient",
+		PlatformType: sourcePkg.PlatformTypeManual,
+	}
+	err = dbRepo.CreateSource(authContext, &manualSourceCredential)
+	require.NoError(suite.T(), err)
+
+	//test - resource doesn't exist
+	_, err = dbRepo.DeleteResourceBySourceId(authContext, manualSourceCredential.ID.String(), "does-not-exist")
+
+	//assert
+	require.Error(suite.T(), err)
+	require.Contains(suite.T(), err.Error(), "resource not found")
+}
+
+func (suite *RepositoryTestSuite) TestUpdateResourceBySourceId() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	// create a fasten source
+	fastenSourceCredential := models.SourceCredential{
+		ModelBase:    models.ModelBase{ID: uuid.New()},
+		UserID:       userModel.ID,
+		Patient:      "test-patient",
+		PlatformType: sourcePkg.PlatformTypeFasten,
+	}
+	err = dbRepo.CreateSource(authContext, &fastenSourceCredential)
+	require.NoError(suite.T(), err)
+
+	testPatientData, err := os.ReadFile("./testdata/Abraham100_Heller342_Patient.json")
+	require.NoError(suite.T(), err)
+
+	wasCreated, err := dbRepo.UpsertRawResource(
+		authContext,
+		&fastenSourceCredential,
+		sourceModels.RawResourceFhir{
+			SourceResourceType: "Patient",
+			SourceResourceID:   "b426b062-8273-4b93-a907-de3176c0567d",
+			ResourceRaw:        testPatientData,
+		},
+	)
+	require.NoError(suite.T(), err)
+	require.True(suite.T(), wasCreated)
+
+	//test - update the resource with new raw data
+	updatedRaw, err := json.Marshal(map[string]interface{}{
+		"resourceType": "Patient",
+		"id":           "b426b062-8273-4b93-a907-de3176c0567d",
+		"name":         []map[string]interface{}{{"family": "UpdatedName", "given": []string{"Test"}}},
+	})
+	require.NoError(suite.T(), err)
+
+	err = dbRepo.UpdateResourceBySourceId(authContext, fastenSourceCredential.ID.String(), "b426b062-8273-4b93-a907-de3176c0567d", updatedRaw)
+
+	//assert
+	require.NoError(suite.T(), err)
+
+	// verify the resource was updated
+	foundResource, err := dbRepo.GetResourceBySourceId(authContext, fastenSourceCredential.ID.String(), "b426b062-8273-4b93-a907-de3176c0567d")
+	require.NoError(suite.T(), err)
+	require.NotNil(suite.T(), foundResource)
+
+	var actualData map[string]interface{}
+	err = json.Unmarshal(foundResource.ResourceRaw, &actualData)
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), "Patient", actualData["resourceType"])
+}
+
+func (suite *RepositoryTestSuite) TestUpdateResourceBySourceId_WithNonManualSource_ShouldFail() {
+	//setup
+	fakeConfig := mock_config.NewMockInterface(suite.MockCtrl)
+	fakeConfig.EXPECT().GetString("database.location").Return(suite.TestDatabase.Name()).AnyTimes()
+	fakeConfig.EXPECT().GetString("database.type").Return("sqlite").AnyTimes()
+	fakeConfig.EXPECT().IsSet("database.encryption.key").Return(false).AnyTimes()
+	fakeConfig.EXPECT().GetString("log.level").Return("INFO").AnyTimes()
+	dbRepo, err := NewRepository(fakeConfig, logrus.WithField("test", suite.T().Name()), event_bus.NewNoopEventBusServer())
+	require.NoError(suite.T(), err)
+
+	userModel := &models.User{
+		Username: "test_username",
+		Password: "testpassword",
+		Email:    "test@test.com",
+	}
+	err = dbRepo.CreateUser(context.Background(), userModel)
+	require.NoError(suite.T(), err)
+	authContext := context.WithValue(context.Background(), pkg.ContextKeyTypeAuthUsername, "test_username")
+
+	nonManualSourceCredential := models.SourceCredential{
+		ModelBase:    models.ModelBase{ID: uuid.New()},
+		UserID:       userModel.ID,
+		Patient:      "test-patient",
+		PlatformType: sourcePkg.PlatformType("bluebutton"),
+	}
+	err = dbRepo.CreateSource(authContext, &nonManualSourceCredential)
+	require.NoError(suite.T(), err)
+
+	testPatientData, err := os.ReadFile("./testdata/Abraham100_Heller342_Patient.json")
+	require.NoError(suite.T(), err)
+
+	wasCreated, err := dbRepo.UpsertRawResource(
+		authContext,
+		&nonManualSourceCredential,
+		sourceModels.RawResourceFhir{
+			SourceResourceType: "Patient",
+			SourceResourceID:   "b426b062-8273-4b93-a907-de3176c0567d",
+			ResourceRaw:        testPatientData,
+		},
+	)
+	require.NoError(suite.T(), err)
+	require.True(suite.T(), wasCreated)
+
+	//test - should fail because source is not manual/fasten
+	updatedRaw, err := json.Marshal(map[string]interface{}{"resourceType": "Patient", "id": "b426b062-8273-4b93-a907-de3176c0567d"})
+	require.NoError(suite.T(), err)
+
+	err = dbRepo.UpdateResourceBySourceId(authContext, nonManualSourceCredential.ID.String(), "b426b062-8273-4b93-a907-de3176c0567d", updatedRaw)
+
+	//assert
+	require.Error(suite.T(), err)
+	require.Contains(suite.T(), err.Error(), "only allowed for manual")
+}

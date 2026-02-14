@@ -386,7 +386,7 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithInval
         },
 	})
 	suite.NoError(err)
-	
+
 	ListResourceFhir(ctx)
 
 	type ResponseWrapper struct {
@@ -400,4 +400,116 @@ func (suite *ResourceFhirHandlerTestSuite) TestListResourceFhirHandler_WithInval
 	require.Equal(suite.T(), false, respWrapper.Success)
 	require.Empty(suite.T(), respWrapper.Data)
 
+}
+
+func (suite *ResourceFhirHandlerTestSuite) TestDeleteResourceFhirHandler() {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	setupGinContext(ctx, suite)
+
+	ctx.AddParam("sourceId", suite.SourceId.String())
+	ctx.AddParam("resourceId", "57959813-8cd2-4e3c-8970-e4364b74980a")
+
+	req, err := http.NewRequest("DELETE", fhirResourcePath, &bytes.Buffer{})
+	require.NoError(suite.T(), err)
+	ctx.Request = req
+
+	DeleteResourceFhir(ctx)
+
+	type ResponseWrapper struct {
+		Data    int64 `json:"data"`
+		Success bool  `json:"success"`
+	}
+	var respWrapper ResponseWrapper
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), true, respWrapper.Success)
+	require.Equal(suite.T(), int64(1), respWrapper.Data)
+
+	// verify resource is no longer found
+	w2 := httptest.NewRecorder()
+	ctx2, _ := gin.CreateTestContext(w2)
+	setupGinContext(ctx2, suite)
+	ctx2.AddParam("sourceId", suite.SourceId.String())
+	ctx2.AddParam("resourceId", "57959813-8cd2-4e3c-8970-e4364b74980a")
+
+	GetResourceFhir(ctx2)
+	require.Equal(suite.T(), http.StatusInternalServerError, w2.Code)
+}
+
+func (suite *ResourceFhirHandlerTestSuite) TestDeleteResourceFhirHandler_WithInvalidResourceId() {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	setupGinContext(ctx, suite)
+
+	ctx.AddParam("sourceId", suite.SourceId.String())
+	ctx.AddParam("resourceId", "does-not-exist")
+
+	req, err := http.NewRequest("DELETE", fhirResourcePath, &bytes.Buffer{})
+	require.NoError(suite.T(), err)
+	ctx.Request = req
+
+	DeleteResourceFhir(ctx)
+
+	require.Equal(suite.T(), http.StatusNotFound, w.Code)
+}
+
+func (suite *ResourceFhirHandlerTestSuite) TestUpdateResourceFhirHandler() {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	setupGinContext(ctx, suite)
+
+	ctx.AddParam("sourceId", suite.SourceId.String())
+	ctx.AddParam("resourceId", "cd72a003-ffa9-44a2-9e9c-97004144f5d8")
+
+	updateBody, err := json.Marshal(map[string]interface{}{
+		"resource_raw": map[string]interface{}{
+			"resourceType": "Observation",
+			"id":           "cd72a003-ffa9-44a2-9e9c-97004144f5d8",
+			"status":       "amended",
+		},
+	})
+	require.NoError(suite.T(), err)
+
+	req, err := http.NewRequest("PUT", fhirResourcePath, bytes.NewBuffer(updateBody))
+	require.NoError(suite.T(), err)
+	req.Header.Set("Content-Type", "application/json")
+	ctx.Request = req
+
+	UpdateResourceFhir(ctx)
+
+	type ResponseWrapper struct {
+		Success bool `json:"success"`
+	}
+	var respWrapper ResponseWrapper
+	err = json.Unmarshal(w.Body.Bytes(), &respWrapper)
+	require.NoError(suite.T(), err)
+	require.Equal(suite.T(), true, respWrapper.Success)
+}
+
+func (suite *ResourceFhirHandlerTestSuite) TestUpdateResourceFhirHandler_WithInvalidResourceId() {
+	w := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(w)
+	setupGinContext(ctx, suite)
+
+	ctx.AddParam("sourceId", suite.SourceId.String())
+	ctx.AddParam("resourceId", "does-not-exist")
+
+	updateBody, err := json.Marshal(map[string]interface{}{
+		"resource_raw": map[string]interface{}{
+			"resourceType": "Observation",
+			"id":           "does-not-exist",
+			"status":       "amended",
+		},
+	})
+	require.NoError(suite.T(), err)
+
+	req, err := http.NewRequest("PUT", fhirResourcePath, bytes.NewBuffer(updateBody))
+	require.NoError(suite.T(), err)
+	req.Header.Set("Content-Type", "application/json")
+	ctx.Request = req
+
+	UpdateResourceFhir(ctx)
+
+	require.Equal(suite.T(), http.StatusNotFound, w.Code)
 }
