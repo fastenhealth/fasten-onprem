@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   fasten-prod:
     image: ghcr.io/fastenhealth/fasten-onprem:main
