@@ -121,6 +121,6 @@ export class SimpleLineChartWidgetComponent extends DashboardWidgetComponent imp
     borderColor:  'rgb(0, 204, 212)',
     borderWidth: 2,
     fill: true,
-  } as ChartConfiguration<'line'>['options']
+  } as ChartConfiguration['options']
 
 }

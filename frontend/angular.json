@@ -70,6 +70,11 @@
                 "glob": "**/*.png",
                 "input": "./node_modules/lforms/dist/lforms/webcomponent/",
                 "output": "/assets/css/lforms/"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/pdfjs-dist/build/",
+                "output": "/assets/pdfjs/"
               }
             ],
             "styles": [

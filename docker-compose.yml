@@ -20,3 +20,10 @@ services:
       - ./db:/opt/fasten/db
       - ./certs:/opt/fasten/certs/shared
 #      - ./config.example.yaml:/opt/fasten/config/config.yaml
+  ocr-service:
+    build:
+      context: ./ocr-service
+      dockerfile: Dockerfile
+    ports:
+      - "9091:8080"
+    restart: unless-stopped

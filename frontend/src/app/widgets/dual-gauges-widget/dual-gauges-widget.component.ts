@@ -49,7 +49,7 @@ export class DualGaugesWidgetComponent extends DashboardWidgetComponent implemen
       animateScale: true,
       animateRotate: true
     }
-  } as ChartConfiguration<'doughnut'>['options']
+  } as ChartConfiguration['options']
 
   // Sessions by channel doughnut chart
   // sessionsChartTwoData = [{

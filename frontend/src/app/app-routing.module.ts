@@ -30,6 +30,7 @@ import { PractitionerHistoryComponent } from "./pages/practitioner-history/pract
 import { SettingsComponent } from './pages/settings/settings.component';
 import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wizard/get-encryption-key-wizard.component';
 import { SetupEncryptionKeyComponent } from './pages/setup-encryption-key/setup-encryption-key.component';
+import { ResourceOcrComponent } from "./pages/resource-ocr/resource-ocr.component";
 
 const routes: Routes = [
   { path: 'auth/signup/wizard', component: AuthSignupWizardComponent },
@@ -56,6 +57,10 @@ const routes: Routes = [
   { path: 'resource/create', component: ResourceCreatorComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
 
   { path: 'desktop/callback/:state', component: DesktopCallbackComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
+  { path: 'resource/ocr-scan', component: ResourceOcrComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+  { path: 'scan', component: ResourceOcrComponent, canActivate: [ IsAuthenticatedAuthGuard] },
+
+  { path: 'desktop/callback/:state', component: DesktopCallbackComponent, canActivate: [ IsAuthenticatedAuthGuard] },
 
   { path: 'background-jobs', component: BackgroundJobsComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
   { path: 'patient-profile', component: PatientProfileComponent, canActivate: [ IsAuthenticatedAuthGuard ] },

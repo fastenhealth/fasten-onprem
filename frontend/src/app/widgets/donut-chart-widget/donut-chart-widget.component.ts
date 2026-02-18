@@ -52,6 +52,6 @@ export class DonutChartWidgetComponent extends DashboardWidgetComponent implemen
       animateScale: true,
       animateRotate: true
     }
-  } as ChartConfiguration<'doughnut'>['options']
+  } as ChartConfiguration['options']
 
 }
