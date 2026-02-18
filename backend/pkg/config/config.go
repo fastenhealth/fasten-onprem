@@ -2,12 +2,13 @@ package config
 
 import (
 	"fmt"
-	"github.com/analogj/go-util/utils"
-	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
-	"github.com/spf13/viper"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/analogj/go-util/utils"
+	"github.com/fastenhealth/fasten-onprem/backend/pkg/errors"
+	"github.com/spf13/viper"
 )
 
 // When initializing this class the following methods must be called:
@@ -64,7 +65,7 @@ func (c *configuration) ReadConfig(configFilePath string) error {
 
 	if !utils.FileExists(configFilePath) {
 		message := fmt.Sprintf("The configuration file (%s) could not be found. Skipping", configFilePath)
-		log.Printf(message)
+		log.Printf("%s", message)
 		return errors.ConfigFileMissingError("The configuration file could not be found.")
 	}
 

@@ -1,0 +1,24 @@
+<div class="az-signin-wrapper">
+    <div class="az-card-signin" [ngStyle]="{'height': 'unset'}">
+        <h1 class="az-logo">fasten</h1>
+        <div class="az-signin-header text-center">
+            <h2>Welcome back!</h2>
+            <h4 *ngIf="!errorMsg">Finalizing sign-in...</h4>
+
+            <div *ngIf="loading" class="pt-4 pb-3 text-center">
+                <p class="pb-3">Please wait while we complete your authentication.</p>
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+
+            <div *ngIf="!loading && success" class="pt-4 pb-3 text-center">
+                <p>Authentication successful! Redirecting to your dashboard...</p>
+            </div>
+
+            <div *ngIf="!loading && errorMsg" class="alert alert-danger mt-3" role="alert">
+                <strong>Error:</strong> {{ errorMsg }}
+            </div>
+        </div><!-- az-signin-header -->
+    </div><!-- az-card-signin -->
+</div><!-- az-signin-wrapper -->

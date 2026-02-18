@@ -14,6 +14,7 @@ type User struct {
 	FullName string `json:"full_name"`
 	Username string `json:"username" gorm:"unique"`
 	Password string `json:"password"`
+	AuthType string `json:"auth_type"` //can be "local" or "oidc" types
 
 	//additional optional metadata that Fasten stores with users
 	Picture string       `json:"picture"`

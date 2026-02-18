@@ -13,6 +13,13 @@ import { User } from '../models/fasten/user';
 import { UserRegisteredClaims } from '../models/fasten/user-registered-claims';
 import { ResponseWrapper } from '../models/response-wrapper';
 
+export interface OidcProvider {
+  name: string;
+  issuer: string;
+  client_id: string;
+  redirect_url: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,6 +28,42 @@ export class AuthService {
   FASTEN_JWT_LOCALSTORAGE_KEY = 'token';
   public IsAuthenticatedSubject = new BehaviorSubject<boolean>(false)
   constructor(@Inject(HTTP_CLIENT_TOKEN) private _httpClient: HttpClient) {
+  }
+
+  /**
+   * Completes the OIDC login process by setting the received token.
+   */
+  public async completeOidcLogin(token: string): Promise<any> {
+    if (!token) {
+      throw new Error('Missing token from OIDC callback.');
+    }
+    
+    this.setAuthToken(token);
+    return Promise.resolve();
+  }
+
+
+  /**
+   * Fetches the list of available OIDC providers from the backend API.
+   */
+  public async getOidcProviders(): Promise<OidcProvider[]> {
+    const fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base);
+    // Assuming the endpoint is /api/auth/methods as set up in the backend
+    const resp = await this._httpClient.get<ResponseWrapper>(`${fastenApiEndpointBase}/oidc/providers`).toPromise();
+
+    // The backend returns the providers directly, not nested under a 'data' property.
+    return resp as any;
+  }
+
+  /**
+   * Redirects the user to the backend to initiate the OIDC login flow.
+   * @param providerName The name of the provider (e.g., 'google')
+   */
+  public oidcLogin(providerName: string): void {
+    const fastenApiEndpointBase = GetEndpointAbsolutePath(globalThis.location, environment.fasten_api_endpoint_base);
+    // This constructs the URL and redirects the entire page.
+    // No response is expected here as the browser navigates away.
+    window.location.href = `${fastenApiEndpointBase}/oidc/${providerName}`;
   }
 
   //Third-party JWT auth, used by Fasten Cloud

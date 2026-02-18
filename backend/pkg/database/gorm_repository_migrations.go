@@ -240,6 +240,12 @@ func (gr *GormRepository) Migrate() error {
 				)
 			},
 		},
+		{
+			ID: "20251008104500", // add auth_type to user
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&models.User{})
+			},
+		},
 	})
 
 	// run when database is empty

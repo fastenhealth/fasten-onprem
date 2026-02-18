@@ -30,6 +30,7 @@ import { PractitionerHistoryComponent } from "./pages/practitioner-history/pract
 import { SettingsComponent } from './pages/settings/settings.component';
 import { GetEncryptionKeyWizardComponent } from './pages/get-encryption-key-wizard/get-encryption-key-wizard.component';
 import { SetupEncryptionKeyComponent } from './pages/setup-encryption-key/setup-encryption-key.component';
+import { OidcCallbackComponent } from "./pages/oidc-callback/oidc-callback.component";
 
 const routes: Routes = [
   { path: 'auth/signup/wizard', component: AuthSignupWizardComponent },
@@ -44,6 +45,8 @@ const routes: Routes = [
 
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, canActivate: [ IsAuthenticatedAuthGuard ] },
+
+  { path: 'oidc/:provider/callback', component: OidcCallbackComponent},
 
   //explore page will replace source/* pages
   { path: 'explore', component: ExploreComponent, canActivate: [ IsAuthenticatedAuthGuard ] },

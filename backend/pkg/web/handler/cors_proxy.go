@@ -2,13 +2,14 @@ package handler
 
 import (
 	"fmt"
-	sourceDefinitions "github.com/fastenhealth/fasten-sources/definitions"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"strings"
+
+	sourceDefinitions "github.com/fastenhealth/fasten-sources/definitions"
+	"github.com/gin-gonic/gin"
 )
 
 // SECURITY: there are security implications to this, this may require some additional authentication to limit misuse
@@ -67,7 +68,7 @@ func CORSProxy(c *gin.Context) {
 		req.Host = remote.Host
 		req.URL.Scheme = remote.Scheme
 		req.URL.Host = remote.Host
-		log.Printf(c.Param("proxyPath"))
+		log.Printf("%s", c.Param("proxyPath"))
 		req.URL.Path = remote.Path
 		req.Body = c.Request.Body
 

@@ -3,6 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
+	"os"
+	"time"
+
 	"github.com/analogj/go-util/utils"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/config"
 	"github.com/fastenhealth/fasten-onprem/backend/pkg/database"
@@ -13,10 +18,6 @@ import (
 	"github.com/fastenhealth/fasten-onprem/backend/resources"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"io"
-	"log"
-	"os"
-	"time"
 )
 
 var goos string
@@ -58,7 +59,7 @@ func main() {
 
 			subtitle := packagrUrl + utils.LeftPad2Len(versionInfo, " ", 53-len(packagrUrl))
 
-			fmt.Fprintf(c.App.Writer, fmt.Sprintf(utils.StripIndent(
+			fmt.Fprintf(c.App.Writer, utils.StripIndent(
 				`
 			  o888o                       o8                          
 			o888oo ooooooo    oooooooo8 o888oo ooooooooo8 oo oooooo   
@@ -67,7 +68,7 @@ func main() {
 			o888o 88ooo88 8o 88oooooo88   888o  88oooo888 o888o o888o
 			%s
 
-			`), subtitle))
+			`), subtitle)
 			return nil
 		},
 
