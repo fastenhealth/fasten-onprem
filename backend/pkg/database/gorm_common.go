@@ -46,15 +46,17 @@ func (gr *GormRepository) CreateUser(ctx context.Context, user *models.User) err
 	if err := user.HashPassword(user.Password); err != nil {
 		return err
 	}
+
+	// SECURITY: disallow reserved usernames that could be used for phishing or
+	// confusion attacks (e.g., "admin", "support", "system").
+	if isReservedUsername(user.Username) {
+		return fmt.Errorf("username '%s' is reserved and cannot be used", user.Username)
+	}
+
 	record := gr.GormClient.Create(user)
 	if record.Error != nil {
 		return record.Error
 	}
-
-	//SECURITY:
-	//TODO: we should disallow reserved usernames:
-	// https://github.com/forwardemail/reserved-email-addresses-list/blob/master/admin-list.json
-	// https://github.com/shouldbee/reserved-usernames/blob/master/reserved-usernames.txt
 
 	//create user settings
 	err := gr.PopulateDefaultUserSettings(ctx, user.ID)
@@ -1573,4 +1575,36 @@ func (gr *GormRepository) DeleteResourceByTypeAndId(ctx context.Context, sourceR
 
 	fmt.Printf("Successfully deleted resource: %s from table: %s\n", sourceResourceId, tableName)
 	return nil
+}
+
+// reservedUsernames is a curated list of usernames that should not be allowed
+// for user registration. These could be used for phishing, social engineering,
+// or confusion attacks if a user were to register with them.
+// References:
+// - https://github.com/forwardemail/reserved-email-addresses-list/blob/master/admin-list.json
+// - https://github.com/shouldbee/reserved-usernames/blob/master/reserved-usernames.txt
+var reservedUsernames = map[string]bool{
+	"admin":        true,
+	"administrator": true,
+	"api":          true,
+	"contact":      true,
+	"fasten":       true,
+	"help":         true,
+	"info":         true,
+	"login":        true,
+	"mail":         true,
+	"noreply":      true,
+	"postmaster":   true,
+	"root":         true,
+	"security":     true,
+	"support":      true,
+	"system":       true,
+	"webmaster":    true,
+	"www":          true,
+}
+
+// isReservedUsername checks if the given username is in the reserved list.
+// The check is case-insensitive.
+func isReservedUsername(username string) bool {
+	return reservedUsernames[strings.ToLower(strings.TrimSpace(username))]
 }
